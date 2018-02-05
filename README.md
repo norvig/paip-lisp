@@ -30,10 +30,8 @@ name, and short description for each file.
 <p>
 <table border=1>
 <tr><td><b><u>CH</u></b> <td><b><u>Filename</u></b><td> <b><u>Description</u></b>
-<tr><td>-  <td><a href="README.html">README.html</a><td>		This file: explanation and index
-<tr><td>-  <td><a href="examples.lisp">examples.lisp</a><td>	A list of example inputs taken from the book
+<tr><td>-  <td><a href="lisp/examples.lisp">examples.lisp</a><td>	A list of example inputs taken from the book
 <tr><td>-  <td><a href="tutor.lisp">tutor.lisp</a><td>		An interpreter for running the examples
-<tr><td>24 <td><a href="loop.lisp">loop.lisp</a><td>		Load this first if your Lisp doesn't support ANSI LOOP
 <tr><td>-  <td><a href="auxfns.lisp">auxfns.lisp</a><td>		Auxiliary functions; load this before anything else
 <tr><td>1  <td><a href="intro.lisp">intro.lisp</a><td>		A few simple definitions
 <tr><td>2  <td><a href="simple.lisp">simple.lisp</a><td>		Random sentence generator (two versions)
