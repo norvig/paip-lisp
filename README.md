@@ -20,7 +20,7 @@ your system you may have to alter its definition, in
 * The function `do-examples`, which takes as an argument either `:all`
 or a chapter number or a list of chapter numbers, can be used to see examples
 of the use of various functions.  For example, `(do-examples 1)` shows
-the examples from chapter 1.
+the examples from chapter 1. Access this by doing `(requires "examples")`.
 
 # The Files
 
