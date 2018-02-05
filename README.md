@@ -3,7 +3,7 @@
 
 This page is the index for the Lisp source code files
 for the book *Paradigms of Artificial
-Intelligence Programming: Case Studies in Common Lisp. by Peter Norvig.  
+Intelligence Programming: Case Studies in Common Lisp* by Peter Norvig.  
 
 # Running Code
 
