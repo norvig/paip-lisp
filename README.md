@@ -1,14 +1,14 @@
-# paip-lisp
-# Lisp code for the textbook *Paradigms of Artificial Intelligence Programming* (1996)
+# `paip-lisp`
+# Lisp code for *Paradigms of Artificial Intelligence Programming* 
 
-This page is the index for the Lisp source code files
+This is the repository for the Lisp source code files
 for the book *Paradigms of Artificial
-Intelligence Programming: Case Studies in Common Lisp* by Peter Norvig.  
+Intelligence Programming: Case Studies in Common Lisp* by Peter Norvig (1992).  (As seen on [TV](https://norvig.com/paip-tv.html). [Errata here](https://norvig.com/errata.html).)
 
-# Running Code
+# Running the Code
 
 There is no single "application" to run. Rather, there is a collection of source code files,
-duplicating the code in the book. You can read the code or run it as you wish. Lisp is an interactive language,
+duplicating the code in the book. You can read and/or run whatever you like. Lisp is an interactive language,
 and you will need to interact with the code to get benefit from it. Some hints:
 
 * You will need a Common Lisp interpreter/compiler/environment. Here's a [discussion](https://www.reddit.com/r/lisp/comments/752wxe/what_is_the_best_common_lisp_interpreter_out_there/) of the options.
