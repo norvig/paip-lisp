@@ -5,7 +5,7 @@
 
 This is the repository for the Lisp source code files
 for the book *Paradigms of Artificial
-Intelligence Programming: Case Studies in Common Lisp* by Peter Norvig (1992).  As seen on [TV](https://norvig.com/paip-tv.html). Also: [errata](https://norvig.com/errata.html), [comments](https://norvig.com/paip-comments.html), [preface](https://norvig.com/paip-preface.html)
+Intelligence Programming: Case Studies in Common Lisp* by Peter Norvig (1992).  As seen on [TV](https://norvig.com/paip-tv.html). Also: [errata](https://norvig.com/paip-errata.html), [comments](https://norvig.com/paip-comments.html), [preface](https://norvig.com/paip-preface.html), [retrospective](https://norvig.com/Lisp-retro.html).
 
 # Running the Code
 
