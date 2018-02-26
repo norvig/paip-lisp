@@ -42,7 +42,6 @@ name, and short description for each file.
 <tr><td>4  <td><a href="lisp/gps.lisp">gps.lisp</a><td>		Final version of General Problem Solver
 <tr><td>5  <td><a href="lisp/eliza1.lisp">eliza1.lisp</a><td>		Basic version of Eliza program
 <tr><td>5  <td><a href="lisp/eliza.lisp">eliza.lisp</a><td>		Eliza with more rules; different reader
-<tr><td>
 <tr><td>6  <td><a href="lisp/patmatch.lisp">patmatch.lisp</a><td>	Pattern Matching Utility
 <tr><td>6  <td><a href="lisp/eliza-pm.lisp">eliza-pm.lisp</a><td>	Version of Eliza using utilities
 <tr><td>6  <td><a href="lisp/search.lisp">search.lisp</a><td>		Search Utility
@@ -50,7 +49,7 @@ name, and short description for each file.
 <tr><td>7  <td><a href="lisp/student.lisp">student.lisp</a><td>		The Student Program
 <tr><td>8  <td><a href="lisp/macsyma.lisp">macsyma.lisp</a><td>		The Macsyma Program
 <tr><td>8  <td><a href="lisp/macsymar.lisp">macsymar.lisp</a><td>	Simplification and integration rules for Macsyma
-<tr><td>9-10	<td> &nbsp; <td>		(no files; important functions in <a href="auxfns.lisp">auxfns.lisp</a>	
+<tr><td>9-10	<td> &nbsp; <td>		(functions from these chapters are in <a href="auxfns.lisp">auxfns.lisp</a>)
 <tr><td>11 <td><a href="lisp/unify.lisp">unify.lisp</a><td>		Unification functions
 <tr><td>11 <td><a href="lisp/prolog1.lisp">prolog1.lisp</a><td>		First version of Prolog interpreter
 <tr><td>11 <td><a href="lisp/prolog.lisp">prolog.lisp</a><td>		Final version of Prolog interpreter
