@@ -1,11 +1,12 @@
 # `paip-lisp`
-# Code for *Paradigms of Artificial Intelligence Programming* 
+# *Paradigms of Artificial Intelligence Programming* 
 
 ![PAIP](https://norvig.com/paip-cover.gif)
 
-This is the repository for the Lisp source code files
-for the book *Paradigms of Artificial
+This is the repository for the book *Paradigms of Artificial
 Intelligence Programming: Case Studies in Common Lisp* by Peter Norvig (1992).  As seen on [TV](https://norvig.com/paip-tv.html). See also: [errata](https://norvig.com/paip-errata.html), [comments](https://norvig.com/paip-comments.html), [preface](https://norvig.com/paip-preface.html), [retrospective](https://norvig.com/Lisp-retro.html).
+
+This repository contains all the Common Lisp code in the book, as well as `pdf` and `txt` versions of the book itself (the copyright has recently reverted to me).
 
 # Running the Code
 
