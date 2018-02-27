@@ -629,7 +629,7 @@ arguments, and it will still add them all:
 
 This time we try (9000 + 900 + 90 -f 9) - (5000 + 500 + 50 + 5): 
 
-> (- (+ 9000 900 90 9) (+ 5000 500 50 5)) =^ 4444 
+> (- (+ 9000 900 90 9) (+ 5000 500 50 5)) => 4444 
 
 This example shows that expressions can be nested. The arguments to the function 
 are parenthesized lists, while the arguments to each + are atoms. The 
@@ -712,9 +712,9 @@ an explicit punctuation mark to tell us where the expression ends. Quotes can be
 used on hsts, as in * (Pat Ki m), on symbols as in ' Robi n, and in fact on anything else. 
 Here are some examples: 
 
-> 'John =^ JOHN 
+> 'John => JOHN 
 
-> '(John Q Public) =^ (JOHN Q PUBLIC) 
+> '(John Q Public) => (JOHN Q PUBLIC) 
 
 > '2 2 
 
@@ -722,7 +722,7 @@ Here are some examples:
 
 > '(+ 2 2) =.> (+ 2 2) 
 
-> (+ 2 2) =^ 4 
+> (+ 2 2) => 4 
 
 > John ^ Error: ]OHN is not a bound variable 
 
@@ -784,7 +784,7 @@ symbols again play an important roleâ€”they are used to name variables. A variab
 can take on a value, which can be any Lisp object. One way to give a value to a 
 variable is with setf: 
 
-> (setf . '(John 0 Public)) =^ (JOHN Q PUBLIC) 
+> (setf . '(John 0 Public)) => (JOHN Q PUBLIC) 
 
 > . (JOHN Q PUBLIC) 
 
@@ -866,7 +866,7 @@ quote (') introduce constant data
 So far we have seen two functions that operate on hsts: append and length. Since 
 lists are important, let's look at some more list processing functions: 
 
-> . =^ (JOHN 0 PUBLIC) 
+> . => (JOHN 0 PUBLIC) 
 
 > (first p) JOHN 
 
@@ -874,7 +874,7 @@ lists are important, let's look at some more list processing functions:
 
 > (second p) ^ Q 
 
-> (third p) =^ PUBLIC 
+> (third p) => PUBLIC 
 
 > (fourth p) ^ NIL 
 
@@ -923,7 +923,7 @@ lists, as these examples show:
 
 > (cons (first p) (rest p)) => (JOHN Q PUBLIC) 
 
-> (setf town (list 'Anytown 'USA)) =^ (ANYTOWN USA) 
+> (setf town (list 'Anytown 'USA)) => (ANYTOWN USA) 
 
 > (list . Of town 'may 'have 'already 'won!) ^ 
 ((JOHN Q PUBLIC) OF (ANYTOWN USA) MAY HAVE ALREADY WON!) 
@@ -1051,7 +1051,7 @@ uses alone.
 > (setf names '((John Q Public) (Malcolm X) 
 (Admiral Grace Murray Hopper) (Spot) 
 (Aristotle) (A A Milne) (Z . Top) 
-(Sir Larry Olivier) (Miss Scarlet))) =^ 
+(Sir Larry Olivier) (Miss Scarlet))) => 
 
 ((JOHN Q PUBLIC) (MALCOLM X) (ADMIRAL GRACE MURRAY HOPPER) 
 (SPOT) (ARISTOTLE) (A A MILNE) (Z . TOP) (SIR LARRY OLIVIER) 
@@ -1214,7 +1214,7 @@ the result of this call to first - name, and thus the result of all four calls, 
 Once we are happy with the workings of first - name, the special form unt race turns 
 off tracing. 
 
-> (first-name '(Madam Major General Paula Jones)) =^ 
+> (first-name '(Madam Major General Paula Jones)) => 
 (1 ENTER FIRST-NAME: (MADAM MAJOR GENERAL PAULA JONES)) 
 (2 ENTER FIRST-NAME: (MAJOR GENERAL PAULA JONES)) 
 
@@ -1404,7 +1404,7 @@ name, we still have to use the # ' notation. For example:
 
 > ((lambda (x) (+ . 2)) 4) =ê> 6 
 
-> (funcall #'(lambda (x) (+ . 2)) 4) =^ 6 
+> (funcall #'(lambda (x) (+ . 2)) 4) => 6 
 
 To understand the distinction we have to be clear on how expressions are evaluated 
 in Lisp. The normal rule for evaluation states that symbols are evaluated by looking 
@@ -1487,7 +1487,7 @@ abbreviation for the special form expression (quote x). Similarly, the notation
 
 (defun twice (x) (+ . x)) => TWICE 
 
-(if (= 2 3) (error) (+ 5 6)) =^ 11 
+(if (= 2 3) (error) (+ 5 6)) => 11 
 
 Afunction application is evaluated by first evaluating the arguments (the rest of 
 the list) and then finding the function named by the first element of the list and 
@@ -1495,7 +1495,7 @@ applying it to the list of evaluated arguments.
 
 (+2 3) =^5 
 
-(- (+ 90 9) (+ 50 5 (length '(Pat Kim)))) =^ 42 
+(- (+ 90 9) (+ 50 5 (length '(Pat Kim)))) => 42 
 
 Note that if ' (Pat Kim) did not have the quote, it would be treated as a function 
 application of the function pat to the value of the variable ki m. 
@@ -2005,7 +2005,7 @@ Sentence ^ Noun-Phrase-^ Verb-Phrase
 Noun-Phrase ^ Article + Noun 
 Verb-Phrase => Verb + Noun-Phrase 
 Article ^ the, a,... 
-Noun =^ man, ball, woman, table... 
+Noun => man, ball, woman, table... 
 Verb hit, took, saw, liked... 
 
 To be technical, this description is called a context-free phrase-structure grammar, and 
@@ -2140,7 +2140,7 @@ Noun-Phrase => ArHcle + Adj* + Noun + PP*
 
 ..*=>.,.. + ..* 
 
-PP =^ Prep + Noun-Phrase 
+PP => Prep + Noun-Phrase 
 
 Ad] ^ big, little, blue, green,... 
 
@@ -2208,7 +2208,7 @@ An alternative implementation of this program v^ould concentrate on making it ea
 to write grammar rules and would worry later about how they will be processed. 
 Let's look again at the original grammar rules: 
 
-Sentence =^ Noun-Phrase + Verb-Phrase 
+Sentence => Noun-Phrase + Verb-Phrase 
 Noun-Phrase ^ Article + Noun 
 Verb-Phrase Verb + Noun-Phrase 
 Article the, a,... 
@@ -2218,7 +2218,7 @@ Verb hit, took, saw, liked...
 Each rule consists of an arrow with a symbol on the left-hand side and something on 
 the right-hand side. The complication is that there can be two kinds of right-hand 
 sides: a concatenated list of symbols, as in "Noun-Phrase Article+Noun," or a list of 
-alternate words, as in "Noun =^ man, hall,..." We can account for these possibilities 
+alternate words, as in "Noun => man, hall,..." We can account for these possibilities 
 by deciding that every rule will have a list of possibilities on the right-hand side, and 
 that a concatenated list, for example "Article+Noun," will be represented as a Lisp list, 
 for example " (Arti cl e Noun)". The list of rules can then be represented as follows: 
@@ -2805,7 +2805,7 @@ name of ni 1 by default. Here we create, access, and modify a structure:
 
 > (name-p 'Barney) =. NIL ; only the results of make-name are names 
 
-> (setf (name-middle b) 'Q) =^ Q 
+> (setf (name-middle b) 'Q) => Q 
 
 > b #S(NAME :FIRST BARNEY .-MIDDLE Q :LAST RUBBLE) 
 
@@ -3255,7 +3255,7 @@ apply to an arbitrary number of lists, not just one:
 
 > (mapcar '(1 2 3)) => (-1 -2 -3) 
 > (mapcar #'+ '(1 2) '(10 20)) (11 22) 
-> (mapcar #'+ '(1 2) '(10 20) '(100 200)) =^ (111 222) 
+> (mapcar #'+ '(1 2) '(10 20) '(100 200)) => (111 222) 
 
 Second, many of the functions accept keywords that allow the user to vary the test 
 for comparing elements, or to only consider part of the sequence. 
@@ -3470,7 +3470,7 @@ entry and exit to a function:
 
 > (untrace length9) =È (LENGTH9) 
 
-> (length9 '(a b c)) =^ 3 
+> (length9 '(a b c)) => 3 
 
 Finally, the special form return can be used to break out of a block of code. Blocks are 
 set up by the special form bl ock, or by the looping forms (do, do*, dol i st, dot i mes, or 
@@ -3566,7 +3566,7 @@ using macroexpand, and see how it runs by typing in an example:
 (PRINT (* I I)) 
 (SETF I (+ I 1))) 
 
-> (setf i 7) =^ 7 
+> (setf i 7) => 7 
 
 > (while (< i 10) 
 (print (* i i)) 
@@ -3938,7 +3938,7 @@ with a setf form. A table would be built as follows:
 
 Now we can retrieve values with get: 
 
-> (get .. 'state) =^ ALASKA 
+> (get .. 'state) => ALASKA 
 > (get 'TX 'state) => NIL 
 
 This will be faster because we can go immediately from a symbol to its lone property 
@@ -3960,7 +3960,7 @@ symbol - pi i st (which gives a symbol's complete property list):
 (setf (symbol-piist 'state-table) 
 '(AL Alabama AK Alaska AZ Arizona AR Arkansas)) 
 
-> (get 'state-table 'AD =^ ALASKA 
+> (get 'state-table 'AD => ALASKA 
 
 > (get 'state-table 'Alaska) NIL 
 
@@ -4072,7 +4072,7 @@ They are equivalent sets, so either is valid, and your program should not depend
 
 the order of elements in the result. Here are the main functions on sets: 
 
-(intersection r s) =^ (c d) find common elements of two sets 
+(intersection r s) => (c d) find common elements of two sets 
 (union r s) (a b c d e) find all elements in either of two sets 
 (set-difference r s) =>(a b) find elements in one but not other set 
 (member *d r) ^(d) check if an element is a member of a set 
@@ -4133,13 +4133,13 @@ Consider the following:
 
 > (setf X '(a b c)) (A . C) 
 > (setf y '(1 2 3)) => (1 2 3) 
-> (append . y) =^ (A .C 1 2 3) 
+> (append . y) => (A .C 1 2 3) 
 
 append is a pure function, so after evaluating the call to append, we can rightfully 
 expect that . and y retain their values. Now consider this: 
 
 > (nconc X y) (A .C 1 2 3) 
-> . =^ (A .C 1 2 3) 
+> . => (A .C 1 2 3) 
 > y (1 2 3) 
 
 The function nconc computes the same result as append, but it has the side effect 
@@ -4422,7 +4422,7 @@ the symbols <= and => are printed by the stepper itself; I have added no annotat
 
 <^ (/ 7 8) 
 7 7 
-8 =^ 8 
+8 => 8 
 
 ^ (/ 7 8) 7/8 
 
@@ -4436,11 +4436,11 @@ the symbols <= and => are printed by the stepper itself; I have added no annotat
 > (step (+ 3 4 (* 5 6 (/ 7 8)))) 
 
 ^ (+ 3 4 (* 5 6 (/ 7 8))) 
-/: 7 8 =^ 7/8 
+/: 7 8 => 7/8 
 *: 5 6 7/8 105/4 
 +: 3 4 105/4 133/4 
 
-(+ 3 4 (* 5 6 (/ 7 8))) =^ 133/4 
+(+ 3 4 (* 5 6 (/ 7 8))) => 133/4 
 133/4 
 
 The functions descri be, i nspect, documentati on, and apropos provide information 
@@ -4483,8 +4483,8 @@ do the trick:
 
 3,14 ANTIBUGGING TOOLS 87 
 
-> (documentation 'first 'function) =^ "Return the first element of LIST.' 
-> (documentation 'pi 'variable) =^ "pi" 
+> (documentation 'first 'function) => "Return the first element of LIST.' 
+> (documentation 'pi 'variable) => "pi" 
 
 If you want to look at and possibly alter components of a complex structure, 
 then i nspect is the tool. In some implementations it invokes a fancy, window-based 
@@ -4666,7 +4666,7 @@ the output in a timely fashion. The form (t i me expression) can be used to see 
 long it takes to execute expression. Some implementations also print statistics on the 
 amount of storage required. For example: 
 
-> (defun f (n) (dotimes (i n) nil)) =^ F 
+> (defun f (n) (dotimes (i n) nil)) => F 
 
 
 3.15 EVALUATION
@@ -4701,8 +4701,8 @@ equivalent:
 > (+ 1 2 3 4) 10 
 > (funcall #'+12 3 4) ^ 10 
 > (apply #'+ '(1 2 3 4))=^ 10 
-> (apply #á+ 1 2 '(3 4)) =^ 10 
-> (eval '(+12 3 4)) =^ 10 
+> (apply #á+ 1 2 '(3 4)) => 10 
+> (eval '(+12 3 4)) => 10 
 
 In the past, eval was seen as the key to Lisp's flexibility. In modern Lisps with lexical 
 scoping, such as Common Lisp, eval is used less often (in fact, in Scheme there is 
@@ -4756,7 +4756,7 @@ a separate value for the lexical variable bal a nee. The subsequent calls to the
 closures change their respective balances, but there is no confusion between the two 
 accounts. 
 
-> (setf my-account (bank-account 500.00)) =^ #<CLOSURE 52330407> 
+> (setf my-account (bank-account 500.00)) => #<CLOSURE 52330407> 
 
 
 3.17 SPECIAL VARIABLES 93 
@@ -4905,7 +4905,7 @@ part. The function round serves both interested and disinterested programmers by
 returning two values: the rounded integer and the remaining fraction: 
 > (round 5.1) 5 .1 
 
-There are two values after the =^ because round returns two values. Most of the time. 
+There are two values after the => because round returns two values. Most of the time. 
 
 
 96 OVERVIEW OF LISP 
@@ -5056,9 +5056,9 @@ Apackage is a symbol table: a mapping between strings and the symbols they name.
 
 
 3.19 MORE ABOUT PARAMETERS 99 
-> :xyz =^ :XYZ ;keywords are self-evaluating 
+> :xyz => :XYZ ;keywords are self-evaluating 
 
-> €optional =^ ; lambda-list keywords are normal symbols 
+> €optional => ; lambda-list keywords are normal symbols 
 
 Error: the symbol &optional has no value 
 
@@ -5077,13 +5077,13 @@ Keywords are constants, and so cannot be used as names of variables.
 > (defun g (&key . y) (list . y)) G 
 
 > (let ((keys *(:x :y :z))) ;keyword args can be computed 
-ig (second keys) 1 (first keys) 2)) =^ (2 1) 
+ig (second keys) 1 (first keys) 2)) => (2 1) 
 
 Many of the functions presented in this chapter take keyword arguments that make 
 them more versatile. For example, remember the function f i nd, which can be used 
 to look for a particular element in a sequence: 
 
-> (find 3 *(1 2 3 4 -5 6.0)) =^ 3 
+> (find 3 *(1 2 3 4 -5 6.0)) => 3 
 
 It turns out that find takes several optional keyword arguments. For example, 
 suppose we tried to find 6 in this sequence: 
@@ -6017,7 +6017,7 @@ indicates either a very complex problem or, more commonly, a bug in the program
 leading to infinite recursion. One way to try to see the cause of the bug is to trace a 
 relevant function, such as achi eve: 
 
-> (trace achieve) =^ (ACHIEVE) 
+> (trace achieve) => (ACHIEVE) 
 
 > (gps '(son-at-home car-needs-battery have-money) 
 '(son-at-school) 
@@ -6517,7 +6517,7 @@ NIL
 Finally, we see that this version of GPS also works on trivial problems requiring no 
 action: 
 
-> (gps '(son-at-home) '(son-at-home)) =^ ((START)) 
+> (gps '(son-at-home) '(son-at-home)) => ((START)) 
 
 4.12 The New Domain Problem: Monkey 
 and Bananas 
@@ -6718,7 +6718,7 @@ remember to include the starting point.
 
 > (find-path 1 1) (1) 
 
-> (equal (find-path 1 25) (reverse (find-path 25 1))) =^ . 
+> (equal (find-path 1 25) (reverse (find-path 25 1))) => . 
 
 4á14 The Blocks World Domain 
 
@@ -6768,7 +6768,7 @@ is stacking one block on another:
 . 
 start goal 
 
-> (use (make-block-ops '(a b))) =^ 4 
+> (use (make-block-ops '(a b))) => 4 
 
 > (gps '((a on table) (b on table) (space on a) (space on b) 
 (space on table)) 
@@ -7004,7 +7004,7 @@ This doesn't look too hard, so let's see how our GPS handles it:
 
 > (gps start '((a on b) (b on c))) NIL 
 
-> (gps start *((b on c) (a on b))) =^ NIL 
+> (gps start *((b on c) (a on b))) => NIL 
 
 There is a "prerequisite clobbers sibling goal" problem regardless of which way we 
 order the conjuncts! In other words, no combination of plans for the two individual 
@@ -8706,7 +8706,7 @@ for the operators.^ Here is a pattern to match a relational expression with one 
 relations. It succeeds because the < matches one of the three possibiUties specified 
 by(?or < = >). 
 
-> (pat-match '(?x (?or < = >) ?y) *(3 < 4)) =^ ((?Y . 4) (?X . 3)) 
+> (pat-match '(?x (?or < = >) ?y) *(3 < 4)) => ((?Y . 4) (?X . 3)) 
 
 Here is an example of an ?and pattern that checks if an expression is both a number 
 and odd: 
@@ -8724,7 +8724,7 @@ etc.
 
 The next pattern uses ?not to insure that two parts are not equal: 
 
-> (pat-match '(?x /= (?not ?x)) '(3 /= 4)) =^ ((?X . 3)) 
+> (pat-match '(?x /= (?not ?x)) '(3 /= 4)) => ((?X . 3)) 
 
 The segment matching notation we have seen before. It is augmented to allow for 
 three possibilities: zero or more expressions; one or more expressions; and zero or 
@@ -8739,7 +8739,7 @@ When the description of a problem gets this complicated, it is a good idea to
 attempt a more formal specification. The following table describes a grammar of 
 patterns, using the same grammar rule format described in chapter 2. 
 
-pat =^ var match any one expression 
+pat => var match any one expression 
 
 constant match just this atom 
 
@@ -9047,9 +9047,9 @@ the second example, there are two segment variables in a row. The first successf
 match is achieved with the first variable, ?x, matching the empty sequence, and the 
 second one, ?y, matching (be). 
 
-> (pat-match '(a (?* ?x) d) '(a b c d)) =^ ((?X . .) 
+> (pat-match '(a (?* ?x) d) '(a b c d)) => ((?X . .) 
 
-> (pat-match '(a (?* ?x) (?* ?y) d) '(a b c d)) =^ ((?Y . C) (?X)) 
+> (pat-match '(a (?* ?x) (?* ?y) d) '(a b c d)) => ((?Y . C) (?X)) 
 
 In the next example, ?x is first matched against nil and ?y against (be d), but that 
 fails, so we try matching ?x against a segment of length one. That fails too, but 
@@ -12182,7 +12182,7 @@ of the identity sin^ . -f cos^ . = 1.
 In this section we return to some examples that pose problems for the simplifier. 
 Here is a simple one: 
 
-SIMPLIFIER> (x + y + y + .) =^ (X + (Y + (Y + X))) 
+SIMPLIFIER> (x + y + y + .) => (X + (Y + (Y + X))) 
 
 We would prefer 2 * (x + y). The problem is that, although we went to great trouble 
 to group numbers together, there was no effort to group non-numbers. We could 
@@ -13601,7 +13601,7 @@ force them by evaluating the delayed function.
 9.3 DELAYINC COMPUTATION 283 
 > (pipe-elt c 3) ^ 3 
 
-> c =^ 
+> c => 
 
 (0 . #S(DELAY 
 :VALUE 
@@ -13664,13 +13664,13 @@ c is similar:
 Accessing an element of the pipe forces evaluation of all the intervening elements, 
 and as before leaves subsequent elements unevaluated: 
 
-> (pipe-elt c 5) =^ 5 
+> (pipe-elt c 5) => 5 
 
-> c =^ (0 1 2 3 4 5 . #<CLOSURE 77351636È 
+> c => (0 1 2 3 4 5 . #<CLOSURE 77351636È 
 
 Pipes can also be used for finite lists. Here we see a pipe of length 11: 
 
-> (setf i (integers 0 10)) =^ (0 . #<CLOSURE 77375357>) 
+> (setf i (integers 0 10)) => (0 . #<CLOSURE 77375357>) 
 
 > (pipe-elt i 10) ^ 10 
 
@@ -13725,7 +13725,7 @@ Eratosthenes algorithm:
 
 > *primes* ^ (2 . #<CLOSURE 3075345>) 
 
-> (enumerate *primes* icount 10) =^ 
+> (enumerate *primes* icount 10) => 
 (2 3 5 7 11 13 17 19 23 29 31 . #<CLOSURE 5224472È 
 
 Finally, let's return to the problem of generating all strings in a grammar. First we're 
@@ -15972,9 +15972,9 @@ the results):
 10.4 AVOID UNNECESSARY CONSING 331^ 
 > (vector-push 2 a) =.> 1 
 
-> a =^ #(1 2) 
+> a => #(1 2) 
 
-> (vector-pop a) =^ 2 
+> (vector-pop a) => 2 
 
 > a #(1) 
 
@@ -15986,11 +15986,11 @@ the results):
 
 > (setf (fill-pointer a) 1) 1 
 
-> a =^ #(1) 
+> a => #(1) 
 
-> (find *x a) =^ NIL NIL ; FIND can't find past the fill pointer 
+> (find *x a) => NIL NIL ; FIND can't find past the fill pointer 
 
-> (aref a 2) =^ X ;But AREF can see beyond the fill pointer 
+> (aref a 2) => X ;But AREF can see beyond the fill pointer 
 
 Using vectors with fill pointers in pat-match, the total storage for binding lists is 
 just twice the number of variables in the largest pattern. I have arbitrarily picked 
@@ -17046,10 +17046,10 @@ define shows this result by binding ?y to 0, ?x to ?y, and ?a to ?x. We will als
 define the function unifier, which shows the structure that results from unifying 
 two structures. 
 
-> (unify '(?a + ?a = 0) '(?x + ?y = ?y)) =^ 
+> (unify '(?a + ?a = 0) '(?x + ?y = ?y)) => 
 ((?Y . 0) (?X . ?Y) (?A . ?X)) 
 
-> (unifier '(?a + ?a = 0) '(?x + ?y = ?y)) =^ (0 + 0 = 0) 
+> (unifier '(?a + ?a = 0) '(?x + ?y = ?y)) => (0 + 0 = 0) 
 
 To avoid getting carried away by the power of unification, it is a good idea to take stock 
 of exactly what unification provides. It does provide a way of stating that variables 
@@ -17144,7 +17144,7 @@ Unfortunately, this definition is not quite right. It handles simple examples:
 
 > (unify '?x '?y) ((?X . ?Y)) 
 
-> (unify '(?x ?x) '(Ty ?y)) =^ ((?Y . ?Y) (?X . ?Y)) 
+> (unify '(?x ?x) '(Ty ?y)) => ((?Y . ?Y) (?X . ?Y)) 
 
 but there are several pathological cases that it can't contend with: 
 
@@ -17306,7 +17306,7 @@ x))))
 
 Now let's try uni fy on some examples: 
 
-> (unify '(?x ?y a) '(?y ?x ?x)) =^ ((?Y . A) (?X. ?Y)) 
+> (unify '(?x ?y a) '(?y ?x ?x)) => ((?Y . A) (?X. ?Y)) 
 
 > (unify á?. '(f ?x)) NIL 
 
@@ -17329,7 +17329,7 @@ Here are some examples of uni f i er:
 > (unifier '(?. ?y a) '(?y ?x ?x)) (A A A) 
 
 > (unifier '((?a * ?x ^ 2) + (?b* ?x) + ?c) 
-'(?z + (4 * 5) + 3)) =^ 
+'(?z + (4 * 5) + 3)) => 
 ((?A * 5 ^ 2) + (4 * 5) + 3) 
 
 
@@ -21364,7 +21364,7 @@ and apply the function to the args."
 
 Here is an example of the use of new- account and send: 
 
-> (setf acct (new-account "J. Random Customer" 1000.00)) =^ 
+> (setf acct (new-account "J. Random Customer" 1000.00)) => 
 #<CLOSURE 23652465> 
 
 > (send acct 'withdraw 500.00) 500.0 
@@ -21373,7 +21373,7 @@ Here is an example of the use of new- account and send:
 
 > (send acct 'name) ^ "J. Random Customer" 
 
-> (send acct 'balance) =^ 623.45 
+> (send acct 'balance) => 623.45 
 
 ^More accurately, we have a guarantee that there is no way to get at the inside of a closure 
 using portable Common Lisp code. Particular implementations may provide debugging tools 
@@ -21480,7 +21480,7 @@ Here we use the generic functions defined by this macro:
 
 > (setf acct2 (account "A. User" 2000.00)) #<CL0SURE 24003064> 
 
-> (deposit acct2 42.00) =^ 2042.0 
+> (deposit acct2 42.00) => 2042.0 
 
 > (interest acct2) 2164.52 
 
@@ -21489,7 +21489,7 @@ Here we use the generic functions defined by this macro:
 
 > (balance acct2) ^ 2164.52 
 
-> (balance acct) =^ 623.45 
+> (balance acct) => 623.45 
 
 In this last line, the generic function bal anee is applied to acct, an object that was 
 created before we even defined the account class and the function balance. But 
@@ -21529,7 +21529,7 @@ an existing account:
 
 (setf acct3 (password-account "secret" acct2)) => #<CLOSURE 33427277> 
 > (balance acct3 "secret") => 2164.52 
-> (withdraw acct3 "guess" 2000.00) =^ WRONG-PASSWORD 
+> (withdraw acct3 "guess" 2000.00) => WRONG-PASSWORD 
 > (withdraw acct3 "secret" 2000.00) 164.52 
 
 Now let's try one more example. Suppose we want to have a new class of account 
@@ -21564,7 +21564,7 @@ password and a limit:
 
 > (withdraw acct4 "pass" 20.00) => 480.0 
 
-> (withdraw acct4 "guess" 20.00) =^ WRONG-PASSWORD 
+> (withdraw acct4 "guess" 20.00) => WRONG-PASSWORD 
 
 Note that functions like wi thdraw are still simple generic functions that just find the 
 right method and apply it to the arguments. The trick is that each class defines a different 
@@ -22181,13 +22181,13 @@ will be used because the class nul 1 is more specific than the class list.
 13.10 ADVANTAGES OF OBJECT-ORIENTED PROGRAMMING
 Here we see that this definition works: 
 
-> (cone nil '(a b c)) =^ (A . C) 
+> (cone nil '(a b c)) => (A . C) 
 
-> (cone '(a b c) nil) =^ (A . C) 
+> (cone '(a b c) nil) => (A . C) 
 
 > (cone '(a b c) '(d e f)) (A . C D . F) 
 
-> (cone '#(a b e) '#(d e f)) =^ #(A . C D . F) 
+> (cone '#(a b e) '#(d e f)) => #(A . C D . F) 
 
 It works, but one might well ask: where are the objects? The metaphor of passing a 
 message to an object does not apply here, unless we consider the object to be the list 
@@ -22744,7 +22744,7 @@ someone." The closest we can get is:
 
 Jan likes someone. 
 
-3 X person(x) =^ likesQan,x) 
+3 X person(x) => likesQan,x) 
 
 (<- (likes Jan pD) 
 (<- (person pD) 
@@ -22769,7 +22769,7 @@ likes someone" we could use:
 
 Everyone likes someone. 
 
-V 2/ 3 X person(3:) =^ likes (y, x) 
+V 2/ 3 X person(3:) => likes (y, x) 
 
 (<- (likes ?y (p2 ?y))) 
 (<- (person (p2 ?y))) 
@@ -23796,9 +23796,9 @@ Now add - fact and ret r i eve - fact comprise all we need to implement the lang
 Here is a short example where add-fact is used to add facts about bears and dogs, 
 both as individuals and as species: 
 
-> (add-fact *(sub dog animal)) =^ . 
-> (add-fact '(sub bear animal)) =^ . 
-> (add-fact '(ind Fido dog)) =^ . 
+> (add-fact *(sub dog animal)) => . 
+> (add-fact '(sub bear animal)) => . 
+> (add-fact '(ind Fido dog)) => . 
 > (add-fact '(ind Yogi bear)) . 
 > (add-fact '(val color Yogi brown)) => . 
 > (add-fact '(val color Fido golden)) . 
@@ -24528,7 +24528,7 @@ to this new world:
 
 > (use-new-world) W7031 
 > (index *(p new c)) => . 
-> (index 'Cp b b)) =^ . 
+> (index 'Cp b b)) => . 
 
 We see that the two new facts are accessible in this world: 
 
@@ -24551,7 +24551,7 @@ back to the original WO, then creating the new world, and then adding some facts
 Here we see that the facts entered in W7031 are not accessible, but the facts in the new 
 world and in WO are: 
 
-> (retrieve-bagof-in-world '(p ?z c)) =^ 
+> (retrieve-bagof-in-world '(p ?z c)) => 
 ((P A C) (P A C) (P . C) (P NEWEST O) 
 
 > (retrieve-bagof-in-world '(^p ?x ?y)) 
@@ -33750,8 +33750,8 @@ groups. More careful representations of "The girls kissed the girls" include the
 following candidates, using predicate calculus: 
 
 VxVy xegirls . yegirls => kiss(x,y) 
-VxVy xegirls . yegirls . x^^y =^ kiss(x,y) 
-Vx3y,z xegirls . yegirls . zegirls =^ kiss(x,y) . kiss(z,x) 
+VxVy xegirls . yegirls . x^^y => kiss(x,y) 
+Vx3y,z xegirls . yegirls . zegirls => kiss(x,y) . kiss(z,x) 
 Vx3y xegirls . yegirls => kiss(x,y) V kiss(y,x) 
 
 The first of these says that every girl kisses every other girl. The second says the same 
@@ -33782,7 +33782,7 @@ This can be considered ambiguous between the following two meanings, in predicat
 calculus form: 
 
 VX picture(x) 3 y story(y) . paint(x,y) 
-3 y story(y) . V . picture(x) =^ paint(x,y) 
+3 y story(y) . V . picture(x) => paint(x,y) 
 
 The first says that for each picture, there is a story that it paints. The second says that 
 there is a certain special story that every picture paints. The second is an unusual 
@@ -37019,7 +37019,7 @@ We can test out the macro faciUty:
 
 > (scheme-macro-expand '(and . q)) (IF . (AND Q)) 
 
-> (scheme-macro-expand '(and q)) =^ Q 
+> (scheme-macro-expand '(and q)) => Q 
 
 > (scheme-macro-expand '(let ((x 1) (y 2)) (+ . y))) 
 ((LAMBDA (X Y) (+ . Y)) 1 2) 
