@@ -737,7 +737,7 @@ no value has been assigned to John.
 Symbolic computations can be nested and even mixed with numeric computations. 
 The following expression builds a list of names in a slightly different way than 
 we saw before, using the built-in function list. We then see how to find the number 
-of elements in the list, using the built-in function 1 ength: 
+of elements in the list, using the built-in function length: 
 
 > (append '(Pat Kim) (list '(John Q Public) 'Sandy)) 
 (PAT KIM (JOHN Q PUBLIC) SANDY) 
@@ -752,7 +752,7 @@ to the objects it manipulates. For example, we naturally think of (Robi.
 Sandy) asalistof two first names, and (John Q Publ ic) as a list of one person's 
 first name, middle initial, and last name. Lisp has no such preconceptions. To 
 Lisp, both Robi. and xyzzy are perfectly good symbols. 
-* Second, to do the computations above, we had to know that append, 1 ength, 
+* Second, to do the computations above, we had to know that append, length, 
 and + are defined functions in Common Lisp. Learning a language involves 
 
  INTRODUCTION TO LISP 
@@ -806,7 +806,7 @@ this variable is -.upcase, but it can be changed to rdowncaseor : capitalize.
 
 Symbols are also used to name functions in Common Lisp. Every symbol can 
 be used as the name of a variable or a function, or both, although it is rare (and 
-potentially confusing) to have symbols name both. For example, append and 1 ength 
+potentially confusing) to have symbols name both. For example, append and length 
 are symbols that name functions but have no values as variables, and pi does not 
 name a function but is a variable whose value is 3.1415926535897936 (or thereabout). 
 
@@ -863,7 +863,7 @@ function (#') refer to a function
 quote (') introduce constant data 
 
 1.4 Lists 
-So far we have seen two functions that operate on hsts: append and 1 ength. Since 
+So far we have seen two functions that operate on hsts: append and length. Since 
 lists are important, let's look at some more list processing functions: 
 
 > . =^ (JOHN 0 PUBLIC) 
@@ -3093,7 +3093,7 @@ recursion general repetition
 
 58 OVERVIEW OF LISP 
 
-To explain each possibiUty, we will present versions of the function 1 ength, which 
+To explain each possibiUty, we will present versions of the function length, which 
 returns the number of elements in a list. First, the special form dol i st can be used 
 to iterate over the elements of a list. The syntax is: 
 
@@ -3104,12 +3104,12 @@ bound to the first element, then the second element, and so on. At the end,
 dol i st evaluates and returns the optional-result expression, or nil if there is no result 
 expression. 
 
-Below is a version of 1 ength usingdol i st. The 1 et form introduces anew variable, 
+Below is a version of length usingdol i st. The 1 et form introduces anew variable, 
 1 en, which is initially bound to zero. The dol i st form then executes the body once 
 for each element of the list, with the body incrementing 1 en by one each time. This 
 use is unusual in that the loop iteration variable, el ement, is not used in the body. 
 
-(defun lengthl (list ) 
+(defun length1 (list ) 
 (let (den 0)) start with LEN=0 
 (dolist (element list ) and on each iteration 
 (incf len)) increment LEN by 1 
@@ -3119,14 +3119,14 @@ It is also possible to use the optional result of dol i st, as shown below. Whil
 programmers use this style, I find that it is too easy to lose track of the result, and so 
 I prefer to place the result last explictly. 
 
-(defun lengthl.1 (list) ; alternate version: 
+(defun length1.1 (list) ; alternate version: 
 (let (den 0)) ; (not my preference) 
 (dolist (element list len) ; uses len as result here 
 (incf len)))) 
 
 The function mapc performs much the same operation as the special form dol i st. In 
 the simplest case, mapc takes two arguments, the first a function, the second a list. It 
-applies the function to each element of the list. Here is 1 ength using mapc: 
+applies the function to each element of the list. Here is length using mapc: 
 
 (defun lengthZ (list) 
 (let (den 0)) ; start with LEN=0 
@@ -3147,7 +3147,7 @@ There is also a dot i mes form, which has the syntax:
 (dot i mes (variable number optional-result) body,..) 
 and executes the body with variable bound first to zero, then one, all the way up to 
 number-1 (for a total of number times). Of course, dot i mes is not appropriate for 
-implementing 1 ength, since we don't know the number of iterations ahead of time. 
+implementing length, since we don't know the number of iterations ahead of time. 
 There are two very general looping forms, do and 1 oop. The syntax of do is as 
 follows: 
 
@@ -3161,7 +3161,7 @@ next value and exit-test is tried again. The loop repeats until exit-test is tru
 value is omitted, then the corresponding variable is not updated each time through 
 the loop. Rather, it is treated as if it had been bound with a 1 et form. 
 
-Here is 1 ength implemented withdo,usingtwo variables, 1 en to count the number 
+Here is length implemented withdo,usingtwo variables, 1 en to count the number 
 of elements, and 1 to go down the list. This is often referred to as cdr-ing down a list, 
 because on each operation we apply the function cdr to the list. (Actually, here we 
 have used the more mnemonic name rest instead of cdr.) Note that the do loop has 
@@ -3189,7 +3189,7 @@ language it is. Rather than list all the possibilities for 1 oop, we will just g
 60 OVERVIEW OF LISP 
 
 here, and refer the reader to Common Lisp the Language, 2d edition, or chapter 24.5 for 
-more details. Here are three versions of 1 ength using 1 oop: 
+more details. Here are three versions of length using 1 oop: 
 
 (defun length4 (list) 
 (loop for element in list ; go through each element 
@@ -3225,7 +3225,7 @@ In addition to special forms like dol 1 st and dotimes, there are quite a few fu
 that are designed to handle common idioms. Two examples are count-If, 
 which counts the number of elements of a sequence that satisfy a predicate, and 
 position-If, which returns the index of an element satisfying a predicate. Both 
-can be used to implement 1 ength. In 1 ength7 below, count -1f gives the number of 
+can be used to implement length. In length7 below, count -1f gives the number of 
 elements in 11 st that satisfy the predicate true. Since true is defined to be always 
 true, this gives the length of the list. 
 
@@ -3234,13 +3234,13 @@ true, this gives the length of the list.
 
 (defun true (x) t) 
 
-In 1 engthS, the function posi t1 on -1 f finds the position of an element that satisfies 
+In lengthS, the function position -1 f finds the position of an element that satisfies 
 the predicate true, starting from the end of the list. This will be the very last element 
 
 
 3.2 SPECIAL FORMS 61 
 of the list, and since indexing is zero-based, we add one to get the length. Admittedly, 
-this is not the most straightforward implementation of 1 ength. 
+this is not the most straightforward implementation of length. 
 
 (defun lengths (list) 
 
@@ -3314,7 +3314,7 @@ a dizzying number of functions and special forms for writing loops in Common Lis
 but it is also true that many programs handle repetition through recursion rather 
 than with a syntactic loop. 
 
-One simple definition of 1 ength is "the empty list has length 0, and any other list 
+One simple definition of length is "the empty list has length 0, and any other list 
 has a length which is one more than the length of the rest of the list (after the first 
 element)." This translates directly into a recursive function: 
 
@@ -3324,7 +3324,7 @@ element)." This translates directly into a recursive function:
 0 
 (+ 1 (length9 (rest list))))) 
 
-This version of 1 ength arises naturally from the recursive definition of a list: "a list 
+This version of length arises naturally from the recursive definition of a list: "a list 
 is either the empty list or an element consed onto another list." In general, most 
 recursive functions derive from the recursive nature of the data they are operating 
 on. Some kinds of data, like binary trees, are hard to deal with in anything but a 
@@ -3345,19 +3345,19 @@ elements identically.
 
 One objection to the use of recursive functions is that they are inefficient, because 
 the compiler has to allocate memory for each recursive call. This may be true for the 
-function 1 ength9, but it is not necessarily true for all recursive calls. Consider the 
+function length9, but it is not necessarily true for all recursive calls. Consider the 
 following definition: 
 
-(defun lengthlO (list) 
-(lengthlO-aux list 0)) 
+(defun length1O (list) 
+(length1O-aux list 0)) 
 
-(defun lengthlO-aux (sublist len-so-far) 
+(defun length1O-aux (sublist len-so-far) 
 
 (if (null sublist) 
 len-so-far 
-(lengthlO-aux (rest sublist) (+ 1 len-so-far)))) 
+(length1O-aux (rest sublist) (+ 1 len-so-far)))) 
 
-1 engthlO uses 1 engthlO - aux as an auxiliary function, passing it 0 as the length of the 
+lengthlO uses lengthlO - aux as an auxiliary function, passing it 0 as the length of the 
 list so far. 1 engt hlO - a ux then goes down the list to the end, adding 1 for each element. 
 The invariant relation is that the length of the sublist plus 1 en- so - fa r always equals 
 the length of the original list. Thus, when the sublist is nil, then 1 en-so-f ar is the 
@@ -3367,27 +3367,27 @@ f 1 a tten - a 11 on page 329; one- un known on page 237; the Prolog predicates 
 on page 686; and anonymous-variables-in on pages 400 and 433, which uses two 
 accumulators. 
 
-The important difference between length9 and lengthlO is when the addition 
+The important difference between length9 and length1O is when the addition 
 is done. In length9, the function calls itself, then returns, and then adds 1. In 
-lengthlO-aux, the function adds 1, then calls itself, then returns. There are no 
+length1O-aux, the function adds 1, then calls itself, then returns. There are no 
 pending operations to do after the recursive call returns, so the compiler is free to 
 release any memory allocated for the original call before making the recursive call. 
-1 engthlO-aux is called a tail-recursive function, because the recursive call appears as 
+lengthlO-aux is called a tail-recursive function, because the recursive call appears as 
 the last thing the function does (the tail). Many compilers will optimize tail-recursive 
 calls, although not all do. (Chapter 22 treats tail-recursion in more detail, and points 
 out that Scheme compilers guarantee that tail-recursive calls will be optimized.) 
 
-Some find it ugly to introduce 1 ength 10 - a ux. For them, there are two alternatives. 
+Some find it ugly to introduce length 10 - a ux. For them, there are two alternatives. 
 
-First, we could combine 1 engthlO and 1 engthlO-aux into a single function with an 
+First, we could combine lengthlO and lengthlO-aux into a single function with an 
 
 optional parameter: 
 
-(defun lengthll (list &optional (len-so-far 0)) 
+(defun length11 (list &optional (len-so-far 0)) 
 
 (if (null list) 
 len-so-far 
-(lengthll (rest list) (+ 1 len-so-far)))) 
+(length11 (rest list) (+ 1 len-so-far)))) 
 
 
 64 OVERVIEW OF LISP 
@@ -3395,15 +3395,15 @@ len-so-far
 Second, we could introduce a local function inside the definition of the main function. 
 This is done with the special form 1 abel s: 
 
-(defun lengthl2 (the-list) 
+(defun length12 (the-list) 
 (labels 
-((lengthl3 (list len-so-far) 
+((length13 (list len-so-far) 
 
 (if (null list) 
 len-so-far 
-(lengthlS (rest list) (+ 1 len-so-far))))) 
+(length1S (rest list) (+ 1 len-so-far))))) 
 
-(lengthlS the-list 0))) 
+(length1S the-list 0))) 
 
 In general, a 1 abel s form (or the similar f 1 et form) can be used to introduce one or 
 more local functions. It has the following syntax: 
@@ -3813,7 +3813,7 @@ strings, respectively.
 Common Lisp is in a transitional position halfway between the Lisps of the past 
 and the Lisps of the future. Nowhere is that more apparent than in the sequence 
 functions. The earliest Lisps dealt only with symbols, numbers, and lists, and 
-provided Hst functions like append and 1 ength. More modern Lisps added support 
+provided Hst functions like append and length. More modern Lisps added support 
 for vectors, strings, and other data types, and introduced the term sequence to refer 
 to both vectors and lists. (A vector is a one-dimensional array. It can be represented 
 more compactly than a list, because there is no need to store the rest pointers. It 
@@ -3822,7 +3822,7 @@ to follow a chain of pointers.) Modern Lisps also support strings that are vecto
 characters, and hence also a subtype of sequence. 
 
 With the new data types came the problem of naming functions that operated 
-on them. In some cases. Common Lisp chose to extend an old function: 1 ength can 
+on them. In some cases. Common Lisp chose to extend an old function: length can 
 
 
 3.6 FUNCTIONS FOR MAINTAINING TABLES 73 
@@ -5237,7 +5237,7 @@ not parameters at all and thus have no place in a parameter list. I think they s
 be clearly distinguished as local variables with a 1 et. But some good programmers 
 do use &aux, presumably to save space on the page or screen. Against my better 
 judgement, I show an example: 
-(defun lengthl4 (list &aux (len 0)) 
+(defun length14 (list &aux (len 0)) 
 (dolist (element lis t len) 
 (incf len))) 
 
@@ -5258,7 +5258,7 @@ it is introducedâ€”would be even more distracting. It would interrupt the descri
 of the AI programs, which is what this book is all about. 
 
 3.21 Exercises 
-@ Exercise 3.9 [m] Write a version of 1 ength using the function reduce. 
+@ Exercise 3.9 [m] Write a version of length using the function reduce. 
 
 @ Exercise 3.10 [m] Use a reference manual or descri be to figure out what the functions 
 1 cm and . reconc do. 
@@ -13462,9 +13462,9 @@ fimctions square the argument n, and the four machine instructions say, "Take th
 0th argument, make a copy of it, multiply those two numbers, and return the result." 
 It's clear the compiler has some knowledge of the basic Lisp functions. In the case 
 of f 1, it was smart enough to get rid of the local variables 11 and 12 (and their 
-initialization), as well as the calls to f 1 rst, second, 1 ength, and 1 i st and most of the 
+initialization), as well as the calls to f 1 rst, second, length, and 1 i st and most of the 
 arithmetic. The compiler could do this because it has knowledge about the functions 
-1 ength and 1 i st and the arithmetic functions. Some of this knowledge might be in 
+length and 1 i st and the arithmetic functions. Some of this knowledge might be in 
 the form of simplification rules. 
 
 As a user of this compiler, there's no need for me to write clever macros or 
@@ -18024,7 +18024,7 @@ third, or the fourth, and so on,
 7LIST = (7X3320 7X3325 7X3330 7ITEM3333 . 7REST3334). 
 No. 
 
-Now let's add the definition of the relation 1 ength: 
+Now let's add the definition of the relation length: 
 
 Ç- (length () 0)) 
 Ç- (length (7x . 7y) (1+ 7n)) (length 7y 7n)) 
@@ -18080,11 +18080,11 @@ second element to a.
 
 In the second query, member keeps generating potential solutions. The first two 
 partial solutions, where a is the first or second member of a list of unknown length, 
-are extended by 1 ength to yield the solutions where the list has length two. After 
-that, member keeps generating longer and longer lists, which 1 ength keeps rejecting. 
+are extended by length to yield the solutions where the list has length two. After 
+that, member keeps generating longer and longer lists, which length keeps rejecting. 
 It is implicit in the definition of member that subsequent solutions will be longer, but 
 because that is not explicitly known, they are all generated anyway and then explicitly 
-tested and rejected by 1 ength. 
+tested and rejected by length. 
 
 This example reveals the limitations of Prolog as a pure logic-programming language. 
 It turns out the user must be concerned not only about the logic of the problem 
@@ -18347,7 +18347,7 @@ is doing less work. Consider the following computation:
 The first two Hnes generate permutations of the Hst (d a c b), and the third line 
 tests for a permutation equal to (a b c d). Most of the work is done by backtracking. 
 An alternative is to extend unification to deal with lists, as well as constants and 
-variables. Predicates like 1 ength and member would be primitives that would have to 
+variables. Predicates like length and member would be primitives that would have to 
 know about the representation of lists. Then the first two lines of the above program 
 would set ?1 to something like #s( list :length 4 :members (d a c d)). The 
 third line would be a call to the extended unification procedure, which would further 
@@ -23129,7 +23129,7 @@ It is important that the retrieval function execute quickly. If it is slow, we m
 just as well match against every key in the table linearly. Therefore, we will take 
 care to implement each part efficiently. Note that we will have to compare the length 
 of lists to choose the shortest possibility. Of course, it is trivial to compare lengths 
-using 1 ength, but 1 ength requires traversing the whole list. We can do better if we 
+using length, but length requires traversing the whole list. We can do better if we 
 store the length of the list explicitly. A list with its length will be called an nl1 st. 
 It will be implemented as a cons cell containing the number of elements and a list 
 of the elements themselves. An alternative would be to use extensible vectors with 
@@ -36617,7 +36617,7 @@ call with current continuation.
 Previously Defined Functions 
 
 Select the last element of a list. 
-Is this a list of lengthl? 
+Is this a list of length1? 
 
 Figure 22.1: Glossary for the Scheme Interpreter 
 
@@ -36688,7 +36688,7 @@ Then we will interpret (f 1 2 3) by interpreting the body of f with the environm
 Scheme procedures are implemented as Common Lisp functions, and in fact all the 
 Scheme data types are implemented by the corresponding Common Lisp types. I 
 include the function i .i t -s eherne - i . te rp to initialize a few global values and repeat 
-the definitions of 1 astl and 1 ength=l: 
+the definitions of 1 astl and length=l: 
 
 (defun set-var! (var val env) 
 "Set a variable to a value, in the given or global environment." 
@@ -39102,7 +39102,7 @@ The top-level function just assigns the nested function to the global variable 1
 Since 1 astl is tail-recursive, it has only one return point, for the termination case, 
 and just calls itself without saving continuations until that case is executed. 
 
-Contrast that to the non-tail-recursive definition of 1 ength below. It is not tail-
+Contrast that to the non-tail-recursive definition of length below. It is not tail-
 recursive because before it calls length recursively, it must save a continuation point, 
 Kl, so that it will know where to return to to add 1. 
 
@@ -39135,7 +39135,7 @@ CONST LENGTH
 NAME! 
 RETURN 
 
-Of course, it is possible to write 1 ength in tail-recursive fashion: 
+Of course, it is possible to write length in tail-recursive fashion: 
 
 > (comp-show '(define (length 1) 
 (letrec (den (lambda (1 n) 
@@ -41808,7 +41808,7 @@ result)))))
 24.7 EXERCISES
 24.7 Exercises 
 @ Exercise 24.2 [m] The function reduce is a very useful one, especially with the key 
-keyword. Write nonrecursive definitions for append and 1 ength using reduce. What 
+keyword. Write nonrecursive definitions for append and length using reduce. What 
 other common functions can be written with reduce? 
 
 S Exercise 24.3 The so-called loop keywords are not symbols in the keyword package. 
@@ -45644,11 +45644,11 @@ legal-nodes,623,632
 legal-p, 602,604 
 len, 455 
 length, 69,370 
-lengthl, 58 
-lengthl.1,58 
-lengthlO, 63 
-lengthll,63 
-lengthl2,64 
+length1, 58 
+length1.1,58 
+length1O, 63 
+length11,63 
+length12,64 
 length2,58 
 lengths,59 
 1ength4,60 
@@ -45657,7 +45657,7 @@ lengths,60
 length/,60 
 lengths, 61 
 lengthQ,62 
-1 ength=l, 255,276,496,757, 760 
+length=l, 255,276,496,757, 760 
 let,41,764, 782 
 let*,56, 764 
 letrec, 762,765 
