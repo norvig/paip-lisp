@@ -953,7 +953,7 @@ name? For (JOHN Q PUBLIC) we could Justuse the function thi rd, but that wouldn'
 
 12 INTRODUCTION TO LISP 
 
-work for someone with no middle name. There is a function called 1 ast in Common 
+work for someone with no middle name. There is a function called last in Common 
 Lisp; perhaps that would work. We can experiment: 
 
 > (last p) => (PUBLIC) 
@@ -961,7 +961,7 @@ Lisp; perhaps that would work. We can experiment:
 > (first (last p)) PUBLIC 
 
 It turns out that last perversely returns a list of the last element, rather than the 
-last element itself.^ Thus we need to combine f i rst and 1 ast to pick out the actual 
+last element itself.^ Thus we need to combine first and last to pick out the actual 
 last element. We would like to be able to save the work we've done, and give it a 
 proper description, like 1 a st - name. We could use setf to save the last name of p, but 
 that wouldn't help determine any other last name. Instead we want to define a new 
@@ -970,13 +970,13 @@ next section does just that.
 
 1.5 Defining New Functions 
 The special form defun stands for "define function." It is used here to define a new 
-function called 1 ast-name: 
+function called last-name: 
 
 (defun last-name (name) 
 "Select the last name from a name represented as a list. " 
 (first (last name))) 
 
-We give our new function the name 1 ast-name. It has a parameter list consisting of a 
+We give our new function the name last-name. It has a parameter list consisting of a 
 single parameter: (name). This means that the function takes one argument, which 
 we will refer to as name. It also has a documentation string that states what the function 
 does. This is not used in any computation, but documentation strings are crucial 
@@ -988,9 +988,9 @@ the particular name p.
 In general, a function definition takes the following form (where the documentation 
 string is optional, and all other parts are required): 
 
-^In ANSI Common Lisp, 1 ast is defined to return a list of the last . elements, where . 
+^In ANSI Common Lisp, last is defined to return a list of the last . elements, where . 
 defaults to 1. Thus (last p) = (last . 1) = (PUBLIC), and (last . 2) = (Q PUBLIC). This 
-may make the definition of 1 ast seem less perverse. 
+may make the definition of last seem less perverse. 
 
 
 1,5 DEFINING NEW FUNCTIONS
@@ -1004,7 +1004,7 @@ complications to be explained later), and the function body consists of one or m
 expressions that are evaluated when the function is called. The last expression is 
 returned as the value of the function call. 
 
-Once we have defined 1 ast-name, we can use it just like any other Lisp function: 
+Once we have defined last-name, we can use it just like any other Lisp function: 
 
 > (last-name p)=i> PUBLIC 
 
@@ -1022,16 +1022,16 @@ for a person to have a last name; we are just defining an operation on a represe
 of names in terms of lists. Our intuitions—that MD is a title. Spot is the first name 
 of a dog, and Aristotle lived before the concept of last name was invented—are not 
 represented in this operation. However, we could always change the definition of 
-1 ast-name to incorporate these problematic cases. 
+last-name to incorporate these problematic cases. 
 
 We can also define the function first-name. Even though the definition is trivial 
 (it is the same as the function f 1 rst), it is still good practice to define f 1 rst-name 
 explicitly. Then we can use the function fi rst - name when we are dealing with names, 
 and first when we are dealing with arbitrary lists. The computer will perform the 
 same operation in each case, but we as programmers (and readers of programs) will 
-be less confused. Another advanatge of defining specific functions like f i rst-name 
+be less confused. Another advanatge of defining specific functions like first-name 
 is that if we decide to change the representation of names we will only have to change 
-the definition of f i rst-name. This is a much easier task than hunting through a large 
+the definition of first-name. This is a much easier task than hunting through a large 
 program and changing the uses of f 1 rst that refer to names, while leaving other 
 uses alone. 
 
@@ -1059,7 +1059,7 @@ uses alone.
 
 > (first-name (first names)) JOHN 
 
-In the last expression we used the function f i rst to pick out the first element in 
+In the last expression we used the function first to pick out the first element in 
 a list of names, and then the function first-name to pick out the first name of 
 that element. We could also have said (first (first names)) or even (first 
 (first-name names)) and still have gotten JOHN, but we would not be accurately 
@@ -1069,7 +1069,7 @@ of names.
 1.6 Using Functions 
 One good thing about defining a list of names, as we did above, is that it makes it 
 easier to test our functions. Consider the following expression, which can be used to 
-test the 1 ast-name function: 
+test the last-name function: 
 
 > (mapcar #'last-name names) 
 (PUBLIC X HOPPER SPOT ARISTOTLE MILNE TOP OLIVIER SCARLET) 
@@ -1086,9 +1086,9 @@ the input list. In other words, the mapcar call above is equivalent to:
 
 mapcar's name comes from the fact that it "maps" the function across each of the 
 arguments. The car part of the name refers to the Lisp function car, an old name for 
-f i rst. cdr is the old name for rest. The names stand for "contents of the address 
+first. cdr is the old name for rest. The names stand for "contents of the address 
 register" and "contents of the decrement register," the instructions that were used in 
-the first implementation of Lisp on the IBM 704. I'm sure you'll agree that f i rst and 
+the first implementation of Lisp on the IBM 704. I'm sure you'll agree that first and 
 
 
 1.6 USING FUNCTIONS
@@ -1111,7 +1111,7 @@ obtained by collecting the first element of each list. Then it applies the funct
 second element of each list, and so on, until one of the lists is exhausted. It returns a 
 list of all the function values it has computed. 
 
-Now that we understand mapcar, let's use it to test the f i rst-name function: 
+Now that we understand mapcar, let's use it to test the first-name function: 
 
 > (mapcar #'first-name names) 
 
@@ -1119,7 +1119,7 @@ Now that we understand mapcar, let's use it to test the f i rst-name function:
 
 We might be disappointed with these results. Suppose we wanted a version of 
 
-f i rst-name which ignored titles like Admiral and Miss, and got to the "real" first 
+first-name which ignored titles like Admiral and Miss, and got to the "real" first 
 
 name. We could proceed as follows: 
 
@@ -1137,7 +1137,7 @@ It is a widely used convention among Lisp programmers to mark special variables 
 spelling their names with asterisks on either end. This is just a convention; in Lisp, 
 the asterisk is just another character that has no particular meaning. 
 
-We next give a new definition for f i rst-name, which supersedes the previous 
+We next give a new definition for first-name, which supersedes the previous 
 definition.^ This definition says that if the first word of the name is a member of the 
 
 ^Just as we can change the value of a variable, we can also change the value of a function 
@@ -1145,7 +1145,7 @@ definition.^ This definition says that if the first word of the name is a member
 
 16 INTRODUCTION TO LISP 
 
-list of titles, then we want to ignore that word and return the f i rst-name of the rest 
+list of titles, then we want to ignore that word and return the first-name of the rest 
 of the words in the name. Otherwise, we use the first word, just as before. Another 
 built-in function, member, tests to see if its first argument is an element of the list 
 passed as the second argument. 
@@ -1157,7 +1157,7 @@ true, the then-part is evaluated and returned as the value of the i f form; othe
 the else-part is evaluated and returned. While some languages insist that the value of 
 a conditional test must be either true or f al se. Lisp is much more forgiving. The test 
 may legally evaluate to any value at all. Only the value nil is considered false; all 
-other values are considered true. In the definition of f i rst - name below, the function 
+other values are considered true. In the definition of first - name below, the function 
 member will return a non-nil (hence true) value if the first element of the name is in the 
 list of titles, and will return .i 1 (hence false) if it is not. Although all non-nil values 
 are considered true, by convention the constant t is usually used to represent truth. 
@@ -1199,19 +1199,19 @@ other languages.
 (1 EXIT FIRST-NAME: JOHN) 
 JOHN 
 
-When f i rst - name is called, the definition is entered with the single argument, name, 
+When first - name is called, the definition is entered with the single argument, name, 
 taking on the value (JOHN Q PUBLIC). The value returned is JOHN. Trace prints two 
 lines indicating entry and exit from the function, and then Lisp, as usual, prints the 
 final result, JOHN. 
 
-The next example is more complicated. The function f i rst-name is used four 
+The next example is more complicated. The function first-name is used four 
 times. First, it is entered with name bound to (Madam Major General Paula Jones). 
 The first element of this list is Madam, and since this is a member of the list of titles, 
-the result is computed by calling f i rst-name again on the rest of the name—(Major 
+the result is computed by calling first-name again on the rest of the name—(Major 
 General Paula Jones). This process repeats two more times, and we finally enter 
-f i rst - name with name bound to (Paul a Jones). Since Pa ul a is not a title, it becomes 
-the result of this call to f i rst - name, and thus the result of all four calls, as trace shows. 
-Once we are happy with the workings of f i rst - name, the special form unt race turns 
+first - name with name bound to (Paul a Jones). Since Pa ul a is not a title, it becomes 
+the result of this call to first - name, and thus the result of all four calls, as trace shows. 
+Once we are happy with the workings of first - name, the special form unt race turns 
 off tracing. 
 
 > (first-name '(Madam Major General Paula Jones)) =^ 
@@ -1232,7 +1232,7 @@ PAULA
 
 > (first-name '(Mr Blue Jeans)) BLUE 
 
-The function f i rst-name is said to be recursive because its definition includes a call 
+The function first-name is said to be recursive because its definition includes a call 
 to itself. Programmers who are new to the concept of recursion sometimes find it 
 mysterious. But recursive functions are really no different from nonrecursive ones. 
 Any function is required to return the correct value for the given input(s). Another 
@@ -1241,7 +1241,7 @@ a value, and it must not return any incorrect values. This two-part requirement 
 equivalent to the first one, but it makes it easier to think about and design function 
 definitions. 
 
-Next I show an abstract description of the f i rst-name problem, to emphasize 
+Next I show an abstract description of the first-name problem, to emphasize 
 the design of the function and the fact that recursive solutions are not tied to Lisp in 
 anyway: 
 
@@ -1271,7 +1271,7 @@ el se return the first element of the name
 
 Now the first case in fi rst-name is recursive, and the second case remains unchanged. 
 We already agreed that the second case returns the correct answer, and the 
-first case only returns what f i rst-name returns. So f 1 rst-name as a whole can only 
+first case only returns what first-name returns. So f 1 rst-name as a whole can only 
 return correct answers. Thus, we're halfway to showing that the function is correct; 
 the other half is to show that it eventually returns some answer. But every recursive 
 call chops off the first element and looks at the rest, so for an n-element list there 
@@ -1884,7 +1884,7 @@ that automatically indent), a much simpler program is possible:
 (atomprint element (+ depth 1))))) 
 
 1.11 Exercises 
-@ Exercise 1.1 [m] Define a version of 1 ast-name that handles "Rex Morgan MD," 
+@ Exercise 1.1 [m] Define a version of last-name that handles "Rex Morgan MD," 
 "Morton Downey, Jr.," and whatever other cases you can think of. 
 
 G] Exercise 1.2 [m] Write a function to exponentiate, or raise a number to an integer 
@@ -3176,7 +3176,7 @@ in the end test.
 I find the do form a little confusing, because it does not clearly say that we are looping 
 through a list. To see that it is indeed iterating over the list requires looking at both 
 the variable 1 and the end test. Worse, there is no variable that stands for the current 
-element of the Ust; we would need to say (f i rst 1 ) to get at it. Both dol i st and 
+element of the Ust; we would need to say (first 1 ) to get at it. Both dol i st and 
 mapc take care of stepping, end testing, and variable naming automatically. They are 
 examples of the "be specific" principle. Because it is so unspecific, do will not be 
 used much in this book. However, many good programmers use it, so it is important 
@@ -7636,15 +7636,15 @@ match fails—and returns nil—versus the case where everything matches, but th
 are no variables, so it returns the null a-list. (This is the semipredicate problem 
 discussed on page 127.) Fourth, we want the bindings of variables to agree—if ?X is 
 used twice in the pattern, we don't want it to match two different values in the input. 
-Finally, it is inefficient for pat-match to check both the f i rst and rest of Hsts, even 
-when the corresponding f i rst parts fail to match. (Isn't it amazing that there could 
+Finally, it is inefficient for pat-match to check both the first and rest of Hsts, even 
+when the corresponding first parts fail to match. (Isn't it amazing that there could 
 be five bugs in a seven-line function?) 
 
 We can resolve these problems by agreeing on two major conventions. First, it is 
 very convenient to make pat-match a true predicate, so we will agree that it returns 
 .i 1 only to indicate failure. That means that we will need a non-nil value to represent 
 the empty binding list. Second, if we are going to be consistent about the values of 
-variables, then the f i rstwillhavetoknow what the restisdoing. We can accomplish 
+variables, then the firstwillhavetoknow what the restisdoing. We can accomplish 
 this by passing the binding list as a third argument to pat-match. We make it an 
 optional argument, because we want to be able to say simply (pat-match ab). 
 
@@ -9001,7 +9001,7 @@ position of the first element of the input that could match the next element of 
 pattern after the segment variable. In ELIZA, we assumed that the segment variable 
 was either the last element of the pattern or was followed by a constant. In the 
 following version, we allow nonconstant patterns to follow segment variables. The 
-function f i rst -match - pos is added to handle this. If the following element is in fact 
+function first -match - pos is added to handle this. If the following element is in fact 
 a constant, the same calculation is done using posi ti on. If it is not a constant, then 
 
 
@@ -9303,7 +9303,7 @@ the longest paths are considered first. In other words, we generate the successo
 of a state, and then work on the first successor first. We only return to one of the 
 subsequent successors if we arrive at a state that has no successors at all. This 
 strategy can be implemented by simply appending the previous states to the end 
-of the Ust of new successors on each iteration. The function depth-f i rst-search 
+of the Ust of new successors on each iteration. The function depth-first-search 
 takes a single starting state, a goal predicate, and a successor function. It packages 
 the starting state into a Hst as expected by tree-search, and specifies append as the 
 combining function: 
@@ -9379,7 +9379,7 @@ states to the end of the existing states:
 (tree-search (list start) goal-p successors #'prepend)) 
 
 The or�y difference between depth-first and breadth-first search is the difference 
-between append and prepend. Here we see breadth-f i rst-search inaction: 
+between append and prepend. Here we see breadth-first-search inaction: 
 
 
 6,4 A SET OF SEARCHING TOOLS 193 
@@ -9545,7 +9545,7 @@ remains tightly focused. Beam search is a variant of best-first search, but it i
 similar to depth-first search. The difference is that beam search looks down several 
 paths at once, instead of just one, and chooses the best one to look at next. But 
 it gives up the ability to backtrack indefinitely. The function beam-search is just 
-like best-f i rst-search, except that after we sort the states, we then take only the 
+like best-first-search, except that after we sort the states, we then take only the 
 first beam-width states. This is done with subseq; (subseq list start end) returns the 
 sublist that starts at position start and ends just before position end. 
 
@@ -13540,7 +13540,7 @@ again just retrieves the cached value, rather than calling the function again:
 > (force (second x)) 2 
 
 Now let's see how delays can be used to build infinite sets. An infinite set will be 
-considered a special case of what we will call a pipe: a list with a f i rst component 
+considered a special case of what we will call a pipe: a list with a first component 
 that has been computed, and a rest component that is either a normal list or a 
 delayed value. Pipes have also been called delayed Usts, generated lists, and (most 
 commonly) streams. We will use the term pipe because stream already has a meaning 
@@ -13553,7 +13553,7 @@ also calls these structures pipes, reserving streams for delayed structures that
 cache computed results. 
 
 To distinguish pipes from lists, we will use the accessors head and tai 1 instead 
-of f i rst and rest. We will also use empty-pipe instead of ni 1, make-pipe instead 
+of first and rest. We will also use empty-pipe instead of ni 1, make-pipe instead 
 of cons, and pipe-el t instead of el t. Note that make-pipe is a macro that delays 
 evaluation of the tail. 
 
@@ -13839,7 +13839,7 @@ points. Where pipes allow us to represent an infinite number of alternatives in 
 data, Prolog allows us to represent those alternatives in the program itself. 
 
 Exercise 9.1 [h] When given a function f and a pipe p. mappend-pipe returns a 
-new pipe that will eventually enumerate all of ( f (f i rst .)), then all of ( f (second 
+new pipe that will eventually enumerate all of ( f (first .)), then all of ( f (second 
 .)), and so on. This is deemed "unfair" if ( f (first .)) has an infinite number of 
 elements. Define a function that will fairly interleave elements, so that all of them are 
 eventually enumerated. Show that the function works by changing generate -a 11 to 
@@ -15887,7 +15887,7 @@ Ex: (flatten '((a) (b (c) d))) => (a b c d)."
 This definition is quite simple, and it is easy to see that it is correct. However, each 
 call to append requires copying the first argument, so this version can cons O(n^) cells 
 on an input with . atoms. The problem with this approach is that it computes the 
-list of atoms in the f 1 rst and rest of each subcomponent of the input. But the f i rst 
+list of atoms in the f 1 rst and rest of each subcomponent of the input. But the first 
 sublist by itself is not part of the final answer—that's why we have to call append. We 
 could avoid generating garbage by replacing append with nconc, but even then we 
 would still be wasting time, because nconc would have to scan through each sublist 
@@ -17359,7 +17359,7 @@ almost verbatim:
 
 Of course, we can write a similar definition in Lisp. The most visible difference is that 
 Prolog allows us to put patterns in the head of a clause, so we don't need recognizers 
-like consp or accessors like f i rst and rest. Otherwise, the Lisp definition is similar:^ 
+like consp or accessors like first and rest. Otherwise, the Lisp definition is similar:^ 
 
 (defun lisp-member (item list) 
 (and (consp list) 
@@ -26561,7 +26561,7 @@ rule)
 Here, then, is the interpreter, f i nd-out. It can find out the value(s) of a parameter 
 three ways. First, it looks to see if the value is already stored in the data base. Next, 
 it tries asking the user or using the rules. The order in which these two options are 
-tried depends on the parm-ask-f i rst property of the parameter. Either way, if an 
+tried depends on the parm-ask-first property of the parameter. Either way, if an 
 answer is determined, it is stored in the data base. 
 
 (defun find-out (parm &optional (inst (get-db 'current-instance))) 
@@ -30798,7 +30798,7 @@ queen-capturing move.
 
 The function alpha-beta3 adds the parameter ki 11 er, which is the best move 
 found so far at the current level. After we determine the legal -moves, we use 
-put-f i rst to put the killer move first, if it is in fact a legal move. When it comes 
+put-first to put the killer move first, if it is in fact a legal move. When it comes 
 time to search the next level, we keep track of the best move in kiHer2. This 
 requires keeping track of the value of the best move in ki 11 er 2- va1. Everything else 
 is unchanged, except that we get a new board by recycling the *pl y-boards* vector 
@@ -42729,7 +42729,7 @@ We can redefine pop-end to call pop directly:
 '(pop (last .place))) 
 
 Now all we need to do is define the setf method for 1 as t. Here is a simple definition. 
-It makes use of the function 1 ast2, which returns the last two elements of a list. In 
+It makes use of the function last2, which returns the last two elements of a list. In 
 ANSI Common Lisp we could use (last list 2), but with a pre-ANSI compiler we 
 need to define last2: 
 
@@ -42757,7 +42757,7 @@ the left-to-right, one-evaluation-only semantics:
 > (setf (last (append . y)) 'end) = 
 (SYSiSETCDR (LAST2 (APPEND X Y)) 'END) 
 
-Unfortunately, there is an error in the setf method for 1 ast. It assumes that the 
+Unfortunately, there is an error in the setf method for last. It assumes that the 
 list will have at least two elements. If the Ust is empty, it is probably an error, but if 
 alisthasexactlyoneelement, then (setf (last list) val) should have the same 
 effect as (setf list val). But there is no way to do that with defsetf, because the 
@@ -42784,11 +42784,11 @@ like i ncf and pop, which need to both access and store.
 
 In the following setf method for last, then, we are defining the meaning of 
 (setf (last place) value). We keep track of all the variables and values needed 
-to evaluate pi ace, and add to that three more local variables: 1 ast2-var will hold 
-the last two elements of the list, 1 ast2-p will be true only if there are two or more 
-elements in the list, and 1 ast - va r will hold the form to access the last element of the 
+to evaluate pi ace, and add to that three more local variables: last2-var will hold 
+the last two elements of the list, last2-p will be true only if there are two or more 
+elements in the list, and last - va r will hold the form to access the last element of the 
 list. We also make up a new variable, resul t, to hold the val ue. The code to store 
-the value either modifies the cdr of 1 ast2-var, if the list is long enough, or it stores 
+the value either modifies the cdr of last2-var, if the list is long enough, or it stores 
 directly into pi ace. The code to access the value just retrieves 1 diSt-\/ar. 
 
 (define-setf-method last (place) 
@@ -43010,7 +43010,7 @@ are needed. Use parser: pri nt-tree instead of parser-print-tree.
 12. Parameters are named by type: (defun length (sequence) ...) or by purpose: 
 (defun subsetp (subset superset) ...) or both: (defun / (number 
 &rest denominator-numbers) ...) 
-13. Avoid ambiguity. A variable named 1 ast-node could have two meanings; use 
+13. Avoid ambiguity. A variable named last-node could have two meanings; use 
 previ ous - node or f i nal - node instead. 
 14. A name like propagate-constraints-to-neighboring-vertexes is too long, 
 while prp-con is too short. In deciding on length, consider how the name will 
