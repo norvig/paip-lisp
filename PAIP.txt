@@ -11827,7 +11827,7 @@ variable-p The symbols m through . are variables.
 An alias for expt, exponentiation. 
 evaluable Decide if an expression can be numerically evaluated. 
 simp-rule Transform a rule into proper format. 
-length=l Is the argument a list of length 1? 
+length=1 Is the argument a list of length 1? 
 
 Previous Functions 
 
@@ -12337,7 +12337,7 @@ where each factor is of the form . y .)."
 (fac (exp-lhs x) n) 
 (fac (exp-rhs x) (- n))) 
 
-((and (starts-with . *-) (length=l (exp-args x))) 
+((and (starts-with . *-) (length=1 (exp-args x))) 
 (setf constant (- constant)) 
 (fac (exp-lhs x) n)) 
 
@@ -12365,7 +12365,7 @@ to turn a list back into an expression:
 "Convert a list of factors back into prefix form." 
 (cond ((null factors) 1) 
 
-((length=l factors) (first factors)) 
+((length=1 factors) (first factors)) 
 (t á(* .(first factors) .(unfactorize (rest factors)))))) 
 
 The derivative-divides method requires a way of dividing two expressions. We do this 
@@ -12406,12 +12406,12 @@ of a particular variable in it.
 ((find-anywhere item (first tree))) 
 ((find-anywhere item (rest tree))))) 
 
-In factorize we made use of the auxiliary function length=l. The function call 
-(length=l x) is faster than (= (length x) 1) because the latter has to compute 
+In factorize we made use of the auxiliary function length=1. The function call 
+(length=1 x) is faster than (= (length x) 1) because the latter has to compute 
 the length of the whole list, while the former merely has to see if the list has a rest 
 element or not. 
 
-(defun length=l (x) 
+(defun length=1 (x) 
 "Is X a list of length 1?" 
 (and (consp x) (null (rest x)))) 
 
@@ -13260,7 +13260,7 @@ constructed to choose one of the cases.
 '(defun ,(rule-lhs rule) () 
 
 .(cond ((every #*atom rhs) *(one-of '.rhs)) 
-((length=l rhs) (build-code (first rhs))) 
+((length=1 rhs) (build-code (first rhs))) 
 (t '(case (random .(length rhs)) 
 
 .(build-cases 0 rhs))))))) 
@@ -13277,10 +13277,10 @@ constructed to choose one of the cases.
 (cond ((null choice) nil) 
 
 ((atom choice) (list choice)) 
-((length=l choice) choice) 
+((length=1 choice) choice) 
 (t '(append .(mapcar #'build-code choice))))) 
 
-(defun length=l (x) 
+(defun length=1 (x) 
 "Is X a list of length 1?" 
 (and (consp x) (null (rest x)))) 
 
@@ -19391,7 +19391,7 @@ cont)))
 (defun maybe-add-undo-bindings (compiled-exps) 
 "Undo any bindings that need undoing. 
 If there are any, bind the trail before we start." 
-(if (length=l compiled-exps) 
+(if (length=1 compiled-exps) 
 
 compiled-exps 
 
@@ -20317,7 +20317,7 @@ done in maybe-add-undo-bindings into the macro with-undo-bindings:
 
 (defmacro with-undo-bindings (&body body) 
 "Undo bindings after each expression in body except the last." 
-(if (length=l body) 
+(if (length=1 body) 
 
 (first body) 
 
@@ -24220,10 +24220,10 @@ t if exps is nil, (first exps) if there is only one.
 and (and expl exp2...) if there are several exps." 
 (cond ((null exps) if-nil) 
 
-((length=l exps) (first exps)) 
+((length=1 exps) (first exps)) 
 (t (cons op exps)))) 
 
-(defun length=l (x) 
+(defun length=1 (x) 
 "Is X a list of length 1?" 
 (and (consp x) (null (cdr x)))) 
 
@@ -25280,7 +25280,7 @@ exp
 (defun intersperse (op args) 
 "Place op between each element of args. 
 Ex: (intersperse '+ '(a b c)) => '(a + b + c)" 
-(if (length=l args) 
+(if (length=1 args) 
 
 (first args) 
 
@@ -25321,7 +25321,7 @@ collect (args->prefix
 
 (cond ((null useful-args) identity) 
 ((and (eq op '*) (member 0 args)) 0) 
-((length=l args) (first useful-args)) 
+((length=1 args) (first useful-args)) 
 (t (cons op (mappend 
 
 #*(lambda (exp) 
@@ -32441,7 +32441,7 @@ Otherwise, apply the sem function to its constituents."
 
 (defun terminal-tree-p (tree) 
 "Does this tree have a single word on the rhs?" 
-(and (length=l (tree-rhs tree)) 
+(and (length=1 (tree-rhs tree)) 
 
 (atom (first (tree-rhs tree))))) 
 
@@ -32797,7 +32797,7 @@ do (format t "~5,lf ~9a~25T''a~%" (tree-score tree) (tree-sem tree)
 "Extract the terminals, bracketed with parens." 
 (cond ((atom tree) tree) 
 
-((length=l (tree-rhs tree)) 
+((length=1 (tree-rhs tree)) 
 (bracketing (first (tree-rhs tree)))) 
 (t (mapcar #'bracketing (tree-rhs tree))))) 
 
@@ -36576,7 +36576,7 @@ map-interp
 call/cc 
 
 lastl 
-length=l 
+length=1 
 
 Top-Level Fimctions 
 
@@ -36688,7 +36688,7 @@ Then we will interpret (f 1 2 3) by interpreting the body of f with the environm
 Scheme procedures are implemented as Common Lisp functions, and in fact all the 
 Scheme data types are implemented by the corresponding Common Lisp types. I 
 include the function i .i t -s eherne - i . te rp to initialize a few global values and repeat 
-the definitions of 1 astl and length=l: 
+the definitions of last1 and length=1: 
 
 (defun set-var! (var val env) 
 "Set a variable to a value, in the given or global environment." 
@@ -36752,10 +36752,10 @@ t if exps is nil, exps if there is only one,
 and (and expl exp2...) if there are several exps." 
 (cond ((null exps) if-nil) 
 
-((length=l exps) (first exps)) 
+((length=1 exps) (first exps)) 
 (t (cons op exps)))) 
 
-(defun length=l (x) 
+(defun length=1 (x) 
 "Is X a list of length 1?" 
 (and (consp x) (null (cdr x)))) 
 
@@ -36961,7 +36961,7 @@ Here are the definitions of nine important macros in Scheme:
 (def-scheme-macro and (&rest args) 
 
 (cond ((null args) *T) 
-((length=l args) (first args)) 
+((length=1 args) (first args)) 
 (t '(if .(first args) 
 
 (and . .(rest args)))))) 
@@ -36969,14 +36969,14 @@ Here are the definitions of nine important macros in Scheme:
 (def-scheme-macro or (&rest args) 
 
 (cond ((null args) 'nil) 
-((length=l args) (first args)) 
+((length=1 args) (first args)) 
 (t (let ((var (gensym))) 
 
 ¥(let ((.var .(first args))) 
 (if ,var .var (or . .(rest args)))))))) 
 (def-scheme-macro cond (&rest clauses) 
 (cond ((null clauses) nil) 
-((length=l (first clauses)) 
+((length=1 (first clauses)) 
 '(or .(first clauses) (cond ..(rest clauses)))) 
 ((starts-with (first clauses) 'else) 
 '(begin ..(rest (first clauses)))) 
@@ -37856,7 +37856,7 @@ named let
 
 (def-scheme-macro cond (&rest clauses) 
 (cond ((null clauses) nil) 
-((length=l (first clauses)) 
+((length=1 (first clauses)) 
 '(or .(first clauses) (cond ..(rest clauses)))) 
 ((starts-with (first clauses) 'else) 
 
@@ -38057,7 +38057,7 @@ and seq makes a sequence of instructions out of two or more subsequences.
 "Compile a sequence of expressions, popping all but the last." 
 (cond ((null exps) (gen 'CONST nil)) 
 
-((length=l exps) (comp (first exps) env)) 
+((length=1 exps) (comp (first exps) env)) 
 
 (t (seq (comp (first exps) env) 
 (gen 'POP) 
@@ -38716,7 +38716,7 @@ appUcation.
 returning the last one as the value." 
 (cond ((null exps) (comp-const nil val? more?)) 
 
-((length=l exps) (comp (first exps) env val? more?)) 
+((length=1 exps) (comp (first exps) env val? more?)) 
 (t (seq (comp (first exps) env nil t) 
 (comp-begin (rest exps) env val? more?))))) 
 
@@ -38767,7 +38767,7 @@ considered, we're left with three more cases: (if . x nil), (if . nil y), and (i
 (comp then env val? more?)) 
 
 ((and distp pred) ; (if (not p) . y) ==> (if pyx) 
-(length=l (rest pred)) 
+(length=1 (rest pred)) 
 (primitive-p (first pred) env 1) 
 (eq (prim-opcode (primitive-p (first pred) env 1)) *not)) 
 
@@ -39098,8 +39098,8 @@ CONST LASTl
 NAMEl 
 RETURN 
 
-The top-level function just assigns the nested function to the global variable 1 astl. 
-Since 1 astl is tail-recursive, it has only one return point, for the termination case, 
+The top-level function just assigns the nested function to the global variable last1. 
+Since last1 is tail-recursive, it has only one return point, for the termination case, 
 and just calls itself without saving continuations until that case is executed. 
 
 Contrast that to the non-tail-recursive definition of length below. It is not tail-
@@ -40253,7 +40253,7 @@ Answer 23.6 We define the predicate a 1 ways and install it in two places in com
 (cond 
 
 ((and (listp pred) ; (if (not p) . y) ==> (if pyx) 
-(length=l (rest pred)) 
+(length=1 (rest pred)) 
 (primitive-p (first pred) env 1) 
 (eq (prim-opcode (primitive-p (first pred) env 1)) 
 
@@ -42642,7 +42642,7 @@ First, make sure you don't shadow local variables. Consider the following defini
 
 for pop- end, a function to pop off and return the last element of a list, while updating 
 
-the list to no longer contain the last element. The definition uses 1 astl, which was 
+the list to no longer contain the last element. The definition uses last1, which was 
 
 defined on page 305 to return the last element of a list, and the built-in function 
 
@@ -42679,7 +42679,7 @@ writes:
 (pop-end list) 
 ...) 
 
-will be in for a surprise, pop-end will expand into code that calls 1 astl, but since 
+will be in for a surprise, pop-end will expand into code that calls last1, but since 
 lastl has been locally defined to be something else, the code won't work. Thus, the 
 expansion of the macro violates referential transparency. To be perfectly safe, we 
 could try: 
@@ -45657,7 +45657,7 @@ lengths,60
 length/,60 
 lengths, 61 
 lengthQ,62 
-length=l, 255,276,496,757, 760 
+length=1, 255,276,496,757, 760 
 let,41,764, 782 
 let*,56, 764 
 letrec, 762,765 
