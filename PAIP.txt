@@ -3357,7 +3357,7 @@ following definition:
 len-so-far 
 (length1O-aux (rest sublist) (+ 1 len-so-far)))) 
 
-lengthlO uses lengthlO - aux as an auxiliary function, passing it 0 as the length of the 
+length1O uses length1O - aux as an auxiliary function, passing it 0 as the length of the 
 list so far. 1 engt hlO - a ux then goes down the list to the end, adding 1 for each element. 
 The invariant relation is that the length of the sublist plus 1 en- so - fa r always equals 
 the length of the original list. Thus, when the sublist is nil, then 1 en-so-f ar is the 
@@ -3372,14 +3372,14 @@ is done. In length9, the function calls itself, then returns, and then adds 1. I
 length1O-aux, the function adds 1, then calls itself, then returns. There are no 
 pending operations to do after the recursive call returns, so the compiler is free to 
 release any memory allocated for the original call before making the recursive call. 
-lengthlO-aux is called a tail-recursive function, because the recursive call appears as 
+length1O-aux is called a tail-recursive function, because the recursive call appears as 
 the last thing the function does (the tail). Many compilers will optimize tail-recursive 
 calls, although not all do. (Chapter 22 treats tail-recursion in more detail, and points 
 out that Scheme compilers guarantee that tail-recursive calls will be optimized.) 
 
 Some find it ugly to introduce length 10 - a ux. For them, there are two alternatives. 
 
-First, we could combine lengthlO and lengthlO-aux into a single function with an 
+First, we could combine length1O and length1O-aux into a single function with an 
 
 optional parameter: 
 
