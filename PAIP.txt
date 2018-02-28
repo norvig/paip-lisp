@@ -1363,8 +1363,8 @@ nil
 (append (funcall fn (first the-list)) 
 (mappend fn (rest the-list))))) 
 
-f unca . is similar to apply; it too takes a function as its first argument and applies the 
-function to a list of arguments, but in the case of f uncal 1, the arguments are listed 
+funcall is similar to apply; it too takes a function as its first argument and applies the 
+function to a list of arguments, but in the case of funcall, the arguments are listed 
 separately: 
 
 > (funcall #'+ 2 3) =i> 5 
@@ -4690,8 +4690,8 @@ words, separate the development stage from the fine-tuning stage. Chapters 9 and
 on debugging and antibugging techniques. 
 
 3.15 Evaluation 
-There are three functions for doing evaluation in Lisp: f uncal 1, apply, and eval. 
-funcal 1 is used to apply a function to individual arguments, while apply is used 
+There are three functions for doing evaluation in Lisp: funcall, apply, and eval. 
+funcall is used to apply a function to individual arguments, while apply is used 
 to apply a function to a list of arguments. Actually, apply can be given one or 
 more individual arguments before the final argument, which is always a Ust. eval 
 is passed a single argument, which should be an entire form-a function or special 
@@ -4707,7 +4707,7 @@ equivalent:
 In the past, eval was seen as the key to Lisp's flexibility. In modern Lisps with lexical 
 scoping, such as Common Lisp, eval is used less often (in fact, in Scheme there is 
 no eval at all). Instead, programmers are expected to use 1 ambda to create a new 
-function, and then apply or f uncal 1 the function. In general, if you find yourself 
+function, and then apply or funcall the function. In general, if you find yourself 
 using eval, you are probably doing the wrong thing. 
 
 
@@ -20261,7 +20261,7 @@ but with dereferencing?"
 (deref-equal (first x) (first y)) 
 (deref-equal (rest x) (rest y))))) 
 
-One of the most important primitives is cal 1. Like f uncal 1 in Lisp, cal 1 allows us 
+One of the most important primitives is cal 1. Like funcall in Lisp, cal 1 allows us 
 to build up a goal and then try to prove it. 
 
 (defun cal 1/1 (goal cont) 
@@ -21001,7 +21001,7 @@ bindings)))))))))
 
 430 COMPILING LOGIC PROGRAMS 
 
-Answer 12.11 true /0 is f uncal 1: when a goal succeeds, we call the continuation, 
+Answer 12.11 true /0 is funcall: when a goal succeeds, we call the continuation, 
 fai 1 /O is i gnore: when a goal fails, we ignore the continuation. We could also define 
 compiler macros for these primitives: 
 
@@ -33636,10 +33636,10 @@ subject, we want to get the simplification:
 ((lambda (x) (kiss . Jean)) Terry) => (kiss Terry Jean) 
 
 Such simplification is not done automatically by Prolog, but we can write a predicate 
-to do it. We will call it f unca 11, because it is similar to the Lisp function of that name, 
+to do it. We will call it funcall, because it is similar to the Lisp function of that name, 
 although it only handles replacement of the argument, not full evaluation of the 
 body. (Technically, this is the lambda-calculus operation known as beta-reduction.) 
-The predicate f unca 11 is normally used with two input arguments, a function and its 
+The predicate funcall is normally used with two input arguments, a function and its 
 argument, and one output argument, the resulting reduction: 
 
 (<- (funcall (lambda (?x) ?body) ?x ?body)) 
@@ -33651,7 +33651,7 @@ With this we could write our rule for sentences as:
 (VP ?agr ?pred) 
 (:test (funcall ?pred ?subj ?sem))) 
 
-An alternative is to, in effect, compile away the call to f unca 11. Instead of having the 
+An alternative is to, in effect, compile away the call to funcall. Instead of having the 
 semantic representation of VP be a single lambda expression, we can represent it as 
 
 ^The asterisk at the start of a sentence is the standard linguistic notation for an utterance 
@@ -33662,7 +33662,7 @@ that is ungrammatical or otherwise ill-formed.
 
 two arguments: an input argument, ?subj, which acts as a parameter to the output 
 argument, ?pred, which takes the place of the body of the lambda expression. By 
-explicitly manipulating the parameter and body, we can eliminate the call to f unca 11. 
+explicitly manipulating the parameter and body, we can eliminate the call to funcall. 
 The trick is to make the parameter and the subject one and the same: 
 
 (rule (S ?pred) --> 
@@ -38705,7 +38705,7 @@ introduced by the var? and more? parameters.
 
 Let's go through the comp- functions one at a time. First, comp-begin and 
 comp-1 ist just handle and pass on the additional parameters, comp-1 ist will be 
-used in comp -f unca 11, a new function that will be introduced to compile a procedure 
+used in comp -funcall, a new function that will be introduced to compile a procedure 
 appUcation. 
 
 
@@ -40081,10 +40081,10 @@ Do you think this last expression should be legal? If so, modify the macros for
 1 et, 1 et*, and 1 etrec to allow the new syntax. If not, explain why it should not be 
 included in the language. 
 
-@ Exercise 23.10 [m] Scheme does not define f uncal 1, because the normal function-
+@ Exercise 23.10 [m] Scheme does not define funcall, because the normal function-
 call syntax does the work of funcall. This suggests two problems. (1) Is it possible 
-to define f uncal 1 in Scheme? Show a definition or explain why there can't be one. 
-Would you ever have reason to use f uncal 1 in a Scheme program? (2) Scheme does 
+to define funcall in Scheme? Show a definition or explain why there can't be one. 
+Would you ever have reason to use funcall in a Scheme program? (2) Scheme does 
 define appl y, as there is no syntax for an application. One might want to extend the 
 syntax to make (+ . numbers) equivalent to (apply + numbers). Would this be a 
 good idea? 
@@ -41302,7 +41302,7 @@ Once-only: A Lesson in Macrology
 
 The macro once - onl y has been around for a long time on various systems, although 
 it didn't make it into the Common Lisp standard. I include it here for two reasons: 
-first, it is used in the following f unca 11 - i f macro, and second, if you can understand 
+first, it is used in the following funcall - i f macro, and second, if you can understand 
 how to write and when to use once-only, then you truly understand macro. 
 
 First, you have to understand the problem that once-only addresses. Suppose 
@@ -42092,7 +42092,7 @@ must be changed. Its value is the old definition of score - fn.
 
 Remedy: Re-evaluate the definition of *scorer*. It is unfortunate, but this problem 
 encourages many programmers to use symbols where they really mean functions. 
-Symbols will be coerced to the global function they name when passed to f uncal 1 
+Symbols will be coerced to the global function they name when passed to funcall 
 
 
  TROUBLESHOOTING 
@@ -42231,7 +42231,7 @@ This does not create a list of four functions. Rather, it creates a list of four
 the first subUst is (f uncti on eis). It is an error to funcall or apply such an object. 
 The two correct ways to create a Ust of functions are shown below. The first assures 
 that each function special form is evaluated, and the second uses function names 
-instead of functions, thus relying on funcal 1 or apply to coerce the names to the 
+instead of functions, thus relying on funcall or apply to coerce the names to the 
 actual functions. 
 
 (defvar *obscure-fns* (list #'cis #'cosh #'ash #'bit -orc2)) 
