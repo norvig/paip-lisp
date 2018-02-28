@@ -1363,7 +1363,7 @@ nil
 (append (funcall fn (first the-list)) 
 (mappend fn (rest the-list))))) 
 
-f unca . is similar to a ppl y; it too takes a function as its first argument and applies the 
+f unca . is similar to apply; it too takes a function as its first argument and applies the 
 function to a list of arguments, but in the case of f uncal 1, the arguments are listed 
 separately: 
 
@@ -6254,7 +6254,7 @@ convention is enforced by the function GPS. Instead of calling (achieve-al 1 sta
 goals nil), GPS calls (achieve-all (cons '(start) state) goals nil). Soeven 
 if the user passes GPS a null initial state, it will pass on a state containing (start ) 
 to achieve-al 1. From then on, we are guaranteed that no state will ever become 
-nil, because the only function that builds a new state is a ppl y - op, and we can see by 
+nil, because the only function that builds a new state is apply - op, and we can see by 
 looking at the last line of appl y - op that it always appends something onto the state it 
 is returning. (An add-list can never be nil, because if it were, the operator would not 
 be appropriate. Besides, every operator includes the (executi ng ... ) condition.) 
