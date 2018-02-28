@@ -1422,7 +1422,7 @@ evaluation rule, and will not be treated as functions. For example:
 
 > append ^ Error: APPEND is not a bound variable 
 
-> (lambda (x) i+ . Z)) Error: LAMBDA is not afunction 
+> (lambda (x) i+ . Z)) Error: LAMBDA is not a function 
 
 Here are some more examples of the correct use of functions: 
 
@@ -1469,7 +1469,7 @@ printed representation of a string has a double quote mark (") at each end.
 We can now summarize the evaluation rule for Lisp. 
 
 * Every expression is either a list or an atom. 
-* Every list to be evaluated is either a special form expression or afunction application. 
+* Every list to be evaluated is either a special form expression or a function application. 
 * A specialform expression is defined to be a lis t whose first element is a special form 
 operator. The expression is evaluated according to the operator's idiosyncratic 
 evaluation rule. For example, the evaluation rule for setf is to evaluate the 
@@ -10416,7 +10416,7 @@ efficient sorter .
 
 0 Exercise 6.10 [m] Write versions of graph-search and a*-search that use hash 
 tables rather than lists to test whether a state has been seen before. 
-S Exercise 6.11 [m] Writeafunctionthatcallsbeam-searchtofindthefirstnsolution s 
+S Exercise 6.11 [m] Write a function that calls beam-searchtofindthefirstnsolution s 
 to a problem and returns them in a list. 
 0 Exercise 6.12 [m] On personal computers without floating-point hardware, the 
 ai r-di stanc e calculation will be rather slow. If this is a problem for you, arrange 
