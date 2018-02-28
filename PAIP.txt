@@ -1381,7 +1381,7 @@ introduce a function without giving it a name, using the special syntax 1 ambda.
 
 The name lambda comes from the mathematician Alonzo Church's notation for 
 functions (Church 1941). Lisp usually prefers expressive names over terse Greek 
-letters, but lambda is an exception. A better name would be ma ke -function. Lambda 
+letters, but lambda is an exception. A better name would be make -function. Lambda 
 derives from the notation in Russell and Whitehead's Principia Mathematica, which 
 used a caret over bound variables: x{x -hx). Church wanted a one-dimensional 
 string, so he moved the caret in front: ^x{x-\-x). The caret looked funny with nothing 
@@ -1469,7 +1469,7 @@ printed representation of a string has a double quote mark (") at each end.
 We can now summarize the evaluation rule for Lisp. 
 
 * Every expression is either a list or an atom. 
-* Every list to be evaluated is either a special form expression or afunction applica tion. 
+* Every list to be evaluated is either a special form expression or afunction application. 
 * A specialform expression is defined to be a lis t whose first element is a special form 
 operator. The expression is evaluated according to the operator's idiosyncratic 
 evaluation rule. For example, the evaluation rule for setf is to evaluate the 
@@ -4619,7 +4619,7 @@ bear (hotness (bear-porridge bear)))
 
 In the interaction below, the assertion failed, and the programmer's error message 
 was printed, along with two possibilities for continuing. The user selected one, typed 
-in a call to ma ke - por r i dge for the new value, and the function succesfully continued. 
+in a call to make - por r i dge for the new value, and the function succesfully continued. 
 
 
 90 OVERVIEW OF LISP 
@@ -5742,7 +5742,7 @@ returns t only when the operator can be applied.
 This section will define a list of operators applicable to the "driving to nursery school" 
 domain and will show how to pose and solve some problems in that domain. First, 
 we need to construct the list of operators for the domain. The defstruct form for the 
-type op automatically defines the function ma ke - op, which can be used as follows: 
+type op automatically defines the function make - op, which can be used as follows: 
 
 (make-op :action 'drive-son-to-school 
 ipreconds *(son-at-home car-works) 
@@ -13654,7 +13654,7 @@ the tail if it is a function."
 (rest pipe))) 
 
 Everything else remains the same. If we recompile integers (because it uses the 
-macro ma ke -pi pe), we see the following behavior. First, creation of the infinite pipe 
+macro make -pi pe), we see the following behavior. First, creation of the infinite pipe 
 c is similar: 
 
 > (setf c (integers 0)) (0 , #<CLOSURE 77350123>) 
@@ -26731,7 +26731,7 @@ an expert in the domain or an expert programmer.
 
 In our version of EMYCIN, we provide only the simplest tools for making the 
 expert's job easier. The macros defcontext and defparm, defined above, are a little 
-easier than calling ma ke - context and ma ke - pa rm explicitly, but not much. The macro 
+easier than calling make - context and make - pa rm explicitly, but not much. The macro 
 def rul e defines a rule and checks for some obvious errors: 
 
 
@@ -28011,7 +28011,7 @@ diagram))
 
 The defstruct for di agram automatically creates the function copy-di agram, but it 
 just copies each field, without copying the contents of each field. Thus we need 
-ma ke - copy -di ag ram to create a copy that shares no structure with the original. 
+make - copy -di ag ram to create a copy that shares no structure with the original. 
 
 
 173 LABELING DIAGRAMS 577 
@@ -29279,9 +29279,9 @@ The next step is to handle moves properly: given a board and a square to move
 to, update the board to reflect the effects of the player moving to that square. This 
 means flipping some of the opponent's pieces. One design decision is whether the 
 procedure that makes moves, make-move, will be responsible for checking for error 
-conditions. My choice is that ma ke - move assumes it will be passed a legal move. That 
+conditions. My choice is that make - move assumes it will be passed a legal move. That 
 way, a strategy can use the function to explore sequences of moves that are known to 
-be valid without slowing ma ke - move down. Of course, separate procedures will have 
+be valid without slowing make - move down. Of course, separate procedures will have 
 to insure that a move is legal. Here we introduce two terms: a valid move is one that 
 is syntactically correct: an integer from 11 to 88 that is not off the board. A legal move 
 is a valid move into an empty square that will flip at least one opponent. Here's the 
@@ -33589,7 +33589,7 @@ nil
 (symbol "Ás (+ . 1)))) 
 (make-dcg-body (rest body) (+ . 1)))))))) 
 
-@ Exercise 20.1 [m] ma ke - dcg violates one of the cardinal rules of macros. What does 
+@ Exercise 20.1 [m] make - dcg violates one of the cardinal rules of macros. What does 
 it do wrong? How would you fix it? 
 
 20.3 A Simple Grammar in DCG Format 
@@ -38991,7 +38991,7 @@ arguments off the stack, but we no longer generate a RETURN instruction, since t
 done by comp-begi n, if necessary. At this point we'll provide a hook for a peephole 
 optimizer, which will be introduced in section 23.4, and for an assembler to convert 
 the assembly language to machine code, new-fn provides this interface, but for now, 
-new- f . acts just like ma ke - f n. 
+new- f . acts just like make - f n. 
 
 We also need to account for the possibility of rest arguments in a lambda list. A 
 new function, gen-args, generates the single instruction to load the arguments of 
@@ -42247,7 +42247,7 @@ or; they should be thought of as directives that tell the compiler what to do wi
 
 piece of code. 
 
-By the way, the function ma ke - speci a 1 i zat i on above is bad not only for its lack of 
+By the way, the function make - specialization above is bad not only for its lack of 
 function but also for its use of backquote. The following is a better use of backquote: 
 
 '(lambda (obj) 
@@ -43188,7 +43188,7 @@ name source-dir object-dir modules)
 *systems*) 
 name) 
 
-The function ma ke - sy s t em is used to compile and/or load a previously defined system. 
+The function make - sy s t em is used to compile and/or load a previously defined system. 
 The name supplied is used to look up the definition of a system, and one of three 
 actions is taken on the system. The keyword : cl oad means to compile and then load 
 files. :1 oad means to load files; if there is an object (compiled) file and it is newer than 
@@ -45748,7 +45748,7 @@ main-var, 512-514
 maintenance, 177 
 make-=, 391,394 
 make-anonymous, 391,399 
-ma ke-a ugmented-dcg, 707 
+make-a ugmented-dcg, 707 
 make-block-ops, 137 
 make-clause, 440 
 make-copy-diagram, 569,577 
@@ -45762,7 +45762,7 @@ make-maze-ops,134
 make-move, 602,604 
 make-moves,312 
 make-obsolete, 870 
-ma ke - pa rameters, 391,392 
+make - pa rameters, 391,392 
 make-pipe, 282,283 
 make-poly, 513,514 
 make-predi cate,391,392 
