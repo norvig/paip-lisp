@@ -1381,7 +1381,7 @@ introduce a function without giving it a name, using the special syntax 1 ambda.
 
 The name lambda comes from the mathematician Alonzo Church's notation for 
 functions (Church 1941). Lisp usually prefers expressive names over terse Greek 
-letters, but lambda is an exception. A better name would be ma ke -f uncti on. Lambda 
+letters, but lambda is an exception. A better name would be ma ke -function. Lambda 
 derives from the notation in Russell and Whitehead's Principia Mathematica, which 
 used a caret over bound variables: x{x -hx). Church wanted a one-dimensional 
 string, so he moved the caret in front: ^x{x-\-x). The caret looked funny with nothing 
@@ -1480,7 +1480,7 @@ is to return the first argument unevaluated. The notation 'x is actually an
 
 1.9 SUMMARY: THE LISP EVALUATION RULE 23 
 abbreviation for the special form expression (quote x). Similarly, the notation 
-# '/is an abbreviation for the special form expression (f uncti on f). 
+# '/is an abbreviation for the special form expression (function f). 
 
 •John = (quote John) JOHN 
 (setf . 'John) => JOHN 
@@ -4714,7 +4714,7 @@ using eval, you are probably doing the wrong thing.
 92 OVERVIEW OF LISP 
 
 3.16 Closures 
-What does it mean to create a new function? Certainly every time a f uncti on (or #') 
+What does it mean to create a new function? Certainly every time a function (or #') 
 special form is evaluated, a function is returned. But in the examples we have seen 
 and in the following one, it is always the same function that is returned. 
 
@@ -9734,7 +9734,7 @@ trip has done, except by reading the debugging output.
 The data structure path is designed to solve both these problems. A path has 
 four fields: the current state, the previous partial path that this path is extending, 
 the cost of the path so far, and an estimate of the total cost to reach the goal. Here is 
-the structure definition for path. It uses the : pri nt-f uncti on option to say that all 
+the structure definition for path. It uses the : pri nt-function option to say that all 
 paths are to be printed with the function pr i nt - pa th, which will be defined below. 
 
 (defstruct (path (:print-function print-path)) 
@@ -13066,14 +13066,14 @@ valueofCfib 5).
 
 Understanding why this works requires a clear understanding of the distinction 
 between functions and function names. The original (defun fib ...) form does two 
-things: builds a function and stores it as the symbol -f uncti on value of f i b. Within 
+things: builds a function and stores it as the symbol -function value of f i b. Within 
 that function there are two references to f i b; these are compiled (or interpreted) as 
-instructions to fetch the symbol - f uncti on of f i b and apply it to the argument. 
+instructions to fetch the symbol - function of f i b and apply it to the argument. 
 
 What memo i ze does is fetch the original function and transform it with memo to a 
 function that, when called, will first look in the table to see if the answer is already 
 known. If not, the original function is called, and a new value is placed in the table. 
-The trick is that memoi ze takes this new function and makes it the symbol - f uncti on 
+The trick is that memoi ze takes this new function and makes it the symbol - function 
 value of the function name. This means that all the references in the original function 
 will now go to the new function, and the table will be properly checked on each 
 recursive call. One further complication to memo: the function gethash returns both 
@@ -13625,15 +13625,15 @@ value. Thus, we can use the closures directly instead of using del ay structures
 have some way of distinguishing closures from lists. Compiled closures are atoms, so 
 they can always be distinguished from lists. But sometimes closures are implemented 
 as lists beginning with 1 ambda or some other implementation-dependent symbol.^ 
-The built-in function f uncti onp is defined to be true of such lists, as well as of all 
-symbols and all objects returned by compi 1 e. But using f uncti onp means that we 
+The built-in function functionp is defined to be true of such lists, as well as of all 
+symbols and all objects returned by compi 1 e. But using functionp means that we 
 can not have a pipe that includes the symbol 1 ambda as an element, because it will be 
 confused for a closure: 
 
 > (functionp (last '(theta iota kappa lambda))) ^ . 
 
 If we consistently use compiled functions, then we could eliminate the problem by 
-testing with the built-in predicate compi 1 ed-f uncti on-p. The following definitions 
+testing with the built-in predicate compi 1 ed-function-p. The following definitions 
 do not make this assumption: 
 
 (defmacro make-pipe (head tail) 
@@ -14064,7 +14064,7 @@ has occurred.
 In the code below, I use the conditional read macro characters #+ and #- to define 
 the right behavior on both Explorer and non-Explorer machines. We have seeen 
 that # is a special character to the reader that takes different action depending on 
-the following character. For example, #' f . is read as (f uncti on f .). The character 
+the following character. For example, #' f . is read as (function f .). The character 
 sequence #+ is defined so that ^+feature expression reads as expression if thefeature is 
 defined in the current implementation, and as nothing at all if it is not. The sequence 
 #- acts in just the opposite way. For example, on a TI Explorer, we would get the 
@@ -18422,7 +18422,7 @@ variable bindings.
 (setf (var-binding var) value) 
 t) 
 
-To make vars easier to read, we can install a : pri nt-f uncti on: 
+To make vars easier to read, we can install a : pri nt-function: 
 
 (defstruct (var (iprint-function print-var)) 
 name (binding unbound)) 
@@ -18437,7 +18437,7 @@ name (binding unbound))
 
 /1.6 DESTRUCTIVE UNIFICATION 379 
 
-Thisis the first example of a carefully crafted : pri nt-f uncti on. There are three things 
+Thisis the first example of a carefully crafted : pri nt-function. There are three things 
 to notice about it. First, it explicitly writes to the stream passed as the argument. 
 It does not write to a default stream. Second, it checks the variable depth against 
 *pr i nt-1 evel *, and prints just the variable name when the depth is exceeded. Third, 
@@ -20081,7 +20081,7 @@ making a query with the ? - macro.
 [¿] Exercise 12.6 [m] Suppose you define a predicate p, which calls q, and then define 
 
 q.In some implementations of Lisp, when you make a query like (? - (. ?x)), you 
-may get a warning message like "f uncti on q/1 undef i ned" before getting the correct 
+may get a warning message like "function q/1 undef i ned" before getting the correct 
 
 12,7 BENCHMARKING THE COMPILER 411 
 
@@ -37892,7 +37892,7 @@ following type of expansion:
 This makes doubl e a special variable, so we can write doubl e instead of # 'doubl e. 
 But this approach is not recommended—it is dangerous to define special variables 
 that violate the asterisk convention, and the Common Lisp compiler may not be able 
-to optimize special variable references the way it canf uncti on special forms. Also, 
+to optimize special variable references the way it canfunction special forms. Also, 
 this approach would not interact properly with f 1 et and 1 abel s. 
 
 
@@ -42105,7 +42105,7 @@ symbol local - fn will not refer to the locally bound function. One needs to use
 (mapcar *local-fn list)) 
 
 Diagnosis: If you changed the name of a function, did you change the name everywhere? 
-For example, if you decide to change the name of pr 1 nt - f . to pr i nt - f uncti on 
+For example, if you decide to change the name of pr 1 nt - f . to pr i nt - function 
 but forget to change the value of *pri nter*, then the old function will be called. 
 
 Remedy: Use your editor's global replace command. To be even safer, redefine 
@@ -42211,7 +42211,7 @@ a list, not a closure. Therefore, it cannot capture lexical variables the way a 
 does. 
 
 Remedy: The correct way to create a closure is to evaluate a call to the special form 
-f uncti on, or its abbreviation, #'. Here is a replacement for the code beginning with 
+function, or its abbreviation, #'. Here is a replacement for the code beginning with 
 
 *(1 ambda Note that it is a closure, closed over pred and c. Also note that it gets 
 the predi cate each time it is called; thus, it is safe to use even when predicates are 
@@ -42221,14 +42221,14 @@ is changed.
 (and (funcall pred obj) 
 (funcall (get c 'predicate) obj))) 
 
-It is important to remember that f uncti on (and thus #') is a special form, and thus 
+It is important to remember that function (and thus #') is a special form, and thus 
 only returns the right value when it is evaluated. A common error is to use # ' notation 
 in positions that are not evaluated: 
 
 (defvar *obscure-fns* '(#'cis #'cosh #'ash #'bit -orc2)) ; wrong 
 
 This does not create a list of four functions. Rather, it creates a list of four sublists; 
-the first subUst is (f uncti on eis). It is an error to funcall or apply such an object. 
+the first subUst is (function eis). It is an error to funcall or apply such an object. 
 The two correct ways to create a Ust of functions are shown below. The first assures 
 that each function special form is evaluated, and the second uses function names 
 instead of functions, thus relying on funcall or apply to coerce the names to the 
@@ -42248,7 +42248,7 @@ or; they should be thought of as directives that tell the compiler what to do wi
 piece of code. 
 
 By the way, the function ma ke - speci a 1 i zat i on above is bad not only for its lack of 
-f uncti on but also for its use of backquote. The following is a better use of backquote: 
+function but also for its use of backquote. The following is a better use of backquote: 
 
 '(lambda (obj) 
 (and (,pred obj) 
@@ -45342,7 +45342,7 @@ short, 887
 tail-recursive, 63 
 function, 92,872 
 functional progranuning, 435 
-f uncti onp, 283 
+functionp, 283 
 fuzzy set theory, 461,558 
 
 Gabriel, Richard, 522 
