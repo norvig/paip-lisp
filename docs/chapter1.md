@@ -105,85 +105,81 @@ There are four important points to make about symbols:
 
 - First, it is important to remember that Lisp does not attach any external significance 
   to the objects it manipulates. For example, we naturally think of (Robi. 
-  Sandy) asalistof two first names, and (John Q Publ ic) as a list of one person's 
+  Sandy) as a list of two first names, and (John Q Public) as a list of one person's 
   first name, middle initial, and last name. Lisp has no such preconceptions. To 
-  Lisp, both Robi. and xyzzy are perfectly good symbols. 
-- Second, to do the computations above, we had to know that append, 1 ength, 
+  Lisp, both Robin and xyzzy are perfectly good symbols. 
+
+- Second, to do the computations above, we had to know that [append](http://clhs.lisp.se/Body/f_append.htm), [length](http://clhs.lisp.se/Body/f_length.htm), 
   and + are defined functions in Common Lisp. Learning a language involves 
-
- INTRODUCTION TO LISP 
-
-remembering vocabulary items (or knowing where to look them up) as well 
-as learning the basic rules for forming expressions and determining what they 
-mean. Common Lisp provides over 700 built-in functions. At some point the 
-reader should flip through a reference text to see what's there, but most of the 
-important functions are presented in part I of this book. 
+  remembering vocabulary items (or knowing where to look them up) as well 
+  as learning the basic rules for forming expressions and determining what they 
+  mean. Common Lisp provides over 700 built-in functions. At some point the 
+  reader should flip through a reference text to see what's there, but most of the 
+  important functions are presented in part I of this book. 
 
 - Third, note that symbols in Common Lisp are not case sensitive. By that I 
-  mean that the inputs John, John, and jOhN all refer to the same symbol, which 
-  is normally printed as JOHN.^ 
+  mean that the inputs <code>John</code>, <code>john</code>, and <code>jOhN</code> all refer to the same symbol, which 
+  is normally printed as <code>JOHN</code><a title="The variable *print-case* controls how symbols will be printed. By default, the value of this variable is :upcase, but it can be changed to :downcase or :capitalize."><sup>2</sup></a>. 
+
 - Fourth, note that a wide variety of characters are allowed in symbols: numbers, 
-  letters, and other punctuation marks like'+' or'!'. The exact rules for what constitutes 
+  letters, and other punctuation marks like <code>'+'</code> or <code>'!'</code>. The exact rules for what constitutes 
   a symbol are a little complicated, but the normal convention is to use 
-  symbols consisting mostly of letters, with words separated by a dash (-), and 
+  symbols consisting mostly of letters, with words separated by a dash <code>(-)</code>, and 
   perhaps with a number at the end. Some programmers are more liberal in naming 
-  variables, and include characters like'? 1 $/<&rArr;'. For example, a function to 
-  convert dollars to yen might be named with the symbol $- to -yen or $ ->yen in 
-  Lisp, while one would use something like Dol 1 arsToYen, dol 1 ars_to_yen or 
-  do! 2yen in Pascal or C. There are a few exceptions to these naming conventions, 
+  variables, and include characters like <code>?!$/<=>'</code>. For example, a function to 
+  convert dollars to yen might be named with the symbol <code>$-to-yen</code> or <code>$->yen</code> in 
+  Lisp, while one would use something like <code>DollarsToYen</code>, <code>dollars_to_yen</code> or 
+  <code>dol2yen</code> in Pascal or C. There are a few exceptions to these naming conventions, 
   which will be dealt with as they come up. 
 
-### 1.2 Variables 
-  We have seen some of the basics of symbolic computation. Now we move on to 
-  perhaps the most important characteristic of a programming language: the ability to 
-  define new objects in terms of others, and to name these objects for future use. Here 
-  symbols again play an important role—they are used to name variables. A variable 
-  can take on a value, which can be any Lisp object. One way to give a value to a 
-  variable is with setf: 
+### 1.2 Variables
 
-> (setf . '(John 0 Public)) =^ (JOHN Q PUBLIC) 
+We have seen some of the basics of symbolic computation. Now we move on to 
+perhaps the most important characteristic of a programming language: the ability to 
+define new objects in terms of others, and to name these objects for future use. Here 
+symbols again play an important role—they are used to name variables. A variable 
+can take on a value, which can be any Lisp object. One way to give a value to a 
+variable is with setf: 
 
-> . (JOHN Q PUBLIC) 
+  >\> (setf . '(John 0 Public)) &rArr; (JOHN Q PUBLIC) 
 
-> (setf X 10) 10 
+  >\> p &rArr; (JOHN Q PUBLIC) 
 
-> (+ X x) 20 
+  >\> (setf X 10) &rArr; 10 
 
-> (+ X (length p)) &rArr; 13 
+  >\> (+ x x) &rArr; 20 
 
-After assigning the value (John Q Rubi i c) to the variable named p, we can refer to 
-the value with the name p. Similarly, after assigning a value to the variable named x, 
-we can refer to both . and p. 
+  >\> (+ x (length p)) &rArr; 13 
 
-^The variable *pri nt - case* controls how symbols will be printed. By default, the value of 
-this variable is -.upcase, but it can be changed to rdowncaseor : capitalize. 
-
-13 SPECIAL FORMS 
+After assigning the value <code>(John Q Rubi i c)</code> to the variable named <code>p</code>, we can refer to 
+the value with the name <code>p</code>. Similarly, after assigning a value to the variable named <code>x</code>, 
+we can refer to both <code>x</code> and <code>p</code>. 
 
 Symbols are also used to name functions in Common Lisp. Every symbol can 
 be used as the name of a variable or a function, or both, although it is rare (and 
-potentially confusing) to have symbols name both. For example, append and 1 ength 
-are symbols that name functions but have no values as variables, and pi does not 
-name a function but is a variable whose value is 3.1415926535897936 (or thereabout). 
+potentially confusing) to have symbols name both. For example, append and length 
+are symbols that name functions but have no values as variables, and <code>pi</code> does not 
+name a function but is a variable whose value is <code>3.1415926535897936</code> (or thereabout). 
 
 ### 1.3 Special Forms 
+
 The careful reader will note that setf violates the evaluation rule. We said earlier 
-that functions like +, - and append work by first evaluating all their arguments and 
+that functions like +, - and [append](http://clhs.lisp.se/Body/f_append.htm) work by first evaluating all their arguments and 
 then applying the function to the result. But setf doesn't follow that rule, because 
 setf is not a function at all. Rather, it is part of the basic syntax of Lisp. Besides the 
 syntax of atoms and function calls. Lisp has a small number of syntactic expressions. 
 They are known as special forms. They serve the same purpose as statements in other 
 programming languages, and indeed have some of the same syntactic markers, such 
-as i f and 1 oop. There are two main differences between Lisp's syntax and other 
+as <code>if</code> and <code>loop</code>. There are two main differences between Lisp's syntax and other 
 languages. First, Lisp's syntactic forms are always lists in which the first element is 
-one of a small number of privileged symbols, setf is one of these symbols, so (setf 
-. 10) is a special form. Second, special forms are expressions that return a value. 
+one of a small number of privileged symbols, setf is one of these symbols, so 
+<code>(setf x 10)</code> is a special form. Second, special forms are expressions that return a value. 
 This is in contrast to statements in most languages, which have an effect but do not 
 return a value. 
 
-In evaluating an to expression like (setf . (+ 1 2)), we set the variable named 
-by the symbol . to the value of (+12), which is 3. If setf were a normal function, 
-we would evaluate both the symbol x and the expression (+1 2) and do something 
+In evaluating an to expression like <code>(setf x (+ 1 2))</code>, we set the variable named 
+by the symbol <code>x</code> to the value of <code>(+12)</code>, which is <code>3</code>. If setf were a normal function, 
+we would evaluate both the symbol <code>x</code> and the expression <code>(+1 2)</code> and do something 
 with these two values, which is not what we want at all. setf is called a special form 
 because it does something special: if it did not exist, it would be impossible to write 
 a function that assigns a value to a variable. The philosophy of Lisp is to provide a 
@@ -191,49 +187,75 @@ small number of special forms to do the things that could not otherwise be done,
 then to expect the user to write everthing else as functions. 
 
 The term special form is used confusingly to refer both to symbols like setf and 
-expressions that start with them, like (setf . 3). In the book Common LISPcraft 
+expressions that start with them, like <code>(setf x 3)</code>. In the book Common LISPcraft, 
 Wilensky resolves the ambiguity by calling setf a special function, and reserving the 
-term special form for (setf . 3). This terminology implies that setf is just another 
+term special form for <code>(setf x 3)</code>. This terminology implies that setf is just another 
 function, but a special one in that its first argument is not evaluated. Such a view 
 made sense in the days when Lisp was primarily an interpreted language. The 
 modern view is that setf should not be considered some kind of abnormal function 
 but rather a marker of special syntax that will be handled specially by the compiler. 
-Thus, the special form (setf x (+ 2 1)) should be considered the equivalent of . = 
-2 + 1 in C. When there is risk of confusion, we will call setf a special form operator 
-and (setf . 3) a special form expression. 
-
-INTRODUCTION TO LISP 
+Thus, the special form <code>(setf x (+ 2 1))</code> should be considered the equivalent of 
+<code>x = 2 + 1</code> in C. When there is risk of confusion, we will call setf a special form operator 
+and <code>(setf x 3)</code> a special form expression. 
 
 It turns out that the quote mark is just an abbreviation for another special form. 
-The expression 'x is equivalent to (quote ;c), a special form expression that evaluates 
-toX. The special form operators used in this chapter are: 
+The expression <code>'x</code> is equivalent to (quote x), a special form expression that evaluates 
+to x. The special form operators used in this chapter are: 
 
-defun define function 
-defparameter define special variable 
-set f set variable or field to new value 
-let bind local variable(s) 
-case choose one of several alternatives 
-if do one thing or another, depending on a test 
-function (#') refer to a function 
-quote (') introduce constant data 
+<table>
+  <tr>
+    <td>defun</td>
+    <td>define function</td>
+  </tr>
+  <tr>
+    <td>defparameter</td>
+    <td>define special variable</td>
+  </tr>
+  <tr>
+    <td>setf</td>
+    <td>set variable or field to new value</td>
+  </tr>
+  <tr>
+    <td>let</td>
+    <td>bind local variable(s)</td>
+  </tr>
+  <tr>
+    <td>case</td>
+    <td>choose one of several alternatives</td>
+  </tr>
+  <tr>
+    <td>if</td>
+    <td>do one thing or another, depending on a test</td>
+  </tr>
+  <tr>
+    <td>function (#')</td>
+    <td>refer to a function</td>
+  </tr>
+  <tr>
+    <td>quote (')</td>
+    <td>introduce constant data</td>
+  </tr>
+</table>
 
 ### 1.4 Lists 
-So far we have seen two functions that operate on hsts: append and 1 ength. Since 
+
+So far we have seen two functions that operate on hsts: [append](http://clhs.lisp.se/Body/f_append.htm) and [length](http://clhs.lisp.se/Body/f_length.htm). Since 
 lists are important, let's look at some more list processing functions: 
 
-> . =^ (JOHN 0 PUBLIC) 
+>\> p &rArr; (JOHN 0 PUBLIC) 
 
-> (first p) JOHN 
+>\> (first p) &rArr; JOHN 
 
-> (rest p) (Q PUBLIC) 
+>\> (rest p) &rArr; (Q PUBLIC) 
 
-> (second p) ^ Q 
+>\> (second p) &rArr; Q 
 
-> (third p) =^ PUBLIC 
+>\> (third p) &rArr; PUBLIC 
 
-> (fourth p) ^ NIL 
+>\> (fourth p) &rArr; NIL 
 
-> (length p) 3 
+>\> (length p) &rArr; 3 
+
 
 The functions first, second, third, and fourth are aptly named: first returns 
 the first element of a list, second gives you the second element, and so on. The 
@@ -426,7 +448,7 @@ test the 1 ast-name function:
 > PUBLIC X HOPPER SPOT ARISTOTLE MILNE TOP OLIVIER SCARLET) 
 
 The funny # ' notation maps from the name of a function to the function itself. This 
-is analogous to ' . notation. The built-in function [mapca](http://clhs.lisp.se/Body/f_mapc_.htm) r is passed two arguments, a 
+is analogous to ' . notation. The built-in function [mapcar](http://clhs.lisp.se/Body/f_mapc_.htm) r is passed two arguments, a 
 function and a list. It returns a list built by calling the function on every element of 
 the input list. In other words, the mapcar call above is equivalent to: 
 
