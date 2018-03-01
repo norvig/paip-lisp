@@ -1200,7 +1200,6 @@ program:
 
 ^Pronounced "see-loss." An alternate pronunciation, "klaus," seems to be losing favor. 
 
-### 1.11 Exercises
 (CDAR RESTLIST)))) 
 (COR RESTLIST))))))) 
 (LIST (CONS (READ) 0)))) 
@@ -1218,30 +1217,31 @@ that automatically indent), a much simpler program is possible:
 (dolist (element exp) 
 (atomprint element (+ depth 1))))) 
 
-1.11 Exercises 
-@ Exercise 1.1 [m] Define a version of 1 ast-name that handles "Rex Morgan MD," 
+### 1.11 Exercises 
+
+&#9635; **Exercise 1.1 [m]** Define a version of last-name that handles "Rex Morgan MD," 
 "Morton Downey, Jr.," and whatever other cases you can think of. 
 
-G] Exercise 1.2 [m] Write a function to exponentiate, or raise a number to an integer 
-power. For example: (power 3 2) = 3^ = 9. 
-Exercise 1.3 [m] Write a function that counts the number of atoms in an expression. 
-For example: (count-atoms '(a (b) c)) = 3. Notice that there is something of an 
-ambiguity in this: should (a nil c) count as three atoms, or as two, because it is 
-equivalent to (a () c)? 
+&#9635; **Exercise 1.2 [m]** Write a function to exponentiate, or raise a number to an integer power. 
+<br>For example: <code>(power 3 2) = 3<sup>2</sup> = 9.</code>
 
-I?] Exercise 1.4 [m] Write a function that counts the number of times an expression 
-occurs anywhere within another expression. Example: (count-anywhere 'a *(a 
-((a) b) a)) 3. 
+&#9635; **Exercise 1.3 [m]** Write a function that counts the number of atoms in an expression. 
+<br>For example: `(count-atoms '(a (b) c)) = 3`. Notice that there is something of an 
+ambiguity in this: should `(a nil c)` count as three atoms, or as two, because it is 
+equivalent to `(a () c)`?
 
-t?J Exercise 1.5 [m] Write a function to compute the dot product of two sequences 
+&#9635; **Exercise 1.4 [m]** Write a function that counts the number of times an expression 
+occurs anywhere within another expression. 
+<br>Example: <code>(count-anywhere 'a '(a ((a) b) a)) &rArr; 3</code>. 
+
+&#9635; **Exercise 1.5 [m]** Write a function to compute the dot product of two sequences 
 of numbers, represented as lists. The dot product is computed by multiplying 
-corresponding elements and then adding up the resulting products. Example: 
+corresponding elements and then adding up the resulting products. 
+<br>Example: <code>(dot-product ' (10 20) ' (3 4)) = 10 x 3 + 20 x 4 = 110</code>
 
-(dot-product ' (10 20) ' (3 4)) = 10 . 3 + 20 . 4 = 110 
 
-32 INTRODUCTION TO LISP 
+### 1.12 Answers 
 
-1.12 Answers 
 Answer 1.2 
 
 (defun power (x n) 
@@ -1283,7 +1283,6 @@ Answer 1.4
 (t (+ (count-anywhere item (first tree)) 
 (count-anywhere item (rest tree)))))) 
 
-### 1.12 Answers
 Answer 1.5 Here are three versions: 
 
 (defun dot-product (a b) 
