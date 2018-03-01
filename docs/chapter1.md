@@ -1,10 +1,9 @@
 ## Intorduction to Lisp {docsify-ignore}
 
-> You think you know when you learn, 
-> are more sure when you can write, even more when you can teach, 
-> but certain when you can program. 
-> —Alan Perils
-> Yale University computer scientist 
+<blockquote>
+  You think you know when you learn, are more sure when you can write, even more when you can teach, but certain when you can program. <br><br>
+  <footer>— <cite><a title="Alan Perlis">Alan Perlis, Yale University computer scientist</a></cite></footer>
+</blockquote>
 
 This chapter is for people with little or no experience in Lisp. Readers who feel confident in their Lisp programming ability can quickly skim the chapter or skip it entirely. This  chapter necessarily moves quickly, so those with little programming experience, or any reader who finds this chapter tough going, should seek out a supplementary introductory text. My recommendations are in the preface. 
 
