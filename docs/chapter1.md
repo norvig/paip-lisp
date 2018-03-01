@@ -344,9 +344,11 @@ next section does just that.
 The special form defun stands for "define function." It is used here to define a new 
 function called 1 ast-name: 
 
-(defun last-name (name) 
-"Select the last name from a name represented as a list. " 
-(first (last name))) 
+```emacs
+(defun last-name (name)
+  "Select the last name from a name represented as a list."
+  (first (last name)))
+```
 
 We give our new function the name 1 ast-name. It has a parameter list consisting of a 
 single parameter: (name). This means that the function takes one argument, which 
@@ -406,9 +408,11 @@ the definition of first-name. This is a much easier task than hunting through a 
 program and changing the uses of f 1 rst that refer to names, while leaving other 
 uses alone. 
 
-(defun first-name (name) 
-"Select the first name from a name represented as a list. " 
-(first name)) 
+```emacs 
+(defun first-name (name)
+  "Select the first name from a name represented as a list."
+  (first name))
+``` 
 
 > . (JOHN Q PUBLIC) 
 
@@ -416,10 +420,12 @@ uses alone.
 
 > (first-name '(Wilma Flintstone)) WILMA 
 
-> (setf names '((John Q Public) (Malcolm X) 
-> Admiral Grace Murray Hopper) (Spot) 
-> Aristotle) (A A Milne) (Z . Top) 
-> Sir Larry Olivier) (Miss Scarlet))) =^ 
+```emacs
+(setf names '((John Q Public) (Malcolm X)
+              (Admiral Grace Murray Hopper) (Spot) 
+              (Aristotle) (A A Milne) (Z Z Top)
+              (Sir Larry Olivier) (Miss Scarlet)))
+```
 
 ((JOHN Q PUBLIC) (MALCOLM X) (ADMIRAL GRACE MURRAY HOPPER) 
 (SPOT) (ARISTOTLE) (A A MILNE) (Z . TOP) (SIR LARRY OLIVIER) 
@@ -490,9 +496,11 @@ first-name which ignored titles like Admiral and Miss, and got to the "real" fir
 
 name. We could proceed as follows: 
 
-(defparameter nitles * 
-'(Mr Mrs Miss Ms Sir Madam Dr Admiral Major General) 
-"A list of titles that can appear at the start of a name.") 
+```emacs 
+(defparameter *titles*
+  '(Mr Mrs Miss Ms Sir Madam Dr Admiral Major General)
+  "A list of titles that can appear at the start of a name.") 
+```
 
 We've introduced another new special form, defparameter, which defines a parameter—
 a variable that does not change over the course of a computation, but that 
@@ -526,15 +534,13 @@ member will return a non-nil (hence true) value if the first element of the name
 list of titles, and will return .i 1 (hence false) if it is not. Although all non-nil values 
 are considered true, by convention the constant t is usually used to represent truth. 
 
-(defun first-name (name) 
-
-"Select the first name from a name represented as a list. " 
-
-(if (member (first name) *titles*) 
-
-(first-name (rest name)) 
-
-(first name))) 
+```emacs
+(defun first-name (name)
+  "Select the first name from a name represented as a list."
+  (if (member (first name) *titles*)
+      (first-name (rest name))
+      (first name)))
+```
 
 When we map the new fi rst-name over the list of names, the results are more 
 encouraging. In addition, the function gets the "right" result for '(Madam Major 
@@ -696,16 +702,17 @@ of all the numbers in the original list and the negation of those numbers. For
 example, given the list (testing 12 3 test), return (1 -12-2 3 -3). This 
 problem can be solved very easily using mappend as a component: 
 
-(defun numbers-and-negations (input) 
-"Given a list, return only the numbers and their negations." 
-(mappend #'number-and-negation input)) 
+```emacs
+(defun numbers-and-negations (input)
+  "Given a list, return only the numbers and their negations."
+  (mappend #'number-and-negation input))
 
-(defun number-and-negation (x) 
-"If . is a number, return a list of . and -x." 
-(if (numberp x) 
-
-(list . (- .)) 
-nil)) 
+(defun number-and-negation (x)
+  "If x is a number, return a list of x and -x."
+  (if (numberp x)
+      (list x (- x))
+      nil))
+```
 
 > (numbers-and-negations '(testing 12 3 test)) =^(1-12-2 3 -3) 
 
@@ -1211,14 +1218,14 @@ Both versions are very difficult to read. With our modern insight (and text edit
 
 that automatically indent), a much simpler program is possible: 
 
-(defun atomprint (exp &optional (depth 0)) 
-"Print each atom in exp. along with its depth of nesting." 
-(if (atom exp) 
-
-(format t ""SATOM: ~a, DEPTH "d" exp depth) 
-
-(dolist (element exp) 
-(atomprint element (+ depth 1))))) 
+```emacs
+(defun atomprint (exp &optional (depth 0))
+  "Print each atom in exp, along with its depth of nesting."
+  (if (atom exp)
+      (format t "~&ATOM: ~a, DEPTH ~d" exp depth)
+      (dolist (element exp)
+        (atomprint element (+ depth 1)))))
+```
 
 ### 1.11 Exercises 
 
@@ -1246,65 +1253,66 @@ corresponding elements and then adding up the resulting products.
 
 ### 1.12 Answers 
 
-Answer 1.2 
+##### Answer 1.2
 
-(defun power (x n) 
-"Power raises . to the nth power. . must be an integer >= 0. 
-This executes in log . time, because of the check for even n. 
+```emacs
+(defun power (x n)
+  "Power raises x to the nth power.  N must be an integer >= 0.
+   This executes in log n time, because of the check for even n."
+  (cond ((= n 0) 1)
+        ((evenp n) (expt (power x (/ n 2)) 2))
+        (t (* x (power x (- n 1))))))
+```
 
-(cond ((= . 0) 1) 
-((evenp n) (expt (power . (/ . 2)) 2)) 
-(t (* . (power . (-. 1)))))) 
+##### Answer 1.3
 
-Answer 1.3 
+```emacs
+(defun count-atoms (exp)
+  "Return the total number of non-nil atoms in the expression."
+  (cond ((null exp) 0)
+        ((atom exp) 1)
+        (t (+ (count-atoms (first exp))
+              (count-atoms (rest exp))))))
 
-(defun count-atoms (exp) 
-"Return the total number of non-nil atoms in the expression." 
-(cond ((null exp) 0) 
+(defun count-all-atoms (exp &optional (if-null 1))
+  "Return the total number of atoms in the expression, 
+  counting nil as an atom only in non-tail position."
+  (cond ((null exp) if-null)
+        ((atom exp) 1)
+        (t (+ (count-all-atoms (first exp) 1)
+              (count-all-atoms (rest exp) 0)))))
+```
 
-((atom exp) 1) 
+##### Answer 1.4
 
-(t (+ (count-atoms (first exp)) 
-(count-atoms (rest exp)))))) 
+```emacs
+(defun count-anywhere (item tree)
+  "Count the times item appears anywhere within tree."
+  (cond ((eql item tree) 1)
+        ((atom tree) 0)
+        (t (+ (count-anywhere item (first tree))
+              (count-anywhere item (rest tree))))))
+```
 
-(defun count-all-atoms (exp ?optional (if-null 1)) 
-"Return the total number of atoms in the expression, 
-counting nil as an atom only in non-tail position." 
-(cond ((null exp) if-null) 
+##### Answer 1.5 Here are three versions: 
 
-((atom exp) 1) 
+```emacs
+(defun dot-product (a b)
+  "Compute the mathematical dot product of two vectors."
+  (if (or (null a) (null b))
+      0
+      (+ (* (first a) (first b))
+         (dot-product (rest a) (rest b)))))
 
-(t (+ (count-all-atoms (first exp) 1) 
-(count-all-atoms (rest exp) 0))))) 
+(defun dot-product (a b)
+  "Compute the mathematical dot product of two vectors."
+  (let ((sum 0))
+    (dotimes (i (length a))
+      (incf sum (* (elt a i) (elt b i))))
+    sum))
 
-Answer 1.4 
+(defun dot-product (a b)
+  "Compute the mathematical dot product of two vectors."
+  (apply #'+ (mapcar #'* a b)))
+```
 
-(defun count-anywhere (item tree) 
-"Count the times item appears anywhere within tree." 
-(cond ((eql item tree) 1) 
-
-((atom tree) 0) 
-(t (+ (count-anywhere item (first tree)) 
-(count-anywhere item (rest tree)))))) 
-
-Answer 1.5 Here are three versions: 
-
-(defun dot-product (a b) 
-"Compute the mathematical dot product of two vectors." 
-(if (or (null a) (null b)) 
-
-0 
-(+ (* (first a) (first b)) 
-(dot-product (rest a) (rest b))))) 
-
-(defun dot-product (a b) 
-"Compute the mathematical dot product of two vectors." 
-(let ((sum 0)) 
-
-(dotimes (i (length a)) 
-(incf sum (* (elt a i) (elt b i)))) 
-sum)) 
-
-(defun dot-product (a b) 
-"Compute the mathematical dot product of two vectors." 
-(apply #'+ (mapcar #'* a b))) 
