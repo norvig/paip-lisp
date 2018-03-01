@@ -736,7 +736,7 @@ separately:
 
 > (apply #'+ '(2 3)) 5 
 
-> (funcall #'+ '(2 3) )&rArr; Error: (2 3) is not a number. 
+> (funcall #'+ '(2 3) ) &rArr; Error: (2 3) is not a number. 
 
 These are equivalent to (+ 2 3), (+ 2 3),and(+ '(2 3)), respectively. 
 
@@ -765,9 +765,9 @@ atomic name for a built-in function. As such, it is appropriate for use in the f
 position of a function call, but if we want to get at the actual function, rather than its 
 name, we still have to use the # ' notation. For example: 
 
-> ((lambda (x) (+ . 2)) 4) =? 6 
+> ((lambda (x) (+ . 2)) 4) &rArr; 6 
 
-> (funcall #'(lambda (x) (+ . 2)) 4) =^ 6 
+> (funcall #'(lambda (x) (+ . 2)) 4) &rArr; 6 
 
 To understand the distinction we have to be clear on how expressions are evaluated 
 in Lisp. The normal rule for evaluation states that symbols are evaluated by looking 
