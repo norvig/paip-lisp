@@ -341,7 +341,7 @@ next section does just that.
 ### 1.5 Defining New Functions 
 
 The special form defun stands for "define function." It is used here to define a new 
-function called 1 ast-name: 
+function called last-name: 
 
 ```emacs
 (defun last-name (name)
@@ -349,7 +349,7 @@ function called 1 ast-name:
   (first (last name)))
 ```
 
-We give our new function the name 1 ast-name. It has a parameter list consisting of a 
+We give our new function the name last-name. It has a parameter list consisting of a 
 single parameter: (name). This means that the function takes one argument, which 
 we will refer to as name. It also has a documentation string that states what the function 
 does. This is not used in any computation, but documentation strings are crucial 
@@ -376,7 +376,7 @@ complications to be explained later), and the function body consists of one or m
 expressions that are evaluated when the function is called. The last expression is 
 returned as the value of the function call. 
 
-Once we have defined 1 ast-name, we can use it just like any other Lisp function: 
+Once we have defined last-name, we can use it just like any other Lisp function: 
 
 > (last-name p)=i> PUBLIC 
 
@@ -394,7 +394,7 @@ for a person to have a last name; we are just defining an operation on a represe
 of names in terms of lists. Our intuitions—that MD is a title. Spot is the first name 
 of a dog, and Aristotle lived before the concept of last name was invented—are not 
 represented in this operation. However, we could always change the definition of 
-1 ast-name to incorporate these problematic cases. 
+last-name to incorporate these problematic cases. 
 
 We can also define the function first-name. Even though the definition is trivial 
 (it is the same as the function f 1 rst), it is still good practice to define f 1 rst-name 
@@ -442,7 +442,7 @@ of names.
 1.6 Using Functions 
 One good thing about defining a list of names, as we did above, is that it makes it 
 easier to test our functions. Consider the following expression, which can be used to 
-test the 1 ast-name function: 
+test the last-name function: 
 
 > (mapcar #'last-name names) 
 > PUBLIC X HOPPER SPOT ARISTOTLE MILNE TOP OLIVIER SCARLET) 
