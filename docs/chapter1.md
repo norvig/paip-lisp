@@ -30,17 +30,17 @@ We may now type in our computation and see the result displayed. It turns out th
 
 We see that Lisp has printed the answer, `4`, and then another prompt, `>`, to indicate it is ready for the next computation. Throughout this book, all Lisp expressions will be displayed in typewriter font. Text on the same line as the `>` prompt is input typed by the user, and text following it is output printed by the computer. Usually, input that is typed by the programmer will be in lowercase letters, while output thatis printed back by the computer will be in UPPERCASE letters. Of course, with symbols like `+` and `4` there is no difference. 
 
-To save space on the page, the output will sometimes be shown on the same line as the input, separated by an arrow `=>` which can be read as "evaluates to," and can also be thought of as standing for the return or enter key that the user presses to complete the input: 
+To save space on the page, the output will sometimes be shown on the same line as the input, separated by an arrow `&rArr;` which can be read as "evaluates to," and can also be thought of as standing for the return or enter key that the user presses to complete the input: 
 
-> \> (+ 2 2) ^ 4 
+> \> (+ 2 2) &rArr; 4 
 
 One advantage of parenthesized prefix notation is that the parentheses clearly mark the beginning and end of an expression. If we want, we can give `+` more than two arguments, and it will still add them all: 
 
-> \> (+ 1 2 3 4 5 6 7 8 9 10) => 55 
+> \> (+ 1 2 3 4 5 6 7 8 9 10) &rArr; 55 
 
 This time we try `(9000 + 900 + 90 -f 9) - (5000 + 500 + 50 + 5)`: 
 
-> \> (- (+ 9000 900 90 9) (+ 5000 500 50 5)) => 4444 
+> \> (- (+ 9000 900 90 9) (+ 5000 500 50 5)) &rArr; 4444 
 
 This example shows that expressions can be nested. The arguments to the function are parenthesized lists, while the arguments to each `+` are atoms. The Lisp notation may look unusual compared to standard mathematical notation, but there are advantages to this notation; since Lisp expressions can consist of a function followed by any number of arguments, we don't have to keep repeating the `+`. More important than the notation is the rule for evaluation. In Lisp, lists are evaluated by first evaluating all the arguments, then applying the function to the arguments, thereby computing the result. This rule is much simpler than the rule for evaluating normal mathematical expressions, where there are many conventions to remember, 
 such as doing multiplications and divisions before sums and differences. We will see below that the actual Lisp evaluation rule is a little more complicated, but not much. 
@@ -63,33 +63,33 @@ Besides numbers. Lisp can represent characters (letters), strings of characters,
 
 Here's an example of a computation on lists: 
 
-> \> (append '(Pat Kim) '(Robin Sandy)) => (PAT KIM ROBIN SANDY) 
+> \> (append '(Pat Kim) '(Robin Sandy)) &rArr; (PAT KIM ROBIN SANDY) 
 
 This expression appends together two lists of names. The rule for evaluating this expression is the same as the rule for numeric calculations: apply the function (in this case append) to the value of the arguments. 
 
 The unusual part is the quote mark `'`, which serves to block the evaluation of the following expression, returning it literally. If we just had the expression (Pat Kim), it would be evaluated by considering Pat as a function and applying it to the value of the expression Kim. This is not what we had in mind. The quote mark instructs Lisp to treat the list as a piece of data rather than as a function call: 
 
-> \> '(Pat Kim) => (PAT KIM) 
+> \> '(Pat Kim) &rArr; (PAT KIM) 
 
 In other computer languages (and in English), quotes usually come in pairs: one to mark the beginning, and one to mark the end. In Lisp, a single quote is used to mark the beginning of an expression. Since we always know how long a single expression is—either to the end of an atom or to the matching parenthesis of a list—we don't need an explicit punctuation mark to tell us where the expression ends. Quotes can be used on lists, as in ' (Pat Kim), on symbols as in ' Robin, and in fact on anything else. 
 
 Here are some examples: 
 
-> \> 'John => JOHN 
+> \> 'John &rArr; JOHN 
 
-> \> '(John Q Public) => (JOHN Q PUBLIC) 
+> \> '(John Q Public) &rArr; (JOHN Q PUBLIC) 
 
-> \> '2 => 2 
+> \> '2 &rArr; 2 
 
-> \> 2 => 2 
+> \> 2 &rArr; 2 
 
-> \> '(+ 2 2) => (+ 2 2) 
+> \> '(+ 2 2) &rArr; (+ 2 2) 
 
-> \> (+ 2 2) => 4 
+> \> (+ 2 2) &rArr; 4 
 
-> \> John => Error: JOHN is not a bound variable 
+> \> John &rArr; Error: JOHN is not a bound variable 
 
-> \> (John Q Public) => Error: JOHN is not a function 
+> \> (John Q Public) &rArr; Error: JOHN is not a function 
 
 Note that '2 evaluates to 2 because it is a quoted expression, and 2 evaluates to 2 because numbers valuate to themselves. Same result, different reason. In contrast, 'John evaluates to John because it is a quoted expression, but evaluating John leads to an error, because evaluating a symbol means getting the value of the symbol, and no value has been assigned to John. 
 
@@ -126,7 +126,7 @@ important functions are presented in part I of this book.
   a symbol are a little complicated, but the normal convention is to use 
   symbols consisting mostly of letters, with words separated by a dash (-), and 
   perhaps with a number at the end. Some programmers are more liberal in naming 
-  variables, and include characters like'? 1 $/<=>'. For example, a function to 
+  variables, and include characters like'? 1 $/<&rArr;'. For example, a function to 
   convert dollars to yen might be named with the symbol $- to -yen or $ ->yen in 
   Lisp, while one would use something like Dol 1 arsToYen, dol 1 ars_to_yen or 
   do! 2yen in Pascal or C. There are a few exceptions to these naming conventions, 
@@ -148,7 +148,7 @@ important functions are presented in part I of this book.
 
 > (+ X x) 20 
 
-> (+ X (length p)) => 13 
+> (+ X (length p)) &rArr; 13 
 
 After assigning the value (John Q Rubi i c) to the variable named p, we can refer to 
 the value with the name p. Similarly, after assigning a value to the variable named x, 
@@ -251,9 +251,9 @@ need not be composed only of atoms, but can contain sublists as elements:
 
 1A LISTS V\_ 
 
-> (second x) => 2 
+> (second x) &rArr; 2 
 
-> (third X) => (ELEMENT 3) 
+> (third X) &rArr; (ELEMENT 3) 
 
 > (fourth X) ((4)) 
 
@@ -265,7 +265,7 @@ need not be composed only of atoms, but can contain sublists as elements:
 
 > (first X) (1ST ELEMENT) 
 
-> (second (first x)) => ELEMENT 
+> (second (first x)) &rArr; ELEMENT 
 
 So far we have seen how to access parts of lists. It is also possible to build up new 
 lists, as these examples show: 
@@ -274,7 +274,7 @@ lists, as these examples show:
 
 > (cons 'Mr p) ^ (MR JOHN Q PUBLIC) 
 
-> (cons (first p) (rest p)) => (JOHN Q PUBLIC) 
+> (cons (first p) (rest p)) &rArr; (JOHN Q PUBLIC) 
 
 > (setf town (list 'Anytown 'USA)) =^ (ANYTOWN USA) 
 
@@ -308,7 +308,7 @@ name? For (JOHN Q PUBLIC) we could Justuse the function thi rd, but that wouldn'
 work for someone with no middle name. There is a function called 1 ast in Common 
 Lisp; perhaps that would work. We can experiment: 
 
-> (last p) => (PUBLIC) 
+> (last p) &rArr; (PUBLIC) 
 
 > (first (last p)) PUBLIC 
 
@@ -448,7 +448,7 @@ that some programmers still use ca r and cdr for Usts as well.
 
 Here are some more examples of mapcar: 
 
-> (mapcar '(1 2 3 4))=>(-l -2 -3 -4) 
+> (mapcar '(1 2 3 4))&rArr;(-l -2 -3 -4) 
 
 > (mapcar #'+ '(1 2 3 4) '(10 20 30 40)) ^(11 22 33 44) 
 
@@ -665,7 +665,7 @@ list that did not contain a number, it would be an error, just as it would be an
 evaluate (self-and-double 3 4) or (self-and-double 'Kim). Now let's return to 
 the mapping functions: 
 
-> (mapcar #'self-and-double '(1 10 300))=>((1 2) (10 20) (300 600)) 
+> (mapcar #'self-and-double '(1 10 300))&rArr;((1 2) (10 20) (300 600)) 
 
 > (mappend #'self-and-double '(1 10 300))=. (1 2 10 20 300 600) 
 
@@ -715,7 +715,7 @@ separately:
 
 > (apply #'+ '(2 3)) 5 
 
-> (funcall #'+ '(2 3) )=> Error: (2 3) is not a number. 
+> (funcall #'+ '(2 3) )&rArr; Error: (2 3) is not a number. 
 
 These are equivalent to (+ 2 3), (+ 2 3),and(+ '(2 3)), respectively. 
 
@@ -774,7 +774,7 @@ Here are some more examples of the correct use of functions:
 > 2468 10) 
 
 > (mappend #'(lambda (1) (list 1 (reverse 1))) 
-> ((1 2 3) (a b c))) => 
+> ((1 2 3) (a b c))) &rArr; 
 > (1 2 3) (3 2 1) (A . C) (C . A)) 
 
 Programmers who are used to other languages sometimes fail to see the point of 
@@ -826,19 +826,19 @@ abbreviation for the special form expression (quote x). Similarly, the notation
 \# '/is an abbreviation for the special form expression (f uncti on f).
 
 ?John = (quote John) JOHN 
-(setf . 'John) => JOHN 
+(setf . 'John) &rArr; JOHN 
 
-(defun twice (x) (+ . x)) => TWICE 
+(defun twice (x) (+ . x)) &rArr; TWICE 
 
-(if (= 2 3) (error) (+ 5 6)) =^ 11 
+(if (= 2 3) (error) (+ 5 6)) &rArr; 11 
 
 Afunction application is evaluated by first evaluating the arguments (the rest of 
 the list) and then finding the function named by the first element of the list and 
 applying it to the list of evaluated arguments. 
 
-(+2 3) =^5 
+(+2 3) &rArr; 5 
 
-(- (+ 90 9) (+ 50 5 (length '(Pat Kim)))) =^ 42 
+(- (+ 90 9) (+ 50 5 (length '(Pat Kim)))) &rArr; 42 
 
 Note that if ' (Pat Kim) did not have the quote, it would be treated as a function 
 application of the function pat to the value of the variable ki m. 
@@ -911,7 +911,8 @@ can save a microsecond at read time, this makes no difference at all at evaluati
 time. Every variable, regardless of its name, is just a memory location, and the time 
 to access the location does not depend on the name of the variable. 
 
-### 1.10 What Makes Lisp Different? 
+### 1.10 What Makes Lisp Different?
+
 What is it that sets Lisp apart from other languages? Why is it a good language for 
 AI applications? There are at least eight important factors: 
 
