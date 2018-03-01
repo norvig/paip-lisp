@@ -1363,8 +1363,8 @@ nil
 (append (funcall fn (first the-list)) 
 (mappend fn (rest the-list))))) 
 
-f unca . is similar to a ppl y; it too takes a function as its first argument and applies the 
-function to a list of arguments, but in the case of f uncal 1, the arguments are listed 
+funcall is similar to apply; it too takes a function as its first argument and applies the 
+function to a list of arguments, but in the case of funcall, the arguments are listed 
 separately: 
 
 > (funcall #'+ 2 3) =i> 5 
@@ -1381,7 +1381,7 @@ introduce a function without giving it a name, using the special syntax 1 ambda.
 
 The name lambda comes from the mathematician Alonzo Church's notation for 
 functions (Church 1941). Lisp usually prefers expressive names over terse Greek 
-letters, but lambda is an exception. A better name would be ma ke -f uncti on. Lambda 
+letters, but lambda is an exception. A better name would be make -function. Lambda 
 derives from the notation in Russell and Whitehead's Principia Mathematica, which 
 used a caret over bound variables: x{x -hx). Church wanted a one-dimensional 
 string, so he moved the caret in front: ^x{x-\-x). The caret looked funny with nothing 
@@ -1422,7 +1422,7 @@ evaluation rule, and will not be treated as functions. For example:
 
 > append ^ Error: APPEND is not a bound variable 
 
-> (lambda (x) i+ . Z)) Error: LAMBDA is not afunction 
+> (lambda (x) i+ . Z)) Error: LAMBDA is not a function 
 
 Here are some more examples of the correct use of functions: 
 
@@ -1469,7 +1469,7 @@ printed representation of a string has a double quote mark (") at each end.
 We can now summarize the evaluation rule for Lisp. 
 
 * Every expression is either a list or an atom. 
-* Every list to be evaluated is either a special form expression or afunction applica tion. 
+* Every list to be evaluated is either a special form expression or a function application. 
 * A specialform expression is defined to be a lis t whose first element is a special form 
 operator. The expression is evaluated according to the operator's idiosyncratic 
 evaluation rule. For example, the evaluation rule for setf is to evaluate the 
@@ -1480,7 +1480,7 @@ is to return the first argument unevaluated. The notation 'x is actually an
 
 1.9 SUMMARY: THE LISP EVALUATION RULE 23 
 abbreviation for the special form expression (quote x). Similarly, the notation 
-# '/is an abbreviation for the special form expression (f uncti on f). 
+# '/is an abbreviation for the special form expression (function f). 
 
 •John = (quote John) JOHN 
 (setf . 'John) => JOHN 
@@ -4619,7 +4619,7 @@ bear (hotness (bear-porridge bear)))
 
 In the interaction below, the assertion failed, and the programmer's error message 
 was printed, along with two possibilities for continuing. The user selected one, typed 
-in a call to ma ke - por r i dge for the new value, and the function succesfully continued. 
+in a call to make - por r i dge for the new value, and the function succesfully continued. 
 
 
 90 OVERVIEW OF LISP 
@@ -4690,8 +4690,8 @@ words, separate the development stage from the fine-tuning stage. Chapters 9 and
 on debugging and antibugging techniques. 
 
 3.15 Evaluation 
-There are three functions for doing evaluation in Lisp: f uncal 1, apply, and eval. 
-funcal 1 is used to apply a function to individual arguments, while apply is used 
+There are three functions for doing evaluation in Lisp: funcall, apply, and eval. 
+funcall is used to apply a function to individual arguments, while apply is used 
 to apply a function to a list of arguments. Actually, apply can be given one or 
 more individual arguments before the final argument, which is always a Ust. eval 
 is passed a single argument, which should be an entire form-a function or special 
@@ -4707,14 +4707,14 @@ equivalent:
 In the past, eval was seen as the key to Lisp's flexibility. In modern Lisps with lexical 
 scoping, such as Common Lisp, eval is used less often (in fact, in Scheme there is 
 no eval at all). Instead, programmers are expected to use 1 ambda to create a new 
-function, and then apply or f uncal 1 the function. In general, if you find yourself 
+function, and then apply or funcall the function. In general, if you find yourself 
 using eval, you are probably doing the wrong thing. 
 
 
 92 OVERVIEW OF LISP 
 
 3.16 Closures 
-What does it mean to create a new function? Certainly every time a f uncti on (or #') 
+What does it mean to create a new function? Certainly every time a function (or #') 
 special form is evaluated, a function is returned. But in the examples we have seen 
 and in the following one, it is always the same function that is returned. 
 
@@ -5742,7 +5742,7 @@ returns t only when the operator can be applied.
 This section will define a list of operators applicable to the "driving to nursery school" 
 domain and will show how to pose and solve some problems in that domain. First, 
 we need to construct the list of operators for the domain. The defstruct form for the 
-type op automatically defines the function ma ke - op, which can be used as follows: 
+type op automatically defines the function make - op, which can be used as follows: 
 
 (make-op :action 'drive-son-to-school 
 ipreconds *(son-at-home car-works) 
@@ -6254,7 +6254,7 @@ convention is enforced by the function GPS. Instead of calling (achieve-al 1 sta
 goals nil), GPS calls (achieve-all (cons '(start) state) goals nil). Soeven 
 if the user passes GPS a null initial state, it will pass on a state containing (start ) 
 to achieve-al 1. From then on, we are guaranteed that no state will ever become 
-nil, because the only function that builds a new state is a ppl y - op, and we can see by 
+nil, because the only function that builds a new state is apply - op, and we can see by 
 looking at the last line of appl y - op that it always appends something onto the state it 
 is returning. (An add-list can never be nil, because if it were, the operator would not 
 be appropriate. Besides, every operator includes the (executi ng ... ) condition.) 
@@ -9734,7 +9734,7 @@ trip has done, except by reading the debugging output.
 The data structure path is designed to solve both these problems. A path has 
 four fields: the current state, the previous partial path that this path is extending, 
 the cost of the path so far, and an estimate of the total cost to reach the goal. Here is 
-the structure definition for path. It uses the : pri nt-f uncti on option to say that all 
+the structure definition for path. It uses the : pri nt-function option to say that all 
 paths are to be printed with the function pr i nt - pa th, which will be defined below. 
 
 (defstruct (path (:print-function print-path)) 
@@ -10416,7 +10416,7 @@ efficient sorter .
 
 0 Exercise 6.10 [m] Write versions of graph-search and a*-search that use hash 
 tables rather than lists to test whether a state has been seen before. 
-S Exercise 6.11 [m] Writeafunctionthatcallsbeam-searchtofindthefirstnsolution s 
+S Exercise 6.11 [m] Write a function that calls beam-searchtofindthefirstnsolution s 
 to a problem and returns them in a list. 
 0 Exercise 6.12 [m] On personal computers without floating-point hardware, the 
 ai r-di stanc e calculation will be rather slow. If this is a problem for you, arrange 
@@ -13066,14 +13066,14 @@ valueofCfib 5).
 
 Understanding why this works requires a clear understanding of the distinction 
 between functions and function names. The original (defun fib ...) form does two 
-things: builds a function and stores it as the symbol -f uncti on value of f i b. Within 
+things: builds a function and stores it as the symbol -function value of f i b. Within 
 that function there are two references to f i b; these are compiled (or interpreted) as 
-instructions to fetch the symbol - f uncti on of f i b and apply it to the argument. 
+instructions to fetch the symbol - function of f i b and apply it to the argument. 
 
 What memo i ze does is fetch the original function and transform it with memo to a 
 function that, when called, will first look in the table to see if the answer is already 
 known. If not, the original function is called, and a new value is placed in the table. 
-The trick is that memoi ze takes this new function and makes it the symbol - f uncti on 
+The trick is that memoi ze takes this new function and makes it the symbol - function 
 value of the function name. This means that all the references in the original function 
 will now go to the new function, and the table will be properly checked on each 
 recursive call. One further complication to memo: the function gethash returns both 
@@ -13625,15 +13625,15 @@ value. Thus, we can use the closures directly instead of using del ay structures
 have some way of distinguishing closures from lists. Compiled closures are atoms, so 
 they can always be distinguished from lists. But sometimes closures are implemented 
 as lists beginning with 1 ambda or some other implementation-dependent symbol.^ 
-The built-in function f uncti onp is defined to be true of such lists, as well as of all 
-symbols and all objects returned by compi 1 e. But using f uncti onp means that we 
+The built-in function functionp is defined to be true of such lists, as well as of all 
+symbols and all objects returned by compi 1 e. But using functionp means that we 
 can not have a pipe that includes the symbol 1 ambda as an element, because it will be 
 confused for a closure: 
 
 > (functionp (last '(theta iota kappa lambda))) ^ . 
 
 If we consistently use compiled functions, then we could eliminate the problem by 
-testing with the built-in predicate compi 1 ed-f uncti on-p. The following definitions 
+testing with the built-in predicate compi 1 ed-function-p. The following definitions 
 do not make this assumption: 
 
 (defmacro make-pipe (head tail) 
@@ -13654,7 +13654,7 @@ the tail if it is a function."
 (rest pipe))) 
 
 Everything else remains the same. If we recompile integers (because it uses the 
-macro ma ke -pi pe), we see the following behavior. First, creation of the infinite pipe 
+macro make -pi pe), we see the following behavior. First, creation of the infinite pipe 
 c is similar: 
 
 > (setf c (integers 0)) (0 , #<CLOSURE 77350123>) 
@@ -14064,7 +14064,7 @@ has occurred.
 In the code below, I use the conditional read macro characters #+ and #- to define 
 the right behavior on both Explorer and non-Explorer machines. We have seeen 
 that # is a special character to the reader that takes different action depending on 
-the following character. For example, #' f . is read as (f uncti on f .). The character 
+the following character. For example, #' f . is read as (function f .). The character 
 sequence #+ is defined so that ^+feature expression reads as expression if thefeature is 
 defined in the current implementation, and as nothing at all if it is not. The sequence 
 #- acts in just the opposite way. For example, on a TI Explorer, we would get the 
@@ -18422,7 +18422,7 @@ variable bindings.
 (setf (var-binding var) value) 
 t) 
 
-To make vars easier to read, we can install a : pri nt-f uncti on: 
+To make vars easier to read, we can install a : pri nt-function: 
 
 (defstruct (var (iprint-function print-var)) 
 name (binding unbound)) 
@@ -18437,7 +18437,7 @@ name (binding unbound))
 
 /1.6 DESTRUCTIVE UNIFICATION 379 
 
-Thisis the first example of a carefully crafted : pri nt-f uncti on. There are three things 
+Thisis the first example of a carefully crafted : pri nt-function. There are three things 
 to notice about it. First, it explicitly writes to the stream passed as the argument. 
 It does not write to a default stream. Second, it checks the variable depth against 
 *pr i nt-1 evel *, and prints just the variable name when the depth is exceeded. Third, 
@@ -20081,7 +20081,7 @@ making a query with the ? - macro.
 [¿] Exercise 12.6 [m] Suppose you define a predicate p, which calls q, and then define 
 
 q.In some implementations of Lisp, when you make a query like (? - (. ?x)), you 
-may get a warning message like "f uncti on q/1 undef i ned" before getting the correct 
+may get a warning message like "function q/1 undef i ned" before getting the correct 
 
 12,7 BENCHMARKING THE COMPILER 411 
 
@@ -20261,7 +20261,7 @@ but with dereferencing?"
 (deref-equal (first x) (first y)) 
 (deref-equal (rest x) (rest y))))) 
 
-One of the most important primitives is cal 1. Like f uncal 1 in Lisp, cal 1 allows us 
+One of the most important primitives is cal 1. Like funcall in Lisp, cal 1 allows us 
 to build up a goal and then try to prove it. 
 
 (defun cal 1/1 (goal cont) 
@@ -21001,7 +21001,7 @@ bindings)))))))))
 
 430 COMPILING LOGIC PROGRAMS 
 
-Answer 12.11 true /0 is f uncal 1: when a goal succeeds, we call the continuation, 
+Answer 12.11 true /0 is funcall: when a goal succeeds, we call the continuation, 
 fai 1 /O is i gnore: when a goal fails, we ignore the continuation. We could also define 
 compiler macros for these primitives: 
 
@@ -26731,7 +26731,7 @@ an expert in the domain or an expert programmer.
 
 In our version of EMYCIN, we provide only the simplest tools for making the 
 expert's job easier. The macros defcontext and defparm, defined above, are a little 
-easier than calling ma ke - context and ma ke - pa rm explicitly, but not much. The macro 
+easier than calling make - context and make - pa rm explicitly, but not much. The macro 
 def rul e defines a rule and checks for some obvious errors: 
 
 
@@ -28011,7 +28011,7 @@ diagram))
 
 The defstruct for di agram automatically creates the function copy-di agram, but it 
 just copies each field, without copying the contents of each field. Thus we need 
-ma ke - copy -di ag ram to create a copy that shares no structure with the original. 
+make - copy -di ag ram to create a copy that shares no structure with the original. 
 
 
 173 LABELING DIAGRAMS 577 
@@ -29279,9 +29279,9 @@ The next step is to handle moves properly: given a board and a square to move
 to, update the board to reflect the effects of the player moving to that square. This 
 means flipping some of the opponent's pieces. One design decision is whether the 
 procedure that makes moves, make-move, will be responsible for checking for error 
-conditions. My choice is that ma ke - move assumes it will be passed a legal move. That 
+conditions. My choice is that make - move assumes it will be passed a legal move. That 
 way, a strategy can use the function to explore sequences of moves that are known to 
-be valid without slowing ma ke - move down. Of course, separate procedures will have 
+be valid without slowing make - move down. Of course, separate procedures will have 
 to insure that a move is legal. Here we introduce two terms: a valid move is one that 
 is syntactically correct: an integer from 11 to 88 that is not off the board. A legal move 
 is a valid move into an empty square that will flip at least one opponent. Here's the 
@@ -33589,7 +33589,7 @@ nil
 (symbol "¡s (+ . 1)))) 
 (make-dcg-body (rest body) (+ . 1)))))))) 
 
-@ Exercise 20.1 [m] ma ke - dcg violates one of the cardinal rules of macros. What does 
+@ Exercise 20.1 [m] make - dcg violates one of the cardinal rules of macros. What does 
 it do wrong? How would you fix it? 
 
 20.3 A Simple Grammar in DCG Format 
@@ -33636,10 +33636,10 @@ subject, we want to get the simplification:
 ((lambda (x) (kiss . Jean)) Terry) => (kiss Terry Jean) 
 
 Such simplification is not done automatically by Prolog, but we can write a predicate 
-to do it. We will call it f unca 11, because it is similar to the Lisp function of that name, 
+to do it. We will call it funcall, because it is similar to the Lisp function of that name, 
 although it only handles replacement of the argument, not full evaluation of the 
 body. (Technically, this is the lambda-calculus operation known as beta-reduction.) 
-The predicate f unca 11 is normally used with two input arguments, a function and its 
+The predicate funcall is normally used with two input arguments, a function and its 
 argument, and one output argument, the resulting reduction: 
 
 (<- (funcall (lambda (?x) ?body) ?x ?body)) 
@@ -33651,7 +33651,7 @@ With this we could write our rule for sentences as:
 (VP ?agr ?pred) 
 (:test (funcall ?pred ?subj ?sem))) 
 
-An alternative is to, in effect, compile away the call to f unca 11. Instead of having the 
+An alternative is to, in effect, compile away the call to funcall. Instead of having the 
 semantic representation of VP be a single lambda expression, we can represent it as 
 
 ^The asterisk at the start of a sentence is the standard linguistic notation for an utterance 
@@ -33662,7 +33662,7 @@ that is ungrammatical or otherwise ill-formed.
 
 two arguments: an input argument, ?subj, which acts as a parameter to the output 
 argument, ?pred, which takes the place of the body of the lambda expression. By 
-explicitly manipulating the parameter and body, we can eliminate the call to f unca 11. 
+explicitly manipulating the parameter and body, we can eliminate the call to funcall. 
 The trick is to make the parameter and the subject one and the same: 
 
 (rule (S ?pred) --> 
@@ -37892,7 +37892,7 @@ following type of expansion:
 This makes doubl e a special variable, so we can write doubl e instead of # 'doubl e. 
 But this approach is not recommended—it is dangerous to define special variables 
 that violate the asterisk convention, and the Common Lisp compiler may not be able 
-to optimize special variable references the way it canf uncti on special forms. Also, 
+to optimize special variable references the way it canfunction special forms. Also, 
 this approach would not interact properly with f 1 et and 1 abel s. 
 
 
@@ -38705,7 +38705,7 @@ introduced by the var? and more? parameters.
 
 Let's go through the comp- functions one at a time. First, comp-begin and 
 comp-1 ist just handle and pass on the additional parameters, comp-1 ist will be 
-used in comp -f unca 11, a new function that will be introduced to compile a procedure 
+used in comp -funcall, a new function that will be introduced to compile a procedure 
 appUcation. 
 
 
@@ -38991,7 +38991,7 @@ arguments off the stack, but we no longer generate a RETURN instruction, since t
 done by comp-begi n, if necessary. At this point we'll provide a hook for a peephole 
 optimizer, which will be introduced in section 23.4, and for an assembler to convert 
 the assembly language to machine code, new-fn provides this interface, but for now, 
-new- f . acts just like ma ke - f n. 
+new- f . acts just like make - f n. 
 
 We also need to account for the possibility of rest arguments in a lambda list. A 
 new function, gen-args, generates the single instruction to load the arguments of 
@@ -40081,10 +40081,10 @@ Do you think this last expression should be legal? If so, modify the macros for
 1 et, 1 et*, and 1 etrec to allow the new syntax. If not, explain why it should not be 
 included in the language. 
 
-@ Exercise 23.10 [m] Scheme does not define f uncal 1, because the normal function-
+@ Exercise 23.10 [m] Scheme does not define funcall, because the normal function-
 call syntax does the work of funcall. This suggests two problems. (1) Is it possible 
-to define f uncal 1 in Scheme? Show a definition or explain why there can't be one. 
-Would you ever have reason to use f uncal 1 in a Scheme program? (2) Scheme does 
+to define funcall in Scheme? Show a definition or explain why there can't be one. 
+Would you ever have reason to use funcall in a Scheme program? (2) Scheme does 
 define appl y, as there is no syntax for an application. One might want to extend the 
 syntax to make (+ . numbers) equivalent to (apply + numbers). Would this be a 
 good idea? 
@@ -41302,7 +41302,7 @@ Once-only: A Lesson in Macrology
 
 The macro once - onl y has been around for a long time on various systems, although 
 it didn't make it into the Common Lisp standard. I include it here for two reasons: 
-first, it is used in the following f unca 11 - i f macro, and second, if you can understand 
+first, it is used in the following funcall - i f macro, and second, if you can understand 
 how to write and when to use once-only, then you truly understand macro. 
 
 First, you have to understand the problem that once-only addresses. Suppose 
@@ -42092,7 +42092,7 @@ must be changed. Its value is the old definition of score - fn.
 
 Remedy: Re-evaluate the definition of *scorer*. It is unfortunate, but this problem 
 encourages many programmers to use symbols where they really mean functions. 
-Symbols will be coerced to the global function they name when passed to f uncal 1 
+Symbols will be coerced to the global function they name when passed to funcall 
 
 
  TROUBLESHOOTING 
@@ -42105,7 +42105,7 @@ symbol local - fn will not refer to the locally bound function. One needs to use
 (mapcar *local-fn list)) 
 
 Diagnosis: If you changed the name of a function, did you change the name everywhere? 
-For example, if you decide to change the name of pr 1 nt - f . to pr i nt - f uncti on 
+For example, if you decide to change the name of pr 1 nt - f . to pr i nt - function 
 but forget to change the value of *pri nter*, then the old function will be called. 
 
 Remedy: Use your editor's global replace command. To be even safer, redefine 
@@ -42211,7 +42211,7 @@ a list, not a closure. Therefore, it cannot capture lexical variables the way a 
 does. 
 
 Remedy: The correct way to create a closure is to evaluate a call to the special form 
-f uncti on, or its abbreviation, #'. Here is a replacement for the code beginning with 
+function, or its abbreviation, #'. Here is a replacement for the code beginning with 
 
 *(1 ambda Note that it is a closure, closed over pred and c. Also note that it gets 
 the predi cate each time it is called; thus, it is safe to use even when predicates are 
@@ -42221,17 +42221,17 @@ is changed.
 (and (funcall pred obj) 
 (funcall (get c 'predicate) obj))) 
 
-It is important to remember that f uncti on (and thus #') is a special form, and thus 
+It is important to remember that function (and thus #') is a special form, and thus 
 only returns the right value when it is evaluated. A common error is to use # ' notation 
 in positions that are not evaluated: 
 
 (defvar *obscure-fns* '(#'cis #'cosh #'ash #'bit -orc2)) ; wrong 
 
 This does not create a list of four functions. Rather, it creates a list of four sublists; 
-the first subUst is (f uncti on eis). It is an error to funcall or apply such an object. 
+the first subUst is (function eis). It is an error to funcall or apply such an object. 
 The two correct ways to create a Ust of functions are shown below. The first assures 
 that each function special form is evaluated, and the second uses function names 
-instead of functions, thus relying on funcal 1 or apply to coerce the names to the 
+instead of functions, thus relying on funcall or apply to coerce the names to the 
 actual functions. 
 
 (defvar *obscure-fns* (list #'cis #'cosh #'ash #'bit -orc2)) 
@@ -42247,8 +42247,8 @@ or; they should be thought of as directives that tell the compiler what to do wi
 
 piece of code. 
 
-By the way, the function ma ke - speci a 1 i zat i on above is bad not only for its lack of 
-f uncti on but also for its use of backquote. The following is a better use of backquote: 
+By the way, the function make - specialization above is bad not only for its lack of 
+function but also for its use of backquote. The following is a better use of backquote: 
 
 '(lambda (obj) 
 (and (,pred obj) 
@@ -43188,7 +43188,7 @@ name source-dir object-dir modules)
 *systems*) 
 name) 
 
-The function ma ke - sy s t em is used to compile and/or load a previously defined system. 
+The function make - sy s t em is used to compile and/or load a previously defined system. 
 The name supplied is used to look up the definition of a system, and one of three 
 actions is taken on the system. The keyword : cl oad means to compile and then load 
 files. :1 oad means to load files; if there is an object (compiled) file and it is newer than 
@@ -45342,7 +45342,7 @@ short, 887
 tail-recursive, 63 
 function, 92,872 
 functional progranuning, 435 
-f uncti onp, 283 
+functionp, 283 
 fuzzy set theory, 461,558 
 
 Gabriel, Richard, 522 
@@ -45748,7 +45748,7 @@ main-var, 512-514
 maintenance, 177 
 make-=, 391,394 
 make-anonymous, 391,399 
-ma ke-a ugmented-dcg, 707 
+make-a ugmented-dcg, 707 
 make-block-ops, 137 
 make-clause, 440 
 make-copy-diagram, 569,577 
@@ -45762,7 +45762,7 @@ make-maze-ops,134
 make-move, 602,604 
 make-moves,312 
 make-obsolete, 870 
-ma ke - pa rameters, 391,392 
+make - pa rameters, 391,392 
 make-pipe, 282,283 
 make-poly, 513,514 
 make-predi cate,391,392 
