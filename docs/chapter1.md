@@ -354,7 +354,7 @@ single parameter: (name). This means that the function takes one argument, which
 we will refer to as name. It also has a documentation string that states what the function 
 does. This is not used in any computation, but documentation strings are crucial 
 tools for debugging and understanding large systems. The body of the definition is 
-(f 1 rst (last name)), which is what we used before to pick out the last name of p. 
+(first (last name)), which is what we used before to pick out the last name of p. 
 The difference is that here we want to pick out the last name of any name, not just of 
 the particular name p. 
 
@@ -397,14 +397,14 @@ represented in this operation. However, we could always change the definition of
 last-name to incorporate these problematic cases. 
 
 We can also define the function first-name. Even though the definition is trivial 
-(it is the same as the function f 1 rst), it is still good practice to define f 1 rst-name 
+(it is the same as the function first), it is still good practice to define first-name 
 explicitly. Then we can use the function fi rst - name when we are dealing with names, 
 and first when we are dealing with arbitrary lists. The computer will perform the 
 same operation in each case, but we as programmers (and readers of programs) will 
 be less confused. Another advanatge of defining specific functions like first-name 
 is that if we decide to change the representation of names we will only have to change 
 the definition of first-name. This is a much easier task than hunting through a large 
-program and changing the uses of f 1 rst that refer to names, while leaving other 
+program and changing the uses of first that refer to names, while leaving other 
 uses alone. 
 
 ```emacs 
@@ -551,7 +551,7 @@ General Paul a Jones) by dropping off titles one at a time.
 > (first-name '(Madam Major General Paula Jones)) 
 > AULA 
 
-We can see how this works by tracing the execution of f 1 rst-name, and seeing the 
+We can see how this works by tracing the execution of first-name, and seeing the 
 values passed to and returned from the function. The special forms trace and 
 untrace are used for this purpose. 
 
@@ -626,7 +626,7 @@ This breaks up the problem into two cases. In the second case, we return an answ
 and it is in fact the correct answer. We have not yet specified what to do in the first 
 case. But we do know that it has something to do with the rest of the name after the 
 first element, and that what we want is to extract the first name out of those elements. 
-The leap of faith is to go ahead and use f 1 rst-name, even though it has not been fully 
+The leap of faith is to go ahead and use first-name, even though it has not been fully 
 defined yet: 
 
 function first-name(name): 
@@ -637,7 +637,7 @@ el se return the first element of the name
 
 Now the first case in fi rst-name is recursive, and the second case remains unchanged. 
 We already agreed that the second case returns the correct answer, and the 
-first case only returns what first-name returns. So f 1 rst-name as a whole can only 
+first case only returns what first-name returns. So first-name as a whole can only 
 return correct answers. Thus, we're halfway to showing that the function is correct; 
 the other half is to show that it eventually returns some answer. But every recursive 
 call chops off the first element and looks at the rest, so for an n-element list there 
