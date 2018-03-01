@@ -324,8 +324,6 @@ name? For (JOHN Q PUBLIC) we could Justuse the function thi rd, but that wouldn'
 
 ^ Later we will see what happens when the second argument is not a list. 
 
-12 INTRODUCTION TO LISP 
-
 work for someone with no middle name. There is a function called 1 ast in Common 
 Lisp; perhaps that would work. We can experiment: 
 
@@ -417,8 +415,6 @@ uses alone.
 > (first-name p) JOHN 
 
 > (first-name '(Wilma Flintstone)) WILMA 
-
-14 INTRODUCTION TO LISP 
 
 > (setf names '((John Q Public) (Malcolm X) 
 > Admiral Grace Murray Hopper) (Spot) 
@@ -512,8 +508,6 @@ We next give a new definition for first-name, which supersedes the previous
 definition.^ This definition says that if the first word of the name is a member of the 
 
 ^Just as we can change the value of a variable, we can also change the value of a function 
-
-16 INTRODUCTION TO LISP 
 
 list of titles, then we want to ignore that word and return the first-name of the rest 
 of the words in the name. Otherwise, we use the first word, just as before. Another 
@@ -614,8 +608,6 @@ definitions.
 Next I show an abstract description of the first-name problem, to emphasize 
 the design of the function and the fact that recursive solutions are not tied to Lisp in 
 anyway: 
-
-18 INTRODUCTION TO LISP 
 
 function first-name(name): 
 
@@ -967,8 +959,6 @@ Automatic Storage Management. The Lisp programmer needn't keep track of
 memory allocation; it is all done automatically. This frees the programmer of a 
 lot of effort, and makes it easy to use the functional style of programming. Other 
 
-26 INTRODUCTION TO LISP 
-
 languages present programmers with a choice. Variables can be allocated on 
 the stack, meaning that they are created when a procedure is entered, and 
 disappear when the procedure is done. This is an efficient use of storage, but 
@@ -1161,8 +1151,6 @@ incorporate the newest features as they become popular.
 
 ^Actually, there can be several symbol tables. They are known as packages in Common 
 Lisp. 
-
-30 INTRODUCTION TO LISP 
 
 The easiest way to extend the language is with macros. When so-called structured 
 programming constructs such as case and if-then-else arose, they were 
