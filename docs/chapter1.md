@@ -28,9 +28,9 @@ We may now type in our computation and see the result displayed. It turns out th
 
 > \>
 
-We see that Lisp has printed the answer, `4`, and then another prompt, `>`, to indicate it is ready for the next computation. Throughout this book, all Lisp expressions will be displayed in typewriter font. Text on the same line as the `>` prompt is input typed by the user, and text following it is output printed by the computer. Usually, input that is typed by the programmer will be in lowercase letters, while output thatis printed back by the computer will be in UPPERCASE letters. Of course, with symbols like `+` and `4` there is no difference. 
+We see that Lisp has printed the answer, `4`, and then another prompt, `>`, to indicate it is ready for the next computation. Throughout this book, all Lisp expressions will be displayed in typewriter font. Text on the same line as the `>` prompt is input typed by the user, and text following it is output printed by the computer. Usually, input that is typed by the programmer will be in lowercase letters, while output that is printed back by the computer will be in UPPERCASE letters. Of course, with symbols like `+` and `4` there is no difference. 
 
-To save space on the page, the output will sometimes be shown on the same line as the input, separated by an arrow `&rArr;` which can be read as "evaluates to," and can also be thought of as standing for the return or enter key that the user presses to complete the input: 
+To save space on the page, the output will sometimes be shown on the same line as the input, separated by an arrow &rArr; which can be read as "evaluates to," and can also be thought of as standing for the return or enter key that the user presses to complete the input: 
 
 > \> (+ 2 2) &rArr; 4 
 
@@ -38,7 +38,7 @@ One advantage of parenthesized prefix notation is that the parentheses clearly m
 
 > \> (+ 1 2 3 4 5 6 7 8 9 10) &rArr; 55 
 
-This time we try `(9000 + 900 + 90 -f 9) - (5000 + 500 + 50 + 5)`: 
+This time we try `(9000 + 900 + 90 + 9) - (5000 + 500 + 50 + 5)`: 
 
 > \> (- (+ 9000 900 90 9) (+ 5000 500 50 5)) &rArr; 4444 
 
@@ -47,7 +47,8 @@ such as doing multiplications and divisions before sums and differences. We will
 
 Sometimes programmers who are familiar with other languages have preconceptions that make it difficult for them to learn Lisp. For them, three points are worth stressing here. First, many other languages make a distinction between statements and expressions. An expression, like `2 + 2`, has a value, but a statement, like `x = 2 + 2`, does not. Statements have effects, but they do not return values. In Lisp, there is no such distinction: every expression returns a value. It is true that some expressions have effects, but even those expressions also return values. 
 
-Second, the lexical rules for Lisp are much simpler than the rules for other languages. In particular, there are fewer punctuation characters: only parentheses, quote marks (single, double, and backward), spaces, and the comma serve to separate symbols from each other. Thus, while the statement `y=a*x+3` is analyzed as seven separate tokens in other languages, in Lisp it would be treated as a single symbol. To get a list of tokens, we would have to insert spaces: `(y = a * x + 3)`. 
+Second, the lexical rules for Lisp are much simpler than the rules for other languages. In particular, there are fewer punctuation characters: only parentheses, quote marks (single, double, and backward), spaces, and the comma serve to separate symbols from each other. Thus, while the statement `y=a*x+3` is analyzed as seven separate tokens in other languages, in Lisp it would be treated as a single symbol. To get a list of tokens, we would have to insert spaces:
+<br> `(y = a * x + 3)`. 
 
 Third, while many languages use semicolons to delimit statements. Lisp has no need of semicolons, since expressions are delimited by parentheses. Lisp chooses to use semicolons for another purpose—to mark the beginning of a comment, which lasts until the end of the line: 
 
@@ -71,7 +72,7 @@ The unusual part is the quote mark `'`, which serves to block the evaluation of 
 
 > \> '(Pat Kim) &rArr; (PAT KIM) 
 
-In other computer languages (and in English), quotes usually come in pairs: one to mark the beginning, and one to mark the end. In Lisp, a single quote is used to mark the beginning of an expression. Since we always know how long a single expression is—either to the end of an atom or to the matching parenthesis of a list—we don't need an explicit punctuation mark to tell us where the expression ends. Quotes can be used on lists, as in ' (Pat Kim), on symbols as in ' Robin, and in fact on anything else. 
+In other computer languages (and in English), quotes usually come in pairs: one to mark the beginning, and one to mark the end. In Lisp, a single quote is used to mark the beginning of an expression. Since we always know how long a single expression is—either to the end of an atom or to the matching parenthesis of a list—we don't need an explicit punctuation mark to tell us where the expression ends. Quotes can be used on lists, as in `'(Pat Kim)`, on symbols as in `'Robin`, and in fact on anything else. 
 
 Here are some examples: 
 
@@ -91,9 +92,9 @@ Here are some examples:
 
 > \> (John Q Public) &rArr; Error: JOHN is not a function 
 
-Note that '2 evaluates to 2 because it is a quoted expression, and 2 evaluates to 2 because numbers valuate to themselves. Same result, different reason. In contrast, 'John evaluates to John because it is a quoted expression, but evaluating John leads to an error, because evaluating a symbol means getting the value of the symbol, and no value has been assigned to John. 
+Note that <code>'2</code> evaluates to <code>2</code> because it is a quoted expression, and <code>2</code> evaluates to <code>2</code> because numbers valuate to themselves. Same result, different reason. In contrast, <code>'John</code> evaluates to <code>John</code> because it is a quoted expression, but evaluating <code>John</code> leads to an error, because evaluating a symbol means getting the value of the symbol, and no value has been assigned to <code>John</code>. 
 
-Symbolic computations can be nested and even mixed with numeric computations. The following expression builds a list of names in a slightly different way than we saw before, using the built-in function list. We then see how to find the number of elements in the list, using the built-in function length: 
+Symbolic computations can be nested and even mixed with numeric computations. The following expression builds a list of names in a slightly different way than we saw before, using the built-in function [list](http://clhs.lisp.se/Body/f_list_.htm). We then see how to find the number of elements in the list, using the built-in function [length](http://clhs.lisp.se/Body/f_length.htm): 
 
 > (append '(Pat Kim) (list '(John Q Public) 'Sandy)) 
 > PAT KIM (JOHN Q PUBLIC) SANDY) 
@@ -425,7 +426,7 @@ test the 1 ast-name function:
 > PUBLIC X HOPPER SPOT ARISTOTLE MILNE TOP OLIVIER SCARLET) 
 
 The funny # ' notation maps from the name of a function to the function itself. This 
-is analogous to ' . notation. The built-in function mapca r is passed two arguments, a 
+is analogous to ' . notation. The built-in function [mapca](http://clhs.lisp.se/Body/f_mapc_.htm) r is passed two arguments, a 
 function and a list. It returns a list built by calling the function on every element of 
 the input list. In other words, the mapcar call above is equivalent to: 
 
