@@ -272,8 +272,6 @@ need not be composed only of atoms, but can contain sublists as elements:
 
 > (first x) = (1ST ELEMENT) 
 
-1A LISTS V\_ 
-
 > (second x) &rArr; 2 
 
 > (third X) &rArr; (ELEMENT 3) 
@@ -336,7 +334,7 @@ Lisp; perhaps that would work. We can experiment:
 > (first (last p)) PUBLIC 
 
 It turns out that last perversely returns a list of the last element, rather than the 
-last element itself.^ Thus we need to combine f i rst and 1 ast to pick out the actual 
+last element itself.^ Thus we need to combine first and 1 ast to pick out the actual 
 last element. We would like to be able to save the work we've done, and give it a 
 proper description, like 1 a st - name. We could use setf to save the last name of p, but 
 that wouldn't help determine any other last name. Instead we want to define a new 
@@ -344,6 +342,7 @@ function that computes the last name of any name that is represented as a list. 
 next section does just that. 
 
 ### 1.5 Defining New Functions 
+
 The special form defun stands for "define function." It is used here to define a new 
 function called 1 ast-name: 
 
@@ -403,9 +402,9 @@ We can also define the function first-name. Even though the definition is trivia
 explicitly. Then we can use the function fi rst - name when we are dealing with names, 
 and first when we are dealing with arbitrary lists. The computer will perform the 
 same operation in each case, but we as programmers (and readers of programs) will 
-be less confused. Another advanatge of defining specific functions like f i rst-name 
+be less confused. Another advanatge of defining specific functions like first-name 
 is that if we decide to change the representation of names we will only have to change 
-the definition of f i rst-name. This is a much easier task than hunting through a large 
+the definition of first-name. This is a much easier task than hunting through a large 
 program and changing the uses of f 1 rst that refer to names, while leaving other 
 uses alone. 
 
@@ -432,7 +431,7 @@ uses alone.
 
 > (first-name (first names)) JOHN 
 
-In the last expression we used the function f i rst to pick out the first element in 
+In the last expression we used the function first to pick out the first element in 
 a list of names, and then the function first-name to pick out the first name of 
 that element. We could also have said (first (first names)) or even (first 
 (first-name names)) and still have gotten JOHN, but we would not be accurately 
@@ -459,9 +458,9 @@ the input list. In other words, the mapcar call above is equivalent to:
 
 mapcar's name comes from the fact that it "maps" the function across each of the 
 arguments. The car part of the name refers to the Lisp function car, an old name for 
-f i rst. cdr is the old name for rest. The names stand for "contents of the address 
+first. cdr is the old name for rest. The names stand for "contents of the address 
 register" and "contents of the decrement register," the instructions that were used in 
-the first implementation of Lisp on the IBM 704. I'm sure you'll agree that f i rst and 
+the first implementation of Lisp on the IBM 704. I'm sure you'll agree that first and 
 
 1.6 USING FUNCTIONS
 rest are much better names, and they will be used instead of ca r and cdr whenever 
@@ -483,7 +482,7 @@ obtained by collecting the first element of each list. Then it applies the funct
 second element of each list, and so on, until one of the lists is exhausted. It returns a 
 list of all the function values it has computed. 
 
-Now that we understand mapcar, let's use it to test the f i rst-name function: 
+Now that we understand mapcar, let's use it to test the first-name function: 
 
 > (mapcar #'first-name names) 
 
@@ -491,7 +490,7 @@ Now that we understand mapcar, let's use it to test the f i rst-name function:
 
 We might be disappointed with these results. Suppose we wanted a version of 
 
-f i rst-name which ignored titles like Admiral and Miss, and got to the "real" first 
+first-name which ignored titles like Admiral and Miss, and got to the "real" first 
 
 name. We could proceed as follows: 
 
@@ -509,14 +508,14 @@ It is a widely used convention among Lisp programmers to mark special variables 
 spelling their names with asterisks on either end. This is just a convention; in Lisp, 
 the asterisk is just another character that has no particular meaning. 
 
-We next give a new definition for f i rst-name, which supersedes the previous 
+We next give a new definition for first-name, which supersedes the previous 
 definition.^ This definition says that if the first word of the name is a member of the 
 
 ^Just as we can change the value of a variable, we can also change the value of a function 
 
 16 INTRODUCTION TO LISP 
 
-list of titles, then we want to ignore that word and return the f i rst-name of the rest 
+list of titles, then we want to ignore that word and return the first-name of the rest 
 of the words in the name. Otherwise, we use the first word, just as before. Another 
 built-in function, member, tests to see if its first argument is an element of the list 
 passed as the second argument. 
@@ -528,7 +527,7 @@ true, the then-part is evaluated and returned as the value of the i f form; othe
 the else-part is evaluated and returned. While some languages insist that the value of 
 a conditional test must be either true or f al se. Lisp is much more forgiving. The test 
 may legally evaluate to any value at all. Only the value nil is considered false; all 
-other values are considered true. In the definition of f i rst - name below, the function 
+other values are considered true. In the definition of first - name below, the function 
 member will return a non-nil (hence true) value if the first element of the name is in the 
 list of titles, and will return .i 1 (hence false) if it is not. Although all non-nil values 
 are considered true, by convention the constant t is usually used to represent truth. 
@@ -570,19 +569,19 @@ other languages.
 > 1 EXIT FIRST-NAME: JOHN) 
 > OHN 
 
-When f i rst - name is called, the definition is entered with the single argument, name, 
+When first - name is called, the definition is entered with the single argument, name, 
 taking on the value (JOHN Q PUBLIC). The value returned is JOHN. Trace prints two 
 lines indicating entry and exit from the function, and then Lisp, as usual, prints the 
 final result, JOHN. 
 
-The next example is more complicated. The function f i rst-name is used four 
+The next example is more complicated. The function first-name is used four 
 times. First, it is entered with name bound to (Madam Major General Paula Jones). 
 The first element of this list is Madam, and since this is a member of the list of titles, 
-the result is computed by calling f i rst-name again on the rest of the name—(Major 
+the result is computed by calling first-name again on the rest of the name—(Major 
 General Paula Jones). This process repeats two more times, and we finally enter 
-f i rst - name with name bound to (Paul a Jones). Since Pa ul a is not a title, it becomes 
-the result of this call to f i rst - name, and thus the result of all four calls, as trace shows. 
-Once we are happy with the workings of f i rst - name, the special form unt race turns 
+first - name with name bound to (Paul a Jones). Since Pa ul a is not a title, it becomes 
+the result of this call to first - name, and thus the result of all four calls, as trace shows. 
+Once we are happy with the workings of first - name, the special form unt race turns 
 off tracing. 
 
 > (first-name '(Madam Major General Paula Jones)) =^ 
@@ -603,7 +602,7 @@ PAULA
 
 > (first-name '(Mr Blue Jeans)) BLUE 
 
-The function f i rst-name is said to be recursive because its definition includes a call 
+The function first-name is said to be recursive because its definition includes a call 
 to itself. Programmers who are new to the concept of recursion sometimes find it 
 mysterious. But recursive functions are really no different from nonrecursive ones. 
 Any function is required to return the correct value for the given input(s). Another 
@@ -612,7 +611,7 @@ a value, and it must not return any incorrect values. This two-part requirement 
 equivalent to the first one, but it makes it easier to think about and design function 
 definitions. 
 
-Next I show an abstract description of the f i rst-name problem, to emphasize 
+Next I show an abstract description of the first-name problem, to emphasize 
 the design of the function and the fact that recursive solutions are not tied to Lisp in 
 anyway: 
 
@@ -641,7 +640,7 @@ el se return the first element of the name
 
 Now the first case in fi rst-name is recursive, and the second case remains unchanged. 
 We already agreed that the second case returns the correct answer, and the 
-first case only returns what f i rst-name returns. So f 1 rst-name as a whole can only 
+first case only returns what first-name returns. So f 1 rst-name as a whole can only 
 return correct answers. Thus, we're halfway to showing that the function is correct; 
 the other half is to show that it eventually returns some answer. But every recursive 
 call chops off the first element and looks at the rest, so for an n-element list there 
@@ -649,7 +648,8 @@ can be at most . recursive calls. This completes the demonstration that the func
 is correct. Programmers who learn to think this way find recursion to be a valuable 
 tool rather than a confusing mystery. 
 
-### 1.7 Higher-Order Functions 
+### 1.7 Higher-Order Functions
+
 Functions in Lisp can not only be "called," or applied to arguments, they can also be 
 manipulated just like any other kind of object. A function that takes another function 
 as an argument is called a higher-orderfunction, ma pea r is an example. To demonstrate 
@@ -704,8 +704,6 @@ of all the numbers in the original list and the negation of those numbers. For
 example, given the list (testing 12 3 test), return (1 -12-2 3 -3). This 
 problem can be solved very easily using mappend as a component: 
 
-20 INTRODUCTION TO LISP 
-
 (defun numbers-and-negations (input) 
 "Given a list, return only the numbers and their negations." 
 (mappend #'number-and-negation input)) 
@@ -730,8 +728,8 @@ nil
 (append (funcall fn (first the-list)) 
 (mappend fn (rest the-list))))) 
 
-f unca . is similar to a ppl y; it too takes a function as its first argument and applies the 
-function to a list of arguments, but in the case of f uncal 1, the arguments are listed 
+funcall is similar to apply; it too takes a function as its first argument and applies the 
+function to a list of arguments, but in the case of funcall, the arguments are listed 
 separately: 
 
 > (funcall #'+ 2 3) =i> 5 
@@ -757,7 +755,6 @@ The . was easily confused with other symbols, so eventually the lowercase lambda
 was substituted: \x{x -hx). John McCarthy was a student of Church's at Princeton, 
 so when McCarthy invented Lisp in 1958, he adopted the lambda notation. There 
 
-1.7 HIGHER-ORDER FUNCTIONS
 were no Greek letters on the keypunches of that era, so McCarthy used (1 ambda (x) 
 (+ . .)), and it has survived to this day. In general, the form of a lambda expression is 
 
@@ -803,8 +800,6 @@ Here are some more examples of the correct use of functions:
 Programmers who are used to other languages sometimes fail to see the point of 
 lambda expressions. There are two reasons why lambda expressions are very useful. 
 
-22 INTRODUCTION TO LISP 
-
 First, it can be messy to clutter up a program with superfluous names. Just as it 
 is clearer to write (a+b)*(c+cl) rather than to invent variable names like tempi and 
 temp2 to hold a+b and c+d, so it can be clearer to define a function as a lambda 
@@ -815,7 +810,8 @@ new functions at run time. This is a powerful technique that is not possible in
 most programming languages. These run-time functions, known as closures, will be 
 covered in section 3.16. 
 
-### 1.8 Other Data Types 
+### 1.8 Other Data Types
+
 So far we have seen just four kinds of Lisp objects: numbers, symbols, lists, and 
 functions. Lisp actually defines about 25 different types of objects: vectors, arrays, 
 structures, characters, streams, hash tables, and others. At this point we will introduce 
@@ -831,6 +827,7 @@ printed representation of a string has a double quote mark (") at each end.
 > (length "")=^0 
 
 ### 1.9 Summary: The Lisp Evaluation Rule 
+
 We can now summarize the evaluation rule for Lisp. 
 
 - Every expression is either a list or an atom. 
@@ -842,9 +839,7 @@ We can now summarize the evaluation rule for Lisp.
   to that value, and return the value as the result. The rule for defun is to define 
   a new function, and return the name of the function. The rule for quote 
   is to return the first argument unevaluated. The notation 'x is actually an 
-
-1.9 SUMMARY: THE LISP EVALUATION RULE 23 
-abbreviation for the special form expression (quote x). Similarly, the notation 
+  abbreviation for the special form expression (quote x). Similarly, the notation 
 
 \# '/is an abbreviation for the special form expression (f uncti on f).
 
@@ -888,7 +883,6 @@ names
   ^For example, symbols that denote so-called special variables usually begin and end in 
   asterisks. Also, note that I did not hesitate to use the symbol won! on page 11. 
 
-24 INTRODUCTION TO LISP 
 
 42 42 
 
@@ -1067,8 +1061,6 @@ to a function that expects an even number.
 
 First-Class Functions. A first-class object is one that can be used anywhere and 
 can be manipulated in the same ways as any other kind of object. In Pascal or C, 
-
-28 INTRODUCTION TO LISP 
 
 for example, functions can be passed as arguments to other functions, but they 
 are not first-class, because it is not possible to create new functions while the 
