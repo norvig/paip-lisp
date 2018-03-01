@@ -1227,7 +1227,8 @@ that automatically indent), a much simpler program is possible:
 
 &#9635; **Exercise 1.3 [m]** Write a function that counts the number of atoms in an expression. 
 <br>For example: `(count-atoms '(a (b) c)) = 3`. Notice that there is something of an 
-ambiguity in this: should `(a nil c)` count as three atoms, or as two, because it is 
+ambiguity in this: 
+<br>should `(a nil c)` count as three atoms, or as two, because it is 
 equivalent to `(a () c)`?
 
 &#9635; **Exercise 1.4 [m]** Write a function that counts the number of times an expression 
