@@ -2,7 +2,7 @@
 
 > You think you know when you learn, 
 > are more sure when you can write, even more when you can teach, 
-> hut certain when you can program. 
+> but certain when you can program. 
 > —Alan Perils
 > Yale University computer scientist 
 
