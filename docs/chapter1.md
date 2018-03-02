@@ -365,8 +365,6 @@ string is optional, and all other parts are required):
 defaults to 1. Thus (last p) = (last . 1) = (PUBLIC), and (last . 2) = (Q PUBLIC). This 
 may make the definition of 1 ast seem less perverse. 
 
-1,5 DEFINING NEW FUNCTIONS
-
 (defun function-name {parameter...) 
 ''documentation string'' 
 function-body...) 
