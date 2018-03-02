@@ -368,23 +368,23 @@ complicated:
 	    nil
 	    bindings)))
 
-> (sublis (pat-match ' ( i need a ?X) ' ( i need a vacation))
-'(what would i t mean to you i f you got a ?X ? ))
-(WHAT WOULD IT MEAN TO YOU IF YOU GOT A VACATION ? )
+> (sublis (pat-match ' (i need a ?X) ' (i need a vacation))
+          '(what would it mean to you if you got a ?X ?))
+(WHAT WOULD IT MEAN TO YOU IF YOU GOT A VACATION ?)
 
-> (pat-match ' ( i need a ?X) ' ( i really need a vacation))
+> (pat-match ' (i need a ?X) ' (i really need a vacation))
 NIL
 
-> (pat-match ' ( t h i s i s easy) ' ( t h i s i s easy))
+> (pat-match ' (this is easy) ' (this is easy))
 ((T . T))
 
-> (pat-match ' ( ?X i s ?X) ' ( ( 2 + 2) i s 4))
+> (pat-match ' (?X is ?X) ' ((2 + 2) is 4))
 NIL
 
-> (pat-match ' ( ?X i s ?X) ' ( ( 2 + 2) i s (2 + 2)))
+> (pat-match ' (?X is ?X) ' ((2 + 2) is (2 + 2)))
 ((?X 2 + 2))
 
-> (pat-match ' ( ? P need . ?X) ' ( i need a long vacation))
+> (pat-match ' (?P need . ?X) ' (i need a long vacation))
 ((?X A LONG VACATION) (?P . I ))
 ```
 
@@ -517,7 +517,7 @@ call to `match-variable` fails, because `?x` has two different values. The fix i
 
 ```emacs
 (defun segment-match (pattern input bindings optional (start 0))
-  "Match the segment pattern ((? * var) . pat) against input."
+  "Match the segment pattern ((?* var) . pat) against input."
   (let ((var (second (first pattern)))
 	(pat (rest pattern)))
     (if (null pat)
