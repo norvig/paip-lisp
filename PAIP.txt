@@ -1884,21 +1884,22 @@ that automatically indent), a much simpler program is possible:
 (atomprint element (+ depth 1))))) 
 
 1.11 Exercises 
-@ Exercise 1.1 [m] Define a version of last-name that handles "Rex Morgan MD," 
+&#9635; Exercise 1.1 [m] Define a version of last-name that handles "Rex Morgan MD," 
 "Morton Downey, Jr.," and whatever other cases you can think of. 
 
-G] Exercise 1.2 [m] Write a function to exponentiate, or raise a number to an integer 
+&#9635; Exercise 1.2 [m] Write a function to exponentiate, or raise a number to an integer 
 power. For example: (power 3 2) = 3^ = 9. 
-Exercise 1.3 [m] Write a function that counts the number of atoms in an expression. 
+
+&#9635; Exercise 1.3 [m] Write a function that counts the number of atoms in an expression. 
 For example: (count-atoms '(a (b) c)) = 3. Notice that there is something of an 
 ambiguity in this: should (a nil c) count as three atoms, or as two, because it is 
 equivalent to (a () c)? 
 
-I¿] Exercise 1.4 [m] Write a function that counts the number of times an expression 
+&#9635; Exercise 1.4 [m] Write a function that counts the number of times an expression 
 occurs anywhere within another expression. Example: (count-anywhere 'a *(a 
 ((a) b) a)) 3. 
 
-t¿J Exercise 1.5 [m] Write a function to compute the dot product of two sequences 
+&#9635; Exercise 1.5 [m] Write a function to compute the dot product of two sequences 
 of numbers, represented as lists. The dot product is computed by multiplying 
 corresponding elements and then adding up the resulting products. Example: 
 
@@ -2371,10 +2372,10 @@ from the time it is set to the time it is referenced again. With 1 et we introdu
 new variable that nobody else can access; therefore it is guaranteed to maintain the 
 proper value. 
 
-@ Exercise 2.1 [m] Write a version of generate that uses cond but avoids calling 
+&#9635; Exercise 2.1 [m] Write a version of generate that uses cond but avoids calling 
 rewrites twice. 
 
-@ Exercise 2.2 [m] Write a version of generate that explicitly differentiates between 
+&#9635; Exercise 2.2 [m] Write a version of generate that explicitly differentiates between 
 terminal symbols (those with no rewrite rules) and nonterminal symbols. 
 
 2.4 Two Paths to Follow 
@@ -2561,10 +2562,10 @@ Noun-Verb-Article-Noun, and there are two articles, four nouns and four verbs
 (2 x4x4x2x4 = 256). 
 
 2.7 Exercises 
-. Exercise 2.3 [h] Write a trivial grammar for some other language. This can be a 
+&#9635; Exercise 2.3 [h] Write a trivial grammar for some other language. This can be a 
 natural language other than English, or perhaps a subset of a computer language. 
 
-@ Exercise 2.4 [m] One way of describing combi ne - a 11 is that it calculates the crossproduct 
+&#9635; Exercise 2.4 [m] One way of describing combi ne - a 11 is that it calculates the crossproduct 
 of the function a ppend on the argument lists. Write the higher-order function 
 cross -product, and define combi ne-all in terms of it. 
 The moral is to make your code as general as possible, because you never know what 
@@ -3019,7 +3020,7 @@ We could not have used 1 et here, because then the variable . would be unbound
 
 during the computation of y's value. 
 
-@ Exercise 3.1 [m] Show a 1 ambda expression that is equivalent to the above 1 et* 
+&#9635; Exercise 3.1 [m] Show a 1 ambda expression that is equivalent to the above 1 et* 
 expression. You may need more than one 1 ambda. 
 
 Because lists are so important to Lisp, there are special forms for adding and 
@@ -3724,13 +3725,13 @@ ONE TWO THREE ONE TWO
 
 Figure 3.1: Cons Cell Diagrams 
 
-S Exercise 3.2 [s] The function cons can be seen as a special case of one of the other 
+&#9635; Exercise 3.2 [s] The function cons can be seen as a special case of one of the other 
 functions listed previously. Which one? 
 
-S Exercise 3.3 [m] Write a function that will print an expression in dotted pair notation. 
+&#9635; Exercise 3.3 [m] Write a function that will print an expression in dotted pair notation. 
 Use the built-in function pri nc to print each component of the expression. 
 
-S Exercise 3.4 [m] Write a function that, like the regular print function, will print an 
+&#9635; Exercise 3.4 [m] Write a function that, like the regular print function, will print an 
 expression in dotted pair notation when necessary but will use normal list notation 
 when possible. 
 
@@ -4163,7 +4164,7 @@ remove. Of course, the setf special form can also be used to alter structures, b
 is the destructive functions that are most dangerous, because it is easier to overlook 
 their effects. 
 
-@ Exercise 3.5 [h] (Exercise in altering structure.) Write a program that will play the 
+&#9635; Exercise 3.5 [h] (Exercise in altering structure.) Write a program that will play the 
 role of the guesser in the game Twenty Questions. The user of the program will have 
 in mind any type of thing. The program will ask questions of the user, which must 
 be answered yes or no, or "it" when the program has guessed it. If the program runs 
@@ -4878,7 +4879,7 @@ running, the identifiers have been compiled away and cannot be used to access th
 variables; only code that appears within the scope of a lexical variable can reference 
 that variable. 
 
-@ Exercise 3.6 [s] Given the following initialization for the lexical variable a and the 
+&#9635; Exercise 3.6 [s] Given the following initialization for the lexical variable a and the 
 special variable *b*, what will be the value of the 1 et form? 
 
 (setf a 'global-a) 
@@ -5210,9 +5211,11 @@ the rtest or rtest-not values. SowewiUhave:
 ^ (1 1) 
 Note that the call to remove will contain two : tes t keywords. This is not an error; 
 Common Lisp declares that the leftmost value is the one that counts. 
-@ Exercise 3.7 [s] Why do you think the leftmost of two keys is the one that counts, 
+
+&#9635; Exercise 3.7 [s] Why do you think the leftmost of two keys is the one that counts, 
 rather than the rightmost? 
-. Exercise 3.8 [m] Some versions of Kyoto Common Lisp (KCL) have a bug wherein 
+
+&#9635; Exercise 3.8 [m] Some versions of Kyoto Common Lisp (KCL) have a bug wherein 
 they use the rightmost value when more than one keyword/value pair is specified 
 for the same keyword. Change the definition of f i nd -a 11 so that it works in KCL. 
 There are two more lambda-list keywords that are sometimes used by advanced 
@@ -5258,16 +5261,16 @@ it is introduced‚Äîwould be even more distracting. It would interrupt the descri
 of the AI programs, which is what this book is all about. 
 
 3.21 Exercises 
-@ Exercise 3.9 [m] Write a version of length using the function reduce. 
+&#9635; Exercise 3.9 [m] Write a version of length using the function reduce. 
 
-@ Exercise 3.10 [m] Use a reference manual or descri be to figure out what the functions 
+&#9635; Exercise 3.10 [m] Use a reference manual or descri be to figure out what the functions 
 1 cm and . reconc do. 
 
-[¿1 Exercise 3.11 [m] There is a built-in Common Lisp function that, given a key, a 
+&#9635; Exercise 3.11 [m] There is a built-in Common Lisp function that, given a key, a 
 value, and an association Hst, returns a new association list that is extended to 
 include the key/value pair. What is the name of this function? 
 
-Exercise 3.12 [m] Write a single expression using format that will take a list of 
+&#9635; Exercise 3.12 [m] Write a single expression using format that will take a list of 
 words and print them as a sentence, with the first word capitalized and a period after 
 the last word. You will have to consult a reference to learn new format directives. 
 
@@ -7270,10 +7273,12 @@ TWEAK synthesizes and formalizes the state of the art in planning as of 1987.
 All of these papers-an d quite a few other important planning papers-ar e 
 reprinted in Allen, Hendler, and Tate 1990. 
 4.22 Exercises 
-t¿3 Exercise 4.1 [m] It is possible to implement dbg using a single call to format. Can 
+&#9635; Exercise 4.1 [m] It is possible to implement dbg using a single call to format. Can 
 you figure out the format directives to do this? 
-t¿3 Exercise 4.2 [m] Write a function that generates all permutations of its input. 
-13 Exercise 4.3 [h] GPS does not recognize the situation where a goal is accidentally 
+
+&#9635; Exercise 4.2 [m] Write a function that generates all permutations of its input. 
+
+&#9635; Exercise 4.3 [h] GPS does not recognize the situation where a goal is accidentally 
 solved as part of achieving another goal. Consider the goal of eating dessert. Assume 
 that there are two operators available: eating ice cream (which requires having the 
 ice cream) and eating cake (which requires having the cake). Assume that we can 
@@ -7285,13 +7290,15 @@ order to get the free ice cream, and then go ahead and eat the ice cream, even t
 the goal of eating dessert has already been achieved by eating the cake. (3) Fix gps so 
 that it does not manifest this problem. 
 The following exercises address the problems in version 2 of the program. 
-SI Exercise 4.4 [h] The Not Looking after You Don't Leap Problem. Write a program that 
+
+&#9635; Exercise 4.4 [h] The Not Looking after You Don't Leap Problem. Write a program that 
 keeps track of the remaining goals so that it does not get stuck considering only one 
 possible operation when others will eventually lead to the goal. Hint: have achi eve 
 take an extra argument indicating the goals that remain to be achieved after the 
 current goal is achieved, achi eve should succeed only if it can achieve the current 
 goal and also achi eve-all the remaining goals. 
-@ Exercise 4.5 [d] Write a planning program that, like Warren's WARPLAN, keeps 
+
+&#9635; Exercise 4.5 [d] Write a planning program that, like Warren's WARPLAN, keeps 
 track of the list of goals that remain to be done as well as the list of goals that have 
 been achieved and should not be undone. The program should never undo a goal 
 that has been achieved, but it should allow for the possibility of reordering steps that 
@@ -7302,13 +7309,13 @@ that has been achieved, but it should allow for the possibility of reordering st
 have already been taken. In this way, the program will solve the Sussman anomaly 
 and sinülar problems. 
 
-@ Exercise 4.6 [d] The Lack of Descriptive Power Problem. Read chapters 5 and 6 to learn 
+&#9635; Exercise 4.6 [d] The Lack of Descriptive Power Problem. Read chapters 5 and 6 to learn 
 about pattern matching. Write a version of GPS that uses the pattern matching tools, 
 and thus allows variables in the operators. Apply it to the maze and blocks world 
 domains. Your program will be more efficient if, like Chapman's TWEAK program, 
 you allow for the possibility of variables that remain unbound as long as possible. 
 
-E¿] Exercise 4.7 [d] Speculate on the design of a planner that can address the Perfect 
+&#9635; Exercise 4.7 [d] Speculate on the design of a planner that can address the Perfect 
 Information and Interacting Goals problems. 
 
 4.23 Answers 
@@ -7550,7 +7557,7 @@ t
 
 (pat-match (rest pattern) (rest input)))))) 
 
-@ Exercise 5.1 [s] Would it be a good idea to replace the complex and form in 
+&#9635; Exercise 5.1 [s] Would it be a good idea to replace the complex and form in 
 pat-match with the simpler (every #'pat-match pattern input)? 
 
 Before we can go on, we need to decide on an implementation for pattern-
@@ -8160,21 +8167,21 @@ work on dialog systems that model belief is reported by Allan Collins (1978) and
 Jamie Carbonell (1981). 
 
 5.6 Exercises 
-t¿3 Exercise 5.2 [m] Experiment with this version of ELIZA. Show some exchanges 
+&#9635; Exercise 5.2 [m] Experiment with this version of ELIZA. Show some exchanges 
 where it performs well, and some where it fails. Try to characterize the difference. 
 Which failures could be fixed by changing the rule set, which by changing the 
 pa t - ma tch function (and the pattern language it defines), and which require a change 
 to the el i za program itself? 
 
-@ Exercise 5.3 [h] Define a new set of rules that make ELIZA give stereotypical responses 
+&#9635; Exercise 5.3 [h] Define a new set of rules that make ELIZA give stereotypical responses 
 to some situation other than the doctor-patient relationship. Or, write a set 
 of rules in a language other than English. Test and debug your new rule set. 
 
-@ Exercise 5.4 [s] We mentioned that our version of ELIZA cannot handle commas 
+&#9635; Exercise 5.4 [s] We mentioned that our version of ELIZA cannot handle commas 
 or double quote marks in the input. However, it seems to handle the apostrophe in 
 both input and patterns. Explain. 
 
-[¿3 Exercise 5.5 [h] Alter the input mechanism to handle commas and other punctuation 
+&#9635; Exercise 5.5 [h] Alter the input mechanism to handle commas and other punctuation 
 characters. Also arrange so that the user doesn't have to type parentheses 
 around the whole input expression. (Hint: this can only be done using some Lisp 
 functions we have not seen yet. Look at read-lineand read-from-string.) 
@@ -8182,15 +8189,18 @@ functions we have not seen yet. Look at read-lineand read-from-string.)
 
 168 ELIZA: DIALOG WITH A MACHINE 
 
-@ Exercise 5.6 [m] Modify ELIZA to have an explicit exit. Also arrange so that the 
+&#9635; Exercise 5.6 [m] Modify ELIZA to have an explicit exit. Also arrange so that the 
 output is not printed in parentheses either. 
-@ Exercise 5.7 [m] Add the "memory mechanism" discussed previously to ELIZA. 
+
+&#9635; Exercise 5.7 [m] Add the "memory mechanism" discussed previously to ELIZA. 
 Also add some way of definining synonyms like "everyone" and "everybody." 
-51 Exercise 5.8 [h] It turns out that none of the rules in the given script uses a variable 
+
+&#9635; Exercise 5.8 [h] It turns out that none of the rules in the given script uses a variable 
 more than once-ther e is no rule of the form (?x... ?x). Write a pattern matcher that 
 only adds bindings, never checks variables against previous bindings. Use the time 
 special form to compare your function against the current version. 
-@ Exercise 5.9 [h] Winston and Horn's book Lisp presents a good pattern-matching 
+
+&#9635; Exercise 5.9 [h] Winston and Horn's book Lisp presents a good pattern-matching 
 program. Compare their implementation with this one. One difference is that they 
 handle the case where the first element of the pattern is a segment variable with the 
 following code (translated into our notation): 
@@ -8201,7 +8211,8 @@ the input, or by matching more than the first element. It is much simpler than o
 approach using posi ti on, partly because they don't update the binding list. Can 
 you change their code to handle bindings, and incorporate it into our version of 
 pat-match? Is it still simpler? Is it more or less efficient? 
-@ Exercise 5.10 What is wrong with the following definition of s i mpl e equa1 
+
+&#9635; Exercise 5.10 What is wrong with the following definition of s i mpl e equa1 
 ? 
 (defun simple-equal (x y) 
 "Test if two list s or atoms are equal." 
@@ -8211,32 +8222,37 @@ Warning incorrect
 (simple-equal (firs t x) (firs t y)) 
 (simple-equal (rest x) (rest y)))) ) 
 
-@ Exercise 5.11 [m] Weigh the advantages of changing no-bi ndi ngs to ni 1, and f ai 1 
+&#9635; Exercise 5.11 [m] Weigh the advantages of changing no-bi ndi ngs to ni 1, and f ai 1 
 to something else. 
 
 
 5.6 EXERCISES 169 
 
-@ Exercise 5.12 [m] Weigh the advantages of making pat-match return multiple values: 
+&#9635; Exercise 5.12 [m] Weigh the advantages of making pat-match return multiple values: 
 the first would be true for a match and false for failure, and the second would 
 be the binding list. 
-@ Exercise 5.13 [m] Suppose that there is a call to segment-match where the variable 
+
+&#9635; Exercise 5.13 [m] Suppose that there is a call to segment-match where the variable 
 already has a binding. The current definition will keep making recursive calls to 
 segment-match, one for each possible matching position. But this is silly‚Äîif the 
 variable is already bound, there is only one sequence that it can possibly match 
 against. Change the definition so that it looks only for this one sequence. 
-S Exercise 5.14 [m]
+
+&#9635; Exercise 5.14 [m]
 of argument lists. 
 Define a version of ma ppend that, like ma pea r, accepts any number 
-@ Exercise 5.15 [m] Give an informal proof that segment-match always terminates. 
-S Exercise 5.16 [s] Trick question: There is an object in Lisp which, when passed to 
+
+&#9635; Exercise 5.15 [m] Give an informal proof that segment-match always terminates. 
+
+&#9635; Exercise 5.16 [s] Trick question: There is an object in Lisp which, when passed to 
 vari abl e- p, results in an error. What is that object? 
-0 Exercise 5.17 [m] The current version of ELIZA takes an input, transforms it according 
+
+&#9635; Exercise 5.17 [m] The current version of ELIZA takes an input, transforms it according 
 to the first applicable rule, and outputs the result. One can also imagine a 
 system where the input might be transformed several times before the final output 
 is printed. Would such a system be more powerful? If so, in what way? 
 
-S Exercise 5.18 [h] Read Weizenbaum's original article on ELIZA and transpose his 
+&#9635; Exercise 5.18 [h] Read Weizenbaum's original article on ELIZA and transpose his 
 list of rules into the notation used in this chapter. 
 
 
@@ -9156,13 +9172,13 @@ We would use this facility as follows:
 
 > (pat-match axyd '(a b c d)) ((?Y . C) (?X)) 
 
-@ Exercise 6.1 [m] Go back and change the ELIZA rules to use the abbreviation facility. 
+&#9635; Exercise 6.1 [m] Go back and change the ELIZA rules to use the abbreviation facility. 
 Does this make the rules easier to read? 
 
 
 188 BUILDING SOFTWARE TOOLS 
 
-@ Exercise 6.2 [h] In the few prior examples, every time there was a binding of 
+&#9635; Exercise 6.2 [h] In the few prior examples, every time there was a binding of 
 pattern variables that satisfied the input, that binding was found. Informally, show 
 that pat-match will always find such a binding, or show a counterexample where it 
 fails to find one. 
@@ -10388,25 +10404,31 @@ some of the algorithms. They are at a lower level of abstraction than the ones i
 this chapter. Iterative deepening was first presented by Korf (1985), and iterative 
 broadening by Ginsberg and Harvey (1990). 
 6.7 Exercises 
-@ Exercise 6.3 [m] Write a version of i . te ra et i ve -i nterpreter that is more general 
+&#9635; Exercise 6.3 [m] Write a version of i . te ra et i ve -i nterpreter that is more general 
 than the one defined in this chapter. Decide what features can be specified, and 
 provide defaults for them. 
-@ Exercise 6.4 [m] Define a version of compose that allows any number of arguments, 
+
+&#9635; Exercise 6.4 [m] Define a version of compose that allows any number of arguments, 
 not just two. Hint: You may want to use the function reduce. 
-@ Exercise 6.5 [m] Define a version of compose that allows any number of arguments 
+
+&#9635; Exercise 6.5 [m] Define a version of compose that allows any number of arguments 
 but is more efficient than the answer to the previous exercise. Hint: try to make 
 decisions when compose is called to build the resulting function, rather than making 
 the same decisions over and over each time the resulting function is called. 
-@ Exercise 6.6 [m] One problem with pat-match is that it gives special significance 
+
+&#9635; Exercise 6.6 [m] One problem with pat-match is that it gives special significance 
 to symbols starting with ?, which means that they can not be used to match a literal 
 pattern. Define a pattern that matches the input literally, so that such symbols can 
 be matched. 
-@ Exercise 6.7 [m] Discuss the pros and cons of data-driven programming compared 
+
+&#9635; Exercise 6.7 [m] Discuss the pros and cons of data-driven programming compared 
 to the conventional approach. 
-[¿3 Exercise 6.8 [m]
+
+&#9635; Exercise 6.8 [m]
 recursion. 
 Write a version of tree-searc h using an explicit loop rather than 
-Exercise 6.9 [m] The sorte r function is inefficient for two reasons: it calls append, 
+
+&#9635; Exercise 6.9 [m] The sorte r function is inefficient for two reasons: it calls append, 
 which has to make a copy of the first argument, and it sorts the entire result, rather 
 than just inserting the new states into the already sorted oíd states. Write a more 
 efficient sorter . 
@@ -10414,22 +10436,27 @@ efficient sorter .
 
 6.8 ANSWERS 215 
 
-0 Exercise 6.10 [m] Write versions of graph-search and a*-search that use hash 
+&#9635; Exercise 6.10 [m] Write versions of graph-search and a*-search that use hash 
 tables rather than lists to test whether a state has been seen before. 
-S Exercise 6.11 [m] Write a function that calls beam-searchtofindthefirstnsolution s 
+
+&#9635; Exercise 6.11 [m] Write a function that calls beam-searchtofindthefirstnsolution s 
 to a problem and returns them in a list. 
-0 Exercise 6.12 [m] On personal computers without floating-point hardware, the 
+
+&#9635; Exercise 6.12 [m] On personal computers without floating-point hardware, the 
 ai r-di stanc e calculation will be rather slow. If this is a problem for you, arrange 
 to compute the xyz-coords of each city only once and then store them, or store 
 a complete table of air distances between cities. Also precompute and store the 
 neighbors of each city. 
-@ Exercise 6.13 [d] Write a version of GPS that uses A* search instead of beam search. 
+
+&#9635; Exercise 6.13 [d] Write a version of GPS that uses A* search instead of beam search. 
 Compare the two versions in a variety of domains. 
-S Exercise 6.14 [d] Write a version of GPS that allows costs for each operator. For 
+
+&#9635; Exercise 6.14 [d] Write a version of GPS that allows costs for each operator. For 
 example, driving the child to school might have a cost of 2, but calling a limousine 
 to transport the child nüght have a cost of 100. Use these costs instead of a constant 
 cost of 1 for each operation. 
-@ Exercise 6.15 [d] Write a version of GPS that uses the searching tools but does 
+
+&#9635; Exercise 6.15 [d] Write a version of GPS that uses the searching tools but does 
 means-ends analysis. 
 6.8 Answers 
 Answer 6.2 Unfortunately, pat -match does not always find the answer. The problem 
@@ -11214,7 +11241,7 @@ Lisp interpreters, however, input can be terminated by a matching right parenthe
 In that case, a newline-before is needed, lest the output appear on the same line as 
 the input. 
 
-[¿3 Exercise 7.1 [m] Implement pri nt-equati ons using only primitive printing functions 
+&#9635; Exercise 7.1 [m] Implement pri nt-equati ons using only primitive printing functions 
 such as terpri and pri nc, along with explicit loops. 
 
 7.3 Examples 
@@ -11379,7 +11406,7 @@ problem of a certain type, then you don't need to know very much linguistics to 
 the right answer most of the time. 
 
 7.5 Exercises 
-@ Exercise 7.2 [h] We said earlier that our program was unable to solve pairs of linear 
+&#9635; Exercise 7.2 [h] We said earlier that our program was unable to solve pairs of linear 
 equations, such as: 
 
 100 = (OVERHEAD + (RUNNING * 40)) 
@@ -11390,7 +11417,7 @@ The original STUDENT could solve these equations. Write a routine to do so. You 
 assume there will be only two equations in two unknowns if you wish, or if you are 
 more ambitious, you could solve a system of . linear equations with . unknowns. 
 
-@ Exercise 7.3 [h] Implement a version of Bobrow's variable-naming algorithm. Instead 
+&#9635; Exercise 7.3 [h] Implement a version of Bobrow's variable-naming algorithm. Instead 
 of taking the first word of each equation, create a unique symbol, and associate 
 
 
@@ -11406,7 +11433,7 @@ vl and . 2 have the words "rectangle" and "width" in common, and add the equatio
 routine should probably print the phrases associated with each variable rather than 
 the variable itself. 
 
-@ Exercise 7.4 [h] The original STUDENT also had a set of "common knowledge" equations 
+&#9635; Exercise 7.4 [h] The original STUDENT also had a set of "common knowledge" equations 
 that it could use when necessary. These were mostly facts about conversion 
 factors, such as (1 inch = 2.54 cm). Also included wereequations like (distance 
 equals rate times time), which could be used to solve problems like "If the distance 
@@ -11415,11 +11442,11 @@ this distance is 2 hours, what is Sandy's rate of speed?" Make changes to incorp
 this facility. It probably only helps in conjunction with a solution to the previous 
 exercise. 
 
-[¿3 Exercise 7.5 [h] Change student so that it prints values only for those variables 
+&#9635; Exercise 7.5 [h] Change student so that it prints values only for those variables 
 that are being asked for in the problem. That is, given the problem "X is 3. Y is 4. 
 How much is X + Y?" it should not print values for X and Y. 
 
-C¿3 Exercise 7.6 [m] Try STUDENT on the following examples. Make sure you handle 
+&#9635; Exercise 7.6 [m] Try STUDENT on the following examples. Make sure you handle 
 special characters properly: 
 
 (a) The price of a radio is 69.70 dollars. If this price is 15% less than the marked 
@@ -11441,21 +11468,24 @@ and Tom. If Mary is 18 years old, how old is Jane?
 
 236 STUDENT; SOLVING ALGEBRA WORD PROBLEMS 
 
-@ Exercise 7.7 [h] Student's infix-to-prefix rules account for the priority of operators 
+&#9635; Exercise 7.7 [h] Student's infix-to-prefix rules account for the priority of operators 
 properly, but they don't handle associativity in the standard fashion. For example, 
 (12 6 
 3) 
 translates to (- 12 (- 6 3)) or 9, when the usual convention is to 
 interpret this as ((- 
 12 6) 3) or 3. Fix student to handle this convention. 
-@ Exercise 7.8 [d] Find a mathematically oriented domain that is sufficiently limited 
+
+&#9635; Exercise 7.8 [d] Find a mathematically oriented domain that is sufficiently limited 
 so that STUDENT can solve problems in it. The chemistry of solutions (calculating pH 
 concentrations) might be an example. Write the necessary *student-rules* , and 
 test the resulting program. 
-@ Exercise 7.9 [m]
+
+&#9635; Exercise 7.9 [m]
 efficient version. 
 Analyze the complexity of one-unknown and implement a more 
-@ Exercise 7.10 [h] Bobrow's paper on STUDENT (1968) includes an appendix that 
+
+&#9635; Exercise 7.10 [h] Bobrow's paper on STUDENT (1968) includes an appendix that 
 abstractly characterizes all the problems that his system can solve. Generate a 
 similar characterization for this version of the program. 
 
@@ -12011,7 +12041,7 @@ SIMPLIFIER> (3 * . + 4 * .)
 
 We will return to these problems in section 8.5. 
 
-@ Exercise 8.1 Verify that the set of rules just prior does indeed implement the desired 
+&#9635; Exercise 8.1 Verify that the set of rules just prior does indeed implement the desired 
 conventions, and that the conventions have the proper effect, and always terminate. 
 As an example of a potential problem, what would happen if we used the rule (. * 
 . = . * .) instead of the rule (s * . = . * s)? 
@@ -12630,17 +12660,19 @@ In this book, techniques for improving the efficiency of algebraic manipulation
 are covered in sections 9.6 and 10.4. Chapter 15 presents a reimplementation that 
 does not use pattern-matching, and is closer to the techniques used in MACSYMA. 
 8.8 Exercises 
-t¿l Exercise 8.2 [s] Some notations use the operator ** instead of " to indicate exponentiation. 
+&#9635; Exercise 8.2 [s] Some notations use the operator ** instead of " to indicate exponentiation. 
 Fix i nf ix->pref i . so that either notation is allowed. 
-Exercise 8.3 [m] Can the system as is deal with imaginary numbers? What are 
+
+&#9635; Exercise 8.3 [m] Can the system as is deal with imaginary numbers? What are 
 some of the difficulties? 
-@ Exercise 8.4 [h] There are some simple expressions involving sums that are not 
+&#9635; Exercise 8.4 [h] There are some simple expressions involving sums that are not 
 handled by the i ntegrate function. The function can integrate axx^-\-bxx-\-c 
 but not 5 X {a X x^ b X X + c) . Similarly, it can integrate x^ + 2x x^ -\- x^ but not 
 (.2 + x)^^ and it can do + + . -h 1 but not (x^ -f 1) . (x + 1). Modify i ntegrate 
 so that it expands out products (or small exponents) of sums. You will probably want 
 to try the usual techniques first, and do the expansion only when that fails. 
-[¿] Exercise 8.5 [d] Another very general integration technique is called integration 
+
+&#9635; Exercise 8.5 [d] Another very general integration technique is called integration 
 by parts. It is based on the rule: Judv = uv — Jvdu 
 So, for example, given 
 X cos xdx/
@@ -12659,7 +12691,7 @@ few, if any, will lead to a successful integration. One simple control rule is t
 integration by parts only at the top level, not at the recursive level. Implement this 
 approach. 
 
-@ Exercise 8.6 [d] A more complicated approach is to try to decide which ways of 
+&#9635; Exercise 8.6 [d] A more complicated approach is to try to decide which ways of 
 breaking up the original expression are promising and which are not. Derive some 
 heuristics for making this division, and reimplement i ntegrate to include a search 
 component, using the search tools of chapter 6. 
@@ -12667,7 +12699,7 @@ component, using the search tools of chapter 6.
 Look in a calculus textbook to see how / sin^ xdx is evaluated by two integrations 
 by parts and a division. Implement this technique as well. 
 
-@ Exercise 8.7 [m] Write simplification rules for predicate calculus expressions. For 
+&#9635; Exercise 8.7 [m] Write simplification rules for predicate calculus expressions. For 
 example, 
 
 (true and . = x) 
@@ -12675,13 +12707,13 @@ example,
 (true or X = true) 
 (false or X = false) 
 
-t¿3 Exercise 8.8 [m] The simplification rule (. / 0 = undef i ned) is necessary to avoid 
+&#9635; Exercise 8.8 [m] The simplification rule (. / 0 = undef i ned) is necessary to avoid 
 problems with division by zero, but the treatment of undef i ned is inadequate. For 
 example, the expression ((0/0) - (0/0)) will simplify to zero, when it should 
 simplify to undef i ned. Add rules to propagate undef i ned values and prevent them 
 from being simplified away. 
 
-@ Exercise 8.9 [d] Extend the method used to handle undef i ned to handle +i nf i ni ty 
+&#9635; Exercise 8.9 [d] Extend the method used to handle undef i ned to handle +i nf i ni ty 
 and -i nf ini ty as well. 
 
 
@@ -13838,7 +13870,7 @@ generates solutions one at a time, automatically keeping track of possible backt
 points. Where pipes allow us to represent an infinite number of alternatives in the 
 data, Prolog allows us to represent those alternatives in the program itself. 
 
-Exercise 9.1 [h] When given a function f and a pipe p. mappend-pipe returns a 
+&#9635; Exercise 9.1 [h] When given a function f and a pipe p. mappend-pipe returns a 
 new pipe that will eventually enumerate all of ( f (first .)), then all of ( f (second 
 .)), and so on. This is deemed "unfair" if ( f (first .)) has an infinite number of 
 elements. Define a function that will fairly interleave elements, so that all of them are 
@@ -14376,7 +14408,7 @@ for the original code and 3 seconds for the memoized code. If this hadn't helped
 could have considered more sophisticated indexing schemes. Instead, we move on 
 to consider other means of gaining efficiency. 
 
-@ Exercise 9.2 [m] The list of rules for each operator is stored in a hash table with 
+&#9635; Exercise 9.2 [m] The list of rules for each operator is stored in a hash table with 
 the operator as key. An alternative would be to store the rules on the property list 
 of each operator, assuming operators must be symbols. Implement this alternative, 
 and time it against the hash table approach. Remember that you need some way of 
@@ -14875,7 +14907,7 @@ until its value is needed. See Hughes 1985 or Field and Harrison 1988.
  EFFICIENCY ISSUES 
 
 9.8 Exercises 
-[¿3 Exercise 9.3 [d] In this chapter we presented a compiler for s i mp1 i fy. It is not too 
+&#9635; Exercise 9.3 [d] In this chapter we presented a compiler for s i mp1 i fy. It is not too 
 much harder to extend this compiler to handle the full power of pat-match. Instead 
 of looking at expressions only, allow trees with variables in any position. Extend and 
 generalize the definitions of compi 1 e -rul e and compi 1 e - rul e-set so that they can 
@@ -14886,22 +14918,22 @@ compiler how to deal with it. One hard part will be accounting for segment varia
 It is worth spending a considerable amount of effort at compile time to make this 
 efficient at run time. 
 
-@ Exercise 9.4 [m] Define the time to compute (fib n) without memoization as Tn. 
+&#9635; Exercise 9.4 [m] Define the time to compute (fib n) without memoization as Tn. 
 Write a formula to express T^. Given that T25 « 1.1 seconds, predict Tioo-
 
-t¿J Exercise 9.5 [m] Consider a version of the game of Nim played as follows: there is 
+&#9635; Exercise 9.5 [m] Consider a version of the game of Nim played as follows: there is 
 a pile of . tokens. Two players alternate removing tokens from the pile; on each turn 
 a player must take either one, two, or three tokens. Whoever takes the last token 
 wins. Write a program that, given n, returns the number of tokens to take to insure 
 a win, if possible. Analyze the execution times for your program, with and without 
 memoization. 
 
-@ Exercise 9.6 [m] A more complicated Nim-like game is known as Grundy's game. 
+&#9635; Exercise 9.6 [m] A more complicated Nim-like game is known as Grundy's game. 
 The game starts with a single pile of . tokens. Each player must choose one pile and 
 split it into two uneven piles. The first player to be unable to move loses. Write a 
 program to play Grundy's game, and see how memoization helps. 
 
-[¿3 Exercise 9.7 [h] This exercise describes a more challenging one-person game. In 
+&#9635; Exercise 9.7 [h] This exercise describes a more challenging one-person game. In 
 this game the player rolls a six-sided die eight times. The player forms four two-digit 
 decimal numbers such that the total of the four numbers is as high as possible, but 
 not higher than 170. A total of 171 or more gets scored as zero. 
@@ -14938,22 +14970,22 @@ total 03 43 49 55 85 90 120 0
 Write a function that allows you to play a game or a series of games. The function 
 should take as argument a function representing a strategy for playing the game. 
 
-S Exercise 9.8 [h] Define a good strategy for the dice game described above. (Hint: 
+&#9635; Exercise 9.8 [h] Define a good strategy for the dice game described above. (Hint: 
 my strategy scores an average of 143.7.) 
 
-S Exercise 9.9 [m] One problem with playing games involving random numbers is 
+&#9635; Exercise 9.9 [m] One problem with playing games involving random numbers is 
 the possibility that a player can cheat by figuring out what random is going to do next. 
 Read the definition of the function random and describe how a player could cheat. 
 Then describe a countermeasure. 
 
-S Exercise 9.10 [m] On page 292 we saw the use of the read-time conditionals, and 
+&#9635; Exercise 9.10 [m] On page 292 we saw the use of the read-time conditionals, and 
 # -, where #+ is the read-time equivalent of when, and #- is the read-time equivalent 
 of unless. Unfortunately, there is no read-time equivalent of case. Implement one. 
 
-@ Exercise 9.11 [h] Write a compiler for ELIZA that compiles all the rules at once into 
+&#9635; Exercise 9.11 [h] Write a compiler for ELIZA that compiles all the rules at once into 
 a single function. How much naore efficient is the compiled version? 
 
-0 Exercise 9.12 [d] Write some rules to simplify Lisp code. Some of the algebraic 
+&#9635; Exercise 9.12 [d] Write some rules to simplify Lisp code. Some of the algebraic 
 simplification rules will still be valid, but new ones will be needed to simplify nonalgebraic 
 functions and special forms. (Since ni1 is a valid expression in this domain, 
 you will have to deal with the semipredicate problem.) Here are some example rules 
@@ -14971,7 +15003,7 @@ you will have to deal with the semipredicate problem.) Here are some example rul
 
 310 EFFICIENCY ISSUES 
 
-S Exercise 9.13 [m] Consider the following two versions of the sieve of Eratosthenes 
+&#9635; Exercise 9.13 [m] Consider the following two versions of the sieve of Eratosthenes 
 algorithm. The second explicitly binds a local variable. Is this worth it? 
 
 (defun sieve (pipe) 
@@ -16777,7 +16809,7 @@ page 472.
  LOW-LEVEL EFFICIENCY ISSUES 
 
 10.6 Exercises 
-@ Exercise 10.1 [h] Define tlie macro deftable, such that (def table person assoc) 
+&#9635; Exercise 10.1 [h] Define tlie macro deftable, such that (def table person assoc) 
 will act much like a def struct‚Äîit will define a set of functions for manipulating a 
 table of people: get-person, put-person, cl ear-person, and map-person. The table 
 should be implemented as an association list. Later on, you can change the representation 
@@ -16803,15 +16835,15 @@ i nl i ne, si ze and test. Here is a possible macroexpansion:
 (defsetf get-person put-person) 
 'person) 
 
-@ Exercise 10.2 [m] We can use the : type option to defstruct to define structures 
+&#9635; Exercise 10.2 [m] We can use the : type option to defstruct to define structures 
 implemented as lists. However, often we have a two-field structure that we would 
 like to implement as a cons cell rather than a two-element list, thereby cutting storage 
 in half. Since defstruct does not allow this, define a new macro that does. 
 
-@ Exercise 10.3 [m] Use reuse - cons to write a version of f 1 atten (see page 329) that 
+&#9635; Exercise 10.3 [m] Use reuse - cons to write a version of f 1 atten (see page 329) that 
 shares as much of its input with its output as possible. 
 
-t¿l Exercise 10.4 [h] Consider the data type set. A set has two main operations: adjoin 
+&#9635; Exercise 10.4 [h] Consider the data type set. A set has two main operations: adjoin 
 an element and test for membership. It is convenient to also add a map-over-elements 
 operation. With these primitive operations it is possible to build up more complex 
 operations like union and intersection. 
@@ -17830,12 +17862,12 @@ number of them. Since our interpreter collects all the solutions into a single l
 before showing any of them, we will never get to see the solutions. The next section 
 shows how to write a new interpreter that fixes this problem. 
 
-El Exercise 11.1 [m] The representation of relations has been a list whose first element 
+&#9635; Exercise 11.1 [m] The representation of relations has been a list whose first element 
 is a symbol. However, for relations with no arguments, some people prefer to write 
 (<- . q r) rather than (<- (p) (q) (r)). Make changes so that either form is 
 acceptable. 
 
-SI Exercise 11.2 [m] Some people find the < - notation difficult to read. Define macros 
+&#9635; Exercise 11.2 [m] Some people find the < - notation difficult to read. Define macros 
 rul e and fact so that we can write: 
 
 (fact (likes Robin cats)) 
@@ -18358,7 +18390,7 @@ specify ?1 to be something like:
 By making the unification procedure more complex, we eliminate the need for backtracking 
 entirely. 
 
-t¿3 Exercise 11.3 [s] Would a unification algorithm that delayed member tests be a good 
+&#9635; Exercise 11.3 [s] Would a unification algorithm that delayed member tests be a good 
 idea or a bad idea for the zebra puzzle? 
 
 11.6 Destructive Unification 
@@ -18659,11 +18691,11 @@ Programming. The language MU-Prolog and NU-Prolog (Naish 1986) and Prolog III
 treatment of the ^ relation and an interpretation of infinite trees. 
 
 11.10 Exercises 
-@ Exercise 11.4 [m] It is somewhat confusing to see "no" printed after one or more 
+&#9635; Exercise 11.4 [m] It is somewhat confusing to see "no" printed after one or more 
 valid answers have appeared. Modify the program to print "no" only when there are 
 no answers at all, and "no more" in other cases. 
 
-t¿J Exercise 11.5 [h] At least six books (Abelson and Sussman 1985, Charniak and 
+&#9635; Exercise 11.5 [h] At least six books (Abelson and Sussman 1985, Charniak and 
 McDermottl985, Charniaketal. 1986, Hennessey 1989, Wilensky 1986, and Winston 
 and Horn 1988) present unification algorithms with a common error. They all have 
 problems unifying (?x ?y a) with (?y ?x ?x). Some of these texts assume that uni fy 
@@ -18690,7 +18722,7 @@ can prove that the unify function in this chapter is correct. Failing a complete
 can you at least prove that the algorithm will always terminate? See Norvig 1991 for 
 more on this problem. 
 
-t¿J Exercise 11.6 [h] Since logic variables are so basic to Prolog, we would like them 
+&#9635; Exercise 11.6 [h] Since logic variables are so basic to Prolog, we would like them 
 to be efficient. In most implementations, structures are not the best choice for small 
 objects. Note that variables only have two slots: the name and the binding. The 
 binding is crucial, but the name is only needed for printing and is arbitrary for most 
@@ -18700,7 +18732,7 @@ marker would be checked by vari abl e-p. Variable names can be stored in a hash
 table that is cleared before each query. Implement this representation for variables 
 and compare it to the structure representation. 
 
-Exercise 11.7 [m] Consider the following alternative implementation for anonymous 
+&#9635; Exercise 11.7 [m] Consider the following alternative implementation for anonymous 
 variables: Leave the macros <- and ?- alone, so that anonymous variables 
 are allowed in assertions and queries. Instead, change uni fy so that it lets anything 
 match against an anonymous variable: 
@@ -18724,10 +18756,10 @@ match against an anonymous variable:
 
 Is this alternative correct? If so, give an informal proof. If not, give a counterexample. 
 
-@ Exercise 11.8 Pi] Write a version of the Prolog interpreter that uses destructive 
+&#9635; Exercise 11.8 Pi] Write a version of the Prolog interpreter that uses destructive 
 unification instead of binding lists. 
 
-C3 Exercise 11.9 [m] Write Prolog rules to express the terms father, mother, son, 
+&#9635; Exercise 11.9 [m] Write Prolog rules to express the terms father, mother, son, 
 daughter, and grand- versions of each of them. Also define parent, child, wife, 
 husband, brother, sister, uncle, and aunt. You will need to decide which relations 
 are primitive (stored in the Prolog data base) and which are derived by rules. 
@@ -18739,7 +18771,7 @@ of C if G is the father of some P, who is the parent of C:
 (father ?g ?p) 
 (parent ?p ?c)) 
 
-@ Exercise 11.10 [m] The following problem is presented in Wirth 1976: 
+&#9635; Exercise 11.10 [m] The following problem is presented in Wirth 1976: 
 
 I married a widow (let's call her W) who has a grown-up daughter (call her 
 D). My father (F), who visited us often, fell in love with my step-daughter and 
@@ -18751,7 +18783,7 @@ father, that is, my step-daughter, also had a son (S2).
 Represent this situation using the predicates defined in the previous exercise, 
 verify its conclusions, and prove that the narrator of this tale is his own grandfather. 
 
-@ Exercise 11.11 [d] Recall the example: 
+&#9635; Exercise 11.11 [d] Recall the example: 
 
 > (?- (length (abed) ?n)) 
 ?N = (1+ (1+ (1+ (1+ 0)))); 
@@ -18762,7 +18794,7 @@ of unification. Ait-Kaci et al. 1987 might give you some ideas how to do this.
 
 386 LOGIC PROGRAMMING 
 
-@ Exercise 11.12 [h] The function rename-vari abl es was necessary to avoid confusion 
+&#9635; Exercise 11.12 [h] The function rename-vari abl es was necessary to avoid confusion 
 between the variables in the first argument to unify and those in the second 
 argument. An alternative is to change the uni f y so that it takes two binding lists, one 
 for each argument, and keeps them separate. Implement this alternative. 
@@ -19915,19 +19947,19 @@ speed execution time and limit the amount of garbage generated. Of course, it ma
 the generated code longer, so that could slow things down if the program ends up 
 spending too much time bringing the code to the processor. 
 
-[¿3 Exercise 12.1 [h] Write definitions for consp-or-variable-p, unify-firstl, and 
+&#9635; Exercise 12.1 [h] Write definitions for consp-or-variable-p, unify-firstl, and 
 uni fy - rest!, and change the compiler to generate code like that outlined previously. 
 You might want to look at the function compile-rule in section 9.6, starting on 
 page 300. This function compiled a call to pat-match into individual tests; now we 
 want to do the same thing to uni fy!. Run some benchmarks to compare the altered 
 compiler to the original version. 
 
-@ Exercise 12.2 [h] We can gain some more efficiency by keeping track of which 
+&#9635; Exercise 12.2 [h] We can gain some more efficiency by keeping track of which 
 variables have been dereferenced and calling an appropriate unification function: 
 either one that dereferences the argument or one that assumes the argument has 
 already been dereferenced. Implement this approach. 
 
-@ Exercise 12.3 [m] What code is generated for (= (f (g ?x) ?y) (f ?y (?p a)))? 
+&#9635; Exercise 12.3 [m] What code is generated for (= (f (g ?x) ?y) (f ?y (?p a)))? 
 
 
 408 COMPILING LOGIC PROGRAMS 
@@ -19936,7 +19968,7 @@ What more efficient code represents the same unification? How easy is it to chan
 
 the compiler to get this more efficient result? 
 
-@ Exercise 12.4 [h] In retrospect, it seems that binding variables to themselves, as 
+&#9635; Exercise 12.4 [h] In retrospect, it seems that binding variables to themselves, as 
 in (?argl . ?argl), was not such a good idea. It complicates the meaning of 
 bindings, and prohibits us from using existing tools. For example, I had to use 
 find-anywhere instead of occur-check for case 11, because occur-check expects 
@@ -19944,7 +19976,7 @@ a noncircular binding list. But find-anywhere does not do as complete a job as
 occur-check. Write a version of compi 1 e - uni fy that returns three values: the code, 
 a noncircular binding list, and a list of variables that are bound to unknown values. 
 
-@ Exercise 12.5 [h] An alternative to the previous exercise is not to use binding lists at 
+&#9635; Exercise 12.5 [h] An alternative to the previous exercise is not to use binding lists at 
 all. Instead, we could pass in a list of equivalence classes‚Äîthat is, a list of lists, where 
 each sublist contains one or more elements that have been unified. In this approach, 
 the initial equivalence class Hst would be ((?argl) (?arg2)). After unifying ?argl 
@@ -20078,7 +20110,7 @@ exp)))
 With these definitions in place, we can invoke the compiler automatically just by 
 making a query with the ? - macro. 
 
-[¿] Exercise 12.6 [m] Suppose you define a predicate p, which calls q, and then define 
+&#9635; Exercise 12.6 [m] Suppose you define a predicate p, which calls q, and then define 
 
 q.In some implementations of Lisp, when you make a query like (? - (. ?x)), you 
 may get a warning message like "function q/1 undef i ned" before getting the correct 
@@ -20485,13 +20517,13 @@ to say,1 i sp is not a part of standard Prolog.
 (unify! ?result (apply (first exp) (rest exp)))) 
 (funcall cont))) 
 
-[¿] Exercise 12.7 [m] Define the primitive solve/1, which works like the function 
+&#9635; Exercise 12.7 [m] Define the primitive solve/1, which works like the function 
 sol ve used in student (page 225). Decide if it should take a single equation as 
 argument or a list of equations. 
 
 
 12.8 ADDING MORE PRIMITIVES 419 
-@ Exercise 12.8 [h] Assumewehadagoalof the form (solve (= 12 (* (+ ?x 1) 
+&#9635; Exercise 12.8 [h] Assumewehadagoalof the form (solve (= 12 (* (+ ?x 1) 
 4))). Rather than manipulate the equation when sol ve/1 is called at run time, we 
 might prefer to do part of the work at compile time, treating the call as if it were 
 (solve (= ?x 2)). Write a Prolog compiler macro for sol ve. Notice that even when 
@@ -20500,11 +20532,11 @@ the predicate might be invoked through a cal 1 / I. The same thing happens in Li
 even when you supply a compiler macro, you still need the actual function, in case 
 of a funcall or apply. 
 
-@ Exercise 12.9 [h] Which of the predicates call, and, or, not, or repeat could 
+&#9635; Exercise 12.9 [h] Which of the predicates call, and, or, not, or repeat could 
 benefit from compiler macros? Write compiler macros for those predicates that 
 could use one. 
 
-^ Exercise 12.10 [m] You might have noticed that ca 11 /1 is inefficient in two important 
+&#9635; Exercise 12.10 [m] You might have noticed that ca 11 /1 is inefficient in two important 
 ways. First, it calls make-predi cate, which must build a symbol by appending 
 strings and then look the string up in the Lisp symbol table. Alter make-predi cate 
 to store the predicate symbol the first time it is created, so it can do a faster lookup 
@@ -20512,14 +20544,14 @@ on subsequent calls. The second inefficiency is the call to append. Change the w
 compiler so that the continuation argument comes first, not last, thus eliminating 
 the need for append in cal 1. 
 
-@ Exercise 12.11 [s] The primitive true/0 always succeeds, and f a i 1 /O always fails. 
+&#9635; Exercise 12.11 [s] The primitive true/0 always succeeds, and f a i 1 /O always fails. 
 Define these primitives. Hint: the first corresponds to a Common Lisp function, and 
 the second is a function already defined in this chapter. 
 
-t¿J Exercise 12.12 [s] Would it be possible to write = =/ 2 as a list of clauses rather than 
+&#9635; Exercise 12.12 [s] Would it be possible to write = =/ 2 as a list of clauses rather than 
 as a primitive? 
 
-t¿3 Exercise 12.13 [m] Write a version of deref - copy that traverses the argument expression 
+&#9635; Exercise 12.13 [m] Write a version of deref - copy that traverses the argument expression 
 only once. 
 
 
@@ -20673,7 +20705,7 @@ cont
 (rest body) cont 
 (bind-new-variables bindings goal)))))))))) 
 
-@ Exercise 12.14 [m] Given the definitions below, figure out what a call to test - cut 
+&#9635; Exercise 12.14 [m] Given the definitions below, figure out what a call to test - cut 
 will do, and what it will write: 
 
 (<- (test-cut) (p a) (p b) ! (p c) (p d)) 
@@ -20821,7 +20853,7 @@ on page 772.
 
 426 COMPILING LOGIC PROGRAMS 
 
-t¿l Exercise 12.15 [m] Assuming an approach using a stack of failure continuations 
+&#9635; Exercise 12.15 [m] Assuming an approach using a stack of failure continuations 
 instead of success continuations, show what the code for . and member would look 
 like. Note that you need not pass failure continuations around; you can just push 
 them onto a stack that top-1 evel - prove will invoke. How would the cut be implemented? 
@@ -20847,7 +20879,7 @@ this chapter does not use the WAM. Instead, it is modeled after Mark Stickel's (
 theorem prover. A similar compiler is briefly sketched by Jacques Cohen 1985. 
 
 12.12 Exercises 
-@ Exercise 12.16 [m] Change the Prolog compiler to allow implicit calls. That is, if 
+&#9635; Exercise 12.16 [m] Change the Prolog compiler to allow implicit calls. That is, if 
 a goal is not a cons cell headed by a predicate, compile it as if it were a cal 1. The 
 clause: 
 
@@ -20859,7 +20891,7 @@ should be compiled as if it were:
 
 
 12.12 EXERCISES
-@ Exercise 12.17 [h] Here are some standard Prolog primitives: 
+&#9635; Exercise 12.17 [h] Here are some standard Prolog primitives: 
 
 * get/1 Read a single character and unify it with the argument. 
 * put/1 Print a single character. 
@@ -20881,15 +20913,15 @@ one meaning in Prolog and another in Lisp. Also, in Prolog the normal notation i
 and \==, not / = and /==. For Prolog-In-Lisp, you need to decide which notations to 
 use: Prolog's or Lisp's. 
 
-[¿3 Exercise 12.18 [s] In Lisp, we are used to writing n-ary calls like (< 1 . 10)or(= 
+&#9635; Exercise 12.18 [s] In Lisp, we are used to writing n-ary calls like (< 1 . 10)or(= 
 . y .). Write compiler macros that expand n-ary calls into a series of binary calls. 
 Forexample, (< 1 . 10) should expand into (and (< 1 n) (< . 10)). 
 
-@ Exercise 12.19 [m] One feature of Lisp that is absent in Prolog is the quote mechanism. 
+&#9635; Exercise 12.19 [m] One feature of Lisp that is absent in Prolog is the quote mechanism. 
 Is there a use for quote? If so, implement it; if not, explain why it is not 
 needed. 
 
-[¿3 Exercise 12.20 [h] Write a tracing mechanism for Prolog. Add procedures . -1 ra ce 
+&#9635; Exercise 12.20 [h] Write a tracing mechanism for Prolog. Add procedures . -1 ra ce 
 and p-untrace to trace and untrace Prolog predicates. Add code to the compiler to 
 generate calls to a printing procedure for goals that are traced. In Lisp, we have to 
 trace procedures when they are called and when they return. In Prolog, there are 
@@ -20931,7 +20963,7 @@ FAIL MEMBER: 11 (B C D)
 FAIL MEMBER: ?1 (A . C D) 
 No. 
 
-@ Exercise 12.21 [m] Some Lisp systems are very slow at compiling functions. KCL 
+&#9635; Exercise 12.21 [m] Some Lisp systems are very slow at compiling functions. KCL 
 is an example; it compiles by translating to C and then calling the C compiler and 
 assembler. In KCL it is best to compile only code that is completely debugged, and 
 run interpreted while developing a program. 
@@ -20939,14 +20971,14 @@ Alter the Prolog compiler so that calling the Lisp compiler is optional. In all 
 Prolog functions are translated into Lisp, but they are only compiled to machine 
 language when a variable is set. 
 
-@ Exercise 12.22 [d] Some Prolog systems provide the predicate freeze to "freeze" a 
+&#9635; Exercise 12.22 [d] Some Prolog systems provide the predicate freeze to "freeze" a 
 goal until its variables are instantiated. For example, the goal (freeze . (> . 0)) 
 is interpreted as follows: if x is instantiated, then just evaluate the goal (> . 0), and 
 succeed or fail depending on the result. However, if . is unbound, then succeed and 
 continue the computation, but remember the goal (> . 0) and evaluate it as soon as 
 X becomes instantiated. Implement freeze. 
 
-@ Exercise 12.23 [m] Write a recursive version of anonymous - va r i abl es -1. that does 
+&#9635; Exercise 12.23 [m] Write a recursive version of anonymous - va r i abl es -1. that does 
 not use a local function. 
 
 
@@ -21662,10 +21694,10 @@ Notice that this new class adds no new variables or methods. All it does is comb
 
 the functionality of two parent classes into one. 
 
-[¿3 Exercise 13.1 [d] Define a version of def i ne-cl ass that handles inheritance and 
+&#9635; Exercise 13.1 [d] Define a version of def i ne-cl ass that handles inheritance and 
 call-next-method. 
 
-[¿3 Exercise 13.2 [d] Define a version of def i ne-cl ass that handles multiple inheritance. 
+&#9635; Exercise 13.2 [d] Define a version of def i ne-cl ass that handles multiple inheritance. 
 
 
 
@@ -22387,17 +22419,17 @@ only ones since Smalltalk to introduce important new concepts: multiple inherita
 and method combination from Flavors, and multimethods from CommonLoops. 
 
 13.12 Exercises 
-@ Exercise 13.3 [m] Implement deposit and interest methods for the account class 
+&#9635; Exercise 13.3 [m] Implement deposit and interest methods for the account class 
 using CLOS. 
 
-@ Exercise 13.4 [m] Implement the password-account class using CLOS. Can it be 
+&#9635; Exercise 13.4 [m] Implement the password-account class using CLOS. Can it be 
 done as cleanly with inheritance as it was done with delegation? Or should you use 
 delegation within CLOS? 
 
-@ Exercise 13.5 [h] Implement graph searching, search paths, and A* searching as 
+&#9635; Exercise 13.5 [h] Implement graph searching, search paths, and A* searching as 
 classes in CLOS. 
 
-@ Exercise 13.6 [h] Implement a priority queue to hold the states of a problem. Instead 
+&#9635; Exercise 13.6 [h] Implement a priority queue to hold the states of a problem. Instead 
 of a list, the probl em-states will be a vector of lists, each initially null. Each 
 new state will have a priority (determined by the generic function priori ty) which 
 must be an integer between zero and the length of the vector, where zero indicates the 
@@ -24643,38 +24675,44 @@ disjunction and negation (i.e., non-Horn clauses) include Loveland 1987, Plaiste
 1988, and Stickell988. 
 
 14.12 Exercises 
-@ Exercise 14.1 [m] Arrange to store dtrees in a hash table rather than on the property 
+&#9635; Exercise 14.1 [m] Arrange to store dtrees in a hash table rather than on the property 
 list of predicates. 
 
-(¿3 Exercise 14.2 [m] Arrange to store the dtree-atoms in a hash table rather than in 
+&#9635; Exercise 14.2 [m] Arrange to store the dtree-atoms in a hash table rather than in 
 an association list. 
 
-@ Exercise 14.3 [m] Change the dtree code so that .i 1 is used as an atom index. Time 
+&#9635; Exercise 14.3 [m] Change the dtree code so that .i 1 is used as an atom index. Time 
 the performance on an application and see if the change helps or hurts. 
 
 ^ A commentary on this paper appears in Elcock and Hoddinott 1986. 
 
 
 14.12 EXERCISES
-@ Exercise 14.4 [m] Consider the query (. a b c d e f g). If the index under a 
+&#9635; Exercise 14.4 [m] Consider the query (. a b c d e f g). If the index under a 
 returns only one or two keys, then it is probably a waste of time for dtree-fetc h 
 to consider the other keys in the hope of finding a smaller bucket. It is certainly 
 a waste if there are no keys at all indexed under a. Make appropriate changes to 
 dtree-fetch . 
-@ Exercise 14.5 [h] Arrange to delete elements from a dtree. 
-@ Exercise 14.6 [h] Implement iterative-deepening search in the Prolog compiler. 
+
+&#9635; Exercise 14.5 [h] Arrange to delete elements from a dtree. 
+
+&#9635; Exercise 14.6 [h] Implement iterative-deepening search in the Prolog compiler. 
 You will have to change each function to accept the depth as an extra argument, and 
 compile in checks for reaching the maximum depth. 
-Exercise 14.7 [d] Integrate the Prolog compiler with the dtree data base. Use 
+
+&#9635; Exercise 14.7 [d] Integrate the Prolog compiler with the dtree data base. Use 
 the dtrees for predicates with a large number of clauses, and make sure that each 
 predicate that is implemented as a dtree has a Prolog primitive accessing the dtree. 
-[¿J Exercise 14.8 [d] Add support for possible worlds to the Prolog compiler with 
+
+&#9635; Exercise 14.8 [d] Add support for possible worlds to the Prolog compiler with 
 dtrees. This support has already been provided for dtrees, but you will have to 
 provide it for ordinary Prolog rules. 
-@ Exercise 14.9 [h] Integrate the language described in section 14.10 and the frame 
+
+&#9635; Exercise 14.9 [h] Integrate the language described in section 14.10 and the frame 
 syntax from section 14.10 with the extended Prolog compiler from the previous 
 exercise. 
-@ Exercise 14.10 [d] Build a strategic reasoner that decides when to create a possible 
+
+&#9635; Exercise 14.10 [d] Build a strategic reasoner that decides when to create a possible 
 world and does reasoning by cases over these worlds. Use it to solve Moore's problem 
 (page 466). 
 
@@ -25239,7 +25277,7 @@ So copy p, and differentiate the coefficients,
 (setf (coef r i) (deriv-poly (coef r i) x))) 
 (normalize-poly r))))) 
 
-@ Exercise 15.1 [h] Integrating polynomials is not much harder than differentiating 
+&#9635; Exercise 15.1 [h] Integrating polynomials is not much harder than differentiating 
 them. Forexample: 
 
 / 2
@@ -25251,7 +25289,7 @@ ax -\-bxdx = -.-+ — + c.
 
 Write a function to integrate polynomials and install it in pref ix->canon. 
 
-@ Exercise 15.2 [m] Add support for definite integrals, such as y dx. You will 
+&#9635; Exercise 15.2 [m] Add support for definite integrals, such as y dx. You will 
 need to make up a suitable notation and properly install it in both infix->prefix 
 and prefix->canon. A full implementation of this feature would have to consider 
 infinity as a bound, as well as the problem of integrating over singularities. You need 
@@ -25651,19 +25689,19 @@ the rest of the functionality for full rational expressions is left to a series 
 (number (denominator rat)) 
 (t 1))) 
 
-^ Exercise 15.3 [s] Modify pref i x->canon to accept input of the form . / y and to 
+&#9635; Exercise 15.3 [s] Modify pref i x->canon to accept input of the form . / y and to 
 return rational expressions instead of polynomials. Also allow for input of the form 
 . " - n. 
 
-@ Exercise 15.4 [m] Add arithmetic routines for multiplication, addition, and division 
+&#9635; Exercise 15.4 [m] Add arithmetic routines for multiplication, addition, and division 
 of rational expressions. Call them rat*rat, rat+rat, and rat/rat respectively. 
 They will call upon poly*poly. poly+poly and a new function, pol y/poly, which is 
 defined in the next exercise. 
 
-@ Exercise 15.5 [h] Define poly-gcd, which computes the greatest common divisor 
+&#9635; Exercise 15.5 [h] Define poly-gcd, which computes the greatest common divisor 
 of two polynomials. 
 
-@ Exercise 15.6 [h] Using poly-gcd, define the function pol y/poly, which will implement 
+&#9635; Exercise 15.6 [h] Using poly-gcd, define the function pol y/poly, which will implement 
 division for polynomials. Polynomials are closed under addition and multiplication, 
 so poly+poly and poly*poly both returned polynomials. Polynomials are 
 not closed under division, so pol y /pol y will return a rational expression. 
@@ -25706,18 +25744,18 @@ system, on which this chapter is loosely based. Fateman (1991) discusses the
 frpoly benchmark and introduces the vector implementation used in this chapter. 
 
 15.8 Exercises 
-t¿l Exercise 15.7 [h] Implement an extension of the rationals to include logarithmic, 
+&#9635; Exercise 15.7 [h] Implement an extension of the rationals to include logarithmic, 
 exponential, and trigonometric functions. 
 
-t¿] Exercise 15.8 [m] Modify deri . to handle the extended rational expressions. 
+&#9635; Exercise 15.8 [m] Modify deri . to handle the extended rational expressions. 
 
-[¿3 Exercise 15.9 [d] Adapt the integration routine from section 8.6 (page 252) to the 
+&#9635; Exercise 15.9 [d] Adapt the integration routine from section 8.6 (page 252) to the 
 rational expression representation. Davenport et al. 1988 may be useful. 
 
 
 15.9 ANSWERS 529 
 
-S Exercise 15.10 [s] Give several reasons why constant polynomials, like 3, are represented 
+&#9635; Exercise 15.10 [s] Give several reasons why constant polynomials, like 3, are represented 
 as integers rather than as vectors. 
 
 15.9 Answers 
@@ -26127,7 +26165,7 @@ this arbitrary cutoff point:
 "Is X a valid numeric certainty factor?" 
 (and (numberp x) (<= false . true))) 
 
-@ Exercise 16.1 [m] Suppose you read the headline "Elvis Alive in Kalamazoo" in a 
+&#9635; Exercise 16.1 [m] Suppose you read the headline "Elvis Alive in Kalamazoo" in a 
 tabloid newspaper to which you attribute a certainty factor of .01. If you combine certainties 
 using EMYCIN'S combination rule, how many more copies of the newspaper 
 would you need to see before you were .95 certain Elvis is alive? 
@@ -27270,7 +27308,7 @@ Pearl (1988) captures most of the important points that lead to the renaissance
 of probability theory. Shafer and Pearl 1990 is a balanced collection of papers on all 
 kinds of uncertain reasoning. 
 16.11 Exercises 
-@ Exercise 16.2 [s] Suppose the rule writer wanted to be able to use symbolic certainty 
+&#9635; Exercise 16.2 [s] Suppose the rule writer wanted to be able to use symbolic certainty 
 factors instead of numbers. What would you need to change to support rules like 
 this: 
 (defrule(defrule 
@@ -27280,22 +27318,28 @@ this:
 .. . 
 then true ... ) 
 then probably ... ) 
-@ Exercise 16.3 [m] Change prompt-and-read-va l s so that it gives a better prompt 
+
+&#9635; Exercise 16.3 [m] Change prompt-and-read-va l s so that it gives a better prompt 
 for parameters of type yes/no. 
-[¿] Exercise 16.4 [m] Currently, the rule writer can introduce a new parameter without 
+
+&#9635; Exercise 16.4 [m] Currently, the rule writer can introduce a new parameter without 
 defining it first. That is handy for rapid testing, but it means that the user of the system 
 won't be able to see a nice English prompt, nor ask for the type of the parameter. In 
 addition, if the rule writer simply misspells a parameter, it will be treated as a new 
 one. Make a simple change to fix these problems. 
-@ Exercise 16.5 [d] Write rules in a domain you are an expert in, or find and interview 
+
+&#9635; Exercise 16.5 [d] Write rules in a domain you are an expert in, or find and interview 
 an expert in some domain, and write down rules coaxed from the expert. Evaluate 
 your resulting system. Was it easier to develop your system with EMYCI N than it 
 would have been without it? 
-@ Exercise 16.6 [s] It is said that an early version of MYCI N asked if the patient was 
+
+&#9635; Exercise 16.6 [s] It is said that an early version of MYCI N asked if the patient was 
 pregnant, even though the patient was male. Write a rule that would fix this problem. 
-E¿] Exercise 16.7 [m] To a yes/no question, what is the difference between yes and (no 
+
+&#9635; Exercise 16.7 [m] To a yes/no question, what is the difference between yes and (no 
 -1) ? What does this suggest? 
-@ Exercise 16.8 [m] What happens if the user types why to the prompt about the 
+
+&#9635; Exercise 16.8 [m] What happens if the user types why to the prompt about the 
 patient's name? What happens if the expert wants to have more than one context 
 with a name parameter? If there is a problem, fix it. 
 
@@ -27307,14 +27351,14 @@ were not implemented in our version. Implementing all the extensions will result
 system that is very close to the full power of EMYCIN. These extensions are discussed 
 in chapter 3 of Buchanan and Shortliffe 1984. 
 
-. Exercise 16.9[h] Add a spelling corrector to ask-vals. If the user enters an invalid 
+&#9635; Exercise 16.9[h] Add a spelling corrector to ask-vals. If the user enters an invalid 
 reply, and the parameter type is a member expression, check if the reply is "close" in 
 spelling to one of the valid values, and if so, use that value. That way, the user can type 
 just entero instead of enterobacter i aceae. You may experiment with the definition 
 of "close," but you should certainly allow for prefixes and at least one instance of a 
 changed, missing, inserted, or transposed letter. 
 
-t¿J Exercise 16.10 [m] Indent the output for each new branch in the context tree. In 
+&#9635; Exercise 16.10 [m] Indent the output for each new branch in the context tree. In 
 other words, have the prompts and findings printed like this: 
 
 RATIENT-1 
@@ -27336,13 +27380,13 @@ Is there another ORGANISM? (Y or N) .
 Is there another CULTURE? (Y or N) . 
 Is there another PATIENT? (Y or N) . 
 
-@ Exercise 16.11 [h] We said that our emycin looks at all possible rules for each 
+&#9635; Exercise 16.11 [h] We said that our emycin looks at all possible rules for each 
 parameter, because there is no telling how a later rule may affect the certainty factor. 
 Actually, that is not quite true. If there is a rule that leads to a conclusion with 
 certainty 1, then no other rules need be considered. This was called a unity path. 
 Modify the program to look for unity paths first. 
 
-@ Exercise 16.12 [m] Depending on whether a parameter is in i ni ti al -data or not, 
+&#9635; Exercise 16.12 [m] Depending on whether a parameter is in i ni ti al -data or not, 
 all the relevant rules are run either before or after asking the user for the value 
 of the parameter. But there are some cases when not all initial data parameters 
 
@@ -27356,7 +27400,7 @@ from rules. After receiving complaints about this problem, a system of anteceden
 rules was developed. These rules were always run first, before asking questions. 
 Implement antecedent rules. 
 
-GJ Exercise 16.13 [h] It is useful to be able to write default rules that fill in a value after 
+&#9635; Exercise 16.13 [h] It is useful to be able to write default rules that fill in a value after 
 all other rules have failed to determine one. A default rule looks like this: 
 
 (defrule . if (parm inst unknown) then (parm inst is default)) 
@@ -27366,17 +27410,17 @@ unknown operator, the difficult part is in making sure that these rules get run 
 right time (after other rules have had a chance to fill in the parameter), and that 
 infinite loops are avoided. 
 
-@ Exercise 16.14 [h] The context tree proved to be a limitation. Eventually, the need 
+&#9635; Exercise 16.14 [h] The context tree proved to be a limitation. Eventually, the need 
 arose for a rule that said, 'Tf any of the organisms in a culture has property X, then the 
 culture has property Y." Implement a means of checking for some or every instance 
 of a context. 
 
-@ Exercise 16.15 [m] As the rule base grew, it became increasingly hard to remember 
+&#9635; Exercise 16.15 [m] As the rule base grew, it became increasingly hard to remember 
 the justification for previous rules. Implement a mechanism that keeps track of the 
 author and date of creation of each rule, and allows the author to add documentation 
 explaining the rationale for the rule. 
 
-@ Exercise 16.16 [m] It is difficult to come up with the perfect prompt for each parameter. 
+&#9635; Exercise 16.16 [m] It is difficult to come up with the perfect prompt for each parameter. 
 One solution is not to insist that one prompt fits all users, but rather to allow 
 the expert to supply three different prompts: a normal prompt, a verbose prompt (or 
 reprompt) for when the user replies with a ?, and a terse prompt for the experienced 
@@ -27386,7 +27430,7 @@ ask for the terse prompts, and change ask-val s to use the proper prompt.
 The remaining exercises cover three additional replies the user can make: how, 
 stop, and change. 
 
-@ Exercise 16.17 [d] In addition to why replies, EMYCIN also allowed for how questions. 
+&#9635; Exercise 16.17 [d] In addition to why replies, EMYCIN also allowed for how questions. 
 The user can ask how the value of a particular parameter/instance pair was determined, 
 and the system will reply with a list of rules and the evidence they supplied for 
 
@@ -27396,10 +27440,10 @@ and the system will reply with a list of rules and the evidence they supplied fo
 or against each value. Implement this mechanism. It will require storing additional 
 information in the data base. 
 
-@ Exercise 16.18 [m] There was also a stop command that immediately halted the 
+&#9635; Exercise 16.18 [m] There was also a stop command that immediately halted the 
 session. Implement it. 
 
-@ Exercise 16.19 [d] The original EMYCIN also had a change command to allow the 
+&#9635; Exercise 16.19 [d] The original EMYCIN also had a change command to allow the 
 user to change the answer to certain questions without starting all over. Each question 
 was assigned a number, which was printed before the prompt. The command change, 
 followed by a list of numbers, causes the system to look up the questions associated 
@@ -27410,7 +27454,7 @@ questions. Although it may seem wasteful to start over from the beginning, it wi
 not be wasteful of the user's time, since correct answers will not be asked again. 
 Identify what needs to be altered to implement change and make the alterations. 
 
-I¿3 Exercise 16.20 [h] Change the definition of cf - a nd and cf -or to use fuzzy set theory 
+&#9635; Exercise 16.20 [h] Change the definition of cf - a nd and cf -or to use fuzzy set theory 
 instead of certainty factors. Do the same for Dempster-Shafer theory. 
 
 16.12 Answers 
@@ -28817,21 +28861,21 @@ chapter, and thereby go all the way from pixels to 3-D descriptions.
 This chapter has solved the problem of line-labeling for polyhedra made of trihedral 
 Vertexes. The following exercises extend this solution. 
 
-I¿] Exercise 17.1 [h] Use the line-labeling to produce a face labeling. Write a function 
+&#9635; Exercise 17.1 [h] Use the line-labeling to produce a face labeling. Write a function 
 that takes a labeled diagram as input and produces a list of the faces (planes) that 
 comprise the diagram. 
 
-@ Exercise 17.2 [h] Use the face labeling to produce a polyhedron labeling. Write 
+&#9635; Exercise 17.2 [h] Use the face labeling to produce a polyhedron labeling. Write 
 a function that takes a hst of faces and a diagram and produces a list of polyhedra 
 (blocks) that comprise the diagram. 
 
-@ Exercise 17.3 [d] Extend the system to include quad-hedral Vertexes and/or shadows. 
+&#9635; Exercise 17.3 [d] Extend the system to include quad-hedral Vertexes and/or shadows. 
 There is no conceptual difficulty in this, but it is a very demanding task to find 
 all the possible vertex types and labelings for them. Consult Waltz 1975. 
 
-t¿] Exercise 17.4 [d] Implement a program to recognize lines from pixels. 
+&#9635; Exercise 17.4 [d] Implement a program to recognize lines from pixels. 
 
-@ Exercise 17.5 [d] If you have access to a workstation with a graphical interface, 
+&#9635; Exercise 17.5 [d] If you have access to a workstation with a graphical interface, 
 implement a program to allow a user to draw diagrams with a mouse. Have the 
 program generate output in the form expected by construct-di agram. 
 
@@ -29499,7 +29543,7 @@ moves))
 (best (apply #*max scores))) 
 (elt moves (position best scores))))) 
 
-Exercise 18.1 Playsomegameswithmaximize -differenceagainst random-strategy 
+&#9635; Exercise 18.1 Playsomegameswithmaximize -differenceagainst random-strategy 
 and human. How good is maximize-difference? 
 Those who complete the exercise will quickly see that the maximi ze-di ff erence 
 player does better than random, and may even beat human players in their first game 
@@ -29568,7 +29612,7 @@ sum (aref *weights* i)
 when (eql (bref board i) opp) 
 sum (- (aref ^weights* i))))) 
 
-@ Exercise 18.2 Compare strategies by evaluating the two forms below. What happens? 
+&#9635; Exercise 18.2 Compare strategies by evaluating the two forms below. What happens? 
 Is this a good test to determine which strategy is better? 
 
 
@@ -31687,15 +31731,15 @@ are discussed by L. Davis (1987,1991) and Goldberg (1989).
 
 18-15 Exercises 
 
-@ Exercise 18.3 [s] How many different Othello positions are there? Would it be 
+&#9635; Exercise 18.3 [s] How many different Othello positions are there? Would it be 
 feasible to store the complete game tree and thus have a perfect player? 
 
-t¿l Exercise 18.4 [m] At the beginning of this chapter, we implemented pieces as an 
+&#9635; Exercise 18.4 [m] At the beginning of this chapter, we implemented pieces as an 
 enumerated type. There is no built-in facility in Common Lisp for doing this, so 
 we had to introduce a series of defconstant forms. Define a macro for defining 
 enumerated types. What else should be provided besides the constants? 
 
-@ Exercise 18.5 [h] Add fixnum and speed declarations to the lago evaluation func
+&#9635; Exercise 18.5 [h] Add fixnum and speed declarations to the lago evaluation func
 
 
 
@@ -31703,19 +31747,19 @@ enumerated types. What else should be provided besides the constants?
 tion and the alpha-beta code. How much does this speed up lago? What other 
 efficiency measures can you take? 
 
-Exercise 18.6 [h] Implement an iterative deepening search that allocates time for 
+&#9635; Exercise 18.6 [h] Implement an iterative deepening search that allocates time for 
 each move and checks between each iteration if the time is exceeded. 
 
-53 Exercise 18.7 [h] Implement zero-window search, as described in section 18.13. 
+&#9635; Exercise 18.7 [h] Implement zero-window search, as described in section 18.13. 
 
-@ Exercise 18.8 [d] Read the references on Bill (Lee and Mahajan 1990, and 1986 if 
+&#9635; Exercise 18.8 [d] Read the references on Bill (Lee and Mahajan 1990, and 1986 if 
 you can get it), and reimplement Bill's evaluation function as best you can, using the 
 table-based approach. It will also be helpful to read Rosenbloom 1982. 
 
-13 Exercise 18.9 [d] Improve the evaluation function by tuning the parameters, using 
+&#9635; Exercise 18.9 [d] Improve the evaluation function by tuning the parameters, using 
 one of the techniques described in section 18.13. 
 
-G3 Exercise 18.10 [h] Write move-generation and evaluation functions for another 
+&#9635; Exercise 18.10 [h] Write move-generation and evaluation functions for another 
 game, such as chess or checkers. 
 
 18.16 Answers 
@@ -32210,7 +32254,7 @@ Memoized Unmemoized
 7 1430 5.80 247 116 — 
 8 4862 20.47 238 144 — 
 
-(¿3 Exercise 19.1 Pi] It seems that we could be more efficient still by memoizing with 
+&#9635; Exercise 19.1 Pi] It seems that we could be more efficient still by memoizing with 
 a table consisting of a vector whose length is the number of words in the input (plus 
 one). Implement this approach and see if it entails less overhead than the more 
 general hash table approach. 
@@ -32988,15 +33032,15 @@ For a general overview of natural language processing, my preferences (in order)
 are Allen 1987, Winograd 1983 or Gazdar and Mellish 1989. 
 
 19.9 Exercises 
-Exercise 19.2 [m-h] Experiment with the grammar and the parser. Find sentences 
+&#9635; Exercise 19.2 [m-h] Experiment with the grammar and the parser. Find sentences 
 it cannot parse correctly, and try to add new syntactic rules to account for them. 
 
-@ Exercise 19.3 [m-h] The parser works in a bottom-up fashion. Write a top-down 
+&#9635; Exercise 19.3 [m-h] The parser works in a bottom-up fashion. Write a top-down 
 parser, and compare it to the bottom-up version. Can both parsers work with the 
 same grammar? If not, what constraints on the grammar does each parsing strategy 
 impose? 
 
-@ Exercise 19.4 [h] Imagine an interface to a dual cassette deck. Whereas the CD 
+&#9635; Exercise 19.4 [h] Imagine an interface to a dual cassette deck. Whereas the CD 
 player had one assumed verb, "play," this unit has three explicit verb forms: "record," 
 "play," and "erase." There should also be modifiers "from" and "to," where the object 
 of a "to" is either 1 or 2, indicating which cassette to use, and the object of a "from" 
@@ -33018,7 +33062,7 @@ automatic timer, with phrases like "at 3:00."
 
  INTRODUCTION TO NATURAL LANGUAGE 
 
-S Exercise 19.5 [m] In the definition of permute, repeated here, why is the :test 
+&#9635; Exercise 19.5 [m] In the definition of permute, repeated here, why is the :test 
 #'eq needed? 
 
 (defun permute (bag) 
@@ -33029,7 +33073,7 @@ nil
 (let ((e (random-elt bag))) 
 (cons e (permute (remove e bag :count 1 :test #'eq)))))) 
 
-S Exercise 19.6 [m] The definition of permute takes 0{n^). Replace it by an 0 (n) 
+&#9635; Exercise 19.6 [m] The definition of permute takes 0{n^). Replace it by an 0 (n) 
 algorithm. 
 
 19.10 Answers 
@@ -33589,7 +33633,7 @@ nil
 (symbol "¡s (+ . 1)))) 
 (make-dcg-body (rest body) (+ . 1)))))))) 
 
-@ Exercise 20.1 [m] make - dcg violates one of the cardinal rules of macros. What does 
+&#9635; Exercise 20.1 [m] make - dcg violates one of the cardinal rules of macros. What does 
 it do wrong? How would you fix it? 
 
 20.3 A Simple Grammar in DCG Format 
@@ -34572,17 +34616,21 @@ Comparing Woods's (1970) ATN grammar to Pereira and Warren's (1980) DCG grammar,
 the careful reader will see that the solutions have much in common. The analysis 
 is more important than the notation, as it should be. 
 20.9 Exercises 
-@ Exercise 20.2 [m] Modify the grammar (from section 20.4, 20.5,
+&#9635; Exercise 20.2 [m] Modify the grammar (from section 20.4, 20.5,
 for adjectives before a noun. 
 or 20.6) to allow 
-[¿3 Exercise 20.3 [m] Modify the grammar to allow for prepositional phrase modifiers 
+
+&#9635; Exercise 20.3 [m] Modify the grammar to allow for prepositional phrase modifiers 
 on verb and noun phrases. 
-@ Exercise 20.4 [m] Modify the grammar to allow for ditransitive verbs—verbs that 
+
+&#9635; Exercise 20.4 [m] Modify the grammar to allow for ditransitive verbs?erbs that 
 take two objects, as in "give the dog a bone." 
-[¿3 Exercise 20.5 Suppose we wanted to adopt the Prolog convention of writing DCG 
+
+&#9635; Exercise 20.5 Suppose we wanted to adopt the Prolog convention of writing DCG 
 tests and words in brackets and braces, respectively. Write a function that will alter 
 the readtable to work this way. 
-@ Exercise 20.6 [m] Define a rule function for a new type of DCG rule that automatically 
+
+&#9635; Exercise 20.6 [m] Define a rule function for a new type of DCG rule that automatically 
 builds up a syntactic parse of the input. For example, the two rules: 
 (rule is) => (np) (vp)) 
 (rule (np) => (iword he)) 
@@ -34593,7 +34641,7 @@ should be equivalent to:
 (rule (s (s ?1 ?2)) --> (np ?1) (vp 12)) 
 (rule (np (np he)) --> (:word he)) 
 
-53 Exercise 20.7 [m] There are advantages and disadvantages to the approach that 
+&#9635; Exercise 20.7 [m] There are advantages and disadvantages to the approach that 
 Prolog takes in dividing predicates into clauses. The advantage is that it is easy to 
 add a new clause. The disadvantage is that it is hard to alter an existing clause. If 
 you edit a clause and then evaluate it, the new clause will be added to the end of the 
@@ -34605,7 +34653,7 @@ Write a macro named - rul e that is just like rul e, except that it attaches nam
 clauses. When a named rule is reloaded, it replaces the old clause rather than adding 
 a new one. 
 
-@ Exercise 20.8 [h] Extend the DCG rule function to allow or goals in the right-hand 
+&#9635; Exercise 20.8 [h] Extend the DCG rule function to allow or goals in the right-hand 
 side. To make this more useful, also allow and goals. For example: 
 
 (rule (A) --> (B) (or (C) (and (D) (E))) (F)) 
@@ -36312,29 +36360,29 @@ published. The grammar is separated into a simple, neat, context-free component
 and a rather baroque augmentation that manipulates features. 
 
 21.16 Exercises 
-@ Exercise 21.1 [m] Change the grammar to account better for mass nouns. The current 
+&#9635; Exercise 21.1 [m] Change the grammar to account better for mass nouns. The current 
 grammar treats mass nouns by making them vague between singular and plural, 
 which is incorrect. They should be treated separately, since there are determiners 
 such as "much" that work only with mass nouns, and other determiners such as 
 "these" that work only with plural count nouns. 
 
-t¿3 Exercise 21.2 [m] Change the grammar to make a distinction between attributive 
+&#9635; Exercise 21.2 [m] Change the grammar to make a distinction between attributive 
 and predicative adjectives. Most adjectives fall into both classes, but some can be used 
 only attributively, as in "an utter fool" but not" * the fool is utter." Other adjectives can 
 only be used predicatively, as in "the woman was loath to admit it" but not "*a loath 
 (to admit it) woman." 
 
-[¿3 Exercise 21.3 Pi] Implement complement lists for adjectives, so that "loath" would 
+&#9635; Exercise 21.3 Pi] Implement complement lists for adjectives, so that "loath" would 
 take an obligatory infinitive complement, and "proud" would take an optional (PP 
 of) complement. In connection to the previous exercise, note that it is rare if not 
 impossible for attributive adjectives to take complements: "he is proud," "he is proud 
 of his country" and "a proud citizen" are all acceptable, but "*a proud of his country 
 citizen" is not. 
 
-Gl Exercise 21.4 [m] Add rules to advp to allow for adverbs to modify other adverbs, 
+&#9635; Exercise 21.4 [m] Add rules to advp to allow for adverbs to modify other adverbs, 
 as in "extremely likely" or "very strongly." 
 
-@ Exercise 21.5 [h] Allow adverbs to modify adjectives, as in "very good" or "really 
+&#9635; Exercise 21.5 [h] Allow adverbs to modify adjectives, as in "very good" or "really 
 delicious." The syntax will be easy, but it is harder to get a reasonable semantics. 
 While you're at it, make sure that you can handle adjectives with so-called nonintersective 
 semantics. Some adjectives can be handled by intersective semantics: a red 
@@ -36347,15 +36395,18 @@ former senator is not a senator at all. Similarly, a toy elephant is not an elep
 
 The semantics should be represented by something closer to ((toy elephant) ?x) 
 rather than (and (toy ?x) (elephant ?x)). 
-G3 Exercise 21.6 [m] Write a function that notices punctuation instead of ignoring it. 
+&#9635; Exercise 21.6 [m] Write a function that notices punctuation instead of ignoring it. 
 It should work something like this: 
 > (string->words "Who asked Lee. Kim and John?") 
 (WHO ASKED LEE I.I KIM AND JOHN l?l ) 
-t¿3 Exercise 21.7 [m] Change the grammar to allow optional punctuation marks at the 
+
+&#9635; Exercise 21.7 [m] Change the grammar to allow optional punctuation marks at the 
 end of sentences and before relative clauses. 
-Exercise 21.8 [m] Change the grammar to allow conjunction with more than two 
+
+&#9635; Exercise 21.8 [m] Change the grammar to allow conjunction with more than two 
 elements, using commas. Can these rules be generated automatically by conj rule? 
-@ Exercise 21.9 [h] Make a distinction between restrictive and nonrestrictive relative 
+
+&#9635; Exercise 21.9 [h] Make a distinction between restrictive and nonrestrictive relative 
 clauses. In "The truck that has á-wheel drive costs $5000," the italicized relative clause 
 is restrictive. It serves to identify the truck and thus would be part of the quantifier's 
 restriction. The complete sentence might be interpreted as: 
@@ -36460,7 +36511,7 @@ constant constant
 
 (define ifnparm...) body) (defun fniparm...) body) 
 
-@ Exercise 22.1 [s] What does the following expression evaluate to in Scheme? How 
+&#9635; Exercise 22.1 [s] What does the following expression evaluate to in Scheme? How 
 many errors does it have as a Common Lisp expression? 
 
 ((if (= (+ 2 2) 4) 
@@ -37435,11 +37486,11 @@ the top level, saves the appropriate continuation in the value of reset:
 (call/cc (lambda (cc) (set! reset (lambda () 
 (cc "Back to top level"))))) 
 
-@ Exercise 22.2 [m] Can you implement cal 1 /cc in Common Lisp? 
+&#9635; Exercise 22.2 [m] Can you implement cal 1 /cc in Common Lisp? 
 
-Exercise 22.3 [s] Can you implement amb and fai1 in Common Lisp? 
+&#9635; Exercise 22.3 [s] Can you implement amb and fai1 in Common Lisp? 
 
-@ Exercise 22.4 [m] f ai 1 could be written 
+&#9635; Exercise 22.4 [m] f ai 1 could be written 
 (define (fail) ((pop backtrack-points))) if we had the pop macro in Scheme. 
 Write pop. 
 
@@ -37649,7 +37700,7 @@ incorporates all of logic programming.
 778 SCHEME: AN UNCOMMON LISP 
 
 22.7 Exercises 
-S Exercise 22.5 [m] While Scheme does not provide full-blown support for optional 
+&#9635; Exercise 22.5 [m] While Scheme does not provide full-blown support for optional 
 and keyword arguments, it does support rest parameters. Modify the interpreter to 
 support the Scheme syntax for rest parameters: 
 Scheme(lambda(lambda 
@@ -37660,16 +37711,19 @@ Common Lisp
 (lambda (x y &rest 
 body) 
 z) body) 
-@ Exercise 22.6 ßi] The representation of environments is somewhat wasteful. Currently 
+
+&#9635; Exercise 22.6 [h] The representation of environments is somewhat wasteful. Currently 
 it takes 3n cons cells to represent an environment with . variables. Change 
 the representation to take less space. 
-@ Exercise 22.7 [m] As we've implemented macros, they need to be expanded each 
+
+&#9635; Exercise 22.7 [m] As we've implemented macros, they need to be expanded each 
 time they are encountered. This is not so bad for the compiler—you expand the 
 source code and compile it, and then never refer to the source code again. But for 
 the interpreter, this treatment of macros is most unsatisfactory: the work of macro-
 expansion must be done again and again. How can you eliminate this duplicated 
 effort? 
-@ Exercise 22.8 [m] It turns out Scheme allows some additional syntax in 1 et and 
+
+&#9635; Exercise 22.8 [m] It turns out Scheme allows some additional syntax in 1 et and 
 cond. First, there is the "named-let" expression, which binds initial values for variables 
 but also defines a local function that can be called within the body of the 1 et. 
 Second, cond recognizes the symbol => when it is the second element of a cond clause, 
@@ -37708,7 +37762,7 @@ result
 
 Write macro definitions for 1 et and cond allowing these variations. 
 
-@ Exercise 22.9 Pi] Some Scheme implementations permit def i ne statements inside 
+&#9635; Exercise 22.9 Pi] Some Scheme implementations permit def i ne statements inside 
 the body of a 1 ambda (and thus of a def i ne, 1 et, 1 et*, or 1 etrec as well). Here is an 
 example: 
 
@@ -37728,12 +37782,12 @@ as defining a local name as if with 1 etrec. The above definition is equivalent 
 
 Make changes to the interpreter to allow this kind of internal definition. 
 
-@ Exercise 22.10 Scheme programmers are often disdainful of the function or # ' 
+&#9635; Exercise 22.10 Scheme programmers are often disdainful of the function or # ' 
 notation in Common Lisp. Is it possible (without changing the compiler) to make 
 Common Lisp accept (1 ambda () ...) instead of # ' (1 ambda () ...) and f . 
 instead of #'fn? 
 
-@ Exercise 22.11 [m] The top level of the continuation-passing version of scheme 
+&#9635; Exercise 22.11 [m] The top level of the continuation-passing version of scheme 
 includes the call: (i nterp (read) nil #' pr int). Will this always result in some 
 
 
@@ -37742,10 +37796,10 @@ includes the call: (i nterp (read) nil #' pr int). Will this always result in so
 value being printed? Or is it possible that the expression read might call some escape 
 function that ignores the value without printing anything? 
 
-@ Exercise 22.12 [h] What would have to be added or changed to turn the Scheme 
+&#9635; Exercise 22.12 [h] What would have to be added or changed to turn the Scheme 
 interpreter into a Common Lisp interpreter? 
 
-S Exercise 22.13 \h] How would you change the interpreter to allow for multiple 
+&#9635; Exercise 22.13 \h] How would you change the interpreter to allow for multiple 
 values? Explain how this would be done both for the first version of the interpreter 
 and for the continuation-passing version. 
 
@@ -38694,7 +38748,7 @@ through. The function to check arguments is as follows:
 ~d supplied, ~d~@[ to ~d~] expected" 
 (first form) form n-args min (if (/= min max) max)))) 
 
-@ Exercise 23.1 [m] Modify the compiler to check for additional compile-time errors 
+&#9635; Exercise 23.1 [m] Modify the compiler to check for additional compile-time errors 
 suggested by the following erroneous expression: 
 
 (cdr (+ (list X y) 'y (3 x) (car 3 x))) 
@@ -39582,7 +39636,7 @@ comp-go.
 "Compile and execute the expression." 
 (machine (compiler '(exit .exp)))) 
 
-[¿3 Exercise 23.2 [m] This implementation of the machine is wasteful in its representation 
+&#9635; Exercise 23.2 [m] This implementation of the machine is wasteful in its representation 
 of environments. For example, consider what happens in a tail-recursive 
 function. Each ARG instruction builds a new frame and pushes it on the environment. 
 Then each CALL pops the latest frame off the environment. So, while the stack does 
@@ -39999,19 +40053,23 @@ tail-recursion or cal 1 / cc.
 The peephole optimizer described here is based on the one in Masinter and 
 Deutsch 1980. 
 23.7 Exercises 
-@ Exercise 23.3 [h] Scheme's syntax for numbers is slightly different from Common 
+&#9635; Exercise 23.3 [h] Scheme's syntax for numbers is slightly different from Common 
 Lisp's. In particular, complex numbers are written like 3+4i rather than #c(3 4). 
 How could you make scheme - read account for this? 
-@ Exercise 23.4 [m] Is it possible to make the core Scheme language even smaller, 
+
+&#9635; Exercise 23.4 [m] Is it possible to make the core Scheme language even smaller, 
 by eliminating any of the five special forms (quote, begin, set! , if, lambda) and 
 replacing them with macros? 
-@ Exercise 23.5 [m] Add the ability to recognize internal defines (see page 779). 
-@ Exercise 23.6 [h] In comp-if we included a special case for (i f t . y) and (i f 
+
+&#9635; Exercise 23.5 [m] Add the ability to recognize internal defines (see page 779). 
+
+&#9635; Exercise 23.6 [h] In comp-if we included a special case for (i f t . y) and (i f 
 nil X y). But there are other cases where we know the value of the predicate. For 
 example, (i f (* a b). y) can also reduce to x. Arrange for these optimizations to 
 be made. Note the prim -a 1 ways field of the prim structure has been provided for this 
 purpose. 
-@ Exercise 23.7 [m] Consider the following version of the quicksort algorithm for 
+
+&#9635; Exercise 23.7 [m] Consider the following version of the quicksort algorithm for 
 sorting a vector: 
 (define (sort-vector vector test) 
 (define (sort lo hi) 
@@ -40053,7 +40111,7 @@ vector
 The next three exercises describe extensions that are not part of the Scheme 
 standard. 
 
-[¿1 Exercise 23.8 [h] The set! special form is defined only when its first argument is 
+&#9635; Exercise 23.8 [h] The set! special form is defined only when its first argument is 
 a symbol. Extend setl to work like setf when the first argument is a hst. That is, 
 (set! (car x) y) should expand into something like ((setter car) y .), where 
 (setter car) evaluates to the primitive procedure set-car!. You will need to add 
@@ -40064,7 +40122,7 @@ for set!, for example:
 (set! (setter third) 
 (lambda (val list) (set-car! (cdr (cdr list)) val))) 
 
-[¿3 Exercise 23.9 [m] Itis a curious asymmetry of Scheme that there isa special notation 
+&#9635; Exercise 23.9 [m] Itis a curious asymmetry of Scheme that there isa special notation 
 for lambda expressions within def i ne expressions, but not within 1 et. Thus, we see 
 the following: 
 
@@ -40081,7 +40139,7 @@ Do you think this last expression should be legal? If so, modify the macros for
 1 et, 1 et*, and 1 etrec to allow the new syntax. If not, explain why it should not be 
 included in the language. 
 
-@ Exercise 23.10 [m] Scheme does not define funcall, because the normal function-
+&#9635; Exercise 23.10 [m] Scheme does not define funcall, because the normal function-
 call syntax does the work of funcall. This suggests two problems. (1) Is it possible 
 to define funcall in Scheme? Show a definition or explain why there can't be one. 
 Would you ever have reason to use funcall in a Scheme program? (2) Scheme does 
@@ -40089,7 +40147,7 @@ define appl y, as there is no syntax for an application. One might want to exten
 syntax to make (+ . numbers) equivalent to (apply + numbers). Would this be a 
 good idea? 
 
-t¿3 Exercise 23.11 [d] Write a compiler that translates Scheme to Common Lisp. This 
+&#9635; Exercise 23.11 [d] Write a compiler that translates Scheme to Common Lisp. This 
 will involve changing the names of some procedures and special forms, figuring out 
 a way to map Scheme's single name space into Common Lisp's distinct function and 
 variable name spaces, and dealing with Scheme's continuations. One possibility is 
@@ -41130,7 +41188,7 @@ gg sum;
 
 (defloop minimizing minimize) 
 
-Exercise 24.1 1 ooplets us buildaggregates (lists, maximums, sums, etc.)over the 
+&#9635; Exercise 24.1 1 ooplets us buildaggregates (lists, maximums, sums, etc.)over the 
 bodyofthe loop. Sometimes itis inconvenientto be restrictedto a single-loop body. 
 For example, we mightwant a list ofallthe nonzero elements ofa two-dimensional 
 array. One waytoimplementthisiswitha macro, with-col1 ecti on,thatsets up and 
@@ -41807,22 +41865,22 @@ result)))))
 
 24.7 EXERCISES
 24.7 Exercises 
-@ Exercise 24.2 [m] The function reduce is a very useful one, especially with the key 
+&#9635; Exercise 24.2 [m] The function reduce is a very useful one, especially with the key 
 keyword. Write nonrecursive definitions for append and length using reduce. What 
 other common functions can be written with reduce? 
 
-S Exercise 24.3 The so-called loop keywords are not symbols in the keyword package. 
+&#9635; Exercise 24.3 The so-called loop keywords are not symbols in the keyword package. 
 The preceding code assumes they are all in the current package, but this is not quite 
 right. Change the definition of 1 oop so that any symbol with the same name as a loop 
 keyword acts as a keyword, regardless of the symbol's package. 
 
-@ Exercise 24.4 Can there be a value for exp for which the following expressions are 
+&#9635; Exercise 24.4 Can there be a value for exp for which the following expressions are 
 not equivalent? Either demonstrate such an exp or argue why none can exist. 
 
 (loop for X in list collect exp) 
 (mapcar #'(lambda (x) exp) list)) 
 
-.] Exercise 24.5 The object-oriented language Eiffel provides two interesting 1 oop 
+&#9635; Exercise 24.5 The object-oriented language Eiffel provides two interesting 1 oop 
 keywords: i nvari ant and vari ant. The former takes a Boolean-valued expression 
 that must remain true on every iteration of the loop, and the latter takes a integer-
 valued expression that must decrease on every iteration, but never becomes negative. 
@@ -43318,12 +43376,12 @@ adding entirely new functions or by modifying existing functions. The programmer
 must be careful not to use such extensions in portable code. 
 
 25.18 Exercises 
-t¿] Exercise 25.1 Pi] On your next programming project, keep a log of each bug you 
+&#9635; Exercise 25.1 Pi] On your next programming project, keep a log of each bug you 
 detect and its eventual cause and remedy. Classify each one according to the taxonomy 
 given in this chapter. What kind of mistakes do you make most often? How 
 could you correct that? 
 
-t¿3 Exercise 25.2 [s-d] Take a Common Lisp program and get it to work with a different 
+&#9635; Exercise 25.2 [s-d] Take a Common Lisp program and get it to work with a different 
 compiler on a different computer. Make sure you use conditional compilation read 
 
 
@@ -43333,7 +43391,7 @@ macros (#+ and #-) so that the program will work on both systems. What did you
 
 have to change? 
 
-@ Exercise 25.3 [m] Write a setf method for i f that works like this: 
+&#9635; Exercise 25.3 [m] Write a setf method for i f that works like this: 
 
 (setf (if test (first x) y) (+ 2 3)) = 
 (let ((temp (+ 2 3))) 
@@ -43345,7 +43403,7 @@ have to change?
 You will need to use def i ne-setf-method, not defsetf. (Why?) Make sure you 
 handle the case where there is no else part to the i f. 
 
-@ Exercise 25.4 [h] Write a setf method for 1 ookup, a function to get the value for a 
+&#9635; Exercise 25.4 [h] Write a setf method for 1 ookup, a function to get the value for a 
 key in an association list. 
 
 (defun lookup (key alist) 
