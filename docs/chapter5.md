@@ -166,7 +166,7 @@ function `equal`. Below we show the function `simple-equal`, which is like the b
 function `equal`,<sup>[1](#chapter5-fn1)</sup> and the function `pat-match`, which is extended to handle pattern-matching
 variables:
 
-```emacs
+```lisp
 (defun simple-equal (x y)
   "Are x and y equal?  (Don't check inside strings.)"
   (if (or (atom x) (atom y))
@@ -206,7 +206,7 @@ Strings in turn have elements that are characters, accessible through the functi
 the predicate `variable-p` can be defined as follows, and we now have a complete
 pattern matcher:
 
-```emacs
+```lisp
 (defun variab1e-p (x)
   "Is X a variable (a symbol beginning with '?')?"
   (and (symbolp x) (equal (char (symbol-name x) 0) #\?)))
@@ -235,7 +235,7 @@ with something like `(cons old new)`. (Such a list of pairs is known as an *asso
 or *a-list*, because it associates keys with values. See section 3.6.) In terms of the
 example above, we would use:
 
-```emacs
+```lisp
 > (sublis '((?X . vacation))
           '(what would it mean to you if you got a ?X ?))
 (WHAT WOULD IT MEAN TO YOU IF YOU GOT A VACATION ?)
@@ -244,7 +244,7 @@ example above, we would use:
 Now we need to arrange for pat-match to return an a-Iist, rather than just . for
 success. Here's a first attempt:
 
-```emacs
+```lisp
 (defun pat-match (pattern input)
   "Does pattern match input? WARNING: buggy version."
   (if (variable-p pattern)
@@ -285,7 +285,7 @@ convention usually is not followed for constants. The reasoning is that asterisk
 shout out, "Careful! I may be changed by something outside of this lexical scope."
 Constants, of course, will not be changed.)
 
-```emacs
+```lisp
 (defconstant fail nil "Indicates pat-match failure")
 
 (defconstant no-bindings ' ((t . t))
@@ -294,7 +294,7 @@ Constants, of course, will not be changed.)
 
 Next, we abstract away from `assoc` by introducing the following four functions:
 
-```emacs
+```lisp
 (defun get-binding (var bindings)
   "Find a (variable . value) pair in a binding list."
   (assoc var bindings))
@@ -325,7 +325,7 @@ the case of atomic patterns and inputs, so the function as a whole must eventual
 return an answer (unless both pattern and input are of infinite size). If none of these
 four cases succeeds, then the match fails.
 
-```emacs
+```lisp
 (defun pat-match (pattern input &optional (bindings no-bindings))
   "Match pattern against input in the context of the bindings"
   (cond ((eq bindings fail) fail)
@@ -348,7 +348,7 @@ four cases succeeds, then the match fails.
 
 We can now test pat-match and see how it works:
 
-```emacs
+```lisp
 > (pat-match '(i need a ?X) '(i need a vacation))
 ((?X . VACATION) (T . T))
 ```
@@ -358,7 +358,7 @@ the list is a `(variable . value)` pair. The `(T . T)` is a remnant from `no-bin
 does no real harm, but we can eliminate it by making `extend-bindings` a little more
 complicated:
 
-```emacs
+```lisp
 (defun extend-bindings (var val bindings)
   "Add a (var . value) pair to a binding list. "
   (cons (cons var val)
@@ -412,7 +412,7 @@ choose the latter, using a list of the form `(?* variable)` to denote segment va
 The symbol `?*` is chosen because it combines the notion of variable with the Kleene-star
 notation. So, the behavior we want from `pat-match` is now:
 
-```emacs
+```lisp
 > (pat-match '((?* ?p) need (?* ?x))
              '(Mr Hulot and I need a vacation))
 ((?P MR HULOT AND I) (?X A VACATION))
@@ -424,7 +424,7 @@ input, and the rest of the pattern will attempt to match the rest. We can update
 `pat-match` to account for this by adding a single cond-clause. Defining the predicate
 to test for segment variables is also easy:
 
-```emacs
+```lisp
 (defun pat-match (pattern input &optional (bindings no-bindings))
   "Match pattern against input in the context of the bindings"
   (cond ((eq bindings fail) fail)
@@ -463,7 +463,7 @@ This is done by introducing an optional parameter, `start`, which is initially 0
 increased with each failure. Notice that this policy rules out the possibility of any
 kind of variable following a segment variable. (Later we will remove this constraint.)
 
-```emacs
+```lisp
 (defun segment-match (pattern input bindings &optional (start 0))
   "Match the segment pattern ((?* var) . pat) against input."
   (let ((var (second (first pattern)))
@@ -486,7 +486,7 @@ kind of variable following a segment variable. (Later we will remove this constr
 
 Some examples of segment matching follow:
 
-```emacs
+```lisp
 > (pat-match '((?* ?p) need (?* ?x))
 	     '(Mr Hulot and I need a vacation))
 ((?P MR HULOT AND I) (?X A VACATION))
@@ -505,7 +505,7 @@ counting starts at 0 in Common Lisp). But then the pattern `a` fails to match th
 Unfortunately, this version of `segment-match` does not match as much as it should.
 Consider the following example:
 
-```emacs
+```lisp
 > (pat-match '((?* ?x) a b (?* ?x)) '(1 2 a b a b 1 2 a b)) ⇒ NIL
 ```
 
@@ -515,7 +515,7 @@ call to `match-variable` fails, because `?x` has two different values. The fix i
 `match-variable` before testing whether the `b2` fails, so that we will be sure to try
 `segment-match` again with a longer match no matter what the cause of the failure.
 
-```emacs
+```lisp
 (defun segment-match (pattern input bindings optional (start 0))
   "Match the segment pattern ((?* var) . pat) against input."
   (let ((var (second (first pattern)))
@@ -540,7 +540,7 @@ call to `match-variable` fails, because `?x` has two different values. The fix i
 
 Now we see that the match goes through:
 
-```emacs
+```lisp
 > (pat-match '((?* ?x) a b (?* ?x)) '(1 2 a b a b 1 2 a b))
 ((?X 1 2 A B))
 ```
@@ -558,14 +558,14 @@ see A, then respond with . or C, chosen at random." We will choose the simplest
 possible implementation for rules: as lists, where the first element is the pattern and
 the rest is a list of responses:
 
-```emacs
+```lisp
 (defun rule-pattern (rule) (first rule))
 (defun rule-responses (rule) (rest rule))
 ```
 
 Here's an example of a rule:
 
-```emacs
+```lisp
 (((?* ?x) I want (?* ?y))
  (What would it mean if you got ?y)
  (Why do you want ?y)
@@ -596,7 +596,7 @@ Here is a short list of rules, selected from Weizenbaum's original article, but 
 the form of the rules updated to the form we are using. The answer to exercise 5.19
 contains a longer list of rules.
 
-```emacs
+```lisp
 (defparameter *eliza-rules*
   '((((?* ?x) hello (?* ?y))
      (How do you do.  Please state your problem.))
@@ -653,7 +653,7 @@ by swapping "you" for "me" and so on, since these terms are relative to the spea
 
 Here is the complete program:
 
-```emacs
+```lisp
 (defun eliza ()
   "Respond to user input using pattern matching rules."
   (loop
@@ -680,7 +680,7 @@ output in some cases. The program makes use of the previously defined `random-el
 and `flatten`, which is defined here using `mappend` and `mklist`, a function that is
 defined in the InterLisp dialect but not in Common Lisp.
 
-```emacs
+```lisp
 (defun flatten (the-list)
   "Append together elements (or lists) in the list."
   (mappend #'mklist the-list))
@@ -795,7 +795,7 @@ program. Compare their implementation with this one. One difference is that they
 handle the case where the first element of the pattern is a segment variable with the
 following code (translated into our notation):
 
-```emacs
+```lisp
 (or (pat-match (rest pattern) (rest input) bindings)
 	(pat-match pattern (rest input) bindings))
 ```
@@ -808,7 +808,7 @@ you change their code to handle bindings, and incorporate it into our version of
 
 &#9635; **Exercise 5.10** What is wrong with the following definition of `simple-equal`?
 
-```emacs
+```lisp
 (defun simple-equal (x y)
   "Test if two lists or atoms are equal."
   ;; Warning - incorrect
@@ -859,7 +859,7 @@ list of rules into the notation used in this chapter.
 No. If either the pattern or the input were shorter, but matched every
 existing element, the every expression would incorrectly return true.
 
-```emacs
+```lisp
 (every #'pat-match *(a b c) '(a)) ⇒ T
 ```
 
@@ -867,7 +867,7 @@ Furthermore, if either the pattern or the input were a dotted list, then the res
 every would be undefined—some implementations might signal an error, and others
 might just ignore the expression after the dot.
 
-```emacs
+```lisp
 (every #'pat-match '(a b . c) '(a b . d)) ⇒ T, NIL, or error.
 ```
 
@@ -886,7 +886,7 @@ One way to do this is to read a whole line of text with `read-line` rather
 than `read`. Then, substitute spaces for any punctuation character in that string.
 Finally, wrap the string in parentheses, and read it back in as a list:
 
-```emacs
+```lisp
 (defun read-line-no-punct ()
   "Read an input line, ignoring punctuation."
   (read-from-string
@@ -901,7 +901,7 @@ This could also be done by altering the readtable, as in section 23.5, page 821.
 
 ##### Answer 5.6
 
-```emacs
+```lisp
 (defun eliza ()
   "Respond to user input using pattern matching rules."
   (loop
@@ -917,7 +917,7 @@ This could also be done by altering the readtable, as in section 23.5, page 821.
 
 *or*
 
-```emacs
+```lisp
 (defun print-with-spaces (list)
   (format t "~{~a ~}" list))
 ```
@@ -928,7 +928,7 @@ Hint: consider `(simple-equal '() '(nil . nil))`.
 
 ##### Answer 5.14
 
-```emacs
+```lisp
 (defun mappend (fn &rest list)
   "Apply fn to each element of lists and append the results."
   (apply #'append (apply #'mapcar fn lists)))
@@ -953,7 +953,7 @@ matching "do not."
 
 The following includes most of Weizenbaum's rules:
 
-```emacs
+```lisp
 (defparameter *eliza-rules*
   '((((?* ?x) hello (?* ?y))
      (How do you do. Please state your problem.))
