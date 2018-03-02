@@ -3,7 +3,7 @@
 
 Here I'm testing the code highlighing functionality
 
-```emacs
+```lisp
 ;;; -*- Mode: Lisp; Syntax: Common-Lisp; -*-
 ;;; Code from Paradigms of Artificial Intelligence Programming
 ;;; Copyright (c) 1991 Peter Norvig

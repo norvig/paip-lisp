@@ -343,7 +343,7 @@ next section does just that.
 The special form defun stands for "define function." It is used here to define a new 
 function called last-name: 
 
-```emacs
+```lisp
 (defun last-name (name)
   "Select the last name from a name represented as a list."
   (first (last name)))
@@ -405,7 +405,7 @@ the definition of first-name. This is a much easier task than hunting through a 
 program and changing the uses of first that refer to names, while leaving other 
 uses alone. 
 
-```emacs 
+```lisp 
 (defun first-name (name)
   "Select the first name from a name represented as a list."
   (first name))
@@ -417,7 +417,7 @@ uses alone.
 
 > (first-name '(Wilma Flintstone)) WILMA 
 
-```emacs
+```lisp
 (setf names '((John Q Public) (Malcolm X)
               (Admiral Grace Murray Hopper) (Spot) 
               (Aristotle) (A A Milne) (Z Z Top)
@@ -493,7 +493,7 @@ first-name which ignored titles like Admiral and Miss, and got to the "real" fir
 
 name. We could proceed as follows: 
 
-```emacs 
+```lisp 
 (defparameter *titles*
   '(Mr Mrs Miss Ms Sir Madam Dr Admiral Major General)
   "A list of titles that can appear at the start of a name.") 
@@ -531,7 +531,7 @@ member will return a non-nil (hence true) value if the first element of the name
 list of titles, and will return .i 1 (hence false) if it is not. Although all non-nil values 
 are considered true, by convention the constant t is usually used to represent truth. 
 
-```emacs
+```lisp
 (defun first-name (name)
   "Select the first name from a name represented as a list."
   (if (member (first name) *titles*)
@@ -699,7 +699,7 @@ of all the numbers in the original list and the negation of those numbers. For
 example, given the list (testing 12 3 test), return (1 -12-2 3 -3). This 
 problem can be solved very easily using mappend as a component: 
 
-```emacs
+```lisp
 (defun numbers-and-negations (input)
   "Given a list, return only the numbers and their negations."
   (mappend #'number-and-negation input))
@@ -1215,7 +1215,7 @@ Both versions are very difficult to read. With our modern insight (and text edit
 
 that automatically indent), a much simpler program is possible: 
 
-```emacs
+```lisp
 (defun atomprint (exp &optional (depth 0))
   "Print each atom in exp, along with its depth of nesting."
   (if (atom exp)
@@ -1252,7 +1252,7 @@ corresponding elements and then adding up the resulting products.
 
 ##### Answer 1.2
 
-```emacs
+```lisp
 (defun power (x n)
   "Power raises x to the nth power.  N must be an integer >= 0.
    This executes in log n time, because of the check for even n."
@@ -1263,7 +1263,7 @@ corresponding elements and then adding up the resulting products.
 
 ##### Answer 1.3
 
-```emacs
+```lisp
 (defun count-atoms (exp)
   "Return the total number of non-nil atoms in the expression."
   (cond ((null exp) 0)
@@ -1282,7 +1282,7 @@ corresponding elements and then adding up the resulting products.
 
 ##### Answer 1.4
 
-```emacs
+```lisp
 (defun count-anywhere (item tree)
   "Count the times item appears anywhere within tree."
   (cond ((eql item tree) 1)
@@ -1293,7 +1293,7 @@ corresponding elements and then adding up the resulting products.
 
 ##### Answer 1.5 Here are three versions: 
 
-```emacs
+```lisp
 (defun dot-product (a b)
   "Compute the mathematical dot product of two vectors."
   (if (or (null a) (null b))
