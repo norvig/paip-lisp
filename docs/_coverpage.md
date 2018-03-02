@@ -1,6 +1,6 @@
 ![logo](_media/paip-cover.gif)
 
-# Paradigms of Artificial Intelligence Programming <small>3.5</small>
+# Paradigms of Artificial Intelligence Programming
 
 > Case Studies in Common Lisp
 
