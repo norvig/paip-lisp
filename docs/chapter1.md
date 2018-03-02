@@ -198,7 +198,7 @@ Thus, the special form <code>(setf x (+ 2 1))</code> should be considered the eq
 and <code>(setf x 3)</code> a special form expression. 
 
 It turns out that the quote mark is just an abbreviation for another special form. 
-The expression <code>'x</code> is equivalent to (quote x), a special form expression that evaluates 
+The expression <code>'x</code> is equivalent to <code>(quote x)</code>, a special form expression that evaluates 
 to x. The special form operators used in this chapter are: 
 
 <table>
