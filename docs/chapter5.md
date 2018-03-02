@@ -477,7 +477,7 @@ kind of variable following a segment variable. (Later we will remove this constr
 	  (if (null pos)
 	    fail
 	    (let ((b2 (pat-match pat (subseq input pos) bindings)))
-	      ;; If this match faile d , try another longer one
+	      ;; If this match failed, try another longer one
 	      ;; If it worked, check that the variables match
 	      (if (eq b2 fail)
 		  (segment-match pattern input bindings (+ pos 1))
