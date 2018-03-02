@@ -147,13 +147,13 @@ response, and a specific input and transformation of that input. Since we have a
 to represent the input as a list, it makes sense for the other components to be lists
 too. For example, we might have:
 
-<blockquote>
-  Pattern: `(i need a X)`<br>
-  Response: `(what would it mean to you if you got a X ?)`
+```text
+Pattern: (i need a X)
+Response: (what would it mean to you if you got a X ?)
 
-  Input: `(i need a vacation)`<br>
-  Transformation: `(what would it mean to you if you got a vacation ?)`
-</blockquote>
+Input: (i need a vacation)
+Transformation: (what would it mean to you if you got a vacation ?)
+```
 
 The pattern matcher must match the literals `i` with `i`, `need` with `need`, and `a` with `a`,
 as well as match the variable `X` with `vacation`. This presupposes that there is some
