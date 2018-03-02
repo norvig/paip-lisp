@@ -1402,7 +1402,7 @@ atomic name for a built-in function. As such, it is appropriate for use in the f
 position of a function call, but if we want to get at the actual function, rather than its 
 name, we still have to use the # ' notation. For example: 
 
-> ((lambda (x) (+ . 2)) 4) =Í> 6 
+> ((lambda (x) (+ . 2)) 4) => 6 
 
 > (funcall #'(lambda (x) (+ . 2)) 4) => 6 
 
@@ -1482,7 +1482,7 @@ is to return the first argument unevaluated. The notation 'x is actually an
 abbreviation for the special form expression (quote x). Similarly, the notation 
 # '/is an abbreviation for the special form expression (function f). 
 
-•John = (quote John) JOHN 
+'John = (quote John) JOHN 
 (setf . 'John) => JOHN 
 
 (defun twice (x) (+ . x)) => TWICE 
@@ -1929,7 +1929,7 @@ Answer 1.3
 (t (+ (count-atoms (first exp)) 
 (count-atoms (rest exp)))))) 
 
-(defun count-all-atoms (exp Äoptional (if-null 1)) 
+(defun count-all-atoms (exp &optional (if-null 1)) 
 "Return the total number of atoms in the expression, 
 counting nil as an atom only in non-tail position." 
 (cond ((null exp) if-null) 
@@ -3264,7 +3264,7 @@ for comparing elements, or to only consider part of the sequence.
 
 > (remove 1 '(1 2 3 2 1 0 -1) :key #'abs) ^(2320) 
 
-> (remove 1 '(1 2 3 2 1 0 -1) :test #'<) =»(110 -1) 
+> (remove 1 '(1 2 3 2 1 0 -1) :test #'<) =>(110 -1) 
 
 > (remove 1 '(1 2 3 2 1 0 -1) rstart 4) (1 2 3 2 0 -1) 
 
@@ -3468,7 +3468,7 @@ entry and exit to a function:
 (1 EXIT LENGTH9: 3) 
 3 
 
-> (untrace length9) =» (LENGTH9) 
+> (untrace length9) => (LENGTH9) 
 
 > (length9 '(a b c)) => 3 
 
@@ -3639,7 +3639,7 @@ this chapter give an overview of the important built-in functions in Common Lisp
 
 
 3.3 FUNCTIONS ON LISTS 
-3·3 Functions on Lists 
+3.3 Functions on Lists 
 
 For the sake of example, assume we have the following assignments: 
 
@@ -3669,25 +3669,25 @@ ones are explained more thoroughly when they are used.
 
 (reverse x) =>(c b a) puts list in reverse order 
 
-(cons 0 y) =»(0 1 2 3) add to front of list 
+(cons 0 y) =>(0 1 2 3) add to front of list 
 
 (append . y) =i>(a b c 1 2 3) append together elements 
 
 (list . y) =>i{d b c) (1 2 3)) make a new list 
 
-(list* 1 2 .) =»(1 2 a b c) append last argument to others 
+(list* 1 2 .) =>(1 2 a b c) append last argument to others 
 
 (null nil) =>J predicate is true of the empty list 
 
-(null x) =»nil ... and false for everything else 
+(null x) =>nil ... and false for everything else 
 
 distp x) =>T predicate is true of any list, including . i1 
 
-distp 3) =» nil ... and is false for nonlists 
+distp 3) => nil ... and is false for nonlists 
 
 (consp x) =>t predicate is true of non-nil lists 
 
-(consp nil) =»nil ... and false for atoms, including . i1 
+(consp nil) =>nil ... and false for atoms, including . i1 
 
 (equal . .) =^t true for lists that look the same 
 
@@ -3695,7 +3695,7 @@ distp 3) =» nil ... and is false for nonlists
 
 (sort y #'>) =^(3 2 1) sort a list according to a comparison function 
 
-(subseq . 1 2) =» (B) subsequence with given start and end points 
+(subseq . 1 2) => (B) subsequence with given start and end points 
 
 We said that (cons a b) builds a longer list by adding element a to the front of list 
 b, but what if b is not a list? This is not an error; the result is an object . such that 
@@ -3797,13 +3797,13 @@ y
 
 ? 
 
-'(.) •(.) nil nil . . 
+'(.) '(.) nil nil . . 
 
-'"xy" •"xy" nil nil . . 
+'"xy" '"xy" nil nil . . 
 
-"•Xy" '".." nil nil nil . 
+"'Xy" '".." nil nil nil . 
 
-•0 ... nil nil nil . 
+'0 ... nil nil nil . 
 . . nil nil nil nil 
 In addition, there are specialized equaUty predicates such as =, tree -equal, 
 char-equal, and string-equal, which compare numbers, trees, characters, and 
@@ -4078,7 +4078,7 @@ the order of elements in the result. Here are the main functions on sets:
 (member *d r) ^(d) check if an element is a member of a set 
 (subsetp s r) =>nil see if all elements of one set are in another 
 (adjoin 'b s) =^(b c d e) add an element to a set 
-(adjoin 'c s) =>{c Ú e) ... but don't add duplicates 
+(adjoin 'c s) =>{c d e) ... but don't add duplicates 
 
 
 3.10 DESTRUCTIVE FUNCTIONS 
@@ -4380,7 +4380,7 @@ The directive "~r" prints the next argument, which should be a number, in Englis
 
 
 3.13 DEBUGGING TOOLS 85 
-and " ~®." prints a number as a roman numeral. The compound directive " ~{..."}" 
+and " ~@." prints a number as a roman numeral. The compound directive " ~{..."}" 
 takes the next argument, which must be a list, and formats each element of the list 
 according to the format string inside the braces. Finally, the directive exits 
 from the enclosing "''i..."}" loop if there are no more arguments. You can see that 
@@ -4541,7 +4541,7 @@ options for continuing.
 Error: Average of the empty list is undefined. 
 Error signaled by function AVERAGE. 
 If continued: Use 0 as the average. 
-» :continue 
+> :continue 
 0 
 
 In this example, adding error checking nearly doubled the length of the code. This 
@@ -4570,7 +4570,7 @@ If s qr is called with a non-number argument, an appropriate error message is pr
 > (sqr "hello") 
 Error: the argument X was "hello", which is not a NUMBER. 
 If continued: replace X with new value 
-» :continue 4 
+> :continue 4 
 16 
 
 assert is more general than check-type. In the simplest form, assert tests an 
@@ -4630,7 +4630,7 @@ Restart actions (select using :continue):
 
 0: Supply a new value for BEAR 
 1: Supply a new value for (BEAR-PORRIDGE BEAR) 
-» :continue 1 
+> :continue 1 
 Form to evaluate and use to replace (BEAR-PORRIDGE BEAR): 
 (make-porridge :temperature just-right) 
 nil 
@@ -4701,7 +4701,7 @@ equivalent:
 > (+ 1 2 3 4) 10 
 > (funcall #'+12 3 4) ^ 10 
 > (apply #'+ '(1 2 3 4))=^ 10 
-> (apply #·+ 1 2 '(3 4)) => 10 
+> (apply #.+ 1 2 '(3 4)) => 10 
 > (eval '(+12 3 4)) => 10 
 
 In the past, eval was seen as the key to Lisp's flexibility. In modern Lisps with lexical 
@@ -4748,7 +4748,7 @@ variable.
 #'(lambda (action amount) 
 
 (case action 
-(deposit (setf balance (-»• balance amount))) 
+(deposit (setf balance (->' balance amount))) 
 (withdraw (setf balance (- balance amount)))))) 
 
 In the following, two calls to bank-account create two different closures, each with 
@@ -5001,7 +5001,7 @@ with the following definition:
 
 98 OVERVIEW OF LISP 
 
-(defun math-quiz (&optional (op '•·-) (range 100) (n 10)) 
+(defun math-quiz (&optional (op ''.-) (range 100) (n 10)) 
 
 "Ask the user a series of math problems." 
 
@@ -5058,7 +5058,7 @@ Apackage is a symbol table: a mapping between strings and the symbols they name.
 3.19 MORE ABOUT PARAMETERS 99 
 > :xyz => :XYZ ;keywords are self-evaluating 
 
-> Äoptional => ; lambda-list keywords are normal symbols 
+> &optional => ; lambda-list keywords are normal symbols 
 
 Error: the symbol &optional has no value 
 
@@ -5189,7 +5189,7 @@ according to the keywords. Doesn't alter sequence."
 
 (apply #*remove item sequence 
 :test-not (complement test-not) keyword-args) 
-(apply #·remove item sequence 
+(apply #.remove item sequence 
 :test (complement test) keyword-args))) 
 
 The only hard part about this definition is understanding the parameter list. The 
@@ -5949,7 +5949,7 @@ labeled a historical revisionist.
 
 
 4.8 THE LEAPING BEFORE YOU LOOK PROBLEM 121 
-4 · 8 The Leaping before You Look Problem 
+4 . 8 The Leaping before You Look Problem 
 
 Another way to address the "prerequisite clobbers sibling goal" problem is just to be 
 more careful about the order of goals in a goal list. If we want to get the kid to school 
@@ -6007,7 +6007,7 @@ new set of operators. Consider the following:
 '(son-at-school) 
 *school-ops*) 
 
-»TRAP 14877 (SYSTEM:PDL-OVERFLOW EH::REGULAR) 
+>TRAP 14877 (SYSTEM:PDL-OVERFLOW EH::REGULAR) 
 The regular push-down list has overflown. 
 While in the function ACHIEVE <- EVERY <- REMOVE 
 
@@ -6406,11 +6406,11 @@ a local variable and explicitly sets and resets the special variable *ops*. Clea
 the idiom of binding a special variable is more concise, and while it can be initially 
 confusing, it is useful once understood. 
 
-(defun GPS (state goals Äoptional (*ops* *ops*)) 
+(defun GPS (state goals &optional (*ops* *ops*)) 
 "General Problem Solver: from state, achieve goals using *ops*." 
 (remove-if #'atom (achieve-all (cons '(start) state) goals nil))) 
 
-(defun GPS (state goals Äoptional (ops *ops*)) 
+(defun GPS (state goals &optional (ops *ops*)) 
 "General Problem Solver: from state, achieve goals using *ops*." 
 (let ((old-ops *ops*)) 
 
@@ -6637,7 +6637,7 @@ layout‚Äîthat is just one way of visualizing the connectivity.
 
 
 4.13 THE MAZE SEARCHING DOMAIN 135 
-> (gps '((at D) •((at 25))) 
+> (gps '((at D) '((at 25))) 
 
 ((START) 
 (EXECUTING (MOVE FROM 1 TO 2)) 
@@ -6673,7 +6673,7 @@ of what's really happening‚Äîthere's bound to be trouble. What we really want to
 is not to remove atoms but to find all elements that denote actions. The code below 
 says what we mean: 
 
-(defun GPS (state goals Äoptional (*ops* *ops*)) 
+(defun GPS (state goals &optional (*ops* *ops*)) 
 "General Problem Solver: from state, achieve goals using *ops*." 
 (find-all-if #*action-p 
 
@@ -6720,7 +6720,7 @@ remember to include the starting point.
 
 > (equal (find-path 1 25) (reverse (find-path 25 1))) => . 
 
-4·14 The Blocks World Domain 
+4.14 The Blocks World Domain 
 
 Another domain that has attracted more than its share of attention in AI circles is 
 the blocks world domain. Imagine a child's set of building blocks on a table top. 
@@ -7312,9 +7312,9 @@ E¿] Exercise 4.7 [d] Speculate on the design of a planner that can address the P
 Information and Interacting Goals problems. 
 
 4.23 Answers 
-Answer 4.1 In this version, the format string " ~&~V®T~?" breaks down as follows: 
+Answer 4.1 In this version, the format string " ~&~V@T~?" breaks down as follows: 
 
-means go to a fresh line; "~V®T" means insert spaces (®T) but use the next 
+means go to a fresh line; "~V@T" means insert spaces (@T) but use the next 
 argument (V) to get the number of spaces. The " ~?" is the indirection operator: use 
 the next argument as a format string, and the argument following that as the list of 
 arguments for the format string. 
@@ -7323,7 +7323,7 @@ arguments for the format string.
 "Print indented debugging info if (DEBUG ID) has been specified." 
 (when (member id *dbg-ids*) 
 
-(format *debug-io* "~&~v®T~?" (* 2 indent) format-string args))) 
+(format *debug-io* "~&~v@T~?" (* 2 indent) format-string args))) 
 
 
 150 CPS; THE GENERAL PROBLEM SOLVER 
@@ -7898,7 +7898,7 @@ call to match-variabl e fails, because ?x has two different values. The fix is t
 match-vari able before testing whether the b2 fails, so that we will be sure to try 
 segment-match again with a longer match no matter what the cause of the failure. 
 
-(defun segment-match (pattern input bindings Äoptional (start 0)) 
+(defun segment-match (pattern input bindings &optional (start 0)) 
 "Match the segment pattern ((?* var) . pat) against input." 
 (let ((var (second (first pattern))) 
 
@@ -8712,7 +8712,7 @@ Here is an example of an ?and pattern that checks if an expression is both a num
 and odd: 
 
 > (pat-match *(x = (?and (?is ?n numberp) (?is ?n oddp))) 
-•(x = 3)) 
+'(x = 3)) 
 ((?N . 3)) 
 
 ^An alternative would be to reserve the question mark for variables only and use another 
@@ -8783,7 +8783,7 @@ definition of pat -match reflects the five cases (along with two checks for fail
 
 
 6.2 A PAnERN'MATCHING TOOL
-(defun pat-match (pattern input Äoptional (bindings no-bindings)) 
+(defun pat-match (pattern input &optional (bindings no-bindings)) 
 "Match pattern against input in the context of the bindings" 
 (cond ((eq bindings fail) fail) 
 
@@ -9009,7 +9009,7 @@ a constant, the same calculation is done using posi ti on. If it is not a consta
 we just return the first possible starting position‚Äîunless that would put us past the 
 end of the input, in which case we return nil to indicate failure: 
 
-(defun segment-match (pattern input bindings Äoptional (start 0)) 
+(defun segment-match (pattern input bindings &optional (start 0)) 
 "Match the segment pattern ((?* var) . pat) against input." 
 (let ((var (second (first pattern))) 
 
@@ -9095,10 +9095,10 @@ Here are two examples using ?i f. The first succeeds because (+ 3 4) is indeed 7
 and the second fails because (> 3 4) is false. 
 
 > (pat-match '(?x ?op ?y is ?z (?if (eql (?op ?x ?y) ?z))) 
-•(3 + 4 is 7)) 
+'(3 + 4 is 7)) 
 ((?Z . 7) (?Y . 4) (?0P . +) (?X . 3)) 
 
-> (pat-match •(?x ?op ?y (?if (?op ?x ?y))) 
+> (pat-match '(?x ?op ?y (?if (?op ?x ?y))) 
 '(3 > 4)) 
 NIL 
 
@@ -9220,7 +9220,7 @@ rules))
 "Find some rule with which to transform the input.' 
 (rule-based-translator input *eliza-rules* 
 
-laction #·(lambda (bindings responses) 
+laction #.(lambda (bindings responses) 
 (sublis (switch-viewpoint bindings) 
 (random-elt responses))))) 
 
@@ -9761,7 +9761,7 @@ that. Finally, the cost function we are trying to minimize is path-total - cost,
 we provide a beam width, which is now an optional argument to tri . that defaults 
 to one: 
 
-(defun trip (start dest Äoptional (beam-width 1)) 
+(defun trip (start dest &optional (beam-width 1)) 
 
 "Search for the best path from the start to dest." 
 
@@ -9894,13 +9894,13 @@ printing output that can not be reconstructed by read. The function show- ci ty 
 prints a more complete representation of a path. We also define map-path to iterate 
 over a path, collecting values: 
 
-(defun print-path (path Äoptional (stream t) depth) 
+(defun print-path (path &optional (stream t) depth) 
 (declare (ignore depth)) 
 (format stream "#<Path to '"a cost ~.lf> " 
 
 (path-state path) (path-total-cost path))) 
 
-(defun show-city-path (path Äoptional (stream t)) 
+(defun show-city-path (path &optional (stream t)) 
 "Show the length of a path, and the cities along it." 
 (format stream "#<Path ~,lf km: "{^..^.^ -~}>" 
 
@@ -10068,7 +10068,7 @@ which generates successors but eliminates states that £ire in either the list of
 currently being considered or the list of old states considered in the past. 
 
 (defun graph-search (states goal-p successors combiner 
-Äoptional (state= #'eql) old-states) 
+&optional (state= #'eql) old-states) 
 "Find a state that satisfies goal-p. Start with states. 
 
 
@@ -10158,7 +10158,7 @@ see if a state has already appeared.
 6.4 A SET OF SEARCHING TOOLS 209 
 (defun a*-search (paths goal-p successors cost-fn cost-left-fn 
 
-Äoptional (state= #'eql) old-paths) 
+&optional (state= #'eql) old-paths) 
 "Find a path whose state satisfies goal-p. Start with paths, 
 and expand successors, exploring least cost first. 
 When there are duplicate states, keep the one with the 
@@ -10307,7 +10307,7 @@ I.
 . C 
 . 
 Figure 6.5: The Blocks World as a Graph 
-(defun search-gps (start goal Äoptional (beam-width 10)) 
+(defun search-gps (start goal &optional (beam-width 10)) 
 "Search for a sequence of operators leading to goal." 
 (find-all-i f 
 #*action-p 
@@ -10325,7 +10325,7 @@ Here is the successor function:
 (defun gps-successors (state) 
 "Return a lis t of states reachable from this one using ops." 
 (mapcar 
-#·(lambda (op) 
+#.(lambda (op) 
 
 
 6.6 HISTORY AND REFERENCES 213 
@@ -10475,13 +10475,13 @@ and binds the various "history variables" that the Lisp top-level binds.
 
 (prompt "> ") (input t) (output t)) 
 "Read an expression, evaluate it, and print the result(s). 
-Does multiple values and binds: ***•••-++++++/// ///" 
-(let (•**•*•-++++++/ // /// vals) 
+Does multiple values and binds: ***'''-++++++/// ///" 
+(let ('**'*'-++++++/ // /// vals) 
 
 The above variables are all special, except VALS 
 The variable - holds the current input 
 
-• ape the 3 most recent values 
+' ape the 3 most recent values 
 + ++ +++ are the 3 most recent inputs 
 / // /// are the 3 most recent lists of multiple-values 
 (loop 
@@ -10506,7 +10506,7 @@ Finally print the computed value(s)
 
 Answer 6.4 
 
-(defun compose (Ärest functions) 
+(defun compose (&rest functions) 
 "Return the function that is the composition of all the args. 
 
 i.e. (compose f g h) = (lambda (x) (f (g (h x))))." 
@@ -10813,7 +10813,7 @@ rule-based-translator Apply a set of rules, (p. 189)
 Figure 7.1: Glossary for the STUDENT Program 
 
 was a list of two equations. But if nested patterns are used, the response could be 
-something like (( = a 5) ((= b (+ a 1)) (= c (-»-a b)))), which is not a list of 
+something like (( = a 5) ((= b (+ a 1)) (= c (->-a b)))), which is not a list of 
 equations. The function create -1 i st-of-equati ons transforms a response like this 
 into a proper list of equations. The other complication is choosing variable names. 
 Givenalistof words like (the number of customers Tom gets), we want to choose 
@@ -11353,7 +11353,7 @@ HOW = FRAN
 
 234 STUDENT; SOLVING ALGEBRA WORD PROBLEMS 
 
-»Error: There was an attempt to divide a number by zero 
+>Error: There was an attempt to divide a number by zero 
 
 However, one could claim that nasty examples with division by zero don't show up 
 in algebra texts. 
@@ -11726,7 +11726,7 @@ are repeated here:
 (defstruct (rule (:type list)) pattern response) 
 
 (defstruct (exp (:type list) 
-(.•constructor mkexp (Ihs op rhs))) 
+(.'constructor mkexp (Ihs op rhs))) 
 op Ihs rhs) 
 
 (defun exp-p (x) (consp x)) 
@@ -11859,7 +11859,7 @@ Here is the program:
 (cond ((rule-based-translator exp *simplification-rules* 
 
 :rule-if #'exp-lhs :rule-then #'exp-rhs 
-.•action #'(lambda (bindings response) 
+.'action #'(lambda (bindings response) 
 
 (simplify (sublis bindings response))))) 
 ((evaluable exp) (eval exp)) 
@@ -11976,7 +11976,7 @@ Define . and m as numbers; s as a non-number:
 (. * (. * y) = . * (. * y)) 
 ((. * .) * y = . * (. * y)) 
 (. + s = s + .) 
-((. + m) + . = . + . -»- m) 
+((. + m) + . = . + . ->- m) 
 (. + (y + .) = (. + y) + .) 
 ((. + .) + y = (. + y) + .))))) 
 
@@ -12366,7 +12366,7 @@ to turn a list back into an expression:
 (cond ((null factors) 1) 
 
 ((length=1 factors) (first factors)) 
-(t ·(* .(first factors) .(unfactorize (rest factors)))))) 
+(t .(* .(first factors) .(unfactorize (rest factors)))))) 
 
 The derivative-divides method requires a way of dividing two expressions. We do this 
 by factoring each expression and then dividing by cancelling factors. There may be 
@@ -12447,7 +12447,7 @@ Now move the constant factors to the left of the integral
 (partition-if #'(lambda (factor) (free-of factor x)) 
 (factorize exp)) 
 (simplify 
-·(* .(unfactorize const-factors) 
+.(* .(unfactorize const-factors) 
 And try to integrate: 
 .(cond ((null x-factors) x) 
 ((some #'(lambda (factor) 
@@ -12504,7 +12504,7 @@ factors
 (factorize *(* ,u ,(deriv (exp-lhs u) x)))))) 
 
 (if (free-of k2 x) 
-·(* .(integrate-from-table (exp-op u) (exp-lhs u)) 
+.(* .(integrate-from-table (exp-op u) (exp-lhs u)) 
 .(unfactorize k2)))))))) 
 
 There are three cases. In any case, all factors are of the form (" u .), so we separate 
@@ -13611,7 +13611,7 @@ force them by evaluating the delayed function.
 :VALUE 
 (3 . #S(DELAY 
 :FUNCTION 
-#<CLOSURE -77432724»))))))) 
+#<CLOSURE -77432724>))))))) 
 While this seems to work fine, there is a heavy price to pay. Every delayed value must 
 be stored in a two-element structure, where one of the elements is a closure. Thus, 
 there is some storage wasted. There is also some time wasted, as ta . or pi pe-elt 
@@ -13666,7 +13666,7 @@ and as before leaves subsequent elements unevaluated:
 
 > (pipe-elt c 5) => 5 
 
-> c => (0 1 2 3 4 5 . #<CLOSURE 77351636» 
+> c => (0 1 2 3 4 5 . #<CLOSURE 77351636> 
 
 Pipes can also be used for finite lists. Here we see a pipe of length 11: 
 
@@ -13726,7 +13726,7 @@ Eratosthenes algorithm:
 > *primes* ^ (2 . #<CLOSURE 3075345>) 
 
 > (enumerate *primes* icount 10) => 
-(2 3 5 7 11 13 17 19 23 29 31 . #<CLOSURE 5224472» 
+(2 3 5 7 11 13 17 19 23 29 31 . #<CLOSURE 5224472> 
 
 Finally, let's return to the problem of generating all strings in a grammar. First we're 
 going to need some more utility functions: 
@@ -13794,7 +13794,7 @@ With these definitions, here's the pipe of all sentences from *grammar2* (from
 page 43): 
 
 > (setf ss (generate-all 'sentence)) 
-((THE . #<CLOSURE 27265720>) . #<CLOSURE 27266035» 
+((THE . #<CLOSURE 27265720>) . #<CLOSURE 27266035> 
 
 
 9.3 DELAYING COMPUTATION 287 
@@ -13803,11 +13803,11 @@ page 43):
 
 ((THE . #<CLOSURE 27265720>) 
 
-(A . #<CLOSURE 27273143» 
+(A . #<CLOSURE 27273143> 
 (THE . #<CLOSURE 27402545>) 
 (A . #<CLOSURE 27404344>) 
 (THE . #<CLOSURE 27404527>) 
-(A . #<CLOSURE 27405473» . #<CLOSURE 27405600>) 
+(A . #<CLOSURE 27405473> . #<CLOSURE 27405600>) 
 > (enumerate ss .-count 5 :key #'enumerate) 
 
 ((THE MAN HIT THE MAN) 
@@ -13815,7 +13815,7 @@ page 43):
 (THE BIG MAN HIT THE MAN) 
 (A BIG MAN HIT THE MAN) 
 (THE LITTLE MAN HIT THE MAN) 
-(THE . #<CLOSURE 27423236>) . #<CL0SURE 27423343» 
+(THE . #<CLOSURE 27423236>) . #<CL0SURE 27423343> 
 
 > (enumerate (pipe-elt ss 200)) 
 
@@ -13917,7 +13917,7 @@ fn-name)
 
 (defun profile-count (fn-name) (get fn-name 'profile-count)) 
 
-(defun profile-report (fn-names Äoptional (key #'profile-count)) 
+(defun profile-report (fn-names &optional (key #'profile-count)) 
 "Report profiling statistics on given functions." 
 (loop for name in (sort fn-names #'> :key key) do 
 
@@ -14166,7 +14166,7 @@ counts. Note that the default f .- names is a copy of the global list. That is b
 pass f .- names to sort, which is a destructive function. We don't want the global list 
 to be modified as a result of this sort. 
 
-(defun profile-report (Äoptional 
+(defun profile-report (&optional 
 (fn-names (copy-list *profiled-functions*)) 
 (key #'profile-count)) 
 
@@ -14230,7 +14230,7 @@ that are typical of the s impli f y task.
 
 (defvar nest-data* (mapcar #'infix->prefix 
 
-•((d (a*x^2 + b*x + c)/dx) 
+'((d (a*x^2 + b*x + c)/dx) 
 (d ((a * . 2 + b * . + c) / x) / d x) 
 (d ((a * . ^ 3 + b * . ^ 2 + c * . + d) / . ^ 5) / d x) 
 ((sin (X + X)) * (sin (2 * x)) + (cos (d (x ^ 2) / d x)) ^ 1) 
@@ -14240,7 +14240,7 @@ that are typical of the s impli f y task.
 The function test-it runs through the test data, making sure that each answer is 
 correct and optionally printing profiling data. 
 
-(defun test-it (Äoptional (with-profiling t)) 
+(defun test-it (&optional (with-profiling t)) 
 "Time a test run, and make sure the answers are correct." 
 (let ((answers 
 
@@ -14396,7 +14396,7 @@ like:
 This eliminates the need for consing up and passing around variable bindings, and 
 should be faster than the general matching procedure. When used in conjunction 
 with indexing, the individual rules can be simpler, because we already know we have 
-the right operator. For example, with the above rule indexed under "-»-", it could now 
+the right operator. For example, with the above rule indexed under "->-", it could now 
 be compiled as: 
 
 
@@ -14444,9 +14444,9 @@ xr)
 (list Xl '2))))) 
 
 ; (x 1 = X) 
-; (1 • X = X) 
-; (X • 0 = 0) 
-; (0 • X = 0) 
+; (1 ' X = X) 
+; (X ' 0 = 0) 
+; (0 ' X = 0) 
 : (X * X = X ^ 2) 
 
 I chose this format for the code because I imagined (and later show) that it would be 
@@ -14540,7 +14540,7 @@ Match a literal atom
 ((starts-with pattern '?is) 
 (push (cons (second pattern) var) *bindings*) 
 
-•(if(,(third pattern) ,var) 
+'(if(,(third pattern) ,var) 
 ,(force consequent))) 
 ;; So, far, only the ?is pattern is covered, because 
 ;; it is the only one used in simplification rules. 
@@ -14569,7 +14569,7 @@ First make up variable names for the arg(s).
 (if (exp-rhs pattern) 
 ;; two arg case 
 
-•(let ((,L (exp-lhs ,var)) 
+'(let ((,L (exp-lhs ,var)) 
 (,R (exp-rhs ,var))) 
 ,(compile-exp L (exp-lhs pattern) 
 (delay 
@@ -14577,7 +14577,7 @@ First make up variable names for the arg(s).
 consequent)))) 
 one arg case 
 
-•(let ((,L (exp-lhs ,var))) 
+'(let ((,L (exp-lhs ,var))) 
 ,(compile-exp L (exp-lhs pattern) consequent))))) 
 The remaining functions are simpler, bui 1 d-exp generates code to build the right-
 hand side of a rule, op? tests if its first argument is an expression with a given 
@@ -14598,7 +14598,7 @@ but not left." exp))
 (build-exp . bindings)) 
 exp))) 
 
-•(simplify-exp (list .,new-exp)))))) 
+'(simplify-exp (list .,new-exp)))))) 
 (defun op? (exp op) 
 "Does the exp have the given op as its operator?" 
 (and (exp-p exp) (eq (exp-op exp) op))) 
@@ -14627,7 +14627,7 @@ XLR))))))
 
 > (compile-rule (simp-rule '(n * (m * x) = (n * m) * x))) 
 (LAMBDA (X) 
-(IF (OP? X ·*) 
+(IF (OP? X .*) 
 (LET ((XL (EXP-LHS X)) 
 (XR (EXP-RHS X))) 
 (IF (NUMBERP XL) 
@@ -14637,7 +14637,7 @@ XLR))))))
 (IF (NUMBERP XRL) 
 (SIMPLIFY-EXP 
 
-(LIST ·* 
+(LIST .* 
 (SIMPLIFY-EXP (LIST '* XL XRL)) 
 XRR))))))))) 
 
@@ -15075,7 +15075,7 @@ duplicate positions by sorting each set of piles, and then removing the duplicat
 (let ((s/n (remove . s icount 1))) 
 (loop for i from 1 to (- (ceiling . 2) 1) 
 collect (sort* (list* i (-ni) s/n) 
-#'»)))) 
+#'>)))) 
 
 (defun sort* (seq pred &key key) 
 "Sort without altering the sequence" 
@@ -15104,7 +15104,7 @@ the current die roll, the score so far, the number of remaining positions in the
 column, and the number of remaining positions in the ones column. The strategy 
 function should return 1 or 10. 
 
-(defun play-games (Äoptional (n-games 10) (player 'make-move)) 
+(defun play-games (&optional (n-games 10) (player 'make-move)) 
 "A driver for a simple dice game. In this game the player 
 rolls a six-sided die eight times. The player forms four 
 two-digit decimal numbers such that the total of the four 
@@ -15348,7 +15348,7 @@ Here is the disassembled code for f from Allegro Common Lisp for a Motorola
 68000-series processor: 
 
 > (disassemble *f) 
-disassembling #<Function f ® #x83ef79> 
+disassembling #<Function f @ #x83ef79> 
 formáis: . y 
 
 ; ; code vector ( ^ #x83ef44 
@@ -15539,7 +15539,7 @@ look at some simple examples:
 
 (defun reg (abed) (list abed)) 
 (defun rst (a b c &rest d) (list* abed)) 
-(defun opt (Äoptional a b (c 1) (d (sqrt a))) (list abed)) 
+(defun opt (&optional a b (c 1) (d (sqrt a))) (list abed)) 
 (defun key (&key a b (c 1) (d (sqrt a))) (list abed)) 
 
 We can see what these compile into for the TI Explorer, but remember that your 
@@ -15644,7 +15644,7 @@ Now let's look at the results on another system, the Allegro compiler for the
 calling sequence:^ 
 
 (disassemble 'reg) 
-disassembling #<Function reg ® #x83db59> 
+disassembling #<Function reg @ #x83db59> 
 
 formáis: abed 
 
@@ -15674,7 +15674,7 @@ Now we see that &rest arguments take a lot more code in this system:
 > (disassemble 'rst) 
 ;; disassembling #<Function rst @ #x83de89> 
 ;; formáis: a D c &rest d 
-11 code vector ® #x83de34 
+11 code vector @ #x83de34 
 0: sub.w #3,dl 
 2: bge.s 8 
 
@@ -16367,19 +16367,19 @@ unpredictably alter the stored buffer. Of course, if process stored a copy of b,
 everything is alright. This pattern of allocation and deallocation is so common that 
 we can provide a macro for it: 
 
-(defmacro with-resource ((var resource Äoptional protect) &rest body) 
+(defmacro with-resource ((var resource &optional protect) &rest body) 
 "Execute body with VAR bound to an instance of RESOURCE." 
 (let ((allocate (symbol 'allocate- resource)) 
 
 (deallocate (symbol 'deallocate- resource))) 
 (if protect 
 
-•(let ((.var nil)) 
+'(let ((.var nil)) 
 (unwind-protect 
 (progn (setf ,var (.allocate)) .body) 
 (unless (null .var) (.deallocate .var)))) 
 
-•(let ((.var (.allocate))) 
+'(let ((.var (.allocate))) 
 .body 
 (.deallocate .var))))) 
 The macro allows for an optional argument that sets up an unwi nd - protect environment, 
@@ -16793,7 +16793,7 @@ i nl i ne, si ze and test. Here is a possible macroexpansion:
 (defparameter *person-table* 
 
 (make-hash-table :test #'eql :size 100)) 
-(defun get-person (x Äoptional default) 
+(defun get-person (x &optional default) 
 (gethash . *person-table* default)) 
 (defun put-person (x value) 
 
@@ -16844,7 +16844,7 @@ Answer 10.2
 
 Answer 10.3 
 
-(defun flatten (exp Äoptional (so-far nil) last-cons) 
+(defun flatten (exp &optional (so-far nil) last-cons) 
 "Return a flat list of the atoms in the input. 
 Ex: (flatten '((a) (b (c) d))) => (a b c d)." 
 (cond ((null exp) so-far) 
@@ -17114,7 +17114,7 @@ follows match -variable closely:
 
 354 LOGIC PROGRAMMING 
 
-(defun unify (. y Äoptional (bindings no-bindings)) 
+(defun unify (. y &optional (bindings no-bindings)) 
 "See if X and y match with given bindings." 
 (cond ((eq bindings fail) fail) 
 
@@ -17150,7 +17150,7 @@ but there are several pathological cases that it can't contend with:
 
 > (unify '(?x ?x ?x) '(?y ?y ?y)) 
 
-»Trap #043622 (PDL-OVERFLOW REGULAR) 
+>Trap #043622 (PDL-OVERFLOW REGULAR) 
 
 The regular push-down list has overflowed. 
 
@@ -17167,7 +17167,7 @@ assumes that equal variables are eql, a valid assumption for variables implement
 
 as symbols (but be careful if you ever decide to implement variables some other way). 
 
-(defun unify (x y Äoptional (bindings no-bindings)) 
+(defun unify (x y &optional (bindings no-bindings)) 
 "See if X and y match with given bindings." 
 (cond ((eq bindings fail) fail) 
 
@@ -17193,7 +17193,7 @@ Here are some test cases:
 > (unify '(?x ?y) '(?y ?x)) ^ ((?Y . ?X) (?X . ?Y)) 
 
 > (unify '(?x ?y a) '(?y ?x ?x)) 
-»Trap #043622 (PDL-OVERFLOW REGULAR) 
+>Trap #043622 (PDL-OVERFLOW REGULAR) 
 The regular push-down list has overflowed. 
 While in the function GET-BINDING ^ UNIFY-VARIABLE <= UNIFY 
 
@@ -17243,7 +17243,7 @@ user to turn occurs checking on or off.
 
 (defparameter *occurs-check* t "Should we do the occurs check?") 
 
-(defun unify (x y Äoptional (bindings no-bindings)) 
+(defun unify (x y &optional (bindings no-bindings)) 
 "See if X and y match with given bindings." 
 (cond ((eq bindings fail) fail) 
 
@@ -17308,7 +17308,7 @@ Now let's try uni fy on some examples:
 
 > (unify '(?x ?y a) '(?y ?x ?x)) => ((?Y . A) (?X. ?Y)) 
 
-> (unify ·?. '(f ?x)) NIL 
+> (unify .?. '(f ?x)) NIL 
 
 > (unify '(?x ?y) '((f ?y) (f ?x))) ^ NIL 
 
@@ -17462,7 +17462,7 @@ to add clauses, and the ? - macro to make queries.
 (defmacro <- (&rest clause) 
 "Add a clause to the data base." 
 
-•(add-clause '.clause)) 
+'(add-clause '.clause)) 
 (defun add-clause (clause) 
 "Add a clause to the data base, indexed by head's predicate." 
 The predicate must be a non-variable symbol, 
@@ -17644,7 +17644,7 @@ vari abl es -i. and its auxiliary function are defined here:
 
 (defun unique-find-anywhere-if (predicate tree 
 
-Äoptional found-so-far) 
+&optional found-so-far) 
 "Return a list of leaves of tree satisfying predicate, 
 with duplicates removed." 
 (if (atom tree) 
@@ -17753,7 +17753,7 @@ top-level call.
 (format t "~&Yes") 
 (dolist (var vars) 
 
-(format t ""Ä^a = ~a" var 
+(format t ""&^a = ~a" var 
 (subst-bindings bindings
 
 (princ ";")) 
@@ -17939,7 +17939,7 @@ totheendofthelistofgoals. Note that this versionneednot call show-prolog-sol uti
 itself, since the printing will be handled by the primitive for show-prol og-vars. 
 
 (defun top-level-prove (goals) 
-(prove-all '(.goals (show-prolog-vars ,®(variables-in goals))) 
+(prove-all '(.goals (show-prolog-vars ,@(variables-in goals))) 
 
 no-bindings) 
 (format t "~&No.") 
@@ -17961,7 +17961,7 @@ Then ask the user if more solutions are desired."
 
 (format t "~&Yes") 
 (dolist (var vars) 
-(format t ""Ä^a = ~a" var 
+(format t ""&^a = ~a" var 
 (subst-bindings bindings var)))) 
 
 (if (continue-.) 
@@ -18705,7 +18705,7 @@ variables: Leave the macros <- and ?- alone, so that anonymous variables
 are allowed in assertions and queries. Instead, change uni fy so that it lets anything 
 match against an anonymous variable: 
 
-(defun unify (x y Äoptional (bindings no-bindings)) 
+(defun unify (x y &optional (bindings no-bindings)) 
 "See if . and y match with given bindings." 
 (cond ((eq bindings fail) fail) 
 
@@ -19033,7 +19033,7 @@ A box for a variable; can be destructively modified.
 
 Major Functions 
 
-New version compiles everything first. · 
+New version compiles everything first. . 
 Compile everything and call a Prolog function. 
 Compile a list of Prolog symbols. 
 Compile a symbol; make a separate function for each arity. 
@@ -19259,7 +19259,7 @@ Note NAME is the raw name, not the name/arity
 (if (/= (length args) 2) 
 .-pass 
 
-•(if.(compile-unify (first args) (second args)) 
+'(if.(compile-unify (first args) (second args)) 
 .(compile-body body cont))))) 
 (defun compile-unify (x y) 
 "Return code that tests if var and term unify." 
@@ -19395,7 +19395,7 @@ If there are any, bind the trail before we start."
 
 compiled-exps 
 
-•((let ((old-trail (fill-pointer nrail*))) 
+'((let ((old-trail (fill-pointer nrail*))) 
 ,(first compiled-exps) 
 ,@(loop for exp in (rest compiled-exps) 
 collect '(undo-bindings! old-trail) 
@@ -19478,7 +19478,7 @@ that only appear once in a clause into anonymous variables:
 ((not (has-variable-p arg)) ",arg) 
 ((proper-listp arg) 
 
-•(list ..(mapcar #'compile-arg arg))) 
+'(list ..(mapcar #'compile-arg arg))) 
 (t '(cons .(compile-arg (first arg)) 
 .(compile-arg (rest arg)))))) 
 (defun make-anonymous (exp &optional 
@@ -19692,7 +19692,7 @@ the preceding table, but each clause is commented with the corresponding number:
 (bind-variables-in yl bindings))) 
 
 ((not (null xb)) 
-;.· i.e. X is an ?arg variable 
+;.. i.e. X is an ?arg variable 
 (if (and (variable-p yl) (null yb)) 
 
 (values 't (extend-bindings yl xl bindings)) ; 4 
@@ -19762,7 +19762,7 @@ arg)))
 ((not (find-if-anywhere #'variable-p arg)) ".arg) 
 ((proper-listp arg) 
 
-•(list ..(mapcar #*(lambda (a) (compile-arg a bindings)) 
+'(list ..(mapcar #*(lambda (a) (compile-arg a bindings)) 
 
 12A IMPROVING THE COMPILATION OF UNIFICATION
 
@@ -20187,7 +20187,7 @@ This is roughly equivalent to the following Lisp verison:
 
 .2.8 ADDING MORE PRIMITIVES 413 
 
-(defun irev (list Äoptional (so-far nil)) 
+(defun irev (list &optional (so-far nil)) 
 
 (if (consp list) 
 (irev (rest list) (cons (first list) so-far)) 
@@ -20867,7 +20867,7 @@ should be compiled as if it were:
 * i nteger/1 True if the argument is an integer. 
 * atom/1 True if the argument is a symbol (like Lisp's symbol p). 
 * atomi c/1 True if the argument is a number or symbol (like Lisp's atom). 
-·<,>,=<,> = Arithmetic comparison; succeeds when the arguments are both 
+.<,>,=<,> = Arithmetic comparison; succeeds when the arguments are both 
 instantiated to numbers and the comparison is true. 
 
 * listing/0 Print out the clauses for all defined predicates. 
@@ -21324,7 +21324,7 @@ control. Here is the same program written in object-oriented style (using plain 
 (if (<= amt balance) 
 (decf balance amt) 
 
-•insufficient-funds))) 
+'insufficient-funds))) 
 (deposit #'(lambda (amt) (incf balance amt))) 
 (balance #'(lambda () balance)) 
 (name #'(lambda () name)) 
@@ -21463,7 +21463,7 @@ unless it has already been defined as one."
 Now we define the class account with this macro. We make i nterest- rate a class 
 variable, one that is shared by all accounts: 
 
-(define-class account (name Äoptional (balance 0.00)) 
+(define-class account (name &optional (balance 0.00)) 
 ((interest-rate .06)) 
 
 (withdraw (amt) (if (<= amt balance) 
@@ -22026,7 +22026,7 @@ method necessary will be for probl em- combi ner.
 452 OBJECT-ORIENTED PROGRAMMING 
 
 (defclass best-problem (problem) 0 
-(.•documentation "A Best-first search problem.")) 
+(.'documentation "A Best-first search problem.")) 
 
 (defmethod problem-combiner ((prob best-problem) new old) 
 "Best-first search sorts new and old according to cost-fn." 
@@ -22887,10 +22887,10 @@ goals, Prolog can still get stuck in one branch of a depth-first search. Conside
 example: 
 
 (<- (natural 0)) 
-(<- (natural (1-·- ?n)) (natural ?n)) 
+(<- (natural (1-.- ?n)) (natural ?n)) 
 
 These rules define the natural numbers (the non-negative integers). We can use 
-the rules either to confirm queries like (natural (1+ (1-»- (1-·- 0)))) or to generate 
+the rules either to confirm queries like (natural (1+ (1->- (1-.- 0)))) or to generate 
 the natural numbers, as in the query (natural ?n). So far, everything is fine. But 
 suppose we wanted to define all the integers. One approach would be this: 
 
@@ -23774,7 +23774,7 @@ list. The changes to them are shown in the following. In each case the extra arg
 is made optional so that previously written functions that call these functions without 
 passing in the extra argument will still work. 
 
-(defun mapc-retrieve (fn query Äoptional (bindings no-bindings)) 
+(defun mapc-retrieve (fn query &optional (bindings no-bindings)) 
 "For every fact that matches the query, 
 apply the function to the binding list. " 
 (dolist (bucket (fetch query)) 
@@ -23784,7 +23784,7 @@ apply the function to the binding list. "
 (unless (eq new-bindings fail) 
 (funcall fn new-bindings)))))) 
 
-(defun retrieve (query Äoptional (bindings no-bindings)) 
+(defun retrieve (query &optional (bindings no-bindings)) 
 "Find all facts that match query. Return a list of bindings." 
 (let ((answers nil)) 
 
@@ -24214,7 +24214,7 @@ Body of translate-exp:
 
 The auxiliary functions maybe - add and repl ace -? - va r s are shown in the following: 
 
-(defun maybe-add (op exps Äoptional if-nil) 
+(defun maybe-add (op exps &optional if-nil) 
 "For example, (maybe-add 'and exps t) returns 
 t if exps is nil, (first exps) if there is only one. 
 and (and expl exp2...) if there are several exps." 
@@ -24429,7 +24429,7 @@ If the world is new, give it the list of parents."
 ((get name 'world)) 
 (t (setf (get name 'world) 
 (make-world rname name .-parents parents 
-.•current current))))) 
+.'current current))))) 
 
 (defvar *world* (get-world 'WO nil nil) 
 "The current world used by index and fetch.") 
@@ -24901,7 +24901,7 @@ degree
 var= 
 var> 
 poly-ipoly-
-k-»-poly 
+k->-poly 
 k*poly 
 poly+same 
 poly*same 
@@ -24911,7 +24911,7 @@ args->prefix
 rat-numerator 
 rat-denominator 
 rat*rat 
-rat-»-rat 
+rat->-rat 
 rat/rat 
 
 Top-Level Fimctions 
@@ -24958,7 +24958,7 @@ Figure 15.1: Glossary for the Symbolic Manipulation Program
 (defun poly (x &rest coefs) 
 "Make a polynomial with main variable . 
 and coefficients in increasing order." 
-(apply #·vector . coefs)) 
+(apply #.vector . coefs)) 
 
 (defun make-poly (x degree) 
 "Make the polynomial 0 + 0*x + 0*x''2 + ... 0*x"degree" 
@@ -24976,7 +24976,7 @@ using the following defsetf forms.
 
 (defsetf coef (p i) (val) 
 
-•(setf (svref (the polynomial ,p) (+ .i D) .val)) 
+'(setf (svref (the polynomial ,p) (+ .i D) .val)) 
 The function pol y constructs polynomials in a fashion similar to 1 i st or vector: with 
 an explicit list of the contents, make-poly, on the other hand, is like make-a may: it 
 makes a polynomial of a specified size. 
@@ -25515,7 +25515,7 @@ in general be a sum of more than two components, so we have to decide how to spl
 into the a and b pieces. There are two obvious ways: either cut the polynomial in half, 
 so that a and 6 will be of equal size, or split off one component at a time. Fateman 
 shows that the latter method is more efficient in most cases. In other words, a 
-polynomial k^x'^ -fk2x'^~~^ +k^x^''^ -h · · will be treated as the sum a + b where 
+polynomial k^x'^ -fk2x'^~~^ +k^x^''^ -h . . will be treated as the sum a + b where 
 a = k\x'^ and b is the rest of the polynomial. 
 
 Following is the code for binomial exponentiation. It is somewhat messy, because 
@@ -26358,7 +26358,7 @@ parm structure, and stores the resulting structure under the parm property of th
 parameter's name. 
 
 (defstruct (parm (.-constructor 
-new-parm (name Äoptional context type-restrict!on 
+new-parm (name &optional context type-restrict!on 
 
 prompt ask-first reader))) 
 name (context nil) (prompt "~&What is the ~*~a of ~2:*~a?") 
@@ -26432,7 +26432,7 @@ name (number 0) initial-data goals)
 (defmacro defcontext (name &optional initial-data goals) 
 "Define a context." 
 
-•(make-context :name '.name :initial-data *.initial-data 
+'(make-context :name '.name :initial-data *.initial-data 
 igoals '.goals)) 
 The name field is something like patient or organism. Instances of contexts are 
 numbered; the number field holds the number of the most recent instance. Each 
@@ -26631,7 +26631,7 @@ If a rule's premises are true, then the conclusions are added to the data base b
 concl ude. Note that is is the only operator allowed in conclusions, is is just an alias 
 for equal. 
 
-(defun eval-condition (condition Äoptional (find-out-p t)) 
+(defun eval-condition (condition &optional (find-out-p t)) 
 "See if this condition is true, optionally using FIND-OUT 
 to determine unknown parameters." 
 (multiple-value-bind (parm inst op val) 
@@ -26849,7 +26849,7 @@ The function pri nt - rul e generates this translation:
 (cf->english (rule-cf rule)) (rule-cf rule)) 
 (print-conditions (rule-conclusions rule) stream)) 
 
-(defun print-conditions (conditions Äoptional 
+(defun print-conditions (conditions &optional 
 
 (stream t) (num 1)) 
 "Print a list of numbered conditions." 
@@ -27883,7 +27883,7 @@ vertex)
 
 574 LINE-DIAGRAM LABELING BY CONSTRAINT SATISFACTION 
 
-(defun show-diagram (diagram Äoptional (title "~2&Diagram:") 
+(defun show-diagram (diagram &optional (title "~2&Diagram:") 
 
 (stream t)) 
 "Print a diagram in a long form. Include a title. " 
@@ -27912,7 +27912,7 @@ ii+ + +)
 > (matrix-transpose (possible-labelings .)) 
 
 ((+ - L - R) 
-(-^• - R L -) 
+(-^' - R L -) 
 (-H -- R D) 
 
 The implementation of matrix-transpose is surprisingly concise. It is an old Lisp 
@@ -28020,7 +28020,7 @@ make - copy -di ag ram to create a copy that shares no structure with the origin
 "Make a copy of a diagram, preserving connectivity." 
 (let* ((new (make-diagram 
 
-•.Vertexes (mapcar #*copy-vertex 
+'.Vertexes (mapcar #*copy-vertex 
 (diagram-vertexes diagram))))) 
 Put in the neighbors for each vertex 
 (dolist (v (diagram-vertexes new)) 
@@ -28429,7 +28429,7 @@ diagram on the line XZ and call pri nt -1 abel i ngs on that, we get the followi
 
 588 LINE-DIAGRAM LABELING BY CONSTRAINT SATISFACTION 
 
-»>ERROR: The first argument to NTH was of the wrong type. 
+>>ERROR: The first argument to NTH was of the wrong type. 
 The function expected a fixnum >= zero. 
 While in the function LABELS-FOR ^ CONSISTENT-LABELINGS 
 
@@ -28521,17 +28521,17 @@ Now let's try the arch again:
 (n L f 1) (3 L . 2) 
 (0 W .1 h) (4. u 1 V)) 
 
-Warning: Inconsistent vertex: T-•V 
-Warning: Inconsistent vertex: U-•T 
+Warning: Inconsistent vertex: T-'V 
+Warning: Inconsistent vertex: U-'T 
 Warning: Inconsistent vertex: U--L 
 Warning: Inconsistent vertex: L--V 
 Warning: Inconsistent vertex: 4
 
 --u 
 
-Warning: Inconsistent vertex: 4-•L 
+Warning: Inconsistent vertex: 4-'L 
 
-»ERROR: Inconsistent diagram, 6 total errors. 
+>ERROR: Inconsistent diagram, 6 total errors. 
 
 The def d i a g ram was transcribed from a hand-labeled diagram, and it appears that the 
 transcription has fallen prey to one of the oldest problems in mathematical notation: 
@@ -28764,7 +28764,7 @@ sure that it won't show up in another case. Here's the error:
 
 594 LINE-DIAGRAM LABELING BY CONSTRAINT SATISFACTION 
 
-»>ERROR: The first argument to NTH was of the wrong type. 
+>>ERROR: The first argument to NTH was of the wrong type. 
 The function expected a fixnum >= zero. 
 While in the function LABELS-FOR <i= CONSISTENT-LABELINGS 
 
@@ -28919,7 +28919,7 @@ left, but it occasionally happens earlier in the game.
 
 f g h 
 
-O•o • 
+O'o ' 
 
 Figure 18.1: The Othello Board 
 
@@ -28927,12 +28927,12 @@ Figure 18.1: The Othello Board
 
 o o 
 
-o o •• • • • 
-•• • 
+o o '' ' ' ' 
+'' ' 
 
 O o o o o o o
 
-•o • • • 
+'o ' ' ' 
 
 o 
 
@@ -29174,7 +29174,7 @@ A strategy that maximizes the difference in pieces.
 Return a strategy that maximizes some measure. 
 Sum of the weights of player's squares minus opponent's. 
 Like above, but treating corners better. 
-Find the best move according to EVAL·FN, searching PLY levels. 
+Find the best move according to EVAL.FN, searching PLY levels. 
 Return a strategy that uses mi.i max to search. 
 Find the best move according to EVAL-FN, searching PLY levels. 
 Return a strategy that uses al pha- beta to search. 
@@ -29260,12 +29260,12 @@ wri te (I added the line breaks to make it easier to read):
 
 > (write (initial-board ) > (print-board (initial-board) ) 
 rarray t) 
-#(3 33333333 3 1234567 8 C®=2 0=2 (-^0)1 
+#(3 33333333 3 1234567 8 C@=2 0=2 (-^0)1 
 300000000 3 10 
 300000000 3 20 
 300000000 3 30 
 300021000 3 40...0@.. . 
-300012000 3 50 . ..®0.. . 
+300012000 3 50 . ..@0.. . 
 300000000 3 60 
 300000000 3 70 
 300000000 3 80 
@@ -29360,7 +29360,7 @@ how to ask black or white for their moves. I choose to represent player's strate
 as functions. Each function takes two arguments: the color to move (black or white) 
 and the current board. The function should return a legal move number. 
 
-(defun Othello (bl-strategy wh-strategy Äoptional (print t)) 
+(defun Othello (bl-strategy wh-strategy &optional (print t)) 
 "Play a game of Othello. Return the score, where a positive 
 difference means black (the first player) wins." 
 (let ((board (initial-board))) 
@@ -29398,7 +29398,7 @@ more, the game is a draw.
 (cond ((any-legal-move? opp board) opp) 
 ((any-legal-move? previous-player board) 
 (when print 
-(format t ""Ä^C has no moves and must pass." 
+(format t ""&^C has no moves and must pass." 
 (name-of opp))) 
 previous-player) 
 (t nil)))) 
@@ -29743,17 +29743,17 @@ indeed an advantage to be able to look ahead:
 
 The game is over. Final result: 
 
-12 3 4 5 6 7 8 [®=53 0=0 (+53)] 
+12 3 4 5 6 7 8 [@=53 0=0 (+53)] 
 
-20®®®@®@®@ 
+20@@@@@@@@ 
 
-30@@@@®®@@ 
+30@@@@@@@@ 
 40@@@@@@@@ 
 50@@@@@@@@ 
 
-60 . . @® @® @ @ 
-70 . . . @ @ @ @ ® 
-80 . . . . ® ® . . 
+60 . . @@ @@ @ @ 
+70 . . . @ @ @ @ @ 
+80 . . . . @ @ . . 
 
 18,5 SMARTER SEARCHING: ALPHA-BETA SEARCH 
 
@@ -29838,7 +29838,7 @@ until (>= achievable cutoff))
 
 (defun alpha-beta-searcher (depth eval-fn) 
 "A strategy that searches to DEPTH and then uses EVAL-FN." 
-#·(lambda (player board) 
+#.(lambda (player board) 
 
 (multiple-value-bind (value move) 
 (alpha-beta player board losing-value winning-value 
@@ -29875,10 +29875,10 @@ After 17 moves, white is down to only one piece:
 12 3 4 5 6 7 8 [@=20 0=1 (+19)] 
 10 0 @ 
 
-20 . ® . . . @ @ . 
+20 . @ . . . @ @ . 
 30 @ @ @ @ @ @ . . 
-40 . @ . ® ® . . . 
-50 ® @ @® @ ® . . 
+40 . @ . @ @ . . . 
+50 @ @ @@ @ @ . . 
 60 . @ 
 70 
 80 
@@ -29893,21 +29893,21 @@ later in the game:
 12 3 4 5 6 7 8 [e=32 0=15 (+17)] 
 10 0 0 0 0 @ @ 0 0 
 20 @ @0 @ @ @ @ @ 
-30 @ @ 0 0 ® 0 @ @ 
+30 @ @ 0 0 @ 0 @ @ 
 40 0 0 @ @ @ @ @ @ 
 50 @0 @ @ @ @ 
-60 @ @0 @ ® 0 
+60 @ @0 @ @ 0 
 70 @ . . @ @ . 
 80 
-1 2 3 4 5 6 7 8 [®=34 0=19 (+15)] 
+1 2 3 4 5 6 7 8 [@=34 0=19 (+15)] 
 10 0 0 0 0 @ @ 0 0 
 20 @ @0 @ @ @ @ @ 
-30 @ @ 0 0 ® 0 @ @ 
-40 0 ® 0 ® @ @ @ @ 
-50 0 ® 0 ® @ @ @ . 
-60 0 @ 0 ® @ @ 
-70 0 ® @ @ @ . 
-80 0 ® 0 . 
+30 @ @ 0 0 @ 0 @ @ 
+40 0 @ 0 @ @ @ @ @ 
+50 0 @ 0 @ @ @ @ . 
+60 0 @ 0 @ @ @ 
+70 0 @ @ @ @ . 
+80 0 @ 0 . 
 
 After some give-and-take, white gains the advantage for good by capturing eight 
 pieces on a move to square 85 on the third-to-last move of the game: 
@@ -29915,53 +29915,53 @@ pieces on a move to square 85 on the third-to-last move of the game:
 1 2 3 4 5 6 7 8 [@=31 0=30 (+1)] 
 10 0 0 0 0 @ @ 0 0 
 20 @ @ 0 0 @ @ @ 0 
-30 ® ® 0 0 0® @ 0 
-40 0 ® 0 0 0® @ 0 
-50 0 @ 0 @ 0 ® @ 0 
+30 @ @ 0 0 0@ @ 0 
+40 0 @ 0 0 0@ @ 0 
+50 0 @ 0 @ 0 @ @ 0 
 
 60 0 @ 0 @ @ @@ 0 
 
 70 0 @ @ @ @ @0 0 
 
-80 0 @ @ @ . . • 0 
+80 0 @ @ @ . . ' 0 
 
 0 moves to 85. 
 
-1 2 3 4 5 6 7 8 [®=23 0=39 (-16)] 
-10 0 0 0 0 ® ® 0 0 
-20 ® @0 0 ® ® @ 0 
-30 @ ®0 0 0® @ 0 
-40 0 ® 0 0 0® @ 0 
-50 0 ® 0 @0 @ @ 0 
-60 0 ® 0 @ 0 ® 0 0 
-70 0 ® @ 0 0 0 0 0 
-80 0 0 0 0 0 . • 0 
+1 2 3 4 5 6 7 8 [@=23 0=39 (-16)] 
+10 0 0 0 0 @ @ 0 0 
+20 @ @0 0 @ @ @ 0 
+30 @ @0 0 0@ @ 0 
+40 0 @ 0 0 0@ @ 0 
+50 0 @ 0 @0 @ @ 0 
+60 0 @ 0 @ 0 @ 0 0 
+70 0 @ @ 0 0 0 0 0 
+80 0 0 0 0 0 . ' 0 
 
-® moves to 86. 
+@ moves to 86. 
 
 
 18.6 AN ANALYSIS OF SOME GAMES 619 
 12 3 4 5 6 7 8 [@=26 0=37 (-11)] 
 10 0000@@00 
-20@@00®@@0 
-30®®000@@0 
-40 0@000®®0 
-50 0@0®0®@0 
-60 0®0®0®00 
-70 0@®0®®00 
-80 00000®.0 
+20@@00@@@0 
+30@@000@@0 
+40 0@000@@0 
+50 0@0@0@@0 
+60 0@0@0@00 
+70 0@@0@@00 
+80 00000@.0 
 
 0 moves to 87. 
 The game is over. Final result: 
 
 1 2 3 4 5 6 7 8 [@=24 0=40 (-16)] 
-10 0000@®00 
-20@@00®@®0 
-30®®000@®0 
-40 0®000®®0 
-50 0®0®0®®0 
-60 0@0®0®00 
-70 0®®0®000 
+10 0000@@00 
+20@@00@@@0 
+30@@000@@0 
+40 0@000@@0 
+50 0@0@0@@0 
+60 0@0@0@00 
+70 0@@0@000 
 80 00000000 
 
 -16 
@@ -29980,14 +29980,14 @@ unfold.
 
 Black slowly builds up an advantage: 
 
-12 3 4 5 6 7 8 [®=21 0=8 (+13)] 
+12 3 4 5 6 7 8 [@=21 0=8 (+13)] 
 
 10 . . @ @ @ @ @ 
-20 . ® . @ 0 ® . 
-30 0@@0®00 
-40 . @. @ 0 ® 0 
-50. @ ® ® @ ® . 
-60 . @ . ® . 0 . 
+20 . @ . @ 0 @ . 
+30 0@@0@00 
+40 . @. @ 0 @ 0 
+50. @ @ @ @ @ . 
+60 . @ . @ . 0 . 
 70 
 80 
 
@@ -29997,39 +29997,39 @@ But at this point white has clear access to the upper left corner, and through t
 corner threatens to take the whole top edge. Still, black maintains a material edge as 
 the game goes on: 
 
-12 3 4 5 6 7 8 [®=34 0=11 (+23)] 
+12 3 4 5 6 7 8 [@=34 0=11 (+23)] 
 
-10 0 . @ @ ® ®@. 
+10 0 . @ @ @ @@. 
 20 . 0 0 @ @ @ . . 
-30 0@00@@®® 
-40®®®@0®@ . 
-50@®@®®0@. 
-60®®®®®®00 
-70 ® . . ® . . ® 0 
+30 0@00@@@@ 
+40@@@@0@@ . 
+50@@@@@0@. 
+60@@@@@@00 
+70 @ . . @ . . @ 0 
 80 
 But eventually white's weighted-squares strategy takes the lead: 
 
-12 3 4 5 6 7 8 [®=23 0=27 (-4)] 
+12 3 4 5 6 7 8 [@=23 0=27 (-4)] 
 10 00 0 00000 
-20 @ @ 0 ® ® ® . . 
-30 0®00®@®@ 
-40 0@0®0@@ . 
-50 0@0@@0® . 
-60 000@®@00 
+20 @ @ 0 @ @ @ . . 
+30 0@00@@@@ 
+40 0@0@0@@ . 
+50 0@0@@0@ . 
+60 000@@@00 
 
-70 0 . 0 ® . . ® 0 
+70 0 . 0 @ . . @ 0 
 800 
 and is able to hold on to win: 
 
-12 3 4 5 6 7 8 [®=24 0=40 (-16)] 
+12 3 4 5 6 7 8 [@=24 0=40 (-16)] 
 10 00000000 
-20@@0®00@® 
-30 0@00®®®@ 
-40 0®00@®®0 
-50 00@®0®00 
-60 000@0®®0 
-70 0000®®00 
-80 00000®®0 
+20@@0@00@@ 
+30 0@00@@@@ 
+40 0@00@@@0 
+50 00@@0@00 
+60 000@0@@0 
+70 0000@@00 
+80 00000@@0 
 
 -16 
 
@@ -30044,11 +30044,11 @@ Consider again this position from the first game above:
 12 3 4 5 6 7 8 [@=20 0=1 (+19)] 
 10 0 @ 
 
-20 . @ . . . @® . 
-30 ® @ @ @® @ . . 
-40 . ® . @ @ . . . 
-50 @ @® @ @® . . 
-60 . ® 
+20 . @ . . . @@ . 
+30 @ @ @ @@ @ . . 
+40 . @ . @ @ . . . 
+50 @ @@ @ @@ . . 
+60 . @ 
 70 
 80 
 Here white, playing the weighted-squares strategy, chose to play 66. This is probably 
@@ -30212,7 +30212,7 @@ get-move encounters a forfeit or resignation, it can throw an appropriate final 
 
 (defun Othello (bl-strategy wh-strategy 
 
-Äoptional (print t) (minutes 30)) 
+&optional (print t) (minutes 30)) 
 "Play a game of Othello. Return the score, where a positive 
 difference means black, the first player, wins." 
 (let ((board (initial-board)) 
@@ -30277,14 +30277,14 @@ Note we don't pass the strategy function the REAL board.
 (cond 
 
 (« (elt clock player) 0) 
-(format t ""Ä^c has no time left and forfeits." 
+(format t ""&^c has no time left and forfeits." 
 (name-of player)) 
 (THROW 'game-over (if (eql player black) -64 64))) 
 ((eq move 'resign) 
 (THROW 'game-over (if (eql player black) -64 64))) 
 ((and (valid-p move) (legal-p move player board)) 
 (when print 
-(format t "^Ä'O moves to ~a. " 
+(format t "^&'O moves to ~a. " 
 (name-of player) (88->h8 move))) 
 (make-move move player board)) 
 (t (warn "Illegal move: ~a" (88->h8 move)) 
@@ -30297,7 +30297,7 @@ debugging one can say just (print- board) to see the current situation. Also not
 esoteric format option: " ~2 / Od" prints a decimal number using at least two places, 
 padding on the left with zeros. 
 
-(defun print-board (Äoptional (board *board*) clock) 
+(defun print-board (&optional (board *board*) clock) 
 "Print a board, along with some statistics." 
 First print the header and the current score 
 
@@ -30398,7 +30398,7 @@ the proper arguments.
 
 (defun random-Othello-series (strategyl strategy2 
 
-n-pairs Äoptional (n-random 10)) 
+n-pairs &optional (n-random 10)) 
 "Play a series of 2*n games, starting from a random position." 
 (othello-series 
 
@@ -30950,7 +30950,7 @@ Returns current and potential mobility for player."
  SEARCH AND THE GAME OF OTHELLO 
 
 (incf current)) 
-((some #·(lambda (sq) (eql (bref board sq) opp)) 
+((some #.(lambda (sq) (eql (bref board sq) opp)) 
 (neighbors square)) 
 (incf potential))))) 
 (values current (+ current potential)))) 
@@ -31253,14 +31253,14 @@ and unstable otherwise.
 
 '#2A(;stab semi un 
 ( * 0 -2000) X 
-( 700 • *) corner 
+( 700 ' *) corner 
 (1200 200 -25) C 
 (1000 200 75) A 
 (1000 200 50) . 
 (1000 200 50) . 
 (1000 200 75) A 
 (1200 200 -25) C 
-( 700 • *) corner 
+( 700 ' *) corner 
 ( * 0 -2000) . X 
 
 )) 
@@ -31855,7 +31855,7 @@ We start with the grammar defined on page 39 for the generate program:
 
 (defparameter *grammarl* 
 
-•((Sentence -> (NP VP)) 
+'((Sentence -> (NP VP)) 
 (NP -> (Art Noun)) 
 (VP -> (Verb NP)) 
 (Art -> the a) 
@@ -31985,7 +31985,7 @@ If nothing needed, return parse and upward extensions
 (let ((parse (make-parse :tree (new-tree Ihs rhs) :rem rem))) 
 (cons parse 
 (mapcan 
-#·(lambda (rule) 
+#.(lambda (rule) 
 
 (extend-parse (rule-lhs rule) 
 (list (parse-tree parse)) 
@@ -32061,7 +32061,7 @@ Here is the grammar:
 
 (defparameter *grammar4* 
 
-•((S -> (NP VP)) 
+'((S -> (NP VP)) 
 (NP -> (D N)) 
 (NP -> (D A+ N)) 
 (NP -> (NP PP)) 
@@ -32551,7 +32551,7 @@ compute a score and then eventually the score itself.
 
 (defstruct (rule (:type list) 
 (¡constructor 
-rule (Ihs -> rhs Äoptional sem score))) 
+rule (Ihs -> rhs &optional sem score))) 
 Ihs -> rhs sem score) 
 
 (defstruct (tree (itype list) (rinclude rule) (:copiernil) 
@@ -32764,7 +32764,7 @@ This version allows start > end."
 ((> start end) (cons start (integers (- start 1) end))) 
 (t (list start)))) 
 
-(defun sum (numbers Äoptional fn) 
+(defun sum (numbers &optional fn) 
 "Sum the numbers, or sum (mapcar fn numbers)." 
 (if fn 
 
@@ -32808,7 +32808,7 @@ Score Semantics (1 TO 6 WITHOUT 3 AND 4)
 
 0.3 (1 2 5 6) ((1 TO 6) WITHOUT (3 AND 4)) 
 -0.7 (1 2 4 5 6 4) (((1 TO 6) WITHOUT 3) AND 4) 
-> (all -parses •(1 and 3 to 7 and 9 without 5 and 6)) 
+> (all -parses '(1 and 3 to 7 and 9 without 5 and 6)) 
 Score Semantics (1 AND 3 TO 7 AND 9 WITHOUT 5 AND 6) 
 
 0.2 (1 3 4 7 9) (1 AND (((3 TO 7) AND 9) WITHOUT (5 AND 6))) 
@@ -32857,7 +32857,7 @@ if there are no valid parses at all. The query-user function may be useful in ma
 applications, but note that meani ng uses it only as a default; a program that had some 
 automatic way of deciding could supply another ti e-breaker function to meani ng. 
 
-(defun meaning (words Äoptional (tie-breaker #'query-user)) 
+(defun meaning (words &optional (tie-breaker #'query-user)) 
 "Choose the single top-ranking meaning for the words." 
 (let* ((trees (sort (parser words) #*> :key #'tree-score)) 
 
@@ -33114,7 +33114,7 @@ considered.
 Bottom-up parsers are stymied by rules with null right-hand sides: (X -> ()) . 
 Note that I was careful to exclude such rules in my grammars earlier. 
 
-(defun parser (words Äoptional (cat *S)) 
+(defun parser (words &optional (cat *S)) 
 "Parse a list of words; return only parses with no remainder." 
 (mapcar #*parse-tree (complete-parses (parse words cat)))) 
 
@@ -33512,7 +33512,7 @@ As an example of a rule function, the arrow: - will be used to represent normal 
 clauses. That is, the form (rul e head : -body) will be equivalent to (<-head body). 
 
 (setf (get *:- 'rule-function) 
-#'(lambda (head body) ·(<- .head .,body))) 
+#'(lambda (head body) .(<- .head .,body))) 
 
 Before writing the rule function for DCG rules, there are two further features of the 
 DCG formalism to consider. First, some goals in the body of a rule may be normal 
@@ -33556,7 +33556,7 @@ make-deg inserts variables to keep track of the strings that are being parsed.
 
 (defun make-dcg (head body) 
 (let ((n (count-if (complement #'dcg-normal-goal-p) body))) 
-·(<- (,@head ?sO .(symbol *?s n)) 
+.(<- (,@head ?sO .(symbol *?s n)) 
 .,(make-dcg-body body 0)))) 
 
 
@@ -34074,7 +34074,7 @@ valid noun phrases:
 
 The person that Lee likes u 
 
-The person that Kim thinks Lee likes • 
+The person that Kim thinks Lee likes ' 
 
 The person that Jan says Kim thinks Lee likes u 
 
@@ -34084,7 +34084,7 @@ clauses can intervene between the head noun and the gap.
 The same kind of filler-gap dependency takes place in questions that begin with 
 "who," "what," "where," and other interrogative pronouns. For example, we can ask 
 a question about the subject of a sentence, as in "Who likes Lee?", or about the object, 
-as in "Who does Kim like •?" 
+as in "Who does Kim like '?" 
 
 Here is a grammar that covers relative clauses with gapped subjects or objects. 
 The rules for S, VP, and .. are augmented with a pair of arguments representing 
@@ -34136,7 +34136,7 @@ position or embedded somewhere in the verb phrase. Here's the complete grammar:
 (S (gap NP ?agr ?x) nogap ?rel)) 
 
 Here are some sentence/parse pairs covered by this grammar: 
-Every man that • loves a woman likes a person. 
+Every man that ' loves a woman likes a person. 
 (AND (ALL ?28 (AND (MAN ?28) 
 (AND . (AND (LOVE ?28 ?30) 
 (EXISTS ?30 (AND (WOMAN ?30) 
@@ -34507,7 +34507,7 @@ conj (cat . args))
 
 
 20.8 HISTORY AND REFERENCES 711 
-(rule (.cat ,®(butlast args) ?combined-sem) ==> 
+(rule (.cat ,@(butlast args) ?combined-sem) ==> 
 (.(symbol cat '_) .(butlast args) .semi) 
 (.conj-cat ,seml ?combined-sem)) 
 
@@ -34629,7 +34629,7 @@ in his or her rules. The fix is to gensym symbols that are guaranteed to be uniq
 
 Answer 20.5 
 
-(defun setup-braces (Äoptional (on? t) (readtable *readtable*)) 
+(defun setup-braces (&optional (on? t) (readtable *readtable*)) 
 "Make Ca b] read as (:word a b) and {a b} as (rtest a b c) 
 if ON? is true; otherwise revert {[]} to normal." 
 (if (not on?) 
@@ -35079,7 +35079,7 @@ agreement feature of the subject. If the subject was a noun phrase, the agreemen
 be present in the gap list. If it was not, then the agreement is third-person singular. 
 An example of this is" That the Red Sox won surprises me," where the italicized phrase 
 is a non-NP subject. The fact that we need to use "surprises" and not "surprise" 
-indicates that it is third-person singular. We will see that the code (---»--) is used 
+indicates that it is third-person singular. We will see that the code (--->--) is used 
 for this. 
 
 (rule (subject ?agree ?x ?subj-slot ext-subj 
@@ -35847,7 +35847,7 @@ abbreviations later.
 (defmacro abbrev (symbol definition) 
 "Make symbol be an abbreviation for definition." 
 
-•(setf (gethash '.symbol *abbrevs*) '.definition)) 
+'(setf (gethash '.symbol *abbrevs*) '.definition)) 
 (defun clear-abbrevs () (clrhash *abbrevs*)) 
 (defun get-abbrev (symbol) (gethash symbol *abbrevs*)) 
 
@@ -35986,8 +35986,8 @@ And here is the macro definition:
 (defmacro verb ((base &rest forms) &body senses) 
 "Enter a verb into the lexicon." 
 
-•(add-verb '.senses '.base .(mapcar #'kwote (mklist forms)))) 
-(defun add-verb (senses base Äoptional 
+'(add-verb '.senses '.base .(mapcar #'kwote (mklist forms)))) 
+(defun add-verb (senses base &optional 
 (past (symbol (strip-vowel base) 'ed)) 
 (past-part past) 
 (pres-part (symbol (strip-vowel base) 'ing)) 
@@ -36040,13 +36040,13 @@ demote the 1 to a (3), and promote any 2 to a 1.
 
 (when (and (eql (slot-number (first slots)) 1) 
 (starts-with (third (first slots)) 'NP)) 
-(let ((old-1 ·(,(first (first slots)) (3) (PP by ?)))) 
+(let ((old-1 .(,(first (first slots)) (3) (PP by ?)))) 
 
 (loop for slot in slots 
 when (eql (slot-number slot) 2) 
 collect '((.(first slot) 1 .(third slot)) 
 
-,®(remove slot (rest slots)) 
+,@(remove slot (rest slots)) 
 .old-1))))) 
 
 (defun slot-number (slot) (first-or-self (second slot))) 
@@ -36122,7 +36122,7 @@ With no cat. runs all the examples."
 "Print a warning message if this is an unknown word." 
 (unless (or (gethash word *words*) (numberp word)) 
 
-(warn ""ÄUnknown word: ~a" word))) 
+(warn ""&Unknown word: ~a" word))) 
 
 21.13 Other Primitives 
 To support the -.test predicates made in various grammar rules we need definitions 
@@ -36722,7 +36722,7 @@ val)))
 
 (defparameter *scheme-procs* 
 
-·(+-•/=<><=>= cons car cdr not append list read member 
+.(+-'/=<><=>= cons car cdr not append list read member 
 (null? null) (eq? eq) (equal? equal) (eqv? eql) 
 (write prinl) (display princ) (newline terpri))) 
 
@@ -36746,7 +36746,7 @@ Define the Boolean 'constants*. Unfortunately, this won't
 (set-global-var! (first f) (symbol-function (second f))) 
 (set-global-var! f (symbol-function f)))) 
 
-(defun maybe-add (op exps Äoptional if-nil) 
+(defun maybe-add (op exps &optional if-nil) 
 "For example, (maybe-add 'and exps t) returns 
 t if exps is nil, exps if there is only one, 
 and (and expl exp2...) if there are several exps." 
@@ -36873,7 +36873,7 @@ just as 1 abel s does in Common Lisp.
 The first step in implementing these syntactic extensions is to change i nterp to 
 allow macros. Only one clause has to be added, but we'll repeat the whole definition: 
 
-(defun interp (x Äoptional env) 
+(defun interp (x &optional env) 
 
 "Interpret (evaluate) the expression . in the environment env. 
 
@@ -36972,7 +36972,7 @@ Here are the definitions of nine important macros in Scheme:
 ((length=1 args) (first args)) 
 (t (let ((var (gensym))) 
 
-•(let ((.var .(first args))) 
+'(let ((.var .(first args))) 
 (if ,var .var (or . .(rest args)))))))) 
 (def-scheme-macro cond (&rest clauses) 
 (cond ((null clauses) nil) 
@@ -37002,7 +37002,7 @@ clauses)))))
 (if (atom name) 
 '(begin (setl .name . .body) '.name) 
 
-•(define .(first name) 
+'(define .(first name) 
 (lambda .(rest name) . .body)))) 
 
 22.2 SYNTACTIC EXTENSION WITH MACROS 765 
@@ -37057,7 +37057,7 @@ The macro def i ne is just like set !, except that it returns the symbol rather 
 value assigned to the symbol. In addition, def i ne provides an optional syntax for 
 defining functions—it serves the purposes of both defun and defvar. The syntax 
 
-(define {fn. args). Í7ody) is an abbreviation for (define (lambda args. body)). 
+(define {fn. args). >7ody) is an abbreviation for (define (lambda args. body)). 
 
 
 766 SCHEME: AN UNCOMMON LISP 
@@ -37322,7 +37322,7 @@ Here's how the throw/catch mechanism would look in Scheme:
 
 (define (map fn 1) 
 (if (null? 1) 
-·() 
+.() 
 
 (cons (fn (first D) 
 (map fn (rest 1))))) 
@@ -37509,7 +37509,7 @@ and pass the result to the continuation cc."
 (funcall cc (set-var! (second x) 
 val env))))) 
 (IF (interp (second x) env 
-#·(lambda (pred) 
+#.(lambda (pred) 
 (interp (if pred (third x) (fourth x)) 
 env cc)))) 
 (LAMBDA (let ((parms (second x)) 
@@ -37531,7 +37531,7 @@ A few auxiliary functions are defined, in the same continuation-passing style:
 "Interpret each element of BODY, passing the last to CC." 
 (interp (first body) env 
 
-#·(lambda (val) 
+#.(lambda (val) 
 
 (if (null (rest body)) 
 (funcall cc val) 
@@ -37589,7 +37589,7 @@ Once the working of cal 1 /cc is understood, the implementation is obvious:
 
 ;; Package up CC into a Scheme function: 
 
-#·(lambda (cont val) 
+#.(lambda (cont val) 
 (declare (ignore cont)) 
 (funcall cc val)))) 
 
@@ -37860,15 +37860,15 @@ named let
 '(or .(first clauses) (cond ..(rest clauses)))) 
 ((starts-with (first clauses) 'else) 
 
-•(begin..(rest (first clauses)))) 
+'(begin..(rest (first clauses)))) 
 ((eq (second (first clauses)) *=>) 
 (assert (= (length (first clauses)) 3)) 
 (let ((var (gensym))) 
 
-•(let ((.var .(first (first clauses)))) 
+'(let ((.var .(first (first clauses)))) 
 (if .var (.(third (first clauses)) .var) 
 (cond ..(rest clauses)))))) 
-(t •(if .(first (first clauses)) 
+(t '(if .(first (first clauses)) 
 (begin ..(rest (first clauses))) 
 (cond ..(rest clauses))))))) 
 
@@ -37876,7 +37876,7 @@ named let
 22.8 ANSWERS 783 
 
 Answer 22.10 It is easy to define . ambda as a macro, eliminating the need for 
-#·(lambda ...): 
+#.(lambda ...): 
 
 (defmacro lambda (args &rest body) 
 '(function (lambda ,args .body))) 
@@ -38150,7 +38150,7 @@ than using append directly for purposes of data abstraction. A label is just an 
 "Return a sequence of instructions" 
 (apply #'append code)) 
 
-(defun gen-label (Äoptional (label .)) 
+(defun gen-label (&optional (label .)) 
 
 "Generate a label (a symbol of the form Lnnn)" 
 
@@ -38205,7 +38205,7 @@ function's name field, by calling name! (which is not part of standard Scheme).
 (def-scheme-macro define (name &rest body) 
 (if (atom name) 
 
-•(name! (set! ,name . .body) '.name) 
+'(name! (set! ,name . .body) '.name) 
 (scheme-macro-expand 
 '(define .(first name) 
 (lambda .(rest name) . .body))))) 
@@ -38220,14 +38220,14 @@ name)
 ;; This should also go in init-scheme-interp: 
 (set-global-var! 'name! #'name!) 
 
-(defun print-fn (fn Äoptional (stream *standard-output*) depth) 
+(defun print-fn (fn &optional (stream *standard-output*) depth) 
 (declare (ignore depth)) 
 (format stream "{~a}" (or (fn-name fn) '??))) 
 
 
 INTRODUCTION 791 
 
-(defun show-fn (fn Äoptional (stream *standard-output*) (depth 0)) 
+(defun show-fn (fn &optional (stream *standard-output*) (depth 0)) 
 "Print all the instructions in a function. 
 If the argument is not a function, just princ it, 
 but in a column at least 8 spaces wide." 
@@ -38602,7 +38602,7 @@ RETURN
 ARGS 0 
 GVAR A 
 GVAR X 
-• 
+' 
 SAVE KI 
 GVAR X 
 GVAR F 
@@ -38685,7 +38685,7 @@ quote, set! and i f. Note that it is reasonable to do more error checking in a c
 than in an interpreter, since the checking need be done only once, not each time 
 through. The function to check arguments is as follows: 
 
-(defun arg-count (form min Äoptional (max min)) 
+(defun arg-count (form min &optional (max min)) 
 "Report an error if form has wrong number of args." 
 (let ((n-args (length (rest form)))) 
 
@@ -38810,7 +38810,7 @@ RETURN
 
 LI: GVAR X 
 GVAR Y 
-• 
+' 
 RETURN 
 
 
@@ -38909,7 +38909,7 @@ first holds the name of a symbol that is globally bound to a primitive operation
 
 second, .-a rgs, is the number of arguments that the primitive requires. We have to 
 
-take into account the number of arguments to each function because we want (-»-. 
+take into account the number of arguments to each function because we want (->-. 
 
 y) to compile into a primitive addition instruction, while (+ x y z) should not. It 
 will compile into a call to the function instead. The opcode slot gives the opcode 
@@ -38925,8 +38925,8 @@ symbol n-args opcode always side-effects)
 
 (defparameter *primitive-fns* 
 
-·((+ 2 + true) (- 2 - true) (* 2 * true) (/ 2 / true) 
-(< 2 <) (> 2 » «= 2 <=) (>= 2 >=) (/= 2 /=) (= 2 =) 
+.((+ 2 + true) (- 2 - true) (* 2 * true) (/ 2 / true) 
+(< 2 <) (> 2 > «= 2 <=) (>= 2 >=) (/= 2 /=) (= 2 =) 
 (eq? 2 eq) (equal? 2 equal) (eqv? 2 eql) 
 (not 1 not) (null? 1 not) 
 (car 1 car) (cdr 1 cdr) (cadr 1 cadr) (cons 2 cons true) 
@@ -39064,7 +39064,7 @@ LI: GVAR A
 23.1 A PROPERLY TAIL-RECURSIVE LISP COMPILER 807 
 GVAR X 
 
-• 
+' 
 
 GVAR . 
 
@@ -39378,7 +39378,7 @@ code-vector))
 
 If we want to be able to look at assembled code, we need a new printing function: 
 
-(defun show-fn (fn Äoptional (stream *standard-output*) (indent 2)) 
+(defun show-fn (fn &optional (stream *standard-output*) (indent 2)) 
 "Print all the instructions in a function. 
 If the argument is not a function, just princ it, 
 but in a column at least 8 spaces wide." 
@@ -39524,7 +39524,7 @@ Binary operations:
 (rest2 stack)))) 
 
 
-816 COMPILING LIÍ>F 
+816 COMPILING LI>>F 
 
 Ternary operations: 
 (LIST3 
@@ -39798,7 +39798,7 @@ appropriate (by the top level of Scheme, and by any user Scheme program).
 
 822 COMPILING LISP 
 
-(defun scheme-read (Äoptional (stream *standard-input*)) 
+(defun scheme-read (&optional (stream *standard-input*)) 
 (let ((*readtable* *scheme-readtable*)) 
 (read stream nil eof))) 
 
@@ -39813,15 +39813,15 @@ in implementing scheme-read is to alter *scheme- readtabl e*, adding read macros
 for whatever characters are necessary. Here we define macros for #t and #f (the true 
 and false values), for #d (decimal numbers) and for the backquote read macro (called 
 quasiquote in Scheme). Note that the backquote and conruna characters are defined 
-as read macros, but the ® in ,® is processed by reading the next character, not by a 
-read macro on ®. 
+as read macros, but the @ in ,@ is processed by reading the next character, not by a 
+read macro on @. 
 
 (set-dispatch-macro-character #\# #\t 
 #*(lambda (&rest ignore) t) 
 *scheme-readtable*) 
 
 (set-dispatch-macro-character #\# #\f 
-#·(lambda (&rest ignore) nil) 
+#.(lambda (&rest ignore) nil) 
 *scheme-readtable*) 
 
 (set-dispatch-macro-character #\# #\d 
@@ -39842,7 +39842,7 @@ nil *scheme-readtable*)
 #'(lambda (stream ignore) 
 (let ((ch (read-char stream))) 
 
-(if (char= ch #\®) 
+(if (char= ch #\@) 
 (list 'unquote-splicing (read stream)) 
 (progn (unread-char ch stream) 
 
@@ -39855,7 +39855,7 @@ Finally, we install scheme- read and eof-object? as prinütives:
 23.5 LANGUAGES WITH DIFFERENT LEXICAL CONVENTIONS
 (defparameter *primitive-fns* 
 
-·((+ 2 + true nil) (-2 - true nil) (* 2 * true nil) (/ 2 / true nil) 
+.((+ 2 + true nil) (-2 - true nil) (* 2 * true nil) (/ 2 / true nil) 
 « 2 < nil nil) (> 2 > nil nil) (<= 2 <= nil nil) (>= 2 >= nil nil) 
 (/= 2 /= nil nil) (= 2 = nil nil) 
 (eq? 2 eq nil nil) (equal? 2 equal nil nil) (eqv? 2 eql nil nil) 
@@ -39886,7 +39886,7 @@ with the Common Lisp function qua si - q), and the eventual evaluation of the
 expansion. In an environment where b is bound to the number 2 and c is bound to 
 the Ust (cl c2), we might have: 
 
-Typed: '(a ,b .®c d) 
+Typed: '(a ,b .@c d) 
 Read: (quasiquote (a (unquote b) (unquote-splicing c) d)) 
 Expanded: (cons 'a (cons b (append c '(d)))) 
 Evaluated: (a 2 cl c2 d) 
@@ -40147,7 +40147,7 @@ X)
 (defun sign-p (char) (find char "+-")) 
 
 Actually, that's not quite good enough, because a Scheme complex number can have 
-multiple signs in it, as in 3. 4e- 5+6. 7e-»-8i, and it need not have two numbers, as in 
+multiple signs in it, as in 3. 4e- 5+6. 7e->-8i, and it need not have two numbers, as in 
 31 or 4+i or just +i. The other problem is that complex numbers can only have a 
 lowercase i, but read does not distinguish between the symbols 3+4i and 3+41. 
 
@@ -40523,12 +40523,12 @@ are in fact error conditions.
 
 Handling Errors 
 
-By default, signaling an error invokes the debugger. In the following example, the » 
+By default, signaling an error invokes the debugger. In the following example, the > 
 prompt means that the user is in the debugger rather than at the top level. 
 
 > (/ 3 0) 
 Error: An attempt was made to divide by zero. 
-» 
+> 
 
 ANSI Common Lisp provides ways of changing this default behavior. Conceptually, 
 this is done by setting up an error handler which handles the error in some way. Error 
@@ -40741,7 +40741,7 @@ Warning: Not every loop keyword is supported."
 (if (every #'listp exps) 
 
 No keywords implies simple loop: 
-'(block nil (tagbody loop ,®exps (go loop))) 
+'(block nil (tagbody loop ,@exps (go loop))) 
 ;; otherwise process loop keywords: 
 (let ((1 (make-loop))) 
 
@@ -40779,7 +40779,7 @@ auxiliary functions:
 "Put in a test for loop termination." 
 (push *(if .test (go end)) (loop-body 1))) 
 
-(defun add-var (1 var init Äoptional (update nil update?)) 
+(defun add-var (1 var init &optional (update nil update?)) 
 "Add a variable, maybe including an update step." 
 (unless (assoc var (loop-vars 1)) 
 
@@ -40862,7 +40862,7 @@ Also, we can define an alias with (defloop key other-key)
 '#'(lambda (1 . y) 
 (call-loop-fn 1 '.args (cons . y)))) 
 ((and (listp args) (= (length args) 2)) 
-*#'(lambda (.®args -exps-) .®body -exps-)) 
+*#'(lambda (.@args -exps-) .@body -exps-)) 
 (t '#'(lambda .args .body))))) 
 
 Now we are ready to define some 1 oop keywords. Each of the following sections 
@@ -41358,7 +41358,7 @@ Here's roughly what we want:
 (if (side-effect-free-p x) 
 *(* .x .x) 
 
-•(let ((gOOl .x)) 
+'(let ((gOOl .x)) 
 .(let ((x 'gOOD) 
 '(* .x .X)))) 
 
@@ -41748,7 +41748,7 @@ half as much storage as lists. Therefore, this is the approach I adopt.
 (defmacro funcall-if (fn arg) 
 (once-only (fn) 
 
-•(if,fn (funcall .fn ,arg) ,arg))) 
+'(if,fn (funcall .fn ,arg) ,arg))) 
 
 862 ANSI COMMON LISP 
 
@@ -41848,11 +41848,11 @@ more than one collection can be going on at the same time.
 
 864 ANSI COMMON LISP 
 
-(defun collect (item Äoptional (queue *queue*)) 
+(defun collect (item &optional (queue *queue*)) 
 (enqueue item queue)) 
 
-(defmacro with-collection ((Äoptional (queue '*queue*)) 
-Äbody body) 
+(defmacro with-collection ((&optional (queue '*queue*)) 
+&body body) 
 
 '(let ((.queue (make-queue))) 
 .body 
@@ -41877,7 +41877,7 @@ X is captured, giving it a longer extent, then a difference shows up. Consider e
 (3 3 3) 
 
 > (mapcar #*funcal1 (mapcar #*(lambda (x) #*(lambda Ox)) 
-•(1 2 3))) 
+'(1 2 3))) 
 (1 2 3) 
 
 Answer 24.5 
@@ -42488,7 +42488,7 @@ array- push in the index yields nothing. But I can turn to Lisp itself and ask:
 PUSH Macro (VALUE PLACE), pi ist 
 PUSHNEW Macro (VALUE PLACE &KEY ...). pi ist 
 VECTOR-PUSH function (NEW-ELEMENT VECTOR), pi is t 
-VECTOR-PUSH-EXTEND function (DATA VECTOR ÄOPTIONAL ...), pi ist 
+VECTOR-PUSH-EXTEND function (DATA VECTOR &OPTIONAL ...), pi ist 
 
 This should be enough to remind me that vector-push is the answer. If not, I can get 
 more information from the manual or from the online functions documentati on or 
@@ -42629,7 +42629,7 @@ pairs. If you are iterating over some kind of sequence, follow dotimes and dol i
 
 For example, here is the syntax of a macro to iterate over the leaves of a tree of conses: 
 
-(defmacro dotree ((var tree Äoptional result) &body body) 
+(defmacro dotree ((var tree &optional result) &body body) 
 "Perform body with var bound to every leaf of tree, 
 then return result. Return and Go can be used in body." 
 ...) 
@@ -42669,7 +42669,7 @@ could not possibly be used elsewhere:
 "Pop and return last element of the list in PLACE." 
 (let ((result (gensym))) 
 
-•(let ((.result (lastl .place))) 
+'(let ((.result (lastl .place))) 
 (setf .place (nbutlast .place)) 
 .result))) 
 There is still the problem of shadowing local functions. For example, a user who 
@@ -42688,7 +42688,7 @@ could try:
 "Pop and return last element of the list in PLACE." 
 (let ((result (gensym))) 
 
-•(let ((.result (funcall .#'lastl .place))) 
+'(let ((.result (funcall .#'lastl .place))) 
 (setf .place (funcall .#'nbutlast .place)) 
 .result))) 
 This approach is sometimes used by Scheme programmers, but Common Lisp programmers 
@@ -42804,7 +42804,7 @@ Return 5 vals: temps vals stores store-form access-form
 
 (values 
 '(.temps Jast2-var .last2-p .last-var) 
-'(.®vals (last2 .access-form) 
+'(.@vals (last2 .access-form) 
 
 (= (length .last2-var) 2) 
 
@@ -42839,7 +42839,7 @@ square-root function. It makes (setf (sqrt x) 5) be almost equivalent to (setf .
 vals 
 (list store) 
 
-•(let ((.(first stores) (* .store .store))) 
+'(let ((.(first stores) (* .store .store))) 
 .store-form 
 .store) 
 '(sqrt .access-form))))) 
@@ -42848,11 +42848,11 @@ Turning from setf methods back to macros, another hard part about writing portab
 macros is anticipating what compilers might warn about. Let's go back to the dotree 
 macro. Its definition might look in part like this: 
 
-(defmacro dotree ((var tree Äoptional result) Äbody body) 
+(defmacro dotree ((var tree &optional result) &body body) 
 "Perform body with var bound to every leaf of tree, 
 then return result. Return and Go can be used in body." 
 
-•(let ((.var)) 
+'(let ((.var)) 
 .body)) 
 
 Now suppose a user decides to count the leaves of a tree with: 
@@ -42900,7 +42900,7 @@ definition is:
 (defmacro defrule (name &body body) 
 "Define a new rule with the given name." 
 
-•(setf (get '.name 'rule) 
+'(setf (get '.name 'rule) 
 #'(lambda () .(translate-rule-body body)))) 
 Beginners sometimes fail to see the difference between these two approaches, because 
 they both have the same result when interpreting a file that makes use of 
@@ -42931,7 +42931,7 @@ quotient and remainder), as does i ntern (the symbol and whether or not the symb
 already existed). But we need a special form to capture these values. For example, 
 compare: 
 
-> (list (floor 11 5) (intern ·.))=^(2 X) 
+> (list (floor 11 5) (intern ..))=^(2 X) 
 
 > (multiple-value-call #*list 
 (floor 11 5) (intern 'x))=^(2 1 X -.INTERNAL) 
@@ -43110,7 +43110,7 @@ Mode: Lisp; Syntax: Common-Lisp; Package: User
 :naaje :project-x 
 :source-dir "/usr/norvig/project-x/*.lisp" 
 :object-dir "/usr/norvig/project-x/*.bin" 
-:modules •((:macros "header" "macros") 
+:modules '((:macros "header" "macros") 
 
 (:main "parser" "transformer" "optimizer" 
 "commands" "database" "output") 
@@ -43370,7 +43370,7 @@ adds a new key/value pair to the front of the a-list.
 '(.key .vals (assoc .key-var .access-form)) 
 '(.result) 
 
-•(if.pair-var 
+'(if.pair-var 
 (setf (cdr .pair-var) .result) 
 (let ((.(first stores) 
 (aeons .key-var .result .access-form))) 
@@ -44423,8 +44423,8 @@ Index
 &aux,102 
 &body, 102 
 &key,98 
-Äoptional, 98 
-Ärest,101 
+&optional, 98 
+&rest,101 
 0,10 
 *abbrevs*,740 
 *acc*, 848 
@@ -44487,7 +44487,7 @@ Index
 *weights*,609 
 *world*,498,500 
 „68 
-.®,68 
+.@,68 
 -->,690 
 -if, 61 
 -if-not, 61 
