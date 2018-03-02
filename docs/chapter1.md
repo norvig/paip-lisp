@@ -198,7 +198,7 @@ Thus, the special form <code>(setf x (+ 2 1))</code> should be considered the eq
 and <code>(setf x 3)</code> a special form expression. 
 
 It turns out that the quote mark is just an abbreviation for another special form. 
-The expression <code>'x</code> is equivalent to (quote x), a special form expression that evaluates 
+The expression <code>'x</code> is equivalent to <code>(quote x)</code>, a special form expression that evaluates 
 to x. The special form operators used in this chapter are: 
 
 <table>
@@ -364,8 +364,6 @@ string is optional, and all other parts are required):
 ^In ANSI Common Lisp, 1 ast is defined to return a list of the last . elements, where . 
 defaults to 1. Thus (last p) = (last . 1) = (PUBLIC), and (last . 2) = (Q PUBLIC). This 
 may make the definition of 1 ast seem less perverse. 
-
-1,5 DEFINING NEW FUNCTIONS
 
 (defun function-name {parameter...) 
 ''documentation string'' 
