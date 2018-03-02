@@ -25,15 +25,12 @@
 ;;;; REQUIRES
 
 ;;; The function REQUIRES is used in subsequent files to state dependencies
-;;; between files.  The current definition just loads the required files,
-;;; assumming they match the pathname specified in *PAIP-DIRECTORY*.
+;;; between files.  The current definition just loads the required files when it has not yet
+;;; been loaded, assumming they match the pathname specified in *PAIP-DIRECTORY*.
 ;;; You should change that to match where you have stored the files.
-;;; A more sophisticated REQUIRES would only load it if it has not yet
-;;; been loaded, and would search in different directories if needed.
+;;; A more sophisticated REQUIRES would search in different directories if needed.
 
-(defun requires (&rest files)
-  "The arguments are files that are required to run an application."
-  (mapc #'load-paip-file files))
+(defvar *paip-modules* '())
 
 (defvar *paip-files*
   `("auxfns" "tutor" "examples" 
@@ -45,9 +42,19 @@
     "grammar" "lexicon" "interp1" "interp2" "interp3" 
     "compile1" "compile2" "compile3" "compopt"))
 
+(defun requires (&rest files)
+  "The arguments are files that are required to run an application."
+  (loop for file in files
+     for name = (string-downcase file)
+     unless (find name *paip-modules* :test 'equal)
+     collect (progn
+               (push name *paip-modules*)
+               (load-paip-file name))))
+
 (defparameter *paip-directory*
   (make-pathname :name nil :type nil
-		 :defaults (or (and (boundp '*load-truename*) *load-truename*)
+		 :defaults (or #.(and (boundp '*compile-file-truename*) *compile-file-truename*)
+			       (and (boundp '*load-truename*) *load-truename*)
 			       (truename ""))) ;;??? Maybe Change this
   "The location of the source files for this book.  If things don't work,
   change it to reflect the location of the files on your computer.")
@@ -82,17 +89,19 @@
 (defun compile-paip-file (name)
   (let ((path (paip-pathname name :lisp)))
     (load path)
-    (compile-file path :output-file (paip-pathname name :binary))))
+    (compile-file path :output-file (ensure-directories-exist (paip-pathname name :binary)))))
 
 (defun load-paip-file (file)
   "Load the binary file if it exists and is newer, else load the source."
   (let* ((src (paip-pathname file :lisp))
 	 (src-date (file-write-date src))
 	 (bin (paip-pathname file :binary))
-	 (bin-date (file-write-date bin)))
+	 (bin-date (ignore-errors (file-write-date bin)))
+	 (*package* (or (find-package :paip)
+                        *package*)))
     (load (if (and (probe-file bin) src-date bin-date (>= bin-date src-date))
 	      bin
-	    src))))
+              src))))
 
 ;;;; Macros (formerly in auxmacs.lisp: that file no longer needed)
 
@@ -686,3 +695,5 @@
                                (funcall-if key (pop seq))))))
              result))))
 )
+
+(pushnew "auxfns" *paip-modules* :test 'equal)
