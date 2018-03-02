@@ -12,7 +12,8 @@
   "Run examples from one or more chapters and sum the number of errors.  
   If all is well, this should return 0. If STREAM is nil, very little 
   output is produced."
-  (loop for chapter in (cond ((member chapters '(all :all)) *chapters*)
+  (loop with *package* = (or (find-package :paip) *package*)
+	for chapter in (cond ((member chapters '(all :all)) *chapters*)
 			     ((listp chapters) chapters)
 			     (t (list chapters)))
 	sum (do-chapter chapter stream)))
