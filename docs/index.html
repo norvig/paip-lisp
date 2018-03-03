@@ -21,7 +21,7 @@
       coverpage: true,
       plugins: [
         function (hook, vm) {
-          hook.ready(function() {
+          hook.doneEach(function() {
             HighlightLisp.highlight_auto({className: 'lang-lisp'});
           })
         }
