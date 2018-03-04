@@ -1,3 +1,4 @@
+## Frontmatter
 Paradigms of 
 Artificial Intelligence 
 Programming: 
@@ -58,7 +59,8 @@ CIP
 To my family,.. 
 
 
-<a id='page-vii'></a>Preface 
+## Preface
+<a id='page-vii'>
 
 paradigm . 1 an example or pattern; esp an outstandingly clear or typical example. 
 -Longman's Dictionary of the EngUsh Language, 1984 
@@ -537,7 +539,8 @@ Finally, thanks to Mike Morgan and Yonie Overton for overseeing the production
 of the book and encouraging me to finish on time. 
 
 
-<a id='page-3'></a>CHAPTER 1 
+## Chapter 1
+<a id='page-3'></a>
 
 Introduction to Lisp 
 
@@ -1975,7 +1978,8 @@ sum))
 (apply #'+ (mapcar #'* a b))) 
 
 
-<a id='page-34'></a>CHAPTER 2 
+## Chapter 2
+<a id='page-34'></a>
 
 A Simple Lisp Program 
 
@@ -2638,7 +2642,8 @@ Now we can use the cross-product in other ways as well:
 (A 8) (B 8) (C 8) (D 8) (E 8) (F 8) (G 8) (H 8)) 
 
 
-<a id='page-48'></a>CHAPTER 3 
+## Chapter 3
+<a id='page-48'></a>
 
 Overview of Lisp 
 
@@ -5413,9 +5418,8 @@ or, with an ANSI-compliant Common Lisp, you can specify a : key
 Answer 3.12 (format t '^@r{'^a'^^ '(this is a test)) 
 
 
-<a id='page-109'></a>CHAPTER 
-
-4 
+## Chapter 4
+<a id='page-109'></a>
 
 GPS: The Genera 
 Problem Solver 
@@ -7359,7 +7363,8 @@ Do this for all possible e to generate all permutations,
 bag))) 
 
 
-<a id='page-151'></a>CHAPTER 5 
+## Chapter 5
+<a id='page-151'></a>
 
 ELIZA: Dialog with a Machine 
 
@@ -8510,7 +8515,8 @@ Answer 5.19 The following includes most of Weizenbaum's rules:
 (Do you feel strongly about discussing such things?)))) 
 
 
-<a id='page-175'></a>CHAPTER 6 
+## Chapter 6
+<a id='page-175'></a>
 
 Building Software Tools 
 
@@ -10604,7 +10610,8 @@ successors cost-fn beam-width)
 solutions)) 
 
 
-<a id='page-219'></a>CHAPTER 7 
+## Chapter 7
+<a id='page-219'></a>
 
 STUDENT: Solving Algebra 
 Word Problems 
@@ -11563,7 +11570,9 @@ exp))
 (t unknown))) 
 
 
-<a id='page-238'></a>CHAPTER 8 
+## Chapter 8
+<a id='page-238'></a>
+CHAPTER 8 
 
 Symbolic Mathematics: 
 A Simplification Program 
@@ -12717,7 +12726,8 @@ from being simplified away.
 and -i nf ini ty as well. 
 
 
-<a id='page-265'></a>CHAPTER 9 
+## Chapter 9
+<a id='page-265'></a>
 
 Efficiency issues 
 
@@ -15224,7 +15234,8 @@ out of delayed functions, while things that may not be done at all should be mov
 inside a delay. 
 
 
-<a id='page-315'></a>CHAPTER 10 
+## Chapter 10
+<a id='page-315'></a>
 
 Low-Level 
 Efficiency Issues 
@@ -16886,7 +16897,8 @@ Ex: (flatten '((a) (b (c) d))) => (a b c d)."
 exp)))) 
 
 
-<a id='page-348'></a>CHAPTER 
+## Chapter 11
+<a id='page-348'></a>
 
 Logic Programming 
 
@@ -18870,7 +18882,8 @@ Yes.
 Yes. 
 
 
-<a id='page-388'></a>CHAPTER 12 
+## Chapter 12
+<a id='page-388'></a>
 
 Compiling Logic 
 Programs 
@@ -21181,7 +21194,8 @@ seen once, and a list of variables seen more than once."
 (t (values (cons tree seen-once) seen-more)))) 
 
 
-<a id='page-434'></a>CHAPTER 73 
+## Chapter 13
+<a id='page-434'></a>
 
 Object-Oriented 
 Programming 
@@ -22437,9 +22451,8 @@ stated in the text, some of the previously defined methods made the unwarranted
 assumption that probl em-states would always hold a Hst. Change these methods. 
 
 
-<a id='page-460'></a>CHAPTER 
-
-14 
+## Chapter 14
+<a id='page-460'></a>
 
 Knowledge Representation 
 and Reasoning 
@@ -24744,9 +24757,8 @@ Assumes that item is present exactly once."
 nlist) 
 
 
-<a id='page-509'></a>CHAPTER 
-
-15 
+## Chapter 15
+<a id='page-509'></a>
 
 Symbolic Mathematics 
 with Canonical Forms 
@@ -25795,9 +25807,8 @@ would be numbers. (3) Unless a policy was decided upon, the representation would
 not be canonical, since #(. 3) and #(y 3) both represent 3. 
 
 
-<a id='page-530'></a>CHAPTER 
-
-16 
+## Chapter 16
+<a id='page-530'></a>
 
 Expert Systems 
 
@@ -27491,9 +27502,8 @@ Answer 16.18 Add the clause (stop (throw 'stop nil)) to the case statement
 in ask-vals and wrap a (catch 'stop ...) around the code in emycin. 
 
 
-<a id='page-564'></a>CHAPTER 
-
-17 
+## Chapter 17
+<a id='page-564'></a>
 
 Line-Diagram 
 Labeling by Constraint 
@@ -28873,7 +28883,8 @@ implement a program to allow a user to draw diagrams with a mouse. Have the
 program generate output in the form expected by construct-di agram. 
 
 
-<a id='page-596'></a>CHAPTER 18 
+## Chapter 18
+<a id='page-596'></a>
 
 Search and the 
 Game of Othello 
@@ -31811,7 +31822,8 @@ names. The user might also want the ability to start the values at some number o
 than zero, or to assign specific values to some of the symbols. 
 
 
-<a id='page-655'></a>CHAPTER 19 
+## Chapter 19
+<a id='page-655'></a>
 
 Introduction to 
 Natural Language 
@@ -33231,7 +33243,8 @@ Rarely, rotatef is used with more than two arguments, (rotatef a b c) is like:
 nil) 
 
 
-<a id='page-684'></a>CHAPTER 20 
+## Chapter 20
+<a id='page-684'></a>
 
 Unification Grammars 
 
@@ -34694,7 +34707,8 @@ nil readtable)
 nil readtable)))) 
 
 
-<a id='page-715'></a>CHAPTER 27 
+## Chapter 21
+<a id='page-715'></a>
 
 A Grammar of English 
 
@@ -36411,7 +36425,8 @@ clause is nonrestrictive and thus belongs outside the quantifier's restriction:
 (4-wheel-drive ?x)(cost s ?x $5000)) 
 
 
-<a id='page-753'></a>CHAPTER 22 
+## Chapter 22
+<a id='page-753'></a>
 
 Scheme: An Uncommon Lisp 
 
@@ -37943,7 +37958,8 @@ to optimize special variable references the way it canfunction special forms. Al
 this approach would not interact properly with f 1 et and 1 abel s. 
 
 
-<a id='page-784'></a>CHAPTER 23 
+## Chapter 23
+<a id='page-784'></a>
 
 Compiling Lisp 
 
@@ -40389,7 +40405,8 @@ not the intended result at all. So there would be an arbitrary restriction: the 
 argument in an apply form would have to be an atom. This kind of restriction goes 
 against the grain of Scheme. 
 
-<a id='page-834'></a>CHAPTER 24 
+## Chapter 24
+<a id='page-834'></a>
 
 ANSI Common Lisp 
 
@@ -41982,7 +41999,8 @@ code, and the executable part serves to notify the lazy reader when something is
 demonstrably wrong at run time. 
 
 
-<a id='page-866'></a>CHAPTER 25 
+## Chapter 25
+<a id='page-866'></a>
 
 Troubleshooting 
 
@@ -43433,7 +43451,9 @@ adds a new key/value pair to the front of the a-list.
 '(cdr .pair-var))))) 
 
 
-<a id='page-897'></a>Appendix: 
+## Appendix
+<a id='page-897'></a>
+
 Obtaining the Code 
 in this Book 
 
@@ -43608,7 +43628,8 @@ XLisp cs.orst.edu Lisp interpreter
 XScheme tut.cis.ohio-state.edu Also mitscheme compiler; sbprolog 
 
 
-<a id='page-901'></a>Bibliography 
+## Bibliography
+<a id='page-901'></a>
 
 Abelson, Harold, and Gerald J. Sussman, with Juhe Sussman. (1985) Structure and 
 Interpretation of Computer Programs. MIT Press. 
@@ -44467,7 +44488,8 @@ Zucker, S. W. (1990) "Vision, Early." In Encyclopedia of Artificial Intelligence
 Stuart C. Shapiro. Wiley. 
 
 
-<a id='page-919'></a>Index 
+## Index
+<a id='page-919'></a>
 
 1,420 
 &al1ow-other-keys, 101 
