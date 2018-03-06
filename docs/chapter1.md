@@ -1,4 +1,4 @@
-## Intorduction to Lisp {docsify-ignore}
+## Introduction to Lisp {docsify-ignore}
 
 <blockquote>
   You think you know when you learn, are more sure when you can write, even more when you can teach, but certain when you can program. <br><br>
