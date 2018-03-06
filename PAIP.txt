@@ -15237,20 +15237,17 @@ inside a delay.
 ## Chapter 10
 <a id='page-315'></a>
 
-Low-Level 
-Efficiency Issues 
+### Low-Level Efficiency Issues 
 
-There are only two qualities in the world: efficiency 
+> There are only two qualities in the world: efficiency 
 and inefficiency; and only two sorts of people: the 
 efficient and the inefficient 
+>
+> —George Bernard Shaw, 
+> *John Bull's Other Island* (1904) 
 
-—George Bernard Shaw 
-John Bull's Other Island (1904) 
-
-r I 1 he efficiency techniques of the previous chapter all involved fairly significant changes 
-
-I to an algorithm. But what happens when you already are using the best imaginable 
-
+The efficiency techniques of the previous chapter all involved fairly significant changes 
+to an algorithm. But what happens when you already are using the best imaginable 
 algorithms, and performance is still a problem? One answer is to find what parts of the 
 program are used most frequently and make micro-optimizations to those parts. This chapter 
 covers the following six optimization techniques. If your programs all run quickly enough, then 
@@ -15266,229 +15263,237 @@ described here can lead to speed-ups of 40 times or more.
 * Provide compiler macros. 
 * Avoid unnecessary consing. 
 * Use the right data structure. 
-10.1 Use Declarations 
+
+### 10.1 Use Declarations 
 On general-purpose computers running Lisp, much time is spent on type-checking. 
 You can gain efficiency at the cost of robustness by declaring, or promising, that 
 certain variables will always be of a given type. For example, consider the following 
 function to compute the sum of the squares of a sequence of numbers: 
 
+```lisp
 (defun sum-squares (seq) 
-(let ((sum 0)) 
-(dotimes (i (length seq)) 
-(incf sum (square (elt seq i)))) 
-sum)) 
+  (let ((sum 0)) 
+    (dotimes (i (length seq)) 
+      (incf sum (square (elt seq i)))) 
+    sum)) 
 
 (defun square (x) (* . x)) 
+```
 
 If this function will only be used to sum vectors of fixnums, we can make it a lot faster 
 by adding declarations: 
 
+```lisp
 (defun sum-squares (vect) 
-(declare (type (simple-array fixnum *) vect) 
-(inline square) (optimize speed (safety 0))) 
+  (declare (type (simple-array fixnum *) vect) 
+           (inline square) (optimize speed (safety 0))) 
 
-(let ((sum 0)) 
-(declare (fixnum sum)) 
-(dotimes (i (length vect)) 
-
-(declare (fixnum i)) 
-(incf sum (the fixnum (square (svref vect i))))))) 
-sum)) 
+  (let ((sum 0)) 
+    (declare (fixnum sum)) 
+    (dotimes (i (length vect)) 
+      (declare (fixnum i)) 
+    (incf sum (the fixnum (square (svref vect i))))))) 
+  sum)) 
+```
 
 The fixnum declarations let the compiler use integer arithmetic directly, rather than 
-checking the type of each addend. The (the f i xnum ... ) special form is a promise 
-that the argument is a fbcnum. The (opt i mi ze speed (safety 0) ) declaration tells 
+checking the type of each addend. The `(the fixnum ... )` special form is a promise 
+that the argument is a fixnum. The `(optimize speed (safety 0))` declaration tells 
 the compiler to make the function run as fast as possible, at the possible expense of 
-
-
 <a id='page-317'></a>
 making the code less safe (by ignoring type checks and so on). Other quantities that 
-can be optimized are compilation-speed, space and in ANSI Common Lisp only, 
-debug (ease of debugging). Quantities can be given a number from 0 to3 indicating 
+can be optimized are `compilation-speed`, `space` and in ANSI Common Lisp only, 
+`debug` (ease of debugging). Quantities can be given a number from 0 to 3 indicating 
 how important they are; 3 is most important and is the default if the number is left out. 
 
-The (inline squa re) declaration allows the compiler to generate the multiplication 
-specified by square right in the loop, without explicitly making a function 
-call to square. The compiler will create a local variable for (svref vect i) and will 
+The `(inline square)` declaration allows the compiler to generate the multiplication 
+specified by `square` right in the loop, without explicitly making a function 
+call to square. The compiler will create a local variable for `(svref vect i)` and will 
 not execute the reference twice—inline functions do not have any of the problems 
 associated with macros as discussed on page 853. However, there is one drawback: 
 when you redefine an inline function, you may need to recompile all the functions 
 that call it. 
 
-You should declare a function inl ine when it is short and the function-calling 
+You should declare a function `inline` when it is short and the function-calling 
 overhead will thus be a significant part of the total execution time. You should not 
-declare a function i nl i ne when the function is recursive, when its definition is likely 
+declare a function `inline` when the function is recursive, when its definition is likely 
 to change, or when the function's definition is long and it is called from many places. 
 
-In the example at hand, declaring the function inline saves the overhead of 
+In the example at hand, declaring the function `inline` saves the overhead of 
 a function call. In some cases, further optimizations are possible. Consider the 
-predicate starts-with: 
+predicate `starts-with`: 
 
+```lisp
 (defun starts-with (list x) 
-"Is this a list whose first element is x?" 
-(and (consp list) (eql (first list) x))) 
+  "Is this a list whose first element is x?" 
+  (and (consp list) (eql (first list) x))) 
+```
 
 Suppose we have a code fragment like the following: 
 
+```lisp
 (if (consp list) (starts-with list x) ...) 
+```
 
-If sta rts - with is declared i nl i ne this will expand to: 
+If `starts-with` is declared `inline` this will expand to: 
 
+```lisp
 (if (consp list) (and (consp list) (eql (first list) x)) ...) 
+```
 
 which many compilers will simplify to: 
 
+```lisp
 (if (consp list) (eql (first list) x) ...) 
+```
 
 Very few compilers do this kind of simplification across functions without the hint 
-provided by inline. 
+provided by `inline`. 
 
 Besides eliminating run-time type checks, declarations also allow the compiler 
 to choose the most efficient representation of data objects. Many compilers support 
-both boxed and unboxed representations of data objects. A boxed representation 
+both *boxed* and *unboxed* representations of data objects. A boxed representation 
 includes enough information to determine the type of the object. An unboxed 
 representation is just the "raw bits" that the computer can deal with directly. Consider 
-
-
 <a id='page-318'></a>
-
 the following function, which is used to clear a 1024x1024 array of floating point 
 numbers, setting each one to zero: 
 
+```lisp
 (defun clear-m-array (array) 
-(declare (optimize (speed 3) (safety 0))) 
-(declare (type (simple-array single-float (1024 1024)) array)) 
-(dotimes (i 1024) 
-
-(dotimes (j 1024) 
-(setf (aref array i j) 0.0)))) 
+  (declare (optimize (speed 3) (safety 0))) 
+  (declare (type (simple-array single-float (1024 1024)) array)) 
+  (dotimes (i 1024) 
+    (dotimes (j 1024) 
+      (setf (aref array i j) 0.0)))) 
+```
 
 In Allegro Common Lisp on a Sun SPARCstation, this compiles into quite good code, 
 comparable to that produced by the C compiler for an equivalent C program. If the 
 declarations are omitted, however, the performance is about 40 times worse. 
 
 The problem is that without the declarations, it is not safe to store the raw floating 
-point representation of 0.0 in each location of the array. Instead, the program 
-has to box the 0.0, allocating storage for a typed pointer to the raw bits. This 
+point representation of `0.0` in each location of the array. Instead, the program 
+has to box the `0.0`, allocating storage for a typed pointer to the raw bits. This 
 is done inside the nested loops, so the result is that each call to the version of 
-clear-m-array without declarations calls the floating-point-boxing function 1048567 
+`clear-m-array` without declarations calls the floating-point-boxing function 1048567 
 times, allocating a megaword of storage. Needless to say, this is to be avoided. 
 
 Not all compilers heed all declarations; you should check before wasting time 
-with declarations your compiler may ignore. The function di sassembl e can be used 
+with declarations your compiler may ignore. The function `disassemble` can be used 
 to show what a function compiles into. For example, consider the trivial function to 
 add two numbers together. Here it is with and without declarations: 
 
+```lisp
 (defun f (x y) 
-(declare (fixnum . y) (optimize (safety 0) (speed 3))) 
-(the fixnum (+ . y))) 
-
+  (declare (fixnum . y) (optimize (safety 0) (speed 3))) 
+  (the fixnum (+ . y))) 
 (defun g (x y) (+ . y)) 
+```
 
 Here is the disassembled code for f from Allegro Common Lisp for a Motorola 
 68000-series processor: 
 
-> (disassemble *f) 
-disassembling #<Function f @ #x83ef79> 
-formals: x y 
-
-; ; code vector ( ^ #x83ef44 
-0: link a6.#0 
-4: move.l a2.-(a7) 
-6: move.l a5,-(a7) 
-8: move.l 7(a2),a5 
-
-12: move.l 8(a6),d4 y 
-16: add.l 12(a6),d4 ; X 
-20: move.l #l,dl 
-
+```
+> (disassemble 'f) 
+;; disassembling #<Function f @ #x83ef79> 
+;; formals: x y 
+;; code vector @ #x83ef44 
+0:      link    a6.#0 
+4:      move.l  a2.-(a7) 
+6:      move.l  a5,-(a7) 
+8:      move.l  7(a2),a5 
+12:     move.l  8(a6),d4 y 
+16:     add.l   12(a6),d4 ; X 
+20:     move.l  #l,d1 
+```
 <a id='page-319'></a>
-22 move.l -8(a6),a5 
-26 unlk a6 
-28 rtd #8 
+```
+22:     move.l  -8(a6),a5 
+26:     unlk    a6 
+28:     rtd     #8 
+```
 
 This may look intimidating at first glance, but you don't have to be an expert at 68000 
 assembler to gain some appreciation of what is going on here. The instructions 
 labeled 0-8 (labels are in the leftmost column) comprise the typical function preamble 
 for the 68000. They do subroutine linkage and store the new function object and 
-constant vector into registers. Since f uses no constants, instructions 6, 8, and 22 
+constant vector into registers. Since `f` uses no constants, instructions 6, 8, and 22 
 are really unnecessary and could be omitted. Instructions 0,4, and 26 could also be 
 omitted if you don't care about seeing this function in a stack trace during debugging. 
 More recent versions of the compiler will omit these instructions. 
 
-The heart of function f is the two-instruction sequence 12-16. Instruction 12 
-retrieves y, and 16 adds y to x, leaving the result in d4, which is the "result" register. 
-Instruction 20 sets dl, the "number of values returned" register, to 1. 
+The heart of function `f` is the two-instruction sequence 12-16. Instruction 12 
+retrieves `y`, and 16 adds `y` to `x`, leaving the result in `d4`, which is the "result" register. 
+Instruction 20 sets `d1`, the "number of values returned" register, to 1. 
 
-Contrast this to the code for g, which has no declarations and is compiled at 
+Contrast this to the code for `g`, which has no declarations and is compiled at 
 default speed and safety settings: 
 
-(disassemble 'g) 
-
-; disassembling #<Function g @ #x83dbdl> 
-
-; formals: x y 
-
+```
+> (disassemble 'g) 
+;; disassembling #<Function g @ #x83dbd1> 
+;; formals: x y 
 ;; code vector @ #x83db64 
-
-0: add.l #8.31(a2) 
-
-4: sub.w #2,dl 
-
-6: beq.s 12 
-
-8: jmp 16(a4) ; wnaerr 
-12 link a6.#0 
-16 move.l a2,-(a7) 
-18 move.l a5,-(a7) 
-20 move.l 7(a2),a5 
-24 tst.b -208(a4) ; signal-hit 
-28 beq.s 34 
-30 jsr 872(a4) ; process-sig 
-34 move.l 8(a6),d4 ; y 
-38 move.l 12(a6),d0 ; X 
-42 or.l d4,d0 
-44 and.b #7.d0 
-48 bne.s 62 
-50 add.l 12(a6),d4 ; X 
-54 bvc.s 76 
-56 jsr 696(a4) ; add-overflow 
-60 bra.s 76 
-62 move.l 12(a6),-(a7) ; . 
-66 move.l d4.-(a7) 
-68 move.l #2.dl 
-
+0:      add.l   #8.31(a2) 
+4:      sub.w   #2,dl 
+6:      beq.s   12 
+8:      jmp     16(a4) ; wnaerr 
+12:     link    a6.#0 
+16:     move.l  a2,-(a7) 
+18:     move.l  a5,-(a7) 
+20:     move.l  7(a2),a5 
+24:     tst.b   -208(a4) ; signal-hit 
+28:     beq.s   34 
+30:     jsr     872(a4) ; process-sig 
+34:     move.l  8(a6),d4 ; y 
+38:     move.l  12(a6),d0 ; X 
+42:     or.l    d4,d0 
+44:     and.b   #7.d0 
+48:     bne.s   62 
+50:     add.l   12(a6),d4 ; X 
+54:     bvc.s   76 
+56:     jsr     696(a4) ; add-overflow 
+60:     bra.s   76 
+62:     move.l  12(a6),-(a7) ; . 
+66:     move.l  d4.-(a7) 
+68:     move.l  #2.dl 
+```
 <a id='page-320'></a>
 
-70 move.l -304(a4),a 0 ; +-2op 
-74 jsr (a4) 
-76 move.l #Ld l 
-78 move.l -8(a6).a 5 
-82 unl k a6 
-84 rtd #8 
+```
+70:     move.l  -304(a4),a 0 ; +-2op 
+74:     jsr     (a4) 
+76:     move.l  #1,d1 
+78:     move.l  -8(a6),a5 
+82:     unlk    a6 
+84:     rtd     #8 
+```
 
 See how much more work is done. The first four instructions ensure that the right 
-number of arguments have been passed to g. If not, there is a jump to wnae rr (wrongnumber-
+number of arguments have been passed to `g`. If not, there is a jump to `wnaerr` (wrong-number-
 of-arguments-error). Instructions 12-20 have the argument loading code 
-that was at 0-8 in f. At 24-30 there is a check for asynchronous signals, such as the 
-user hitting the abort key. After . and y are loaded, there is a type check (42-48). If 
+that was at 0-8 in `f`. At 24-30 there is a check for asynchronous signals, such as the 
+user hitting the abort key. After `x` and `y` are loaded, there is a type check (42-48). If 
 the arguments are not both fixnums, then the code at instructions 62-74 sets up a 
-call to +_2op, which handles type coercion and non-fixnum addition. If all goes well, 
+call to `+_2op`, which handles type coercion and non-fixnum addition. If all goes well, 
 we don't have to call this routine, and do the addition at instruction 50 instead. But 
 even then we are not done—just because the two arguments were fixnums does not 
 mean the result will be. Instructions 54-56 check and branch to an overflow routine 
-if needed. Finally, instructions 76-84 return the final value, just as in f. 
+if needed. Finally, instructions 76-84 return the final value, just as in `f`. 
 
 Some low-quality compilers ignore declarations altogether. Other compilers 
 don't need certain declarations, because they can rely on special instructions in the 
-underlying architecture. On a Lisp Machine, both f and g compile into the same 
+underlying architecture. On a Lisp Machine, both `f` and `g` compile into the same 
 code: 
 
-6 PUSH ARG 10 
-7 + ARG II 
-8 RETURN PDL-POP 
+```
+6 PUSH      ARG|0     ; X 
+7 +         ARG|1     ; Y 
+8 RETURN    PDL-POP 
+```
 
-The Lisp Machine has a microcoded + instruction that simultaneously does a fixnum 
+The Lisp Machine has a microcoded `+` instruction that simultaneously does a fixnum 
 add and checks for non-fixnum arguments, branching to a subroutine if either argument 
 is not a fixnum. The hardware does the work that the compiler has to do on a 
 conventional processor. This makes the Lisp Machine compiler simpler, so compiling 
@@ -15498,53 +15503,54 @@ microcode toward reduced instruction set computers (RISC).
 
 On most computers, the following declarations are most likely to be helpful: 
 
-* fixnum and float. Numbers declared as fixnums or floating-point numbers 
+* `fixnum` and `float`. Numbers declared as fixnums or floating-point numbers 
 can be handled directly by the host computer's arithmetic instructions. On 
-some systems, float by itself is not enough; you have to say single-float 
-or doubl e-fl oat. Other numeric declarations will probably be ignored. For 
-example, declaring a variable as integer does not help the compiler much, 
+some systems, `float` by itself is not enough; you have to say `single-float` 
+or `double-float`. Other numeric declarations will probably be ignored. For 
+example, declaring a variable as `integer` does not help the compiler much, 
 because bignums are integers. The code to add bignums is too complex to put 
-
 <a id='page-321'></a>
-inline, so the compiler will branch to a general-purpose routine (like +_2op in 
+inline, so the compiler will branch to a general-purpose routine (like `+_2op` in 
 Allegro), the same routine it would use if no declarations were given. 
 
-* list and a r ray, Many Lisp systems provide separate functions for the list- and 
-array- versions of commonly used sequence functions. For example, (del ete 
-X (the list 1)) compiles into (sys: del ete-list-eql . 1) on a TI Explorer 
-Lisp Machine. Another function, sys: del ete-vector, is used for arrays, and 
-the generic function del ete is used only when the compiler can't tell what type 
+* `list` and `array`. Many Lisp systems provide separate functions for the list- and 
+array- versions of commonly used sequence functions. For example, `(delete 
+X (the list l))` compiles into `(sys: delete-list-eql x 1)` on a TI Explorer 
+Lisp Machine. Another function, `sys:delete-vector`, is used for arrays, and 
+the generic function `delete` is used only when the compiler can't tell what type 
 the sequence is. So if you know that the argument to a generic function is either 
-a 1 i st or an a rray, then declare it as such. 
-* simpl e-vector and simpl e-array. Simple vectors and arrays are those that 
+a `list` or an `array`, then declare it as such. 
+* `simple-vector` and `simple-array`. Simple vectors and arrays are those that 
 do not share structure with other arrays, do not have fill pointers, and are 
-not adjustable. In many implementations it is faster to aref a simpl e-vector 
-than a vector. It is certainly much faster than taking an el t of a sequence of 
+not adjustable. In many implementations it is faster to `aref` a `simple-vector` 
+than a `vector`. It is certainly much faster than taking an `elt` of a sequence of 
 unknown type. Declare your arrays to be simple (if they in fact are). 
-* (ar ray type). It is often important to specialize the type of array elements. For 
-example, an (a r ray short - fl oat) may take only half the storage of a general 
+* `(array` *type*`)`. It is often important to specialize the type of array elements. For 
+example, an `(array short-float)` may take only half the storage of a general 
 array, and such a declaration will usually allow computations to be done using 
 the CPU's native floating-point instructions, rather than converting into and 
 out of Common Lisp's representation of floating points. This is very important 
 because the conversion normally requires allocating storage, but the direct 
-computation does not. The specifiers (simpl e-array iype) and (vector type) 
-should be used instead of (array type) when appropriate. A very common 
-mistake is to declare (s i mpl e - vector type). This is an error because Common 
-Lisp expects (simple-vector s/ze)—don't ask me why, 
-* (array '^dimensions). Thefullformof an array or si mpl e-array type specifier 
-is (array type dimensions). So, for example, (array bit (* *)) is a two-
-dimensional bit array, and (a r ray bit (1024 1024)) is a 1024 . 1024 bit array. 
+computation does not. The specifiers `(simple-array type)` and `(vector type)` 
+should be used instead of `(array type)` when appropriate. A very common 
+mistake is to declare `(simple-vector type)`. This is an error because Common 
+Lisp expects `(simple-vector size)`—don't ask me why. 
+* `(array * dimensions)`. The full form of an `array` or `simple-array` type specifier 
+is `(array type dimensions)`. So, for example, `(array bit (* *))` is a two-
+dimensional bit array, and `(array bit (1024 1024))` is a 1024 &times; 1024 bit array. 
 It is very important to specify the number of dimensions when known, and less 
 important to specify the exact size, although with multidimensional arrays, 
-declaring the size is more important. The format for a vector type specifier is 
-(vector type size). 
+declaring the size is more important. The format for a `vector` type specifier is 
+`(vector type size)`. 
 Note that several of these declarations can apply all at once. For example, in 
 
+```lisp
 (position #\. (the simple-string file-name)) 
+```
 
-the variable filename has been declared to be a vector, a simple array, and a sequence 
-of type string-char. All three of these declarations are helpful. The type 
-simple-string is an abbreviation for (simple-array string-char). 
+the variable `filename` has been declared to be a vector, a simple array, and a sequence 
+of type `string-char`. All three of these declarations are helpful. The type 
+`simple-string` is an abbreviation for `(simple-array string-char)`. 
 
 
 <a id='page-322'></a>
@@ -15553,35 +15559,38 @@ This guide applies to most Common Lisp systems, but you should look in the
 implementation notes for your particular system for more advice on how to fine-tune 
 your code. 
 
-10.2 Avoid Generic Functions 
+### 10.2 Avoid Generic Functions 
 Common Lisp provides functions with great generality, but someone must pay the 
-price for this generality. For example, if you write (elt . 0), different machine 
-instruction will be executed depending on if . is a list, string, or vector. Without 
+price for this generality. For example, if you write `(elt x 0)`, different machine 
+instruction will be executed depending on if `x` is a list, string, or vector. Without 
 declarations, checks will have to be done at runtime. You can either provide declarations, 
-as in (elt (the list x) O),oruseamorespecificfunction,suchas (first 
-
-x) in the case of lists, (char . 0) for strings, (aref xO) for vectors, and (svref . 
-0) for simple vectors. Of course, generic functions are useful—I wrote random-el t 
+as in `(elt (the list x) O)`, or use a more specific function, such as `(first x)` 
+in the case of lists, `(char x 0)` for strings, `(aref x 0)` for vectors, and `(svref x 0)` 
+for simple vectors. Of course, generic functions are useful—I wrote `random-elt` 
 as shown following to work on lists, when I could have written the more efficient 
-random-mem instead. The choice paid off when I wanted a function to choose a random 
-character from a string—random-el t does the job unchanged, while random-mem 
+`random-mem` instead. The choice paid off when I wanted a function to choose a random 
+character from a string—`random-elt` does the job unchanged, while `random-mem` 
 does not. 
+``` lisp
 (defun random-elt (s) (elt s (random (length s)))) 
 (defun random-mem (1) (nth (random (length (the list 1))) 1)) 
+```
 
 This example was simple, but in more complicated cases you can make your sequence 
 functions more efficient by having them explicitly check if their arguments are lists 
-or vectors. See the definition of map- i nto on page 857. 
+or vectors. See the definition of `map-into` on page 857. 
 
-10.3 Avoid Complex Argument Lists 
+### 10.3 Avoid Complex Argument Lists 
 Functions with keyword arguments suffer a large degree of overhead. This may also 
 be true for optional and rest arguments, although usually to a lesser degree. Let's 
 look at some simple examples: 
 
-(defun reg (abed) (list abed)) 
-(defun rst (a b c &rest d) (list* abed)) 
-(defun opt (&optional a b (c 1) (d (sqrt a))) (list abed)) 
-(defun key (&key a b (c 1) (d (sqrt a))) (list abed)) 
+```lisp
+(defun reg (a b c d) (list a b c d)) 
+(defun rst (a b c &rest d) (list* a b c d)) 
+(defun opt (&optional a b (c 1) (d (sqrt a))) (list a b c d)) 
+(defun key (&key a b (c 1) (d (sqrt a))) (list a b c d)) 
+```
 
 We can see what these compile into for the TI Explorer, but remember that your 
 compiler may be quite different. 
@@ -15589,19 +15598,21 @@ compiler may be quite different.
 
 <a id='page-323'></a>
 
+```
 > (disassemble 'reg) 
+   8 PUSH           ARG|0    ; A 
+   9 PUSH           ARG|I    ; B 
+  10 PUSH           ARG|2    ; C 
+  11 PUSH           ARG|3    ; D 
+  12 TAIL-REC CALL-4  FEF|3  ; #'LIST 
 
-8 PUSH ARG 10 A 
-9 PUSH ARG II . 
-10 PUSH ARG 12 C 
-11 PUSH ARG 13 D 
-12 TAIL-REC CALL-4 FEFI3 #'LIST 
-> (disassemble 'rst ) 
-8 PUSH ARG 10 A 
-9 PUSH ARGIl. . 
-10 PUSH ARG 12 C 
-11 PUSH LOCAL 10 D 
-12 RETURN CALL-4 FEE 13 #'LIST * 
+> (disassemble 'rst) 
+   8 PUSH           ARG|0    ; A 
+   9 PUSH           ARG|1    ; B 
+  10 PUSH           ARG|2    ; C 
+  11 PUSH           LOCAL|0  ; D 
+  12 RETURN CALL-4  FEF|3    ; #'LIST* 
+```
 
 With the regular argument list, we just push the four variables on the argument stack 
 and branch to the list function. (Chapter 22 explains why a tail-recursive call is just 
@@ -15611,106 +15622,102 @@ With a rest argument, things are almost as easy. It turns out that on this machi
 the microcode for the calling sequence automatically handles rest arguments, storing 
 them in local variable 0. Let's compare with optional arguments: 
 
-(defun opt (@optional a b (c 1) (d (sqrt a))) (list abed)) 
+```lisp
+(defun opt (&optional a b (c 1) (d (sqrt a))) (list a b c d)) 
 
-> (disassemble Opt) 
-
-24 DISPATCH FEFI5 C0=^25;l=^25 
-
-25 PUSH-NUMBER 1 
-
-26 POP ARG 12 C 
-
-27 PUSH ARG 10 A 
-
-28 PUSH CALL-1 FEFI3 #'SQRT 
-
-29 POP ARG 13 D 
-
-30 PUSH ARG 10 A 
-
-31 PUSH ARGIl . 
-
-32 PUSH ARG 12 C 
-
-33 PUSH ARG 13 D 
-
-34 TAIL-REC CALL-4 FEFI4 #'LIST 
+> (disassemble 'opt) 
+24 DISPATCH       FEF|5     ; [0=>25;1=>25;2=>25;3=>27;ELSE=>30]
+25 PUSH-NUMBER    1 
+26 POP            ARG|2     ; C 
+27 PUSH           ARG|0     ; A 
+28 PUSH CALL-1    FEF|3     ; #'SQRT 
+29 POP            ARG|3     ; D 
+30 PUSH           ARG|0     ; A 
+31 PUSH           ARG|1     ; B 
+32 PUSH           ARG|2     ; C 
+33 PUSH           ARG|3     ; D 
+34 TAIL-REC CALL-4 FEFI4    ; #'LIST 
+```
 
 Although this assembly language may be harder to read, it turns out that optional 
 arguments are handled very efficiently. The calling sequence stores the number of 
-optional arguments on top of the stack, and the DISPATCH instruction uses this to 
-index into a table stored at location FEFI 5 (an offset five words from the start of 
+optional arguments on top of the stack, and the `DISPATCH` instruction uses this to 
+index into a table stored at location `FEF|5` (an offset five words from the start of 
 the function). The result is that in one instruction the function branches to just the 
 right place to initialize any unspecified arguments. Thus, a function with optional 
 arguments that are all supplied takes only one more instruction (the dispatch) than 
 the "regular" case. Unfortunately, keyword arguments don't fare as well: 
 
-(defun key (&key a b (c 1) (d (sqrt a))) (list abed)) 
+```lisp
+(defun key (&key a b (c 1) (d (sqrt a))) (list a b c d)) 
+```
 
 
 <a id='page-324'></a>
 
+```lisp
 > (disassemble 'key) 
-14 PUSH-NUMBER 1 
-15 POP LOCALIS 
-16 PUSH FEE 13 SYS:-.KEYWORD-GARBAGE 
-17 POP LOCAL 14 
-18 TEST LOCAL 10 
-19 BR-NULL 24 
-20 PUSH FEE 14 '(:A :B :C :D) 
-21 SET-NIL PDL-PUSH 
-22 PUSH-LOC LOCAL II 
+14 PUSH-NUMBER      1 
+15 POP              LOCAL|3   ; C 
+16 PUSH             FEF|3     ; SYS::KEYWORD-GARBAGE 
+17 POP              LOCAL|4 
+18 TEST             LOCAL|0 
+19 BR-NULL      24 
+20 PUSH             FEF|4     ; '(:A :B :C :D) 
+21 SET-NIL          PDL-PUSH 
+22 PUSH-LOC         LOCAL|1   ; A
 23 (AUX) %STORE-KEY-WORD-ARGS 
-24 PUSH LOCAL II A 
-25 PUSH LOCAL 12 . 
-26 PUSH LOCAL 13 C 
-27 PUSH LOCAL 14 
-28 EQ FEE 13 SYS::KEYWORD-GARBAGE 
-29 BR-NULL 33 
-30 PUSH LOCAL II A 
-31 PUSH CALL-1 FEFI5 #'SQRT 
-32 RETURN CALL-4 FEE 16 
-
-#'LIST 
-33 PUSH LOCAL 14 
-34 RETURN CALL-4 FEE 16 #'LIST 
+24 PUSH             LOCAL|1   ; A 
+25 PUSH             LOCAL|2   ; B 
+26 PUSH             LOCAL|3   ; C 
+27 PUSH             LOCAL|4 
+28 EQ               FEF|3     ; SYS::KEYWORD-GARBAGE 
+29 BR-NULL      33 
+30 PUSH             LOCAL|1   ; A 
+31 PUSH CALL-1      FEF|5     ; #'SQRT 
+32 RETURN CALL-4    FEF|6     ; #'LIST 
+33 PUSH             LOCAL|4 
+34 RETURN CALL-4    FEF|6     ; #'LIST 
+```
 
 It is not important to be able to read all this assembly language. The point is that there 
 is considerable overhead, even though this architecture has a specific instruction 
-(%STORE-KEY-WORD-ARGS) to help deal with keyword arguments. 
+`(%STORE-KEY-WORD-ARGS)` to help deal with keyword arguments. 
 
 Now let's look at the results on another system, the Allegro compiler for the 
-68000. First, here's the assembly code for reg, to give you an idea of the minimal 
-calling sequence:^ 
+68000. First, here's the assembly code for `reg`, to give you an idea of the minimal 
+calling sequence:[1](#fn-10-1)
 
-(disassemble 'reg) 
-disassembling #<Function reg @ #x83db59> 
+```
+> (disassemble 'reg) 
+;; disassembling #<Function reg @ #x83db59> 
+;; formals: a b c d 
+;; code vector @ #x83db1c 
+0:      link    a6,#0 
+4:      move.l  a2.-(a7) 
+6:      move.l  a5.-(a7) 
+8:      move.l  7(a2),a5 
+12:     move.l  20(a6),-(a7)    ; a 
+16:     move.l  16(a6).-(a7)    ; b 
+20:     move.l  12(a6),-(a7)    ; c 
+24:     move.l  8(a6).-(a7)     ; d 
+28:     move.l  #4.dl 
+30:     jsr     848(a4)         ; list 
+```
 
-formals: abed 
+[fn-10-1] These are all done with safety 0 and speed 3. 
 
-code vector @ #x83dblc 
-0 link a6,#0 
-4 move.l a2.-(a7) 
-6 move.l a5.-(a7) 
-8 move.l 7(a2),a5 
-12 move.l 20(a6),-(a7) a 
-16 move.l 16(a6).-(a7) b 
-20 move.l 12(a6),-(a7) c 
-24 move.l 8(a6).-(a7) d 
-28 move.l #4.dl 
-30 jsr 848(a4) list 
-
-^ These are all done with safety 0 and speed 3. 
-
-
 <a id='page-325'></a>
 
-34 move.l -8(a6).a5 
-38 unlk a6 
-40 rtd #10 
+```
+34:     move.l  -8(a6).a5 
+38:     unlk    a6 
+40:     rtd     #10 
+```
 
 Now we see that &rest arguments take a lot more code in this system: 
+
+### WIP
 
 > (disassemble 'rst) 
 ;; disassembling #<Function rst @ #x83de89> 
