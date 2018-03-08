@@ -2,7 +2,7 @@
 <a id='page-vii'></a>
 
 > **paradigm** *n* **1** an example or pattern; *esp* an outstandingly clear or typical example. 
-
+>
 > -*Longman's Dictionary of the English Language*, 1984 
 
 This book is concerned with three related topics: the field of artificial intelligence, or AI; the skill 
