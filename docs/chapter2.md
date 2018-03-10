@@ -3,8 +3,7 @@
 
 ## A Simple Lisp Program 
 
-> *Cerium quod factum.* 
-> 
+> *Cerium quod factum.* \
 > (One is certain of only what one builds.) 
 > 
 > -Giovanni Battista Vico (1668-1744) \
@@ -42,19 +41,19 @@ nonsentences as well). In the following we show the derivation of a single sente
 using the rules: 
 
 
-> To get a *Sentence,* append a *Noun-Phrase* and a *Verb-Phrase* \
-> &nbsp;&nbsp; To get a *Noun-Phrase*, append an *Article* and a *Noun* \
-> &nbsp;&nbsp;&nbsp;&nbsp; Choose *"the"* for the *Article* \
-> &nbsp;&nbsp;&nbsp;&nbsp; Choose *"man"* for the *Noun* \
-> &nbsp;&nbsp; The resulting *Noun-Phrase* is "the man" \
-> &nbsp;&nbsp; To get a *Verb-Phrase,* append a *Verb* and a *Noun-Phrase* \
-> &nbsp;&nbsp;&nbsp;&nbsp; Choose *"hit"* for the *Verb* \
-> &nbsp;&nbsp;&nbsp;&nbsp; To get a *Noun-Phrase*, append an *Article* and a *Noun* \
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Choose *"the"* for the *Article* \
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Choose *"ball"* for the *Noun* \
-> &nbsp;&nbsp;&nbsp;&nbsp; The resulting *Noun-Phrase* is "the ball" \
-> &nbsp;&nbsp; The resulting *Verb-Phrase* is "hit the ball" \
-> The resulting Sentence is "The man hit the ball" 
+* To get a *Sentence,* append a *Noun-Phrase* and a *Verb-Phrase* 
+  * To get a *Noun-Phrase*, append an *Article* and a *Noun* 
+    * Choose *"the"* for the *Article* 
+    * Choose *"man"* for the *Noun* 
+  * The resulting *Noun-Phrase* is "the man" 
+  * To get a *Verb-Phrase,* append a *Verb* and a *Noun-Phrase* 
+    * Choose *"hit"* for the *Verb* 
+    * To get a *Noun-Phrase*, append an *Article* and a *Noun* 
+      * Choose *"the"* for the *Article* 
+      * Choose *"ball"* for the *Noun* 
+    * The resulting *Noun-Phrase* is "the ball" 
+  * The resulting *Verb-Phrase* is "hit the ball" 
+* The resulting Sentence is "The man hit the ball" 
 
 ## 2.2 A Straightforward Solution 
 We will develop a program that generates random sentences from a phrase-structure 
@@ -100,7 +99,7 @@ The first argument is the list, and the second is the position in the list. The 
 part is that the positions start at 0, so `(elt choices 0)` is the first element of the list, 
 and `(elt choices 1)` is the second. Think of the position numbers as telling you 
 how far away you are from the front. The expression `(random n)` returns an integer 
-from 0 to n-1, so that `(random 4)` would return either 0,1,2, or 3. 
+from 0 to n-1, so that `(random 4)` would return either 0, 1, 2, or 3. 
 
 Now we can test the program by generating a few random sentences, along with 
 a noun phrase and a verb phrase: 
@@ -164,9 +163,7 @@ several alternatives, and the asterisk is nothing special—as in Lisp, it's jus
 name of a symbol. However, the convention used here is that names ending in an 
 asterisk denote zero or more repetitions of the underlying name. That is, *PP*\* denotes 
 zero or more repetitions of *PP.* This is known as "Kleene star" notation (pronounced 
-
 <a id='page-38'></a>
-
 "clean-E") after the mathematician Stephen Cole Kleene.[TK - fn1] 
 The problem is that the rules for Adj * and PP * contain choices that we would have 
 to represent as some kind of conditional in Lisp. For example: 
@@ -212,7 +209,7 @@ ideally the implementation of a grammar rule should use only *linguistic* conven
 If we wanted to develop a larger grammar, the problem could get worse, because the 
 rule-writer might have to depend more and more on Lisp. 
 
-[TK, fn1] We will soon see "Kleene plus" notation, wherein *PP+* denotes one or more repetition 
+[TK, fn1] We will soon see "Kleene plus" notation, wherein *PP+* denotes one or more repetitions 
 of *PP.* 
 
 <a id='page-39'></a>
