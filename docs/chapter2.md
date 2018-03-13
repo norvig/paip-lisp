@@ -3,10 +3,10 @@
 
 ## A Simple Lisp Program 
 
-> *Cerium quod factum.* \
+> *Cerium quod factum.*  
 > (One is certain of only what one builds.) 
 > 
-> -Giovanni Battista Vico (1668-1744) \
+> -Giovanni Battista Vico (1668-1744)  
 > Italian royal historiographer 
 
 You will never become proficient in a foreign language by studying vocabulary lists. 
@@ -22,11 +22,11 @@ Lisp (as outlined in chapter 3) will be easy.
 The program we will develop in this chapter generates random English sentences. 
 Here is a simple grammar for a tiny portion of English: 
 
-> *Sentence &rArr; Noun-Phrase + Verb-Phrase\
-Noun-Phrase &rArr; Article + Noun \
-Verb-Phrase &rArr; Verb + Noun-Phrase \
-Article &rArr; the, a, ... \
-Noun &rArr; man, ball, woman, table... \
+> *Sentence &rArr; Noun-Phrase + Verb-Phrase  
+Noun-Phrase &rArr; Article + Noun  
+Verb-Phrase &rArr; Verb + Noun-Phrase  
+Article &rArr; the, a, ...  
+Noun &rArr; man, ball, woman, table...  
 Verb &rArr; hit, took, saw, liked...*
 
 To be technical, this description is called a *context-free phrase-structure grammar,* and 
@@ -105,6 +105,7 @@ Now we can test the program by generating a few random sentences, along with
 a noun phrase and a verb phrase: 
 
 <a id='page-37'></a>
+
 ```lisp
 > (sentence) => (THE WOMAN HIT THE BALL) 
 
@@ -150,11 +151,11 @@ wanted to allow noun phrases to be modified by an indefinite number of adjective
 and an indefinite number of prepositional phrases. In grammatical notation, we 
 might have the following rules: 
 
-> *Noun-Phrase &rArr; Article + Adj\* + Noun + PP\* \
-> Adj\* &rArr; 0&#x0338;, Adj + Adj\* \
-> PP\* &rArr; 0&#x0338;, PP + PP\* \
-> PP &rArr; Prep + Noun-Phrase \
-> Adj &rArr; big, little, blue, green, ... \
+> *Noun-Phrase &rArr; Article + Adj\* + Noun + PP\*  
+> Adj\* &rArr; 0&#x0338;, Adj + Adj\*  
+> PP\* &rArr; 0&#x0338;, PP + PP\*  
+> PP &rArr; Prep + Noun-Phrase  
+> Adj &rArr; big, little, blue, green, ...  
 > Prep &rArr; to, in, by, with, ...*
 
 
@@ -218,11 +219,11 @@ An alternative implementation of this program v^ould concentrate on making it ea
 to write grammar rules and would worry later about how they will be processed. 
 Let's look again at the original grammar rules: 
 
-> *Sentence &rArr; Noun-Phrase + Verb-Phrase\
-Noun-Phrase &rArr; Article + Noun \
-Verb-Phrase &rArr; Verb + Noun-Phrase \
-Article &rArr; the, a, ... \
-Noun &rArr; man, ball, woman, table... \
+> *Sentence &rArr; Noun-Phrase + Verb-Phrase  
+Noun-Phrase &rArr; Article + Noun  
+Verb-Phrase &rArr; Verb + Noun-Phrase  
+Article &rArr; the, a, ...  
+Noun &rArr; man, ball, woman, table...  
 Verb &rArr; hit, took, saw, liked...*
 
 Each rule consists of an arrow with a symbol on the left-hand side and something on 
@@ -361,7 +362,7 @@ This version uses the special form `let`, which introduces a new variable (in th
 saves us from calling the function `rewrites` twice, as was done in the `cond` version 
 of `generate`. The general form of a `let` form is: 
 
-> `(let` ((var value)...) \
+> `(let` ((var value)...)  
 > &nbsp;&nbsp; body-containing-vars)*
 
 `let` is the most common way of introducing variables that are not parameters of 
@@ -498,6 +499,7 @@ but rather just list them with `mapcar`:
 Here are some examples: 
 
 <a id='page-45'></a>
+
 ```lisp
 > (generate-tree 'Sentence) 
 (SENTENCE (NOUN-PHRASE (ARTICLE A) 
@@ -582,7 +584,7 @@ The moral is to make your code as general as possible, because you never know wh
 you may want to do with it next. 
 
 ## 2.8 Answers 
-**Answer 2.1** 
+### Answer 2.1 
 ```lisp
   (defun generate (phrase) 
   "Generate a random sentence or phrase" 
@@ -595,7 +597,7 @@ you may want to do with it next.
 ```
 
 <a id='page-47'></a>
-**Answer 2.2** 
+### Answer 2.2 
 
 ```lisp
 (defun generate (phrase) 
@@ -611,7 +613,7 @@ you may want to do with it next.
   (not (null (rewrites category)))) 
 ```
 
-**Answer 2.4** 
+### Answer 2.4 
 ```lisp
 (defun cross-product (fn xlist ylist) 
   "Return a list of all (fn . y) values." 
