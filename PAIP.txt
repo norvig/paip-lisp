@@ -256,7 +256,7 @@ the text.
 Part I has been kept intentionally brief, so that there is more room for presenting 
 actual AI programs. Unfortunately, that means that another text or reference book 
 (or online help) may be needed to clarify some of the more esoteric features of the 
-language. My recommendations for texts are on page xiii. 
+language. My recommendations for texts are on [page xiii](preface#page-xiii). 
 
 The reader may also want to refer to chapter 25, which offers some debugging 
 and troubleshooting hints. 
@@ -2956,7 +2956,7 @@ setf can be used to set a component of a structure as well as to set a variable.
 languages like Pascal, the expressions that can appear on the left-hand side of an 
 assignment statement are limited by the syntax of the language. In Lisp, the user can 
 extend the expressions that are allowed in a s etf form using the special forms defs et f 
-or define-setf-method. These are introduced on pages 514 and 884 respectively. 
+or define-setf-method. These are introduced on pages [514](chapter15.md#page-514) and [884](chapter25.md#page-884) respectively. 
 
 There are also some built-in functions that modify places. For example, (rpl a cd 
 list nil) has the same effect as (setf (rest list) nil), except that it returns 
@@ -3350,8 +3350,8 @@ The invariant relation is that the length of the sublist plus 1 en- so - fa r al
 the length of the original list. Thus, when the sublist is nil, then 1 en-so-f ar is the 
 length of the original list. Variables like 1 en- so - fa r that keep track of partial results 
 are called accumulators. Other examples of functions that use accumulators include 
-f 1 a tten - a 11 on [page 329](chapter10.md#page-329); one- un known on page 237; the Prolog predicates discussed 
-on [page 686](chapter20.md#page-686); and anonymous-variables-in on pages 400 and 433, which uses two 
+f 1 a tten - a 11 on [page 329](chapter10.md#page-329); one- un known on page [page 237](chapter7.md#page-237); the Prolog predicates discussed
+on [page 686](chapter20.md#page-686); and anonymous-variables-in on pages [page 400](chapter12.md#page-400) and [page 433](chapter12.md#page-433), which uses two 
 accumulators. 
 
 The important difference between length9 and length1O is when the addition 
@@ -11740,7 +11740,7 @@ put x.y.z first to find them a little faster
 
 8.2 Simplification Rules 
 Now we are ready to define the simplification rules. We use the definition of the data 
-types rule and exp ([page 221](chapter7.md#page-221)) and prefix->inf ix (page 228) from STUDENT. They 
+types rule and exp ([page 221](chapter7.md#page-221)) and prefix->inf ix ([page 228](chapter7.md#page-228)) from STUDENT. They 
 are repeated here: 
 
 (defstruct (rule (:type list)) pattern response) 
@@ -28434,7 +28434,7 @@ take longer is also responsible for its interest as an illusion.
 17.4 Checking Diagrams for Errors 
 This section considers one more example, and considers what to do when there are 
 apparent errors in the input. The example is taken from Charniak and McDermott's 
-Introduction to Artificial Intelligence, [page 138](chapter4.md#page-138), and shown in figure 17.12. 
+Introduction to Artificial Intelligence, page 138, and shown in figure 17.12. 
 
 
 <a id='page-587'></a>
