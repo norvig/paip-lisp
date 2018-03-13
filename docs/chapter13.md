@@ -195,7 +195,7 @@ the information in the account in any other way.^
 The function get - method finds the method that implements a message for a given 
 object. The function send gets the method and applies it to a list of arguments. The 
 name send comes from the Flavors object-oriented system, which is discussed in the 
-history section (page 456). 
+history section ([page 456](chapter13.md#page-456)). 
 
 (defun get-method (object message) 
 "Return the method that implements message for this object." 
@@ -919,7 +919,7 @@ programmer and the applications programmer. The systems programmer would
 supply a library of classes like dfs-problem and generic functions like searcher. 
 The applications programmer then just picks what is needed from the library. From 
 the following we see that it is not too difficult to pick out the right code to define a 
-trip-planning searcher. Compare this with the definition of tri . on page 198 to see 
+trip-planning searcher. Compare this with the definition of tri . on [page 198](chapter6.md#page-198) to see 
 if you prefer CLOS in this case. The main difference is that here we say that the cost 
 function is a i r-di stance and the successors are the nei ghbors by defining methods; 
 in tri . we did it by passing parameters. The latter is a little more succint, but the 

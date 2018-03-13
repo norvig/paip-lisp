@@ -385,7 +385,7 @@ called data-driven programming. It is a very flexible style that is appropriate 
 extensible systems. 
 
 There are many ways to implement tables in Conunon Lisp, as discussed in 
-section 3.6, page 73. In this case, the keys to the table will be symbols (like ?*), 
+section 3.6, [page 73](chapter3.md#page-73). In this case, the keys to the table will be symbols (like ?*), 
 and it is fine if the representation of the table is distributed across memory. Thus, 
 property lists are an appropriate choice. We will have two tables, represented by 
 the segment-match property and the si ngl e-match property of symbols like ?*. The 
@@ -1133,7 +1133,7 @@ all cities within the 1000 kilometer range of each other.^ This map was drawn wi
 the help of ai r-di stance, a function that retiutis the distance in kilometers between 
 two cities "as the crow flies." It will be defined later. Two other useful fimctions are 
 nei ghbors, which finds all the cities within 1000 kilometers, and ci ty, which maps 
-from a name to a city. The former uses f i nd - a 11 - i f, which was defined on page 101 
+from a name to a city. The former uses f i nd - a 11 - i f, which was defined on [page 101](chapter3.md#page-101) 
 as a synonym for remove- i f-not. 
 
 (defun neighbors (city) 
@@ -1758,7 +1758,7 @@ The GPS program can be seen as a problem in search. For example, in the three-bl
 blocks world, there are only 13 different states. They could be arranged in a graph and 
 searched just as we searched for a route between cities. Figure 6.5 shows this graph. 
 
-The function search-gps does just that. Like the gps function on page 135, it 
+The function search-gps does just that. Like the gps function on [page 135](chapter4.md#page-135), it 
 computes a final state and then picks out the actions that lead to that state. But 
 it computes the state with a beam search. The goal predicate tests if the current 
 state satisfies every condition in the goal, the successor function finds all applicable 

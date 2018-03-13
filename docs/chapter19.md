@@ -72,7 +72,7 @@ implementations, but we will ignore that problem.
 
 <a id='page-657'></a>
 
-We start with the grammar defined on page 39 for the generate program: 
+We start with the grammar defined on [page 39](chapter2.md#page-39) for the generate program: 
 
 (defvar ^grammar* "The grammar used by GENERATE.") 
 
@@ -130,7 +130,7 @@ I also define the data types rul e, parse, and tree, and some functions for gett
 
 at the rules. Rules are defined as structures of type list with three slots: the left-
 hand side, the arrow (which should always be represented as the literal ->) and the 
-right-hand side. Compare this to the treatment on page 40. 
+right-hand side. Compare this to the treatment on [page 40](chapter2.md#page-40). 
 
 (defstruct (rule (:type list)) Ihs -> rhs) 
 

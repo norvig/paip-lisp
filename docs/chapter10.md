@@ -73,7 +73,7 @@ The `(inline square)` declaration allows the compiler to generate the multiplica
 specified by `square` right in the loop, without explicitly making a function 
 call to square. The compiler will create a local variable for `(svref vect i)` and will 
 not execute the reference twice—inline functions do not have any of the problems 
-associated with macros as discussed on page 853. However, there is one drawback: 
+associated with macros as discussed on [page 853](chapter24.md#page-853). However, there is one drawback: 
 when you redefine an inline function, you may need to recompile all the functions 
 that call it. 
 
@@ -340,7 +340,7 @@ does not.
 
 This example was simple, but in more complicated cases you can make your sequence 
 functions more efficient by having them explicitly check if their arguments are lists 
-or vectors. See the definition of `map-into` on page 857. 
+or vectors. See the definition of `map-into` on [page 857](chapter24.md#page-857). 
 
 ### 10.3 Avoid Complex Argument Lists 
 Functions with keyword arguments suffer a large degree of overhead. This may also 
@@ -739,7 +739,7 @@ cases and time them.
 
 As an example of efficient use of storage, here is a version of pat-match that 
 eliminates (almost) all consing. The original version of pat-match, as used in ELIZA 
-(page 180), used an association list of variable/value pairs to represent the binding 
+([page 180](chapter6.md#page-180)), used an association list of variable/value pairs to represent the binding 
 list. This version uses two sequences: a sequence of variables and a sequence of 
 values. The sequences are implemented as vectors instead of lists. In general, vectors 
 take half as much space as lists to store the same information, since half of every list 
@@ -1559,7 +1559,7 @@ arriving at the complete set of matches: bellow, billow, fallow, fellow, follow,
 hollow, mallow, mellow, pillow, sallow, tallow, wallow, willow, and yellow. 
 
 We will return to the problem of discrimination nets with variables in section 14.8, 
-page 472. 
+[page 472](chapter14.md#page-472). 
 
 <a id='page-346'></a>
 
@@ -1595,7 +1595,7 @@ implemented as lists. However, often we have a two-field structure that we would
 like to implement as a cons cell rather than a two-element list, thereby cutting storage 
 in half. Since defstruct does not allow this, define a new macro that does. 
 
-&#9635; Exercise 10.3 [m] Use reuse - cons to write a version of f 1 atten (see page 329) that 
+&#9635; Exercise 10.3 [m] Use reuse - cons to write a version of f 1 atten (see [page 329](chapter10.md#page-329)) that 
 shares as much of its input with its output as possible. 
 
 &#9635; Exercise 10.4 [h] Consider the data type set. A set has two main operations: adjoin 

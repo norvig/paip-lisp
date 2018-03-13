@@ -561,7 +561,7 @@ will come last.
 A better solution to the phone-book problem is to index each phone-book entry in 
 some kind of table that makes it easy to add, delete, and retrieve entries. That is what 
 we will do in this section. We will develop an extension of the trie or discrimination 
-tree data structure built in section 10.5 (page 344). 
+tree data structure built in section 10.5 ([page 344](chapter10.md#page-344)). 
 
 Making a discrimination tree for Prolog facts is complicated by the presence of 
 variables in both the facts and the query. Either facts with variables in them will have 
@@ -772,7 +772,7 @@ association lists and switches to a hash table when the number of entries gets l
 
 use 1 ookup to look up the value of a key in a property list. This function, and its setf 
 
-method, are defined on page 896. 
+method, are defined on [page 896](chapter25.md#page-896). 
 
 (defun index (key) 
 "Store key in a dtree node. Key must be (predicate . args); 
@@ -1847,7 +1847,7 @@ in different worlds we can make predictions about the future, resolve ambiguitit
 about the current state, and do reasoning by cases. 
 
 For example, possible worlds allow us to solve Moore's communism/democracy 
-problem (page 466). We create two new possible worlds, one where is a democracy 
+problem ([page 466](chapter14.md#page-466)). We create two new possible worlds, one where is a democracy 
 and one where it is communist. In each world it is easy to derive that there is 
 a democracy next to a communist country. The trick is to realize then that the 
 two worlds form a partition, and that therefore the assertion holds in the original 
@@ -2227,7 +2227,7 @@ exercise.
 
 &#9635; Exercise 14.10 [d] Build a strategic reasoner that decides when to create a possible 
 world and does reasoning by cases over these worlds. Use it to solve Moore's problem 
-(page 466). 
+([page 466](chapter14.md#page-466)). 
 
 <a id='page-506'></a>
 

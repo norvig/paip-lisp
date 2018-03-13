@@ -847,7 +847,7 @@ other clauses. The idea is that cal 1 -1 oop-f. parses the THEN and ELSE parts,
 adding whatever is necessary to the body and to other parts of the loop structure. 
 Then add-body is used to add labels and go statements that branch to the labels as 
 needed. This is the same technique that is used to compile conditionals in chapter 23; 
-see the function comp - i f on page 787. Here is the code: 
+see the function comp - i f on [page 787](chapter23.md#page-787). Here is the code: 
 
 (defloop when (1 test exps) 
 (loop-unless 1 '(not ,(maybe-set-it test exps)) exps)) 
@@ -1070,7 +1070,7 @@ is non-nil, uninterned symbols are printed with a prefix #:,asin #:G3811. This
 insures that the symbol will not be interned by a subsequent read. 
 
 It is worth noting that Common Lisp automatically handles problems related to 
-multiple evaluation of subforms in setf methods. See page 884 for an example. 
+multiple evaluation of subforms in setf methods. See [page 884](chapter25.md#page-884) for an example. 
 
 Avoid Overusing Macros 
 
@@ -1102,7 +1102,7 @@ which would expand into:
 ((SETQ THAT (ASSOC ITEM A-LIST)) (PROCESS (CDR THAT))))) 
 
 This was a convenient feature (compare it to the => feature of Scheme's cond, as 
-discussed on page 778), but it backfired often enough that I eventually gave up on 
+discussed on [page 778](chapter22.md#page-778)), but it backfired often enough that I eventually gave up on 
 my version of i f. Here's why. I would write code like this: 
 
 (if (total-score x) 
@@ -1123,7 +1123,7 @@ this case, violating referential transparency can lead to confusion.
 <a id='page-857'></a>
 MAP-INTO 
 
-The function map-i nto is used on page 632. This function, added for the ANSI 
+The function map-i nto is used on [page 632](chapter18.md#page-632). This function, added for the ANSI 
 version of Common Lisp, is like map, except that instead of building a new sequence, 
 the first argument is changed to hold the results. This section describes how to write 
 a fairly efficient version of map-i nto, using techniques that are applicable to any 

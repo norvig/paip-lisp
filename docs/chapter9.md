@@ -454,7 +454,7 @@ For example, the memoized version f i b is an 0(n) algorithm because the computa
 time is bounded by some constant times n, for any value of n. The unmemoized 
 version, it turns out, is O (1.7^), meaning computing f i b of n+1 can take up to 1.7 times 
 as long as f i b of n. In simpler terms, the memoized version has linear complexity, 
-while the unmemoized version has exponential complexity. Exercise 9.4 (page 308) 
+while the unmemoized version has exponential complexity. Exercise 9.4 ([page 308](chapter9.md#page-308)) 
 describes where the 1.7 comes from, and gives a tighter bound on the complexity. 
 
 The version of memo presented above is inflexible in several ways. First, it only 
@@ -525,7 +525,7 @@ find the appropriate rule, then count the length of the right-hand side, and so 
 A compiler for this rule-language would take each rule and translate it into a function. 
 These functions could then call each other with no need to search through the 
 *grammar*. We implement this approach with the function compi 1 e - rul e. It makes 
-use of the auxiliary functions one-of and rule-lhs and rule-rhs from page 40, 
+use of the auxiliary functions one-of and rule-lhs and rule-rhs from [page 40](chapter2.md#page-40), 
 repeated here: 
 
 (defun rule-lhs (rule) 
@@ -637,7 +637,7 @@ a rule directly:
 
 or by macroexpanding a def rul e expression. The compiler was designed to produce 
 the same code we were writing in our first approach to the generation problem (see 
-page 35). 
+[page 35](chapter2.md#page-35)). 
 
 <a id='page-278'></a>
 
@@ -773,7 +773,7 @@ will cover up for my laziness. With another compiler that didn't know about such
 optimizations, I would have to be more careful about the code I generate. 
 
 9.3 Delaying Computation 
-Back on page 45, we saw a program to generate all strings derivable from a grammar. 
+Back on [page 45](chapter2.md#page-45), we saw a program to generate all strings derivable from a grammar. 
 One drawback of this program was that some grammars produce an infinite number 
 of strings, so the program would not terminate on those grammars. 
 
@@ -1055,7 +1055,7 @@ empty-pipe
 fn (tail pipe))))))) 
 
 Now we can rewrite generate-all and combine-all to use pipes instead of lists. 
-Everything else is the same as on page 45. 
+Everything else is the same as on [page 45](chapter2.md#page-45). 
 
 (defun generate-all (phrase) 
 "Generate a random sentence or phrase" 
@@ -1084,7 +1084,7 @@ xpipe))
 ypipe)) 
 
 With these definitions, here's the pipe of all sentences from *grammar2* (from 
-page 43): 
+[page 43](chapter2.md#page-43)): 
 
 > (setf ss (generate-all 'sentence)) 
 ((THE . #<CLOSURE 27265720>) . #<CLOSURE 27266035> 
@@ -1154,7 +1154,7 @@ structures, it is often worthwhile to spend some effort on building just the rig
 structure for frequently used data. For example. Lisp's hash tables are very general 
 and thus can be inefficient. You may want to build your own hash tables if, for 
 example, you never need to delete elements, thus making open hashing an attractive 
-possibility. We will see an example of efficient indexing in section 9.6 (page 297). 
+possibility. We will see an example of efficient indexing in section 9.6 ([page 297](chapter9.md#page-297)). 
 
 9.5 Instrumentation: Deciding What 
 to Optimize 
@@ -1402,7 +1402,7 @@ function, the body of the function is compiled in line at the place of the funct
 call. Thus, there is no overhead for setting up the argument list and branching to the 
 definition. An i nl i ne declaration can appear anywhere any other declaration can 
 appear. In this case, the function proel aim is used to register a global declaration. 
-Inline declarations are discussed in more depth on page 317. 
+Inline declarations are discussed in more depth on [page 317](chapter10.md#page-317). 
 
 (proclaim '(inline profile-enter profile-exit inc-profile-time)) 
 
@@ -2216,7 +2216,7 @@ the possibility that a player can cheat by figuring out what random is going to 
 Read the definition of the function random and describe how a player could cheat. 
 Then describe a countermeasure. 
 
-&#9635; Exercise 9.10 [m] On page 292 we saw the use of the read-time conditionals, and 
+&#9635; Exercise 9.10 [m] On [page 292](chapter9.md#page-292) we saw the use of the read-time conditionals, and 
 # -, where #+ is the read-time equivalent of when, and #- is the read-time equivalent 
 of unless. Unfortunately, there is no read-time equivalent of case. Implement one. 
 

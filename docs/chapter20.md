@@ -36,7 +36,7 @@ that is noun phrase and one that is a verb phrase, and if they can be concatenat
 form ?s. Logically, this is fine, and it would work as a program to generate random 
 sentences. However, it is a very inefficient program for parsing sentences. It will 
 consider all possible noun phrases and verb phrases, without regard to the input 
-words. Only when it gets to the concat goal (defined on page 411) will it test to see if 
+words. Only when it gets to the concat goal (defined on [page 411](chapter12.md#page-411)) will it test to see if 
 the two constituents can be concatenated together to make up the input string. Thus, 
 a better order of evaluation for parsing is: 
 
@@ -88,7 +88,7 @@ The combination of two arguments, an input list and an output list, is often cal
 difference list, to emphasize this interpretation. More generally, the combination of an 
 input parameter and output parameter is caUed an accumulator. Accumulators, particularly 
 difference lists, are an important technique throughout logic programming 
-and are also used in functional programming, as we saw on page 63. 
+and are also used in functional programming, as we saw on [page 63](chapter3.md#page-63). 
 
 In our rule for S, the concatenation of difference lists was implicit. If we prefer, 
 we could define a version of concat for difference lists and call it explicitly: 
@@ -390,7 +390,7 @@ nil
 it do wrong? How would you fix it? 
 
 20.3 A Simple Grammar in DCG Format 
-Here is the trivial grammar from page 688 in DCG format. 
+Here is the trivial grammar from [page 688](chapter20.md#page-688) in DCG format. 
 
 (rule (S (?pred ?subj)) --> 
 (NP ?agr ?subj) 

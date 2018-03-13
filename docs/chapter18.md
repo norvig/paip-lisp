@@ -213,7 +213,7 @@ The horizontal direction is now &plusmn;1, vertical is &plusmn;10, and the diago
 &plusmn;11. We'll tentatively adopt this latest representation, but leave open the possibility 
 of changing to another format. With this much decided, we are ready to begin. 
 Figure 18.3 is the glossary for the complete program. A glossary for a second version 
-of the program is on page 623. 
+of the program is on [page 623](chapter18.md#page-623). 
 
 What follows is the code for directions and pieces. We explicitly define the type 
 piece to be a number from empty to outer (0 to 3), and define the function name-of 
@@ -1814,7 +1814,7 @@ moves)
 #'> :key #'node-value))) 
 
 (Note the use of the function map -i nto. This is part of ANSI Common Lisp, but if it 
-is not a part of your implementation, a definition is provided on page 857.) 
+is not a part of your implementation, a definition is provided on [page 857](chapter24.md#page-857).) 
 
 The following table compares the performance of the random-ordering strategy, 
 the sorted-ordering strategy and the static-ordering strategy in the course of a single 
@@ -2828,7 +2828,7 @@ game, such as chess or checkers.
 Answer 18.2 The wei ghted-squa res strategy wins the first game by 20 pieces, 
 but when count-di ff erence plays first, it captures all the pieces on its fifth move. 
 These two games alone are not enough to determine the best strategy; the function 
-othel 1 o-seri es on page 626 shows a better comparison. 
+othel 1 o-seri es on [page 626](chapter18.md#page-626) shows a better comparison. 
 
 Answer 18.3 3^ = 3,433,683,820,292,512,484,657,849,089,281. No. 
 
