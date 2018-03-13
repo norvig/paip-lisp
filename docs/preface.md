@@ -21,7 +21,7 @@ At another level, this book is a highly technical compendium of the knowledge yo
 to progress from being an intermediate Lisp programmer to being an expert. Parts I and II are 
 designed to help the novice get up to speed, but the complete beginner may have a hard time 
 even with this material. Fortunately, there are at least five good texts available for the beginner; 
-see [page xiii](#page-xiii) for my recommendations. 
+see [page xiii](preface#page-xiii) for my recommendations. 
 
 [TK fn1] This does not imply that the programs chosen are the best of all AI programs—just that 
 they are representative. 
