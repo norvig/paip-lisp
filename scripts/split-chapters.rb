@@ -14,7 +14,7 @@ in_file.each_line do |line|
   if chapter_match
     chapter = chapter_match[1].downcase
     chapter.gsub!(" ", "")
-    line.gsub!(/^#/, "") # promote sections a level
+    line.gsub!(/^##/, "#") # promote sections a level
     out_file = File.open("#{out_path}/#{chapter}.md", "w")
     out_file.puts "#{line} {docsify-ignore}"
     next

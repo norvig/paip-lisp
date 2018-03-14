@@ -63,7 +63,7 @@ To my family,..
 <a id='page-vii'></a>
 
 > **paradigm** *n* **1** an example or pattern; *esp* an outstandingly clear or typical example. 
-
+>
 > -*Longman's Dictionary of the English Language*, 1984 
 
 This book is concerned with three related topics: the field of artificial intelligence, or AI; the skill 
@@ -82,11 +82,12 @@ At another level, this book is a highly technical compendium of the knowledge yo
 to progress from being an intermediate Lisp programmer to being an expert. Parts I and II are 
 designed to help the novice get up to speed, but the complete beginner may have a hard time 
 even with this material. Fortunately, there are at least five good texts available for the beginner; 
-see [page xiii](#page-xiii) for my recommendations. 
+see [page xiii](preface#page-xiii) for my recommendations. 
 
 [TK fn1] This does not imply that the programs chosen are the best of all AI programs—just that 
 they are representative. 
 
+
 <a id='page-viii'></a>
 
 All too often, the teaching of computer programming consists of explaining the 
@@ -185,6 +186,7 @@ memory of a von Neumann-style computer. The majority of their syntax is devoted
 to arithmetic and Boolean expressions, and while they provide some facilities for 
 forming data structures, they have poor mechanisms for procedural abstraction 
 or control abstraction. In addition, they are designed for the state-oriented style 
+
 <a id='page-x'></a>
 of programming: computing a result by changing the value of variables through 
 assignment statements. 
@@ -392,6 +394,7 @@ While *Common Lisp the Language* is the definitive standard, it is sometimes ter
 and can be difficult for a beginner. *Common Lisp: the Reference,* published by Franz 
 Inc., offers complete coverage of the language with many helpful examples. *Common 
 LISPcraft,* by Robert Wilensky, and *Artificial Intelligence Programming,* by Charniak 
+
 <a id='page-xiv'></a>
 et al., also include brief summaries of the Common Lisp functions. They are not 
 as comprehensive, but that can be a blessing, because it can lead the reader more 
@@ -434,50 +437,54 @@ that go into the depth of this book. Nevertheless, the expert AI programmer will
 want to be familiar with all the following texts, listed in rough order of increasing 
 sophistication: 
 
-* LISP (3d edition). (See above.) 
-Programming Paradigms in Lisp by Rajeev Sangal. Presents the different styles 
+* *LISP* (3d edition). (See above.) 
+
+* *Programming Paradigms in Lisp* by Rajeev Sangal. Presents the different styles 
 of programming that Lisp accommodates, illustrating them with some useful 
 AI tools. 
 
 
 <a id='page-xv'></a>
 
-Programming for Artificial Intelligence by Wolfgang Kreutzer and Bruce McKenzie. 
+* *Programming for Artificial Intelligence* by Wolfgang Kreutzer and Bruce McKenzie. 
 Covers some of the basics of rule-based and pattern-matching systems well, 
 but covers Lisp, Prolog, and Smalltalk, and thus has no time left for details in 
 any of the languages. 
 
-* Artificial Intelligence Programming (2d edition) by Eugene Charniak, Christopher 
+* *Artificial Intelligence Programming* (2d edition) by Eugene Charniak, Christopher 
 Riesbeck, Drew McDermott, and James Meehan. Contains 150 pages of 
 Lisp overview, followed by an advanced discussion of AI tools, but no actual 
 AI programs. 
-* .7in Practice: Examples in Pop-11 by Allan Ramsey and Rosalind Barrett. Advanced, 
+
+* *AI in Practice: Examples in Pop-11* by Allan Ramsey and Rosalind Barrett. Advanced, 
 high-quality implementations of five AI programs, unfortunately using 
 a language that has not gained popularity. 
+
 The current text combines the virtues of the last two entries: it presents both actual 
 AI programs and the tools necessary to build them. Furthermore, the presentation is 
 in an incremental fashion, with simple versions presented first for clarity, followed 
 by more sophisticated versions for completeness. 
 
-A Note on Exercises 
+### A Note on Exercises 
 
 Sample exercises are provided throughout. Readers can test their level of understanding 
 by faithfully doing the exercises. The exercises are graded on the scale [s], 
 [m], [h], [d], which can be interpreted either as a level of difficulty or as an expected 
 time it will take to do the exercise: 
 
-Code Difficulty Tune to Do 
+| Code | Difficulty | Time to Do  |
+|------|------------|-------------|
+| [s]  | Simple     | Seconds     |
+| [m]  | Medium     | Minutes     |
+| [h]  | Hard       | Hours       |
+| [d]  | Difficult  | Days        |
 
-[s] Simple Seconds 
-[m] Medium Minutes 
-[h] Hard Hours 
-[d] Difficult Days 
 The time to do the exercise is measured from the point that the concepts have 
 been well understood. If the reader is unclear on the underlying concepts, it might 
 take hours of review to understand a [m] problem. Answers to the exercises can be 
 found in a separate section at the end of each chapter. 
 
-Acknowledgments 
+### Acknowledgments 
 
 A great many people contributed to this book. First of all I would like to thank my 
 students at USC and Berkeley, as well as James Martin's students at Colorado and 
@@ -1967,10 +1974,10 @@ sum))
 
 ### A Simple Lisp Program 
 
-> *Cerium quod factum.* \
+> *Cerium quod factum.*  
 > (One is certain of only what one builds.) 
 > 
-> -Giovanni Battista Vico (1668-1744) \
+> -Giovanni Battista Vico (1668-1744)  
 > Italian royal historiographer 
 
 You will never become proficient in a foreign language by studying vocabulary lists. 
@@ -1987,11 +1994,11 @@ Lisp (as outlined in chapter 3) will be easy.
 The program we will develop in this chapter generates random English sentences. 
 Here is a simple grammar for a tiny portion of English: 
 
-> *Sentence &rArr; Noun-Phrase + Verb-Phrase\
-Noun-Phrase &rArr; Article + Noun \
-Verb-Phrase &rArr; Verb + Noun-Phrase \
-Article &rArr; the, a, ... \
-Noun &rArr; man, ball, woman, table... \
+> *Sentence &rArr; Noun-Phrase + Verb-Phrase  
+Noun-Phrase &rArr; Article + Noun  
+Verb-Phrase &rArr; Verb + Noun-Phrase  
+Article &rArr; the, a, ...  
+Noun &rArr; man, ball, woman, table...  
 Verb &rArr; hit, took, saw, liked...*
 
 To be technical, this description is called a *context-free phrase-structure grammar,* and 
@@ -2072,6 +2079,7 @@ a noun phrase and a verb phrase:
 
 
 <a id='page-37'></a>
+
 ```lisp
 > (sentence) => (THE WOMAN HIT THE BALL) 
 
@@ -2117,11 +2125,11 @@ wanted to allow noun phrases to be modified by an indefinite number of adjective
 and an indefinite number of prepositional phrases. In grammatical notation, we 
 might have the following rules: 
 
-> *Noun-Phrase &rArr; Article + Adj\* + Noun + PP\* \
-> Adj\* &rArr; 0&#x0338;, Adj + Adj\* \
-> PP\* &rArr; 0&#x0338;, PP + PP\* \
-> PP &rArr; Prep + Noun-Phrase \
-> Adj &rArr; big, little, blue, green, ... \
+> *Noun-Phrase &rArr; Article + Adj\* + Noun + PP\*  
+> Adj\* &rArr; 0&#x0338;, Adj + Adj\*  
+> PP\* &rArr; 0&#x0338;, PP + PP\*  
+> PP &rArr; Prep + Noun-Phrase  
+> Adj &rArr; big, little, blue, green, ...  
 > Prep &rArr; to, in, by, with, ...*
 
 
@@ -2187,11 +2195,11 @@ An alternative implementation of this program v^ould concentrate on making it ea
 to write grammar rules and would worry later about how they will be processed. 
 Let's look again at the original grammar rules: 
 
-> *Sentence &rArr; Noun-Phrase + Verb-Phrase\
-Noun-Phrase &rArr; Article + Noun \
-Verb-Phrase &rArr; Verb + Noun-Phrase \
-Article &rArr; the, a, ... \
-Noun &rArr; man, ball, woman, table... \
+> *Sentence &rArr; Noun-Phrase + Verb-Phrase  
+Noun-Phrase &rArr; Article + Noun  
+Verb-Phrase &rArr; Verb + Noun-Phrase  
+Article &rArr; the, a, ...  
+Noun &rArr; man, ball, woman, table...  
 Verb &rArr; hit, took, saw, liked...*
 
 Each rule consists of an arrow with a symbol on the left-hand side and something on 
@@ -2332,7 +2340,7 @@ This version uses the special form `let`, which introduces a new variable (in th
 saves us from calling the function `rewrites` twice, as was done in the `cond` version 
 of `generate`. The general form of a `let` form is: 
 
-> `(let` ((var value)...) \
+> `(let` ((var value)...)  
 > &nbsp;&nbsp; body-containing-vars)*
 
 `let` is the most common way of introducing variables that are not parameters of 
@@ -2473,6 +2481,7 @@ Here are some examples:
 
 
 <a id='page-45'></a>
+
 ```lisp
 > (generate-tree 'Sentence) 
 (SENTENCE (NOUN-PHRASE (ARTICLE A) 
@@ -2558,7 +2567,7 @@ The moral is to make your code as general as possible, because you never know wh
 you may want to do with it next. 
 
 ### 2.8 Answers 
-**Answer 2.1** 
+#### Answer 2.1 
 ```lisp
   (defun generate (phrase) 
   "Generate a random sentence or phrase" 
@@ -2572,7 +2581,7 @@ you may want to do with it next.
 
 
 <a id='page-47'></a>
-**Answer 2.2** 
+#### Answer 2.2 
 
 ```lisp
 (defun generate (phrase) 
@@ -2588,7 +2597,7 @@ you may want to do with it next.
   (not (null (rewrites category)))) 
 ```
 
-**Answer 2.4** 
+#### Answer 2.4 
 ```lisp
 (defun cross-product (fn xlist ylist) 
   "Return a list of all (fn . y) values." 

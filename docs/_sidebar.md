@@ -23,7 +23,7 @@
 * [Chapter 19 - Introduction to Natural Language](chapter19.md)
 * [Chapter 20 - Unification Grammars](chapter20.md)
 * [Chapter 21 - A Grammar of English](chapter21.md)
-* [Chapter 22 - Scheme: A n Uncommon Lisp](chapter22.md)
+* [Chapter 22 - Scheme: An Uncommon Lisp](chapter22.md)
 * [Chapter 23 - Compiling Lisp](chapter23.md)
 * [Chapter 24 - ANSI Common Lisp](chapter24.md)
 * [Chapter 25 - Troubleshooting](chapter25.md)
