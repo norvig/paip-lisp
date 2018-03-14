@@ -20,7 +20,7 @@ in chapter 14, but for now it is safe to say that Prolog is an approximation to 
 programming. Prolog has arrived at a comfortable niche between a traditional programming 
 language and a logical specification language. It relies on three important ideas: 
 
-^Actually, programmation en logique, since it was invented bya French group (see page 382). 
+^Actually, programmation en logique, since it was invented bya French group (see [page 382](chapter11.md#page-382)). 
 
 <a id='page-349'></a>
 
@@ -245,7 +245,7 @@ bindings)))
 ((equal input (binding-val binding)) bindings) 
 (t fail)))) 
 
-The unify function follows; it is identical to pat-match (as defined on page 180) 
+The unify function follows; it is identical to pat-match (as defined on [page 180](chapter6.md#page-180)) 
 except for the addition of the line marked The function uni fy-vari abl e also 
 follows match -variable closely: 
 
@@ -986,7 +986,7 @@ In this section we implement an incremental Prolog interpreter. One approach
 would be to modify the interpreter of the last section to use pipes rather than lists. 
 With pipes, unnecessary computation is delayed, and even infinite lists can be 
 expressed in a finite amount of time and space. We could change to pipes simply by 
-changing the mapcan in prove and prove-a11 to mappend-pi pe (page 286). The books 
+changing the mapcan in prove and prove-a11 to mappend-pi pe ([page 286](chapter9.md#page-286)). The books 
 by Winston and Horn (1988) and by Abelson and Sussman (1985) take this approach. 
 We take a different one. 
 
@@ -1403,7 +1403,7 @@ Here's the query and solution to the puzzle:
 
 No. 
 
-This took 278 seconds, and profiHng (see page 288) reveals that the function prove was 
+This took 278 seconds, and profiHng (see [page 288](chapter9.md#page-288)) reveals that the function prove was 
 called 12,825 times. A call to prove has been termed a logical inference, so our system 
 
 <a id='page-376'></a>
@@ -1444,7 +1444,7 @@ Englishman's house being green, yellow, and so forth. The search continues, fill
 in only as much as is necessary and backing up whenever a unification fails. 
 
 For this problem, unification serves the same purpose as the delay macro 
-(page 281). It allows us to delay deciding the value of some attribute as long as 
+([page 281](chapter9.md#page-281)). It allows us to delay deciding the value of some attribute as long as 
 possible, but to immediately reject a solution that tries to give two different values 
 to the same attribute. That way, we save time if we end up backtracking before the 
 computation is made, but we are still able to fill in the value later on. 
@@ -1637,7 +1637,7 @@ No.
 11.8 Prolog Compared to Lisp 
 Many of the features that make Prolog a succesful language for AI (and for program 
 development in general) are the same as Lisp's features. Let's reconsider the list of 
-features that make Lisp different from conventional languages (see page 25) and see 
+features that make Lisp different from conventional languages (see [page 25](chapter1.md#page-25)) and see 
 what Prolog has to offer: 
 
 <a id='page-381'></a>

@@ -256,7 +256,7 @@ the text.
 Part I has been kept intentionally brief, so that there is more room for presenting 
 actual AI programs. Unfortunately, that means that another text or reference book 
 (or online help) may be needed to clarify some of the more esoteric features of the 
-language. My recommendations for texts are on page xiii. 
+language. My recommendations for texts are on [page xiii](preface#page-xiii). 
 
 The reader may also want to refer to chapter 25, which offers some debugging 
 and troubleshooting hints. 
@@ -510,7 +510,7 @@ which I adapted some code for that chapter. Charley Cox (Franz Inc.), Jamie Zawi
 (Lucid Inc.), and Paul Fuqua (Texas Instruments) explained the inner workings of 
 their respective companies' compilers. Mike Harrison, Paul Hilfinger, Marc Luria, 
 Ethan Munson, and Stephan Slade helped with LATEX. Narciso Jarimillo tested all the 
-code and separated it into the files that are available to the reader (see page 897). 
+code and separated it into the files that are available to the reader (see [page 897](appendix.md#page-897)). 
 
 During the writing of this book I was supported by a grant from the Defense 
 Advanced Research Projects Agency (DoD), Arpa Order No. 4871, monitored by 
@@ -1507,7 +1507,7 @@ notation, rational and complex numbers, and numbers with different bases,
 but we won't describe the details here. Strings are delimited by double quote 
 marks on both sides. 
 ^For example, symbols that denote so-called special variables usually begin and end in 
-asterisks. Also, note that I did not hesitate to use the symbol won! on page 11. 
+asterisks. Also, note that I did not hesitate to use the symbol won! on [page 11](chapter1.md#page-11). 
 
 
 <a id='page-24'></a>
@@ -1699,7 +1699,7 @@ for example, functions can be passed as arguments to other functions, but they
 are not first-class, because it is not possible to create new functions while the 
 program is running, nor is it possible to create an anonymous function without 
 giving it a name. In Lisp we can do both those things using 1 ambda. This is 
-explained in section 3.16, page 92. 
+explained in section 3.16, [page 92](chapter3.md#page-92). 
 
 * Uniform Syntax. The syntax of Lisp programs is simple. This makes the language 
 easy to learn, and very little time is wasted correcting typos. In addition, 
@@ -2276,7 +2276,7 @@ generate from that. Thus, `generate` must also accept a list as input, in which 
 it should generate each element of the list, and then append them all together. In 
 the following, the first clause in `generate` handles this case, while the second clause 
 handles (1) and the third handles (2). Note that we used the `mappend` function from 
-section 1.7 (page 18). 
+section 1.7 ([page 18](chapter1.md#page-18)). 
 
 
 <a id='page-41'></a>
@@ -2737,7 +2737,7 @@ Special Forms for Definitions
 
 In this section we survey the special forms that can be used to introduce new global 
 functions, macros, variables, and structures. We have already seen the defun form 
-for defining functions; the def macro form is similar and is covered on page 66. 
+for defining functions; the def macro form is similar and is covered on [page 66](chapter3.md#page-66). 
 
 (defun function-name (parameter...) " optional documentation" body...) 
 
@@ -2956,7 +2956,7 @@ setf can be used to set a component of a structure as well as to set a variable.
 languages like Pascal, the expressions that can appear on the left-hand side of an 
 assignment statement are limited by the syntax of the language. In Lisp, the user can 
 extend the expressions that are allowed in a s etf form using the special forms defs et f 
-or define-setf-method. These are introduced on pages 514 and 884 respectively. 
+or define-setf-method. These are introduced on pages [514](chapter15.md#page-514) and [884](chapter25.md#page-884) respectively. 
 
 There are also some built-in functions that modify places. For example, (rpl a cd 
 list nil) has the same effect as (setf (rest list) nil), except that it returns 
@@ -3350,8 +3350,8 @@ The invariant relation is that the length of the sublist plus 1 en- so - fa r al
 the length of the original list. Thus, when the sublist is nil, then 1 en-so-f ar is the 
 length of the original list. Variables like 1 en- so - fa r that keep track of partial results 
 are called accumulators. Other examples of functions that use accumulators include 
-f 1 a tten - a 11 on page 329; one- un known on page 237; the Prolog predicates discussed 
-on page 686; and anonymous-variables-in on pages 400 and 433, which uses two 
+f 1 a tten - a 11 on [page 329](chapter10.md#page-329); one- un known on page [page 237](chapter7.md#page-237); the Prolog predicates discussed
+on [page 686](chapter20.md#page-686); and anonymous-variables-in on pages [page 400](chapter12.md#page-400) and [page 433](chapter12.md#page-433), which uses two 
 accumulators. 
 
 The important difference between length9 and length1O is when the addition 
@@ -3432,9 +3432,9 @@ they allow an implicit progn. If there are more than two branches, then cond sho
 be used. 
 
 Second, progn is sometimes needed in macros that expand into more than one 
-top-level form, as in the defun* macro on page 326, section 10.3. Third, a progn is 
+top-level form, as in the defun* macro on [page 326](chapter10.md#page-326), section 10.3. Third, a progn is 
 sometimes needed in an unwi nd- protect, an advanced macro. An example of this is 
-the wi th- resource macro on page 338, section 10.4. 
+the wi th- resource macro on [page 338](chapter10.md#page-338), section 10.4. 
 
 The forms trace and untrace are used to control debugging information about 
 entry and exit to a function: 
@@ -3564,8 +3564,8 @@ using macroexpand, and see how it runs by typing in an example:
 81 
 NIL 
 
-Section 24.6 (page 853) describes a more complicated macro and some details on the 
-pitfalls of writing complicated macros (page 855). 
+Section 24.6 ([page 853](chapter24.md#page-853)) describes a more complicated macro and some details on the 
+pitfalls of writing complicated macros ([page 855](chapter24.md#page-855)). 
 
 Backquote Notation 
 
@@ -4388,7 +4388,7 @@ display information about the program. You need not rely solely on looking at th
 source code. 
 
 We have already seen how trace and untrace can be used to provide debugging 
-information (page 65). Another useful tool is st e p, which can be used to halt execution 
+information ([page 65](chapter3.md#page-65)). Another useful tool is st e p, which can be used to halt execution 
 before each subform is evaluated. The form (step expression) will evaluate and return 
 expression, but pauses at certain points to allow the user to inspect the computation, 
 and possibly change things before proceeding to the next step. The commands 
@@ -5713,7 +5713,7 @@ The function a chi eve is given as an argument a single goal. The function succe
 if that goal is already true in the current state (in which case we don't have to do 
 anything) or if we can apply an appropriate operator. This is accomplished by first 
 building the list of appropriate operators and then testing each in turn until one can 
-be applied, achieve calls find-al 1, which we defined on page 101. In this use, 
+be applied, achieve calls find-al 1, which we defined on [page 101](chapter3.md#page-101). In this use, 
 find-al 1 returns a list of operators that match the current goal, according to the 
 predicate appropriate-p. 
 
@@ -5758,7 +5758,7 @@ simpler, and we do not need to describe the whole world. Subsequent chapters tak
 knowledge representation more seriously. 
 
 With this operator as a model, we can define other operators corresponding to 
-Newell and Simon's quote on page 109. There will be an operator for installing a 
+Newell and Simon's quote on [page 109](chapter4.md#page-109). There will be an operator for installing a 
 battery, telling the repair shop the problem, and telephoning the shop. We can fill in 
 the "and so on" by adding operators for looking up the shop's phone number and for 
 giving the shop money: 
@@ -6615,7 +6615,7 @@ ipreconds '((at .here))
 (12 11) (11 6) (11 16) (16 17) (17 22) (21 22) (22 23) 
 (23 18) (23 24) (24 19) (19 20) (20 15) (15 10) (10 5) (20 25)))) 
 
-Note the backquote notation, (It is covered in section 3.2, page 67. 
+Note the backquote notation, (It is covered in section 3.2, [page 67](chapter3.md#page-67). 
 We can now use this list of operators to solve several problems with this maze. 
 And we could easily create another maze by giving another list of connections. Note 
 that there is nothing that says the places in the maze are arranged in a five-by-five 
@@ -7321,7 +7321,7 @@ arguments for the format string.
 <a id='page-150'></a>
 
 Answer 4.2 Here is one solution. The sophisticated Lisp programmer should also 
-see the exercise on page 680. 
+see the exercise on [page 680](chapter19.md#page-680). 
 
 (defun permutations (bag) 
 
@@ -7627,7 +7627,7 @@ should indicate failure, but it will just be treated as a list, and will be appe
 the rest of the answer. Third, we haven't distinguished between the case where the 
 match fails—and returns nil—versus the case where everything matches, but there 
 are no variables, so it returns the null a-list. (This is the semipredicate problem 
-discussed on page 127.) Fourth, we want the bindings of variables to agree—if ?X is 
+discussed on [page 127](chapter4.md#page-127).) Fourth, we want the bindings of variables to agree—if ?X is 
 used twice in the pattern, we don't want it to match two different values in the input. 
 Finally, it is inefficient for pat-match to check both the first and rest of Hsts, even 
 when the corresponding first parts fail to match. (Isn't it amazing that there could 
@@ -8260,7 +8260,7 @@ Answer 5.4 The expression don't may look like a single word, but to the Lisp rea
 it is composed of the two elements don and ' t, or (quote t). If these elements are 
 used consistently, they will match correctly, but they won't print quite right—there 
 will be a space before the quote mark. In fact the :pretty t argument to write is 
-specified primarily to make (quote t) print as ' t (See page 559 of Steele's Common 
+specified primarily to make (quote t) print as ' t (See [page 559](chapter16.md#page-559) of Steele's Common 
 Lisp the Language, 2d edition.) 
 
 Answer 5.5 One way to do this is to read a whole line of text with read -line rather 
@@ -8281,7 +8281,7 @@ Finally, wrap the string in parentheses, and read it back in as a list:
 
 (defun punctuation-p (char) (find char ".,;:*l?#-()\\\"")) 
 
-This could also be done by altering the readtable, as in section 23.5, page 821. 
+This could also be done by altering the readtable, as in section 23.5, [page 821](chapter23.md#page-821). 
 
 
 <a id='page-171'></a>
@@ -8890,7 +8890,7 @@ called data-driven programming. It is a very flexible style that is appropriate 
 extensible systems. 
 
 There are many ways to implement tables in Conunon Lisp, as discussed in 
-section 3.6, page 73. In this case, the keys to the table will be symbols (like ?*), 
+section 3.6, [page 73](chapter3.md#page-73). In this case, the keys to the table will be symbols (like ?*), 
 and it is fine if the representation of the table is distributed across memory. Thus, 
 property lists are an appropriate choice. We will have two tables, represented by 
 the segment-match property and the si ngl e-match property of symbols like ?*. The 
@@ -9654,7 +9654,7 @@ all cities within the 1000 kilometer range of each other.^ This map was drawn wi
 the help of ai r-di stance, a function that retiutis the distance in kilometers between 
 two cities "as the crow flies." It will be defined later. Two other useful fimctions are 
 nei ghbors, which finds all the cities within 1000 kilometers, and ci ty, which maps 
-from a name to a city. The former uses f i nd - a 11 - i f, which was defined on page 101 
+from a name to a city. The former uses f i nd - a 11 - i f, which was defined on [page 101](chapter3.md#page-101) 
 as a synonym for remove- i f-not. 
 
 (defun neighbors (city) 
@@ -10292,7 +10292,7 @@ The GPS program can be seen as a problem in search. For example, in the three-bl
 blocks world, there are only 13 different states. They could be arranged in a graph and 
 searched just as we searched for a route between cities. Figure 6.5 shows this graph. 
 
-The function search-gps does just that. Like the gps function on page 135, it 
+The function search-gps does just that. Like the gps function on [page 135](chapter4.md#page-135), it 
 computes a final state and then picks out the actions that lead to that state. But 
 it computes the state with a beam search. The goal predicate tests if the current 
 state satisfies every condition in the goal, the successor function finds all applicable 
@@ -11652,7 +11652,7 @@ makes use of implicit multiplication as well as operator precedence. The fourth
 requires a lexical analyzer to break Lisp symbols into pieces. 
 
 Suppose we only wanted to handle the fully parenthesized case. To write 
-i nf i x->pref i ., one might first look at pref i x->i nf i . (on page 228) trying to adapt 
+i nf i x->pref i ., one might first look at pref i x->i nf i . (on [page 228](chapter7.md#page-228)) trying to adapt 
 it to our new purposes. In doing so, the careful reader might discover a surprise: 
 infix->prefix and pref ix->inf ix are in fact the exact same function! Both leave 
 atoms unchanged, and both transform three-element lists by swapping the exp-op 
@@ -11740,7 +11740,7 @@ put x.y.z first to find them a little faster
 
 8.2 Simplification Rules 
 Now we are ready to define the simplification rules. We use the definition of the data 
-types rule and exp (page 221) and prefix->inf ix (page 228) from STUDENT. They 
+types rule and exp ([page 221](chapter7.md#page-221)) and prefix->inf ix ([page 228](chapter7.md#page-228)) from STUDENT. They 
 are repeated here: 
 
 (defstruct (rule (:type list)) pattern response) 
@@ -11765,7 +11765,7 @@ exp))))
 (defun binary-exp-p (x) 
 (and (exp-p x) (= (length (exp-args x)) 2))) 
 
-We also use rule-based-translator (page 188) once again, this time on a list of 
+We also use rule-based-translator ([page 188](chapter6.md#page-188)) once again, this time on a list of 
 
 simplification rules. A reasonable list of simplification rules is shown below. This 
 
@@ -13172,7 +13172,7 @@ For example, the memoized version f i b is an 0(n) algorithm because the computa
 time is bounded by some constant times n, for any value of n. The unmemoized 
 version, it turns out, is O (1.7^), meaning computing f i b of n+1 can take up to 1.7 times 
 as long as f i b of n. In simpler terms, the memoized version has linear complexity, 
-while the unmemoized version has exponential complexity. Exercise 9.4 (page 308) 
+while the unmemoized version has exponential complexity. Exercise 9.4 ([page 308](chapter9.md#page-308)) 
 describes where the 1.7 comes from, and gives a tighter bound on the complexity. 
 
 The version of memo presented above is inflexible in several ways. First, it only 
@@ -13244,7 +13244,7 @@ find the appropriate rule, then count the length of the right-hand side, and so 
 A compiler for this rule-language would take each rule and translate it into a function. 
 These functions could then call each other with no need to search through the 
 *grammar*. We implement this approach with the function compi 1 e - rul e. It makes 
-use of the auxiliary functions one-of and rule-lhs and rule-rhs from page 40, 
+use of the auxiliary functions one-of and rule-lhs and rule-rhs from [page 40](chapter2.md#page-40), 
 repeated here: 
 
 (defun rule-lhs (rule) 
@@ -13358,7 +13358,7 @@ a rule directly:
 
 or by macroexpanding a def rul e expression. The compiler was designed to produce 
 the same code we were writing in our first approach to the generation problem (see 
-page 35). 
+[page 35](chapter2.md#page-35)). 
 
 
 <a id='page-278'></a>
@@ -13497,7 +13497,7 @@ will cover up for my laziness. With another compiler that didn't know about such
 optimizations, I would have to be more careful about the code I generate. 
 
 9.3 Delaying Computation 
-Back on page 45, we saw a program to generate all strings derivable from a grammar. 
+Back on [page 45](chapter2.md#page-45), we saw a program to generate all strings derivable from a grammar. 
 One drawback of this program was that some grammars produce an infinite number 
 of strings, so the program would not terminate on those grammars. 
 
@@ -13785,7 +13785,7 @@ empty-pipe
 fn (tail pipe))))))) 
 
 Now we can rewrite generate-all and combine-all to use pipes instead of lists. 
-Everything else is the same as on page 45. 
+Everything else is the same as on [page 45](chapter2.md#page-45). 
 
 (defun generate-all (phrase) 
 "Generate a random sentence or phrase" 
@@ -13814,7 +13814,7 @@ xpipe))
 ypipe)) 
 
 With these definitions, here's the pipe of all sentences from *grammar2* (from 
-page 43): 
+[page 43](chapter2.md#page-43)): 
 
 > (setf ss (generate-all 'sentence)) 
 ((THE . #<CLOSURE 27265720>) . #<CLOSURE 27266035> 
@@ -13886,7 +13886,7 @@ structures, it is often worthwhile to spend some effort on building just the rig
 structure for frequently used data. For example. Lisp's hash tables are very general 
 and thus can be inefficient. You may want to build your own hash tables if, for 
 example, you never need to delete elements, thus making open hashing an attractive 
-possibility. We will see an example of efficient indexing in section 9.6 (page 297). 
+possibility. We will see an example of efficient indexing in section 9.6 ([page 297](chapter9.md#page-297)). 
 
 9.5 Instrumentation: Deciding What 
 to Optimize 
@@ -14139,7 +14139,7 @@ function, the body of the function is compiled in line at the place of the funct
 call. Thus, there is no overhead for setting up the argument list and branching to the 
 definition. An i nl i ne declaration can appear anywhere any other declaration can 
 appear. In this case, the function proel aim is used to register a global declaration. 
-Inline declarations are discussed in more depth on page 317. 
+Inline declarations are discussed in more depth on [page 317](chapter10.md#page-317). 
 
 (proclaim '(inline profile-enter profile-exit inc-profile-time)) 
 
@@ -14969,7 +14969,7 @@ the possibility that a player can cheat by figuring out what random is going to 
 Read the definition of the function random and describe how a player could cheat. 
 Then describe a countermeasure. 
 
-&#9635; Exercise 9.10 [m] On page 292 we saw the use of the read-time conditionals, and 
+&#9635; Exercise 9.10 [m] On [page 292](chapter9.md#page-292) we saw the use of the read-time conditionals, and 
 # -, where #+ is the read-time equivalent of when, and #- is the read-time equivalent 
 of unless. Unfortunately, there is no read-time equivalent of case. Implement one. 
 
@@ -15291,7 +15291,7 @@ The `(inline square)` declaration allows the compiler to generate the multiplica
 specified by `square` right in the loop, without explicitly making a function 
 call to square. The compiler will create a local variable for `(svref vect i)` and will 
 not execute the reference twice—inline functions do not have any of the problems 
-associated with macros as discussed on page 853. However, there is one drawback: 
+associated with macros as discussed on [page 853](chapter24.md#page-853). However, there is one drawback: 
 when you redefine an inline function, you may need to recompile all the functions 
 that call it. 
 
@@ -15559,7 +15559,7 @@ does not.
 
 This example was simple, but in more complicated cases you can make your sequence 
 functions more efficient by having them explicitly check if their arguments are lists 
-or vectors. See the definition of `map-into` on page 857. 
+or vectors. See the definition of `map-into` on [page 857](chapter24.md#page-857). 
 
 ### 10.3 Avoid Complex Argument Lists 
 Functions with keyword arguments suffer a large degree of overhead. This may also 
@@ -15965,7 +15965,7 @@ cases and time them.
 
 As an example of efficient use of storage, here is a version of pat-match that 
 eliminates (almost) all consing. The original version of pat-match, as used in ELIZA 
-(page 180), used an association list of variable/value pairs to represent the binding 
+([page 180](chapter6.md#page-180)), used an association list of variable/value pairs to represent the binding 
 list. This version uses two sequences: a sequence of variables and a sequence of 
 values. The sequences are implemented as vectors instead of lists. In general, vectors 
 take half as much space as lists to store the same information, since half of every list 
@@ -16800,7 +16800,7 @@ arriving at the complete set of matches: bellow, billow, fallow, fellow, follow,
 hollow, mallow, mellow, pillow, sallow, tallow, wallow, willow, and yellow. 
 
 We will return to the problem of discrimination nets with variables in section 14.8, 
-page 472. 
+[page 472](chapter14.md#page-472). 
 
 
 <a id='page-346'></a>
@@ -16837,7 +16837,7 @@ implemented as lists. However, often we have a two-field structure that we would
 like to implement as a cons cell rather than a two-element list, thereby cutting storage 
 in half. Since defstruct does not allow this, define a new macro that does. 
 
-&#9635; Exercise 10.3 [m] Use reuse - cons to write a version of f 1 atten (see page 329) that 
+&#9635; Exercise 10.3 [m] Use reuse - cons to write a version of f 1 atten (see [page 329](chapter10.md#page-329)) that 
 shares as much of its input with its output as possible. 
 
 &#9635; Exercise 10.4 [h] Consider the data type set. A set has two main operations: adjoin 
@@ -16907,7 +16907,7 @@ in chapter 14, but for now it is safe to say that Prolog is an approximation to 
 programming. Prolog has arrived at a comfortable niche between a traditional programming 
 language and a logical specification language. It relies on three important ideas: 
 
-^Actually, programmation en logique, since it was invented bya French group (see page 382). 
+^Actually, programmation en logique, since it was invented bya French group (see [page 382](chapter11.md#page-382)). 
 
 
 <a id='page-349'></a>
@@ -17137,7 +17137,7 @@ bindings)))
 ((equal input (binding-val binding)) bindings) 
 (t fail)))) 
 
-The unify function follows; it is identical to pat-match (as defined on page 180) 
+The unify function follows; it is identical to pat-match (as defined on [page 180](chapter6.md#page-180)) 
 except for the addition of the line marked The function uni fy-vari abl e also 
 follows match -variable closely: 
 
@@ -17892,7 +17892,7 @@ In this section we implement an incremental Prolog interpreter. One approach
 would be to modify the interpreter of the last section to use pipes rather than lists. 
 With pipes, unnecessary computation is delayed, and even infinite lists can be 
 expressed in a finite amount of time and space. We could change to pipes simply by 
-changing the mapcan in prove and prove-a11 to mappend-pi pe (page 286). The books 
+changing the mapcan in prove and prove-a11 to mappend-pi pe ([page 286](chapter9.md#page-286)). The books 
 by Winston and Horn (1988) and by Abelson and Sussman (1985) take this approach. 
 We take a different one. 
 
@@ -18317,7 +18317,7 @@ Here's the query and solution to the puzzle:
 
 No. 
 
-This took 278 seconds, and profiHng (see page 288) reveals that the function prove was 
+This took 278 seconds, and profiHng (see [page 288](chapter9.md#page-288)) reveals that the function prove was 
 called 12,825 times. A call to prove has been termed a logical inference, so our system 
 
 
@@ -18359,7 +18359,7 @@ Englishman's house being green, yellow, and so forth. The search continues, fill
 in only as much as is necessary and backing up whenever a unification fails. 
 
 For this problem, unification serves the same purpose as the delay macro 
-(page 281). It allows us to delay deciding the value of some attribute as long as 
+([page 281](chapter9.md#page-281)). It allows us to delay deciding the value of some attribute as long as 
 possible, but to immediately reject a solution that tries to give two different values 
 to the same attribute. That way, we save time if we end up backtracking before the 
 computation is made, but we are still able to fill in the value later on. 
@@ -18556,7 +18556,7 @@ No.
 11.8 Prolog Compared to Lisp 
 Many of the features that make Prolog a succesful language for AI (and for program 
 development in general) are the same as Lisp's features. Let's reconsider the list of 
-features that make Lisp different from conventional languages (see page 25) and see 
+features that make Lisp different from conventional languages (see [page 25](chapter1.md#page-25)) and see 
 what Prolog has to offer: 
 
 
@@ -19533,7 +19533,7 @@ variables that have been seen once, and the variables that have been seen twice
 or more. The local function wal k is then used to walk over the tree, recursively 
 considering the components of each cons cell and updating the two lists as each 
 variable is encountered. This use of local functions should be remembered, as well 
-as an alternative discussed in exercise 12.23 on page 428. 
+as an alternative discussed in exercise 12.23 on [page 428](chapter12.md#page-428). 
 
 (defun anonymous-variables-in (tree) 
 "Return a list of all variables that occur only once in tree." 
@@ -19616,7 +19616,7 @@ is to bind the parameters to themselves. Thus, the initial binding list will be:
 
 ((?argl . ?argl) (?arg2 . ?arg2)) 
 
-We saw in the previous chapter (page 354) that binding a variable to itself can lead to 
+We saw in the previous chapter ([page 354](chapter11.md#page-354)) that binding a variable to itself can lead to 
 problems; we will have to be careful. 
 Besides eliminating unifications of new variables against parameters, there are 
 quite a few other improvements that can be made. For example, unifications involv
@@ -19949,7 +19949,7 @@ spending too much time bringing the code to the processor.
 &#9635; Exercise 12.1 [h] Write definitions for consp-or-variable-p, unify-firstl, and 
 uni fy - rest!, and change the compiler to generate code like that outlined previously. 
 You might want to look at the function compile-rule in section 9.6, starting on 
-page 300. This function compiled a call to pat-match into individual tests; now we 
+[page 300](chapter9.md#page-300). This function compiled a call to pat-match into individual tests; now we 
 want to do the same thing to uni fy!. Run some benchmarks to compare the altered 
 compiler to the original version. 
 
@@ -20517,7 +20517,7 @@ to say,1 i sp is not a part of standard Prolog.
 (funcall cont))) 
 
 &#9635; Exercise 12.7 [m] Define the primitive solve/1, which works like the function 
-sol ve used in student (page 225). Decide if it should take a single equation as 
+sol ve used in student ([page 225](chapter7.md#page-225)). Decide if it should take a single equation as 
 argument or a list of equations. 
 
 
@@ -20847,7 +20847,7 @@ is pushed on a stack. Upon failure, the next choice is popped off the stack. Thi
 
 reminiscent of the backtracking approach using Scheme's cal 1 /cc facility outlined 
 
-on page 772. 
+on [page 772](chapter22.md#page-772). 
 
 
 <a id='page-426'></a>
@@ -21383,7 +21383,7 @@ the information in the account in any other way.^
 The function get - method finds the method that implements a message for a given 
 object. The function send gets the method and applies it to a list of arguments. The 
 name send comes from the Flavors object-oriented system, which is discussed in the 
-history section (page 456). 
+history section ([page 456](chapter13.md#page-456)). 
 
 (defun get-method (object message) 
 "Return the method that implements message for this object." 
@@ -22122,7 +22122,7 @@ programmer and the applications programmer. The systems programmer would
 supply a library of classes like dfs-problem and generic functions like searcher. 
 The applications programmer then just picks what is needed from the library. From 
 the following we see that it is not too difficult to pick out the right code to define a 
-trip-planning searcher. Compare this with the definition of tri . on page 198 to see 
+trip-planning searcher. Compare this with the definition of tri . on [page 198](chapter6.md#page-198) to see 
 if you prefer CLOS in this case. The main difference is that here we say that the cost 
 function is a i r-di stance and the successors are the nei ghbors by defining methods; 
 in tri . we did it by passing parameters. The latter is a little more succint, but the 
@@ -23014,7 +23014,7 @@ will come last.
 A better solution to the phone-book problem is to index each phone-book entry in 
 some kind of table that makes it easy to add, delete, and retrieve entries. That is what 
 we will do in this section. We will develop an extension of the trie or discrimination 
-tree data structure built in section 10.5 (page 344). 
+tree data structure built in section 10.5 ([page 344](chapter10.md#page-344)). 
 
 Making a discrimination tree for Prolog facts is complicated by the presence of 
 variables in both the facts and the query. Either facts with variables in them will have 
@@ -23230,7 +23230,7 @@ association lists and switches to a hash table when the number of entries gets l
 
 use 1 ookup to look up the value of a key in a property list. This function, and its setf 
 
-method, are defined on page 896. 
+method, are defined on [page 896](chapter25.md#page-896). 
 
 (defun index (key) 
 "Store key in a dtree node. Key must be (predicate . args); 
@@ -24325,7 +24325,7 @@ in different worlds we can make predictions about the future, resolve ambiguitit
 about the current state, and do reasoning by cases. 
 
 For example, possible worlds allow us to solve Moore's communism/democracy 
-problem (page 466). We create two new possible worlds, one where is a democracy 
+problem ([page 466](chapter14.md#page-466)). We create two new possible worlds, one where is a democracy 
 and one where it is communist. In each world it is easy to derive that there is 
 a democracy next to a communist country. The trick is to realize then that the 
 two worlds form a partition, and that therefore the assertion holds in the original 
@@ -24713,7 +24713,7 @@ exercise.
 
 &#9635; Exercise 14.10 [d] Build a strategic reasoner that decides when to create a possible 
 world and does reasoning by cases over these worlds. Use it to solve Moore's problem 
-(page 466). 
+([page 466](chapter14.md#page-466)). 
 
 
 <a id='page-506'></a>
@@ -25030,7 +25030,7 @@ Common Lisp binds local variables to these expressions, and passes those variabl
 to the setf method. That way, the writer does not have to worry about evaluating 
 the expressions in the wrong order or the wrong number of times. It is also possible 
 to gain finer control over the whole process with def i ne-setf-method, as explained 
-on page 884. 
+on [page 884](chapter25.md#page-884). 
 The functions poly+poly, poly*poly and poly'n perform addition, multiplication, 
 and exponentiation of polynomials, respectively. They are defined with several 
 helping functions. k*poly multipHes a polynomial by a constant, k, which may 
@@ -25460,7 +25460,7 @@ processors.
 
 <a id='page-523'></a>
 much slower. Section 9.6 describes ways to speed up the rule-based program, and a 
-comparison of timing data appears on page 525. 
+comparison of timing data appears on [page 525](chapter15.md#page-525). 
 
 There are always surprises when it comes down to measuring timing data. For 
 example, the alert reader may have noticed that the version of pol y defined above 
@@ -25742,7 +25742,7 @@ exponential, and trigonometric functions.
 
 &#9635; Exercise 15.8 [m] Modify deri . to handle the extended rational expressions. 
 
-&#9635; Exercise 15.9 [d] Adapt the integration routine from section 8.6 (page 252) to the 
+&#9635; Exercise 15.9 [d] Adapt the integration routine from section 8.6 ([page 252](chapter8.md#page-252)) to the 
 rational expression representation. Davenport et al. 1988 may be useful. 
 
 
@@ -26919,7 +26919,7 @@ by the remainder of the rule. The parameter being asked for will always be the f
 prennse in the remainder of the rule. The current - rul e is stored in the data base by 
 use-rul e whenever a rule is applied, but it is also set by get-context -data to the 
 atom i ni ti al or goal when the system is prompting for parameters, pri nt-why 
-checks for this case as well. Note the use of the pa rt it i on - i f function from page 256. 
+checks for this case as well. Note the use of the pa rt it i on - i f function from [page 256](chapter8.md#page-256). 
 
 
 <a id='page-552'></a>
@@ -27223,8 +27223,8 @@ the answer computed may lead to irrational decisions.
 
 Certainty factors have been justified by their performance (MYCIN performed as 
 well or better than expert doctors) and by intuitive appeal (they satisfy the criteria 
-listed on page 534). However, they are subject to paradoxes where they compute 
-bizarre results (as in Exercise 16.1, page 536). If the rules that make up the knowledge 
+listed on [page 534](chapter16.md#page-534)). However, they are subject to paradoxes where they compute 
+bizarre results (as in Exercise 16.1, [page 536](chapter16.md#page-536)). If the rules that make up the knowledge 
 base are designed in a modular fashion, then problems usually do not arise, but it is 
 certainly worrisome that the answers may be untrustworthy. 
 
@@ -29091,7 +29091,7 @@ The horizontal direction is now &plusmn;1, vertical is &plusmn;10, and the diago
 &plusmn;11. We'll tentatively adopt this latest representation, but leave open the possibility 
 of changing to another format. With this much decided, we are ready to begin. 
 Figure 18.3 is the glossary for the complete program. A glossary for a second version 
-of the program is on page 623. 
+of the program is on [page 623](chapter18.md#page-623). 
 
 What follows is the code for directions and pieces. We explicitly define the type 
 piece to be a number from empty to outer (0 to 3), and define the function name-of 
@@ -30723,7 +30723,7 @@ moves)
 #'> :key #'node-value))) 
 
 (Note the use of the function map -i nto. This is part of ANSI Common Lisp, but if it 
-is not a part of your implementation, a definition is provided on page 857.) 
+is not a part of your implementation, a definition is provided on [page 857](chapter24.md#page-857).) 
 
 The following table compares the performance of the random-ordering strategy, 
 the sorted-ordering strategy and the static-ordering strategy in the course of a single 
@@ -31758,7 +31758,7 @@ game, such as chess or checkers.
 Answer 18.2 The wei ghted-squa res strategy wins the first game by 20 pieces, 
 but when count-di ff erence plays first, it captures all the pieces on its fifth move. 
 These two games alone are not enough to determine the best strategy; the function 
-othel 1 o-seri es on page 626 shows a better comparison. 
+othel 1 o-seri es on [page 626](chapter18.md#page-626) shows a better comparison. 
 
 Answer 18.3 3^ = 3,433,683,820,292,512,484,657,849,089,281. No. 
 
@@ -31886,7 +31886,7 @@ implementations, but we will ignore that problem.
 
 <a id='page-657'></a>
 
-We start with the grammar defined on page 39 for the generate program: 
+We start with the grammar defined on [page 39](chapter2.md#page-39) for the generate program: 
 
 (defvar ^grammar* "The grammar used by GENERATE.") 
 
@@ -31945,7 +31945,7 @@ I also define the data types rul e, parse, and tree, and some functions for gett
 
 at the rules. Rules are defined as structures of type list with three slots: the left-
 hand side, the arrow (which should always be represented as the literal ->) and the 
-right-hand side. Compare this to the treatment on page 40. 
+right-hand side. Compare this to the treatment on [page 40](chapter2.md#page-40). 
 
 (defstruct (rule (:type list)) Ihs -> rhs) 
 
@@ -33270,7 +33270,7 @@ that is noun phrase and one that is a verb phrase, and if they can be concatenat
 form ?s. Logically, this is fine, and it would work as a program to generate random 
 sentences. However, it is a very inefficient program for parsing sentences. It will 
 consider all possible noun phrases and verb phrases, without regard to the input 
-words. Only when it gets to the concat goal (defined on page 411) will it test to see if 
+words. Only when it gets to the concat goal (defined on [page 411](chapter12.md#page-411)) will it test to see if 
 the two constituents can be concatenated together to make up the input string. Thus, 
 a better order of evaluation for parsing is: 
 
@@ -33323,7 +33323,7 @@ The combination of two arguments, an input list and an output list, is often cal
 difference list, to emphasize this interpretation. More generally, the combination of an 
 input parameter and output parameter is caUed an accumulator. Accumulators, particularly 
 difference lists, are an important technique throughout logic programming 
-and are also used in functional programming, as we saw on page 63. 
+and are also used in functional programming, as we saw on [page 63](chapter3.md#page-63). 
 
 In our rule for S, the concatenation of difference lists was implicit. If we prefer, 
 we could define a version of concat for difference lists and call it explicitly: 
@@ -33631,7 +33631,7 @@ nil
 it do wrong? How would you fix it? 
 
 20.3 A Simple Grammar in DCG Format 
-Here is the trivial grammar from page 688 in DCG format. 
+Here is the trivial grammar from [page 688](chapter20.md#page-688) in DCG format. 
 
 (rule (S (?pred ?subj)) --> 
 (NP ?agr ?subj) 
@@ -36912,7 +36912,7 @@ define is a combination of defun and defparameter. In its first form, it assigns
 value to a variable. Since there are no special variables in Scheme, this is no different 
 than using set!. (There is a difference when the def i ne is nested inside another 
 definition, but that is not yet considered.) In the second form, it defines a function, 
-del ay is used to delay evaluation, as described in section 9.3, page 281. 1 etrec is 
+del ay is used to delay evaluation, as described in section 9.3, [page 281](chapter9.md#page-281). 1 etrec is 
 similar to 1 et. The difference is that all the init forms are evaluated in an environment 
 that includes all the pars. Thus, 1 etrec can be used to define local recursive functions, 
 just as 1 abel s does in Common Lisp. 
@@ -37973,7 +37973,7 @@ In addition, our machine has three JUMP instructions; one that branches uncondit
 two that branch depending on if the top of the stack is nil or non-nil. There is also an instruction 
 for popping unneeded values off the stack, and for accessing and altering global variables. The 
 instruction set is shown in figure 23.1. A glossary for the compiler program is given in figure 23.2. 
-A summary of a more complex version of the compiler appears on page 795. 
+A summary of a more complex version of the compiler appears on [page 795](chapter23.md#page-795). 
 
 
 <a id='page-785'></a>
@@ -40058,7 +40058,7 @@ How could you make scheme - read account for this?
 by eliminating any of the five special forms (quote, begin, set! , if, lambda) and 
 replacing them with macros? 
 
-&#9635; Exercise 23.5 [m] Add the ability to recognize internal defines (see page 779). 
+&#9635; Exercise 23.5 [m] Add the ability to recognize internal defines (see [page 779](chapter22.md#page-779)). 
 
 &#9635; Exercise 23.6 [h] In comp-if we included a special case for (i f t . y) and (i f 
 nil X y). But there are other cases where we know the value of the predicate. For 
@@ -40152,7 +40152,7 @@ to translate a cal 1 /cc into a catch and throw, and disallow dynamic continuati
 
 23.8 Answers 
 Answer 23.2 We can save frames by making a resource for frames, as was done 
-on page 337. Unfortunately, we can't just use the def resource macro as is, because 
+on [page 337](chapter10.md#page-337). Unfortunately, we can't just use the def resource macro as is, because 
 we need a separate resource for each size frame. Thus, a two-dimensional array or 
 a vector of vectors is necessary. Furthermore, one must be careful in determining 
 when a frame is no longer needed, and when it has been saved and may be used again. 
@@ -41259,7 +41259,7 @@ other clauses. The idea is that cal 1 -1 oop-f. parses the THEN and ELSE parts,
 adding whatever is necessary to the body and to other parts of the loop structure. 
 Then add-body is used to add labels and go statements that branch to the labels as 
 needed. This is the same technique that is used to compile conditionals in chapter 23; 
-see the function comp - i f on page 787. Here is the code: 
+see the function comp - i f on [page 787](chapter23.md#page-787). Here is the code: 
 
 (defloop when (1 test exps) 
 (loop-unless 1 '(not ,(maybe-set-it test exps)) exps)) 
@@ -41486,7 +41486,7 @@ is non-nil, uninterned symbols are printed with a prefix #:,asin #:G3811. This
 insures that the symbol will not be interned by a subsequent read. 
 
 It is worth noting that Common Lisp automatically handles problems related to 
-multiple evaluation of subforms in setf methods. See page 884 for an example. 
+multiple evaluation of subforms in setf methods. See [page 884](chapter25.md#page-884) for an example. 
 
 Avoid Overusing Macros 
 
@@ -41519,7 +41519,7 @@ which would expand into:
 ((SETQ THAT (ASSOC ITEM A-LIST)) (PROCESS (CDR THAT))))) 
 
 This was a convenient feature (compare it to the => feature of Scheme's cond, as 
-discussed on page 778), but it backfired often enough that I eventually gave up on 
+discussed on [page 778](chapter22.md#page-778)), but it backfired often enough that I eventually gave up on 
 my version of i f. Here's why. I would write code like this: 
 
 (if (total-score x) 
@@ -41541,7 +41541,7 @@ this case, violating referential transparency can lead to confusion.
 <a id='page-857'></a>
 MAP-INTO 
 
-The function map-i nto is used on page 632. This function, added for the ANSI 
+The function map-i nto is used on [page 632](chapter18.md#page-632). This function, added for the ANSI 
 version of Common Lisp, is like map, except that instead of building a new sequence, 
 the first argument is changed to hold the results. This section describes how to write 
 a fairly efficient version of map-i nto, using techniques that are applicable to any 
@@ -42524,10 +42524,10 @@ given the lists (abed) and (cd), would return (a b), that is, the part of the fi
 list without the second list. I thought that this was the kind of function that might 
 be in the standard, but I didn't know what it would be called. The desired function 
 is similar to set-difference, so I looked that up in the index of Common Lisp the 
-Language and was directed to page 429. I browsed through the section on "using lists 
+Language and was directed to [page 429](chapter12.md#page-429). I browsed through the section on "using lists 
 as sets" but found nothing appropriate. However, I was reminded of the function 
 but! ast, which is also similar to the desired function. The index directed me to 
-page 422 for butl ast, and on the same page I found 1 di f f, which was exactly the 
+[page 422](chapter12.md#page-422) for butl ast, and on the same page I found 1 di f f, which was exactly the 
 desired function. It might have been easier to find (and remember) if it were called 
 1 i st-di ff erence, but the methodology of browsing near similar functions paid off. 
 
@@ -42701,7 +42701,7 @@ for pop- end, a function to pop off and return the last element of a list, while
 
 the list to no longer contain the last element. The definition uses last1, which was 
 
-defined on page 305 to return the last element of a list, and the built-in function 
+defined on [page 305](chapter9.md#page-305) to return the last element of a list, and the built-in function 
 
 nbutl ast returns all but the last element of a list, destructively altering the list. 
 

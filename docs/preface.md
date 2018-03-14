@@ -193,7 +193,7 @@ the text.
 Part I has been kept intentionally brief, so that there is more room for presenting 
 actual AI programs. Unfortunately, that means that another text or reference book 
 (or online help) may be needed to clarify some of the more esoteric features of the 
-language. My recommendations for texts are on page xiii. 
+language. My recommendations for texts are on [page xiii](preface#page-xiii). 
 
 The reader may also want to refer to chapter 25, which offers some debugging 
 and troubleshooting hints. 
@@ -447,7 +447,7 @@ which I adapted some code for that chapter. Charley Cox (Franz Inc.), Jamie Zawi
 (Lucid Inc.), and Paul Fuqua (Texas Instruments) explained the inner workings of 
 their respective companies' compilers. Mike Harrison, Paul Hilfinger, Marc Luria, 
 Ethan Munson, and Stephan Slade helped with LATEX. Narciso Jarimillo tested all the 
-code and separated it into the files that are available to the reader (see page 897). 
+code and separated it into the files that are available to the reader (see [page 897](appendix.md#page-897)). 
 
 During the writing of this book I was supported by a grant from the Defense 
 Advanced Research Projects Agency (DoD), Arpa Order No. 4871, monitored by 

@@ -306,7 +306,7 @@ generate from that. Thus, `generate` must also accept a list as input, in which 
 it should generate each element of the list, and then append them all together. In 
 the following, the first clause in `generate` handles this case, while the second clause 
 handles (1) and the third handles (2). Note that we used the `mappend` function from 
-section 1.7 (page 18). 
+section 1.7 ([page 18](chapter1.md#page-18)). 
 
 <a id='page-41'></a>
 

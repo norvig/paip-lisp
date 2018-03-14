@@ -488,7 +488,7 @@ define is a combination of defun and defparameter. In its first form, it assigns
 value to a variable. Since there are no special variables in Scheme, this is no different 
 than using set!. (There is a difference when the def i ne is nested inside another 
 definition, but that is not yet considered.) In the second form, it defines a function, 
-del ay is used to delay evaluation, as described in section 9.3, page 281. 1 etrec is 
+del ay is used to delay evaluation, as described in section 9.3, [page 281](chapter9.md#page-281). 1 etrec is 
 similar to 1 et. The difference is that all the init forms are evaluated in an environment 
 that includes all the pars. Thus, 1 etrec can be used to define local recursive functions, 
 just as 1 abel s does in Common Lisp. 

@@ -109,7 +109,7 @@ Special Forms for Definitions
 
 In this section we survey the special forms that can be used to introduce new global 
 functions, macros, variables, and structures. We have already seen the defun form 
-for defining functions; the def macro form is similar and is covered on page 66. 
+for defining functions; the def macro form is similar and is covered on [page 66](chapter3.md#page-66). 
 
 (defun function-name (parameter...) " optional documentation" body...) 
 
@@ -324,7 +324,7 @@ setf can be used to set a component of a structure as well as to set a variable.
 languages like Pascal, the expressions that can appear on the left-hand side of an 
 assignment statement are limited by the syntax of the language. In Lisp, the user can 
 extend the expressions that are allowed in a s etf form using the special forms defs et f 
-or define-setf-method. These are introduced on pages 514 and 884 respectively. 
+or define-setf-method. These are introduced on pages [514](chapter15.md#page-514) and [884](chapter25.md#page-884) respectively. 
 
 There are also some built-in functions that modify places. For example, (rpl a cd 
 list nil) has the same effect as (setf (rest list) nil), except that it returns 
@@ -710,8 +710,8 @@ The invariant relation is that the length of the sublist plus 1 en- so - fa r al
 the length of the original list. Thus, when the sublist is nil, then 1 en-so-f ar is the 
 length of the original list. Variables like 1 en- so - fa r that keep track of partial results 
 are called accumulators. Other examples of functions that use accumulators include 
-f 1 a tten - a 11 on page 329; one- un known on page 237; the Prolog predicates discussed 
-on page 686; and anonymous-variables-in on pages 400 and 433, which uses two 
+f 1 a tten - a 11 on [page 329](chapter10.md#page-329); one- un known on page [page 237](chapter7.md#page-237); the Prolog predicates discussed
+on [page 686](chapter20.md#page-686); and anonymous-variables-in on pages [page 400](chapter12.md#page-400) and [page 433](chapter12.md#page-433), which uses two 
 accumulators. 
 
 The important difference between length9 and length1O is when the addition 
@@ -790,9 +790,9 @@ they allow an implicit progn. If there are more than two branches, then cond sho
 be used. 
 
 Second, progn is sometimes needed in macros that expand into more than one 
-top-level form, as in the defun* macro on page 326, section 10.3. Third, a progn is 
+top-level form, as in the defun* macro on [page 326](chapter10.md#page-326), section 10.3. Third, a progn is 
 sometimes needed in an unwi nd- protect, an advanced macro. An example of this is 
-the wi th- resource macro on page 338, section 10.4. 
+the wi th- resource macro on [page 338](chapter10.md#page-338), section 10.4. 
 
 The forms trace and untrace are used to control debugging information about 
 entry and exit to a function: 
@@ -920,8 +920,8 @@ using macroexpand, and see how it runs by typing in an example:
 81 
 NIL 
 
-Section 24.6 (page 853) describes a more complicated macro and some details on the 
-pitfalls of writing complicated macros (page 855). 
+Section 24.6 ([page 853](chapter24.md#page-853)) describes a more complicated macro and some details on the 
+pitfalls of writing complicated macros ([page 855](chapter24.md#page-855)). 
 
 Backquote Notation 
 
@@ -1726,7 +1726,7 @@ display information about the program. You need not rely solely on looking at th
 source code. 
 
 We have already seen how trace and untrace can be used to provide debugging 
-information (page 65). Another useful tool is st e p, which can be used to halt execution 
+information ([page 65](chapter3.md#page-65)). Another useful tool is st e p, which can be used to halt execution 
 before each subform is evaluated. The form (step expression) will evaluate and return 
 expression, but pauses at certain points to allow the user to inspect the computation, 
 and possibly change things before proceeding to the next step. The commands 

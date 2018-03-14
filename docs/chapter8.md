@@ -97,7 +97,7 @@ makes use of implicit multiplication as well as operator precedence. The fourth
 requires a lexical analyzer to break Lisp symbols into pieces. 
 
 Suppose we only wanted to handle the fully parenthesized case. To write 
-i nf i x->pref i ., one might first look at pref i x->i nf i . (on page 228) trying to adapt 
+i nf i x->pref i ., one might first look at pref i x->i nf i . (on [page 228](chapter7.md#page-228)) trying to adapt 
 it to our new purposes. In doing so, the careful reader might discover a surprise: 
 infix->prefix and pref ix->inf ix are in fact the exact same function! Both leave 
 atoms unchanged, and both transform three-element lists by swapping the exp-op 
@@ -183,7 +183,7 @@ put x.y.z first to find them a little faster
 
 8.2 Simplification Rules 
 Now we are ready to define the simplification rules. We use the definition of the data 
-types rule and exp (page 221) and prefix->inf ix (page 228) from STUDENT. They 
+types rule and exp ([page 221](chapter7.md#page-221)) and prefix->inf ix ([page 228](chapter7.md#page-228)) from STUDENT. They 
 are repeated here: 
 
 (defstruct (rule (:type list)) pattern response) 
@@ -208,7 +208,7 @@ exp))))
 (defun binary-exp-p (x) 
 (and (exp-p x) (= (length (exp-args x)) 2))) 
 
-We also use rule-based-translator (page 188) once again, this time on a list of 
+We also use rule-based-translator ([page 188](chapter6.md#page-188)) once again, this time on a list of 
 
 simplification rules. A reasonable list of simplification rules is shown below. This 
 

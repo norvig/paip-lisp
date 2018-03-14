@@ -1101,7 +1101,7 @@ by the remainder of the rule. The parameter being asked for will always be the f
 prennse in the remainder of the rule. The current - rul e is stored in the data base by 
 use-rul e whenever a rule is applied, but it is also set by get-context -data to the 
 atom i ni ti al or goal when the system is prompting for parameters, pri nt-why 
-checks for this case as well. Note the use of the pa rt it i on - i f function from page 256. 
+checks for this case as well. Note the use of the pa rt it i on - i f function from [page 256](chapter8.md#page-256). 
 
 <a id='page-552'></a>
 
@@ -1399,8 +1399,8 @@ the answer computed may lead to irrational decisions.
 
 Certainty factors have been justified by their performance (MYCIN performed as 
 well or better than expert doctors) and by intuitive appeal (they satisfy the criteria 
-listed on page 534). However, they are subject to paradoxes where they compute 
-bizarre results (as in Exercise 16.1, page 536). If the rules that make up the knowledge 
+listed on [page 534](chapter16.md#page-534)). However, they are subject to paradoxes where they compute 
+bizarre results (as in Exercise 16.1, [page 536](chapter16.md#page-536)). If the rules that make up the knowledge 
 base are designed in a modular fashion, then problems usually do not arise, but it is 
 certainly worrisome that the answers may be untrustworthy. 
 

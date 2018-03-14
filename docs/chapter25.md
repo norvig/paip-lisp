@@ -524,10 +524,10 @@ given the lists (abed) and (cd), would return (a b), that is, the part of the fi
 list without the second list. I thought that this was the kind of function that might 
 be in the standard, but I didn't know what it would be called. The desired function 
 is similar to set-difference, so I looked that up in the index of Common Lisp the 
-Language and was directed to page 429. I browsed through the section on "using lists 
+Language and was directed to [page 429](chapter12.md#page-429). I browsed through the section on "using lists 
 as sets" but found nothing appropriate. However, I was reminded of the function 
 but! ast, which is also similar to the desired function. The index directed me to 
-page 422 for butl ast, and on the same page I found 1 di f f, which was exactly the 
+[page 422](chapter12.md#page-422) for butl ast, and on the same page I found 1 di f f, which was exactly the 
 desired function. It might have been easier to find (and remember) if it were called 
 1 i st-di ff erence, but the methodology of browsing near similar functions paid off. 
 
@@ -697,7 +697,7 @@ for pop- end, a function to pop off and return the last element of a list, while
 
 the list to no longer contain the last element. The definition uses last1, which was 
 
-defined on page 305 to return the last element of a list, and the built-in function 
+defined on [page 305](chapter9.md#page-305) to return the last element of a list, and the built-in function 
 
 nbutl ast returns all but the last element of a list, destructively altering the list. 
 

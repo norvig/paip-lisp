@@ -278,7 +278,7 @@ Common Lisp binds local variables to these expressions, and passes those variabl
 to the setf method. That way, the writer does not have to worry about evaluating 
 the expressions in the wrong order or the wrong number of times. It is also possible 
 to gain finer control over the whole process with def i ne-setf-method, as explained 
-on page 884. 
+on [page 884](chapter25.md#page-884). 
 The functions poly+poly, poly*poly and poly'n perform addition, multiplication, 
 and exponentiation of polynomials, respectively. They are defined with several 
 helping functions. k*poly multipHes a polynomial by a constant, k, which may 
@@ -699,7 +699,7 @@ processors.
 
 <a id='page-523'></a>
 much slower. Section 9.6 describes ways to speed up the rule-based program, and a 
-comparison of timing data appears on page 525. 
+comparison of timing data appears on [page 525](chapter15.md#page-525). 
 
 There are always surprises when it comes down to measuring timing data. For 
 example, the alert reader may have noticed that the version of pol y defined above 
@@ -976,7 +976,7 @@ exponential, and trigonometric functions.
 
 &#9635; Exercise 15.8 [m] Modify deri . to handle the extended rational expressions. 
 
-&#9635; Exercise 15.9 [d] Adapt the integration routine from section 8.6 (page 252) to the 
+&#9635; Exercise 15.9 [d] Adapt the integration routine from section 8.6 ([page 252](chapter8.md#page-252)) to the 
 rational expression representation. Davenport et al. 1988 may be useful. 
 
 <a id='page-529'></a>

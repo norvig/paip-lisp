@@ -649,7 +649,7 @@ variables that have been seen once, and the variables that have been seen twice
 or more. The local function wal k is then used to walk over the tree, recursively 
 considering the components of each cons cell and updating the two lists as each 
 variable is encountered. This use of local functions should be remembered, as well 
-as an alternative discussed in exercise 12.23 on page 428. 
+as an alternative discussed in exercise 12.23 on [page 428](chapter12.md#page-428). 
 
 (defun anonymous-variables-in (tree) 
 "Return a list of all variables that occur only once in tree." 
@@ -731,7 +731,7 @@ is to bind the parameters to themselves. Thus, the initial binding list will be:
 
 ((?argl . ?argl) (?arg2 . ?arg2)) 
 
-We saw in the previous chapter (page 354) that binding a variable to itself can lead to 
+We saw in the previous chapter ([page 354](chapter11.md#page-354)) that binding a variable to itself can lead to 
 problems; we will have to be careful. 
 Besides eliminating unifications of new variables against parameters, there are 
 quite a few other improvements that can be made. For example, unifications involv
@@ -1058,7 +1058,7 @@ spending too much time bringing the code to the processor.
 &#9635; Exercise 12.1 [h] Write definitions for consp-or-variable-p, unify-firstl, and 
 uni fy - rest!, and change the compiler to generate code like that outlined previously. 
 You might want to look at the function compile-rule in section 9.6, starting on 
-page 300. This function compiled a call to pat-match into individual tests; now we 
+[page 300](chapter9.md#page-300). This function compiled a call to pat-match into individual tests; now we 
 want to do the same thing to uni fy!. Run some benchmarks to compare the altered 
 compiler to the original version. 
 
@@ -1615,7 +1615,7 @@ to say,1 i sp is not a part of standard Prolog.
 (funcall cont))) 
 
 &#9635; Exercise 12.7 [m] Define the primitive solve/1, which works like the function 
-sol ve used in student (page 225). Decide if it should take a single equation as 
+sol ve used in student ([page 225](chapter7.md#page-225)). Decide if it should take a single equation as 
 argument or a list of equations. 
 
 <a id='page-419'></a>
@@ -1938,7 +1938,7 @@ is pushed on a stack. Upon failure, the next choice is popped off the stack. Thi
 
 reminiscent of the backtracking approach using Scheme's cal 1 /cc facility outlined 
 
-on page 772. 
+on [page 772](chapter22.md#page-772). 
 
 <a id='page-426'></a>
 

@@ -25,7 +25,7 @@ In addition, our machine has three JUMP instructions; one that branches uncondit
 two that branch depending on if the top of the stack is nil or non-nil. There is also an instruction 
 for popping unneeded values off the stack, and for accessing and altering global variables. The 
 instruction set is shown in figure 23.1. A glossary for the compiler program is given in figure 23.2. 
-A summary of a more complex version of the compiler appears on page 795. 
+A summary of a more complex version of the compiler appears on [page 795](chapter23.md#page-795). 
 
 <a id='page-785'></a>
 
@@ -2068,7 +2068,7 @@ How could you make scheme - read account for this?
 by eliminating any of the five special forms (quote, begin, set! , if, lambda) and 
 replacing them with macros? 
 
-&#9635; Exercise 23.5 [m] Add the ability to recognize internal defines (see page 779). 
+&#9635; Exercise 23.5 [m] Add the ability to recognize internal defines (see [page 779](chapter22.md#page-779)). 
 
 &#9635; Exercise 23.6 [h] In comp-if we included a special case for (i f t . y) and (i f 
 nil X y). But there are other cases where we know the value of the predicate. For 
@@ -2160,7 +2160,7 @@ to translate a cal 1 /cc into a catch and throw, and disallow dynamic continuati
 
 23.8 Answers 
 Answer 23.2 We can save frames by making a resource for frames, as was done 
-on page 337. Unfortunately, we can't just use the def resource macro as is, because 
+on [page 337](chapter10.md#page-337). Unfortunately, we can't just use the def resource macro as is, because 
 we need a separate resource for each size frame. Thus, a two-dimensional array or 
 a vector of vectors is necessary. Furthermore, one must be careful in determining 
 when a frame is no longer needed, and when it has been saved and may be used again. 

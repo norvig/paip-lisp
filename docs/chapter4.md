@@ -305,7 +305,7 @@ The function a chi eve is given as an argument a single goal. The function succe
 if that goal is already true in the current state (in which case we don't have to do 
 anything) or if we can apply an appropriate operator. This is accomplished by first 
 building the list of appropriate operators and then testing each in turn until one can 
-be applied, achieve calls find-al 1, which we defined on page 101. In this use, 
+be applied, achieve calls find-al 1, which we defined on [page 101](chapter3.md#page-101). In this use, 
 find-al 1 returns a list of operators that match the current goal, according to the 
 predicate appropriate-p. 
 
@@ -349,7 +349,7 @@ simpler, and we do not need to describe the whole world. Subsequent chapters tak
 knowledge representation more seriously. 
 
 With this operator as a model, we can define other operators corresponding to 
-Newell and Simon's quote on page 109. There will be an operator for installing a 
+Newell and Simon's quote on [page 109](chapter4.md#page-109). There will be an operator for installing a 
 battery, telling the repair shop the problem, and telephoning the shop. We can fill in 
 the "and so on" by adding operators for looking up the shop's phone number and for 
 giving the shop money: 
@@ -1189,7 +1189,7 @@ ipreconds '((at .here))
 (12 11) (11 6) (11 16) (16 17) (17 22) (21 22) (22 23) 
 (23 18) (23 24) (24 19) (19 20) (20 15) (15 10) (10 5) (20 25)))) 
 
-Note the backquote notation, (It is covered in section 3.2, page 67. 
+Note the backquote notation, (It is covered in section 3.2, [page 67](chapter3.md#page-67). 
 We can now use this list of operators to solve several problems with this maze. 
 And we could easily create another maze by giving another list of connections. Note 
 that there is nothing that says the places in the maze are arranged in a five-by-five 
@@ -1879,7 +1879,7 @@ arguments for the format string.
 <a id='page-150'></a>
 
 Answer 4.2 Here is one solution. The sophisticated Lisp programmer should also 
-see the exercise on page 680. 
+see the exercise on [page 680](chapter19.md#page-680). 
 
 (defun permutations (bag) 
 
