@@ -20,7 +20,10 @@
 
   #+LCL 
    (compiler-options :warnings nil)
-  )
+  #+sbcl
+  (progn
+    (sb-ext:unlock-package '#:common-lisp)
+    (sb-ext:unlock-package '#:common-lisp-user)))
 
 ;;;; REQUIRES
 
