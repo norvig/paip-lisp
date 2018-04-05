@@ -1,6 +1,6 @@
 (defpackage paip
   (:use :cl)
-  (:shadow :symbol :debug :ignore :optimize :defconstant)
+  (:shadow :defconstant)
   (:export :requires :*paip-files* :do-examples))
 
 (in-package :paip)
