@@ -1197,9 +1197,9 @@ we just take the cdr of the result returned by assoc.
 (setf state-table 
 '((AL . Alabama) (AK . Alaska) (AZ . Arizona) (AR . Arkansas))) 
 
-> (assoc .. state-table) ^ (AK . ALASKA) 
+> (assoc 'AK state-table) => (AK . ALASKA) 
 
-> (cdr (assoc *AK state-table)) ^ ALASKA 
+> (cdr (assoc 'AK state-table)) => ALASKA 
 
 > (assoc 'TX state-table) => NIL 
 
@@ -1224,13 +1224,13 @@ make-hash-tab! e and modified with a setf of gethash:
 (setf table (make-hash-table)) 
 
 (setf (gethash 'AL table) 'Alabama) 
-(setf (gethash .. table) 'Alaska) 
-(setf (gethash .. table) 'Arizona) 
+(setf (gethash 'AK table) 'Alaska) 
+(setf (gethash 'AZ table) 'Arizona) 
 (setf (gethash 'AR table) 'Arkansas) 
 
 Here we retrieve values from the table: 
 
-> (gethash .. table) ^ ALASKA 
+> (gethash 'AK table) => ALASKA 
 > (gethash 'TX table) => NIL 
 
 The function remhash removes a key/value pair from a hash table, cl rhash removes 
@@ -1267,13 +1267,13 @@ with a setf form. A table would be built as follows:
 
 (setf (get 'AL 'state) 'Alabama) 
 
-(setf (get .. 'state) 'Alaska) 
-(setf (get .. 'state) 'Arizona) 
+(setf (get 'AK 'state) 'Alaska) 
+(setf (get 'AZ 'state) 'Arizona) 
 (setf (get 'AR 'state) 'Arkansas) 
 
 Now we can retrieve values with get: 
 
-> (get .. 'state) => ALASKA 
+> (get 'AK 'state) => ALASKA 
 > (get 'TX 'state) => NIL 
 
 This will be faster because we can go immediately from a symbol to its lone property 
@@ -1295,9 +1295,9 @@ symbol - pi i st (which gives a symbol's complete property list):
 (setf (symbol-piist 'state-table) 
 '(AL Alabama AK Alaska AZ Arizona AR Arkansas)) 
 
-> (get 'state-table 'AD => ALASKA 
+> (get 'state-table 'AK) => ALASKA 
 
-> (get 'state-table 'Alaska) NIL 
+> (get 'state-table 'Alaska) => NIL 
 
 Property lists have a long history in Lisp, but they are falling out of favor as new 
 alternatives such as hash tables are introduced. There are two main reasons why 
