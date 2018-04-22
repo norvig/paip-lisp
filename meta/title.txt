@@ -1,0 +1,2 @@
+% Paradigms of Artificial Intelligence Programming
+% Peter Norvig
