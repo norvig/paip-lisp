@@ -1943,7 +1943,7 @@ was printed, along with two possibilities for continuing. The user selected one,
 in a call to make - por r i dge for the new value, and the function succesfully continued. 
 
 <a id='page-90'></a>
-
+```lisp
 > (eat-porridge momma-bear) 
 Error: #<MOMMA BEAR>*s porridge is not just right: 39 
 Restart actions (select using :continue): 
@@ -1954,6 +1954,8 @@ Restart actions (select using :continue):
 Form to evaluate and use to replace (BEAR-PORRIDGE BEAR): 
 (make-porridge :temperature just-right) 
 nil 
+```
+
 It may seem like wasted effort to spend time writing assertions that (if all goes well) 
 will never be used. However, for all but the perfect programmer, bugs do occur, and 
 the time spent antibugging will more than pay for itself in saving debugging time. 

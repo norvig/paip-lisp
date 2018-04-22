@@ -1,9 +1,8 @@
-## Introduction to Lisp {docsify-ignore}
+# Chapter 1 {docsify-ignore}
+## Introduction to Lisp
 
-<blockquote>
-  You think you know when you learn, are more sure when you can write, even more when you can teach, but certain when you can program. <br><br>
-  <footer>— <cite><a title="Alan Perlis">Alan Perlis, Yale University computer scientist</a></cite></footer>
-</blockquote>
+> You think you know when you learn, are more sure when you can write, even more when you can teach, but certain when you can program.  
+> - Alan Perlis, Yale University computer scientist
 
 This chapter is for people with little or no experience in Lisp. Readers who feel confident in their Lisp programming ability can quickly skim the chapter or skip it entirely. This  chapter necessarily moves quickly, so those with little programming experience, or any reader who finds this chapter tough going, should seek out a supplementary introductory text. My recommendations are in the preface. 
 
@@ -47,7 +46,7 @@ such as doing multiplications and divisions before sums and differences. We will
 Sometimes programmers who are familiar with other languages have preconceptions that make it difficult for them to learn Lisp. For them, three points are worth stressing here. First, many other languages make a distinction between statements and expressions. An expression, like `2 + 2`, has a value, but a statement, like `x = 2 + 2`, does not. Statements have effects, but they do not return values. In Lisp, there is no such distinction: every expression returns a value. It is true that some expressions have effects, but even those expressions also return values. 
 
 Second, the lexical rules for Lisp are much simpler than the rules for other languages. In particular, there are fewer punctuation characters: only parentheses, quote marks (single, double, and backward), spaces, and the comma serve to separate symbols from each other. Thus, while the statement `y=a*x+3` is analyzed as seven separate tokens in other languages, in Lisp it would be treated as a single symbol. To get a list of tokens, we would have to insert spaces:
-<br> `(y = a * x + 3)`. 
+`(y = a * x + 3)`. 
 
 Third, while many languages use semicolons to delimit statements. Lisp has no need of semicolons, since expressions are delimited by parentheses. Lisp chooses to use semicolons for another purpose—to mark the beginning of a comment, which lasts until the end of the line: 
 
@@ -1230,22 +1229,22 @@ that automatically indent), a much simpler program is possible:
 "Morton Downey, Jr.," and whatever other cases you can think of. 
 
 &#9635; **Exercise 1.2 [m]** Write a function to exponentiate, or raise a number to an integer power. 
-<br>For example: <code>(power 3 2) = 3<sup>2</sup> = 9.</code>
+For example: <code>(power 3 2) = 3<sup>2</sup> = 9.</code>
 
 &#9635; **Exercise 1.3 [m]** Write a function that counts the number of atoms in an expression. 
-<br>For example: `(count-atoms '(a (b) c)) = 3`. Notice that there is something of an 
+For example: `(count-atoms '(a (b) c)) = 3`. Notice that there is something of an 
 ambiguity in this: 
-<br>should `(a nil c)` count as three atoms, or as two, because it is 
+should `(a nil c)` count as three atoms, or as two, because it is 
 equivalent to `(a () c)`?
 
 &#9635; **Exercise 1.4 [m]** Write a function that counts the number of times an expression 
 occurs anywhere within another expression. 
-<br>Example: <code>(count-anywhere 'a '(a ((a) b) a)) &rArr; 3</code>. 
+Example: <code>(count-anywhere 'a '(a ((a) b) a)) &rArr; 3</code>. 
 
 &#9635; **Exercise 1.5 [m]** Write a function to compute the dot product of two sequences 
 of numbers, represented as lists. The dot product is computed by multiplying 
 corresponding elements and then adding up the resulting products. 
-<br>Example: <code>(dot-product ' (10 20) ' (3 4)) = 10 x 3 + 20 x 4 = 110</code>
+Example: <code>(dot-product ' (10 20) ' (3 4)) = 10 x 3 + 20 x 4 = 110</code>
 
 
 ### 1.12 Answers 
