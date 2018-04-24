@@ -1,7 +1,7 @@
 (defpackage paip
   (:use :cl)
   (:shadow :defconstant)
-  (:export :requires :*paip-files* :do-examples))
+  (:export :requires :*paip-files* :do-examples :open-pdf))
 
 (in-package :paip)
 
@@ -28,5 +28,6 @@
                 :components
                 ((:file "auxfns")
                  (:file "tutor")
-                 (:file "examples"))))
+                 (:file "examples")
+                 (:file "open-pdf"))))
   :description "Lisp code for the textbook \"Paradigms of Artificial Intelligence Programming\"")
