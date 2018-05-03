@@ -2764,7 +2764,7 @@ will always stand for a particular value.
 (def constant variable-name value "optional documentation") 
 
 All the def - forms define global objects. It is also possible to define local variables 
-with 1 et, and to define local functions with 1 abel s, as we shall see. 
+with let, and to define local functions with label s, as we shall see. 
 
 Most programming languages provide a way to group related data together into 
 a structure. Common Lisp is no exception. The def struct special form defines a 
@@ -2980,8 +2980,8 @@ are assigned new values all the time. Actually, many Lisp programs do no
 assignments whatsoever. It is very common to use Lisp in a functional style where 
 new variables may be introduced, but once a new variable is established, it never 
 changes. One way to introduce a new variable is as a parameter of a function. It 
-is also possible to introduce local variables using the special form 1 et. Following 
-are the general 1 et form, along with an example. Each variable is bound to the 
+is also possible to introduce local variables using the special form let. Following 
+are the general let form, along with an example. Each variable is bound to the 
 corresponding value, and then the body is evaluated: 
 
 
@@ -2991,7 +2991,7 @@ corresponding value, and then the body is evaluated:
 body...) (y (+ 1 1))) 
 (+ X y)) 42 
 
-Defining a local variable with a 1 et form is really no different from defining parameters 
+Defining a local variable with a let form is really no different from defining parameters 
 to an anonymous function. The former is equivalent to: 
 
 ((lambdei(variable..,) ((lambda (x y) 
@@ -3004,19 +3004,19 @@ First, all the values are evaluated. Then they are bound to the variables (the p
 of the lambda expression), and finally the body is evaluated, using those 
 bindings. 
 
-The special form 1 et* is appropriate when you want to use one of the newly 
+The special form let* is appropriate when you want to use one of the newly 
 introduced variables in a subsequent value computation. For example: 
 
 (let* ((x 6) 
 (y (* . .))) 
 (+ . y)) 42 
 
-We could not have used 1 et here, because then the variable . would be unbound 
+We could not have used let here, because then the variable . would be unbound 
 
 during the computation of y's value. 
 
-&#9635; Exercise 3.1 [m] Show a 1 ambda expression that is equivalent to the above 1 et* 
-expression. You may need more than one 1 ambda. 
+&#9635; Exercise 3.1 [m] Show a lambda expression that is equivalent to the above let* 
+expression. You may need more than one lambda. 
 
 Because lists are so important to Lisp, there are special forms for adding and 
 deleting elements from the front of a list—in other words, for treating a list as a stack. 
@@ -3100,7 +3100,7 @@ bound to the first element, then the second element, and so on. At the end,
 dol i st evaluates and returns the optional-result expression, or nil if there is no result 
 expression. 
 
-Below is a version of length usingdol i st. The 1 et form introduces anew variable, 
+Below is a version of length usingdol i st. The let form introduces anew variable, 
 1 en, which is initially bound to zero. The dol i st form then executes the body once 
 for each element of the list, with the body incrementing 1 en by one each time. This 
 use is unusual in that the loop iteration variable, el ement, is not used in the body. 
@@ -3155,7 +3155,7 @@ Each variable is initially bound to the initial value. If exit-test is true, the
 Otherwise, the body is executed and each variable is set to the corresponding 
 next value and exit-test is tried again. The loop repeats until exit-test is true. If a next 
 value is omitted, then the corresponding variable is not updated each time through 
-the loop. Rather, it is treated as if it had been bound with a 1 et form. 
+the loop. Rather, it is treated as if it had been bound with a let form. 
 
 Here is length implemented withdo,usingtwo variables, 1 en to count the number 
 of elements, and 1 to go down the list. This is often referred to as cdr-ing down a list, 
@@ -3401,7 +3401,7 @@ len-so-far
 
 (length1S the-list 0))) 
 
-In general, a 1 abel s form (or the similar f 1 et form) can be used to introduce one or 
+In general, a 1 abel s form (or the similar flet form) can be used to introduce one or 
 more local functions. It has the following syntax: 
 
 (labels 
@@ -3724,7 +3724,7 @@ Figure 3.1: Cons Cell Diagrams
 functions listed previously. Which one? 
 
 &#9635; Exercise 3.3 [m] Write a function that will print an expression in dotted pair notation. 
-Use the built-in function pri nc to print each component of the expression. 
+Use the built-in function princ to print each component of the expression. 
 
 &#9635; Exercise 3.4 [m] Write a function that, like the regular print function, will print an 
 expression in dotted pair notation when necessary but will use normal list notation 
@@ -4775,7 +4775,7 @@ global variables in other languages. Unfortunately, this is not quite correct an
 lead to problems. It is best to understand Common Lisp variables on their own terms. 
 
 By default. Common Lisp variables are lexical variables. Lexical variables are 
-introduced by some syntactic construct like 1 et or defun and get their name from the 
+introduced by some syntactic construct like let or defun and get their name from the 
 fact that they may only be referred to by code that appears lexically within the body 
 of the syntactic construct. The body is called the scope of the variable. 
 
@@ -4845,9 +4845,9 @@ Counter = 0
 NIL 
 
 There are three calls to report here. In the first and third, report prints the global 
-value of the special variable ^counter*. In the second call, the 1 et form introduces 
+value of the special variable ^counter*. In the second call, the let form introduces 
 a new binding for the special variable ^counter*, which is again printed by report. 
-Once the scope of the 1 et is exited, the new binding is disestablished, so the final 
+Once the scope of the let is exited, the new binding is disestablished, so the final 
 call to report uses the global value again. 
 
 In summary. Common Lisp special variables are different because they have 
@@ -4875,7 +4875,7 @@ variables; only code that appears within the scope of a lexical variable can ref
 that variable. 
 
 &#9635; Exercise 3.6 [s] Given the following initialization for the lexical variable a and the 
-special variable *b*, what will be the value of the 1 et form? 
+special variable *b*, what will be the value of the let form? 
 
 (setf a 'global-a) 
 (defvar *b* 'global-b) 
@@ -5230,9 +5230,9 @@ Then the automatic indentation of wh 11 e2 (on certain systems) is prettier than
 (print (* i i)) 
 (setf i (+ i 1))) 
 Finally, an &aux can be used to bind a new local variable or variables, as if bound 
-with 1 et*. Personally, I consider this an abomination, because &aux variables are 
+with let*. Personally, I consider this an abomination, because &aux variables are 
 not parameters at all and thus have no place in a parameter list. I think they should 
-be clearly distinguished as local variables with a 1 et. But some good programmers 
+be clearly distinguished as local variables with a let. But some good programmers 
 do use &aux, presumably to save space on the page or screen. Against my better 
 judgement, I show an example: 
 (defun length14 (list &aux (len 0)) 
@@ -5374,7 +5374,7 @@ AHA!
 
 Answer 3.6 The value is (LOCAL-A LOCAL-B LOCAL-B GLOBAL-A LOCAL-B). 
 
-The 1 et form binds a lexically and *b* dynamically, so the references to a and 
+The let form binds a lexically and *b* dynamically, so the references to a and 
 *b* (including the reference to *b* within f n) all get the local values. The function 
 symbol - value always treats its argument as a special variable, so it ignores the lexical 
 binding for a and returns the global binding instead. However, the symbol - va1 ue of 
@@ -14446,7 +14446,7 @@ indexing is in effect part of the compiled code. As an example, I show here a sm
 of rules and a possible compilation of the rule set. The generated function assumes 
 that . is not an atom. This is appropriate because we are replacing simpl 1 fy-exp, 
 not simpl ify. Also, we will return nil to indicate that . is already simplified. I 
-have chosen a slightly different format for the code; the main difference is the 1 et 
+have chosen a slightly different format for the code; the main difference is the let 
 to introduce variable names for subexpressions. This is useful especially for deeply 
 nested patterns. The other difference is that I explicitly build up the answer with a 
 call to 1 i St, rather than make-exp. This is normally considered bad style, but since 
@@ -14584,7 +14584,7 @@ Or we could switch to a data-driven approach,
 ,(compile-args var pattern consequent))))) 
 
 The function compi 1 e - a rgs is used to check the arguments to a pattern. It generates 
-a 1 et form binding one or two new variables (for a unary or binary expression), and 
+a let form binding one or two new variables (for a unary or binary expression), and 
 then calls compi 1 e-exp to generate code that actually makes the tests. It just passes 
 along the continuation, consequent, to compi 1 e-exp. 
 
@@ -16050,7 +16050,7 @@ runs out of space, or when the user needs to make a copy of a returned value.
 Here is the new definition of pat-match. It is implemented by closing the defi
 
 
-nition of pat-match and its two auxilliary functions inside a 1 et that establishes the 
+nition of pat-match and its two auxilliary functions inside a let that establishes the 
 
 bindings of vars, val s, and success, but that is not crucial. Those three variables 
 
@@ -16758,7 +16758,7 @@ new-trie)))))
 <a id='page-345'></a>
 There are a few subtleties in the implementation. First, we test for deleted entries 
 
-with an eq comparison to a distinguished marker, the string tri e-de1 eted. No other 
+with an eq comparison to a distinguished marker, the string tri e-deleted. No other 
 
 object will be eq to this string except tri e-del eted itself, so this is a good test. We 
 
@@ -18968,7 +18968,7 @@ each argument. Thus, for the second clause, we would have the code:
 (if (and (unify! ?argl 'Sandy) (unifyl ?arg2 ?x)) 
 (likes/2 ?x 'cats cont)) 
 
-where we would need a suitable 1 et binding for the variable ?x. 
+where we would need a suitable let binding for the variable ?x. 
 
 12.1 A Prolog Compiler 
 This section presents the compiler summarized in figure 12.1. At the top level is 
@@ -36904,8 +36904,8 @@ following forms are used (nearly) identically in Scheme and Common Lisp:
 
 let let* and or do cond case 
 
-One difference is that Scheme is less lenient as to what counts as a binding in 1 et, 
-1 et* and do. Every binding must be (var init); just (var) or var is not allowed. In do, 
+One difference is that Scheme is less lenient as to what counts as a binding in let, 
+let* and do. Every binding must be (var init); just (var) or var is not allowed. In do, 
 a binding can be either (var init step) or (var init). Notice there is no do*. The other 
 difference is in ca se and cond. Where Common Lisp uses the symbol t or otherwi se 
 to mark the final case. Scheme uses el se. The final three syntactic extensions are 
@@ -36921,9 +36921,9 @@ define is a combination of defun and defparameter. In its first form, it assigns
 value to a variable. Since there are no special variables in Scheme, this is no different 
 than using set!. (There is a difference when the def i ne is nested inside another 
 definition, but that is not yet considered.) In the second form, it defines a function, 
-del ay is used to delay evaluation, as described in section 9.3, [page 281](chapter9.md#page-281). 1 etrec is 
-similar to 1 et. The difference is that all the init forms are evaluated in an environment 
-that includes all the pars. Thus, 1 etrec can be used to define local recursive functions, 
+del ay is used to delay evaluation, as described in section 9.3, [page 281](chapter9.md#page-281). letrec is 
+similar to let. The difference is that all the init forms are evaluated in an environment 
+that includes all the pars. Thus, letrec can be used to define local recursive functions, 
 just as 1 abel s does in Common Lisp. 
 
 The first step in implementing these syntactic extensions is to change i nterp to 
@@ -37119,7 +37119,7 @@ defining functions - it serves the purposes of both defun and defvar. The syntax
 <a id='page-766'></a>
 
 In addition. Scheme provides a notation where def i ne can be used inside a function 
-definition in a way that makes it work like 1 et rather than set!. 
+definition in a way that makes it work like let rather than set!. 
 
 The advantage of the macro-based approach to special forms is that we don't have 
 to change the interpreter to add new special forms. The interpreter remains simple, 
@@ -37173,7 +37173,7 @@ code (env nil) (name nil) (parms nil))
 
 The following is a properly tail-recursive interpreter. The macro prog sets up a 
 tagbody within which we can use go statements to branch to labels, and it also sets 
-up a bl ock from which we can return a value. It can also bind variables like 1 et, 
+up a bl ock from which we can return a value. It can also bind variables like let, 
 although in this usage, the variable list is empty. Any symbol within the body of a 
 prog is considered a label. In this case, the label : INTERP is the target of the branch 
 statements (GO :I NTERP). I use uppercase to indicate that go-to statements are being 
@@ -37728,9 +37728,9 @@ the interpreter, this treatment of macros is most unsatisfactory: the work of ma
 expansion must be done again and again. How can you eliminate this duplicated 
 effort? 
 
-&#9635; Exercise 22.8 [m] It turns out Scheme allows some additional syntax in 1 et and 
+&#9635; Exercise 22.8 [m] It turns out Scheme allows some additional syntax in let and 
 cond. First, there is the "named-let" expression, which binds initial values for variables 
-but also defines a local function that can be called within the body of the 1 et. 
+but also defines a local function that can be called within the body of the let. 
 Second, cond recognizes the symbol => when it is the second element of a cond clause, 
 and treats it as a directive to pass the value of the test (when it is not false) to the 
 third element of the clause, which must be a function of one argument. Here are two 
@@ -37765,10 +37765,10 @@ result
 (cdr g0030) 
 #f))) 
 
-Write macro definitions for 1 et and cond allowing these variations. 
+Write macro definitions for let and cond allowing these variations. 
 
 &#9635; Exercise 22.9 Pi] Some Scheme implementations permit def i ne statements inside 
-the body of a 1 ambda (and thus of a def i ne, 1 et, 1 et*, or 1 etrec as well). Here is an 
+the body of a 1 ambda (and thus of a def i ne, let, let*, or letrec as well). Here is an 
 example: 
 
 (define (length 1) 
@@ -37778,7 +37778,7 @@ example:
 
 The internal definition of len is interpreted not as defining a global name but rather 
 
-as defining a local name as if with 1 etrec. The above definition is equivalent to: 
+as defining a local name as if with letrec. The above definition is equivalent to: 
 
 (define (length 1) 
 (letrec (den (lambda (1 n) 
@@ -37952,7 +37952,7 @@ This makes doubl e a special variable, so we can write doubl e instead of # 'dou
 But this approach is not recommended - it is dangerous to define special variables 
 that violate the asterisk convention, and the Common Lisp compiler may not be able 
 to optimize special variable references the way it canfunction special forms. Also, 
-this approach would not interact properly with f 1 et and 1 abel s. 
+this approach would not interact properly with flet and 1 abel s. 
 
 
 ## Chapter 23
@@ -40033,7 +40033,7 @@ It is problems like these that made the designers of Scheme admit that they
 don't know the best way to specify macros, so there is no standard macro definition 
 mechanism in Scheme. Such problems rarely come up in Common Lisp because 
 functions and variables have different name spaces, and because local function 
-definitions (with f 1 et or 1 abel s) are not widely used. Those who do define local 
+definitions (with flet or 1 abel s) are not widely used. Those who do define local 
 functions tend not to use already estabUshed names like 1 i st and append. 
 
 23.6 History and References 
@@ -40129,7 +40129,7 @@ for set!, for example:
 (lambda (val list) (set-car! (cdr (cdr list)) val))) 
 
 &#9635; Exercise 23.9 [m] Itis a curious asymmetry of Scheme that there isa special notation 
-for lambda expressions within def i ne expressions, but not within 1 et. Thus, we see 
+for lambda expressions within def i ne expressions, but not within let. Thus, we see 
 the following: 
 
 (define square (lambda (x) (* . .))) listhesameas 
@@ -40142,7 +40142,7 @@ the following:
 (let (((square x) (* . .))) ...) : <=illegal! 
 
 Do you think this last expression should be legal? If so, modify the macros for 
-1 et, 1 et*, and 1 etrec to allow the new syntax. If not, explain why it should not be 
+let, let*, and letrec to allow the new syntax. If not, explain why it should not be 
 included in the language. 
 
 &#9635; Exercise 23.10 [m] Scheme does not define funcall, because the normal function-
@@ -41217,7 +41217,7 @@ Implementwith-col1 ecti onand col1 ect.
 Variable Initialization (26.9) 
 
 The with clause allows local variables - I have included it, but recommend using a 
-1 et instead. I have not included the and preposition, which allows the variables to 
+let instead. I have not included the and preposition, which allows the variables to 
 nest at different levels. 
 
 26.9. Variable Initializations ("and" omitted) 
@@ -42185,7 +42185,7 @@ obsolete functions to call error. The following function is handy for this purpo
 (declare (ignore args)) 
 (error "Obsolete function.")))) 
 
-Diagnosis: Are you using 1 abel s and f 1 et properly? Consider again the function 
+Diagnosis: Are you using 1 abel s and flet properly? Consider again the function 
 repl ace-?-vars, which was defined in section 11.3 to replace an anonymous logic 
 variable with a unique new variable. 
 
@@ -42222,12 +42222,12 @@ variable number, and then a local function to do the computation:
 (replace-?-vars (rest exp))))))) 
 (replace-?-vars exp)))) 
 
-This version doesn't work. The problem is that f 1 et, like 1 et, defines a new function 
-within the body of the f 1 et but not within the new function's definition. So two 
-lessons are learned here: use 1 abel s instead of f 1 et to define recursive functions, 
+This version doesn't work. The problem is that flet, like let, defines a new function 
+within the body of the flet but not within the new function's definition. So two 
+lessons are learned here: use 1 abel s instead of flet to define recursive functions, 
 and don't shadow a function definition with a local definition of the same name (this 
 second lesson holds for variables as well). Let's fix the problem by changing 1 abel s 
-tof 1 et and naming the local function recurse: 
+to flet and naming the local function recurse: 
 
 (defun replace-?-vars (exp) 
 "Replace any ? within exp with a var of the form ?123." 
@@ -42644,9 +42644,9 @@ nil keys:
 ((nil) ...)) 
 
 25.13 Syntax of LET and LET* 
-A common error is leaving off a layer of parentheses in 1 et, just like in cond. Another 
-error is to refer to a variable that has not yet been bound in a 1 et. To avoid this 
-problem, use 1 et* whenever a variable's initial binding refers to a previous variable. 
+A common error is leaving off a layer of parentheses in let, just like in cond. Another 
+error is to refer to a variable that has not yet been bound in a let. To avoid this 
+problem, use let* whenever a variable's initial binding refers to a previous variable. 
 
 25.14 Problems with Macros 
 In section 3.2 we describeda four-part approach to the design of macros: 
@@ -42689,7 +42689,7 @@ body. It would be nice to allow for optional declarations and documentation stri
 
 If your macro binds some variables or variablelike objects, use the conventions 
 
-laid down by 1 et, 1 et*, and 1 abel s: allow for a list of variable or (variable init-val) 
+laid down by let, let*, and 1 abel s: allow for a list of variable or (variable init-val) 
 
 pairs. If you are iterating over some kind of sequence, follow dotimes and dol i st. 
 
@@ -43019,7 +43019,7 @@ for any of the following reasons:
 In (2), it is interesting to consider what "too long" means. Charniak et al. (1987) 
 suggested that 20 lines is the limit. But now that large bit-map displays have replaced 
 24-line terminals, function definitions have become longer. So perhaps one screenful 
-is a better limit than 20 lines. The addition of f 1 et and 1 abel s also contributes to 
+is a better limit than 20 lines. The addition of f let and 1 abel s also contributes to 
 longer function definitions. 
 
 
@@ -43041,7 +43041,7 @@ around among all your high-level functions just to make it available to pri nt.
 When to Bind a Lexical Variable 
 
 In contrast to special variables, lexical variables are encouraged. You should feel free 
-to introduce a lexical variable (with a 1 et, 1 ambda or defun) for any of the following 
+to introduce a lexical variable (with a let, 1 ambda or defun) for any of the following 
 reasons: 
 
 1. To avoid typing in the same expression twice. 
