@@ -1,9 +1,8 @@
+# Chapter 5 {docsify-ignore}
 ## ELIZA: Dialog with a Machine {docsify-ignore}
 
-<blockquote>
-  It is said that to explain is to explain away. <br><br>
-  <footer>— <cite><a title="Joseph Weizenbaum">Joseph Weizenbaum, MIT computer scientist</a></cite></footer>
-</blockquote>
+> It is said that to explain is to explain away.  
+> - Joseph Weizenbaum, MIT computer scientist
 
 This chapter and the rest of part I will examine three more well-known AI programs of
 the 1960s. ELIZA held a conversation with the user in which it simulated a psychotherapist.

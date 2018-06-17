@@ -874,7 +874,7 @@ with each of the factors. If none of them work, we return an expression indicati
 that the integral is unknown. 
 
 <a id='page-256'></a>
-
+```lisp
 (defun integrate (exp x) 
 First try some trivial cases 
 
@@ -919,6 +919,7 @@ and elements that don't."
 (push item no-list))) 
 
 (values (nreverse yes-list) (nreverse no-list)))) 
+```
 
 <a id='page-257'></a>
 Note that the place in integrate where other techniques could be added is 

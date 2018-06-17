@@ -769,7 +769,7 @@ or (9(n^)), he uses a fine-grained analysis that computes the constant factors (
 variety of polynomials, an exponentiation algorithm based on the binomial theorem 
 is best. The binomial theorem states that 
 
-(a + b)<sup>n = &Sigma; TK
+(a + b)<sup>n</sup> = &Sigma; TK
 
 
 i=0 
