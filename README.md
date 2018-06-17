@@ -74,9 +74,7 @@ The [Lisp code files](https://github.com/norvig/paip-lisp/tree/master/lisp) are 
 <tr><td>23 <td><a href="lisp/compile3.lisp">compile3.lisp</a><td>	Compiler with peephole optimizer
 <tr><td>23 <td><a href="lisp/compopt.lisp">compopt.lisp</a><td>		Peephole optimizers for compile3.lisp
 </table>
-<p>
-<hr>
-<i><a href="http://www.norvig.com">Peter Norvig</a></i>
+
       
 
 # Running the Code
