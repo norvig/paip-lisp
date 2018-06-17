@@ -3,38 +3,23 @@
 
 ![PAIP](https://norvig.com/paip-cover.gif)
 
-This is the repository for the book *Paradigms of Artificial
-Intelligence Programming: Case Studies in Common Lisp* by Peter Norvig (1992).  Here you'll find:
+This is an open-source repository for the book *Paradigms of Artificial
+Intelligence Programming: Case Studies in Common Lisp* by Peter Norvig (1992), and the code contained therein.  The copyright has reverted to the author, who has shared it here.
 
-- A directory of all the [Lisp code](https://github.com/norvig/paip-lisp/tree/master/lisp) from the book.
+# The Book
+
 - A `pdf` of the book, split into two parts (because GitHub can't handle big files) covering Chapters 1-14 ([PAIP-part1.pdf](https://github.com/norvig/paip-lisp/blob/master/PAIP-part1.pdf)) and 15-25 ([PAIP-part2.pdf](https://github.com/norvig/paip-lisp/blob/master/PAIP-part2.pdf)). The copyright has recently reverted to me, and I choose to share it under MIT license.
 - A rough `txt` export, from the pdf, [PAIP.txt](https://github.com/norvig/paip-lisp/blob/master/PAIP.txt), containing many errors.
+- A [version](https://github.com/norvig/paip-lisp/blob/master/PAIP-safari.epub) in `epub` format.
 - We're in the process of making a nice online version of the book; here's the [first draft](https://norvig.github.io/paip-lisp) of a few sample chapters.
 
 As seen on [TV](https://norvig.com/paip-tv.html). See also: [errata](https://norvig.com/paip-errata.html), [comments](https://norvig.com/paip-comments.html), [preface](https://norvig.com/paip-preface.html), [retrospective](https://norvig.com/Lisp-retro.html).
 
 
-# Running the Code
 
-There is no single "application" to run. Rather, there is a collection of source code files,
-duplicating the code in the book. You can read and/or run whatever you like. Lisp is an interactive language,
-and you will need to interact with the code to get benefit from it. Some hints:
+# The Lisp Files
 
-* You will need a Common Lisp interpreter/compiler/environment. Here's a [discussion](https://www.reddit.com/r/lisp/comments/752wxe/what_is_the_best_common_lisp_interpreter_out_there/) of the options.
-* You will always need `(load "auxfns.lisp")`.
-* You will need `(requires "`*file*`")`, for the various
-instances of *file* that you want to use. (If `requires` does not work properly on
-your system you may have to alter its definition, in 
-`auxfns.lisp`.  
-* The function `do-examples`, which takes as an argument either `:all`
-or a chapter number or a list of chapter numbers, can be used to see examples
-of the use of various functions.  For example, `(do-examples 1)` shows
-the examples from chapter 1. Access this by doing `(requires "examples")`.
-
-# The Files
-
-The index below gives the chapter in the book, file
-name, and short description for each file.  
+The [Lisp code files](https://github.com/norvig/paip-lisp/tree/master/lisp) are listed here:
 
 <p>
 <table border=1>
@@ -92,6 +77,24 @@ name, and short description for each file.
 <p>
 <hr>
 <i><a href="http://www.norvig.com">Peter Norvig</a></i>
+      
+
+# Running the Code
+
+There is no single "application" to run. Rather, there is a collection of source code files,
+duplicating the code in the book. You can read and/or run whatever you like. Lisp is an interactive language,
+and you will need to interact with the code to get benefit from it. Some hints:
+
+* You will need a Common Lisp interpreter/compiler/environment. Here's a [discussion](https://www.reddit.com/r/lisp/comments/752wxe/what_is_the_best_common_lisp_interpreter_out_there/) of the options.
+* You will always need `(load "auxfns.lisp")`.
+* You will need `(requires "`*file*`")`, for the various
+instances of *file* that you want to use. (If `requires` does not work properly on
+your system you may have to alter its definition, in 
+`auxfns.lisp`.  
+* The function `do-examples`, which takes as an argument either `:all`
+or a chapter number or a list of chapter numbers, can be used to see examples
+of the use of various functions.  For example, `(do-examples 1)` shows
+the examples from chapter 1. Access this by doing `(requires "examples")`.
 
 # Table of Contents: Chapters
 
