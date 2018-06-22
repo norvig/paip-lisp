@@ -6,17 +6,16 @@
 This is an open-source repository for the book *Paradigms of Artificial
 Intelligence Programming: Case Studies in Common Lisp* by Peter Norvig (1992), and the code contained therein.  The copyright has reverted to the author, who has shared it here under MIT license.
 
-# The Book (in Multiple Formats)
+# The Book
 
-- A `pdf` in two parts: Chapters 1-14 ([PAIP-part1.pdf](https://github.com/norvig/paip-lisp/blob/master/PAIP-part1.pdf)) and 15-25 ([PAIP-part2.pdf](https://github.com/norvig/paip-lisp/blob/master/PAIP-part2.pdf)). 
-- A rough `txt` export, [PAIP.txt](https://github.com/norvig/paip-lisp/blob/master/PAIP.txt), containing many errors.
-- An `epub` version, [PAIP-safari.epub](https://github.com/norvig/paip-lisp/blob/master/PAIP-safari.epub), with fewer errors.
-- Markdown versions of chapters, linked below:
+The book is available in these formats: `pdf` [PAIP-part1.pdf](https://github.com/norvig/paip-lisp/blob/master/PAIP-part1.pdf)) (Chapters 1-14) and ([PAIP-part2.pdf](https://github.com/norvig/paip-lisp/blob/master/PAIP-part2.pdf)) (15-25);
+[PAIP.txt](https://github.com/norvig/paip-lisp/blob/master/PAIP.txt) (containing many errors);
+[PAIP-safari.epub](https://github.com/norvig/paip-lisp/blob/master/PAIP-safari.epub) (much cleaner); and markdown by chapter:
 
 - **Part I:  Introduction to Common Lisp**
   * 1  [Introduction to Lisp](docs/chapter1.md)
   * 2  [A Simple Lisp Program](docs/chapter2.md)
-  * 3 [3  Overview of Lisp](docs/chapter3.md)
+  * 3 [Overview of Lisp](docs/chapter3.md)
 - **Part II: Early AI Programs**
   * 4  [GPS:  The General problem Solver](docs/chapter4.md)
   * 5  [Eliza:  Dialog with a Machine](docs/chapter5.md)
