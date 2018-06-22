@@ -12,6 +12,9 @@ The book is available in these formats:  [PAIP-part1.pdf](https://github.com/nor
 [PAIP.txt](https://github.com/norvig/paip-lisp/blob/master/PAIP.txt) (containing many errors);
 [PAIP-safari.epub](https://github.com/norvig/paip-lisp/blob/master/PAIP-safari.epub) (much cleaner); and `chapter?.md` markdown files:
 
+- **Paradigms of Artificial Intelligence Programming**
+  * [Front matter](docs/frontmatter.md)
+  * [Preface](docs/preface.md)
 - **Part I:  Introduction to Common Lisp**
   * 1  [Introduction to Lisp](docs/chapter1.md)
   * 2  [A Simple Lisp Program](docs/chapter2.md)
@@ -43,7 +46,7 @@ The book is available in these formats:  [PAIP-part1.pdf](https://github.com/nor
   * 24  [ANSI Common Lisp](docs/chapter24.md)
   * 25  [Troubleshooting](docs/chapter25.md)
   
-As seen on [TV](https://norvig.com/paip-tv.html). See also: [errata](https://norvig.com/paip-errata.html), [comments](https://norvig.com/paip-comments.html), [preface](https://norvig.com/paip-preface.html), [retrospective](https://norvig.com/Lisp-retro.html).
+As seen on [TV](https://norvig.com/paip-tv.html). See also: [errata](https://norvig.com/paip-errata.html), [comments](https://norvig.com/paip-comments.html),  [retrospective](https://norvig.com/Lisp-retro.html).
 
 # The Lisp Files
 
