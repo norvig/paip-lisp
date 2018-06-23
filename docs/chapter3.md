@@ -276,26 +276,15 @@ For example:
 
 When the main purpose is to return a value rather than take action, `cond` and `if` (with explicit `nil` in the else case) are preferred over when and `unless`, which implicitly return `nil` in the else case, `when` and `unless` are preferred when there is only one possibility, `if` (or, for some people, `cond)` when there are two, and `cond` when there are more than two:
 
-[ ](#){:#l0060}`(defun tax-bracket (income)`
-!!!(p) {:.unnumlist}
-
-  `"Determine what percent tax should be paid for this income."`
-!!!(p) {:.unnumlist}
-
-  `(cond ((< income 10000.00) 0.00)`
-!!!(p) {:.unnumlist}
-
-     `((< income 30000.00) 0.20)`
-!!!(p) {:.unnumlist}
-
-     `((< income 50000.00) 0.25)`
-!!!(p) {:.unnumlist}
-
-     `((< income 70000.00) 0.30)`
-!!!(p) {:.unnumlist}
-
-     `(t             .35)))`
-!!!(p) {:.unnumlist}
+```lisp
+(defun tax-bracket (income)
+  "Determine what percent tax should be paid for this income."
+  (cond ((< income 10000.00) 0.00)
+        ((< income 30000.00) 0.20)
+        ((< income 50000.00) 0.25)
+        ((< income 70000.00) 0.30)
+        (t                   0.35)))
+```
 
 If there are several tests comparing an expression to constants, then case is appropriate.
 A case form looks like:
@@ -448,21 +437,15 @@ In the following example, we have a list of players and want to decide which pla
 The structure `player` has slots for the player’s score and number of wins, and the function `determine` - `winner` increments the winning player’s `wins` field.
 The expansion of the `incf` form binds a temporary variable so that the sort is not done twice.
 
-[ ](#){:#l0085}`(defstruct player (score 0) (wins 0))`
-!!!(p) {:.unnumlist}
+```lisp
+(defstruct player (score 0) (wins 0))
 
-`(defun determine-winner (players)`
-!!!(p) {:.unnumlist}
 
-   `"Increment the WINS for the player with highest score."`
-!!!(p) {:.unnumlist}
-
-   `(incf (player-wins (first (sort players #’>`
-!!!(p) {:.unnumlist}
-
-`                  :key #’player-score)))))`
-!!!(p) {:.unnumlist}
-
+(defun determine-winner (players)
+  "Increment the WINS for the player with highest score."
+  (incf (player-wins (first (sort players #'>
+                                  :key #'player-score)))))
+```
 `≡`
 !!!(p) {:.unnumlist}
 
@@ -515,58 +498,37 @@ The `let` form introduces a new variable, `len`, which is initially bound to zer
 The `dolist` form then executes the body once for each element of the list, with the body incrementing `len` by one each time.
 This use is unusual in that the loop iteration variable, `element`, is not used in the body.
 
-[ ](#){:#l0095}`(defun lengthl (list)`
-!!!(p) {:.unnumlist}
-
-` (let (len 0))       ;start with LEN=0`
-!!!(p) {:.unnumlist}
-
-`  (dolist (element list) ;and on each iteration`
-!!!(p) {:.unnumlist}
-
-`   (incf len))        ; increment LEN by 1`
-!!!(p) {:.unnumlist}
-
-`  len))           ;and return LEN`
-!!!(p) {:.unnumlist}
+```lisp
+(defun length1 (list)
+  (let ((len 0))            ; start with LEN=0
+    (dolist (element list)  ; and on each iteration
+      (incf len))           ;  increment LEN by 1
+    len))                   ; and return LEN
+```
 
 It is also possible to use the optional result of `dolist`, as shown below.
 While many programmers use this style, I find that it is too easy to lose track of the result, and so I prefer to place the result last explictly.
 
-[ ](#){:#l0100}`(defun lengthl.1 (list)        ;alternate version:`
-!!!(p) {:.unnumlist}
-
-` (let ((len 0))         ;(not my preference)`
-!!!(p) {:.unnumlist}
-
-`  (dolist (element list len) ;uses len as result here`
-!!!(p) {:.unnumlist}
-
-`   (incf len))))`
-!!!(p) {:.unnumlist}
+```lisp
+(defun length1.1 (list)         ; alternate version:
+  (let ((len 0))                ; (not my preference)
+    (dolist (element list len)  ; uses len as result here
+      (incf len))))
+```
 
 The function `mapc` performs much the same operation as the special form `dolist`.
 In the simplest case, `mapc` takes two arguments, the first a function, the second a list.
 It applies the function to each element of the list.
 Here is `length` using `mapc`:
 
-[ ](#){:#l0105}`(defun length2 (list)`
-!!!(p) {:.unnumlist}
-
-` (let ((len 0))        ;start with LEN=0`
-!!!(p) {:.unnumlist}
-
-`  (mapc #’(lambda (element) ;and on each iteration`
-!!!(p) {:.unnumlist}
-
-`        (incf len))   ; increment LEN by 1`
-!!!(p) {:.unnumlist}
-
-`     list)`
-!!!(p) {:.unnumlist}
-
-`  len)) ;and return LEN`
-!!!(p) {:.unnumlist}
+```lisp
+(defun length2 (list)
+  (let ((len 0))                    ; start with LEN=0
+    (mapc #'(lambda (element)       ; and on each iteration
+              (incf len))           ;  increment LEN by 1
+          list)
+    len))                           ; and return LEN
+```
 
 There are seven different mapping functions, of which the most useful are `mapc` and `mapcar`.
 `mapcar` executes the same function calls as `mapc,` but then returns the results in a list.
@@ -603,17 +565,12 @@ This is often referred to as *cdr-ing down a list,* because on each operation we
 (Actually, here we have used the more mnemonic name `rest` instead of `cdr`.) Note that the `do loop` has no body!
 All the computation is done in the variable initialization and stepping, and in the end test.
 
-[ ](#){:#l0120}`(defun length3 (list)`
-!!!(p) {:.unnumlist}
-
-` (do ((len 0 (+ len 1))  ;start with LEN=0, increment`
-!!!(p) {:.unnumlist}
-
-`   (1 list (rest 1)))   ;… on each iteration`
-!!!(p) {:.unnumlist}
-
-`   ((null 1) len)))    ;(until the end of the list)`
-!!!(p) {:.unnumlist}
+```lisp
+(defun length3 (list)
+  (do ((len 0 (+ len 1))   ; start with LEN=0, increment
+       (l list (rest l)))  ; ... on each iteration
+      ((null l) len)))     ; (until the end of the list)
+```
 
 I find the `do` form a little confusing, because it does not clearly say that we are looping through a list.
 To see that it is indeed iterating over the list requires looking at both the variable `l` and the end test.
@@ -627,23 +584,22 @@ The syntax of `loop` is an entire language by itself, and a decidedly non-Lisp-l
 Rather than list all the possibilities for `loop`, we will just give examples here, and refer the reader to *Common Lisp the Language*, 2d edition, or chapter 24.5 for more details.
 Here are three versions of `length` using `loop`:
 
-[ ](#){:#t0045}
-!!!(table)
+```lisp
+(defun length4 (list)
+  (loop for element in list      ; go through each element
+        count t))                ;   counting each one
 
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `(defun length4 (list)` | |
-|  `(loop for element in list` | `;go through each element` |
-| `  count t))` | `; counting each one` |
-| `(defun length5 (list)` | |
-| ` (loop for element in list` | `;go through each element` |
-| `  summing 1))` | `; adding 1 each time` |
-| `(defun length6 (list)` | |
-| ` (loop with len = 0` | `;start with LEN=0` |
-| `  until (null list)` | `;and (until end of list)` |
-| `  for element = (pop list)` | `;on each iteration` |
-| `  do (incf len)` | `; increment LEN by 1` |
-| `  finally (return len)))` | `;and return LEN` |
+(defun length5 (list)
+  (loop for element in list      ; go through each element
+        summing 1))              ;   adding 1 each time
+
+(defun length6 (list)
+  (loop with len = 0             ; start with LEN=0
+        until (null list)        ; and (until end of list)
+        for element = (pop list) ; on each iteration
+        do (incf len)            ;  increment LEN by 1
+        finally (return len)))   ; and return LEN
+```
 
 Every programmer learns that there are certain kinds of loops that are used again and again.
 These are often called *programming idioms* or *cliches.* An example is going through the elements of a list or array and doing some operation to each element.
@@ -658,30 +614,23 @@ In addition to special forms like `dolist` and `dotimes,` there are quite a few 
 Two examples are `count-if,` which counts the number of elements of a sequence that satisfy a predicate, and `position-if,` which returns the index of an element satisfying a predicate.
 Both can be used to implement `length.` In `length7` below, `count - if` gives the number of elements in `list` that satisfy the predicate `true.` Since `true` is defined to be always true, this gives the length of the list.
 
-[ ](#){:#l0125}`(defun length7 (list)`
-!!!(p) {:.unnumlist}
+```lisp
+(defun length7 (list)
+  (count-if #'true list))
 
-` (count-if #’true list))`
-!!!(p) {:.unnumlist}
-
-`(defun true (x) t)`
-!!!(p) {:.unnumlist}
+(defun true (x) t)
+```
 
 In `length8,` the function `position` - `if` finds the position of an element that satisfies the predicate true, starting from the end of the list.
 This will be the very last element of the list, and since indexing is zero-based, we add one to get the length.
 Admittedly, this is not the most straightforward implementation of `length.`
 
-[ ](#){:#l0130}`(defun length8 (list)`
-!!!(p) {:.unnumlist}
-
-` (if (null list)`
-!!!(p) {:.unnumlist}
-
-   `0`
-!!!(p) {:.unnumlist}
-
-   `(+ 1 (position-if #'true list :from-end t))))`
-!!!(p) {:.unnumlist}
+```lisp
+(defun length8 (list)
+  (if (null list)
+      0
+      (+ 1 (position-if #'true list :from-end t))))
+```
 
 A partial table of functions that implement looping idioms is given below.
 These functions are designed to be flexible enough to handle almost all operations on sequences.
@@ -767,17 +716,12 @@ As we have seen above, there is a dizzying number of functions and special forms
 
 One simple definition of `length` is “the empty list has length 0, and any other list has a length which is one more than the length of the rest of the list (after the first element).” This translates directly into a recursive function:
 
-[ ](#){:#l0155}`(defun length9 (list)`
-!!!(p) {:.unnumlist}
-
- `(if (null list)`
-!!!(p) {:.unnumlist}
-
-   `0`
-!!!(p) {:.unnumlist}
-
-   `(+ 1 (length9 (rest list)))))`
-!!!(p) {:.unnumlist}
+```lisp
+(defun length9 (list)
+  (if (null list)
+      0
+      (+ 1 (length9 (rest list)))))
+```
 
 This version of `length` arises naturally from the recursive definition of a list: “a list is either the empty list or an element consed onto another list.” In general, most recursive functions derive from the recursive nature of the data they are operating on.
 Some kinds of data, like binary trees, are hard to deal with in anything but a recursive fashion.
@@ -793,23 +737,15 @@ One objection to the use of recursive functions is that they are inefficient, be
 This may be true for the function `1ength9`, but it is not necessarily true for all recursive calls.
 Consider the following definition:
 
-[ ](#){:#l0160}`(defun length10 (list)`
-!!!(p) {:.unnumlist}
+```lisp
+(defun length10 (list)
+  (length10-aux list 0))
 
-` (length10-aux list 0))`
-!!!(p) {:.unnumlist}
-
-`(defun length10-aux (sublist len-so-far)`
-!!!(p) {:.unnumlist}
-
-` (if (null sublist)`
-!!!(p) {:.unnumlist}
-
-   `len-so-far`
-!!!(p) {:.unnumlist}
-
-   `(length10-aux (rest sublist) (+ 1 len-so-far))))`
-!!!(p) {:.unnumlist}
+(defun length10-aux (sublist len-so-far)
+  (if (null sublist)
+      len-so-far
+      (length10-aux (rest sublist) (+ 1 len-so-far))))
+```
 
 `length10` uses `length10` - `aux` as an auxiliary function, passing it 0 as the length of the list so far.
 `length10`-`aux` then goes down the list to the end, adding 1 for each element.
@@ -829,41 +765,25 @@ Some find it ugly to introduce 1 `length10`- `aux`.
 For them, there are two alternatives.
 First, we could combine 1 `length10` and 1 `length10`-`aux` into a single function with an optional parameter:
 
-[ ](#){:#l0165}`(defun length11 (list &optional (len-so-far 0))`
-!!!(p) {:.unnumlist}
-
- `(if (null list)`
-!!!(p) {:.unnumlist}
-
-   `len-so-far`
-!!!(p) {:.unnumlist}
-
-   `(length11 (rest list) (+ 1 len-so-far))))`
-!!!(p) {:.unnumlist}
+```lisp
+(defun length11 (list &optional (len-so-far 0))
+  (if (null list)
+      len-so-far
+      (length11 (rest list) (+ 1 len-so-far))))
+```
 
 Second, we could introduce a *local* function inside the definition of the main function.
 This is done with the special form `labels`:
 
-[ ](#){:#l0170}`(defun length12 (the-list)`
-!!!(p) {:.unnumlist}
-
- `(labels`
-!!!(p) {:.unnumlist}
-
-  `((length13 (list len-so-far)`
-!!!(p) {:.unnumlist}
-
-   `(if (null list)`
-!!!(p) {:.unnumlist}
-
-    `len-so-far`
-!!!(p) {:.unnumlist}
-
-    `(length13 (rest list) (+ 1 len-so-far)))))`
-!!!(p) {:.unnumlist}
-
-  `(length13 the-list 0)))`
-!!!(p) {:.unnumlist}
+```lisp
+(defun length12 (the-list)
+  (labels
+    ((length13 (list len-so-far)
+       (if (null list)
+           len-so-far
+           (length13 (rest list) (+ 1 len-so-far)))))
+    (length13 the-list 0)))
+```
 
 In general, a `1abels` form (or the similar `flet` form) can be used to introduce one or more local functions.
 It has the following syntax:
@@ -961,26 +881,15 @@ For example, the following function computes the product of a list of numbers, b
 Note that this returns from the `dolist` only, not from the function itself (although in this case, the value returned by `dolist` becomes the value returned by the function, because it is the last expression in the function).
 I have used uppercase letters in `RETURN` to emphasize the fact that it is an unusual step to exit from a loop.
 
-[ ](#){:#l0195}`(defun product (numbers)`
-!!!(p) {:.unnumlist}
-
-  `"Multiply all the numbers together to compute their product."`
-!!!(p) {:.unnumlist}
-
-  `(let ((prod 1))`
-!!!(p) {:.unnumlist}
-
-    `(dolist (n numbers prod)`
-!!!(p) {:.unnumlist}
-
-     `(if (= n 0)`
-!!!(p) {:.unnumlist}
-
-      `(RETURN 0)`
-!!!(p) {:.unnumlist}
-
-      `(setf prod (* n prod))))))`
-!!!(p) {:.unnumlist}
+```lisp
+(defun product (numbers)
+  "Multiply all the numbers together to compute their product."
+  (let ((prod 1))
+    (dolist (n numbers prod)
+      (if (= n 0)
+          (RETURN 0)
+          (setf prod (* n prod))))))
+```
 
 ### [ ](#){:#st0050}Macros
 {:#s0050}
@@ -1034,20 +943,13 @@ A defmacro` form is similar to a `defun` in that it has a parameter list, option
 There are a few differences in what is allowed in the parameter list, which will be covered later.
 Here is a definition of the macro `while`, which takes a test and a body, and builds up the `loop` code shown previously:
 
-[ ](#){:#l0215}`(defmacro while (test &rest body)`
-!!!(p) {:.unnumlist}
-
-  `"Repeat body while test is true."`
-!!!(p) {:.unnumlist}
-
-  `(list* 'loop`
-!!!(p) {:.unnumlist}
-
-  `(list 'unless test '(return nil))`
-!!!(p) {:.unnumlist}
-
-      `body))`
-!!!(p) {:.unnumlist}
+```lisp
+(defmacro while (test &rest body)
+  "Repeat body while test is true."
+  (list* 'loop
+         (list 'unless test '(return nil))
+         body))
+```
 
 (The function `list`* is like `list`, except that the last argument is appended onto the end of the list of the other arguments.) We can see what this macro expands into by using `macroexpand`, and see how it runs by typing in an example:
 
@@ -1105,18 +1007,12 @@ The following version of `while` following attempts to do just that.
 It defines the local variable `code` to be a template for the code we want, and then substitutes the real values of the variables test and body for the placeholders in the code.
 This is done with the function `subst`; (`subst`*new old tree*) substitutes *new* for each occurrence of *old* anywhere within *tree.*
 
-[ ](#){:#l0225}`(defmacro while (test &rest body)`
-!!!(p) {:.unnumlist}
-
- `"Repeat body while test is true."`
-!!!(p) {:.unnumlist}
-
- `(let ((code '(loop (unless test (return nil)) .
-body)))`
-!!!(p) {:.unnumlist}
-
-   `(subst test 'test (subst body 'body code))))`
-!!!(p) {:.unnumlist}
+```lisp
+(defmacro while (test &rest body)
+  "Repeat body while test is true."
+  (let ((code '(loop (unless test (return nil)) . body)))
+    (subst test 'test (subst body 'body code))))
+```
 
 The need to build up code (and noncode data) from components is so frequent that there is a special notation for it, the *backquote* notation.
 The backquote character `"‘"` is similar to the quote character `"’"`.
@@ -1125,17 +1021,12 @@ Anything marked by a leading comma `","` is evaluated and inserted into the stru
 The notation is covered in more detail in [section 23.5](B9780080571157500236.xhtml#s0030).
 Here we use the combination of backquote and comma to rewrite `while`:
 
-[ ](#){:#l0230}`(defmacro while (test &rest body)`
-!!!(p) {:.unnumlist}
-
- `"Repeat body while test is true."`
-!!!(p) {:.unnumlist}
-
- `'(loop (unless ,test (return nil))`
-!!!(p) {:.unnumlist}
-
-     `,@body))`
-!!!(p) {:.unnumlist}
+```lisp
+(defmacro while (test &rest body)
+  "Repeat body while test is true."
+  `(loop (unless ,test (return nil))
+         ,@body))
+```
 
 Here are some more examples of backquote.
 Note that at the end of a list, `",@"` has the same effect as `"."` followed by `","`.
@@ -1421,7 +1312,17 @@ Many Common Lisp functions treat the expression `((a b) ((c)) (d e))` as a seque
 The function `copy` - `tree` creates a copy of a tree, and `tree` - `equal` tests if two trees are equal by traversing cons cells, but not other complex data like vectors or strings.
 In that respect, `tree-equal` is similar to `equal`, but `tree-equal` is more powerful because it allows a : `test keyword`:
 
-[ ](#){:#l0295}`> (setf tree '((a b) ((c)) (d e)))` `> (tree-equal tree (copy-tree tree))` ⇒ `T` `(defun same-shape-tree (a b)`  `"Are two trees the same except for the leaves?"`  `(tree-equal a b :test #’true))` `(defun true (&rest ignore) t)` `> (same-shape-tree tree '((1 2) ((3)) (4 5)))` ⇒ `T` `> (same-shape-tree tree '((1 2) (3) (4 5)))` ⇒ `NIL`
+[ ](#){:#l0295}`> (setf tree '((a b) ((c)) (d e)))` `> (tree-equal tree (copy-tree tree))` ⇒ `T`
+
+```lisp
+(defun same-shape-tree (a b)
+  "Are two trees the same except for the leaves?"
+  (tree-equal a b :test #'true))
+
+(defun true (&rest ignore) t)
+```
+
+`> (same-shape-tree tree '((1 2) ((3)) (4 5)))` ⇒ `T` `> (same-shape-tree tree '((1 2) (3) (4 5)))` ⇒ `NIL`
 !!!(p) {:.unnumlist}
 
 [Figure 3.4](#f0025) shows the tree `((a b) ((c)) (d e))`asa cons cell diagram.
@@ -1437,15 +1338,17 @@ Note that the order of old and new in the a-list for `sublis` is reversed from t
 The name `sublis` is uncharacteristically short and confusing; abetter name would be `subst-list`.
 
 [ ](#){:#l0300}`> (subst 'new 'old '(old ((very old))) (NEW ((VERY NEW)))` `> (sublis '((old .
-new)) '(old ((very old))))` ⇒ `(NEW ((VERY NEW)))` `> (subst 'new 'old 'old) => 'NEW`  `(defun english->french (words)`   `(subiis '((are .
-va) (book .
-libre) (friend .
-ami)`      `(hello .
-bonjour) (how .
-comment) (my .
-mon)`      `(red .
-rouge) (you .
-tu))`     `words))`  `> (english->french '(hello my friend - how are you today?))` ⇒   `(BONJOUR MON AMI - COMMENT VA TU TODAY?)`
+new)) '(old ((very old))))` ⇒ `(NEW ((VERY NEW)))` `> (subst 'new 'old 'old) => 'NEW`  
+
+```lisp
+(defun english->french (words)
+  (sublis '((are . va) (book . libre) (friend . ami)
+            (hello . bonjour) (how . comment) (my . mon)
+            (red . rouge) (you . tu))
+          words))
+```
+
+  `> (english->french '(hello my friend - how are you today?))` ⇒   `(BONJOUR MON AMI - COMMENT VA TU TODAY?)`
 !!!(p) {:.unnumlist}
 
 ## [ ](#){:#st0090}3.8 Functions on Numbers
@@ -1811,8 +1714,13 @@ The function error takes a format string and optional arguments.
 It signals a fatal error; that is, it stops the program and does not offer the user any way of restarting it.
 For example:
 
-[ ](#){:#l0365}`(defun average (numbers)`  `(if (null numbers)`   `(error "Average of the empty list is undefined.")`   `(/ (reduce #’+ numbers)`    `(length numbers))))`
-!!!(p) {:.unnumlist}
+```lisp
+(defun average (numbers)
+  (if (null numbers)
+      (error "Average of the empty list is undefined.")
+      (/ (reduce #'+ numbers)
+         (length numbers))))
+```
 
 In many cases, a fatal error is a little drastic.
 The function `cerror` stands for continuable error.
@@ -1821,7 +1729,19 @@ The function `cerror` stands for continuable error.
 In the following implementation, the user continues by typing : `continue`.
 In ANSI Common Lisp, there are additional ways of specifying options for continuing.
 
-[ ](#){:#l0370}`(defun average (numbers)`  `(if (null numbers)`   `(progn`    `(cerror "Use 0 as the average."`      `"Average of the empty list is undefined.")`    `0)`   `(/ (reduce #+ numbers)`    `(length numbers))))` `> (average '())` `Error: Average of the empty list is undefined.` `Error signaled by function AVERAGE.` `If continued: Use 0 as the average.` `>> : continue` `0`
+```lisp
+(defun average (numbers)
+  (if (null numbers)
+      (progn
+        (cerror "Use 0 as the average."
+                "Average of the empty list is undefined.")
+        0)
+      (/ (reduce #'+ numbers)
+         (length numbers))))
+```
+
+
+`> (average '())` `Error: Average of the empty list is undefined.` `Error signaled by function AVERAGE.` `If continued: Use 0 as the average.` `>> : continue` `0`
 !!!(p) {:.unnumlist}
 
 In this example, adding error checking nearly doubled the length of the code.
@@ -1836,8 +1756,12 @@ As the name implies, `check-type` is used to check the type of an argument.
 It signals a continuable error if the argument has the wrong type.
 For example:
 
-[ ](#){:#l0375}`(defun sqr (x)`  `"Multiply` x `by itself."`  `(check-type` x `number)`  `(* x x))`
-!!!(p) {:.unnumlist}
+```lisp
+(defun sqr (x)
+  "Multiply x by itself."
+  (check-type x number)
+  (* x x))
+```
 
 If `sqr` is called with a non-number argument, an appropriate error message is printed:
 
@@ -1848,15 +1772,23 @@ assert is more general than check-type.
 In the simplest form, assert tests an expression and signals an error if it is false.
 For example:
 
-[ ](#){:#l0385}`(defun sqr (x)`  `"Multiply` x `by itself."`  `(assert (numberp x))`  `(* x x))`
-!!!(p) {:.unnumlist}
+```lisp
+(defun sqr (x)
+  "Multiply x by itself."
+  (assert (numberp x))
+  (* x x))
+```
 
 There is no possibility of continuing from this kind of assertion.
 It is also possible to give assert a list of places that can be modified in an attempt to make the assertion true.
 In this example, the variable `x` is the only thing that can be changed:
 
-[ ](#){:#l0390}`(defun sqr (x)`  `"Multiply x by itself."`  `(assert (numberp x) (x))`  `(* x x))`
-!!!(p) {:.unnumlist}
+```lisp
+(defun sqr (x)
+  "Multiply x by itself."
+  (assert (numberp x) (x))
+  (* x x))
+```
 
 If the assertion is violated, an error message will be printed and the user will be given the option of continuing by altering `x`.
 If `x` is given a value that satisfies the assertion, then the program continues, assert always returns nil.
@@ -1870,8 +1802,14 @@ So the most complex syntax for assert is:
 Here is another example.
 The assertion tests that the temperature of the bear’s porridge is neither too hot nor too cold.
 
-[ ](#){:#l0400}`(defun eat-porridge (bear)`  `(assert (< too-cold (temperature (bear-porridge bear)) too-hot)`      `(bear (bear-porridge bear))`      `"~a's porridge is not just right: ~a"`      `bear (hotness (bear-porridge bear)))`  `(eat (bear-porridge bear)))`
-!!!(p) {:.unnumlist}
+```lisp
+(defun eat-porridge (bear)
+  (assert (< too-cold (temperature (bear-porridge bear)) too-hot)
+          (bear (bear-porridge bear))
+          "~a's porridge is not just right: ~a"
+          bear (hotness (bear-porridge bear)))
+  (eat (bear-porridge bear)))
+```
 
 In the interaction below, the assertion failed, and the programmer’s error message was printed, along with two possibilities for continuing.
 The user selected one, typed in a call to `make` - `porridge` for the new value, and the function succesfully continued.
@@ -1948,7 +1886,13 @@ However, in the general case, a function consists of the body of the function co
 Such a pairing is called a *lexical closure,* or just a *closure,* because the lexical variables are enclosed within the function.
 Consider this example:
 
-[ ](#){:#l0430}`(defun adder (c)`  `"Return a function that adds c to its argument."`  `#’(lambda (x) (+ x c)))` `> (mapcar (adder 3) ‘(1 3 10))` ⇒ `(4 6 13)` `> (mapcar (adder 10) ‘(1 3 10))` ⇒ `(11 13 20)`
+```lisp
+(defun adder (c)
+  "Return a function that adds c to its argument."
+  #'(lambda (x) (+ x c)))
+```
+
+`> (mapcar (adder 3) ‘(1 3 10))` ⇒ `(4 6 13)` `> (mapcar (adder 10) ‘(1 3 10))` ⇒ `(11 13 20)`
 !!!(p) {:.unnumlist}
 
 Each time we call `adder` with a different value for `c`, it creates a different function, the function that adds `c` to its argument.
@@ -1959,8 +1903,14 @@ The function bank-account returns a closure that can be used as a representation
 The closure captures the local variable balance.
 The body of the closure provides code to access and modify the local variable.
 
-[ ](#){:#l0435}`(defun bank-account (balance)`  `"Open a bank account starting with the given balance."`  `#'(lambda (action amount)` `  (case action`    `(deposit (setf balance (+ balance amount)))`    `(withdraw (setf balance (- balance amount))))))`
-!!!(p) {:.unnumlist}
+```lisp
+(defun bank-account (balance)
+  "Open a bank account starting with the given balance."
+  #'(lambda (action amount)
+      (case action
+        (deposit  (setf balance (+ balance amount)))
+        (withdraw (setf balance (- balance amount))))))
+```
 
 In the following, two calls to bank-account create two different closures, each with a separate value for the lexical variable `balance`.
 The subsequent calls to the two closures change their respective balances, but there is no confusion between the two accounts.
@@ -2093,8 +2043,19 @@ It asks the user a series of *n* problems, where each problem tests the arithmet
 The arguments to the operator will be random integers from 0 to range.
 Here is the program:
 
-[ ](#){:#l0495}`(defun math-quiz (op range n)`  `"Ask the user a series of math problems."`  `(dotimes (i n)`   `(problem (random range) op (random range))))` `(defun problem` (x `op y)`  `"Ask a math problem, read a reply, and say if it is correct."`  `(format t "~&How much is ~d ~a ~d?"` x `op y)`  `(if (eql (read) (funcall op` x `y))`   `(princ "Correct!")`   `(princ "Sorry, that's not right.")))`
-!!!(p) {:.unnumlist}
+```lisp
+(defun math-quiz (op range n)
+  "Ask the user a series of math problems."
+  (dotimes (i n)
+    (problem (random range) op (random range))))
+
+(defun problem (x op y)
+  "Ask a math problem, read a reply, and say if it is correct."
+  (format t "~&How much is ~d ~a ~d?" x op y)
+  (if (eql (read) (funcall op x y))
+      (princ "Correct!")
+      (princ "Sorry, that's not right.")))
+```
 
 and here is an example of its use:
 
@@ -2124,8 +2085,12 @@ These *keyword* parameters are explicitly named in the function call.
 They are useful when there are a number of parameters that normally take default values but occasionally need specific values.
 For example, we could have defined `math - quiz` as:
 
-[ ](#){:#l0510}`(defun math-quiz (&key (op '+) (range 100) (n 10))`  `"Ask the user a series of math problems."`  `(dotimes (i n)`   `(problem (random range) op (random range))))`
-!!!(p) {:.unnumlist}
+```lisp
+(defun math-quiz (&key (op '+) (range 100) (n 10))
+  "Ask the user a series of math problems."
+  (dotimes (i n)
+    (problem (random range) op (random range))))
+```
 
 Now (`math-quiz :n 5`) and (`math-quiz :op '+ :n 5 :range 100`) mean the same.
 Keyword arguments are specified by the parameter name preceded by a colon, and followed by the value.
@@ -2220,9 +2185,17 @@ We should also test for when the user specifies the : `test -not` predicate, whi
 It is an error to specify both a : `test` and : `test-not` argument to the same call, so we need not test for that case.
 The definition is:
 
-[ ](#){:#l0560}`(defun find-all (item sequence &rest keyword-args` `        &key (test #'eql) test-not &allow-other-keys)`  `"Find all those elements of sequence that match item,`  `according to the keywords.
-Doesn't alter sequence."`  `(if test-not`   `(apply #'remove item sequence`     `:test-not (complement test-not) keyword-args)`   `(apply #'remove item sequence`     `:test (complement test) keyword-args)))`
-!!!(p) {:.unnumlist}
+```lisp
+(defun find-all (item sequence &rest keyword-args
+                 &key (test #'eql) test-not &allow-other-keys)
+  "Find all those elements of sequence that match item,
+  according to the keywords.  Doesn't alter sequence."
+  (if test-not
+      (apply #'remove item sequence
+             :test-not (complement test-not) keyword-args)
+      (apply #'remove item sequence
+             :test (complement test) keyword-args)))
+```
 
 The only hard part about this definition is understanding the parameter list.
 The &rest accumulates all the keyword/value pairs in the variable `keyword-args`.
@@ -2249,9 +2222,12 @@ First, within a macro definition (but not a function definition), the symbol &bo
 The difference is that &body instructs certain formatting programs to indent the rest as a body.
 Thus, if we defined the macro:
 
-[ ](#){:#l0570}`(defmacro while2 (test &body body)`  `"Repeat body while test is true."`  `'(loop (if (not .test) (return nil))`    `.
-,body))`
-!!!(p) {:.unnumlist}
+```lisp
+(defmacro while2 (test &body body)
+  "Repeat body while test is true."
+  `(loop (if (not ,test) (return nil))
+         . ,body))
+```
 
 Then the automatic indentation of `while2` (on certain systems) is prettier than `while`:
 
@@ -2270,8 +2246,11 @@ I think they should be clearly distinguished as local variables with a `let`.
 But some good programmers do use &aux, presumably to save space on the page or screen.
 Against my better judgement, I show an example:
 
-[ ](#){:#l0575}`(defun lengthl4 (list &aux (len 0))`  `(dolist (element list len)`   `(incf len)))`
-!!!(p) {:.unnumlist}
+```lisp
+(defun length14 (list &aux (len 0))
+  (dolist (element list len)
+    (incf len)))
+```
 
 ## [ ](#){:#st0155}3.20 The Rest of Lisp
 {:#s0160}
@@ -2306,15 +2285,29 @@ You will have to consult a reference to learn new format directives.
 
 **Answer 3.3**
 
-[ ](#){:#l0580}` (defun dprint (x)` `  "Print an expression in dotted pair notation."` `  (cond ((atom x) (princ x))` `    (t (princ "(")` `     (dprint (first x))` `     (pr-rest (rest x))` `     (princ ")")` `     x)))` ` (defun pr-rest (x)` `  (princ " .
-")` `  (dprint x))`
-!!!(p) {:.unnumlist}
+```lisp
+(defun dprint (x)
+  "Print an expression in dotted pair notation."
+  (cond ((atom x) (princ x))
+        (t (princ "(")
+           (dprint (first x))
+           (pr-rest (rest x))
+           (princ ")")
+           x)))
+
+(defun pr-rest (x)
+  (princ " . ")
+  (dprint x))
+```
 
 **Answer 3.4** Use the same `dprint` function defined in the last exercise, but change `pr-rest`.
 
-[ ](#){:#l0585}` (defun pr-rest (x)` `  (cond ((null x))` `    ((atom x) (princ " .
-") (princ x))` `    (t (princ " ") (dprint (first x)) (pr-rest (rest x)))))`
-!!!(p) {:.unnumlist}
+```lisp
+(defun pr-rest (x)
+  (cond ((null x))
+        ((atom x) (princ " . ") (princ x))
+        (t (princ " ") (dprint (first x)) (pr-rest (rest x)))))
+```
 
 **Answer 3.5** We will keep a data base called *`db`*.
 The data base is organized into a tree structure of nodes.
@@ -2322,10 +2315,37 @@ Each node has three fields: the name of the object it represents, a node to go t
 We traverse the nodes until we either get an “it” reply or have to give up.
 In the latter case, we destructively modify the data base to contain the new information.
 
-[ ](#){:#l0590}`(defstruct node` ` name` ` (yes nil)` ` (no nil))` `(defvar *db*` ` (make-node:name 'animal` `    :yes (make-node :name 'mammal)` `    :no (make-node` `     :name 'vegetable` `     :no (make-node :name 'mineral))))` `(defun questions (&optional (node *db*))` ` (format t "~&Is it a ~a?
-" (node-name node))` ` (case (read)` `  ((y yes) (if (not (null (node-yes node)))` `     (questions (node-yes node))` `     (setf (node-yes node) (give-up))))` `  ((n no) (if (not (null (node-no node)))` `     (questions (node-no node))` `     (setf (node-no node) (give-up))))` `  (it 'aha!)` `  (t (format t "Reply with YES, NO, or IT if I have guessed it.")` `   (questions node))))` `(defun give-up ()` ` (format t "~&I give up - what is it?
-")` ` (make-node :name (read)))`
-!!!(p) {:.unnumlist}
+```lisp
+(defstruct node
+  name
+  (yes nil)
+  (no nil))
+
+(defvar *db*
+  (make-node :name 'animal
+             :yes (make-node :name 'mammal)
+             :no (make-node
+                   :name 'vegetable
+                   :no (make-node :name 'mineral))))
+
+
+(defun questions (&optional (node *db*))
+  (format t "~&Is it a ~a? " (node-name node))
+  (case (read)
+    ((y yes) (if (not (null (node-yes node)))
+                 (questions (node-yes node))
+                 (setf (node-yes node) (give-up))))
+    ((n no)  (if (not (null (node-no node)))
+                 (questions (node-no node))
+                 (setf (node-no node) (give-up))))
+    (it 'aha!)
+    (t (format t "Reply with YES, NO, or IT if I have guessed it.")
+       (questions node))))
+
+(defun give-up ()
+  (format t "~&I give up - what is it? ")
+  (make-node :name (read)))
+```
 
 Here it is used:
 
@@ -2358,18 +2378,25 @@ Second, in the case where you want to override an existing keyword and pass the 
 
 **Answer 3.9**
 
-[ ](#){:#l0610}`(defun length-r (list)` ` (reduce #'+ (mapcar #'(lambda (x) 1) list)))`
-!!!(p) {:.unnumlist}
+```lisp
+(defun length-r (list)
+  (reduce #'+ (mapcar #'(lambda (x) 1) list)))
+```
 
 or more efficiently:
 
-[ ](#){:#l0615}`(defun length-r (list)` ` (reduce #'(lambda (x y) (+ x 1)) list` `   :initial-value 0))`
-!!!(p) {:.unnumlist}
+```lisp
+(defun length-r (list)
+  (reduce #'(lambda (x y) (+ x 1)) list
+          :initial-value 0))
+```
 
 or, with an ANSI-compliant Common Lisp, you can specify a : key
 
-[ ](#){:#l0620}`(defun length-r (list)` `(reduce #'+ list :key #'(lambda (x) 1)))`
-!!!(p) {:.unnumlist}
+```lisp
+(defun length-r (list)
+  (reduce #'+ list :key #'(lambda (x) 1)))
+```
 
 **Answer 3.12**`(format t "~@(~{~a~^ ~).~)" '(this is a test))`
 
