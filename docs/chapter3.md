@@ -946,10 +946,8 @@ This second cons cell has a rest field that is a third cons cell, one whose rest
 All proper lists have a last cons cell whose rest field is nil.
 [Figure 3.1](#f0010) shows the cons cell notation for the three-element list (`one two three`), as well as for the result of (`cons ‘one ‘two`).
 
-![f03-01-9780080571157](images/B9780080571157500030/f03-01-9780080571157.jpg)     
-Figure 3.1
-!!!(span) {:.fignum}
-Cons Cell Diagrams
+![Figure 3.1: Cons Cell Diagrams](images/chapter3/f03-01.jpg)
+**Figure 3.1: Cons Cell Diagrams**
 
 &#9635; **Exercise 3.2 [s]** The function cons can be seen as a special case of one of the other functions listed previously.
 Which one?
@@ -973,14 +971,11 @@ This is because `read` calls `cons` to build up the list, and each call to `cons
 [Figure 3.2](#f0015) shows two lists, `x` and `Y`, which are both equal to (`one two`), but which are composed of different cons cells, and hence are not identical.
 [Figure 3.3](#f0020) shows that the expression (`rest x`) does not generate new cons cells, but rather shares structure with `x`, and that the expression (`cons ‘ zero x`) generates exactly one new cons cell, whose rest is `x`.
 
-![f03-02-9780080571157](images/B9780080571157500030/f03-02-9780080571157.jpg)     
-Figure 3.2
-!!!(span) {:.fignum}
-Equal But Nonidentical Lists
-![f03-03-9780080571157](images/B9780080571157500030/f03-03-9780080571157.jpg)     
-Figure 3.3
-!!!(span) {:.fignum}
-Parts of Lists
+![Figure 3.2: Equal But Nonidentical Lists](images/chapter3/f03-02.jpg)
+**Figure 3.2: Equal But Nonidentical Lists**
+
+![Figure 3.3: Parts of Lists](images/chapter3/f03-03.jpg)
+**Figure 3.3: Parts of Lists**
 
 When two mathematically equal numbers are read (or computed) in two places, they may or may not be the same, depending on what the designers of your implementation felt was more efficient.
 In most systems, two equal fixnums will be identical, but equal numbers of other types will not (except possibly short floats).
@@ -1179,10 +1174,8 @@ In that respect, `tree-equal` is similar to `equal`, but `tree-equal` is more po
 
 [Figure 3.4](#f0025) shows the tree `((a b) ((c)) (d e))` as a cons cell diagram.
 
-![f03-04-9780080571157](images/B9780080571157500030/f03-04-9780080571157.jpg)     
-Figure 3.4
-!!!(span) {:.fignum}
-Cons Cell Diagram of a Tree
+![Figure 3.4: Cons Cell Diagram of a Tree](images/chapter3/f03-04.jpg)
+**Figure 3.4: Cons Cell Diagram of a Tree**
 
 There are also two functions for substituting a new expression for an old one anywhere within a tree.
 `subst` substitutes a single value for another, while `sublis` takes a list of substitutions in the form of an association list of (*old . new*) pairs.
