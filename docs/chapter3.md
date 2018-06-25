@@ -209,13 +209,13 @@ For example:
 
 ```lisp
 (and (> n 100)
-     (princ "N is large."))    ; Bad style!
+     (princ "N is large."))    ; Bad style!
 (or (<= n 100)
-    (princ "N is large."))    ; Even worse style!
-(cond ((> n 100)        ; OK, but not MY preference
-      (princ "N is large."))
+    (princ "N is large."))    ; Even worse style!
+(cond ((> n 100)        ; OK, but not MY preference
+      (princ "N is large."))
 (when (> n 100)
-  (princ "N is large."))    ; Good style.
+  (princ "N is large."))    ; Good style.
 ```
 
 When the main purpose is to return a value rather than take action, `cond` and `if` (with explicit `nil` in the else case) are preferred over when and `unless`, which implicitly return `nil` in the else case, `when` and `unless` are preferred when there is only one possibility, `if` (or, for some people, `cond)` when there are two, and `cond` when there are more than two:
@@ -234,7 +234,7 @@ If there are several tests comparing an expression to constants, then case is ap
 A `case` form looks like:
 
 > `(case` *expression*  
-      (*match result*...)...)
+      (*match result*...)...)
 
 The *expression* is evaluated and compared to each successive *match*.
 As soon as one is `eql`, the *result* expressions are evaluated and the last one is returned.
@@ -253,26 +253,26 @@ Here are some examples of case forms and their `cond` equivalents:
 | []() | |
 |---|---|
 | `(case x` | `(cond` |
-|   `(1 10)` |   `((eql x 1) 10)` |
-|   `(2 20))` |   `((eql x 2) 20))` |
+|   `(1 10)` |   `((eql x 1) 10)` |
+|   `(2 20))` |   `((eql x 2) 20))` |
 | | |
 | `(typecase x` | `(cond` |
-|   `(number (abs x))` |   `((typep x 'number) (abs x))` |
-|   `(list (length x)))` |   `((typep x 'list) (length x)))` |
+|   `(number (abs x))` |   `((typep x 'number) (abs x))` |
+|   `(list (length x)))` |   `((typep x 'list) (length x)))` |
 | | |
 | `(ecase x` | `(cond` |
-|   `(1 10)` |   `((eql x 1) 10)` |
-|   `(2 20))` |   `((eql x 2) 20)` |
-| |   `(t (error "no valid case")))` |
+|   `(1 10)` |   `((eql x 1) 10)` |
+|   `(2 20))` |   `((eql x 2) 20)` |
+| |   `(t (error "no valid case")))` |
 | | |
 | `(etypecase x` | `(cond` |
-|   `(number (abs x))` |   `((typep x 'number) (abs x))` |
-|   `(list (length x)))` |   `((typep x 'list) (length x))` |
-| |   `(t (error "no valid typecase")))` |
+|   `(number (abs x))` |   `((typep x 'number) (abs x))` |
+|   `(list (length x)))` |   `((typep x 'list) (length x))` |
+| |   `(t (error "no valid typecase")))` |
 
 ### Special Forms for Dealing with Variables and Places
 
-The special form `setf` is used to assign a new value to a variable or *place,* much as an assignment statement with `=` or `:=` is used in other languages.
+The special form `setf` is used to assign a new value to a variable or *place,* much as an assignment statement with `=` or `:=` is used in other languages.
 A place, or *generalized variable* is a name for a location that can have a value stored in it.
 Here is a table of corresponding assignment forms in Lisp and Pascal:
 
@@ -304,15 +304,15 @@ It is also possible to introduce local variables using the special form `let`.
 Following are the general `let` form, along with an example.
 Each variable is bound to the corresponding value, and then the body is evaluated:
 
-> `(let` ((*variable value*)...)  
+> `(let` ((*variable value*)...)  
 > *body*...)
 
 ```lisp
 (let ((x 40)
-       (y (+ 1 1)))
-  (+ x y)) => 42
+       (y (+ 1 1)))
+  (+ x y)) => 42
 ```
-       
+
 Defining a local variable with a `let` form is really no different from defining parameters to an anonymous function.
 The former is equivalent to:
 
@@ -324,7 +324,7 @@ The former is equivalent to:
 
 ```lisp
 ((lambda (x y)
-     (+ x y))
+     (+ x y))
 40
 (+ 1 1))
 ```
@@ -338,7 +338,7 @@ For example:
 ```lisp
 (let* ((x 6)
        (y (* x x)))
-  (+ x y)) => 42
+  (+ x y)) => 42
 ```
 
 We could not have used `let` here, because then the variable `x` would be unbound during the computation of `y`'s value.
@@ -351,10 +351,10 @@ If `list` is the name of a location that holds a list, then (`push` *x* `list`) 
 `push` and `pop` are equivalent to the following expressions:
 
 ```lisp
-(push x list) = (setf list (cons x list))
-(pop list)    = (let ((result (first list)))
-                 (setf list (rest list))
-                 result)
+(push x list) = (setf list (cons x list))
+(pop list)    = (let ((result (first list)))
+                 (setf list (rest list))
+                 result)
 ```
 
 Just as a list can be used to accumulate elements, a running sum can be used to accumulate numbers.
@@ -364,8 +364,8 @@ For those who know C, (`incf x`) is equivalent to `++x`, and (`incf x 2`) is equ
 In Lisp the equivalence is:
 
 ```lisp
-(incf x) = (incf x 1) = (setf x (+ x 1))
-(decf x) = (decf x 1) = (setf x (- x 1))
+(incf x) = (incf x 1) = (setf x (+ x 1))
+(decf x) = (decf x 1) = (setf x (- x 1))
 ```
 
 When the location is a complex form rather than a variable, Lisp is careful to expand into code that does not evaluate any subform more than once.
@@ -384,9 +384,9 @@ The expansion of the `incf` form binds a temporary variable so that the sort is 
                                   :key #'player-score)))))
 =
 (defun determine-winner (players)
-   "Increment the WINS for the player with highest score."
-   (let ((temp (first (sort players #'> :key #'player-score))))
-      (setf (player-wins temp) (+ (player-wins temp) 1))))
+   "Increment the WINS for the player with highest score."
+   (let ((temp (first (sort players #'> :key #'player-score))))
+      (setf (player-wins temp) (+ (player-wins temp) 1))))
 ```
 
 ### Functions and Special Forms for Repetition
@@ -467,8 +467,8 @@ The syntax of `do` is as follows:
 
 ```lisp
 (do ((variable initial next)...)
-    (exit-test result)
-  body...)
+    (exit-test result)
+  body...)
 ```
 
 Each *variable* is initially bound to the *initial* value.
@@ -559,7 +559,7 @@ The flexibility comes in three forms.
 First, functions like mapcar can apply to an arbitrary number of lists, not just one:
 
 ```lisp
-> (mapcar #'- '(1 2 3)) => (-1 -2 -3)
+> (mapcar #'- '(1 2 3)) => (-1 -2 -3)
 > (mapcar #'+ '(1 2) '(10 20)) => (11 22)
 > (mapcar #'+ '(1 2) '(10 20) '(100 200)) => (111 222)
 ```
@@ -567,23 +567,23 @@ First, functions like mapcar can apply to an arbitrary number of lists, not just
 Second, many of the functions accept keywords that allow the user to vary the test for comparing elements, or to only consider part of the sequence.
 
 ```lisp
-> (remove 1 '(1 2 3 2 1 0 -1)) => (2 3 2 0 -1)
+> (remove 1 '(1 2 3 2 1 0 -1)) => (2 3 2 0 -1)
 
-> (remove 1 '(1 2 3 2 1 0 -1) :key #'abs) => (2 3 2 0)
+> (remove 1 '(1 2 3 2 1 0 -1) :key #'abs) => (2 3 2 0)
 
-> (remove 1 '(1 2 3 2 1 0 -1) :test #'<) => (1 1 0 -1)
+> (remove 1 '(1 2 3 2 1 0 -1) :test #'<) => (1 1 0 -1)
 
-> (remove 1 '(1 2 3 2 1 0 -1) : start 4) => (1 2 3 2 0 -1)
+> (remove 1 '(1 2 3 2 1 0 -1) : start 4) => (1 2 3 2 0 -1)
 ```
 
 Third, some have corresponding functions ending in `-if` or `-if-not` that take a predicate rather than an element to match against:
 
 ```lisp
-> (remove-if #'oddp '(1 2 3 2 1 0 -1)) => (2 2 0)
+> (remove-if #'oddp '(1 2 3 2 1 0 -1)) => (2 2 0)
 
-> (remove-if-not #'oddp '(1 2 3 2 1 0 -1)) => (1 3 1 -1)
+> (remove-if-not #'oddp '(1 2 3 2 1 0 -1)) => (1 3 1 -1)
 
-> (find-if #'evenp '(1 2 3 2 1 0 -1)) => 2
+> (find-if #'evenp '(1 2 3 2 1 0 -1)) => 2
 ```
 
 The following two tables assume these two values:
@@ -611,7 +611,7 @@ The second table lists functions that have `-if` and `-if-not` versions and also
 | `(delete 1 y)` | => `(2 3)` | omit matching elements |
 | `(find 2 y)` | => `2` | find first element that matches |
 | `(position 'a x)` | => 0 | find index of element in sequence |
-| `(reduce #'+ y)` | => `6` | apply function to succesive elements |
+| `(reduce #'+ y)` | => `6` | apply function to succesive elements |
 | `(remove 2 y)` | => (1 `3)` | like `delete`, but makes a new copy |
 | `(substitute 4 2 y)` | => `(1 4 3)` | replace elements with new ones |
 
@@ -698,7 +698,7 @@ It has the following syntax:
 
 ```lisp
 (labels ((function-name (parameter...) function-body)...)
- body-of-labels)
+ body-of-labels)
 ```
 
 ### Other Special Forms
@@ -710,7 +710,7 @@ These are so common that they have abbreviations: `'x` for `(quote x`) and `#'f`
 The special form `progn` can be used to evaluate a sequence of forms and return the value of the last one:
 
 ```lisp
-(progn (setf x 0) (setf x (+ x 1)) x) => 1
+(progn (setf x 0) (setf x (+ x 1)) x) => 1
 ```
 
 `progn` is the equivalent of a `begin...end` block in other languages, but it is used very infrequently in Lisp.
@@ -737,7 +737,7 @@ An example of this is the `with-resource` macro on [page 338](B97800805711575001
 The forms `trace` and `untrace` are used to control debugging information about entry and exit to a function:
 
 ```lisp
-> (trace length9) => (LENGTH9)
+> (trace length9) => (LENGTH9)
 > (length9 '(a b c))=>
 (1 ENTER LENGTH9: (ABC))
   (2 ENTER LENGTH9: (B C))
@@ -779,7 +779,7 @@ Common Lisp provides a number of built-in macros and allows the user to extend t
 
 Macros are defined with the special form `defmacro`.
 Suppose we wanted to define a macro, `while`, that would act like the `while` loop statement of Pascal.
-Writing a macro is a four-step process:
+Writing a macro is a four-step process:[ ](#){:#p1240}
 
 * Decide if the macro is really necessary.
 
@@ -936,7 +936,7 @@ The more complicated ones are explained more thoroughly when they are used.
 | `(subseq x 1 2)` | => `(B)` | subsequence with given start and end points |
 
 We said that (`cons` *a b*) builds a longer list by adding element *a* to the front of list *b,* but what if *b* is not a list?
-This is not an error; the result is an object *x* such that (`first` *x*) => *a* (`rest`*x*) => *b,* and where *x* prints as (*a* . *b*).
+This is not an error; the result is an object *x* such that (`first` *x*) => *a* (`rest`*x*) => *b,* and where *x* prints as (*a* . *b*).
 This is known as *dotted pair* notation.
 If *b* is a list, then the usual list notation is used for output rather than the dotted pair notation.
 But either notation can be used for input.
@@ -964,7 +964,7 @@ Use the built-in function `princ` to print each component of the expression.
 
 In Lisp there are five major equality predicates, because not all objects are created equally equal.
 The numeric equality predicate, `=`, tests if two numbers are the same.
-It is an error to apply `=` to non-numbers.
+It is an error to apply `=` to non-numbers.
 The other equality predicates operate on any kind of object, but to understand the difference between them, we need to understand some of the internals of Lisp.
 
 When Lisp reads a symbol in two different places, the result is guaranteed to be the exact same symbol.
@@ -1048,18 +1048,18 @@ To get the value, we just take the `cdr` of the result returned by `assoc`.
 (setf state-table
   '((AL . Alabama) (AK . Alaska) (AZ . Arizona) (AR . Arkansas)))
 
-> (assoc 'AK state-table) => (AK . ALASKA)
+> (assoc 'AK state-table) => (AK . ALASKA)
 
-> (cdr (assoc 'AK state-table)) => ALASKA
+> (cdr (assoc 'AK state-table)) => ALASKA
 
-> (assoc 'TX state-table) => NIL
+> (assoc 'TX state-table) => NIL
 ```
 
 If we want to search the table by value rather than by key, we can use rassoc:
 
 ```lisp
-> (rassoc 'Arizona table) => (AZ . ARIZONA)
-> (car (rassoc 'Arizona table)) => AZ
+> (rassoc 'Arizona table) => (AZ . ARIZONA)
+> (car (rassoc 'Arizona table)) => AZ
 ```
 
 Managing a table with `assoc` is simple, but there is one drawback: we have to search through the whole list one element at a time.
@@ -1082,8 +1082,8 @@ The table itself is initialized with a call to `make-hash-table` and modified wi
 Here we retrieve values from the table:
 
 ```lisp
-> (gethash 'AK table) => ALASKA
-> (gethash 'TX table) => NIL
+> (gethash 'AK table) => ALASKA
+> (gethash 'TX table) => NIL
 ```
 
 The function `remhash` removes a key/value pair from a hash table, `clrhash` removes all pairs, and `maphash` can be used to map over the key/value pairs.
@@ -1122,8 +1122,8 @@ A table would be built as follows:
 Now we can retrieve values with get:
 
 ```lisp
-> (get 'AK 'state) => ALASKA
-> (get 'TX 'state) => NIL
+> (get 'AK 'state) => ALASKA
+> (get 'TX 'state) => NIL
 ```
 
 This will be faster because we can go immediately from a symbol to its lone property value, regardless of the number of symbols that have properties.
@@ -1141,8 +1141,8 @@ We could have mimicked the a-list approach, and listed all the properties under 
 ```lisp
 (setf (symbol-plist 'state-table)
       '(AL Alabama AK Alaska AZ Arizona AR Arkansas))
-> (get 'state-table 'AL) => ALASKA
-> (get 'state-table 'Alaska) => NIL
+> (get 'state-table 'AL) => ALASKA
+> (get 'state-table 'Alaska) => NIL
 ```
 
 Property lists have a long history in Lisp, but they are falling out of favor as new alternatives such as hash tables are introduced.
@@ -1163,7 +1163,7 @@ In that respect, `tree-equal` is similar to `equal`, but `tree-equal` is more po
 ```lisp
 > (setf tree '((a b) ((c)) (d e)))
 
-> (tree-equal tree (copy-tree tree)) => T
+> (tree-equal tree (copy-tree tree)) => T
 
 (defun same-shape-tree (a b)
   "Are two trees the same except for the leaves?"
@@ -1171,8 +1171,8 @@ In that respect, `tree-equal` is similar to `equal`, but `tree-equal` is more po
 
 (defun true (&rest ignore) t)
 
-> (same-shape-tree tree '((1 2) ((3)) (4 5))) => T
-> (same-shape-tree tree '((1 2) (3) (4 5))) => NIL
+> (same-shape-tree tree '((1 2) ((3)) (4 5))) => T
+> (same-shape-tree tree '((1 2) (3) (4 5))) => NIL
 ```
 
 [Figure 3.4](#f0025) shows the tree `((a b) ((c)) (d e))` as a cons cell diagram.
@@ -1188,9 +1188,9 @@ The name `sublis` is uncharacteristically short and confusing; a better name wou
 ```lisp
 > (subst 'new 'old '(old ((very old))) (NEW ((VERY NEW)))
 
-> (sublis '((old . new)) '(old ((very old))))` => `(NEW ((VERY NEW)))
+> (sublis '((old . new)) '(old ((very old))))` => `(NEW ((VERY NEW)))
 
-> (subst 'new 'old 'old) => 'NEW`  
+> (subst 'new 'old 'old) => 'NEW`  
 
 (defun english->french (words)
   (sublis '((are . va) (book . libre) (friend . ami)
@@ -1198,7 +1198,7 @@ The name `sublis` is uncharacteristically short and confusing; a better name wou
             (red . rouge) (you . tu))
           words))
 
-> (english->french '(hello my friend - how are you today?)) =>
+> (english->french '(hello my friend - how are you today?)) =>
 (BONJOUR MON AMI - COMMENT VA TU TODAY?)
 ```
 
@@ -1209,13 +1209,13 @@ There are quite a few other numeric functions that have been omitted.
 
 | []() | | |
 |---|---|---|
-| `(+ 4 2)` | => `6` | add |
+| `(+ 4 2)` | => `6` | add |
 | `(- 4 2)` | => `2` | subtract |
 | `(* 4 2)` | => `8` | multiply |
 | `(/ 4 2)` | => `2` | divide |
-| `(> 100 99)` | => `t` | greater than (also `>=`, greater than or equal to) |
-| `(= 100 100)` | => `t` | equal (also `/=`, not equal) |
-| `(< 99 100)` | => `t` | less than (also `<=`, less than or equal to) |
+| `(> 100 99)` | => `t` | greater than (also `>=`, greater than or equal to) |
+| `(= 100 100)` | => `t` | equal (also `/=`, not equal) |
+| `(< 99 100)` | => `t` | less than (also `<=`, less than or equal to) |
 | `(random 100)` | `=> 42` | random integer from 0 to 99 |
 | `(expt 4 2)` | => `16` | exponentiation (also exp, *e<sup>x</sup>* and `log`) |
 | `(sin pi)` | => `0.0` | sine function (also `cos`, `tan,` etc.) |
@@ -1233,9 +1233,9 @@ Common Lisp provides functions that treat lists in just that way.
 For example, to see what elements the sets *r* = {*a, b, c, d*} and *s* = {*c, d, e*} have in common, we could use:
 
 ```lisp
-> (setf r '(a b c d)) => (A B C D)
-> (setf s '(c d e)) => (C D E)
-> (intersection r s) => (C D)
+> (setf r '(a b c d)) => (A B C D)
+> (setf s '(c d e)) => (C D E)
+> (intersection r s) => (C D)
 ```
 
 This implementation returned (`C D`) as the answer, but another might return (`D C`).
@@ -1283,7 +1283,7 @@ For example,
 
 In mathematics, a function is something that computes an output value given some input arguments.
 Functions do not "do" anything, they just compute results.
-For example, if I tell you that *x* = 4 and *y* = 5 and ask you to apply the function "plus" to *x* and *y,* I expect you to tell me 9.
+For example, if I tell you that *x* = 4 and *y* = 5 and ask you to apply the function "plus" to *x* and *y,* I expect you to tell me 9.
 If I then ask, "Now what is the value of *x*?" it would be surprising if *x* had changed.
 In mathematics, applying an operator to *x* can have no effect on the value of *x.*
 
@@ -1297,18 +1297,18 @@ For both reasons, they are worth knowing about.
 Consider the following:
 
 ```lisp
-> (setf x '(a b c)) => (A B C)
-> (setf y '(1 2 3)) => (1 2 3)
-> (append x y) => (A B C 1 2 3)
+> (setf x '(a b c)) => (A B C)
+> (setf y '(1 2 3)) => (1 2 3)
+> (append x y) => (A B C 1 2 3)
 ```
 
 `append` is a pure function, so after evaluating the call to `append,` we can rightfully expect that `x` and `y` retain their values.
 Now consider this:
 
 ```lisp
-> (nconc x y) => (A B C 1 2 3)
-> x => (A B C 1 2 3)
-> y => (1 2 3)
+> (nconc x y) => (A B C 1 2 3)
+> x => (A B C 1 2 3)
+> y => (1 2 3)
 ```
 
 The function `nconc` computes the same result as `append,` but it has the side effect of altering its first argument.
@@ -1382,15 +1382,15 @@ The function `subtypep` tests if one type can be determined to be a subtype of a
 For example:
 
 ```lisp
-> (type-of 123) => FIXNUM
+> (type-of 123) => FIXNUM
 
-> (typep 123 'fixnum) => T
+> (typep 123 'fixnum) => T
 
-> (typep 123 'number) => T
+> (typep 123 'number) => T
 
-> (typep 123 'integer) => T
+> (typep 123 'integer) => T
 
-> (typep 123.0 'integer) => NIL
+> (typep 123.0 'integer) => NIL
 
 > (subtypep 'fixnum 'number) T
 ```
@@ -1434,7 +1434,7 @@ The parser is called `read`.
 It is used to read and return a single Lisp expression.
 If you can design your application so that it reads Lisp expressions, then your input worries are over.
 Note that the expression parsed by `read` need not be a legal *evaluable* Lisp expression.
-That is, you can read (`"hello" cons zzz`) just as well as (`+ 2 2`).
+That is, you can read (`"hello" cons zzz`) just as well as (`+ 2 2`).
 In cases where Lisp expressions are not adequate, the function `read-char` reads a single character, and `read-line` reads everything up to the next newline and returns it as a string.
 
 To read from the terminal, the functions `read, read-char,` or `read-line` (with no arguments) return an expression, a character, and a string up to the end of line, respectively.
@@ -1507,7 +1507,7 @@ Here's a more complex example:
 
 ```lisp
 > (let ((numbers '(1234 5)))
-    (format t "~&~{~ r~^ plus ~} is ~@r"
+    (format t "~&~{~ r~^ plus ~} is ~@r"
             numbers (apply #'+ numbers)))
 one plus two plus three plus four plus five is XV
 NIL
@@ -1535,30 +1535,30 @@ should give you a list of commands.
 As an example, here we step through an expression twice, the first time giving commands to stop at each subevaluation, and the second time giving commands to skip to the next function call.
 In this implementation, the commands are control characters, so they do not show up in the output.
 
-All output, including the symbols <= and => are printed by the stepper itself; I have added no annotation.
+All output, including the symbols <= and => are printed by the stepper itself; I have added no annotation.
 
 ```lisp
-> (step (+ 3 4 (* 5 6 (/ 7 8))))
-<= (+ 3 4 (* 5 6 (/ 7 8)))
-  <= 3 => 3
-  <= 4 => 4
+> (step (+ 3 4 (* 5 6 (/ 7 8))))
+<= (+ 3 4 (* 5 6 (/ 7 8)))
+  <= 3 => 3
+  <= 4 => 4
   <= (* 5 6 (/ 7 8))
-  <= 5 => 5
-  <= 6 => 6
+  <= 5 => 5
+  <= 6 => 6
   <= (/ 7 8)
-    <= 7 => 7
-  <= 8 => 8
-    <=(/ 7 8) => 7/8
-  <= (* 5 6 (/ 7 8)) => 105/4
-  <= (+ 3 4 (* 5 6 (/ 7 8))) => 133/4
+    <= 7 => 7
+  <= 8 => 8
+    <=(/ 7 8) => 7/8
+  <= (* 5 6 (/ 7 8)) => 105/4
+  <= (+ 3 4 (* 5 6 (/ 7 8))) => 133/4
 133/4
 
-> (step (+ 3 4 (* 5 6 (/ 7 8))))
-<= (+ 3 4 (* 5 6 (/ 7 8)))
-  /: 7 8 => 7/8
-  *: 5 6 7/8 => 105/4
-  +: 3 4 105/4 => 133/4
-<= (+ 3 4 (* 5 6 (/ 7 8))) => 133/4
+> (step (+ 3 4 (* 5 6 (/ 7 8))))
+<= (+ 3 4 (* 5 6 (/ 7 8)))
+  /: 7 8 => 7/8
+  *: 5 6 7/8 => 105/4
+  +: 3 4 105/4 => 133/4
+<= (+ 3 4 (* 5 6 (/ 7 8))) => 133/4
 133/4
 ```
 
@@ -1579,7 +1579,7 @@ Once you know what object you are interested in, `describe` can give more inform
 ```lisp
 > (describe 'make-string)
 Symbol MAKE-STRING is in LISP package.
-The function definition is #<FUNCTION MAKE-STRING -42524322 >:
+The function definition is #<FUNCTION MAKE-STRING -42524322 >:
   NAME:          MAKE-STRING
   ARGLIST:       (LENGTH &KEY INITIAL-ELEMENT)
   DOCUMENTATION: "Creates and returns a string of LENGTH elements,
@@ -1599,7 +1599,7 @@ MAKE-STRING has property :SOURCE-FILE: #P"SYS:KERNEL; STRINGS"
 If all you want is a symbol's documentation string, the function `documentation` will do the trick:
 
 ```lisp
-> (documentation 'first 'function) => "Return the first element of LIST."
+> (documentation 'first 'function) => "Return the first element of LIST."
 > (documentation 'pi 'variable) =$> "pi"
 ```
 
@@ -1775,14 +1775,14 @@ Some implementations also print statistics on the amount of storage required.
 For example:
 
 ```lisp
-> (defun f (n) (dotimes (i n) nil)) => F
+> (defun f (n) (dotimes (i n) nil)) => F
 > (time (f 10000)) NIL
-Evaluation of (F 10000) took 4.347272 Seconds of elapsed time, including 0.0 seconds of paging time for 0 faults, Consed 27 words.
+Evaluation of (F 10000) took 4.347272 Seconds of elapsed time, including 0.0 seconds of paging time for 0 faults, Consed 27 words.
 
 > (compile 'f) F
 
-> (time (f 10000)) => NIL
-Evaluation of (F 10000) took 0.011518 Seconds of elapsed time, including 0.0 seconds of paging time for 0 faults, Consed 0 words.
+> (time (f 10000)) => NIL
+Evaluation of (F 10000) took 0.011518 Seconds of elapsed time, including 0.0 seconds of paging time for 0 faults, Consed 0 words.
 ```
 
 This shows that the compiled version is over 300 times faster and uses less storage to boot.
@@ -1801,7 +1801,7 @@ Actually, `apply` can be given one or more individual arguments before the final
 The following five forms are equivalent:
 
 ```lisp
-> (+ 1 2 3 4)             => 10
+> (+ 1 2 3 4)             => 10
 > (funcall #'+ 1 2 3 4)   => 10
 > (apply #'+ '(1 2 3 4))  => 10
 > (apply #'+ 1 2 '(3 4))  => 10
@@ -1820,7 +1820,7 @@ Certainly every time a `function` (or `#')` special form is evaluated, a functio
 But in the examples we have seen and in the following one, it is always the *same* function that is returned.
 
 ```lisp
-> (mapcar #'(lambda (x) (+ x x)) '(1 3 10)) => (2 6 20)
+> (mapcar #'(lambda (x) (+ x x)) '(1 3 10)) => (2 6 20)
 ```
 
 Every time we evaluate the `#'(lambda ...)` form, it returns the function that doubles its argument.
@@ -1833,9 +1833,9 @@ Consider this example:
   "Return a function that adds c to its argument."
   #'(lambda (x) (+ x c)))
 
-> (mapcar (adder 3) '(1 3 10)) => (4 6 13)
+> (mapcar (adder 3) '(1 3 10)) => (4 6 13)
 
-> (mapcar (adder 10) '(1 3 10)) => (11 13 20)
+> (mapcar (adder 10) '(1 3 10)) => (11 13 20)
 ```
 
 Each time we call `adder` with a different value for `c`, it creates a different function, the function that adds `c` to its argument.
@@ -1859,17 +1859,17 @@ In the following, two calls to bank-account create two different closures, each 
 The subsequent calls to the two closures change their respective balances, but there is no confusion between the two accounts.
 
 ```lisp
-> (setf my-account (bank-account 500.00)) => #<CLOSURE 52330407>
+> (setf my-account (bank-account 500.00)) => #<CLOSURE 52330407>
 
-> (setf your-account (bank-account 250.00)) => #<CLOSURE 52331203>
+> (setf your-account (bank-account 250.00)) => #<CLOSURE 52331203>
 
-> (funcall my-account 'withdraw 75.00) => 425.0
+> (funcall my-account 'withdraw 75.00) => 425.0
 
-> (funcall your-account 'deposit 250.00) => 500.0
+> (funcall your-account 'deposit 250.00) => 500.0
 
-> (funcall your-account 'withdraw 100.00) => 400.0
+> (funcall your-account 'withdraw 100.00) => 400.0
 
-> (funcall my-account 'withdraw 25.00) => 400.0
+> (funcall my-account 'withdraw 25.00) => 400.0
 ```
 
 This style of programming will be considered in more detail in [chapter 13](chapter13.md).
@@ -1991,7 +1991,7 @@ The function `round` serves both interested and disinterested programmers by ret
 > (round 5.1) => 5 .1
 ```
 
-There are two values after the => because `round` returns two values.
+There are two values after the => because `round` returns two values.
 Most of the time, multiple values are ignored, and only the first value is used.
 So (`* 2 (round 5.1)`) is 10, just as if `round` had only returned a single value.
 If you want to get at multiple values, you have to use a special form, such as `multiple-value-bind`:
@@ -2009,7 +2009,7 @@ If you want to get at multiple values, you have to use a special form, such as `
 You can write functions of your own that return multiple values using the function `values`, which returns its arguments as multiple values:
 
 ```lisp
-> (values 1 2 3) => 1 2 3
+> (values 1 2 3) => 1 2 3
 ```
 
 Multiple values are a good solution because they are unobtrusive until they are needed.
@@ -2074,7 +2074,7 @@ This is quite a lot to expect from a user who presumably is just learning to add
 
 Common Lisp provides two ways of dealing with this problem.
 First, a programmer can specify that certain arguments are *optional* and provide default values for those arguments.
-For example, in `math-quiz` we can arrange to make `+` be the default operator, `100` be the default number range, and `10` be the default number of examples with the following definition:
+For example, in `math-quiz` we can arrange to make `+` be the default operator, `100` be the default number range, and `10` be the default number of examples with the following definition:
 
 ```lisp
 (defun math-quiz (&optional (op '+) (range 100) (n 10))
@@ -2119,16 +2119,16 @@ Unlike the colon in real keywords, the `&` in lambda-list keywords has no specia
 Consider these annotated examples:
 
 
-`> :xyz => :XYZ`        *; keywords are self-evaluating*
+`> :xyz => :XYZ`        *; keywords are self-evaluating*
 
-`> &optional =>`        *; lambda-list keywords are normal symbols  
+`> &optional =>`        *; lambda-list keywords are normal symbols  
 Error: the symbol &optional has no value*
 
-`> '&optional => &OPTIONAL`
+`> '&optional => &OPTIONAL`
 
 `> (defun f (&xyz) (+ &xyz &xyz)) F` *;& has no significance*
 
-`> (f 3) => 6`
+`> (f 3) => 6`
 
 `> (defun f (:xyz) (+ :xyz :xyz)) =>`
 *Error: the keyword :xyz appears in a variable list.  
@@ -2137,8 +2137,8 @@ Keywords are constants, and so cannot be used as names of variables.*
 `> (defun g (&key x y) (list x y)) => G`
 
 ```
-> (let ((key s '(:x :y :z)))      
-   (g (second keys) 1 (first keys) 2)) => (2 1)
+> (let ((key s '(:x :y :z)))      
+   (g (second keys) 1 (first keys) 2)) => (2 1)
 ```
 *; keyword args can be computed*
 
@@ -2146,13 +2146,13 @@ Many of the functions presented in this chapter take keyword arguments that make
 For example, remember the function `find`, which can be used to look for a particular element in a sequence:
 
 ```lisp
-> (find 3 '(1 2 3 4 -5 6.0)) => 3
+> (find 3 '(1 2 3 4 -5 6.0)) => 3
 ```
 It turns out that `find` takes several optional keyword arguments.
 For example, suppose we tried to find `6` in this sequence:
 
 ```lisp
-> (find 6 '(1 2 3 4 -5 6.0)) => nil
+> (find 6 '(1 2 3 4 -5 6.0)) => nil
 ```
 
 This fails because `find` tests for equality with `eql`, and `6` is not `eql` to `6.0`.
@@ -2209,9 +2209,9 @@ All we have to do is arrange to pass remove the complement of the `:test` predic
 For example, finding all elements that are equal to 1 in a list is equivalent to removing elements that are not equal to 1:
 
 ```lisp
-> (setf nums '(1 2 3 2 1)) => (1 2 3 2 1)
+> (setf nums '(1 2 3 2 1)) => (1 2 3 2 1)
 
-> (find-all 1 nums :test #'=) = (remove 1 nums :test #'/=) => (1 1)
+> (find-all 1 nums :test #'=) = (remove 1 nums :test #'/=) => (1 1)
 ```
 
 Now what we need is a higher-order function that returns the complement of a function.
