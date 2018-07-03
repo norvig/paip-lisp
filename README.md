@@ -26,7 +26,7 @@ The book is available in these formats:  [PAIP-part1.pdf](https://github.com/nor
   * 7 [Student:  Solving Algebra Word Problems](docs/chapter7.md)
   * 8 [Symbolic Mathematics:  A Simplification Program](docs/chapter8.md)
 - **Part III:  Tools and Techniques**
-  * 9  Efficiency Issues](docs/chapter9.md)
+  * 9  [Efficiency Issues](docs/chapter9.md)
   * 10  [Low-Level Efficiency Issues](docs/chapter10.md)
   * 11  [Logic Programming](docs/chapter11.md)
   * 12  [Compiling Logic programs](docs/chapter12.md)
