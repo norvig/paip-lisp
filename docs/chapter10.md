@@ -1,7 +1,7 @@
 # Chapter 10 {docsify-ignore}
 <a id='page-315'></a>
 
-### Low-Level Efficiency Issues 
+## Low-Level Efficiency Issues 
 
 > There are only two qualities in the world: efficiency 
 and inefficiency; and only two sorts of people: the 
@@ -446,7 +446,7 @@ is considerable overhead, even though this architecture has a specific instructi
 
 Now let's look at the results on another system, the Allegro compiler for the 
 68000. First, here's the assembly code for `reg`, to give you an idea of the minimal 
-calling sequence:[1](#fn-10-1)
+calling sequence:[fn-10-1]
 
 ```
 > (disassemble 'reg) 
@@ -470,48 +470,48 @@ calling sequence:[1](#fn-10-1)
 <a id='page-325'></a>
 
 ```
-34:     move.l  -8(a6).a5 
+34:     move.l  -8(a6),a5 
 38:     unlk    a6 
 40:     rtd     #10 
 ```
 
 Now we see that &rest arguments take a lot more code in this system: 
 
-### WIP
-
+```
 > (disassemble 'rst) 
 ;; disassembling #<Function rst @ #x83de89> 
-;; formals: a D c &rest d 
-11 code vector @ #x83de34 
-0: sub.w #3,dl 
+;; formals: a b c &rest d 
+;; code vector @ #x83de34 
+0: sub.w #3,d1 
 2: bge.s 8 
-
 4: jmp 16(a4) ; wnaerr 
-8: move.l (a7)+.al 
-10 move.l d3.-(a7) ; nil 
-12 sub.w #l,dl 
+8: move.l (a7)+,a1 
+10 move.l d3,-(a7)      ; nil 
+12 sub.w #1,d1
 14 blt.s 38 
-16 move.l al,-52(a4) ; c-protected-retaddr 
-20 jsr 40(a4) ; cons 
+16 move.l a1,-52(a4)    ; c-protected-retaddr 
+20 jsr 40(a4)           ; cons 
 24 move.l d4,-(a7) 
-26 dbra dl,20 
-30 move.l -52(a4).al ; C-protected-retaddr 
-34 clr.l -52(a4) ; C-protected-retaddr 
-38 move.l al.-(a7) 
-40 link a6.#0 
-44 move.l a2.-(a7) 
+26 dbra d1,20 
+30 move.l -52(a4),a1    ; C-protected-retaddr 
+34 clr.l -52(a4)        ; C-protected-retaddr 
+38 move.l a1,-(a7) 
+40 link a6,#0 
+44 move.l a2,-(a7) 
 46 move.l a5,-(a7) 
-48 move.l 7(a2).a5 
-52 move.l -332(a4),a0 ; list* 
+48 move.l 7(a2),a5 
+52 move.l -332(a4),a0   ; list* 
 56 move.l -8(a6),a5 
 60 unlk a6 
 62 move.l #4,dl 
 64 jmp (a4) 
-The loop from 20-26 builds up the &rest list one cons at a time. Part of the difficulty 
+```
+
+The loop from 20-26 builds up the `&rest` list one cons at a time. Part of the difficulty 
 is that cons could initiate a garbage collection at any time, so the list has to be built 
 in a place that the garbage collector will know about. The function with optional 
 arguments is even worse, taking 34 instructions (104 bytes), and keywords are worst 
-of all, weighing in at 71 instructions (178 bytes), and including a loop. The overhead 
+of all, weighing in at 71 instructions (178 bytes), and including a `loop`. The overhead 
 for optional arguments is proportional to the number of optional arguments, while 
 for keywords it is proportional to the product of the number of parameters allowed 
 and the number of arguments actually supplied. 
@@ -522,130 +522,136 @@ keywords that can be used in places where efficiency is important. Consider:
 
 <a id='page-326'></a>
 
+``` lisp
 (proclaim '(inline key)) 
-(defun key (&key a b (c 1) (d (sqrt a))) (*no-key abed)) 
-(defun *no-key (abed) (list abed)) 
+(defun key (&key a b (c 1) (d (sqrt a))) (*no-key a b c d)) 
+(defun *no-key (a b c d) (list a b c d)) 
+```
 
-Here the function key is used as an interface to the function no - key, which does the 
+Here the function key is used as an interface to the function `no-key`, which does the 
 real work. The inline proclamation should allow the compiler to compile a call to key 
-as a call to no - key with the appropriate arguments: 
+as a call to `no-key` with the appropriate arguments: 
 
-> (disassemble #'(lambda (x y) (key :b . :a y))) 
+```
+> (disassemble #'(lambda (x y) (key :b :a y))) 
 
-10 PUSH ARG II Y 
-11 PUSH ARG 10 X 
-12 PUSH-NUMBER 1 
-13 PUSH ARG II Y 
-14 PUSH CALL-1 FEFI3 #'SQRT 
-15 TAIL-REC CALL-4 FEFI4 #*NO-KEY 
+10 PUSH            ARG|1   ; Y 
+11 PUSH            ARG|0   ; X 
+12 PUSH-NUMBER     1 
+13 PUSH            ARG|1   ; Y 
+14 PUSH CALL-1     FEF|3   ; #'SQRT 
+15 TAIL-REC CALL-4 FEF|4   ; #*NO-KEY 
+```
 
 The overhead only comes into play when the keywords are not known at compile 
-time. In the following example, the compiler is forced to call key, not no- key, because 
+time. In the following example, the compiler is forced to call key, not `no-key`, because 
 it doesn't know what the keyword k will be at run time: 
 
-> (disassemble #*(lambda (k . y) (key k . :a y))) 
-10 PUSH ARGIO . 
-11 PUSH ARG 11 . 
-12 PUSH FEFI3 ':. 
-13 PUSH ARG 12 . 
-14 TAIL-REC CALL-4 FEFI4 #... 
+```
+> (disassemble #'(lambda (k x y) (key k x :a y))) 
+10 PUSH            ARG|0  ; K
+11 PUSH            ARG|1  ; X
+12 PUSH            FEF|3  ; ':A 
+13 PUSH            ARG|2  ; Y
+14 TAIL-REC CALL-4 FEF|4  ; #'KEY 
+```
 
-Of course, in this simple example I could have replaced no-key with 1 i st, but in 
-general there will be some more complex processing. If I had proclaimed no-key 
+Of course, in this simple example I could have replaced `no-key` with `list`, but in 
+general there will be some more complex processing. If I had proclaimed `no-key` 
 inline as well, then I would get the following: 
 
+```
 > (disassemble #'(lambda (x y) (key :b . :a y))) 
 
-10 PUSH ARG 11 ; Y 
-
-11 PUSH ARG 10 ; . 
-
-12 PUSH-NUMBER 1 
-
-13 PUSH ARG II ; Y 
-
-14 PUSH CALL-1 FEFI3 ; #'SQRT 
-
-15 TAIL-REC CALL-4 FEFI4 ; #'LIST 
+10 PUSH            ARG|1  ; Y 
+11 PUSH            ARG|0  ; X
+12 PUSH-NUMBER     1 
+13 PUSH            ARG|1  ; Y 
+14 PUSH CALL-1     FEF|3  ; #'SQRT 
+15 TAIL-REC CALL-4 FEF|4  ; #'LIST 
+```
 
 If you like, you can define a macro to automatically define the interface to the keyword-
 less function: 
 
 <a id='page-327'></a>
 
+``` lisp
 (defmacro defun* (fn-name arg-list &rest body) 
-"Define two functions, one an interface to a &keyword-less 
-version. Proclaim the interface function inline." 
-(if (and (member '&key arg-list) 
-
-(not (member *&rest arg-list))) 
-(let ((no-key-fn-name (symbol fn-name '*no-key)) 
-(args (mapcar #'first-or-self 
-
-(set-difference 
-arg-list 
-1ambda-list-keywords)))) 
-
-'(progn 
-(proclaim '(inline ,fn-name)) 
-(defun ,no-key-fn-name ,args 
-
-..body) 
-(defun ,fn-name ,arg-list 
-(,no-key-fn-name ..args)))) 
-'(defun ,fn-name ,arg-list 
-..body))) 
+	"Define two functions, one an interface to a &keyword-less 
+	version. Proclaim the interface function inline." 
+	(if (and (member '&key arg-list) 
+		     (not (member *&rest arg-list))) 
+		(let ((no-key-fn-name (symbol fn-name '*no-key)) 
+			(args (mapcar #'first-or-self 
+				(set-difference 
+					arg-list 
+					1ambda-list-keywords)))) 
+				'(progn 
+					(proclaim '(inline ,fn-name)) 
+					(defun ,no-key-fn-name ,args 
+						.,body) 
+					(defun ,fn-name ,arg-list 
+						(,no-key-fn-name .,args)))) 
+	'(defun ,fn-name ,arg-list 
+		..body))) 
 
 > (macroexpand '(defun* key (&key a b (c 1) (d (sqrt a))) 
-(list a b c d))) 
+	(list a b c d))) 
 
 (PROGN (PROCLAIM '(INLINE KEY)) 
-(DEFUN KEY*NO-KEY (A . C D) (LIST A . C D)) 
-(DEFUN KEY (&KEY A . (C 1) (D (SQRT A))) 
+	(DEFUN KEY*NO-KEY (A B C D) (LIST A B C D)) 
+	(DEFUN KEY (&KEY A B (C 1) (D (SQRT A))) 
+		(KEY*NO-KEY A B C D))) 
 
-(KEY*NO-KEY A . C D))) 
+> (macroexpand '(defun* reg (a b c d) (list a b c d))) 
+(DEFUN REG (A B C D) (LIST A B C D)) 
+```
 
-> (macroexpand '(defun* reg (abed) (list abed))) 
-(DEFUN REG (A . C D) (LIST A . C D)) 
-
-There is one disadvantage to this approach: a user who wants to declare key inHne 
+There is one disadvantage to this approach: a user who wants to declare `key` inline 
 or not inline does not get the expected result. The user has to know that key is 
-implemented with key*no- key, and declare key*no- key inline. 
+implemented with `key*no-key`, and declare `key*no-key` inline. 
 
-An alternative is just to proclaim the function that uses &key to be inline. Rob 
+An alternative is just to proclaim the function that uses `&key` to be inline. Rob 
 MacLachlan provides an example. In CMU Lisp, the function member has the following 
 definition, which is proclaimed inline: 
 
+``` lisp
 (defun member (item list &key (key #'identity) 
-(test #'eql testp)(test-not nil notp)) 
-(do ((list list (cdr list))) 
-((null list) nil) 
-(let ((car (car list))) 
-(if (cond 
-(testp 
-(funcall test item 
-(funcall key car))) 
-(notp 
-(not 
+	                (test #'eql testp)(test-not nil notp)) 
+	(do ((list list (cdr list))) 
+		((null list) nil) 
+		(let ((car (car list))) 
+			(if (cond 
+				(testp 
+					(funcall test item 
+						(funcall key car))) 
+	            (notp 
+					(not 
+```
 
 <a id='page-328'></a>
 
-(funcall test-not item 
-(funcall key car)))) 
-(t 
-(funcall test item 
-(funcall key car)))) 
-(return list))))) 
+``` lisp
+	     (funcall test-not item 
+			 (funcall key car)))) 
+	(t 
+		(funcall test item 
+			(funcall key car)))) 
+	(return list))))) 
+```
 
-A call like (member ch 1 :key #'first-letter rtest #'cha r=) expands into the 
+A call like `(member ch 1 :key #'first-letter :test #'char=)` expands into the 
 equivalent of the following code. Unfortunately, not all compilers are this clever with 
 inline declarations. 
 
+``` lisp
 (do ((list list (cdr list))) 
-((null list) nil) 
-(let ((car (car list))) 
-(if (char= ch (first-letter car)) 
-(return list)))) 
+	((null list) nil) 
+	(let ((car (car list))) 
+		(if (char= ch (first-letter car)) 
+			(return list)))) 
+```
 
 This chapter is concerned with efficiency and so has taken a stand against the use 
 of keyword parameters in frequently used functions. But when maintainability 
@@ -653,8 +659,9 @@ is considered, keyword parameters look much better. When a program is being
 developed, and it is not clear if a function will eventually need additional arguments, 
 keyword parameters may be the best choice. 
 
-10.4 Avoid Unnecessary Consing 
-The cons function may appear to execute quite quickly, but like all functions that 
+### 10.4 Avoid Unnecessary Consing 
+
+The `cons` function may appear to execute quite quickly, but like all functions that 
 allocate new storage, it has a hidden cost. When large amounts of storage are 
 used, eventually the system must spend time garbage collecting. We have not 
 mentioned it earlier, but there are actually two relevant measures of the amount of 
@@ -667,50 +674,51 @@ vary widely. Garbage collection is particularly worrisome for real-time systems,
 because it can happen at any time. 
 
 The antidote to garbage woes is to avoid unnecessary copying of objects in often-
-used code. Try using destructive operations, like nreverse, delete, and nconc, 
-rather than their nondestructive counterparts, (like reverse, remove, and append) 
+used code. Try using destructive operations, like `nreverse, delete,` and `nconc`, 
+rather than their nondestructive counterparts, (like `reverse, remove,` and `append`) 
 whenever it is safe to do so. Or use vectors instead of lists, and reuse values rather 
 than creating copies. As usual, this gain in efficiency may lead to errors that can 
 
 <a id='page-329'></a>
 be difficult to debug. However, the most common kind of unnecessary copying 
 can be eliminated by simple reorganization of your code. Consider the following 
-version of f 1 a tten, which returns a list of all the atoms in its input, preserving order. 
+version of `flatten`, which returns a list of all the atoms in its input, preserving order. 
 Unlike the version in chapter 5, this version returns a single list of atoms, with no 
 embedded lists. 
 
+``` lisp
 (defun flatten (input) 
-"Return a flat list of the atoms in the input. 
-Ex: (flatten '((a) (b (c) d))) => (a b c d)." 
-(cond ((null input) nil) 
-
-((atom input) (list input)) 
-(t (append (flatten (first input)) 
-(flatten (rest input)))))) 
+	"Return a flat list of the atoms in the input. 
+	Ex: (flatten '((a) (b (c) d))) => (a b c d)." 
+	(cond ((null input) nil) 
+		((atom input) (list input)) 
+		(t (append (flatten (first input)) 
+			(flatten (rest input)))))) 
+```
 
 This definition is quite simple, and it is easy to see that it is correct. However, each 
-call to append requires copying the first argument, so this version can cons O(n^) cells 
-on an input with . atoms. The problem with this approach is that it computes the 
+call to append requires copying the first argument, so this version can cons *O(n^2)* cells 
+on an input with *n* atoms. The problem with this approach is that it computes the 
 list of atoms in the first and rest of each subcomponent of the input. But the first 
-sublist by itself is not part of the final answer—that's why we have to call append. We 
-could avoid generating garbage by replacing append with nconc, but even then we 
-would still be wasting time, because nconc would have to scan through each sublist 
+sublist by itself is not part of the final answer — that's why we have to call `append`. We 
+could avoid generating garbage by replacing append with `nconc`, but even then we 
+would still be wasting time, because `nconc` would have to scan through each sublist 
 to find its end. 
 
-The version below makes use of an accumulator to keep track of the atoms that 
-have been collected in the rest, and to add the atoms in the first one at a time with 
+The version below makes use of an *accumulator* to keep track of the atoms that 
+have been collected in the `rest`, and to add the atoms in the `first` one at a time with 
 cons, rather than building up unnecessary sublists and appending them. This way 
 no garbage is generated, and no subcomponent is traversed more than once. 
 
+``` lisp
 (defun flatten (input &optional accumulator) 
-"Return a flat list of the atoms in the input. 
-Ex: (flatten '((a) (b (c) d))) => (a b c d)." 
-(cond ((null input) accumulator) 
-
-((atom input) (cons input accumulator)) 
-
-(t (flatten (first input) 
-(flatten (rest input) accumulator))))) 
+	"Return a flat list of the atoms in the input. 
+	Ex: (flatten '((a) (b (c) d))) => (a b c d)." 
+	(cond ((null input) accumulator) 
+		((atom input) (cons input accumulator)) 
+		(t (flatten (first input) 
+			(flatten (rest input) accumulator))))) 
+```
 
 The version with the accumulator may be a little harder to understand, but it is far 
 more efficient than the original version. Experienced Lisp programmers become 
@@ -729,16 +737,16 @@ Compacting garbage-collection algorithms can relocate live data, packing it into
 minimum number of pages. 
 
 Some garbage-collection algorithms have been optimized to deal particularly well 
-with just this case. If your system has an ephemeral or generational garbage collector, 
+with just this case. If your system has an *ephemeral* or *generational* garbage collector, 
 you need not be so concerned with short-lived objects. Instead, it will be the medium-
 aged objects that cause problems. The other problem with such systems arises when 
 an object in an old generation is changed to point to an object in a newer generation. 
-This is to be avoided, and it may be that reverse is actually faster than nreverse in 
+This is to be avoided, and it may be that `reverse` is actually faster than `nreverse` in 
 such cases. To decide what works best on your particular system, design some test 
 cases and time them. 
 
 As an example of efficient use of storage, here is a version of pat-match that 
-eliminates (almost) all consing. The original version of pat-match, as used in ELIZA 
+eliminates (almost) all consing. The original version of `pat-match`, as used in ELIZA 
 ([page 180](chapter6.md#page-180)), used an association list of variable/value pairs to represent the binding 
 list. This version uses two sequences: a sequence of variables and a sequence of 
 values. The sequences are implemented as vectors instead of lists. In general, vectors 
@@ -749,7 +757,7 @@ In this case, the savings are much more substantial than just half. Instead of
 building up small binding lists for each partial match and adding to them when the 
 match is extended, we will allocate a sufficiently large vector of variables and values 
 just once, and use them over and over for each partial match, and even for each 
-invocation of pat-match. To do this, we need to know how many variables we are 
+invocation of `pat-match`. To do this, we need to know how many variables we are 
 currently using. We could initialize a counter variable to zero and increment it each 
 time we found a new variable in the pattern. The only difficulty would be when the 
 counter variable exceeds the size of the vector. We could just give up and print an 
@@ -758,317 +766,310 @@ allocate a larger vector for the variables, copy over the existing ones, and the
 the new one. 
 
 It turns out that Common Lisp has a built-in facility to do just this. When a 
-vector is created, it can be given a fill pointer. This is a counter variable, but one that 
+vector is created, it can be given a *fill pointer*. This is a counter variable, but one that 
 is conceptually stored inside the vector. Vectors with fill pointers act like a cross 
 between a vector and a stack. You can push new elements onto the stack with the 
-functions vector -push or vector-push-extend. The latter will automatically allocate 
+functions `vector-push` or `vector-push-extend`. The latter will automatically allocate 
 a larger vector and copy over elements if necessary. You can remove elements with 
-vector - pop, or you can explicitly look at the fill pointer with f .1 - poi . te r, or change 
-it with a setf. Here are some examples (with *print-array* set to t so we can see 
+`vector-pop`, or you can explicitly look at the fill pointer with `fill-pointer`, or change 
+it with a setf. Here are some examples (with `*print-array*` set to t so we can see 
 the results): 
 
+```
 > (setf a (make-array 5 :fiH-pointer 0)) ^ #() 
 
 > (vector-push 1 a) 0 
+```
 
 <a id='page-331'></a>
-> (vector-push 2 a) =.> 1 
+
+```
+> (vector-push 2 a) => 1 
 
 > a => #(1 2) 
 
 > (vector-pop a) => 2 
 
-> a #(1) 
+> a => #(1) 
 
-> (dotimes (i 10) (vector-push-extend 'x a)) NIL 
+> (dotimes (i 10) (vector-push-extend 'x a)) => NIL 
 
->a=:^#(lXXXXXXXXXX) 
+>a => #(1 X X X X X X X X X X) 
 
 > (fill-pointer a) => 11 
 
-> (setf (fill-pointer a) 1) 1 
+> (setf (fill-pointer a) 1) => 1
 
 > a => #(1) 
 
 > (find *x a) => NIL NIL ; FIND can't find past the fill pointer 
 
 > (aref a 2) => X ;But AREF can see beyond the fill pointer 
+```
 
-Using vectors with fill pointers in pat-match, the total storage for binding lists is 
+Using vectors with fill pointers in `pat-match`, the total storage for binding lists is 
 just twice the number of variables in the largest pattern. I have arbitrarily picked 
 10 as the maximum number of variables, but even this is not a hard limit, because 
-vector -push-extend can increase it. In any case, the total storage is small, fixed 
-in size, and amortized over all calls to pat-match. These are just the features that 
+`vector-push-extend` can increase it. In any case, the total storage is small, fixed 
+in size, and amortized over all calls to `pat-match`. These are just the features that 
 indicate a responsible use of storage. 
 
 However, there is a grave danger with this approach: the value returned must 
-be managed carefully. The new pat-match returns the value of success when it 
-matches, success is bound to a cons of the variable and value vectors. These can be 
-freely manipulated by the calling routine, but only up until the next call to pa t - ma tch. 
+be managed carefully. The new `pat-match` returns the value of `success` when it 
+matches, `success` is bound to a cons of the variable and value vectors. These can be 
+freely manipulated by the calling routine, but only up until the next call to `pat-match`. 
 At that time, the contents of the two vectors can change. Therefore, if any calling 
-function needs to hang on to the returned value after another call to pat-match, it 
+function needs to hang on to the returned value after another call to `pat-match`, it 
 should make a copy of the returned value. So it is not quite right to say that this 
-version of pat-match eliminates all consing. It will cons when vector-push-extend 
+version of pat-match eliminates all consing. It will cons when `vector-push-extend` 
 runs out of space, or when the user needs to make a copy of a returned value. 
-
-Here is the new definition of pat-match. It is implemented by closing the defi
-
-
-nition of pat-match and its two auxilliary functions inside a 1 et that establishes the 
-
-bindings of vars, val s, and success, but that is not crucial. Those three variables 
-
+Here is the new definition of `pat-match`. It is implemented by closing the defi-
+nition of pat-match and its two auxilliary functions inside a let that establishes the 
+bindings of `vars, vals,` and `success`, but that is not crucial. Those three variables 
 could have been implemented as global variables instead. Note that it does not sup
-
-
-port segment variables, or any of the other options implemented in the pat-match 
-
+port segment variables, or any of the other options implemented in the `pat-match` 
 of chapter 6. 
 
+``` lisp
 (let* ((vars (make-array 10 :fill-pointer 0 ladjustable t)) 
-(vals (make-array 10 :fill-pointer 0 :adjustable t)) 
-(success (cons vars vals))) 
+	(vals (make-array 10 :fill-pointer 0 :adjustable t)) 
+	(success (cons vars vals))) 
+```
 
 <a id='page-332'></a>
 
+``` lisp
 (defun efficient-pat-match (pattern input) 
-"Match pattern against input." 
-(setf (fill-pointer vars) 0) 
-(setf (fill-pointer vals) 0) 
-(pat-match-1 pattern input)) 
+	"Match pattern against input." 
+	(setf (fill-pointer vars) 0) 
+	(setf (fill-pointer vals) 0) 
+	(pat-match-1 pattern input)) 
 
 (defun pat-match-1 (pattern input) 
-
-(cond ((variable-p pattern) (match-var pattern input)) 
-((eql pattern input) success) 
-((and (consp pattern) (consp input)) 
-
-(and (pat-match-1 (first pattern) (first input)) 
-(pat-match-1 (rest pattern) (rest input)))) 
-(t fail))) 
+	(cond ((variable-p pattern) (match-var pattern input)) 
+		((eql pattern input) success) 
+		((and (consp pattern) (consp input)) 
+			(and (pat-match-1 (first pattern) (first input)) 
+				(pat-match-1 (rest pattern) (rest input)))) 
+	    (t fail))) 
 
 (defun match-var (var input) 
-"Match a single variable against input." 
-(let ((i (position var vars))) 
-
-(cond ((null i) 
-(vector-push-extend var vars) 
-(vector-push-extend input vals) 
-success) 
-
-((equal input (aref vals i)) success) 
-
-(t fail))))) 
+	"Match a single variable against input." 
+	(let ((i (position var vars))) 
+		(cond ((null i) 
+			(vector-push-extend var vars) 
+			(vector-push-extend input vals) 
+			success) 
+			((equal input (aref vals i)) success) 
+			(t fail))))) 
+```
 
 An example of its use: 
 
-> (efficient-pat-match '(Tx + ?x = ?y . ?z) 
-'(2 + 2 = (3 + 1) is true)) 
-(#(?X ?Y 11) . #(2 (3 + 1) (IS TRUE))) 
+```
+> (efficient-pat-match '(?x + ?x = ?y . ?z) 
+	'(2 + 2 = (3 + 1) is true)) 
+(#(?X ?Y ?Z) . #(2 (3 + 1) (IS TRUE))) 
+```
 
 Extensible vectors with fill pointers are convenient, and much more efficient than 
 consing up lists. However, there is some overhead involved in using them, and for 
 those sections of code that must be most efficient, it is best to stick with simple 
-vectors. The following version of ef f i cient-pat-match explicitly manages the size 
+vectors. The following version of `efficient-pat-match` explicitly manages the size 
 of the vectors and explicitly replaces them with new ones when the size is exceeded: 
 
+``` lisp
 (let* ((current-size 0) 
-(max-size 1) 
-(vars (make-array max-size)) 
-(vals (make-array max-size)) 
-(success (cons vars vals))) 
-
-(declare (simple-vector vars vals) 
-(fixnum current-size max-size)) 
+	(max-size 1) 
+	(vars (make-array max-size)) 
+	(vals (make-array max-size)) 
+	(success (cons vars vals))) 
+	(declare (simple-vector vars vals) 
+		(fixnum current-size max-size)) 
+```
 
 <a id='page-333'></a>
 
-(defun efficient-pat-match (pattern input) 
-"Match pattern against input." 
-(setf current-size 0) 
-(pat-match-1 pattern input)) 
+``` lisp
+	    (defun efficient-pat-match (pattern input) 
+			"Match pattern against input." 
+			(setf current-size 0) 
+			(pat-match-1 pattern input)) 
 
-pat-match-1 is unchanged 
+;; pat-match-1 is unchanged 
 
 (defun match-var (var input) 
-"Match a single variable against input." 
-(let ((i (position var vars))) 
-
-(cond 
-((null i) 
-(when (= current-size max-size) 
-Make new vectors when we run out of space 
-
-(setf max-size (* 2 max-size) 
-vars (replace (make-array max-size) vars) 
-vals (replace (make-array max-size) vals) 
-success (cons vars vals))) 
-
-;; Store var and its value in vectors 
-(setf (aref vars current-size) var) 
-(setf (aref vals current-size) input) 
-(incf current-size) 
-success) 
-
-((equal input (aref vals i)) success) 
-
-(t fail))))) 
+	"Match a single variable against input." 
+	(let ((i (position var vars))) 
+		(cond 
+			((null i) 
+				(when (= current-size max-size) 
+					;; Make new vectors when we run out of space 
+					(setf max-size (* 2 max-size) 
+						vars (replace (make-array max-size) vars) 
+						vals (replace (make-array max-size) vals) 
+						success (cons vars vals))) 
+					;; Store var and its value in vectors 
+					(setf (aref vars current-size) var) 
+					(setf (aref vals current-size) input) 
+					(incf current-size) 
+					success) 
+	        ((equal input (aref vals i)) success) 
+			(t fail))))) 
+```
 
 In conclusion, replacing lists with vectors can often save garbage. But when you 
 must use lists, it pays to use a version of cons that avoids consing when possible. The 
 following is such a version: 
 
+``` lisp
 (proclaim '(inline reuse-cons)) 
 
 (defun reuse-cons (x y x-y) 
-"Return (cons . y), or just x-y if it is equal to (cons . y). " 
-(if (and (eql . (car x-y)) (eql y (cdr x-y))) 
+	"Return (cons . y), or just x-y if it is equal to (cons . y). " 
+	(if (and (eql . (car x-y)) (eql y (cdr x-y))) 
+		x-y 
+		(cons X y))) 
+```
 
-x-y 
-
-(cons X y))) 
-
-The trick is based on the definition of subst in Steele's Common Lisp the Language. 
-Here is a definition for a version of remove that uses reuse- cons: 
+The trick is based on the definition of `subst` in Steele's *Common Lisp the Language*. 
+Here is a definition for a version of remove that uses `reuse-cons`: 
 
 <a id='page-334'></a>
 
+``` lisp
 (defun remq (item list) 
-"Like REMOVE, but uses EQ, and only works on lists. " 
-(cond ((null list) nil) 
+	"Like REMOVE, but uses EQ, and only works on lists. " 
+	(cond ((null list) nil) 
+		((eq item (first list)) (remq item (rest list))) 
+		(t (reuse-cons (first list) 
+			(remq item (rest list)) 
+			list)))) 
+```
 
-((eq item (first list)) (remq item (rest list))) 
+#### Avoid Consing: Unique Lists 
 
-(t (reuse-cons (first list) 
-(remq item (rest list)) 
-list)))) 
-
-Avoid Consing: Unique Lists 
-
-Of course, reuse - cons only works when you have candidate cons cells around. That 
-is, (reuse-cons a b c) only saves space when c is (or might be) equal to (cons a b). 
-For some applications, it is useful to have a version of cons that returns a unique cons 
+Of course, `reuse-cons` only works when you have candidate cons cells around. That 
+is, `(reuse-cons a b c)` only saves space when c is (or might be) equal to `(cons a b)`. 
+For some applications, it is useful to have a version of cons that returns unique cons 
 cell without needing c as a hint. We will call this version ucons for "unique cons." 
-ucons maintains a double hash table: *uni q- cons - tabl e* is a hash table whose keys 
-are the cars of cons cells. The value for each car is another hash table whose keys 
-are the cdrs of cons cells. The value of each cdr in this second table is the original 
-cons cell. So two different cons cells with the same ca r and cdr will retrieve the same 
-value. Here is an implementation of ucons: 
+`ucons` maintains a double hash table: `*uniq-cons-table*` is a hash table whose keys 
+are the `car`s of cons cells. The value for each `car` is another hash table whose keys 
+are the `cdr`s of cons cells. The value of each `cdr` in this second table is the original 
+cons cell. So two different cons cells with the same `car` and `cdr` will retrieve the same 
+value. Here is an implementation of `ucons`: 
 
+``` lisp
 (defvar *uniq-cons-table* (make-hash-table :test #'eq)) 
 
 (defun ucons (x y) 
-"Return a cons s.t. (eq (ucons . y) (ucons . y)) is true." 
-(let ((car-table (or (gethash . *uniq-cons-table*) 
+	"Return a cons s.t. (eq (ucons . y) (ucons . y)) is true." 
+	(let ((car-table (or (gethash . *uniq-cons-table*) 
+		(setf (gethash . *uniq-cons-table*) 
+			(make-hash-table :test #'eq))))) 
+		(or (gethash y car-table) 
+			(setf (gethash y car-table) (cons . y))))) 
+```
 
-(setf (gethash . *uniq-cons-table*) 
-(make-hash-table :test #'eq))))) 
-(or (gethash y car-table) 
-(setf (gethash y car-table) (cons . y))))) 
-
-ucons, unlike cons, is a true function: it will always return the same value, given 
-the same arguments, where "same" is measured by eq. However, if ucons is given 
-arguments that are equal but not eq, it will not return a unique result. For that 
-we need the function unique. It has the property that (unique x) is eq to (unique 
-
-y) whenever . and y are equal. unique uses a hash table for atoms in addition to 
+`ucons`, unlike `cons`, is a true function: it will always return the same value, given 
+the same arguments, where "same" is measured by `eq`. However, if `ucons` is given 
+arguments that are equal but not `eq`, it will not return a unique result. For that 
+we need the function `unique`. It has the property that `(unique x)` is `eq` to `(unique 
+y)` whenever x and y are equal. `unique` uses a hash table for atoms in addition to 
 the double hash table for conses. This is necessary because strings and arrays can 
-be equal without being eq. Besides unique, we also define ul ist and uappend for 
+be `equal` without being `eq`. Besides `unique`, we also define `ulist` and `uappend` for 
 convenience. 
+
+``` lisp
 (defvar *uniq-atom-table* (make-hash-table .-test #'equal)) 
+```
 
 <a id='page-335'></a>
+
+``` lisp
 (defun unique (exp) 
-"Return a canonical representation that is EQUAL to exp. 
-such that (equal . y) implies (eq (unique x) (unique y))." 
-(typecase exp 
-
-(symbol exp) 
-(fixnum exp) Remove if fixnums are not eq in your Lisp 
-(atom (or (gethash exp *uniq-atom-table*) 
-
-(setf (gethash exp *uniq-atom-table*) exp))) 
-(cons (unique-cons (car exp) (cdr exp))))) 
+	"Return a canonical representation that is EQUAL to exp. 
+	such that (equal . y) implies (eq (unique x) (unique y))." 
+	(typecase exp 
+		(symbol exp) 
+		(fixnum exp) Remove if fixnums are not eq in your Lisp 
+		(atom (or (gethash exp *uniq-atom-table*) 
+			(setf (gethash exp *uniq-atom-table*) exp))) 
+		(cons (unique-cons (car exp) (cdr exp))))) 
 
 (defun unique-cons (x y) 
-"Return a cons s.t. (eq (ucons . y) (uconswhenever (equal . x2) and (equal y y2) are(ucons (unique x) (unique y))) 
+	"Return a cons s.t. (eq (ucons . y) (ucons x2 y2)) is true
+	whenever (equal . x2) and (equal y y2) are true."
+	(ucons (unique x) (unique y))) 
 
 (defun ulist (&rest args) 
-"A uniquified list." 
-(unique args)) 
+	"A uniquified list." 
+	(unique args)) 
 
 (defun uappend (x y) 
-"A unique list equal to (append . y). " 
-(if (null X) 
-(unique y) 
+	"A unique list equal to (append . y). " 
+	(if (null X) 
+		(unique y) 
+		(ucons (first x) (uappend (rest x) y)))) 
+```
 
- x2 y2)) is true 
-true." 
-
-(ucons (first x) (uappend (rest x) y)))) 
-
-The above code works, but it can be improved. The problem is that when uni que is 
+The above code works, but it can be improved. The problem is that when `unique` is 
 applied to a tree, it always traverses the tree all the way to the leaves. The function 
-unique-cons is like ucons, except that unique-cons assumes its arguments are not 
-yet unique. We can modify uni que- cons so that it first checks to see if its arguments 
+`unique-cons` is like `ucons`, except that unique-cons assumes its arguments are not 
+yet unique. We can modify `unique-cons` so that it first checks to see if its arguments 
 are unique, by looking in the appropriate hash tables: 
 
+``` lisp
 (defun unique-cons (x y) 
-"Return a cons s.t. (eq (ucons . y) (ucons x2 y2)) is true 
-whenever (equal . x2) and (equal y y2) are true." 
-(let ((ux) (uy)) : unique . and y 
+	"Return a cons s.t. (eq (ucons . y) (ucons x2 y2)) is true 
+	whenever (equal . x2) and (equal y y2) are true." 
+	(let ((ux) (uy)) : unique . and y 
+		(let ((car-table 
+			(or (gethash . *uniq-cons-table*) 
+				(gethash (setf ux (unique x)) *uniq-cons-table*) 
+				(setf (gethash ux *uniq-cons-table*) 
+					(make-hash-table :test #*eq))))) 
+	      (or (gethash y car-table) 
+			  (gethash (setf uy (unique y)) car-table) 
+			  (setf (gethash uy car-table) 
+				  (cons ux uy)))))) 
+```
 
-(let ((car-table 
-
-(or (gethash . *uniq-cons-table*) 
-(gethash (setf ux (unique x)) *uniq-cons-table*) 
-(setf (gethash ux *uniq-cons-table*) 
-
-(make-hash-table :test #*eq))))) 
-
-(or (gethash y car-table) 
-(gethash (setf uy (unique y)) car-table) 
-(setf (gethash uy car-table) 
-
-(cons ux uy)))))) 
-
-Another advantage of uni que is that it can help in indexing. If lists are unique, 
-then they can be stored in an eq hash table instead of a equal hash table. This can 
+Another advantage of `unique` is that it can help in indexing. If lists are unique, 
+then they can be stored in an `eq` hash table instead of a equal hash table. This can 
 
 <a id='page-336'></a>
 
-lead to significant savings v^hen the list structures are large. An eq hash table for 
+lead to significant savings when the list structures are large. An `eq` hash table for 
 lists is almost as good as a property list on symbols. 
 
-Avoid Consing: Multiple Values 
+#### Avoid Consing: Multiple Values 
 
 Parameters and multiple values can also be used to pass around values, rather than 
 building up lists. For example, instead of: 
 
+``` lisp
 (defstruct point "A point in 3-D cartesian space." . y z) 
 
 (defun scale-point (k pt) 
-
-"Multiply a point by a constant, K." 
-
-(make-point :x (* k (point-x pt)) 
-
-:y (* k (point-y pt)) 
-
-:z (* k (point-z pt)))) 
+	"Multiply a point by a constant, K." 
+	(make-point :x (* k (point-x pt)) 
+		:y (* k (point-y pt)) 
+		:z (* k (point-z pt)))) 
+```
 
 one could use the following approach, which doesn't generate structures: 
 
-(defun scale-point (k . y z) 
+``` lisp
+(defun scale-point (k x y z) 
+	"Multiply the point (x,y,z) by a constant, K." 
+	(values (* k x) (* k y) (* k z))) 
+```
 
-"Multiply the point (x,y,z) by a constant, K." 
-
-(values (* k x) (* k y) (* k z))) 
-
-Avoid Consing: Resources 
+#### Avoid Consing: Resources 
 
 Sometimes it pays to manage explicitly the storage of instances of some data type. A 
-pool of these instances may be called a resource. Explicit management of a resource 
+pool of these instances may be called a *resource*. Explicit management of a resource 
 is appropriate when: (1) instances are frequently created, and are needed only 
 temporarily; (2) it is easy/possible to be sure when instances are no longer needed; 
 and (3) instances are fairly large structures or take a long time to initialize, so that it 
@@ -1083,7 +1084,7 @@ never to leak and never to deallocate structures that are in use. This eliminate
 potential bug sources. The penalty you pay for this guarantee is some inefficiency of 
 the general-purpose memory management as compared to a custom user-supplied 
 management scheme. But beware: modern garbage-collection techniques are highly 
-optimized. In particular, the so-called generation scavenging or ephemeral garbage 
+optimized. In particular, the so-called *generation scavenging* or *ephemeral* garbage 
 collectors look more often at recently allocated storage, on the grounds that recently 
 made objects are more likely to become garbage. If you hold on to garbage in your 
 own data structures, you may end up with worse performance. 
@@ -1092,30 +1093,26 @@ own data structures, you may end up with worse performance.
 
 With all these warnings in mind, here is some code to manage resources: 
 
+``` lisp
 (defmacro defresource (name &key constructor (initial-copies 0) 
-(size (max initial-copies 10))) 
-
-(let ((resource (symbol name '-resource)) 
-(deallocate (symbol 'deallocate- name)) 
-(allocate (symbol 'allocate- name))) 
-
-'(let ((.resource (make-array .size ifill-pointer 0))) 
-
-(defun .allocate () 
-"Get an element from the resource pool, or make one." 
-(if (= (fill-pointer .resource) 0) 
-
-.constructor 
-(vector-pop .resource))) 
-
-(defun .deallocate (.name) 
-"Place a no-longer-needed element back in the pool." 
-(vector-push-extend .name .resource)) 
-
-.(if (> initial-copies 0) 
-'(mapc #'.deallocate (loop repeat .initial-copies 
-collect (.allocate)))) 
-'.name))) 
+	(size (max initial-copies 10))) 
+	(let ((resource (symbol name '-resource)) 
+		(deallocate (symbol 'deallocate- name)) 
+		(allocate (symbol 'allocate- name))) 
+	`(let ((,resource (make-array ,size :fill-pointer 0))) 
+		(defun ,allocate () 
+			"Get an element from the resource pool, or make one." 
+			(if (= (fill-pointer ,resource) 0) 
+				,constructor 
+				(vector-pop ,resource))) 
+	    (defun ,deallocate (,name) 
+			"Place a no-longer-needed element back in the pool." 
+			(vector-push-extend ,name ,resource)) 
+			,(if (> initial-copies 0) 
+				`(mapc #',deallocate (loop repeat ,initial-copies 
+					collect (,allocate)))) 
+	        ',name)))
+```
 
 Let's say we had some structure called a buffer which we were constantly making 
 instances of and then discarding. Furthermore, suppose that buffers are fairly 
@@ -1123,87 +1120,91 @@ complex objects to build, that we know we'll need at least 10 of them at a time,
 that we probably won't ever need more than 100 at a time. We might use the buffer 
 resource as follows: 
 
+``` lisp
 (defresource buffer :constructor (make-buffer) 
-:size 100 :initial-copies 10) 
+	:size 100 :initial-copies 10) 
+```
 
 This expands into the following code: 
 
-(let ((buffer-resource (make-array 100 :fil 1-pointer 0))) 
-
-(defun allocate-buffer () 
-"Get an element from the resource pool, or make one." 
-(if (= (fil1-pointer buffer-resource) 0) 
-
-(make-buffer) 
-(vector-pop buffer-resource))) 
-
-(defun deallocate-buffer (buffer) 
-"Place a no-longer-needed element back in the pool." 
-(vector-push-extend buffer buffer-resource)) 
-
-(mapc #'deanocate-buffer 
-(loop repeat 10 collect (allocate-buffer))) 
-'buffer) 
+``` lisp
+(let ((buffer-resource (make-array 100 :fill-pointer 0))) 
+	(defun allocate-buffer () 
+		"Get an element from the resource pool, or make one." 
+		(if (= (fil1-pointer buffer-resource) 0) 
+			(make-buffer) 
+			(vector-pop buffer-resource))) 
+	(defun deallocate-buffer (buffer) 
+		"Place a no-longer-needed element back in the pool." 
+		(vector-push-extend buffer buffer-resource)) 
+	(mapc #'deanocate-buffer 
+		(loop repeat 10 collect (allocate-buffer))) 
+	'buffer) 
+```
 
 <a id='page-338'></a>
 
 We could then use: 
 
+```
 (let ((b (allocate-buffer))) 
-
-(process b) 
-
-(deallocate-buffer b))) 
+	...
+	(process b) 
+	...
+	(deallocate-buffer b))) 
+```
 
 The important thing to remember is that this works only if the buffer b really can 
 be deallocated. If the function process stored away a pointer to b somewhere, 
 then it would be a mistake to deallocate b, because a subsequent allocation could 
-unpredictably alter the stored buffer. Of course, if process stored a copy of b, then 
+unpredictably alter the stored buffer. Of course, if process stored a *copy* of b, then 
 everything is alright. This pattern of allocation and deallocation is so common that 
 we can provide a macro for it: 
 
+``` lisp
 (defmacro with-resource ((var resource &optional protect) &rest body) 
-"Execute body with VAR bound to an instance of RESOURCE." 
-(let ((allocate (symbol 'allocate- resource)) 
+	"Execute body with VAR bound to an instance of RESOURCE." 
+	(let ((allocate (symbol 'allocate- resource)) 
+		(deallocate (symbol 'deallocate- resource))) 
+		(if protect 
+			`(let ((,var nil)) 
+				(unwind-protect 
+					(progn (setf ,var (,allocate)) ,body) 
+					(unless (null ,var) (,deallocate ,var)))) 
+	        `(let ((,var (,allocate))) 
+				,@body 
+				(,deallocate ,var))))) 
+```
 
-(deallocate (symbol 'deallocate- resource))) 
-(if protect 
-
-'(let ((.var nil)) 
-(unwind-protect 
-(progn (setf ,var (.allocate)) .body) 
-(unless (null .var) (.deallocate .var)))) 
-
-'(let ((.var (.allocate))) 
-.body 
-(.deallocate .var))))) 
-The macro allows for an optional argument that sets up an unwi nd - protect environment, 
+The macro allows for an optional argument that sets up an `unwind-protect` environment, 
 so that the buffer gets deallocated even when the body is abnormally exited. 
 The following expansions should make this clearer: 
 
+```
 > (macroexpand '(with-resource (b buffer) 
-"..." (process b) "...")) 
+	"..." (process b) "...")) 
 (let ((b (allocate-buffer))) 
-
-. It 
-
+"..."
 (process b) 
-
-11 II 
-
+"..."
 (deallocate-buffer b)) 
 
 > (macroexpand '(with-resource (b buffer t) 
-"..." (process b) "...")) 
+	"..." (process b) "...")) 
 (let ((b nil)) 
-(unwind-protect 
-(progn (setf b (allocate-buffer)) 
+	(unwind-protect 
+		(progn (setf b (allocate-buffer)) 
+			"..."
+```
 
 <a id='page-339'></a>
-(process b) 
-"...") 
-(unless (null b) 
-(deallocate-buffer b)))) 
+
+```
+	            (process b) 
+				"...") 
+	(unless (null b) 
+		(deallocate-buffer b)))) 
+```
 
 An alternative to full resources is to just save a single data object. Such an approach 
 is simpler because there is no need to index into a vector of objects, but it is sufficient 
@@ -1211,7 +1212,7 @@ for some applications, such as a tail-recursive function call that only uses one
 at a time. 
 
 Another possibility is to make the system slower but safer by having the 
-deal 1 ocate function check that its argument is indeed an object of the correct type. 
+deallocate function check that its argument is indeed an object of the correct type. 
 
 Keep in mind that using resources may put you at odds with the Lisp system's own 
 storage management scheme. In particular, you should be concerned with paging 
@@ -1220,64 +1221,71 @@ live objects on each page, thus forcing the system to do a lot of paging to get 
 done. Compacting garbage collectors can collect live objects onto the same page, but 
 using resources may interfere with this. 
 
-10.5 Use the Right Data Structures 
+### 10.5 Use the Right Data Structures 
+
 It is important to implement key data types with the most efficient implementation. 
 This can vary from machine to machine, but there are a few techniques that are 
 universal. Here we consider three case studies. 
 
-The Right Data Structure: Variables 
+#### The Right Data Structure: Variables 
 
 As an example, consider the implementation of pattern-matching variables. We saw 
-from the instrumentation of s i mp1 if y that variable-p was one of the most frequently 
+from the instrumentation of `simplify` that `variable-p` was one of the most frequently 
 used functions. In compiling the matching expressions, I did away with all calls to 
-vari abl e-p, but let's suppose we had an application that required run-time use of 
+`variable-p`, but let's suppose we had an application that required run-time use of 
 variables. The specification of the data type vari abl e will include two operators, 
-the recognizer vari abl e-p, and the constructor make-vari abl e, which gives a new, 
+the recognizer `variable-p`, and the constructor `make-variable`, which gives a new, 
 previously unused variable. (This was not needed in the pattern matchers shown so 
 far, but will be needed for unification with backward chaining.) One implementation 
 of variables is as symbols that begin with the character #\?: 
 
+``` lisp
 (defun variable-p (x) 
-"Is X a variable (a symbol beginning with *?')?" 
-(and (symbolp x) (equal (elt (symbol-name x) 0) #\?))) 
+	"Is X a variable (a symbol beginning with *?')?" 
+	(and (symbolp x) (equal (elt (symbol-name x) 0) #\?))) 
+```
 
 <a id='page-340'></a>
 
+``` lisp
 (defun make-variable () "Generate a new variable" (gentemp "?")) 
+```
 
 We could try to speed things up by changing the implementation of variables to be 
 keywords and making the functions inline: 
 
+```
 (proclaim '(inline variable-p make-variable)) 
-(defun variable-p (x) "Is . a variable?" (keywordp x)) 
-(defun make-variable () (gentemp "X" #.(find-package "KEYWORD"))) 
+(defun variable-p (x) "Is x a variable?" (keywordp x)) 
+(defun make-variable () (gentemp "X" #,(find-package "KEYWORD"))) 
+```
 
 (The reader character sequence #. means to evaluate at read time, rather than at 
 execution time.) On my machine, this implementation is pretty fast, and I accepted 
 it as a viable compromise. However, other implementations were also considered. 
 One was to have variables as structures, and provide a read macro and print function: 
 
-(defstruct (variable (iprint-function print-variable)) name) 
+``` lisp
+(defstruct (variable (:print-function print-variable)) name) 
 
 (defvar *vars* (make-hash-table)) 
 
 (set-macro-character #\? 
-##'(lambda (stream char) 
-
-Find an old var, or make a new one with the given name 
-(declare (ignore char)) 
-(let ((name (read stream t nil t))) 
-
-(or (gethash name *vars*) 
-(setf (gethash name *vars*) (make-variable mame name)))))) 
+	#'(lambda (stream char) 
+	;; Find an old var, or make a new one with the given name 
+	(declare (ignore char)) 
+	(let ((name (read stream t nil t))) 
+		(or (gethash name *vars*) 
+			(setf (gethash name *vars*) (make-variable mame name)))))) 
 
 (defun print-variable (var stream depth) 
-(declare (ignore depth)) 
-(format stream "?~a" (var-name var))) 
+	(declare (ignore depth)) 
+	(format stream "?~a" (var-name var))) 
+```
 
 It turned out that, on all three Lisps tested, structures were slower than keywords 
 or symbols. Another alternative is to have the ? read macro return a cons whose 
-first is, say, : var. This requires a special output routine to translate back to the ? 
+first is, say, `:var`. This requires a special output routine to translate back to the ? 
 notation. Yet another alternative, which turned out to be the fastest of all, was to 
 implement variables as negative integers. Of course, this means that the user cannot 
 use negative integers elsewhere in patterns, but that turned out to be acceptable for 
@@ -1293,51 +1301,54 @@ the problem of maintaining information about a set of people, and searching that
 A naive implementation might look like this: 
 
 <a id='page-341'></a>
+
+``` lisp
 (defvar *people* nil "Will hold a list of people") 
 
 (defstruct person name address id-number) 
 
 (defun person-with-id (id) 
-(find id *people* :key #'person-id-number)) 
+	(find id *people* :key #'person-id-number)) 
+```
 
 In a traditional language like C, the natural solution is to include in the person 
 structure a pointer to the next person, and to write a loop to follow these pointers. 
 Of course, we can do that in Lisp too: 
 
+``` lisp
 (defstruct person name address id-number next) 
 
 (defun person-with-id (id) 
-
-(loop for person = *people* then (person-next person) 
-
-until (null person) 
-
-do (when (eql id (person-id-number person)) 
-
-(RETURN person)))) 
+	(loop for person = *people* then (person-next person) 
+		until (null person) 
+		do (when (eql id (person-id-number person)) 
+			(RETURN person)))) 
+```
 
 This solution takes less space and is probably faster, because it requires less memory 
 accesses: one for each person rather than one for each person plus one for each 
 cons cell. So there is a small price to pay for using lists. But Lisp programmers feel 
 that price is worth it, because of the convenience and ease of coding and debugging 
-afforded by general-purpose functions like f i nd. 
+afforded by general-purpose functions like `find`. 
 
 In any case, if there are going to be a large number of people, the list is definitely 
 the wrong data structure. Fortunately, Lisp makes it easy to switch to more efficient 
 data structures, for example: 
 
+``` lisp
 (defun person-with-id (id) 
-(gethash id *people*)) 
+	(gethash id *people*)) 
+```
 
-The Right Data Structure: Queues 
+#### The Right Data Structure: Queues 
 
-Aqueue is a data structure where one can add elements at the rear and remove them 
+A *queue* is a data structure where one can add elements at the rear and remove them 
 from the front. This is almost like a stack, except that in a stack, elements are both 
 added and removed at the same end. 
 
 Lists can be used to implement stacks, but there is a problem in using lists to 
 implement queues: adding an element to the rear requires traversing the entire list. 
-So collecting . elements would be O(n^) instead of 0{n). 
+So collecting *n* elements would be *O(n^2)* instead of *O(n)*. 
 
 An alternative implementation of queues is as a cons of two pointers: one to the 
 list of elements of the queue (the contents), and one to the last cons cell in the list. 
@@ -1346,70 +1357,70 @@ and UCI Lisp under the function name tconc:
 
 <a id='page-342'></a>
 
+``` lisp
 ;;; A queue is a (contents . last) pair 
 
 (defun tconc (item q) 
-"Insert item at the end of the queue." 
-(setf (cdr q) 
+	"Insert item at the end of the queue." 
+	(setf (cdr q) 
+		(if (null (cdr q)) 
+			(setf (car q) (cons item nil)) 
+			(setf (rest (cdr q)) 
+				(cons item nil))))) 
+```
 
-(if (null (cdr q)) 
-(setf (car q) (cons item nil)) 
-(setf (rest (cdr q)) 
-
-(cons item nil))))) 
-
-The tconc implementation has the disadvantage that adding the first element to 
-the contents is different from adding subsequent elements, so an i f statement is 
+The `tconc` implementation has the disadvantage that adding the first element to 
+the contents is different from adding subsequent elements, so an `if` statement is 
 required to decide which action to take. The definition of queues given below avoids 
 this disadvantage with a clever trick. First, the order of the two fields is reversed. 
-The car of the cons cell is the last element, and the cdr is the contents. Second, the 
-empty queue is a cons cell where the cdr (the contents field) is nil, and the car (the 
-last field) is the cons itself. In the definitions below, we change the name tconc to 
-the more standard enqueue, and provide the other queue functions as well: 
+The `car` of the cons cell is the last element, and the cdr is the contents. Second, the 
+empty queue is a cons cell where the `cdr` (the contents field) is `nil`, and the `car` (the 
+last field) is the cons itself. In the definitions below, we change the name `tconc` to 
+the more standard `enqueue`, and provide the other queue functions as well: 
 
+``` lisp
 ;;; A queue is a (last . contents) pair 
 
 (proclaim '(inline queue-contents make-queue enqueue dequeue 
-front empty-queue-p queue-nconc)) 
+	front empty-queue-p queue-nconc)) 
 
 (defun queue-contents (q) (cdr q)) 
 
 (defun make-queue () 
-"Build a new queue, with no elements." 
-(let ((q (cons nil nil))) 
-
-(setf (car q) q))) 
+	"Build a new queue, with no elements." 
+	(let ((q (cons nil nil))) 
+		(setf (car q) q))) 
 
 (defun enqueue (item q) 
-"Insert item at the end of the queue." 
-(setf (car q) 
-
-(setf (rest (car q)) 
-(cons item nil))) 
-q) 
+	"Insert item at the end of the queue." 
+	(setf (car q) 
+		(setf (rest (car q)) 
+			(cons item nil))) 
+	q) 
 
 (defun dequeue (q) 
-"Remove an item from the front of the queue." 
-(pop (cdr q)) 
-
-(if (null (cdr q)) (setf (car q) q)) 
-q) 
+	"Remove an item from the front of the queue." 
+	(pop (cdr q)) 
+	(if (null (cdr q)) (setf (car q) q)) 
+	q) 
 
 (defun front (q) (first (queue-contents q))) 
 
 (defun empty-queue-p (q) (null (queue-contents q))) 
+```
 
 <a id='page-343'></a>
 
+``` lisp
 (defun queue-nconc (q list) 
-"Add the elements of LIST to the end of the queue." 
-(setf (car q) 
+	"Add the elements of LIST to the end of the queue." 
+	(setf (car q) 
+		(last (setf (rest (car q)) list)))) 
+```
 
-(last (setf (rest (car q)) list)))) 
+#### The Right Data Structure: Tables 
 
-The Right Data Structure: Tables 
-
-A table is a data structure to which one can insert a key and associate it with a value, 
+A *table* is a data structure to which one can insert a key and associate it with a value, 
 and later use the key to look up the value. Tables may have other operations, like 
 counting the number of keys, clearing out all keys, or mapping a function over each 
 key/value pair. 
@@ -1421,13 +1432,13 @@ tables, but may have significant overhead for small ones. If the keys are symbol
 property lists can be used. If the keys are integers in a narrow range (or can be 
 mapped into them), then a vector may be the most efficient choice. 
 
-Here we implement an alternative data structure, the trie. A trie implements a 
+Here we implement an alternative data structure, the *trie*. A trie implements a 
 table for keys that are composed of a finite sequence of components. For example, 
 if we were implementing a dictionary as a trie, each key would be a word, and 
 each letter of the word would be a component. The value of the key would be the 
 word's definition. At the top of the dictionary trie is a multiway branch, one for each 
 possible first letter. Each second-level node has a branch for every possible second 
-letter, and so on. To find an n-letter word requires . reads. This kind of organization 
+letter, and so on. To find an *n*-letter word requires *n* reads. This kind of organization 
 is especially good when the information is stored on secondary storage, because a 
 single read can bring in a node with all its possible branches. 
 
@@ -1437,107 +1448,96 @@ to do that makes use of the fact that any tree can be written as a linear sequen
 of atoms and cons operations, in prefix form. Thus, we would make the following 
 transformation: 
 
+``` lisp
 (a (b c) d) = 
 (cons a (cons (cons b (cons c nil)) (cons d nil))) = 
-(cons a cons cons b cons c nil cons d nil) 
+(cons a cons cons b cons c nil       cons d nil) 
+```
 
 In the implementation of tries below, this transformation is done on the fly: The four 
-user-level functions are make-trie to create a new trie, put-trie and get-trie to 
-add and retrieve key/value pairs, and del ete-tri e to remove them. 
+user-level functions are `make-trie` to create a new trie, `put-trie` and `get-trie` to 
+add and retrieve key/value pairs, and `delete-trie` to remove them. 
 
 Notice that we use a distinguished value to mark deleted elements, and that 
 get-trie returns two values: the actual value found, and a flag saying if anything 
 
 <a id='page-344'></a>
 
-was found or not. This is consistent with the interface to gethash and find, and 
+was found or not. This is consistent with the interface to `gethash` and `find`, and 
 allows us to store null values in the trie. It is an inobtrusive choice, because the 
 programmer who decides not to store null values can just ignore the second value, 
 and everything will work properly. 
 
+``` lisp
 (defstruct trie (value nil) (arcs nil)) 
 (defconstant trie-deleted "deleted") 
 
 (defun put-trie (key trie value) 
-"Set the value of key in trie." 
-(setf (trie-value (find-trie key t trie)) value)) 
+	"Set the value of key in trie." 
+	(setf (trie-value (find-trie key t trie)) value)) 
 
 (defun get-trie (key trie) 
-"Return the value for a key in a trie, and t/nil if found." 
-(let* ((key-trie (find-trie key nil trie)) 
-
-(val (if key-trie (trie-value key-trie)))) 
-
-(if (or (null key-trie) (eq val trie-deleted)) 
-(values nil nil) 
-(values val t)))) 
+	"Return the value for a key in a trie, and t/nil if found." 
+	(let* ((key-trie (find-trie key nil trie)) 
+		(val (if key-trie (trie-value key-trie)))) 
+		(if (or (null key-trie) (eq val trie-deleted)) 
+			(values nil nil) 
+			(values val t)))) 
 
 (defun delete-trie (key trie) 
-"Remove a key from a trie." 
-(put-trie key trie trie-deleted)) 
+	"Remove a key from a trie." 
+	(put-trie key trie trie-deleted)) 
 
 (defun find-trie (key extend? trie) 
-"Find the trie node for this key. 
-If EXTEND? is true, make a new node if need be." 
-(cond ((null trie) nil) 
-
-((atom key) 
-(follow-arc key extend? trie)) 
-
-(t (find-trie 
-(cdr key) extend? 
-(find-trie 
-
-(car key) extend? 
-(find-trie 
-"." extend? trie)))))) 
+	"Find the trie node for this key. 
+	If EXTEND? is true, make a new node if need be." 
+	(cond ((null trie) nil) 
+		((atom key) 
+			(follow-arc key extend? trie)) 
+		(t (find-trie 
+			(cdr key) extend? 
+			(find-trie 
+				(car key) extend? 
+				(find-trie 
+					"." extend? trie)))))) 
 
 (defun follow-arc (component extend? trie) 
-"Find the trie node for this component of the key. 
-If EXTEND? is true, make a new node if need be." 
-(let ((arc (assoc component (trie-arcs trie)))) 
-
-(cond ((not (null arc)) (cdr arc)) 
-((not extend?) nil) 
-(t (let ((new-trie (make-trie))) 
-
-(push (cons component new-trie) 
-(trie-arcs trie)) 
-new-trie))))) 
+	"Find the trie node for this component of the key. 
+	If EXTEND? is true, make a new node if need be." 
+	(let ((arc (assoc component (trie-arcs trie)))) 
+		(cond ((not (null arc)) (cdr arc)) 
+			((not extend?) nil) 
+			(t (let ((new-trie (make-trie))) 
+				(push (cons component new-trie) 
+					(trie-arcs trie)) 
+				new-trie))))) 
+```
 
 <a id='page-345'></a>
 There are a few subtleties in the implementation. First, we test for deleted entries 
-
-with an eq comparison to a distinguished marker, the string tri e-de1 eted. No other 
-
-object will be eq to this string except tri e-del eted itself, so this is a good test. We 
-
+with an eq comparison to a distinguished marker, the string `trie-deleted`. No other 
+object will be `eq` to this string except `trie-deleted` itself, so this is a good test. We 
 also use a distinguished marker, the string ".", to mark cons cells. Components are 
-
-implicitly compared against this marker with an eql test by the assoc in fol 1 ow- arc. 
-
+implicitly compared against this marker with an eql test by the assoc in `follow-arc`. 
 Maintaining the identity of this string is crucial; if, for example, you recompiled 
-
-the definition of f i nd-tri e (without changing the definition at all), then you could 
-
+the definition of `find-trie` (without changing the definition at all), then you could 
 no longer find keys that were indexed in an existing trie, because the "." used by 
+`find-trie` would be a different one from the "." in the existing trie. 
 
-fi nd-tri e would be a different one from the "." in the existing trie. 
-
-Artificial Intelligence Programming (Charniak et al. 1987) discusses variations on 
+*Artificial Intelligence Programming* (Charniak et al. 1987) discusses variations on 
 the trie, particularly in the indexing scheme. If we always use proper lists (no non-null 
 cdrs), then a more efficient encoding is possible. As usual, the best type of indexing 
 depends on the data to be indexed. It should be noted that Charniak et al. call the trie 
-a discrimination net. In general, that term refers to any tree with tests at the nodes. 
+a *discrimination net*. In general, that term refers to any tree with tests at the nodes. 
 
 A trie is, of course, a kind of tree, but there are cases where it pays to convert a trie 
-into a dag—di directed acyclic graph. A dag is a tree where some of the subtrees are 
+into a *dag*—di directed acyclic graph. A dag is a tree where some of the subtrees are 
 shared. Imagine you have a spelUng corrector program with a list of some 50,000 or 
 so words. You could put them into a trie, each word with the value t. But there would 
-be many subtrees repeated in this trie. For example, given a word list containing look, 
-looks, looked, and looking as well as show, shows, showed, and showing, there would 
-be repetition of the subtree containing -s, -ed and -ing. After the trie is built, we 
-could pass the whole trie to un i que, and it would collapse the shared subtrees, saving 
+be many subtrees repeated in this trie. For example, given a word list containing *look, 
+looks, looked,* and *looking* as well as *show, shows, showed,* and *showing*, there would 
+be repetition of the subtree containing *-s, -ed and -ing*. After the trie is built, we 
+could pass the whole trie to `unique`, and it would collapse the shared subtrees, saving 
 storage. Of course, you can no longer add or delete keys from the dag without risking 
 unintended side effects. 
 
@@ -1549,12 +1549,12 @@ suffixes.
 
 Tries work best when neither the indexing key nor the retrieval key contains 
 variables. They work reasonably well when the variables are near the end of the 
-sequence. Consider looking up the pattern "yel 1 o?" in the dictionary, where the " ?" 
-character indicates a match of any letter. Following the branches for "yel 1 o" leads 
-quickly to the only possible match, "yel 1 ow". In contrast, fetching with the pattern 
-" ??11 ow" is much less efficient. The table lookup function would have to search all 
+sequence. Consider looking up the pattern "yello?" in the dictionary, where the "?" 
+character indicates a match of any letter. Following the branches for "yello" leads 
+quickly to the only possible match, "yellow". In contrast, fetching with the pattern 
+"??llow" is much less efficient. The table lookup function would have to search all 
 26 top-level branches, and for each of those consider all possible second letters, and 
-for each of those consider the path " 11 ow". Quite a bit of searching is required before 
+for each of those consider the path "llow". Quite a bit of searching is required before 
 arriving at the complete set of matches: bellow, billow, fallow, fellow, follow, hallow, 
 hollow, mallow, mellow, pillow, sallow, tallow, wallow, willow, and yellow. 
 
@@ -1563,16 +1563,18 @@ We will return to the problem of discrimination nets with variables in section 1
 
 <a id='page-346'></a>
 
-10.6 Exercises 
-&#9635; Exercise 10.1 [h] Define tlie macro deftable, such that (def table person assoc) 
-will act much like a def struct—it will define a set of functions for manipulating a 
-table of people: get-person, put-person, cl ear-person, and map-person. The table 
-should be implemented as an association list. Later on, you can change the representation 
-of the table simply by changing the form to (def tabl e person hash), without 
-having to change anything else in your code. Other implementation options include 
-property lists and vectors, def table should also take three keyword arguments: 
-i nl i ne, si ze and test. Here is a possible macroexpansion: 
+### 10.6 Exercises 
 
+&#9635; **Exercise 10.1 [h]** Define tlie macro deftable, such that (`deftable person assoc`) 
+will act much like a `defstruct`—it will define a set of functions for manipulating a 
+table of people: `get-person, put-person, clear-person,` and `map-person`. The table 
+should be implemented as an association list. Later on, you can change the representation 
+of the table simply by changing the form to (`deftable person hash`), without 
+having to change anything else in your code. Other implementation options include 
+property lists and vectors, `deftable` should also take three keyword arguments: 
+`inline, size` and `test`. Here is a possible macroexpansion: 
+
+``` lisp
 > (macroexpand '(deftableperson hash .-inline t :size 100)) = 
 
 (progn 
@@ -1589,16 +1591,17 @@ i nl i ne, si ze and test. Here is a possible macroexpansion:
 (defun map-person (fn) (maphash fn *person-table*)) 
 (defsetf get-person put-person) 
 'person) 
+```
 
-&#9635; Exercise 10.2 [m] We can use the : type option to defstruct to define structures 
+&#9635; **Exercise 10.2 [m]** We can use the `:type` option to defstruct to define structures 
 implemented as lists. However, often we have a two-field structure that we would 
 like to implement as a cons cell rather than a two-element list, thereby cutting storage 
-in half. Since defstruct does not allow this, define a new macro that does. 
+in half. Since `defstruct` does not allow this, define a new macro that does. 
 
-&#9635; Exercise 10.3 [m] Use reuse - cons to write a version of f 1 atten (see [page 329](chapter10.md#page-329)) that 
+&#9635; **Exercise 10.3 [m]** Use reuse-cons to write a version of `flatten` (see [page 329](chapter10.md#page-329)) that 
 shares as much of its input with its output as possible. 
 
-&#9635; Exercise 10.4 [h] Consider the data type set. A set has two main operations: adjoin 
+&#9635; **Exercise 10.4 [h]** Consider the data type *set*. A set has two main operations: adjoin 
 an element and test for membership. It is convenient to also add a map-over-elements 
 operation. With these primitive operations it is possible to build up more complex 
 operations like union and intersection. 
@@ -1607,38 +1610,39 @@ of sets. The simplest uses lists as the underlying representation, and provides 
 
 <a id='page-347'></a>
 
-functions ad j oi ., member, uni on, i ntersecti on, and set-di f f erence. Another uses 
+functions `adjoin, member, union, intersection,` and `set-difference`. Another uses 
 bit vectors, and a similar one uses integers viewed as bit sequences. Analyze the 
 time complexity of each implementation for each operation. 
 
-Next, show how sorted lists can be used to implement sets, and compare the 
+Next, show how *sorted lists* can be used to implement sets, and compare the 
 operations on sorted lists to their counterparts on unsorted lists. 
 
-10.7 Answers 
-Answer 10.2 
+### 10.7 Answers 
 
+**Answer 10.2**
+
+``` lisp
 (defmacro def-cons-struct (cons car cdr &optional inline?) 
-"Define aliases for cons, car and cdr." 
-'(progn (proclaim '(.(if inline? 'inline 'notinline) 
+	"Define aliases for cons, car and cdr." 
+	`(progn (proclaim '(,(if inline? 'inline 'notinline) 
+		,car ,cdr ,cons)) 
+		(defun ,car (x) (car x)) 
+		(defun ,cdr (x) (cdr x)) 
+		(defsetf ,car (x) (val) '(setf (car ,x) ,val)) 
+		(defsetf ,cdr (x) (val) '(setf (cdr ,x) ,val)) 
+		(defun ,cons (x y) (cons . y)))) 
+```
 
-.car .cdr .cons)) 
-(defun .car (x) (car x)) 
-(defun .cdr (x) (cdr x)) 
-(defsetf .car (x) (val) '(setf (car .x) .val)) 
-(defsetf .cdr (x) (val) '(setf (cdr .x) .val)) 
-(defun .cons (x y) (cons . y)))) 
+**Answer 10.3**
 
-Answer 10.3 
-
+``` lisp
 (defun flatten (exp &optional (so-far nil) last-cons) 
-"Return a flat list of the atoms in the input. 
-Ex: (flatten '((a) (b (c) d))) => (a b c d)." 
-(cond ((null exp) so-far) 
-
-((atom exp) (reuse-cons exp so-far last-cons)) 
-
-(t (flatten (first exp) 
-(flatten (rest exp) so-far exp) 
-exp)))) 
-
+	"Return a flat list of the atoms in the input. 
+	Ex: (flatten '((a) (b (c) d))) => (a b c d)." 
+	(cond ((null exp) so-far) 
+		((atom exp) (reuse-cons exp so-far last-cons)) 
+		(t (flatten (first exp) 
+			(flatten (rest exp) so-far exp) 
+			exp)))) 
+```
 
