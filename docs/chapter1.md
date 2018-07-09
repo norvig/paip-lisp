@@ -237,7 +237,7 @@ to x. The special form operators used in this chapter are:
 
 ### 1.4 Lists 
 
-So far we have seen two functions that operate on hsts: [append](http://clhs.lisp.se/Body/f_append.htm) and [length](http://clhs.lisp.se/Body/f_length.htm). Since 
+So far we have seen two functions that operate on lists: [append](http://clhs.lisp.se/Body/f_append.htm) and [length](http://clhs.lisp.se/Body/f_length.htm). Since 
 lists are important, let's look at some more list processing functions: 
 
 >\> p &rArr; (JOHN 0 PUBLIC) 
