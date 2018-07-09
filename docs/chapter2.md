@@ -315,7 +315,7 @@ section 1.7 ([page 18](chapter1.md#page-18)).
 (defun generate (phrase) 
   "Generate a random sentence or phrase" 
   (cond ((listp phrase) 
-        (mappend #'generate phrase)) 
+         (mappend #'generate phrase)) 
         ((rewrites phrase) 
          (generate (random-elt (rewrites phrase)))) 
         (t (list phrase)))) 
