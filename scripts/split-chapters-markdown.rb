@@ -1,7 +1,8 @@
 #!/usr/bin/env ruby
 
 # require "byebug"
-in_path = "PAIP.txt"
+
+in_path = "PAIP-safari.md"
 out_path = "docs"
 
 in_file = File.open(in_path, "r").read
@@ -10,9 +11,10 @@ out_file = ""
 in_file.each_line do |line|
   line.chomp!
 
-  chapter_match = line.match(/^## (.+)$/)
+  chapter_match = line.match(/^# (.+)$/)
   if chapter_match
     chapter = chapter_match[1].downcase
+    # byebug
     chapter.gsub!(" ", "")
     line.gsub!(/^##/, "#") # promote sections a level
     out_file = File.open("#{out_path}/#{chapter}.md", "w")
