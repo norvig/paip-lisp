@@ -1148,10 +1148,8 @@ Part I
 Introduction to Common Lisp
 !!!(p) {:.parttitle}
 
-[ ](#){:#c0005}Chapter 1
-
-# Introduction to Lisp
-{:.chaptitle}
+# Chapter 1
+## Introduction to Lisp
 
 > You think you know when you learn, are more sure when you can write, even more when you can teach, but certain when you can program.
 
@@ -2696,10 +2694,8 @@ They are known as *packages* in Common Lisp.
 [8](#xfn0045){:#np0045} Pronounced “see-loss.” An alternate pronunciation, “klaus,” seems to be losing favor.
 !!!(p) {:.ftnote1}
 
-[ ](#){:#c0010}Chapter 2
-
-# A Simple Lisp Program
-{:.chaptitle}
+# Chapter 2
+## A Simple Lisp Program
 
 > *Certum quod factum.*
 
@@ -3663,10 +3659,8 @@ Now we can use the `cross-product` in other ways as well:
 [1](#xfn0010){:#np0010} We will soon see “Kleene plus” notation, wherein *PP+* denotes one or more repetition of *PP*.
 !!!(p) {:.ftnote1}
 
-[ ](#){:#c0015}Chapter 3
-
-# Overview of Lisp
-{:.chaptitle}
+# Chapter 3
+## Overview of Lisp
 
 > No doubt about it.
 Common Lisp is a *big* language.
@@ -6053,10 +6047,8 @@ Part II
 Early AI Programs
 !!!(p) {:.parttitle}
 
-[ ](#){:#c0020}Chapter 4
-
-# GPS: The General Problem Solver
-{:.chaptitle}
+# Chapter 4
+## GPS: The General Problem Solver
 
 > *There are now in the world machines that think.*
 
@@ -8551,12 +8543,8 @@ I prefer to be gender neutral, even at the risk of being labeled a historical re
 Perhaps many children thought of it earlier but did not recognize that it was hard.” The problem is named after Gerald Sussman because he popularized it in Sussman 1973.
 !!!(p) {:.ftnote1}
 
-[ ](#){:#c0025}Chapter 5
-
-# ELIZA
-!!!(span) {:.smallcaps}
-: Dialog with a Machine
-{:.chaptitle}
+# Chapter 5
+## ELIZA: Dialog with a Machine
 
 > *It is said that to explain is to explain away.*
 
@@ -10251,10 +10239,8 @@ Please state your problem.))`
 [1](#xfn0010){:#np0010} The difference is that `simple-equal` does not handle strings.
 !!!(p) {:.ftnote1}
 
-[ ](#){:#c0030}Chapter 6
-
-# Building Software Tools
-{:.chaptitle}
+# Chapter 6
+## Building Software Tools
 
 > *Man is a tool-using animal…Without tools he is nothing with tools he is all.*
 
@@ -13368,12 +13354,8 @@ Its value depends on the implementation, but in most Lisps it is over 16 million
 The difference between trees and graphs and the implications for searching will be covered later.
 !!!(p) {:.ftnote1}
 
-[ ](#){:#c0035}Chapter 7
-
-# STUDENT
-!!!(span) {:.smallcaps}
-: Solving Algebra Word Problems
-{:.chaptitle}
+# Chapter 7
+## STUDENT: Solving Algebra Word Problems
 
 > *[This] is an example par excellence* of the power of using meaning to solve linguistic problems
 
@@ -14636,10 +14618,8 @@ The function `find-one-unknown` has four cases: (1) If we have already found two
 [1](#xfn0015){:#np0015}[Page 316](B9780080571157500108.xhtml#p316) of *Common Lisp the Language* says, “Because a constructor of this type operates By Order of Arguments, it is sometimes known as a BOA constructor.”
 !!!(p) {:.ftnote1}
 
-[ ](#){:#c0040}Chapter 8
-
-# Symbolic Mathematics: A Simplification Program
-{:.chaptitle}
+# Chapter 8
+## Symbolic Mathematics: A Simplification Program
 
 > *Our life is frittered away by detail….*
 
@@ -16394,10 +16374,8 @@ Part III
 Tools and Techniques
 !!!(p) {:.parttitle}
 
-[ ](#){:#c0045}Chapter 9
-
-# Efficiency Issues
-{:.chaptitle}
+# Chapter 9
+## Efficiency Issues
 
 > A Lisp programmer knows the value of everything, but the cost of nothing.
 
@@ -20029,10 +20007,8 @@ In general, things that you expect to be done multiple times should be moved out
 [3](#xfn0020){:#np0020} The terms *metering* and *monitoring* are sometimes used instead of profiling.
 !!!(p) {:.ftnote1}
 
-[ ](#){:#c0050}Chapter 10
-
-# Low-Level Efficiency Issues
-{:.chaptitle}
+# Chapter 10
+## Low-Level Efficiency Issues
 
 > There are only two qualities in the world: efficiency and inefficiency; and only two sorts of people: the efficient and the inefficient
 
@@ -22208,10 +22184,8 @@ Next, show how *sorted lists* can be used to implement sets, and compare the ope
 [1](#xfn0015){:#np0015} These are all done with safety 0 and speed 3.
 !!!(p) {:.ftnote1}
 
-[ ](#){:#c0055}Chapter 11
-
-# Logic Programming
-{:.chaptitle}
+# Chapter 11
+## Logic Programming
 
 [ ](#){:#p0010}> A language that doesn't affect the way you think about programming is not worth knowing.
 
@@ -24879,10 +24853,8 @@ In this chapter we have adopted the traditional Prolog definition of `member`.
 [4](#xfn0030){:#np0030} See the MU-Prolog and NU-Prolog languages ([Naish 1986](B9780080571157500285.xhtml#bb0890)).
 !!!(p) {:.ftnote1}
 
-[ ](#){:#c0060}Chapter 12
-
-# Compiling Logic Programs
-{:.chaptitle}
+# Chapter 12
+## Compiling Logic Programs
 
 The end of [chapter 11](B978008057115750011X.xhtml) introduced a new, more efficient representation for logic variables.
 It would be reasonable to build a new version of the Prolog interpreter incorporating this representation.
@@ -28426,10 +28398,8 @@ The definition of `prolog-trace` is:
 `  (t (values (cons tree seen-once) seen-more))))`
 !!!(p) {:.unnumlist}
 
-[ ](#){:#c0065}Chapter 13
-
-# Object-Oriented Programming
-{:.chaptitle}
+# Chapter 13
+## Object-Oriented Programming
 
 The programs in this book cover a wide range of problems.
 It is only natural that a wide range of programming styles have been introduced to attack these problems.
@@ -29973,10 +29943,8 @@ Also, be warned that Steve's was bought out by his Teal Square rival, Joey’s.
 The original Steve retired from the business for years, then came back with a new line of stores under his last name, Harrell.
 !!!(p) {:.ftnote1}
 
-[ ](#){:#c0070}Chapter 14
-
-# Knowledge Representation and Reasoning
-{:.chaptitle}
+# Chapter 14
+## Knowledge Representation and Reasoning
 
 > Knowledge itself is power.
 
@@ -33093,10 +33061,8 @@ Part IV
 Advanced AI Programs
 !!!(p) {:.parttitle}
 
-[ ](#){:#c0075}Chapter 15
-
-# Symbolic Mathematics with Canonical Forms
-{:.chaptitle}
+# Chapter 15
+## Symbolic Mathematics with Canonical Forms
 
 > Anything simple always interests me.
 
@@ -34576,10 +34542,8 @@ We'll pursue a slightly different approach here.
 But cdr-coding is losing favor as RISC chips replace microcoded processors.
 !!!(p) {:.ftnote1}
 
-[ ](#){:#c0080}Chapter 16
-
-# Expert Systems
-{:.chaptitle}
+# Chapter 16
+## Expert Systems
 
 > An expert is one who knows more and more about less and less.
 
@@ -36866,10 +36830,8 @@ Another possibility would be to have `update-cf check` to see if any certainty f
 
 **Answer 16.18** Add the clause `(stop (throw ‘stop nil))` to the case statement inask-valsandwrapa `(catch ‘stop …)` around the code in `emycin`.
 
-[ ](#){:#c0085}Chapter 17
-
-# Line-Diagram Labeling by Constraint Satisfaction
-{:.chaptitle}
+# Chapter 17
+## Line-Diagram Labeling by Constraint Satisfaction
 
 > It is wrong to think of Waltz's work only as a statement of the epistemology of line drawings of polyhedra.
 Instead I think it is an elegant case study of a paradigm we can expect to see again and again.
@@ -39230,10 +39192,8 @@ Consult [Waltz 1975](B9780080571157500285.xhtml#bb1300).
 **Exercise 17.5 [d]** If you have access to a workstation with a graphical interface, implement a program to allow a user to draw diagrams with a mouse.
 Have the program generate output in the form expected by `construct-diagram`
 
-[ ](#){:#c0090}Chapter 18
-
-# Search and the Game of Othello
-{:.chaptitle}
+# Chapter 18
+## Search and the Game of Othello
 
 > In the beginner’s mind there are endless possibilities; in the expert’s there are few.
 
@@ -43462,10 +43422,8 @@ i.
 [3](#xfn0025){:#np0025} Remember, when a constant is redefined, it may be necessary to recompile any functions that use the constant.
 !!!(p) {:.ftnote1}
 
-[ ](#){:#c0095}Chapter 19
-
-# Introduction to Natural Language
-{:.chaptitle}
+# Chapter 19
+## Introduction to Natural Language
 
 > Language is everywhere.
 It permeates our thoughts mediates our relations with others, and even creeps into our dreams.
@@ -45559,10 +45517,8 @@ The resulting sequence (1,2,5,14,42,…) is known as the Catalan Numbers.
 This kind of ambiguity is discussed by [Church and Patil (1982)](B9780080571157500285.xhtml#bb0200) in their article *Coping with Syntactic Ambiguity, or How to Put the Block in the Box on the Table.*
 !!!(p) {:.ftnote1}
 
-[ ](#){:#c0100}Chapter 20
-
-# Unification Grammars
-{:.chaptitle}
+# Chapter 20
+## Unification Grammars
 
 Prolog was invented because Alain Colmerauer wanted a formalism to describe the grammar of French.
 His intuition was that the combination of Horn clauses and unification resulted in a language that was just powerful enough to express the kinds of constraints that show up in natural languages, while not as powerful as, for example, full predicate calculus.
@@ -47705,10 +47661,8 @@ is true; otherwise revert {[]} to normal.”`
 [1](#xfn0015){:#np0015} The asterisk at the start of a sentence is the standard linguistic notation for an utterance that is ungrammatical or otherwise ill-formed.
 !!!(p) {:.ftnote1}
 
-[ ](#){:#c0105}Chapter 21
-
-# A Grammar of English
-{:.chaptitle}
+# Chapter 21
+## A Grammar of English
 
 > Prefer geniality to grammar.
 
@@ -50231,10 +50185,8 @@ Part V
 The Rest of Lisp
 !!!(p) {:.parttitle}
 
-[ ](#){:#c0110}Chapter 22
-
-# Scheme: An Uncommon Lisp
-{:.chaptitle}
+# Chapter 22
+## Scheme: An Uncommon Lisp
 
 > The best laid schemes o' mice an' men
 
@@ -52481,10 +52433,8 @@ However, `defstruct` concatenates `-p` in all its predicates, regardless of the 
 [3](#xfn0020){:#np0020} McCarthy’s words from a talk on the history of Lisp, 1974, recorded by [Stoyan (1984)](B9780080571157500285.xhtml#bb1205).
 !!!(p) {:.ftnote1}
 
-[ ](#){:#c0115}Chapter 23
-
-# Compiling Lisp
-{:.chaptitle}
+# Chapter 23
+## Compiling Lisp
 
 Many textbooks show simple interpreters for Lisp, because they are simple to write, and because it is useful to know how an interpreter works.
 Unfortunately, not as many textbooks show how to write a compiler, even though the same two reasons hold.
@@ -56131,10 +56081,8 @@ The function to input LAP was called `lapin`.
 Those who know French will get the pun.
 !!!(p) {:.ftnote1}
 
-[ ](#){:#c0120}Chapter 24
-
-# ANSI Common Lisp
-{:.chaptitle}
+# Chapter 24
+## ANSI Common Lisp
 
 This chapter briefly covers some advanced features of Common Lisp that were not used in the rest of the book.
 The first topic, packages, is crucial in building large systems but was not covered in this book, since the programs are concise.
@@ -58614,10 +58562,8 @@ The idea is that the comment should help the reader prove the correctness of the
 [2](#xfn0015){:#np0015} As was noted before, the proper way to do this is to proclaim squa re as an inline function, not a macro, but please bear with the example.
 !!!(p) {:.ftnote1}
 
-[ ](#){:#c0125}Chapter 25
-
-# Troubleshooting
-{:.chaptitle}
+# Chapter 25
+## Troubleshooting
 
 > Perhaps if we wrote programs from childhood on, as adults we'd be able to read them.
 
@@ -60548,13 +60494,9 @@ Now you know why.
 
 
 
-# Appendix: Obtaining the Code in this Book
-{:#app0005}
-{:.fmtitle}
-
-## [ ](#){:#st0010}FTP: The File Transfer Protocol
-{:#s0010}
-{:.h1hd}
+# Appendix
+## Obtaining the Code in this Book
+### FTP: The File Transfer Protocol
 
 FTP is a file transfer protocol that is widely accepted by computers around the world.
 FTP makes it easy to transfer files between two computers on which you have accounts.
@@ -60662,9 +60604,7 @@ DOS 5.25 diskette ISBN 1-55860-228-3
 DOS 3.5 diskette ISBN 1-55860-229-1
 !!!(p) {:.unnumlist}
 
-## [ ](#){:#st0015}Available Software
-{:#s0015}
-{:.h1hd}
+### Available Software
 
 In addition to the program from this book, a good deal of other software is available.
 The tables below list some of the relevant AI/Lisp programs.
