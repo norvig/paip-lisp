@@ -1,4 +1,4 @@
-# Chapter 3 {docsify-ignore}
+# Chapter 3
 ## Overview of Lisp
 
 > No doubt about it.
