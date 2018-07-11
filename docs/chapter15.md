@@ -3,14 +3,14 @@
 
 > Anything simple always interests me.
 
-> —David Hockney
+> -David Hockney
 
 [Chapter 8](B978008057115750008X.xhtml) started with high hopes: to take an existing pattern matcher, copy down some mathematical identities out of a reference book, and come up with a usable symbolic algebra system.
 The resulting system *was* usable for some purposes, and it showed that the technique of rule-based translation is a powerful one.
 However, the problems of [section 8.5](B978008057115750008X.xhtml#s0030) show that not everything can be done easily and efficiently within the rule-based pattern matching framework.
 
 There are important mathematical transformations that are difficult to express in the rule-based approach.
-For example, dividing two polynomials to obtain a quotient and remainder is a task that is easier to express as an algorithm—a program—than as a rule or set of rules.
+For example, dividing two polynomials to obtain a quotient and remainder is a task that is easier to express as an algorithm-a program-than as a rule or set of rules.
 
 In addition, there is a problem with efficiency.
 Pieces of the input expressions are simplified over and over again, and much time is spent interpreting rules that do not apply.
@@ -27,37 +27,37 @@ Thus, our system is not canonical.
 Most of the problems of the previous section stem from the lack of a canonical form.
 
 Adhering to canonical form imposes grave restrictions on the representation.
-For example, *x2*− 1 and (*x*− 1)(*x* + 1) are equal, so they must be represented identically.
+For example, *x2*-  1 and (*x*- 1)(*x* + 1) are equal, so they must be represented identically.
 One way to insure this is to multiply out all factors and collect similar terms.
-So (*x*− 1)(*x* + 1) is *x2*− *x* + *x*− 1, which simplifies to *x2*− 1, in whatever the canonical internal form is.
-This approach works fine for *x2*− 1, but for an expression like (*x*− 1)1000, multiplying out all factors would be quite time- (and space-) consuming.
+So (*x*- 1)(*x* + 1) is *x2*- *x* + *x*- 1, which simplifies to *x2*-  1, in whatever the canonical internal form is.
+This approach works fine for *x2*- 1, but for an expression like (*x*- 1)1000, multiplying out all factors would be quite time- (and space-) consuming.
 It is hard to find a canonical form that is ideal for all problems.
 The best we can do is choose one that works well for the problems we are most likely to encounter.
 
-## [ ](#){:#st0010}15.1 A Canonical Form for Polynomials
+## 15.1 A Canonical Form for Polynomials
 {:#s0010}
 {:.h1hd}
 
 This section will concentrate on a canonical form for *polynomials.* Mathematically speaking, a polynomial is a function (of one or more variables) that can be computed using only addition and multiplication.
-We will speak of a polynomial’s *main variable, coefficents,* and *degree.* In the polynomial:
+We will speak of a polynomial's *main variable, coefficents,* and *degree.* In the polynomial:
 
-5×x3+b×x2+c×x+1
+5xx3+bxx2+cxx+1
 
 ![si1_e](images/B9780080571157500157/si1_e.gif)
 
 the main variable is *x,* the degree is 3 (the highest power of *x*), and the coefficients are 5, *b, c* and 1.
 We can define an input format for polynomials as follows:
 
-[ ](#){:#l0010}1. Any Lisp number is a polynomial.
+1.  Any Lisp number is a polynomial.
 !!!(p) {:.numlist}
 
-2. Any Lisp symbol is a polynomial.
+2.  Any Lisp symbol is a polynomial.
 !!!(p) {:.numlist}
 
-3. If *p* and *q* are polynomials, so are (*p + q*) and (*p * q*).
+3.  If *p* and *q* are polynomials, so are (*p + q*) and (*p * q*).
 !!!(p) {:.numlist}
 
-4. If *p* is a polynomial and *n* is a positive integer, then (*p* ^ *n*) is a polynomial.
+4.  If *p* is a polynomial and *n* is a positive integer, then (*p* ^ *n*) is a polynomial.
 !!!(p) {:.numlist}
 
 However, the input format cannot be used as the canonical form, because it would admit both `(x + y)` and `(y + x)`, and both `4` and `(2 + 2)`.
@@ -71,23 +71,21 @@ As a bonus, polynomials are also closed under differentiation and integration, s
 
 Second, for sufficiently large classes of expressions it becomes not just difficult but impossible to define a canonical form.
 This may be surprising, and we don't have space here to explain exactly why it is so, but here is an argument: Consider what would happen if we added enough functionality to duplicate all of Lisp.
-Then “converting to canonical form” would be the same as “running a program.” But it is an elementary result of computability theory that it is in general impossible to determine the result of running an arbitrary program (this is known as the halting problem).
+Then "converting to canonical form" would be the same as "running a program." But it is an elementary result of computability theory that it is in general impossible to determine the result of running an arbitrary program (this is known as the halting problem).
 Thus, it is not surprising that it is impossible to canonicalize complex expressions.
 
-Our task is to convert a polynomial as previously defined into some canonical form.[1](#fn0015){:#xfn0015} Much of the code and some of the commentary on this format and the routines to manipulate it was written by Richard Fateman, with some enhancements made by Peter Klier.
+Our task is to convert a polynomial as previously defined into some canonical form.[1](#fn0015) Much of the code and some of the commentary on this format and the routines to manipulate it was written by Richard Fateman, with some enhancements made by Peter Klier.
 
 The first design decision is to assume that we will be dealing mostly with *dense* polynomials, rather than *sparse* ones.
 That is, we expect most of the polynomials to be like *ax*3*+ bx*2*+ cx* + *d,* not like *ax*100*+ bx*50 + *c.* For dense polynomials, we can save space by representing the main variable (*x* in these examples) and the individual coefficients (*a*, *b*, *c*, and *d* in these examples) explicitly, but representing the exponents only implicitly, by position.
 Vectors will be used instead of lists, to save space and to allow fast access to any element.
 Thus, the representation of 5*x*3+ 10*x*2+ 20*x +* 30 will be the vector:
 
-[ ](#){:#l0015}`#(x 30 20 10 5)`
-!!!(p) {:.unnumlist}
+`#(x 30 20 10 5)`
 
 The main variable, *x*, is in the 0th element of the vector, and the coefficient of the *i*th power of *x* is in element *i* + 1 of the vector.
 A single variable is represented as a vector whose first coefficient is 1, and a number is represented as itself:
 
-[ ](#){:#t9010}
 !!!(table)
 
 | []() | | | | | | | | | |
@@ -99,35 +97,29 @@ A single variable is represented as a vector whose first coefficient is 1, and a
 The fact that a number is represented as itself is a possible source of confusion.
 The number 5, for example, is a polynomial by our mathematical definition of polynomials.
 But it is represented as 5, not as a vector, so `(typep 5 'polynomial)` will be false.
-The word “polynomial” is used ambiguously to refer to both the mathematical concept and the Lisp type, but it should be clear from context which is meant.
+The word "polynomial" is used ambiguously to refer to both the mathematical concept and the Lisp type, but it should be clear from context which is meant.
 
-A glossary for the canonical simplifier program is given in [figure 15.1](#f0010).
+A glossary for the canonical simplifier program is given in [figure  15.1](#f0010).
 
 ![f15-01-9780080571157](images/B9780080571157500157/f15-01-9780080571157.jpg)     
-Figure 15.1
+Figure  15.1
 !!!(span) {:.fignum}
 Glossary for the Symbolic Manipulation Program
 The functions defining the type `polynomial` follow.
 Because we are concerned with efficiency, we proclaim certain short functions to be compiled inline, use the specific function `svref` (simple-vector reference) rather than the more general aref, and provide declarations for the polynomials using the special form the.
 More details on efficiency issues are given in [Chapter 9](B9780080571157500091.xhtml).
 
-[ ](#){:#l0025}`(proclaim '(inline main-var degree coef`
-!!!(p) {:.unnumlist}
+`(proclaim '(inline main-var degree coef`
 
-       `var= var> poly make-poly))`
-!!!(p) {:.unnumlist}
+              `var= var> poly make-poly))`
 
 `(deftype polynomial () 'simple-vector)`
-!!!(p) {:.unnumlist}
 
 `(defun main-var (p) (svref (the polynomial p) 0))`
-!!!(p) {:.unnumlist}
 
-`(defun coef (p i) (svref (the polynomial p) (+ i 1)))`
-!!!(p) {:.unnumlist}
+`(defun coef (p i)  (svref (the polynomial p) (+ i 1)))`
 
-`(defun degree (p) (-(length (the polynomial p)) 2))`
-!!!(p) {:.unnumlist}
+`(defun degree (p)  (-(length (the polynomial p)) 2))`
 
 We had to make another design decision in defining `coef`, the function to extract a coefficient from a polynomial.
 As stated above, the *i*th coefficient of a polynomial is in element *i* + 1 of the vector.
@@ -136,52 +128,39 @@ The design decision was that this would be too confusing and error prone.
 Thus, coef expects to be passed *i* and does the addition itself.
 
 For our format, we will insist that main variables be symbols, while coefficients can be numbers or other polynomials.
-A “production” version of the program might have to account for main variables like `(sin x)`, as well as other complications like + and * with more than two arguments, and noninteger powers.
+A "production" version of the program might have to account for main variables like `(sin x)`, as well as other complications like + and * with more than two arguments, and noninteger powers.
 
 Now we can extract information from a polynomial, but we also need to build and modify polynomials.
 The function `poly` takes a variable and some coefficients and builds a vector representing the polynomial.
 `make-poly` takes a variable and a degree and produces a polynomial with all zero coefficients.
 
-[ ](#){:#l0030}`(defun poly (x &rest coefs)`
-!!!(p) {:.unnumlist}
+`(defun poly (x &rest coefs)`
 
-  `"Make a polynomial with main variable x`
-!!!(p) {:.unnumlist}
+    `"Make a polynomial with main variable x`
 
-  `and coefficients in increasing order."`
-!!!(p) {:.unnumlist}
+    `and coefficients in increasing order."`
 
-  `(apply #'vector x coefs))`
-!!!(p) {:.unnumlist}
+    `(apply #'vector x coefs))`
 
 `(defun make-poly (x degree)`
-!!!(p) {:.unnumlist}
 
-  `"Make the polynomial 0 + 0*x + 0*x^2 + … 0*x^degree"`
-!!!(p) {:.unnumlist}
+    `"Make the polynomial 0 + 0*x + 0*x^2 + ... 0*x^degree"`
 
-  `(let ((p (make-array (+ degree 2) : initial-element 0)))`
-!!!(p) {:.unnumlist}
+    `(let ((p (make-array (+ degree 2) : initial-element 0)))`
 
-    `(setf (main-var p) x)`
-!!!(p) {:.unnumlist}
+        `(setf (main-var p) x)`
 
-    `p))`
-!!!(p) {:.unnumlist}
+        `p))`
 
 A polynomial can be altered by setting its main variable or any one of its coefficients using the following `defsetf` forms.
 
-[ ](#){:#l0035}`(defsetf main-var (p) (val)`
-!!!(p) {:.unnumlist}
+`(defsetf main-var (p) (val)`
 
- `'(setf (svref (the polynomial ,p) 0) ,val))`
-!!!(p) {:.unnumlist}
+  `'(setf (svref (the polynomial ,p) 0) ,val))`
 
 `(defsetf coef (p i) (val)`
-!!!(p) {:.unnumlist}
 
- `'(setf (svref (the polynomial .p) (+ ,i 1)) .val))`
-!!!(p) {:.unnumlist}
+  `'(setf (svref (the polynomial .p) (+ ,i 1)) .val))`
 
 The function `poly` constructs polynomials in a fashion similar to `list` or `vector`: with an explicit list of the contents, `make-poly`, on the other hand, is like `make-array`: it makes a polynomial of a specified size.
 
@@ -197,40 +176,30 @@ It is also possible to gain finer control over the whole process with `define-se
 
 The functions `poly+poly, poly*poly` and `poly^n` perform addition, multiplication, and exponentiation of polynomials, respectively.
 They are defined with several helping functions.
-`k*poly` multiplies a polynomial by a constant, `k`, which may be a number or another polynomial that is free of polynomial `p`’s main variable.
+`k*poly` multiplies a polynomial by a constant, `k`, which may be a number or another polynomial that is free of polynomial `p`'s main variable.
 `poly*same` is used to multiply two polynomials with the same main variable.
 For addition, the functions `k+poly` and `poly+same` serve analogous purposes.
-With that in mind, here’s the function to convert from prefix to canonical form:
+With that in mind, here's the function to convert from prefix to canonical form:
 
-[ ](#){:#l0040}`(defun prefix->canon (x)`
-!!!(p) {:.unnumlist}
+`(defun prefix->canon (x)`
 
- `"Convert a prefix Lisp expression to canonical form.`
-!!!(p) {:.unnumlist}
+  `"Convert a prefix Lisp expression to canonical form.`
 
- `Exs: (+ (^ x 2) (* 3 x))` =>`#(x 0 3 1)`
-!!!(p) {:.unnumlist}
+  `Exs: (+ (^ x 2) (* 3 x))` =>`#(x 0 3 1)`
 
-   `(- (* (- x 1) (+ x 1)) (- (^ x 2) 1))` =>`0"`
-!!!(p) {:.unnumlist}
+      `(- (* (- x 1) (+ x 1)) (- (^ x 2) 1))` =>`0"`
 
- `(cond ((numberp x) x)`
-!!!(p) {:.unnumlist}
+  `(cond ((numberp x) x)`
 
-   `((symbolp x) (poly x 0 1))`
-!!!(p) {:.unnumlist}
+      `((symbolp x) (poly x 0 1))`
 
-   `((and (exp-p x) (get (exp-op x) 'prefix->canon))`
-!!!(p) {:.unnumlist}
+      `((and (exp-p x) (get (exp-op x) 'prefix->canon))`
 
-       `(apply (get (exp-op x) 'prefix->canon)`
-!!!(p) {:.unnumlist}
+              `(apply (get (exp-op x) 'prefix->canon)`
 
-     `(mapcar #'prefix->canon (exp-args x))))`
-!!!(p) {:.unnumlist}
+          `(mapcar #'prefix->canon (exp-args x))))`
 
-   `(t (error "Not a polynomial: ~a" x))))`
-!!!(p) {:.unnumlist}
+      `(t (error "Not a polynomial: ~a" x))))`
 
 It is data-driven, based on the `prefix->canon` property of each operator.
 In the following we install the appropriate functions.
@@ -238,436 +207,310 @@ The existing functions `poly*poly` and `poly^n` can be used directly.
 But other operators need interface functions.
 The operators + and - need interface functions that handle both unary and binary.
 
-[ ](#){:#l0045}`(dolist (item '((+ poly+) (- poly-) (* poly*poly)`
-!!!(p) {:.unnumlist}
+`(dolist (item '((+ poly+) (- poly-) (* poly*poly)`
 
-     `(^ poly^n) (D deriv-poly)))`
-!!!(p) {:.unnumlist}
+          `(^ poly^n) (D deriv-poly)))`
 
- `(setf (get (first item) 'prefix->canon) (second item)))`
-!!!(p) {:.unnumlist}
+  `(setf (get (first item) 'prefix->canon) (second item)))`
 
 `(defun poly+ (&rest args)`
-!!!(p) {:.unnumlist}
 
- `"Unary or binary polynomial addition."`
-!!!(p) {:.unnumlist}
+  `"Unary or binary polynomial addition."`
 
- `(ecase (length args)`
-!!!(p) {:.unnumlist}
+  `(ecase (length args)`
 
-  `(1 (first args))`
-!!!(p) {:.unnumlist}
+    `(1 (first args))`
 
-  `(2 (poly+poly (first args) (second args)))))`
-!!!(p) {:.unnumlist}
+    `(2 (poly+poly (first args) (second args)))))`
 
 `(defun poly- (&rest args)`
-!!!(p) {:.unnumlist}
 
- `"Unary or binary polynomial subtraction."`
-!!!(p) {:.unnumlist}
+  `"Unary or binary polynomial subtraction."`
 
- `(ecase (length args)`
-!!!(p) {:.unnumlist}
+  `(ecase (length args)`
 
-  `(1 (poly*poly -1 (first args)))`
-!!!(p) {:.unnumlist}
+    `(1 (poly*poly -1 (first args)))`
 
-  `(2 (poly+poly (first args) (poly*poly -1 (second args))))))`
-!!!(p) {:.unnumlist}
+    `(2 (poly+poly (first args) (poly*poly -1 (second args))))))`
 
 The function `prefix->canon` accepts inputs that were not part of our definition of polynomials: unary positive and negation operators and binary subtraction and differentiation operators.
 These are permissible because they can all be reduced to the elementary + and * operations.
 
 Remember that our problems with canonical form all began with the inability to decide which was simpler: `(+ x y)` or `(+ y x)`.
 In this system, we define a canonical form by imposing an ordering on variables (we use alphabetic ordering as defined by `string>`).
-The rule is that a polynomial `p` can have coefficients that are polynomials in a variable later in the alphabet than `p`’s main variable, but no coefficients that are polynomials in variables earlier than `p`’s main variable.
-Here’s how to compare variables:
+The rule is that a polynomial `p` can have coefficients that are polynomials in a variable later in the alphabet than `p`'s main variable, but no coefficients that are polynomials in variables earlier than `p`'s main variable.
+Here's how to compare variables:
 
-[ ](#){:#l0050}`(defun var= (x y) (eq x y))`
-!!!(p) {:.unnumlist}
+`(defun var= (x y) (eq x y))`
 
 `(defun var> (x y) (string> x y))`
-!!!(p) {:.unnumlist}
 
-The canonical form of the variable `x` will be `#(x 0 1)`, which is 0 × *x*0 + 1 × *x*1.
+The canonical form of the variable `x` will be `#(x 0 1)`, which is 0 x *x*0 + 1 x *x*1.
 The canonical form of `(+ x y)` is `#(x #(y 0 1) 1)`.
 It couldn't be `#(y #(x 0 1) 1)`, because then the resulting polynomial would have a coefficient with a lesser main variable.
 The policy of ordering variables assures canonicality, by properly grouping like variables together and by imposing a particular ordering on expressions that would otherwise be commutative.
 
 Here, then, is the code for adding two polynomials:
 
-[ ](#){:#l0055}`(defun poly+poly (p q)`
-!!!(p) {:.unnumlist}
+`(defun poly+poly (p q)`
 
- `"Add two polynomials."`
-!!!(p) {:.unnumlist}
+  `"Add two polynomials."`
 
- `(normalize-poly`
-!!!(p) {:.unnumlist}
+  `(normalize-poly`
 
-  `(cond`
-!!!(p) {:.unnumlist}
+    `(cond`
 
-   `((numberp p)                      (k+poly p q))`
-!!!(p) {:.unnumlist}
+      `((numberp p)                                            (k+poly p q))`
 
-   `((numberp q)                      (k+poly q p))`
-!!!(p) {:.unnumlist}
+      `((numberp q)                                            (k+poly q p))`
 
-   `((var= (main-var p) (main-var q)) (poly+same p q))`
-!!!(p) {:.unnumlist}
+      `((var= (main-var p) (main-var q)) (poly+same p q))`
 
-   `((var> (main-var q) (main-var p)) (k+poly q p))`
-!!!(p) {:.unnumlist}
+      `((var> (main-var q) (main-var p)) (k+poly q p))`
 
-   `(t                                (k+poly p q)))))`
-!!!(p) {:.unnumlist}
+      `(t                                                                (k+poly p q)))))`
 
 `(defun k+poly (k p)`
-!!!(p) {:.unnumlist}
 
- `"Add a constant k to a polynomial p."`
-!!!(p) {:.unnumlist}
+  `"Add a constant k to a polynomial p."`
 
- `(cond ((eql k 0) p)     ;; 0 + p = p`
-!!!(p) {:.unnumlist}
+  `(cond ((eql k 0) p)          ;; 0 + p = p`
 
-    `((and (numberp k)(numberp p))`
-!!!(p) {:.unnumlist}
+        `((and (numberp k)(numberp p))`
 
-        `(+ k p))       ;; Add numbers`
-!!!(p) {:.unnumlist}
+                `(+ k p))              ;; Add numbers`
 
-    `(t (let ((r (copy-poly p))) ;; Add k to x^0 term of p`
-!!!(p) {:.unnumlist}
+        `(t (let ((r (copy-poly p))) ;; Add k to x^0 term of p`
 
-      `(setf (coef r 0) (poly+poly (coef r 0) k))`
-!!!(p) {:.unnumlist}
+            `(setf (coef r 0) (poly+poly (coef r 0) k))`
 
-      `r))))`
-!!!(p) {:.unnumlist}
+            `r))))`
 
 `(defun poly+same (p q)`
-!!!(p) {:.unnumlist}
 
- `"Add two polynomials with the same main variable."`
-!!!(p) {:.unnumlist}
+  `"Add two polynomials with the same main variable."`
 
- `;; First assure that q is the higher degree polynomial`
-!!!(p) {:.unnumlist}
+  `;; First assure that q is the higher degree polynomial`
 
- `(if (> (degree p) (degree q))`
-!!!(p) {:.unnumlist}
+  `(if (> (degree p) (degree q))`
 
-   `(poly+same q p)`
-!!!(p) {:.unnumlist}
+      `(poly+same q p)`
 
-   `;; Add each element of p into r (which is a copy of q).`
-!!!(p) {:.unnumlist}
+      `;; Add each element of p into r (which is a copy of q).`
 
-   `(let ((r (copy-poly q)))`
-!!!(p) {:.unnumlist}
+      `(let ((r (copy-poly q)))`
 
-    `(loop for i from 0 to (degree p) do`
-!!!(p) {:.unnumlist}
+        `(loop for i from 0 to (degree p) do`
 
-      `(setf (coef r i) (poly+poly (coef r i) (coef p i))))`
-!!!(p) {:.unnumlist}
+            `(setf (coef r i) (poly+poly (coef r i) (coef p i))))`
 
-    `r)))`
-!!!(p) {:.unnumlist}
+        `r)))`
 
 `(defun copy-poly (p)`
-!!!(p) {:.unnumlist}
 
- `"Make a copy a polynomial."`
-!!!(p) {:.unnumlist}
+  `"Make a copy a polynomial."`
 
- `(copy-seq p))`
-!!!(p) {:.unnumlist}
+  `(copy-seq p))`
 
 and the code for multiplying polynomials:
 
-[ ](#){:#l0060}`(defun poly*poly (p q)`
-!!!(p) {:.unnumlist}
+`(defun poly*poly (p q)`
 
- `"Multiply two polynomials."`
-!!!(p) {:.unnumlist}
+  `"Multiply two polynomials."`
 
- `(normalize-poly`
-!!!(p) {:.unnumlist}
+  `(normalize-poly`
 
-  `(cond`
-!!!(p) {:.unnumlist}
+    `(cond`
 
-   `((numberp p)                      (k*poly p q))`
-!!!(p) {:.unnumlist}
+      `((numberp p)                                            (k*poly p q))`
 
-   `((numberp q)                      (k*poly q p))`
-!!!(p) {:.unnumlist}
+      `((numberp q)                                            (k*poly q p))`
 
-   `((var= (main-var p) (main-var q)) (poly*same p q))`
-!!!(p) {:.unnumlist}
+      `((var= (main-var p) (main-var q)) (poly*same p q))`
 
-   `((var> (main-var q) (main-var p)) (k*poly q p))`
-!!!(p) {:.unnumlist}
+      `((var> (main-var q) (main-var p)) (k*poly q p))`
 
-   `(t                                (k*poly p q)))))`
-!!!(p) {:.unnumlist}
+      `(t                                                                (k*poly p q)))))`
 
 `(defun k*poly (k p)`
-!!!(p) {:.unnumlist}
 
- `"Multiply a polynomial p by a constant factor k."`
-!!!(p) {:.unnumlist}
+  `"Multiply a polynomial p by a constant factor k."`
 
- `(cond`
-!!!(p) {:.unnumlist}
+  `(cond`
 
-  `((eql k 0)   0)   ;; 0 * p = 0`
-!!!(p) {:.unnumlist}
+    `((eql k 0)      0)      ;; 0 * p = 0`
 
-  `((eql kl)   p)   ;; 1 * p = p`
-!!!(p) {:.unnumlist}
+    `((eql kl)      p)      ;; 1 * p = p`
 
-  `((and (numberp k)`
-!!!(p) {:.unnumlist}
+    `((and (numberp k)`
 
-    `(numberp p)) (* k p)) ;; Multiply numbers`
-!!!(p) {:.unnumlist}
+        `(numberp p)) (* k p)) ;; Multiply numbers`
 
-  `(t ;; Multiply each coefficient`
-!!!(p) {:.unnumlist}
+    `(t ;; Multiply each coefficient`
 
-   `(let ((r (make-poly (main-var p) (degree p))))`
-!!!(p) {:.unnumlist}
+      `(let ((r (make-poly (main-var p) (degree p))))`
 
-       `;; Accumulate result in r; r[i] = k*p[i]`
-!!!(p) {:.unnumlist}
+              `;; Accumulate result in r; r[i] = k*p[i]`
 
-       `(loop for i from 0 to (degree p) do`
-!!!(p) {:.unnumlist}
+              `(loop for i from 0 to (degree p) do`
 
-     `(setf (coef r i) (poly*poly k (coef p i))))`
-!!!(p) {:.unnumlist}
+          `(setf (coef r i) (poly*poly k (coef p i))))`
 
-       `r))))`
-!!!(p) {:.unnumlist}
+              `r))))`
 
 The hard part is multiplying two polynomials with the same main variable.
 This is done by creating a new polynomial, `r`, whose degree is the sum of the two input polynomials `p` and `q`.
-Initially, all of `r`’s coefficients are zero.
+Initially, all of `r`'s coefficients are zero.
 A doubly nested loop multiplies each coefficient of `p` and `q` and adds the `result` into the appropriate coefficient of `r`.
 
-[ ](#){:#l0065}`(defun poly*same (p q)`
-!!!(p) {:.unnumlist}
+`(defun poly*same (p q)`
 
- `"Multiply two polynomials with the same variable."`
-!!!(p) {:.unnumlist}
+  `"Multiply two polynomials with the same variable."`
 
- `;; r[i] = p[0]*q[i] + p[l]*q[i-1] + …`
-!!!(p) {:.unnumlist}
+  `;; r[i] = p[0]*q[i] + p[l]*q[i-1] + ...`
 
- `(let* ((r-degree (+ (degree p) (degree q)))`
-!!!(p) {:.unnumlist}
+  `(let* ((r-degree (+ (degree p) (degree q)))`
 
-   `(r (make-poly (main-var p) r-degree)))`
-!!!(p) {:.unnumlist}
+      `(r (make-poly (main-var p) r-degree)))`
 
-  `(loop for i from 0 to (degree p) do`
-!!!(p) {:.unnumlist}
+    `(loop for i from 0 to (degree p) do`
 
-    `(unless (eql (coef p i) 0)`
-!!!(p) {:.unnumlist}
+        `(unless (eql (coef p i) 0)`
 
-     `(loop for j from 0 to (degree q) do`
-!!!(p) {:.unnumlist}
+          `(loop for j from 0 to (degree q) do`
 
-      `(setf (coef r (+ i j))`
-!!!(p) {:.unnumlist}
+            `(setf (coef r (+ i j))`
 
-       `(poly+poly (coef r (+ i j))`
-!!!(p) {:.unnumlist}
+              `(poly+poly (coef r (+ i j))`
 
-        `(poly*poly (coef p i)`
-!!!(p) {:.unnumlist}
+                `(poly*poly (coef p i)`
 
-         `(coef q j)))))))`
-!!!(p) {:.unnumlist}
+                  `(coef q j)))))))`
 
-  `r))`
-!!!(p) {:.unnumlist}
+    `r))`
 
-Both `poly+poly` and `poly*poly` make use of the function `normalize-poly` to “normalize” the `result`.
+Both `poly+poly` and `poly*poly` make use of the function `normalize-poly` to "normalize" the `result`.
 The idea is that `(- (^ 5) (^ x 5))` should return 0, not `#(x 0 0 0 0 0 0)`.
 Note that `normal` ize`-poly` is a destructive operation: it calls `delete,` which can actually alter its argument.
 Normally this is a dangerous thing, but since `normalize-poly` is replacing something with its conceptual equal, no harm is done.
 
-[ ](#){:#l0070}`(defun normalize-poly (p)`
-!!!(p) {:.unnumlist}
+`(defun normalize-poly (p)`
 
- `"Alter a polynomial by dropping trailing zeros."`
-!!!(p) {:.unnumlist}
+  `"Alter a polynomial by dropping trailing zeros."`
 
- `(if (numberp p)`
-!!!(p) {:.unnumlist}
+  `(if (numberp p)`
 
-   `p`
-!!!(p) {:.unnumlist}
+      `p`
 
-   `(let ((p-degree (- (position 0 p :test (complement #'eql)`
-!!!(p) {:.unnumlist}
+      `(let ((p-degree (- (position 0 p :test (complement #'eql)`
 
-                  `:from-end t)`
-!!!(p) {:.unnumlist}
+                                    `:from-end t)`
 
-            `1)))`
-!!!(p) {:.unnumlist}
+                        `1)))`
 
-    `(cond ((<= p-degree 0) (normalize-poly (coef p 0)))`
-!!!(p) {:.unnumlist}
+        `(cond ((<= p-degree 0) (normalize-poly (coef p 0)))`
 
-     `((< p-degree (degree p))`
-!!!(p) {:.unnumlist}
+          `((< p-degree (degree p))`
 
-      `(delete 0 p :start p-degree))`
-!!!(p) {:.unnumlist}
+            `(delete 0 p :start p-degree))`
 
-     `(t p)))))`
-!!!(p) {:.unnumlist}
+          `(t p)))))`
 
 There are a few loose ends to clean up.
 First, the exponentiation function:
 
-[ ](#){:#l0075}`(defun poly^n (p n)`
-!!!(p) {:.unnumlist}
+`(defun poly^n (p n)`
 
- `"Raise polynomial p to the nth power, n>=0."`
-!!!(p) {:.unnumlist}
+  `"Raise polynomial p to the nth power, n>=0."`
 
- `(check-type n (integer 0 *))`
-!!!(p) {:.unnumlist}
+  `(check-type n (integer 0 *))`
 
- `(cond ((= n 0) (assert (not (eql p 0))) 1)`
-!!!(p) {:.unnumlist}
+  `(cond ((= n 0) (assert (not (eql p 0))) 1)`
 
-   `((integerp p) (expt p n))`
-!!!(p) {:.unnumlist}
+      `((integerp p) (expt p n))`
 
-   `(t (poly*poly p (poly^n p (- n 1))))))`
-!!!(p) {:.unnumlist}
+      `(t (poly*poly p (poly^n p (- n 1))))))`
 
-## [ ](#){:#st0015}15.2 Differentiating Polynomials
+## 15.2 Differentiating Polynomials
 {:#s0015}
 {:.h1hd}
 
 The differentiation routine is easy, mainly because there are only two operators (+ and *) to deal with:
 
-[ ](#){:#l0080}`(defun deriv-poly (p x)`
-!!!(p) {:.unnumlist}
+`(defun deriv-poly (p x)`
 
- `"Return the derivative, dp/dx, of the polynomial p."`
-!!!(p) {:.unnumlist}
+  `"Return the derivative, dp/dx, of the polynomial p."`
 
- `;; If p is a number or a polynomial with main-var > x,`
-!!!(p) {:.unnumlist}
+  `;; If p is a number or a polynomial with main-var > x,`
 
- `;; then p is free of x, and the derivative is zero;`
-!!!(p) {:.unnumlist}
+  `;; then p is free of x, and the derivative is zero;`
 
- `;; otherwise do real work.`
-!!!(p) {:.unnumlist}
+  `;; otherwise do real work.`
 
- `;; But first, make sure X is a simple variable,`
-!!!(p) {:.unnumlist}
+  `;; But first, make sure X is a simple variable,`
 
- `;; of the form #(X 0 1).`
-!!!(p) {:.unnumlist}
+  `;; of the form #(X 0 1).`
 
- `(assert (and (typep x 'polynomial) (= (degree x) 1)`
-!!!(p) {:.unnumlist}
+  `(assert (and (typep x 'polynomial) (= (degree x) 1)`
 
-     `(eql (coef x 0) 0) (eql (coef x 1) 1)))`
-!!!(p) {:.unnumlist}
+          `(eql (coef x 0) 0) (eql (coef x 1) 1)))`
 
-  `(cond`
-!!!(p) {:.unnumlist}
+    `(cond`
 
-     `((numberp p) 0)`
-!!!(p) {:.unnumlist}
+          `((numberp p) 0)`
 
-     `((var> (main-var p) (main-var x)) 0)`
-!!!(p) {:.unnumlist}
+          `((var> (main-var p) (main-var x)) 0)`
 
-     `((var= (main-var p) (main-var x))`
-!!!(p) {:.unnumlist}
+          `((var= (main-var p) (main-var x))`
 
-      `;; d(a + bx + cx^2 + dx^3)/dx = b + 2cx + 3dx^2`
-!!!(p) {:.unnumlist}
+            `;; d(a + bx + cx^2 + dx^3)/dx = b + 2cx + 3dx^2`
 
-      `;; So, shift the sequence p over by 1, then`
-!!!(p) {:.unnumlist}
+            `;; So, shift the sequence p over by 1, then`
 
-      `;; put x back in, and multiply by the exponents`
-!!!(p) {:.unnumlist}
+            `;; put x back in, and multiply by the exponents`
 
-      `(let ((r (subseq p 1)))`
-!!!(p) {:.unnumlist}
+            `(let ((r (subseq p 1)))`
 
-      `(setf (main-var r) (main-var x))`
-!!!(p) {:.unnumlist}
+            `(setf (main-var r) (main-var x))`
 
-      `(loop for i from 1 to (degree r) do`
-!!!(p) {:.unnumlist}
+            `(loop for i from 1 to (degree r) do`
 
-        `(setf (coef r i) (poly*poly (+ i 1) (coef r i))))`
-!!!(p) {:.unnumlist}
+                `(setf (coef r i) (poly*poly (+ i 1) (coef r i))))`
 
-      `(normalize-poly r)))`
-!!!(p) {:.unnumlist}
+            `(normalize-poly r)))`
 
-     `(t ;; Otherwise some coefficient may contain x.
+          `(t ;; Otherwise some coefficient may contain x.
 Ex:`
-!!!(p) {:.unnumlist}
 
-      `;; d(z + 3x + 3zx^2 + z^2x^3)/dz`
-!!!(p) {:.unnumlist}
+            `;; d(z + 3x + 3zx^2 + z^2x^3)/dz`
 
-      `;; = 1 + 0 + 3x^2 + 2zx^3`
-!!!(p) {:.unnumlist}
+            `;; = 1 + 0 + 3x^2 + 2zx^3`
 
-      `;; So copy p, and differentiate the coefficients.`
-!!!(p) {:.unnumlist}
+            `;; So copy p, and differentiate the coefficients.`
 
-      `(let ((r (copy-poly p)))`
-!!!(p) {:.unnumlist}
+            `(let ((r (copy-poly p)))`
 
-      `(loop for i from 0 to (degree p) do`
-!!!(p) {:.unnumlist}
+            `(loop for i from 0 to (degree p) do`
 
-        `(setf (coef r i) (deriv-poly (coef r i) x)))`
-!!!(p) {:.unnumlist}
+                `(setf (coef r i) (deriv-poly (coef r i) x)))`
 
-      `(normalize-poly r)))))`
-!!!(p) {:.unnumlist}
+            `(normalize-poly r)))))`
 
-**Exercise 15.1 [h]** Integrating polynomials is not much harder than differentiating them.
+**Exercise  15.1 [h]** Integrating polynomials is not much harder than differentiating them.
 For example:
 
-∫ax2+bxdx=ax33+bx22+c.
+&int;ax2+bxdx=ax33+bx22+c.
 
 ![si2_e](images/B9780080571157500157/si2_e.gif)
 
 Write a function to integrate polynomials and install it in `prefix->canon`.
 
-**Exercise 15.2 [m]** Add support for *definite* integrais, such as ∫abydx !!!(span) {:.hiddenClass} ![si3_e](images/B9780080571157500157/si3_e.gif).
+**Exercise  15.2 [m]** Add support for *definite* integrais, such as &int;abydx !!!(span) {:.hiddenClass} ![si3_e](images/B9780080571157500157/si3_e.gif).
 You will need to make up a suitable notation and properly install it in both `infix->prefix` and `prefix->canon`.
 A full implementation of this feature would have to consider infinity as a bound, as well as the problem of integrating over singularises.
 You need not address these problems.
 
-## [ ](#){:#st0020}15.3 Converting between Infix and Prefix
+## 15.3 Converting between Infix and Prefix
 {:#s0020}
 {:.h1hd}
 
@@ -675,274 +518,187 @@ All that remains is converting from canonical form back to prefix form, and from
 This is a good point to extend the prefix form to allow expressions with more than two arguments.
 First we show an updated version of `prefix->infix` that handles multiple arguments:
 
-[ ](#){:#l0085}`(defun prefix->infix (exp)`
-!!!(p) {:.unnumlist}
+`(defun prefix->infix (exp)`
 
- `"Translate prefix to infix expressions.`
-!!!(p) {:.unnumlist}
+  `"Translate prefix to infix expressions.`
 
- `Handles operators with any number of args."`
-!!!(p) {:.unnumlist}
+  `Handles operators with any number of args."`
 
- `(if (atom exp)`
-!!!(p) {:.unnumlist}
+  `(if (atom exp)`
 
-   `exp`
-!!!(p) {:.unnumlist}
+      `exp`
 
-   `(intersperse`
-!!!(p) {:.unnumlist}
+      `(intersperse`
 
-    `(exp-op exp)`
-!!!(p) {:.unnumlist}
+        `(exp-op exp)`
 
-    `(mapcar #'prefix->infix (exp-args exp)))))`
-!!!(p) {:.unnumlist}
+        `(mapcar #'prefix->infix (exp-args exp)))))`
 
 `(defun intersperse (op args)`
-!!!(p) {:.unnumlist}
 
- `"Place op between each element of args.`
-!!!(p) {:.unnumlist}
+  `"Place op between each element of args.`
 
- `Ex: (intersperse '+ '(a b c))` =>`'(a + b + c)"`
-!!!(p) {:.unnumlist}
+  `Ex: (intersperse '+ '(a b c))` =>`'(a + b + c)"`
 
- `(if (length=1 args)`
-!!!(p) {:.unnumlist}
+  `(if (length=1 args)`
 
-   `(first args)`
-!!!(p) {:.unnumlist}
+      `(first args)`
 
-   `(rest (loop for arg in args`
-!!!(p) {:.unnumlist}
+      `(rest (loop for arg in args`
 
-      `collect op`
-!!!(p) {:.unnumlist}
+            `collect op`
 
-      `collect arg))))`
-!!!(p) {:.unnumlist}
+            `collect arg))))`
 
 Now we need only convert from canonical form to prefix:
 
-[ ](#){:#l0090}`(defun canon->prefix (p)`
-!!!(p) {:.unnumlist}
+`(defun canon->prefix (p)`
 
- `"Convert a canonical polynomial to a lisp expression."`
-!!!(p) {:.unnumlist}
+  `"Convert a canonical polynomial to a lisp expression."`
 
- `(if (numberp p)`
-!!!(p) {:.unnumlist}
+  `(if (numberp p)`
 
-    `p`
-!!!(p) {:.unnumlist}
+        `p`
 
-    `(args->prefix`
-!!!(p) {:.unnumlist}
+        `(args->prefix`
 
-      `'+ 0`
-!!!(p) {:.unnumlist}
+            `'+ 0`
 
-      `(loop for i from (degree p) downto 0`
-!!!(p) {:.unnumlist}
+            `(loop for i from (degree p) downto 0`
 
-        `collect (args->prefix`
-!!!(p) {:.unnumlist}
+                `collect (args->prefix`
 
-        `'* 1`
-!!!(p) {:.unnumlist}
+                `'* 1`
 
-        `(list (canon->prefix (coef pi))`
-!!!(p) {:.unnumlist}
+                `(list (canon->prefix (coef pi))`
 
-         `(exponent->prefix`
-!!!(p) {:.unnumlist}
+                  `(exponent->prefix`
 
-          `(main-var p) i)))))))`
-!!!(p) {:.unnumlist}
+                    `(main-var p) i)))))))`
 
 `(defun exponent->prefix (base exponent)`
-!!!(p) {:.unnumlist}
 
- `"Convert canonical base'exponent to prefix form."`
-!!!(p) {:.unnumlist}
+  `"Convert canonical base'exponent to prefix form."`
 
- `(case exponent`
-!!!(p) {:.unnumlist}
+  `(case exponent`
 
-  `(0 1)`
-!!!(p) {:.unnumlist}
+    `(0 1)`
 
-  `(1 base)`
-!!!(p) {:.unnumlist}
+    `(1 base)`
 
-  `(t '(^ .base .exponent))))`
-!!!(p) {:.unnumlist}
+    `(t '(^ .base .exponent))))`
 
 `(defun args->prefix (op identity args)`
-!!!(p) {:.unnumlist}
 
- `"Convert argl op arg2 op … to prefix form."`
-!!!(p) {:.unnumlist}
+  `"Convert argl op arg2 op ... to prefix form."`
 
- `(let ((useful-args (remove identity args)))`
-!!!(p) {:.unnumlist}
+  `(let ((useful-args (remove identity args)))`
 
-  `(cond ((null useful-args) identity)`
-!!!(p) {:.unnumlist}
+    `(cond ((null useful-args) identity)`
 
-    `((and (eq op '*) (member 0 args)) 0)`
-!!!(p) {:.unnumlist}
+        `((and (eq op '*) (member 0 args)) 0)`
 
-    `((length=1 args) (first useful-args))`
-!!!(p) {:.unnumlist}
+        `((length=1 args) (first useful-args))`
 
-    `(t (cons op (mappend`
-!!!(p) {:.unnumlist}
+        `(t (cons op (mappend`
 
-        `#'(lambda (exp)`
-!!!(p) {:.unnumlist}
+                `#'(lambda (exp)`
 
-        `(if (starts-with exp op)`
-!!!(p) {:.unnumlist}
+                `(if (starts-with exp op)`
 
-           `(exp-args exp)`
-!!!(p) {:.unnumlist}
+                      `(exp-args exp)`
 
-           `(list exp)))`
-!!!(p) {:.unnumlist}
+                      `(list exp)))`
 
-      `useful-args))))))`
-!!!(p) {:.unnumlist}
+            `useful-args))))))`
 
-Finally, here’s a top level to make use of all this:
+Finally, here's a top level to make use of all this:
 
-[ ](#){:#l0095}`(defun canon (infix-exp)`
-!!!(p) {:.unnumlist}
+`(defun canon (infix-exp)`
 
- `"Canonicalize argument and convert it back to infix"`
-!!!(p) {:.unnumlist}
+  `"Canonicalize argument and convert it back to infix"`
 
- `(prefix->infix`
-!!!(p) {:.unnumlist}
+  `(prefix->infix`
 
-  `(canon->prefix`
-!!!(p) {:.unnumlist}
+    `(canon->prefix`
 
-   `(prefix->canon`
-!!!(p) {:.unnumlist}
+      `(prefix->canon`
 
-    `(infix->prefix infix-exp)))))`
-!!!(p) {:.unnumlist}
+        `(infix->prefix infix-exp)))))`
 
 `(defun canon-simplifier ()`
-!!!(p) {:.unnumlist}
 
- `"Read an expression, canonicalize it, and print the result."`
-!!!(p) {:.unnumlist}
+  `"Read an expression, canonicalize it, and print the result."`
 
- `(loop`
-!!!(p) {:.unnumlist}
+  `(loop`
 
-  `(print 'canon>)`
-!!!(p) {:.unnumlist}
+    `(print 'canon>)`
 
-  `(print (canon (read)))))`
-!!!(p) {:.unnumlist}
+    `(print (canon (read)))))`
 
 and an example of it in use:
 
-[ ](#){:#l0100}`> (canon-simplifier)`
-!!!(p) {:.unnumlist}
+`> (canon-simplifier)`
 
 `CANON> (3 + x + 4 - x)`
-!!!(p) {:.unnumlist}
 
 `7`
-!!!(p) {:.unnumlist}
 
 `CANON> (x + y + y + x)`
-!!!(p) {:.unnumlist}
 
 `((2 * X) + (2 * Y))`
-!!!(p) {:.unnumlist}
 
 `CANON> (3 * x + 4 * x)`
-!!!(p) {:.unnumlist}
 
 `(7 * X)`
-!!!(p) {:.unnumlist}
 
 `CANON> (3 * x + y + x + 4 * x)`
-!!!(p) {:.unnumlist}
 
 `((8 * X) + Y)`
-!!!(p) {:.unnumlist}
 
 `CANON> (3 * x + y + z + x + 4 * x)`
-!!!(p) {:.unnumlist}
 
 `((8 * X) + (Y + Z))`
-!!!(p) {:.unnumlist}
 
 `CANON> ((x + 1) ^ 10)`
-!!!(p) {:.unnumlist}
 
 `((X ^ 10) + (10 * (X ^ 9)) + (45 * (X ^ 8)) + (120 * (X ^ 7))`
-!!!(p) {:.unnumlist}
 
- `+ (210 * (X ^ 6)) + (252 * (X ^ 5)) + (210 * (X ^ 4))`
-!!!(p) {:.unnumlist}
+  `+ (210 * (X ^ 6)) + (252 * (X ^ 5)) + (210 * (X ^ 4))`
 
- `+ (120 * (X ^ 3)) + (45 * (X ^ 2)) + (10 * X) + 1)`
-!!!(p) {:.unnumlist}
+  `+ (120 * (X ^ 3)) + (45 * (X ^ 2)) + (10 * X) + 1)`
 
 `CANON> ((x + 1) ^ 10 + (x - 1) ^ 10)`
-!!!(p) {:.unnumlist}
 
 `((2 * (X ^ 10)) + (90 * (X ^ 8)) + (420 * (X ^ 6))`
-!!!(p) {:.unnumlist}
 
- `+ (420 * (X ^ 4)) + (90 * (X ^ 2)) + 2)`
-!!!(p) {:.unnumlist}
+  `+ (420 * (X ^ 4)) + (90 * (X ^ 2)) + 2)`
 
 `CANON> ((x + 1) ^ 10 - (x - 1) ^ 10)`
-!!!(p) {:.unnumlist}
 
 `((20 * (X ^ 8)) + (240 * (X ^ 7)) + (504 * (X ^ 5))`
-!!!(p) {:.unnumlist}
 
- `+ (240 * (X ^ 3)) + (20 * X))`
-!!!(p) {:.unnumlist}
+  `+ (240 * (X ^ 3)) + (20 * X))`
 
 `CANON> (3 * x ^ 3 + 4 * x * y * (x - 1) + x ^ 2 * (x + y))`
-!!!(p) {:.unnumlist}
 
 `((4 * (X ^ 3)) + ((5 * Y) * (X ^ 2)) + ((-4 * Y) * X))`
-!!!(p) {:.unnumlist}
 
 `CANON> (3 * x ^ 3 + 4 * x * w * (x - 1) + x ^ 2 * (x + w))`
-!!!(p) {:.unnumlist}
 
 `((((5 * (X ^ 2)) + (-4 * X)) * W) + (4 * (X ^ 3)))`
-!!!(p) {:.unnumlist}
 
 `CANON> (d (3 * x ^ 2 + 2 * x + 1) / d x)`
-!!!(p) {:.unnumlist}
 
 `((6 * X) + 2)`
-!!!(p) {:.unnumlist}
 
 `CANON> (d(z + 3 * x + 3 * z * x ^ 2 + z ^ 2 * x ^ 3) / d z)`
-!!!(p) {:.unnumlist}
 
 `(((2 * Z) * (X ^ 3)) + (3 * (X ^ 2)) + 1)`
-!!!(p) {:.unnumlist}
 
 `CANON> [Abort]`
-!!!(p) {:.unnumlist}
 
-## [ ](#){:#st0025}15.4 Benchmarking the Polynomial Simplifier
+## 15.4 Benchmarking the Polynomial Simplifier
 {:#s0025}
 {:.h1hd}
 
@@ -955,27 +711,23 @@ The `frpoly` benchmark encodes polynomials as lists rather than vectors, and goe
 Otherwise, it is similar to the algorithms used here (although the code itself is quite different, using progs and gos and other features that have fallen into disfavor in the intervening decades).
 The particular benchmark we will use here is raising 1 ***+** x + y + z* to the 15th power:
 
-[ ](#){:#l0105}`(defun r15-test ()`
-!!!(p) {:.unnumlist}
+`(defun r15-test ()`
 
- `(let ((r (prefix->canon'(+ 1 (+ x (+ y z))))))`
-!!!(p) {:.unnumlist}
+  `(let ((r (prefix->canon'(+ 1 (+ x (+ y z))))))`
 
-  `(time (poly^n r 15))`
-!!!(p) {:.unnumlist}
+    `(time (poly^n r 15))`
 
-  `nil))`
-!!!(p) {:.unnumlist}
+    `nil))`
 
 This takes .97 seconds on our system.
 The equivalent test with the original `frpoly` code takes about the same time: .98 seconds.
 Thus, our program is as fast as production-quality code.
-In terms of storage space, vectors use about half as much storage as lists, because half of each cons cell is a pointer, while vectors are all useful data.[2](#fn0020){:#xfn0020}
+In terms of storage space, vectors use about half as much storage as lists, because half of each cons cell is a pointer, while vectors are all useful data.[2](#fn0020)
 
 How much faster is the polynomial-based code than the rule-based version?
 Unfortunately, we can't answer that question directly.
 We can time `(simp ' ( (1 + x + y + z) ^ 15)))`.
-This takes only a tenth of a second, but that is because it is doing no work at all—the answer is the same as the input!
+This takes only a tenth of a second, but that is because it is doing no work at all-the answer is the same as the input!
 Alternately, we can take the expression computed by `(poly^n r 15)`, convert it to prefix, and pass that `to simplify.
 simplify` takes 27.8 seconds on this, so the rule-based version is much slower.
 [Section 9.6](B9780080571157500091.xhtml#s0035) describes ways to speed up the rule-based program, and a comparison of timing data appears on [page 525](#p525).
@@ -985,29 +737,21 @@ For example, the alert reader may have noticed that the version of `poly^n` defi
 Usually, exponentiation is done by squaring a value when the exponent is even.
 Such an algorithm takes only log *n* multiplications instead of *n.* We can add a line to the definition of `poly^n` to get an *O*(log *n*) algorithm:
 
-[ ](#){:#l0110}`(defun poly^n (p n)`
-!!!(p) {:.unnumlist}
+`(defun poly^n (p n)`
 
- `"Raise polynomial p to the nth power, n>=0."`
-!!!(p) {:.unnumlist}
+  `"Raise polynomial p to the nth power, n>=0."`
 
- `(check-type n (integer 0 *))`
-!!!(p) {:.unnumlist}
+  `(check-type n (integer 0 *))`
 
- `(cond ((= n 0) (assert (not (eql p 0))) 1)`
-!!!(p) {:.unnumlist}
+  `(cond ((= n 0) (assert (not (eql p 0))) 1)`
 
-   `((integerp p) (expt p n))`
-!!!(p) {:.unnumlist}
+      `((integerp p) (expt p n))`
 
-   `((evenp n) (poly^2 (poly^n p (/ n 2)))) ;***`
-!!!(p) {:.unnumlist}
+      `((evenp n) (poly^2 (poly^n p (/ n 2)))) ;***`
 
-   `(t (poly*poly p (poly^n p (- n 1))))))`
-!!!(p) {:.unnumlist}
+      `(t (poly*poly p (poly^n p (- n 1))))))`
 
 `(defun poly^2 (p) (poly*poly p p))`
-!!!(p) {:.unnumlist}
 
 The surprise is that this takes *longer* to raise `*r*` to the 15th power.
 Even though it does fewer `poly*poly` operations, it is doing them on more complex arguments, and there is more work altogether.
@@ -1015,68 +759,55 @@ If we use this version of `poly^n,` then `r15-test` takes 1.6 seconds instead of
 
 By the way, this is a perfect example of the conceptual power of recursive functions.
 We took an existing function, poly^n, added a single cond clause, and changed it from an *O*(*n*) to *O*(log *n*) algorithm.
-(This turned out to be a bad idea, but that’s beside the point.
+(This turned out to be a bad idea, but that's beside the point.
 It would be a good idea for raising integers to powers.) The reasoning that allows the change is simple: First, *pn* is certainly equal to (*p**n*/2)2 when *n* is even, so the change can't introduce any wrong answers.
 Second, the change continues the policy of decrementing *n* on every recursive call, so the function must eventually termina te (when *n =* 0).
-If it gives no wrong answers, and it terminâtes, then it must give the right answer.
+If it gives no wrong answers, and it terminates, then it must give the right answer.
 
 In contrast, making the change for an iterative algorithm is more complex.
 The initial algorithm is simple:
 
-[ ](#){:#l0115}`(defun poly^n (p n)`
-!!!(p) {:.unnumlist}
+`(defun poly^n (p n)`
 
- `(let ((result 1))`
-!!!(p) {:.unnumlist}
+  `(let ((result 1))`
 
-  `(loop repeat n do (setf result (poly*poly p result)))`
-!!!(p) {:.unnumlist}
+    `(loop repeat n do (setf result (poly*poly p result)))`
 
-  `result))`
-!!!(p) {:.unnumlist}
+    `result))`
 
 But to change it, we have to change the repeat loop to a `while` loop, explicitly put in the decrement of *n*, and insert a test for the even case:
 
-[ ](#){:#l0120}`(defun poly^n (p n)`
-!!!(p) {:.unnumlist}
+`(defun poly^n (p n)`
 
- `(let ((result 1))`
-!!!(p) {:.unnumlist}
+  `(let ((result 1))`
 
-  `(loop while (> n 0)`
-!!!(p) {:.unnumlist}
+    `(loop while (> n 0)`
 
-   `do (if (evenp n)`
-!!!(p) {:.unnumlist}
+      `do (if (evenp n)`
 
-     `(setf p (poly^2 p)`
-!!!(p) {:.unnumlist}
+          `(setf p (poly^2 p)`
 
-       `n (/ n 2))`
-!!!(p) {:.unnumlist}
+              `n (/ n 2))`
 
-     `(setf result (poly*poly p result)`
-!!!(p) {:.unnumlist}
+          `(setf result (poly*poly p result)`
 
-       `n (- n 1))))`
-!!!(p) {:.unnumlist}
+              `n (- n 1))))`
 
-  `result))`
-!!!(p) {:.unnumlist}
+    `result))`
 
 For this problem, it is clear that thinking recursively leads to a simpler function that is easier to modify.
 
 It turns out that this is not the final word.
 Exponentiation of polynomials can be done even faster, with a little more mathematical sophistication.
-[Richard Fateman’s 1974](B9780080571157500285.xhtml#bb0380) paper on Polynomial Multiplication analyzes the complexity of a variety of exponentiation algorithms.
+[Richard Fateman's 1974](B9780080571157500285.xhtml#bb0380) paper on Polynomial Multiplication analyzes the complexity of a variety of exponentiation algorithms.
 Instead of the usual asymptotic analysis (e.g.
 *O*(*n*) or *O*(*n*2)), he uses a fine-grained analysis that computes the constant factors (e.g.
-1000 × *n* or 2 × *n*2).
+1000 x *n* or 2 x *n*2).
 Such analysis is crucial for small values of *n*.
 It turns out that for a variety of polynomials, an exponentiation algorithm based on the binomial theorem is best.
 The binomial theorem states that
 
-a+bn=∑i=0nn!i!n−i!aibn−i
+a+bn=&Sigma;i=0nn!i!n-i!aibn-i
 
 ![si4_e](images/B9780080571157500157/si4_e.gif)
 
@@ -1090,151 +821,108 @@ We can use this theorem to compute a power of a polynomial all at once, instead 
 Of course, a polynomial will in general be a sum of more than two components, so we have to decid`e` how to split it into the *a* and *b* pieces.
 There are two obvious ways: either eut the polynomial in half, so that *a* and *b* will be of equal size, or split off one component at a time.
 Fateman shows that the latter method is more efficient in most cases.
-In other words, a polynomial k1xn+k2xn−1+k3xn−2+⋯ !!!(span) {:.hiddenClass} ![si6_e](images/B9780080571157500157/si6_e.gif) will be treated as the sum *a + b* where *a*= *k*1*xn* and *b* is the rest of the polynomial.
+In other words, a polynomial k1xn+k2xn-1+k3xn-2+... !!!(span) {:.hiddenClass} ![si6_e](images/B9780080571157500157/si6_e.gif) will be treated as the sum *a + b* where *a*=  *k*1*xn* and *b* is the rest of the polynomial.
 
 Following is the code for binomial exponentiation.
 It is somewhat messy, because the emphasis is on efficiency.
 This means reusing some data and using `p-add-into!` instead of the more general `poly+poly`.
 
-[ ](#){:#l0125}`(defun poly^n (p n)`
-!!!(p) {:.unnumlist}
+`(defun poly^n (p n)`
 
- `"Raise polynomial p to the nth power, n>=0."`
-!!!(p) {:.unnumlist}
+  `"Raise polynomial p to the nth power, n>=0."`
 
- `;; Uses the binomial theorem`
-!!!(p) {:.unnumlist}
+  `;; Uses the binomial theorem`
 
- `(check-type n (integer 0 *))`
-!!!(p) {:.unnumlist}
+  `(check-type n (integer 0 *))`
 
- `(cond`
-!!!(p) {:.unnumlist}
+  `(cond`
 
-  `((= n 0) 1)`
-!!!(p) {:.unnumlist}
+    `((= n 0) 1)`
 
-  `((integerp p) (expt p n))`
-!!!(p) {:.unnumlist}
+    `((integerp p) (expt p n))`
 
-  `(t ;; First: split the polynomial p = a + b, where`
-!!!(p) {:.unnumlist}
+    `(t ;; First: split the polynomial p = a + b, where`
 
-   `;; a = k*x^d and b is the rest of p`
-!!!(p) {:.unnumlist}
+      `;; a = k*x^d and b is the rest of p`
 
-   `(let ((a (make-poly (main-var p) (degree p)))`
-!!!(p) {:.unnumlist}
+      `(let ((a (make-poly (main-var p) (degree p)))`
 
-    `(b (normalize-poly (subseq p 0 (- (length p) 1))))`
-!!!(p) {:.unnumlist}
+        `(b (normalize-poly (subseq p 0 (- (length p) 1))))`
 
-    `;; Allocate arrays of powers of a and b:`
-!!!(p) {:.unnumlist}
+        `;; Allocate arrays of powers of a and b:`
 
-    `(a^n (make-array (+ n 1)))`
-!!!(p) {:.unnumlist}
+        `(a^n (make-array (+ n 1)))`
 
-    `(b^n (make-array (+ n 1)))`
-!!!(p) {:.unnumlist}
+        `(b^n (make-array (+ n 1)))`
 
-    `;; Initialize the result:`
-!!!(p) {:.unnumlist}
+        `;; Initialize the result:`
 
-    `(result (make-poly (main-var p) (* (degree p) n))))`
-!!!(p) {:.unnumlist}
+        `(result (make-poly (main-var p) (* (degree p) n))))`
 
-   `(setf (coef a (degree p)) (coef p (degree p)))`
-!!!(p) {:.unnumlist}
+      `(setf (coef a (degree p)) (coef p (degree p)))`
 
-   `;; Second: Compute powers of a^i and b^i for i up to n`
-!!!(p) {:.unnumlist}
+      `;; Second: Compute powers of a^i and b^i for i up to n`
 
-   `(setf (aref a^n 0) 1)`
-!!!(p) {:.unnumlist}
+      `(setf (aref a^n 0) 1)`
 
-   `(setf (aref b^n 0) 1)`
-!!!(p) {:.unnumlist}
+      `(setf (aref b^n 0) 1)`
 
-   `(loop for i from 1 to n do`
-!!!(p) {:.unnumlist}
+      `(loop for i from 1 to n do`
 
-     `(setf (aref a^n i) (poly*poly a (aref a^n (- i 1))))`
-!!!(p) {:.unnumlist}
+          `(setf (aref a^n i) (poly*poly a (aref a^n (- i 1))))`
 
-     `(setf (aref b^n i) (poly*poly b (aref b^n (- i 1)))))`
-!!!(p) {:.unnumlist}
+          `(setf (aref b^n i) (poly*poly b (aref b^n (- i 1)))))`
 
-   `;; Third: add the products into the result,`
-!!!(p) {:.unnumlist}
+      `;; Third: add the products into the result,`
 
-   `;; so that result[i] = (n choose i) * a^i * b^(n-i)`
-!!!(p) {:.unnumlist}
+      `;; so that result[i] = (n choose i) * a^i * b^(n-i)`
 
-   `(let ((c 1)) ;; c helps compute (n choose i) incrementally`
-!!!(p) {:.unnumlist}
+      `(let ((c 1)) ;; c helps compute (n choose i) incrementally`
 
-    `(loop for i from 0 to n do`
-!!!(p) {:.unnumlist}
+        `(loop for i from 0 to n do`
 
-      `(p-add-into!
+            `(p-add-into!
 result c`
-!!!(p) {:.unnumlist}
 
-        `(poly*poly (aref a^n i)`
-!!!(p) {:.unnumlist}
+                `(poly*poly (aref a^n i)`
 
-          `(aref b^n (- n i))))`
-!!!(p) {:.unnumlist}
+                    `(aref b^n (- n i))))`
 
-      `(setf c (/ (* c (- n i)) (+ i 1)))))`
-!!!(p) {:.unnumlist}
+            `(setf c (/ (* c (- n i)) (+ i 1)))))`
 
-   `(normalize-poly result)))))`
-!!!(p) {:.unnumlist}
+      `(normalize-poly result)))))`
 
 `(defun p-add-into!
 (result c p)`
-!!!(p) {:.unnumlist}
 
- `"Destructively add c*p into result."`
-!!!(p) {:.unnumlist}
+  `"Destructively add c*p into result."`
 
- `(if (or (numberp p)`
-!!!(p) {:.unnumlist}
+  `(if (or (numberp p)`
 
-     `(not (var= (main-var p) (main-var result))))`
-!!!(p) {:.unnumlist}
+          `(not (var= (main-var p) (main-var result))))`
 
-   `(setf (coef result 0)`
-!!!(p) {:.unnumlist}
+      `(setf (coef result 0)`
 
-      `(poly+poly (coef result 0) (poly*poly c p)))`
-!!!(p) {:.unnumlist}
+            `(poly+poly (coef result 0) (poly*poly c p)))`
 
-   `(loop for i from 0 to (degree p) do`
-!!!(p) {:.unnumlist}
+      `(loop for i from 0 to (degree p) do`
 
-      `(setf (coef result i)`
-!!!(p) {:.unnumlist}
+            `(setf (coef result i)`
 
-        `(poly+poly (coef result i) (poly*poly c (coef p i))))))`
-!!!(p) {:.unnumlist}
+                `(poly+poly (coef result i) (poly*poly c (coef p i))))))`
 
- `result)`
-!!!(p) {:.unnumlist}
+  `result)`
 
 Using this version of `poly^n, r15-test` takes only .23 seconds, four times faster than the previous version.
 The following table compares the times for `r15-test` with the three versions of `poly^n`, along with the times for applying `simply` to the `r15` polynomial, for various versions of `simplify`:
 
-[ ](#){:#t0010}
 !!!(table)
 
 | []() | | | | | | | | | |
 |---|---|---|---|---|---|---|---|---|---|
 | | program | secs | speed-up |
 | | **rule-based versions** |
-| 1 | original | 27.8 | − |
+| 1 | original | 27.8 | - |
 | 2 | memoization | 7.7 | 4 |
 | 3 | memo+index | 4.0 | 7 |
 | 4 | compilation only | 2.5 | 11 |
@@ -1252,7 +940,7 @@ Instead, the fastest version was achieved by throwing out the original rule-base
 
 Now that we have achieved a sufficiently fast system, the next two sections concentrate on making it more powerful.
 
-## [ ](#){:#st0030}15.5 A Canonical Form for Rational Expressions
+## 15.5 A Canonical Form for Rational Expressions
 {:#s0030}
 {:.h1hd}
 
@@ -1263,85 +951,68 @@ This section presents a canonical form for rational expressions.
 First, a number or polynomial will continue to be represented as before.
 The quotient of two polynomials will be represented as a cons cells of numerator and denominator pairs.
 However, just as Lisp automatically reduces rational numbers to simplest form (6/8 is represented as 3/4), we must reduce rational expressions.
-So, for example, (*x*2− 1)/(*x*− 1) must be reduced to *x* + 1, not left as a quotient of two polynomials.
+So, for example, (*x*2- 1)/(*x*- 1) must be reduced to *x* + 1, not left as a quotient of two polynomials.
 
 The following functions build and access rational expressions but do not reduce to simplest form, except in the case where the denominator is a number.
 Building up the rest of the functionality for full rational expressions is left to a series of exercises:
 
-[ ](#){:#l0130}`(defun make-rat (numerator denominator)`
-!!!(p) {:.unnumlist}
+`(defun make-rat (numerator denominator)`
 
- `"Build a rational: a quotient of two polynomials."`
-!!!(p) {:.unnumlist}
+  `"Build a rational: a quotient of two polynomials."`
 
- `(if (numberp denominator)`
-!!!(p) {:.unnumlist}
+  `(if (numberp denominator)`
 
-   `(k*poly (/ 1 denominator) numerator)`
-!!!(p) {:.unnumlist}
+      `(k*poly (/ 1 denominator) numerator)`
 
-   `(cons numeratordenominator)))`
-!!!(p) {:.unnumlist}
+      `(cons numeratordenominator)))`
 
 `(defun rat-numerator (rat)`
-!!!(p) {:.unnumlist}
 
- `"The numerator of a rational expression."`
-!!!(p) {:.unnumlist}
+  `"The numerator of a rational expression."`
 
- `(typecase rat`
-!!!(p) {:.unnumlist}
+  `(typecase rat`
 
-  `(cons (car rat))`
-!!!(p) {:.unnumlist}
+    `(cons (car rat))`
 
-  `(number (numerator rat))`
-!!!(p) {:.unnumlist}
+    `(number (numerator rat))`
 
-  `(t rat)))`
-!!!(p) {:.unnumlist}
+    `(t rat)))`
 
 `(defun rat-denominator (rat)`
-!!!(p) {:.unnumlist}
 
- `"The denominator of a rational expression."`
-!!!(p) {:.unnumlist}
+  `"The denominator of a rational expression."`
 
- `(typecase rat`
-!!!(p) {:.unnumlist}
+  `(typecase rat`
 
-  `(cons (cdr rat))`
-!!!(p) {:.unnumlist}
+    `(cons (cdr rat))`
 
-  `(number (denominator rat))`
-!!!(p) {:.unnumlist}
+    `(number (denominator rat))`
 
-  `(t 1)))`
-!!!(p) {:.unnumlist}
+    `(t 1)))`
 
-**Exercise 15.3 [s]** Modify `prefix->canon` to accept input of the form `x / y` and to return rational expressions instead of polynomials.
+**Exercise  15.3 [s]** Modify `prefix->canon` to accept input of the form `x / y` and to return rational expressions instead of polynomials.
 Also allow for input of the form `x ^ - n`.
 
-**Exercise 15.4 [m]** Add arithmetic routines for multiplication, addition, and division of rational expressions.
+**Exercise  15.4 [m]** Add arithmetic routines for multiplication, addition, and division of rational expressions.
 Call them `rat*rat, rat+rat`, and `rat/rat` respectively.
 They will call upon `poly*poly.
 poly+poly` and a new function, `poly/poly`, which is defined in the next exercise.
 
-**Exercise 15.5 [h]** Define `poly-gcd`, which computes the greatest common divisor of two polynomials.
+**Exercise  15.5 [h]** Define `poly-gcd`, which computes the greatest common divisor of two polynomials.
 
-**Exercise 15.6 [h]** Using `poly-gcd`, define the function `poly/poly`, which will implement division for polynomials.
+**Exercise  15.6 [h]** Using `poly-gcd`, define the function `poly/poly`, which will implement division for polynomials.
 Polynomials are closed under addition and multiplication, so `poly+poly` and `poly*poly` both returned polynomials.
 Polynomials are not closed under division, so `poly/poly` will return a rational expression.
 
-## [ ](#){:#st0035}15.6 Extending Rational Expressions
+## 15.6 Extending Rational Expressions
 {:#s0035}
 {:.h1hd}
 
 Now that we can divide polynomials, the final step is to reinstate the logarithmic, exponential, and trigonometrie functions.
 The problem is that if we allow all these functions, we get into problems with canonical form again.
-For example, the following three expressions are all equivalent :
+For example, the following three expressions are all equivalent  :
 
-sinxcosx−π2eix−e−ix2i
+sinxcosx-&pi;2eix-e-ix2i
 
 ![si7_e](images/B9780080571157500157/si7_e.gif)
 
@@ -1357,7 +1028,7 @@ These systems are treading on thin mathematical ice.
 Algorithms that would be guaranteed to work over a simple differentiable field may fail when the domain is extended this way.
 In general, the result will not be a wrong answer but rather the failure to find an answer at all.
 
-## [ ](#){:#st0040}15.7 History and References
+## 15.7 History and References
 {:#s0040}
 {:.h1hd}
 
@@ -1366,7 +1037,7 @@ A brief history of symbolic algebra systems is given in [chapter 8](B97800805711
 (1988)](B9780080571157500285.xhtml#bb0270) give more details on the MACSYMA !!!(span) {:.smallcaps} system, on which this chapter is loosely based.
 [Fateman (1991)](B9780080571157500285.xhtml#bb0390) discusses the `frpoly` benchmark and introduces the vector implementation used in this chapter.
 
-## [ ](#){:#st0045}15.8 Exercises
+## 15.8 Exercises
 {:#s0045}
 {:.h1hd}
 
@@ -1380,90 +1051,65 @@ A brief history of symbolic algebra systems is given in [chapter 8](B97800805711
 
 **Exercise 15.10 [s]** Give several reasons why constant polynomials, like 3, are represented as integers rather than as vectors.
 
-## [ ](#){:#st0050}15.9 Answers
+## 15.9 Answers
 {:#s0050}
 {:.h1hd}
 
 **Answer 15.4**
 
-[ ](#){:#l0135}`(defun rat*rat (x y)`
-!!!(p) {:.unnumlist}
+`(defun rat*rat (x y)`
 
- `"Multiply rationals: a/b * c/d = a*c/b*d"`
-!!!(p) {:.unnumlist}
+  `"Multiply rationals: a/b * c/d = a*c/b*d"`
 
- `(poly/poly (poly*poly (rat-numerator x)`
-!!!(p) {:.unnumlist}
+  `(poly/poly (poly*poly (rat-numerator x)`
 
-        `(rat-numerator y))`
-!!!(p) {:.unnumlist}
+                `(rat-numerator y))`
 
-    `(poly*poly (rat-denominator x)`
-!!!(p) {:.unnumlist}
+        `(poly*poly (rat-denominator x)`
 
-        `(rat-denominator y))))`
-!!!(p) {:.unnumlist}
+                `(rat-denominator y))))`
 
 `(defun rat+rat (x y)`
-!!!(p) {:.unnumlist}
 
- `"Add rationals: a/b + c/d = (a*d + c*b)/b*d"`
-!!!(p) {:.unnumlist}
+  `"Add rationals: a/b + c/d = (a*d + c*b)/b*d"`
 
- `(let ((a (rat-numerator x))`
-!!!(p) {:.unnumlist}
+  `(let ((a (rat-numerator x))`
 
-    `(b (rat-denominator x))`
-!!!(p) {:.unnumlist}
+        `(b (rat-denominator x))`
 
-    `(c (rat-numerator y))`
-!!!(p) {:.unnumlist}
+        `(c (rat-numerator y))`
 
-    `(d (rat-denominator y)))`
-!!!(p) {:.unnumlist}
+        `(d (rat-denominator y)))`
 
-  `(poly/poly (poly+poly (poly*poly a d) (poly*poly c b))`
-!!!(p) {:.unnumlist}
+    `(poly/poly (poly+poly (poly*poly a d) (poly*poly c b))`
 
-       `(poly*poly b d))))`
-!!!(p) {:.unnumlist}
+              `(poly*poly b d))))`
 
 `(defun rat/rat (x y)`
-!!!(p) {:.unnumlist}
 
- `"Divide rationals: a/b / c/d - a*d/b*c"`
-!!!(p) {:.unnumlist}
+  `"Divide rationals: a/b / c/d - a*d/b*c"`
 
- `(rat*rat x (make-rat (rat-denominator y) (rat-numerator y))))`
-!!!(p) {:.unnumlist}
+  `(rat*rat x (make-rat (rat-denominator y) (rat-numerator y))))`
 
 **Answer 15.6**
 
-[ ](#){:#l0140}`(defun poly/poly (p q)`
-!!!(p) {:.unnumlist}
+`(defun poly/poly (p q)`
 
- `"Divide p by q: if d is the greatest common divisor of p and q`
-!!!(p) {:.unnumlist}
+  `"Divide p by q: if d is the greatest common divisor of p and q`
 
- `then p/q = (p/d) / (q/d).
+  `then p/q = (p/d) / (q/d).
 Note if q-1.
 then p/q = p."`
-!!!(p) {:.unnumlist}
 
- `(if (eql q 1)`
-!!!(p) {:.unnumlist}
+  `(if (eql q 1)`
 
-   `p`
-!!!(p) {:.unnumlist}
+      `p`
 
-   `(let ((d (poly-gcd p q)))`
-!!!(p) {:.unnumlist}
+      `(let ((d (poly-gcd p q)))`
 
-    `(make-rat (poly/poly p d)`
-!!!(p) {:.unnumlist}
+        `(make-rat (poly/poly p d)`
 
-        `(poly/poly q d)))))`
-!!!(p) {:.unnumlist}
+                `(poly/poly q d)))))`
 
 **Answer 15.10** (1) An integer takes less time and space to process.
 (2) Representing numbers as a polynomial would cause an infinit`e` regress, because the coefficients would be numbers.
@@ -1471,11 +1117,11 @@ then p/q = p."`
 
 ----------------------
 
-[1](#xfn0015){:#np0015} In fact, the algebraic properties of polynomial arithmetic and its generalizations fit so well with ideas in data abstraction that an extended example (in Scheme) on this topic is provided in *Structure and Interpretation of Computer Programs* by Abelson and Sussman (see section 2.4.3, [pages 153](B9780080571157500054.xhtml#p153)–[166](B9780080571157500054.xhtml#p166)).
+[1](#xfn0015) In fact, the algebraic properties of polynomial arithmetic and its generalizations fit so well with ideas in data abstraction that an extended example (in Scheme) on this topic is provided in *Structure and Interpretation of Computer Programs* by Abelson and Sussman (see section 2.4.3, [pages 153](B9780080571157500054.xhtml#p153)-[166](B9780080571157500054.xhtml#p166)).
 We'll pursue a slightly different approach here.
 !!!(p) {:.ftnote1}
 
-[2](#xfn0020){:#np0020} Note: systems that use `“`cdr-coding`”` take about the same space for lists that are allocated all at once as for vectors.
+[2](#xfn0020) Note: systems that use `"`cdr-coding`"` take about the same space for lists that are allocated all at once as for vectors.
 But cdr-coding is losing favor as RISC chips replace microcoded processors.
 !!!(p) {:.ftnote1}
 

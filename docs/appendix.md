@@ -11,9 +11,9 @@ All the code in this book is available for anonymous FTP from the computer `mkp.
 The file `README` in that directory gives further instructions on using the files.
 
 In the session below, the user `smith` retrieves the files from `mkp.com`.
-Smith’s input is in *slanted font.* The login name must be *anonymous*, and Smith’s own mail address is used as the password.
+Smith's input is in *slanted font.* The login name must be *anonymous*, and Smith's own mail address is used as the password.
 The command *cd pub/norvig* changes to that directory, and the command *ls* lists all the files.
-The command *mget* * retrieves ail files (the *m* stands for “multiple”).
+The command *mget* * retrieves ail files (the *m* stands for "multiple").
 Normally, there would be a prompt before each file asking if you do indeed want to copy it, but the *prompt* command disabled this.
 The command *bye* ends the FTP session.
 
@@ -41,7 +41,7 @@ The command *bye* ends the FTP session.
 `ftp>*ls*`
 !!!(p) {:.unnumlist}
 
-`…`
+`...`
 !!!(p) {:.unnumlist}
 
 `ftp>*prompt*`
@@ -53,7 +53,7 @@ The command *bye* ends the FTP session.
 `ftp>*mget**`
 !!!(p) {:.unnumlist}
 
-`…`
+`...`
 !!!(p) {:.unnumlist}
 
 `ftp> bye`
@@ -85,13 +85,13 @@ San Francisco, CA 94104-3205
 USA
 !!!(p) {:.unnumlist}
 
-Telephone 415/392-2665
+Telephone  415/392-2665
 !!!(p) {:.unnumlist}
 
-Facsimile 415/982-2665
+Facsimile  415/982-2665
 !!!(p) {:.unnumlist}
 
-Internet mkp@mkp.com
+Internet  mkp@mkp.com
 !!!(p) {:.unnumlist}
 
 (800) 745-7323
@@ -108,20 +108,18 @@ DOS 5.25 diskette ISBN 1-55860-228-3
 DOS 3.5 diskette ISBN 1-55860-229-1
 !!!(p) {:.unnumlist}
 
-### [ ](#){:#st0015}Available Software
-{:#s0015}
-{:.h1hd}
+### Available Software
 
 In addition to the program from this book, a good deal of other software is available.
 The tables below list some of the relevant AI/Lisp programs.
 Each entry lists the name of the system, an address, and some comments.
 The address is either a computer from which you can FTP, or a mail address of a contact.
-Unless it is stated that distribution is by *email* or *Floppy* or requires a *license,* then you can FTP from the contact’s home computer.
+Unless it is stated that distribution is by *email* or *Floppy* or requires a *license,* then you can FTP from the contact's home computer.
 In some cases the host computer and/or directory have been provided in italics in the comments field.
 However, in most cases it should be obvious what files to transfer.
 First do an `ls` command to see what files and directories are available.
 If there is a file called `README`, follow its advice: do a get `README` and then look at the file.
-If you still haven’t found what you are looking for, be aware that most hosts keep their public software in the directory pub.
+If you still haven't found what you are looking for, be aware that most hosts keep their public software in the directory pub.
 Do a `cd pub` and then another `ls`, and you should find the desired files.
 
 If a file ends in the suffix `.Z`, then you should give the FTP command `binary` before transferring it, and then give the UNIX command `uncompress` to recover the original file.
@@ -137,16 +135,16 @@ If you have problems, consult your local documentation or system administrator.
 |---|---|---|---|---|---|---|---|---|---|
 | System | Address | Comments |
 | Babbler | [rsfl@ra.msstate.edu](mailto:rsfl@ra.msstate.edu) | *email;*Markov chains/NLP |
-| BACK | [peltason@tubvm.cs.tu-berlin.de](mailto:peltason@tubvm.cs.tu-berlin.de) | *3.5″ floppy;* KL-ONE family |
+| BACK | [peltason@tubvm.cs.tu-berlin.de](mailto:peltason@tubvm.cs.tu-berlin.de) | *3.5" floppy;* KL-ONE family |
 | Belief | [almond@stat.washington.edu](mailto:almond@stat.washington.edu) | belief networks |
 | Classic | [dlm@research.att.com](mailto:dlm@research.att.com) | *license;* KL-ONE family |
-| Fol Getfol | [fausto@irst.it](mailto:fausto@irst.it) | *tape;* Weyrauch’s FOL system |
+| Fol Getfol | [fausto@irst.it](mailto:fausto@irst.it) | *tape;* Weyrauch's FOL system |
 | Framekit | [ehn+@cs.cmu.edu](mailto:ehn+@cs.cmu.edu) | *floppy;* frames |
 | Framework | [mkant+@cs.cmu.edu](mailto:mkant+@cs.cmu.edu) | *a.gp.cs.cmu.edu:/usr/mkant/Public;* frames |
 | Frobs | [kessler@cs.utah.edu](mailto:kessler@cs.utah.edu) | frames |
 | Knowbel | [kramer@ai.toronto.edu](mailto:kramer@ai.toronto.edu) | sorted/temporal logic |
 | MVL | [ginsberg@t.stanford.edu](mailto:ginsberg@t.stanford.edu) | multivalued logics |
-| OPS | [slisp-group@b.gp.cs.cmu.edu](mailto:slisp-group@b.gp.cs.cmu.edu) | Forgy’s OPS-5 language |
+| OPS | [slisp-group@b.gp.cs.cmu.edu](mailto:slisp-group@b.gp.cs.cmu.edu) | Forgy's OPS-5 language |
 | PARKA | [spector@cs.umd.edu](mailto:spector@cs.umd.edu) | frames (designed for connection machine) |
 | Parmenides | [pshell@cs.cmu.edu](mailto:pshell@cs.cmu.edu) | frames |
 | Rhetorical | [miller@cs.rochester.edu](mailto:miller@cs.rochester.edu) | planning, time logic |
@@ -166,7 +164,7 @@ If you have problems, consult your local documentation or system administrator.
 | COBWEB/3 | [cobweb@ptolemy.arc.nasa.gov](mailto:cobweb@ptolemy.arc.nasa.gov) | *email;* concept formation |
 | MATS | [kautz@research.att.com](mailto:kautz@research.att.com) | *license;* temporal constraints |
 | MICRO-xxx | [waander@cs.ume.edu](mailto:waander@cs.ume.edu) | case-based reasoning |
-| Nonlin | [nonlin-users-request@cs.umd.edu](mailto:nonlin-users-request@cs.umd.edu) | Tate’s planner in Common Lisp |
+| Nonlin | [nonlin-users-request@cs.umd.edu](mailto:nonlin-users-request@cs.umd.edu) | Tate's planner in Common Lisp |
 | Prodigy | [prodigy@cs.cmu.edu](mailto:prodigy@cs.cmu.edu) | *license;* planning and learning |
 | PROTOS | [porter@cs.utexas.edu](mailto:porter@cs.utexas.edu) | knowledge acquisition |
 | SNLP | [weld@cs.washington.edu](mailto:weld@cs.washington.edu) | nonlinear planner |

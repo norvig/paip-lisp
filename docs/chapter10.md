@@ -3,7 +3,7 @@
 
 > There are only two qualities in the world: efficiency and inefficiency; and only two sorts of people: the efficient and the inefficient
 
-> —George Bernard Shaw
+> -George Bernard Shaw
 
 > John Bull's Other Island (1904)
 
@@ -14,19 +14,19 @@ This chapter covers the following six optimization techniques.
 If your programs all run quickly enough, then feel free to skip this chapter.
 But if you would like your programs to run faster, the techniques described here can lead to speed-ups of 40 times or more.
 
-* [ ](#){:#l0010}• Use declarations.
+*   Use declarations.
 
-* • Avoid generic functions.
+*   Avoid generic functions.
 
-* • Avoid complex argument lists.
+*   Avoid complex argument lists.
 
-* • Provide compiler macros.
+*   Provide compiler macros.
 
-* • Avoid unnecessary consing.
+*   Avoid unnecessary consing.
 
-* • Use the right data structure.
+*   Use the right data structure.
 
-## [ ](#){:#st0010}10.1 Use Declarations
+## 10.1 Use Declarations
 {:#s0010}
 {:.h1hd}
 
@@ -34,61 +34,46 @@ On general-purpose computers running Lisp, much time is spent on type-checking.
 You can gain efficiency at the cost of robustness by declaring, or promising, that certain variables will always be of a given type.
 For example, consider the following function to compute the sum of the squares of a sequence of numbers:
 
-[ ](#){:#l0015}`(defun sum-squares (seq)`
-!!!(p) {:.unnumlist}
+`(defun sum-squares (seq)`
 
-` (let ((sum 0))`
-!!!(p) {:.unnumlist}
+`  (let ((sum 0))`
 
-`  (dotimes (i (length seq))`
-!!!(p) {:.unnumlist}
+`    (dotimes (i (length seq))`
 
-`   (incf sum (square (elt seq i))))`
-!!!(p) {:.unnumlist}
+`      (incf sum (square (elt seq i))))`
 
-`  sum))`
-!!!(p) {:.unnumlist}
+`    sum))`
 
 `(defun square (x) (* x x))`
-!!!(p) {:.unnumlist}
 
 If this function will only be used to sum vectors of fixnums, we can make it a lot faster by adding declarations:
 
-[ ](#){:#l0020}`(defun sum-squares (vect)`
-!!!(p) {:.unnumlist}
+`(defun sum-squares (vect)`
 
-` (declare (type (simple-array fixnum *) vect)`
-!!!(p) {:.unnumlist}
+`  (declare (type (simple-array fixnum *) vect)`
 
-`    (inline square) (optimize speed (safety 0)))`
-!!!(p) {:.unnumlist}
+`        (inline square) (optimize speed (safety 0)))`
 
-` (let ((sum 0))`
-!!!(p) {:.unnumlist}
+`  (let ((sum 0))`
 
-`  (declare (fixnum sum))`
-!!!(p) {:.unnumlist}
+`    (declare (fixnum sum))`
 
-`  (dotimes (i (length vect))`
-!!!(p) {:.unnumlist}
+`    (dotimes (i (length vect))`
 
-`   (declare (fixnum i))`
-!!!(p) {:.unnumlist}
+`      (declare (fixnum i))`
 
-`   (incf sum (the fixnum (square (svref vect i)))))))`
-!!!(p) {:.unnumlist}
+`      (incf sum (the fixnum (square (svref vect i)))))))`
 
-`  sum))`
-!!!(p) {:.unnumlist}
+`    sum))`
 
 The fixnum declarations let the compiler use integer arithmetic directly, rather than checking the type of each addend.
-The (`the fixnum`… ) special form is a promise that the argument is a fixnum.
+The (`the fixnum`... ) special form is a promise that the argument is a fixnum.
 The (`optimize speed (safety 0))` declaration tells the compiler to make the function run as fast as possible, at the possible expense of making the code less safe (by ignoring type checks and so on).
 Other quantities that can be optimized are `compilation-speed, space` and in ANSI Common Lisp only, `debug` (ease of debugging).
 Quantities can be given a number from 0 to 3 indicating how important they are; 3 is most important and is the default if the number is left out.
 
 The (`inline square`) declaration allows the compiler to generate the multiplication specified by `square` right in the loop, without explicitly making a function call to square.
-The compiler will create a local variable for (`svref vect i`) and will not execute the reference twice—inline functions do not have any of the problems associated with macros as discussed on [page 853](B9780080571157500248.xhtml#p853).
+The compiler will create a local variable for (`svref vect i`) and will not execute the reference twice-inline functions do not have any of the problems associated with macros as discussed on [page 853](B9780080571157500248.xhtml#p853).
 However, there is one drawback: when you redefine an inline function, you may need to recompile all the functions that call it.
 
 You should declare a function `inline` when it is short and the function-calling overhead will thus be a significant part of the total execution time.
@@ -98,29 +83,23 @@ In the example at hand, declaring the function inline saves the overhead of a fu
 In some cases, further optimizations are possible.
 Consider the predicate `starts-with`:
 
-[ ](#){:#l0025}`(defun starts-with (list x)`
-!!!(p) {:.unnumlist}
+`(defun starts-with (list x)`
 
-` "Is this a list whose first element is x?"`
-!!!(p) {:.unnumlist}
+`  "Is this a list whose first element is x?"`
 
-` (and (consp list) (eql (first list) x)))`
-!!!(p) {:.unnumlist}
+`  (and (consp list) (eql (first list) x)))`
 
 Suppose we have a code fragment like the following:
 
-[ ](#){:#l0030}`(if (consp list) (starts-with list x) …)`
-!!!(p) {:.unnumlist}
+`(if (consp list) (starts-with list x) ...)`
 
 If `starts-with` is declared `inline` this will expand to:
 
-[ ](#){:#l0035}`(if (consp list) (and (consp list) (eql (first list) x)) …)`
-!!!(p) {:.unnumlist}
+`(if (consp list) (and (consp list) (eql (first list) x)) ...)`
 
 which many compilers will simplify to:
 
-[ ](#){:#l0040}`(if (consp list) (eql (first list) x) …)`
-!!!(p) {:.unnumlist}
+`(if (consp list) (eql (first list) x) ...)`
 
 Very few compilers do this kind of simplification across functions without the hint provided by `inline`.
 
@@ -128,25 +107,19 @@ Besides eliminating run-time type checks, declarations also allow the compiler t
 Many compilers support both *boxed* and *unboxed* representations of data objects.
 A boxed representation includes enough information to determine the type of the object.
 An unboxed representation is just the "raw bits" that the computer can deal with directly.
-Consider the following function, which is used to clear a 1024 × 1024 array of floating point numbers, setting each one to zero:
+Consider the following function, which is used to clear a 1024  x  1024 array of floating point numbers, setting each one to zero:
 
-[ ](#){:#l0045}`(defun clear-m-array (array)`
-!!!(p) {:.unnumlist}
+`(defun clear-m-array (array)`
 
-` (declare (optimize (speed 3) (safety 0)))`
-!!!(p) {:.unnumlist}
+`  (declare (optimize (speed 3) (safety 0)))`
 
-` (declare (type (simple-array single-float (1024 1024)) array))`
-!!!(p) {:.unnumlist}
+`  (declare (type (simple-array single-float (1024 1024)) array))`
 
-` (dotimes (i 1024)`
-!!!(p) {:.unnumlist}
+`  (dotimes (i 1024)`
 
-`  (dotimes (j 1024)`
-!!!(p) {:.unnumlist}
+`    (dotimes (j 1024)`
 
-`   (setf (aref array i j) 0.0))))`
-!!!(p) {:.unnumlist}
+`      (setf (aref array i j) 0.0))))`
 
 In Allegro Common Lisp on a Sun SPARCstation, this compiles into quite good code, comparable to that produced by the C compiler for an equivalent C program.
 If the declarations are omitted, however, the performance is about 40 times worse.
@@ -161,27 +134,22 @@ The function `disassemble` can be used to show what a function compiles into.
 For example, consider the trivial function to add two numbers together.
 Here it is with and without declarations:
 
-[ ](#){:#l0050}`(defun f (x y)`
-!!!(p) {:.unnumlist}
+`(defun f (x y)`
 
-` (declare (fixnum x y) (optimize (safety 0) (speed 3)))`
-!!!(p) {:.unnumlist}
+`  (declare (fixnum x y) (optimize (safety 0) (speed 3)))`
 
-` (the fixnum (+ x y)))`
-!!!(p) {:.unnumlist}
+`  (the fixnum (+ x y)))`
 
 `(defun g (x y) (+ x y))`
-!!!(p) {:.unnumlist}
 
 Here is the disassembled code for f from Allegro Common Lisp for a Motorola 68000-series processor:
 
-[ ](#){:#t0010}
 !!!(table)
 
 | []() | | | | | | | | | |
 |---|---|---|---|---|---|---|---|---|---|
 | `> (disassemble 'f)` |
-| `;; disassembling #<Function f @ #x83ef79 >` |
+| `;; disassembling #<Function f @ #x83ef79  >` |
 | `;; formals: x y` |
 | `;; code vector @ #x83ef44` |
 | `0:` | `link` | `a6.#0` |
@@ -198,24 +166,23 @@ Here is the disassembled code for f from Allegro Common Lisp for a Motorola 6800
 ![t0010](images/B9780080571157500108/t0010.png)
 
 This may look intimidating at first glance, but you don't have to be an expert at 68000 assembler to gain some appreciation of what is going on here.
-The instructions labeled 0–8 (labels are in the leftmost column) comprise the typical function preamble for the 68000.
+The instructions labeled 0-8 (labels are in the leftmost column) comprise the typical function preamble for the 68000.
 They do subroutine linkage and store the new function object and constant vector into registers.
 Since f uses no constants, instructions 6, 8, and 22 are really unnecessary and could be omitted.
 Instructions 0,4, and 26 could also be omitted if you don't care about seeing this function in a stack trace during debugging.
 More recent versions of the compiler will omit these instructions.
 
-The heart of function `f` is the two-instruction sequence 12–16.
+The heart of function `f` is the two-instruction sequence 12-16.
 Instruction 12 retrieves `y`, and 16 adds `y` to `x`, leaving the result in `d4`, which is the "result" register.
 Instruction 20 sets `dl`, the "number of values returned" register, to 1.
 
 Contrast this to the code for `g`, which has no declarations and is compiled at default speed and safety settings:
 
-[ ](#){:#t0015}
 !!!(table)
 
 | []() | | | | | | | | | |
 |---|---|---|---|---|---|---|---|---|---|
-| `> (disassemble 'g)` `;; disassembling #<Function g @ #x83dbd1 >` `;; formals: x y` `;; code vector @ #x83db64` |
+| `> (disassemble 'g)` `;; disassembling #<Function g @ #x83dbd1  >` `;; formals: x y` `;; code vector @ #x83db64` |
 | `0:` | `add.l` | `#8,31(a2)` | |
 | `4:` | `sub.w` | `#2,dl` | |
 | `6:` | `beq.s` | `12` | |
@@ -224,7 +191,7 @@ Contrast this to the code for `g`, which has no declarations and is compiled at 
 | `16:` | `move.l` | `a2,-(a7)` | |
 | `18:` | `move.l` | `a5,-(a7)` | |
 | `20:` | `move.l` | `7(a2),a5` | |
-| `24:` | `tst.b` | `− 208(a4)` | `; signal-hit` |
+| `24:` | `tst.b` | `-  208(a4)` | `; signal-hit` |
 | `28` | `beq.s` | `34` | |
 | `30:` | `jsr` | `872(a4)` | `; process-sig` |
 | `34:` | `move.l` | `8(a6),d4` | `; y` |
@@ -239,7 +206,7 @@ Contrast this to the code for `g`, which has no declarations and is compiled at 
 | `62:` | `move.l` | `12(a6),-(a7)` | `; x` |
 | `66:` | `move.l` | `d4,-(a7)` | |
 | `68:` | `move.l` | `#2,d1` | |
-| `70:` | `move.l` | `-304(a4),a0` | `; + _2op` |
+| `70:` | `move.l` | `-304(a4),a0` | `; +  _2op` |
 | `74:` | `jsr` | `(a4)` | |
 | `76:` | `move.l` | `#1,d1` | |
 | `78:` | `move.l` | `-8(a6),a5` | |
@@ -251,20 +218,19 @@ Contrast this to the code for `g`, which has no declarations and is compiled at 
 See how much more work is done.
 The first four instructions ensure that the right number of arguments have been passed to `g`.
 If not, there is a jump to `wnaerr` (wrong-number-of-arguments-error).
-Instructions 12–20 have the argument loading code that was at 0–8 in `f`.
-At 24–30 there is a check for asynchronous signals, such as the user hitting the abort key.
-After `x` and `y` are loaded, there is a type check (42–48).
-If the arguments are not both fixnums, then the code at instructions 62–74 sets up a call to `+ _2op`, which handles type coercion and non-fixnum addition.
+Instructions 12-20 have the argument loading code that was at 0-8 in `f`.
+At 24-30 there is a check for asynchronous signals, such as the user hitting the abort key.
+After `x` and `y` are loaded, there is a type check (42-48).
+If the arguments are not both fixnums, then the code at instructions 62-74 sets up a call to  `+  _2op`, which handles type coercion and non-fixnum addition.
 If all goes well, we don't have to call this routine, and do the addition at instruction 50 instead.
-But even then we are not done—just because the two arguments were fixnums does not mean the result will be.
-Instructions 54–56 check and branch to an overflow routine if needed.
-Finally, instructions 76–84 return the final value, just as in `f`.
+But even then we are not done-just because the two arguments were fixnums does not mean the result will be.
+Instructions 54-56 check and branch to an overflow routine if needed.
+Finally, instructions 76-84 return the final value, just as in `f`.
 
 Some low-quality compilers ignore declarations altogether.
 Other compilers don't need certain declarations, because they can rely on special instructions in the underlying architecture.
 On a Lisp Machine, both `f` and `g` compile into the same code:
 
-[ ](#){:#t0020}
 !!!(table)
 
 | []() | | | | | | | | | |
@@ -273,7 +239,7 @@ On a Lisp Machine, both `f` and `g` compile into the same code:
 | `7 +` | `ARG|1` | `; Y` |
 | `8 RETURN` | `PDL-POP` | |
 
-The Lisp Machine has a microcoded + instruction that simultaneously does a fixnum add and checks for non-fixnum arguments, branching to a subroutine if either argument is not a fixnum.
+The Lisp Machine has a microcoded  +  instruction that simultaneously does a fixnum add and checks for non-fixnum arguments, branching to a subroutine if either argument is not a fixnum.
 The hardware does the work that the compiler has to do on a conventional processor.
 This makes the Lisp Machine compiler simpler, so compiling a function is faster.
 However, on modem pipelined computers with instruction caches, there is little or no advantage to microcoding.
@@ -281,45 +247,43 @@ The current trend is away from microcode toward reduced instruction set computer
 
 On most computers, the following declarations are most likely to be helpful:
 
-* [ ](#){:#l0055}• `fixnum and float`.
+*   `fixnum and float`.
 Numbers declared as fixnums or floating-point numbers can be handled directly by the host computer's arithmetic instructions.
 On some systems, `float` by itself is not enough; you have to say `single-float` or `double-float`.
 Other numeric declarations will probably be ignored.
 For example, declaring a variable as integer does not help the compiler much, because bignums are integers.
-The code to add bignums is too complex to put inline, so the compiler will branch to a general-purpose routine (like `+ _2op` in Allegro), the same routine it would use if no declarations were given.
+The code to add bignums is too complex to put inline, so the compiler will branch to a general-purpose routine (like  `+  _2op` in Allegro), the same routine it would use if no declarations were given.
 
-* • `list and array`.
+*   `list and array`.
 Many Lisp systems provide separate functions for the list- and array- versions of commonly used sequence functions.
-For example, `(delete × (the list 1 ))` compiles into `(sys: delete-list-eql × 1)` on a TI Explorer Lisp Machine.
+For example, `(delete  x  (the list 1 ))` compiles into `(sys: delete-list-eql x 1)` on a TI Explorer Lisp Machine.
 Another function, `sys:delete-vector`, is used for arrays, and the generic function `delete` is used only when the compiler can't tell what type the sequence is.
 So if you know that the argument to a generic function is either a `1ist` or an `array`, then declare it as such.
 
-* • `simple-vector and simple-array`.
+*   `simple-vector and simple-array`.
 Simple vectors and arrays are those that do not share structure with other arrays, do not have fill pointers, and are not adjustable.
 In many implementations it is faster to aref a `simple-vector` than a `vector`.
 It is certainly much faster than taking an `elt` of a sequence of unknown type.
 Declare your arrays to be simple (if they in fact are).
 
-* • `(array *type*)`.
+*   `(array *type*)`.
 It is often important to specialize the type of array elements.
 For example, an `(array short-f1oat)` may take only half the storage of a general array, and such a declaration will usually allow computations to be done using the CPU's native floating-point instructions, rather than converting into and out of Common Lisp's representation of floating points.
 This is very important because the conversion normally requires allocating storage, but the direct computation does not.
 The specifiers `(simple-array *type*)` and `(vector *type*)` should be used instead of `(array *type*)` when appropriate.
 A very common mistake is to declare `(simple-vector *type*)`.
-This is an error because Common Lisp expects `(simple-vector *size*)`—don't ask me why.
+This is an error because Common Lisp expects `(simple-vector *size*)`-don't ask me why.
 
-* • `(array **dimensions*)`.
+*   `(array **dimensions*)`.
 The full form of an array or `simple-array` type specifier is `(array *type dimensions*)`.
-So, for example, `(array bit (* *))` is a two-dimensional bit array, and `(array bit (1024 1024))` is a 1024 × 1024 bit array.
+So, for example, `(array bit (* *))` is a two-dimensional bit array, and `(array bit (1024 1024))` is a 1024  x  1024 bit array.
 It is very important to specify the number of dimensions when known, and less important to specify the exact size, although with multidimensional arrays, declaring the size is more important.
 The format for a vector type specifier is `(vector *type size*)`.
 
 Note that several of these declarations can apply all at once.
 For example, in
 
-[ ](#){:#l9060}`(position # \ .
-(the simple-string file-name))`
-!!!(p) {:.unnumlist}
+`(position # \ . (the simple-string file-name))`
 
 the variable `filename` has been declared to be a vector, a simple array, and a sequence of type `string-char`.
 All three of these declarations are helpful.
@@ -327,7 +291,7 @@ The type `simple-string` is an abbreviation for `(simple-array string-char)`.
 
 This guide applies to most Common Lisp systems, but you should look in the implementation notes for your particular system for more advice on how to fine-tune your code.
 
-## [ ](#){:#st0015}10.2 Avoid Generic Functions
+## 10.2 Avoid Generic Functions
 {:#s0015}
 {:.h1hd}
 
@@ -335,19 +299,17 @@ Common Lisp provides functions with great generality, but someone must pay the p
 For example, if you write `(elt x 0)`, different machine instruction will be executed depending on if x is a list, string, or vector.
 Without declarations, checks will have to be done at runtime.
 You can either provide declarations, as in `(elt (the list x) 0)`, or use a more specific function, such as `(first x)` in the case of lists, `(char x 0)` for strings, `(aref x0)` for vectors, and `(svref x 0)` for simple vectors.
-Of course, generic functions are useful–I wrote `random-elt` as shown following to work on lists, when I could have written the more efficient `random-mem` instead.
-The choice paid off when `I` wanted a function to choose a random character from a string–`random-elt` does the job unchanged, while `random-mem` does not.
+Of course, generic functions are useful-I wrote `random-elt` as shown following to work on lists, when I could have written the more efficient `random-mem` instead.
+The choice paid off when `I` wanted a function to choose a random character from a string-`random-elt` does the job unchanged, while `random-mem` does not.
 
-[ ](#){:#l0060}`(defun random-elt (s) (elt s (random (length s))))`
-!!!(p) {:.unnumlist}
+`(defun random-elt (s) (elt s (random (length s))))`
 
 `(defun random-mem (l) (nth (random (length (the list l))) l))`
-!!!(p) {:.unnumlist}
 
 This example was simple, but in more complicated cases you can make your sequence functions more efficient by having them explicitly check if their arguments are lists or vectors.
 See the definition of `map-into` on [page 857](B9780080571157500248.xhtml#p857).
 
-## [ ](#){:#st0020}10.3 Avoid Complex Argument Lists
+## 10.3 Avoid Complex Argument Lists
 {:#s0020}
 {:.h1hd}
 
@@ -355,37 +317,32 @@ Functions with keyword arguments suffer a large degree of overhead.
 This may also be true for optional and rest arguments, although usually to a lesser degree.
 Let's look at some simple examples:
 
-[ ](#){:#l0065}`(defun reg (a b c d) (list a b c d))`
-!!!(p) {:.unnumlist}
+`(defun reg (a b c d) (list a b c d))`
 
 `(defun rst (abc &rest d) (list* a b c d))`
-!!!(p) {:.unnumlist}
 
 `(defun opt (&optional a b (c 1) (d (sqrt a))) (list a b c d))`
-!!!(p) {:.unnumlist}
 
 `(defun key (&key a b (c 1) (d (sqrt a))) (list a b c d))`
-!!!(p) {:.unnumlist}
 
 We can see what these compile into for the TI Explorer, but remember that your compiler may be quite different.
 
-[ ](#){:#t0025}
 !!!(table)
 
 | []() | | | | | | | | | |
 |---|---|---|---|---|---|---|---|---|---|
 | `> (disassemble 'reg)` |
-| `   8 PUSH` | `ARG|0` | `; A` |
-| `   9 PUSH` | `ARG|1` | `; B` |
-| `  10 PUSH` | `ARG|2` | `; C` |
-| `  11 PUSH` | `ARG|3` | `; D` |
-| `  12 TAIL-REC CALL-4` | `FEF|3` | `; #’LIST` |
+| `      8 PUSH` | `ARG|0` | `; A` |
+| `      9 PUSH` | `ARG|1` | `; B` |
+| `    10 PUSH` | `ARG|2` | `; C` |
+| `    11 PUSH` | `ARG|3` | `; D` |
+| `    12 TAIL-REC CALL-4` | `FEF|3` | `; #'LIST` |
 | `> (disassemble 'rst)` |
-| `   8 PUSH` | `ARG|0` | `; A` |
-| `   9 PUSH` | `ARG|1` | `; B` |
-| `  10 PUSH` | `ARG|2` | `; C` |
-| `  11 PUSH` | `LOCAL|0` | `; D` |
-| `  12 RETURN CALL-4` | `FEF|3` | `; #’LIST*` |
+| `      8 PUSH` | `ARG|0` | `; A` |
+| `      9 PUSH` | `ARG|1` | `; B` |
+| `    10 PUSH` | `ARG|2` | `; C` |
+| `    11 PUSH` | `LOCAL|0` | `; D` |
+| `    12 RETURN CALL-4` | `FEF|3` | `; #'LIST*` |
 
 ![t0025](images/B9780080571157500108/t0025.png)
 
@@ -396,23 +353,22 @@ With a rest argument, things are almost as easy.
 It turns out that on this machine, the microcode for the calling sequence automatically handles rest arguments, storing them in local variable 0.
 Let's compare with optional arguments:
 
-[ ](#){:#t0030}
 !!!(table)
 
 | []() | | | | | | | | | |
 |---|---|---|---|---|---|---|---|---|---|
 | `(defun opt (&optional a b` (`c 1) (d (sqrt a))) (list a b c d))` `> (disassemble 'opt)` |
-| ` 24 DISPATCH` | `FEF|5` | `; [0`⇒`25;1`⇒`25;2`⇒`25;3`⇒`27;ELSE`⇒`30]` |
-| ` 25 PUSH-NUMBER` | `1` | |
-| ` 26 POP` | `ARG|2` | ; `C` |
-| ` 27 PUSH` | `ARG|0` | ; `A` |
-| ` 28 PUSH CALL-1` | `FEF|3` | ; `#'SQRT` |
-| ` 29 POP` | `ARG|3` | ; `D` |
-| ` 30 PUSH` | `ARG|0` | ; `A` |
-| ` 31 PUSH` | `ARG|1` | ; `B` |
-| ` 32 PUSH` | `ARG|2` | ; `C` |
-| ` 33 PUSH` | `ARG|3` | ; `D` |
-| ` 34 TAIL-REC CALL-4` | `FEF|4` | ; `#'LIST` |
+| `  24 DISPATCH` | `FEF|5` | `; [0`=>`25;1`=>`25;2`=>`25;3`=>`27;ELSE`=>`30]` |
+| `  25 PUSH-NUMBER` | `1` | |
+| `  26 POP` | `ARG|2` | ; `C` |
+| `  27 PUSH` | `ARG|0` | ; `A` |
+| `  28 PUSH CALL-1` | `FEF|3` | ; `#'SQRT` |
+| `  29 POP` | `ARG|3` | ; `D` |
+| `  30 PUSH` | `ARG|0` | ; `A` |
+| `  31 PUSH` | `ARG|1` | ; `B` |
+| `  32 PUSH` | `ARG|2` | ; `C` |
+| `  33 PUSH` | `ARG|3` | ; `D` |
+| `  34 TAIL-REC CALL-4` | `FEF|4` | ; `#'LIST` |
 
 ![t0030](images/B9780080571157500108/t0030.png)
 
@@ -422,33 +378,32 @@ The result is that in one instruction the function branches to just the right pl
 Thus, a function with optional arguments that are all supplied takes only one more instruction (the dispatch) than the "regular" case.
 Unfortunately, keyword arguments don't fare as well:
 
-[ ](#){:#t0035}
 !!!(table)
 
 | []() | | | | | | | | | |
 |---|---|---|---|---|---|---|---|---|---|
 | `(defun key (&key a b` (`c 1`) `(d (sqrt a))) (list a b c d))` `> (disassemble 'key)` |
-| ` 14 PUSH-NUMBER` | `1` | |
-| ` 15 POP` | `LOCAL|3` | `; C` |
-| ` 16 PUSH` | `FEF|3` | `; SYS:-.KEYWORD-GARBAGE` |
-| ` 17 POP` | `LOCAL|4` | |
-| ` 18 TEST` | `LOCAL|0` | |
-| ` 19 BR-NULL` | `24` | |
-| ` 20 PUSH` | `FEF|4` | `; '(:A :B :C :D)` |
-| ` 21 SET-NIL` | `PDL-PUSH` | |
-| ` 22 PUSH-LOC` | `LOCAL|1` | `; A` |
-| ` 23 (AUX) %STORE-KEY-WORD-ARGS` | | |
-| ` 24 PUSH` | `LOCAL|1` | `; A` |
-| ` 25 PUSH` | `LOCAL|2` | `; B` |
-| ` 26 PUSH` | `LOCAL|3` | `; C` |
-| ` 27 PUSH` | `|4` | |
-| ` 28 EQ` | `FEF|3` | `; SYS::KEYW0RD-GARBAGE` |
-| ` 29 BR-NULL` | `33` | |
-| ` 30 PUSH` | `LOCAL|1` | `; A` |
-| ` 31 PUSH CALL-1` | `FEF|5` | `; #'SQRT` |
-| ` 32 RETURN CALL-4` | `FEF|6` | `; #'LIST` |
-| ` 33 PUSH` | `LOCAL|4` | |
-| ` 34 RETURN CALL-4` | `FEF|6` | ;`#'LIST` |
+| `  14 PUSH-NUMBER` | `1` | |
+| `  15 POP` | `LOCAL|3` | `; C` |
+| `  16 PUSH` | `FEF|3` | `; SYS:-.KEYWORD-GARBAGE` |
+| `  17 POP` | `LOCAL|4` | |
+| `  18 TEST` | `LOCAL|0` | |
+| `  19 BR-NULL` | `24` | |
+| `  20 PUSH` | `FEF|4` | `; '(:A :B :C :D)` |
+| `  21 SET-NIL` | `PDL-PUSH` | |
+| `  22 PUSH-LOC` | `LOCAL|1` | `; A` |
+| `  23 (AUX) %STORE-KEY-WORD-ARGS` | | |
+| `  24 PUSH` | `LOCAL|1` | `; A` |
+| `  25 PUSH` | `LOCAL|2` | `; B` |
+| `  26 PUSH` | `LOCAL|3` | `; C` |
+| `  27 PUSH` | `|4` | |
+| `  28 EQ` | `FEF|3` | `; SYS::KEYW0RD-GARBAGE` |
+| `  29 BR-NULL` | `33` | |
+| `  30 PUSH` | `LOCAL|1` | `; A` |
+| `  31 PUSH CALL-1` | `FEF|5` | `; #'SQRT` |
+| `  32 RETURN CALL-4` | `FEF|6` | `; #'LIST` |
+| `  33 PUSH` | `LOCAL|4` | |
+| `  34 RETURN CALL-4` | `FEF|6` | ;`#'LIST` |
 
 ![t0035](images/B9780080571157500108/t0035.png)
 
@@ -456,14 +411,13 @@ It is not important to be able to read all this assembly language.
 The point is that there is considerable overhead, even though this architecture has a specific instruction `(%STORE-KEY-WORD-ARGS)` to help deal with keyword arguments.
 
 Now let's look at the results on another system, the Allegro compiler for the 68000.
-First, here's the assembly code for reg, to give you an idea of the minimal calling sequence:[1](#fn0015){:#xfn0015}
+First, here's the assembly code for reg, to give you an idea of the minimal calling sequence:[1](#fn0015)
 
-[ ](#){:#t0040}
 !!!(table)
 
 | []() | | | | | | | | | |
 |---|---|---|---|---|---|---|---|---|---|
-| `> (disassemble 'reg)` `;; disassembling #<Function reg @ #x83db59 >` `;; formals: a b c d` `;; code vector @ #x83dblc` |
+| `> (disassemble 'reg)` `;; disassembling #<Function reg @ #x83db59  >` `;; formals: a b c d` `;; code vector @ #x83dblc` |
 | `0:` | `link` | `a6,#0` | |
 | `4:` | `move.l` | `a2,-(a7)` | |
 | `6:` | `move.l` | `a5,-(a7)` | |
@@ -474,7 +428,7 @@ First, here's the assembly code for reg, to give you an idea of the minimal call
 | `24:` | `move.l` | `8(a6),-(a7)` | `; d` |
 | `28:` | `move.l` | `#4,dl` | |
 | `30:` | `jsr` | `848(a4)` | `; list` |
-| `34:` | `move.l` | `− 8(a6),a5` | |
+| `34:` | `move.l` | `-  8(a6),a5` | |
 | `38:` | `unlk` | `a6` | |
 | `40:` | `rtd` | `#10` | |
 
@@ -482,12 +436,11 @@ First, here's the assembly code for reg, to give you an idea of the minimal call
 
 Now we see that `&rest` arguments take a lot more code in this system:
 
-[ ](#){:#t0045}
 !!!(table)
 
 | []() | | | | | | | | | |
 |---|---|---|---|---|---|---|---|---|---|
-| `> (disassemble 'rst)` `;; disassembling #<Function rst @ #x83de89 >` `;; formals: a b c &rest d` `code vector @ #x83de34` |
+| `> (disassemble 'rst)` `;; disassembling #<Function rst @ #x83de89  >` `;; formals: a b c &rest d` `code vector @ #x83de34` |
 | `0:` | `sub.w` | `#3,dl` | |
 | `2:` | `bge.s` | `8` | |
 | `4:` | `jmp` | `16(a4)` | `; wnaerr` |
@@ -495,26 +448,26 @@ Now we see that `&rest` arguments take a lot more code in this system:
 | `10`: | `move.l` | `d3,-(a7)` | `; nil` |
 | `12`: | `sub.w` | `#l,dl` | |
 | `14:` | `bit.s` | `38` | |
-| `16:` | `move.l` | `al, − 52(a4)` | `; c_protected-retaddr` |
+| `16:` | `move.l` | `al, -  52(a4)` | `; c_protected-retaddr` |
 | `20:` | `jsr` | `40(a4)` | `; cons` |
 | `24:` | `move.l` | `d4,-(a7)` | |
 | `26:` | `dbra` | `dl,20` | |
-| `30:` | `move.l` | `− 52(a4),al` | `; c_protected-retaddr` |
-| `34:` | `clr.l` | `− 52(a4)` | `; c_protected-retaddr` |
-| `38:` | `move.l` | `al,` | `−(a7)` |
+| `30:` | `move.l` | `-  52(a4),al` | `; c_protected-retaddr` |
+| `34:` | `clr.l` | `-  52(a4)` | `; c_protected-retaddr` |
+| `38:` | `move.l` | `al,` | `-(a7)` |
 | `40:` | `link` | `a6,#0` | |
 | `44:` | `move.l` | `a2,-(a7)` | |
 | `46:` | `move.l` | `a5,-(a7)` | |
 | `48:` | `move.l` | `7(a2),a5` | |
-| `52:` | `move.l` | `− 332(a4),a0` | `; list*` |
-| `56:` | `move.l` | `− 8(a6),a5` | |
+| `52:` | `move.l` | `-  332(a4),a0` | `; list*` |
+| `56:` | `move.l` | `-  8(a6),a5` | |
 | `60:` | `unlk` | `a6` | |
 | `62`: | `move.l` | `#4,dl` | |
 | `64` | `jmp` | `(a4)` | |
 
 ![t0045](images/B9780080571157500108/t0045.png)
 
-The loop from 20–26 builds up the `&rest` list one cons at a time.
+The loop from 20-26 builds up the `&rest` list one cons at a time.
 Part of the difficulty is that cons could initiate a garbage collection at any time, so the list has to be built in a place that the garbage collector will know about.
 The function with optional arguments is even worse, taking 34 instructions (104 bytes), and keywords are worst of all, weighing in at 71 instructions (178 bytes), and including a loop.
 The overhead for optional arguments is proportional to the number of optional arguments, while for keywords it is proportional to the product of the number of parameters allowed and the number of arguments actually supplied.
@@ -522,149 +475,117 @@ The overhead for optional arguments is proportional to the number of optional ar
 A good guideline to follow is to use keyword arguments primarily as an interface to infrequently used functions, and to provide versions of these functions without keywords that can be used in places where efficiency is important.
 Consider:
 
-[ ](#){:#l0070}`(proclaim '(inline key))`
-!!!(p) {:.unnumlist}
+`(proclaim '(inline key))`
 
 `(defun key (&key a b (c 1) (d (sqrt a))) (*no-key a b c d))`
-!!!(p) {:.unnumlist}
 
 `(defun *no-key (a b c d) (list a b c d))`
-!!!(p) {:.unnumlist}
 
 Here the function `key` is used as an interface to the function `no-key`, which does the real work.
 The inline proclamation should allow the compiler to compile a call to key as a call to `no-key` with the appropriate arguments:
 
-[ ](#){:#t0050}
 !!!(table)
 
 | []() | | | | | | | | | |
 |---|---|---|---|---|---|---|---|---|---|
 | `> (disassemble #'(lambda (x y) (key :b x :a y)))` |
-| ` 10 PUSH` | `ARG|1` | `; Y` |
-| ` 11 PUSH` | `ARG|0` | `; X` |
-| ` 12 PUSH-NUMBER` | `1` | |
-| ` 13 PUSH` | `ARG|1` | `; Y` |
-| ` 14 PUSH CALL-1` | `FEF|3` | `; #’SORT` |
-| ` 15 TAIL-REC CALL-4` | `FEF|4` | `; #’NO-KEY` |
+| `  10 PUSH` | `ARG|1` | `; Y` |
+| `  11 PUSH` | `ARG|0` | `; X` |
+| `  12 PUSH-NUMBER` | `1` | |
+| `  13 PUSH` | `ARG|1` | `; Y` |
+| `  14 PUSH CALL-1` | `FEF|3` | `; #'SORT` |
+| `  15 TAIL-REC CALL-4` | `FEF|4` | `; #'NO-KEY` |
 
 ![t0050](images/B9780080571157500108/t0050.png)
 
 The overhead only comes into play when the keywords are not known at compile time.
 In the following example, the compiler is forced to call key, not `no-key`, because it doesn't know what the keyword `k` will be at run time:
 
-[ ](#){:#t0055}
 !!!(table)
 
 | []() | | | | | | | | | |
 |---|---|---|---|---|---|---|---|---|---|
 | `> (disassemble #'(lambda (k x y) (key k x :a y)))` |
-| ` 10 PUSH` | `ARG|0` | ; `K` |
-| ` 11 PUSH` | `ARG|1` | ; `X` |
-| ` 12 PUSH` | `FEF|3` | `; ':A` |
-| ` 13 PUSH` | `ARG|2` | ; `Y` |
-| ` 14 TAIL-REC CALL-4` | `FEF|4` | ; `#'KEY` |
+| `  10 PUSH` | `ARG|0` | ; `K` |
+| `  11 PUSH` | `ARG|1` | ; `X` |
+| `  12 PUSH` | `FEF|3` | `; ':A` |
+| `  13 PUSH` | `ARG|2` | ; `Y` |
+| `  14 TAIL-REC CALL-4` | `FEF|4` | ; `#'KEY` |
 
 ![t0055](images/B9780080571157500108/t0055.png)
 
 Of course, in this simple example I could have replaced `no-key` with `list`, but in general there will be some more complex processing.
 If I had proclaimed `no-key` inline as well, then I would get the following:
 
-[ ](#){:#t0060}
 !!!(table)
 
 | []() | | | | | | | | | |
 |---|---|---|---|---|---|---|---|---|---|
 | `> (disassemble #'(lambda (x y) (key :b x :a y)))` |
-| ` 10 PUSH` | `ARG|1` | `; Y` |
-| ` 11 PUSH` | `ARG|0` | `; X` |
-| ` 12 PUSH-NUMBER` | `1` | |
-| ` 13 PUSH` | `ARG|1` | `; Y` |
-| ` 14 PUSH CALL-1` | `FEF|3` | `; #’SORT` |
-| ` 15 TAIL-REC CALL-4` | `FEF|4` | `; #’LIST` |
+| `  10 PUSH` | `ARG|1` | `; Y` |
+| `  11 PUSH` | `ARG|0` | `; X` |
+| `  12 PUSH-NUMBER` | `1` | |
+| `  13 PUSH` | `ARG|1` | `; Y` |
+| `  14 PUSH CALL-1` | `FEF|3` | `; #'SORT` |
+| `  15 TAIL-REC CALL-4` | `FEF|4` | `; #'LIST` |
 
 ![t0060](images/B9780080571157500108/t0060.png)
 
 If you like, you can define a macro to automatically define the interface to the keyword-less function:
 
-[ ](#){:#l0075}`(defmacro defun* (fn-name arg-list &rest body)`
-!!!(p) {:.unnumlist}
+`(defmacro defun* (fn-name arg-list &rest body)`
 
-` "Define two functions.
+`  "Define two functions.
 one an interface to a &keyword-less`
-!!!(p) {:.unnumlist}
 
-` version.
+`  version.
 Proclaim the interface function inline."`
-!!!(p) {:.unnumlist}
 
-` (if (and (member '&key arg-list)`
-!!!(p) {:.unnumlist}
+`  (if (and (member '&key arg-list)`
 
-`    (not (member '&rest arg-list)))`
-!!!(p) {:.unnumlist}
+`        (not (member '&rest arg-list)))`
 
-`   (let ((no-key-fn-name (symbol fn-name '*no-key))`
-!!!(p) {:.unnumlist}
+`      (let ((no-key-fn-name (symbol fn-name '*no-key))`
 
-`    (args (mapcar #'first-or-self`
-!!!(p) {:.unnumlist}
+`        (args (mapcar #'first-or-self`
 
-`       (set-difference`
-!!!(p) {:.unnumlist}
+`              (set-difference`
 
-`        arg-list`
-!!!(p) {:.unnumlist}
+`                arg-list`
 
-`        1ambda-list-keywords))))`
-!!!(p) {:.unnumlist}
+`                1ambda-list-keywords))))`
 
-`   '(progn`
-!!!(p) {:.unnumlist}
+`      '(progn`
 
-`    (proclaim '(inline ,fn-name))`
-!!!(p) {:.unnumlist}
+`        (proclaim '(inline ,fn-name))`
 
-`    (defun ,no-key-fn-name ,args`
-!!!(p) {:.unnumlist}
+`        (defun ,no-key-fn-name ,args`
 
-`     .,body)`
-!!!(p) {:.unnumlist}
+`          .,body)`
 
-`    (defun ,fn-name ,arg-list`
-!!!(p) {:.unnumlist}
+`        (defun ,fn-name ,arg-list`
 
-`     (,no-key-fn-name .,args))))`
-!!!(p) {:.unnumlist}
+`          (,no-key-fn-name .,args))))`
 
-`  '(defun ,fn-name ,arg-list`
-!!!(p) {:.unnumlist}
+`    '(defun ,fn-name ,arg-list`
 
-`   .,body)))`
-!!!(p) {:.unnumlist}
+`      .,body)))`
 
 `>(macroexpand '(defun* key (&key a b (c 1) (d (sqrt a)))`
-!!!(p) {:.unnumlist}
 
-`      (list a b c d)))`
-!!!(p) {:.unnumlist}
+`            (list a b c d)))`
 
 `(PROGN (PROCLAIM '(INLINE KEY))`
-!!!(p) {:.unnumlist}
 
-`  (DEFUN KEY*NO-KEY (A B C D) (LIST A B C D))`
-!!!(p) {:.unnumlist}
+`    (DEFUN KEY*NO-KEY (A B C D) (LIST A B C D))`
 
-`  (DEFUN KEY (&KEY A B (C 1) (D (SQRT A)))`
-!!!(p) {:.unnumlist}
+`    (DEFUN KEY (&KEY A B (C 1) (D (SQRT A)))`
 
-`   (KEY*NO-KEY A B C D)))`
-!!!(p) {:.unnumlist}
+`      (KEY*NO-KEY A B C D)))`
 
 `>(macroexpand '(defun* reg (a b c d) (list a b c d)))`
-!!!(p) {:.unnumlist}
 
 `(DEFUN REG (A B C D) (LIST A B C D))`
-!!!(p) {:.unnumlist}
 
 There is one disadvantage to this approach: a user who wants to declare key inline or not inline does not get the expected result.
 The user has to know that key is implemented with `key*no- key`, and declare `key*no- key` inline.
@@ -673,80 +594,58 @@ An alternative is just to proclaim the function that uses `&key` to be inline.
 Rob MacLachlan provides an example.
 In CMU Lisp, the function `member` has the following definition, which is proclaimed inline:
 
-[ ](#){:#l0080}`(defun member (item list &key (key #'identity)`
-!!!(p) {:.unnumlist}
+`(defun member (item list &key (key #'identity)`
 
-`        (test #'eql testp)(test-not nil notp))`
-!!!(p) {:.unnumlist}
+`                (test #'eql testp)(test-not nil notp))`
 
-` (do ((list list (cdr list)))`
-!!!(p) {:.unnumlist}
+`  (do ((list list (cdr list)))`
 
-`   ((null list) nil)`
-!!!(p) {:.unnumlist}
+`      ((null list) nil)`
 
-`  (let ((car (car list)))`
-!!!(p) {:.unnumlist}
+`    (let ((car (car list)))`
 
-`   (if (cond`
-!!!(p) {:.unnumlist}
+`      (if (cond`
 
-`    (testp`
-!!!(p) {:.unnumlist}
+`        (testp`
 
-`     (funcall test item`
-!!!(p) {:.unnumlist}
+`          (funcall test item`
 
-`        (funcall key car)))`
-!!!(p) {:.unnumlist}
+`                (funcall key car)))`
 
-`    (notp`
-!!!(p) {:.unnumlist}
+`        (notp`
 
-`     (not`
-!!!(p) {:.unnumlist}
+`          (not`
 
-`   (funcall test-not item`
-!!!(p) {:.unnumlist}
+`      (funcall test-not item`
 
-`      (funcall key car))))`
-!!!(p) {:.unnumlist}
+`            (funcall key car))))`
 
-`  (t`
-!!!(p) {:.unnumlist}
+`    (t`
 
-`   (funcall test item`
-!!!(p) {:.unnumlist}
+`      (funcall test item`
 
-`      (funcall key car))))`
-!!!(p) {:.unnumlist}
+`            (funcall key car))))`
 
-` (return list)))))`
-!!!(p) {:.unnumlist}
+`  (return list)))))`
 
-A call like `(member`[ch 1](B9780080571157500017.xhtml)`:key #'first-letter :test #'char =)` expands into the equivalent of the following code.
+A call like `(member`[ch 1](B9780080571157500017.xhtml)`:key #'first-letter :test #'char  =)` expands into the equivalent of the following code.
 Unfortunately, not all compilers are this clever with inline declarations.
 
-[ ](#){:#l0085}`(do ((list list (cdr list)))`
-!!!(p) {:.unnumlist}
+`(do ((list list (cdr list)))`
 
-`   ((null list) nil)`
-!!!(p) {:.unnumlist}
+`      ((null list) nil)`
 
-`  (let ((car (car list)))`
-!!!(p) {:.unnumlist}
+`    (let ((car (car list)))`
 
-`   (if (char = ch (first-letter car))`
-!!!(p) {:.unnumlist}
+`      (if (char  = ch (first-letter car))`
 
-`    (return list))))`
-!!!(p) {:.unnumlist}
+`        (return list))))`
 
 This chapter is concerned with efficiency and so has taken a stand against the use of keyword parameter s in frequently used functions.
 But when maintainability is considered, keyword parameters look much better.
 When a program is being developed, and it is not clear if a function will eventually need additional arguments, keyword parameters may be the best choice.
 
-## [ ](#){:#st0025}10.4 Avoid Unnecessary Consing
+## 10.4 Avoid Unnecessary Consing
 {:#s0025}
 {:.h1hd}
 
@@ -755,7 +654,7 @@ When large amounts of storage are used, eventually the system must spend time ga
 We have not mentioned it earlier, but there are actually two relevant measures of the amount of space consumed by a program: the amount of storage allocated, and the amount of storage retained.
 The difference is storage that is used temporarily but eventually freed.
 Lisp guarantees that unused space will eventually be reclaimed by the garbage collector.
-This happens automatically—the programmer need not and indeed can not explicitly free storage.
+This happens automatically-the programmer need not and indeed can not explicitly free storage.
 The problem is that the efficiency of garbage collection can vary widely.
 Garbage collection is particularly worrisome for real-time systems, because it can happen at any time.
 
@@ -767,55 +666,41 @@ However, the most common kind of unnecessary copying can be eliminated by simple
 Consider the following version of `flatten`, which returns a list of all the atoms in its input, preserving order.
 Unlike the version in [chapter 5](B9780080571157500054.xhtml), this version returns a single list of atoms, with no embedded lists.
 
-[ ](#){:#l0090}`(defun flatten (input)`
-!!!(p) {:.unnumlist}
+`(defun flatten (input)`
 
-` "Return a flat list of the atoms in the input.`
-!!!(p) {:.unnumlist}
+`  "Return a flat list of the atoms in the input.`
 
-` Ex: (flatten '((a) (b (c) d))) => (a b c d)."`
-!!!(p) {:.unnumlist}
+`  Ex: (flatten '((a) (b (c) d))) => (a b c d)."`
 
-` (cond ((null input) nil)`
-!!!(p) {:.unnumlist}
+`  (cond ((null input) nil)`
 
-`   ((atom input) (list input))`
-!!!(p) {:.unnumlist}
+`      ((atom input) (list input))`
 
-`   (t (append (flatten (first input))`
-!!!(p) {:.unnumlist}
+`      (t (append (flatten (first input))`
 
-`      (flatten (rest input))))))`
-!!!(p) {:.unnumlist}
+`            (flatten (rest input))))))`
 
 This definition is quite simple, and it is easy to see that it is correct.
 However, each call to `append` requires copying the first argument, so this version can cons *O*(*n*2) cells on an input with *n* atoms.
 The problem with this approach is that it computes the list of atoms in the `first` and `rest` of each subcomponent of the input.
-But the `first` sublist by itself is not part of the final answer—that's why we have to call `append.` We could avoid generating garbage by replacing `append` with `nconc,` but even then we would still be wasting time, because `nconc` would have to scan through each sublist to find its end.
+But the `first` sublist by itself is not part of the final answer-that's why we have to call `append.` We could avoid generating garbage by replacing `append` with `nconc,` but even then we would still be wasting time, because `nconc` would have to scan through each sublist to find its end.
 
 The version below makes use of an *accumulator* to keep track of the atoms that have been collected in the rest, and to add the atoms in the `first` one at a time with cons, rather than building up unnecessary sublists and appending them.
 This way no garbage is generated, and no subcomponent is traversed more than once.
 
-[ ](#){:#l0095}`(defun flatten (input &optional accumulator)`
-!!!(p) {:.unnumlist}
+`(defun flatten (input &optional accumulator)`
 
-` "Return a flat list of the atoms in the input.`
-!!!(p) {:.unnumlist}
+`  "Return a flat list of the atoms in the input.`
 
-` Ex: (flatten '((a) (b (c) d))) => (a b c d)."`
-!!!(p) {:.unnumlist}
+`  Ex: (flatten '((a) (b (c) d))) => (a b c d)."`
 
-` (cond ((null input) accumulator)`
-!!!(p) {:.unnumlist}
+`  (cond ((null input) accumulator)`
 
-`   ((atom input) (cons input accumulator))`
-!!!(p) {:.unnumlist}
+`      ((atom input) (cons input accumulator))`
 
-`   (t (flatten (first input)`
-!!!(p) {:.unnumlist}
+`      (t (flatten (first input)`
 
-`      (flatten (rest input) accumulator)))))`
-!!!(p) {:.unnumlist}
+`            (flatten (rest input) accumulator)))))`
 
 The version with the accumulator may be a little harder to understand, but it is far more efficient than the original version.
 Experienced Lisp programmers become quite skilled at replacing calls to `append` with accumulators.
@@ -855,44 +740,31 @@ The latter will automatically allocate a larger vector and copy over elements if
 You can remove elements with `vector - pop`, or you can explicitly look at the fill pointer with `fi1l - pointer`, or change it with a `setf`.
 Here are some examples (with `*print-array*` set to t so we can see the results):
 
-[ ](#){:#l0100}`> (setf a (make-array 5 :fi11-pointer 0))`⇒ `#()`
-!!!(p) {:.unnumlist}
+`> (setf a (make-array 5 :fi11-pointer 0))`=> `#()`
 
-`> (vector-push 1 a)`⇒ `0`
-!!!(p) {:.unnumlist}
+`> (vector-push 1 a)`=> `0`
 
-`> (vector-push 2 a)`⇒ `1`
-!!!(p) {:.unnumlist}
+`> (vector-push 2 a)`=> `1`
 
-`> a`⇒ `#(1 2)`
-!!!(p) {:.unnumlist}
+`> a`=> `#(1 2)`
 
-`> (vector-pop a)`⇒ `2`
-!!!(p) {:.unnumlist}
+`> (vector-pop a)`=> `2`
 
-`> a`⇒ `#(1)`
-!!!(p) {:.unnumlist}
+`> a`=> `#(1)`
 
-`> (dotimes (i 10) (vector-push-extend 'x a))`⇒ `NIL`
-!!!(p) {:.unnumlist}
+`> (dotimes (i 10) (vector-push-extend 'x a))`=> `NIL`
 
-`> a`⇒ `#(1 XXXXXXXXXX)`
-!!!(p) {:.unnumlist}
+`> a`=> `#(1 XXXXXXXXXX)`
 
-`> (fill- pointer a)`⇒ `11`
-!!!(p) {:.unnumlist}
+`> (fill- pointer a)`=> `11`
 
-`> (setf (fill-pointer a) 1)`⇒ `1`
-!!!(p) {:.unnumlist}
+`> (setf (fill-pointer a) 1)`=> `1`
 
-`> a`⇒ `#(1)`
-!!!(p) {:.unnumlist}
+`> a`=> `#(1)`
 
-`> (find 'x a)`⇒ `NIL NIL ;`*FIND can't find past the fill pointer*
-!!!(p) {:.unnumlist}
+`> (find 'x a)`=> `NIL NIL ;`*FIND can't find past the fill pointer*
 
-`> (aref a 2)`⇒ `X` ; *But AREF can see beyond the fill pointer*
-!!!(p) {:.unnumlist}
+`> (aref a 2)`=> `X` ; *But AREF can see beyond the fill pointer*
 
 Using vectors with fill pointers in `pat-match,` the total storage for binding lists is just twice the number of variables in the largest pattern.
 I have arbitrarily picked 10 as the maximum number of variables, but even this is not a hard limit, because `vector-push-extend` can increase it.
@@ -910,226 +782,156 @@ Here is the new definition of `pat-match.` It is implemented by closing the defi
 Those three variables could have been implemented as global variables instead.
 Note that it does not support segment variables, or any of the other options implemented in the `pat-match` of [chapter 6](B9780080571157500066.xhtml).
 
-[ ](#){:#l0105}`(let* ((vars (make-array 10 :fill-pointer 0 :adjustable t))`
-!!!(p) {:.unnumlist}
+`(let* ((vars (make-array 10 :fill-pointer 0 :adjustable t))`
 
-`   (vals (make-array 10 :fill-pointer 0 :adjustable t))`
-!!!(p) {:.unnumlist}
+`      (vals (make-array 10 :fill-pointer 0 :adjustable t))`
 
-`   (success (cons vars vals)))`
-!!!(p) {:.unnumlist}
+`      (success (cons vars vals)))`
 
 `(defun efficient-pat-match (pattern input)`
-!!!(p) {:.unnumlist}
 
-` "Match pattern against input."`
-!!!(p) {:.unnumlist}
+`  "Match pattern against input."`
 
-` (setf (fill-pointer vars) 0)`
-!!!(p) {:.unnumlist}
+`  (setf (fill-pointer vars) 0)`
 
-` (setf (fill-pointer vals) 0)`
-!!!(p) {:.unnumlist}
+`  (setf (fill-pointer vals) 0)`
 
-` (pat-match-1 pattern input))`
-!!!(p) {:.unnumlist}
+`  (pat-match-1 pattern input))`
 
 `(defun pat-match-1 (pattern input)`
-!!!(p) {:.unnumlist}
 
-` (cond ((variable-p pattern) (match-var pattern input))`
-!!!(p) {:.unnumlist}
+`  (cond ((variable-p pattern) (match-var pattern input))`
 
-`   ((eql pattern input) success)`
-!!!(p) {:.unnumlist}
+`      ((eql pattern input) success)`
 
-`   ((and (consp pattern) (consp input))`
-!!!(p) {:.unnumlist}
+`      ((and (consp pattern) (consp input))`
 
-`    (and (pat-match-1 (first pattern) (first input))`
-!!!(p) {:.unnumlist}
+`        (and (pat-match-1 (first pattern) (first input))`
 
-`      (pat-match-1 (rest pattern) (rest input))))`
-!!!(p) {:.unnumlist}
+`            (pat-match-1 (rest pattern) (rest input))))`
 
-`   (t fail)))`
-!!!(p) {:.unnumlist}
+`      (t fail)))`
 
 `(defun match-var (var input)`
-!!!(p) {:.unnumlist}
 
-` "Match a single variable against input."`
-!!!(p) {:.unnumlist}
+`  "Match a single variable against input."`
 
-` (let ((i (position var vars)))`
-!!!(p) {:.unnumlist}
+`  (let ((i (position var vars)))`
 
-`  (cond ((null i)`
-!!!(p) {:.unnumlist}
+`    (cond ((null i)`
 
-`     (vector-push-extend var vars)`
-!!!(p) {:.unnumlist}
+`          (vector-push-extend var vars)`
 
-`     (vector-push-extend input vals) success)`
-!!!(p) {:.unnumlist}
+`          (vector-push-extend input vals) success)`
 
-`   ((equal input (aref vals i)) success)`
-!!!(p) {:.unnumlist}
+`      ((equal input (aref vals i)) success)`
 
-`   (t fail)))))`
-!!!(p) {:.unnumlist}
+`      (t fail)))))`
 
 An example of its use:
 
-[ ](#){:#l0110}`>(efficient-pat-match '(?x + ?x = ?y .
-?z)`
-!!!(p) {:.unnumlist}
+`>(efficient-pat-match '(?x + ?x = ?y . ?z)`
 
-`        '(2 + 2 = (3 + 1) is true))`
-!!!(p) {:.unnumlist}
+`                '(2 + 2 = (3 + 1) is true))`
 
-`(#(?X ?Y ?Z) .
-#(2 (3 + 1) (IS TRUE)))`
-!!!(p) {:.unnumlist}
+`(#(?X ?Y ?Z) . #(2 (3 + 1) (IS TRUE)))`
 
 Extensible vectors with fill pointers are convenient, and much more efficient than consing up lists.
 However, there is some overhead involved in using them, and for those sections of code that must be most efficient, it is best to stick with simple vectors.
 The following version of `efficient-pat-match` explicitly manages the size of the vectors and explicitly replaces them with new ones when the size is exceeded:
 
-[ ](#){:#l0120}`(let* ((current-size 0)`
-!!!(p) {:.unnumlist}
+`(let* ((current-size 0)`
 
-`   (max-size 1)`
-!!!(p) {:.unnumlist}
+`      (max-size 1)`
 
-`   (vars (make-array max-size))`
-!!!(p) {:.unnumlist}
+`      (vars (make-array max-size))`
 
-`   (vals (make-array max-size))`
-!!!(p) {:.unnumlist}
+`      (vals (make-array max-size))`
 
-`   (success (cons vars vals)))`
-!!!(p) {:.unnumlist}
+`      (success (cons vars vals)))`
 
-` (declare (simple-vector vars vals)`
-!!!(p) {:.unnumlist}
+`  (declare (simple-vector vars vals)`
 
-`     (fixnum current-size max-size))`
-!!!(p) {:.unnumlist}
+`          (fixnum current-size max-size))`
 
 `(defun efficient-pat-match (pattern input)`
-!!!(p) {:.unnumlist}
 
-` "Match pattern against input."`
-!!!(p) {:.unnumlist}
+`  "Match pattern against input."`
 
-` (setf current-size 0)`
-!!!(p) {:.unnumlist}
+`  (setf current-size 0)`
 
-` (pat-match-1 pattern input))`
-!!!(p) {:.unnumlist}
+`  (pat-match-1 pattern input))`
 
 `;; pat-match-1 is unchanged`
-!!!(p) {:.unnumlist}
 
 `(defun match-var (var input)`
-!!!(p) {:.unnumlist}
 
-` "Match a single variable against input."`
-!!!(p) {:.unnumlist}
+`  "Match a single variable against input."`
 
-` (let ((i (position var vars)))`
-!!!(p) {:.unnumlist}
+`  (let ((i (position var vars)))`
 
-`  (cond`
-!!!(p) {:.unnumlist}
+`    (cond`
 
-`   ((null i)`
-!!!(p) {:.unnumlist}
+`      ((null i)`
 
-`    (when (= current-size max-size)`
-!!!(p) {:.unnumlist}
+`        (when (= current-size max-size)`
 
-`     ;; Make new vectors when we run out of space`
-!!!(p) {:.unnumlist}
+`          ;; Make new vectors when we run out of space`
 
-`     (setf max-size (* 2 max-size)`
-!!!(p) {:.unnumlist}
+`          (setf max-size (* 2 max-size)`
 
-`       vars (replace (make-array max-size) vars)`
-!!!(p) {:.unnumlist}
+`              vars (replace (make-array max-size) vars)`
 
-`       vals (replace (make-array max-size) vals)`
-!!!(p) {:.unnumlist}
+`              vals (replace (make-array max-size) vals)`
 
-`       success (cons vars vals)))`
-!!!(p) {:.unnumlist}
+`              success (cons vars vals)))`
 
-`    ;; Store var and its value in vectors`
-!!!(p) {:.unnumlist}
+`        ;; Store var and its value in vectors`
 
-`    (setf (aref vars current-size) var)`
-!!!(p) {:.unnumlist}
+`        (setf (aref vars current-size) var)`
 
-`    (setf (aref vals current-size) input)`
-!!!(p) {:.unnumlist}
+`        (setf (aref vals current-size) input)`
 
-`    (incf current-size)``    success)`
-!!!(p) {:.unnumlist}
+`        (incf current-size)``        success)`
 
-`   ((equal input (aref vals i)) success)`
-!!!(p) {:.unnumlist}
+`      ((equal input (aref vals i)) success)`
 
-`   (t fail)))))`
-!!!(p) {:.unnumlist}
+`      (t fail)))))`
 
 In conclusion, replacing lists with vectors can often save garbage.
 But when you must use lists, it pays to use a version of cons that avoids consing when possible.
 The following is such a version:
 
-[ ](#){:#l0125}`(proclaim '(inline reuse-cons))`
-!!!(p) {:.unnumlist}
+`(proclaim '(inline reuse-cons))`
 
 `(defun reuse-cons (x y x-y)`
-!!!(p) {:.unnumlist}
 
-` "Return (cons x y), or just x-y if it is equal to (cons x y)."`
-!!!(p) {:.unnumlist}
+`  "Return (cons x y), or just x-y if it is equal to (cons x y)."`
 
-` (if (and (eql x (car x-y)) (eql y (cdr x-y)))`
-!!!(p) {:.unnumlist}
+`  (if (and (eql x (car x-y)) (eql y (cdr x-y)))`
 
-`   x-y`
-!!!(p) {:.unnumlist}
+`      x-y`
 
-`   (cons x y)))`
-!!!(p) {:.unnumlist}
+`      (cons x y)))`
 
 The trick is based on the definition of subst in Steele's *Common Lisp the Language*.
 Here is a definition for a version of `remove` that uses `reuse-cons`:
 
-[ ](#){:#l0130}`(defun remq (item list)`
-!!!(p) {:.unnumlist}
+`(defun remq (item list)`
 
-` "Like REMOVE, but uses EQ, and only works on lists."`
-!!!(p) {:.unnumlist}
+`  "Like REMOVE, but uses EQ, and only works on lists."`
 
-` (cond ((null list) nil )`
-!!!(p) {:.unnumlist}
+`  (cond ((null list) nil )`
 
-`   ((eq item (first list)) (remq item (rest list)))`
-!!!(p) {:.unnumlist}
+`      ((eq item (first list)) (remq item (rest list)))`
 
-`   (t (reuse-cons (first list)`
-!!!(p) {:.unnumlist}
+`      (t (reuse-cons (first list)`
 
-`        (remq item (rest list))`
-!!!(p) {:.unnumlist}
+`                (remq item (rest list))`
 
-`        list))))`
-!!!(p) {:.unnumlist}
+`                list))))`
 
-### [ ](#){:#st9000}Avoid Consing: Unique Lists
+### Avoid Consing: Unique Lists
 {:#s9000}
 {:.h2hd}
 
@@ -1142,30 +944,22 @@ The value of each `cdr` in this second table is the original cons cell.
 So two different cons cells with the same `car` and `cdr` will retrieve the same value.
 Here is an implementation of `ucons`:
 
-[ ](#){:#l0135}`(defvar *uniq-cons-table* (make-hash-table :test #'eq))`
-!!!(p) {:.unnumlist}
+`(defvar *uniq-cons-table* (make-hash-table :test #'eq))`
 
 `(defun ucons (x y)`
-!!!(p) {:.unnumlist}
 
-` "Return a cons s.t.
+`  "Return a cons s.t.
 (eq (ucons x y) (ucons x y)) is true."`
-!!!(p) {:.unnumlist}
 
-` (let ((car-table (or (gethash x *uniq-cons-table*)`
-!!!(p) {:.unnumlist}
+`  (let ((car-table (or (gethash x *uniq-cons-table*)`
 
-`        (setf (gethash x *uniq-cons-table*)`
-!!!(p) {:.unnumlist}
+`                (setf (gethash x *uniq-cons-table*)`
 
-`          (make-hash-table :test #'eq)))))`
-!!!(p) {:.unnumlist}
+`                    (make-hash-table :test #'eq)))))`
 
-`  (or (gethash y car-table)`
-!!!(p) {:.unnumlist}
+`    (or (gethash y car-table)`
 
-`    (setf (gethash y car-table) (cons x y)))))`
-!!!(p) {:.unnumlist}
+`        (setf (gethash y car-table) (cons x y)))))`
 
 `ucons`, unlike `cons`, is a true function: it will always return the same value, given the same arguments, where "same" is measured by eq.
 However, if `ucons` is given arguments that are equal but not eq, it will not return a unique result.
@@ -1175,160 +969,116 @@ It has the property that `(unique x)` is eq to `(unique y)` whenever `x` and `y`
 This is necessary because strings and arrays can be equal without being eq.
 Besides `unique`, we also define `ulist` and uappend for convenience.
 
-[ ](#){:#l0140}`(defvar *uniq-atom-table* (make-hash-table :test #'equal))`
-!!!(p) {:.unnumlist}
+`(defvar *uniq-atom-table* (make-hash-table :test #'equal))`
 
-` (defun unique (exp)`
-!!!(p) {:.unnumlist}
+`  (defun unique (exp)`
 
-`  "Return a canonical representation that is EQUAL to exp,`
-!!!(p) {:.unnumlist}
+`    "Return a canonical representation that is EQUAL to exp,`
 
-`  such that (equal x y) implies (eq (unique x) (unique y))."`
-!!!(p) {:.unnumlist}
+`    such that (equal x y) implies (eq (unique x) (unique y))."`
 
-`  (typecase exp`
-!!!(p) {:.unnumlist}
+`    (typecase exp`
 
-`   (symbol exp)`
-!!!(p) {:.unnumlist}
+`      (symbol exp)`
 
-`   (fixnum exp) ;; Remove if fixnums are not eq in your Lisp`
-!!!(p) {:.unnumlist}
+`      (fixnum exp) ;; Remove if fixnums are not eq in your Lisp`
 
-`   (atom (or (gethash exp *uniq-atom-table*)`
-!!!(p) {:.unnumlist}
+`      (atom (or (gethash exp *uniq-atom-table*)`
 
-`        (setf (gethash exp *uniq-atom-table*) exp)))`
-!!!(p) {:.unnumlist}
+`                (setf (gethash exp *uniq-atom-table*) exp)))`
 
-`   (cons (unique-cons (car exp) (cdr exp)))))`
-!!!(p) {:.unnumlist}
+`      (cons (unique-cons (car exp) (cdr exp)))))`
 
-` (defun unique-cons (x y)`
-!!!(p) {:.unnumlist}
+`  (defun unique-cons (x y)`
 
-`  "Return a cons s.t.
+`    "Return a cons s.t.
 (eq (ucons x y) (ucons x2 y2)) is true`
-!!!(p) {:.unnumlist}
 
-`  whenever (equal x x2) and (equal y y2) are true."`
-!!!(p) {:.unnumlist}
+`    whenever (equal x x2) and (equal y y2) are true."`
 
-`  (ucons (unique x) (unique y)))`
-!!!(p) {:.unnumlist}
+`    (ucons (unique x) (unique y)))`
 
-` (defun ulist (&rest args)`
-!!!(p) {:.unnumlist}
+`  (defun ulist (&rest args)`
 
-`  "A uni qui fied list."`
-!!!(p) {:.unnumlist}
+`    "A uni qui fied list."`
 
-`  (unique args))`
-!!!(p) {:.unnumlist}
+`    (unique args))`
 
-` (defun uappend (x y)`
-!!!(p) {:.unnumlist}
+`  (defun uappend (x y)`
 
-`  "A unique list equal to (append x y)."`
-!!!(p) {:.unnumlist}
+`    "A unique list equal to (append x y)."`
 
-`  (if (null x)`
-!!!(p) {:.unnumlist}
+`    (if (null x)`
 
-`    (unique y)`
-!!!(p) {:.unnumlist}
+`        (unique y)`
 
-`    (ucons (first x) (uappend (rest x) y))))`
-!!!(p) {:.unnumlist}
+`        (ucons (first x) (uappend (rest x) y))))`
 
 The above code works, but it can be improved.
 The problem is that when `unique` is applied to a tree, it always traverses the tree all the way to the leaves.
 The function `unique-cons` is like `ucons,` except that `unique-cons` assumes its arguments are not yet unique.
 We can modify `unique - cons` so that it first checks to see if its arguments are unique, by looking in the appropriate hash tables:
 
-[ ](#){:#l0145}`(defun unique-cons (x y)`
-!!!(p) {:.unnumlist}
+`(defun unique-cons (x y)`
 
-` "Return a cons s.t.
+`  "Return a cons s.t.
 (eq (ucons x y) (ucons x2 y2)) is true`
-!!!(p) {:.unnumlist}
 
-` whenever (equal x x2) and (equal y y2) are true."`
-!!!(p) {:.unnumlist}
+`  whenever (equal x x2) and (equal y y2) are true."`
 
-` (let ((ux) (uy)) ; unique x and y`
-!!!(p) {:.unnumlist}
+`  (let ((ux) (uy)) ; unique x and y`
 
-`  (let ((car-table`
-!!!(p) {:.unnumlist}
+`    (let ((car-table`
 
-`     (or (gethash x *uniq-cons-table*)`
-!!!(p) {:.unnumlist}
+`          (or (gethash x *uniq-cons-table*)`
 
-`      (gethash (setf ux (unique x)) *uniq-cons-table*)`
-!!!(p) {:.unnumlist}
+`            (gethash (setf ux (unique x)) *uniq-cons-table*)`
 
-`      (setf (gethash ux *uniq-cons-table*)`
-!!!(p) {:.unnumlist}
+`            (setf (gethash ux *uniq-cons-table*)`
 
-`        (make-hash-table :test #'eq)))))`
-!!!(p) {:.unnumlist}
+`                (make-hash-table :test #'eq)))))`
 
-`   (or (gethash y car-table)`
-!!!(p) {:.unnumlist}
+`      (or (gethash y car-table)`
 
-`    (gethash (setf uy (unique y)) car-table)`
-!!!(p) {:.unnumlist}
+`        (gethash (setf uy (unique y)) car-table)`
 
-`    (setf (gethash uy car-table)`
-!!!(p) {:.unnumlist}
+`        (setf (gethash uy car-table)`
 
-`      (cons ux uy))))))`
-!!!(p) {:.unnumlist}
+`            (cons ux uy))))))`
 
 Another advantage of `unique` is that it can help in indexing.
 If lists are unique, then they can be stored in an `eq` hash table instead of a equal hash table.
 This can lead to significant savings when the list structures are large.
 An `eq` hash table for lists is almost as good as a property list on symbols.
 
-### [ ](#){:#st9005}Avoid Consing: Multiple Values
+### Avoid Consing: Multiple Values
 {:#s9005}
 {:.h2hd}
 
 Parameters and multiple values can also be used to pass around values, rather than building up lists.
 For example, instead of :
 
-[ ](#){:#l0150}`(defstruct point "A point in 3-D cartesian space." x y z)`
-!!!(p) {:.unnumlist}
+`(defstruct point "A point in 3-D cartesian space." x y z)`
 
-`(defun scale-point (k pt)`
-!!!(p) {:.unnumlist}
+`(defun scale-point (k  pt)`
 
-` "Multiply a point by a constant, K."`
-!!!(p) {:.unnumlist}
+`  "Multiply a point by a constant, K."`
 
-` (make-point :x (* k (point-x pt))`
-!!!(p) {:.unnumlist}
+`  (make-point :x (* k (point-x pt))`
 
-`         :y (* k (point-y pt))`
-!!!(p) {:.unnumlist}
+`                  :y (* k (point-y pt))`
 
-`         :z (* k (point-z pt))))`
-!!!(p) {:.unnumlist}
+`                  :z (* k (point-z pt))))`
 
 one could use the following approach, which doesn't generate structures:
 
-[ ](#){:#l0155}`(defun scale-point (k x y z)`
-!!!(p) {:.unnumlist}
+`(defun scale-point (k x y z)`
 
-` "Multiply the point (x,y,z) by a constant, K."`
-!!!(p) {:.unnumlist}
+`  "Multiply the point (x,y,z) by a constant, K."`
 
-` (values (* k x) (* k y) (* k z)))`
-!!!(p) {:.unnumlist}
+`  (values (* k x) (* k y) (* k z)))`
 
-### [ ](#){:#st9010}Avoid Consing: Resources
+### Avoid Consing: Resources
 {:#s9010}
 {:.h2hd}
 
@@ -1348,219 +1098,153 @@ If you hold on to garbage in your own data structures, you may end up with worse
 
 With all these warnings in mind, here is some code to manage resources:
 
-[ ](#){:#l0160}`(defmacro defresource (name &key constructor (initial-copies 0)`
-!!!(p) {:.unnumlist}
+`(defmacro defresource (name &key constructor (initial-copies 0)`
 
-`         (size (max initial-copies 10)))`
-!!!(p) {:.unnumlist}
+`                  (size (max initial-copies 10)))`
 
-` (let ((resource (symbol name '-resource))`
-!!!(p) {:.unnumlist}
+`  (let ((resource (symbol name '-resource))`
 
-`   (deallocate (symbol 'deallocate- name))`
-!!!(p) {:.unnumlist}
+`      (deallocate (symbol 'deallocate- name))`
 
-`   (allocate (symbol 'allocate- name)))`
-!!!(p) {:.unnumlist}
+`      (allocate (symbol 'allocate- name)))`
 
-`  '(let ((.resource (make-array ,size :fill-pointer 0)))`
-!!!(p) {:.unnumlist}
+`    '(let ((.resource (make-array ,size :fill-pointer 0)))`
 
-`   (defun ,allocate ()`
-!!!(p) {:.unnumlist}
+`      (defun ,allocate ()`
 
-`    "Get an element from the resource pool, or make one."`
-!!!(p) {:.unnumlist}
+`        "Get an element from the resource pool, or make one."`
 
-`    (if (= (fill-pointer ,resource) 0)`
-!!!(p) {:.unnumlist}
+`        (if (= (fill-pointer ,resource) 0)`
 
-`      ,constructor`
-!!!(p) {:.unnumlist}
+`            ,constructor`
 
-`      (vector-pop ,resource)))`
-!!!(p) {:.unnumlist}
+`            (vector-pop ,resource)))`
 
-`   (defun ,deallocate (.name)`
-!!!(p) {:.unnumlist}
+`      (defun ,deallocate (.name)`
 
-`    "Place a no-longer-needed element back in the pool."`
-!!!(p) {:.unnumlist}
+`        "Place a no-longer-needed element back in the pool."`
 
-`    (vector-push-extend ,name ,resource))`
-!!!(p) {:.unnumlist}
+`        (vector-push-extend ,name ,resource))`
 
-`   .(if (> initial-copies 0)`
-!!!(p) {:.unnumlist}
+`      .(if (> initial-copies 0)`
 
-`      '(mapc #',deallocate (loop repeat ,initial-copies`
-!!!(p) {:.unnumlist}
+`            '(mapc #',deallocate (loop repeat ,initial-copies`
 
-`             collect (,allocate))))`
-!!!(p) {:.unnumlist}
+`                         collect (,allocate))))`
 
-`   ',name)))`
-!!!(p) {:.unnumlist}
+`      ',name)))`
 
 Let's say we had some structure called a buffer which we were constantly making instances of and then discarding.
 Furthermore, suppose that buffers are fairly complex objects to build, that we know we'll need at least 10 of them at a time, and that we probably won't ever need more than 100 at a time.
 We might use the buffer resource as follows:
 
-[ ](#){:#l0165}`(defresource buffer :constructor (make-buffer)`
-!!!(p) {:.unnumlist}
+`(defresource buffer :constructor (make-buffer)`
 
-`      :size 100 : initial-copies 10)`
-!!!(p) {:.unnumlist}
+`            :size 100 : initial-copies 10)`
 
 This expands into the following code:
 
-[ ](#){:#l0170}`(let ((buffer-resource (make-array 100 :fil1-pointer 0)))`
-!!!(p) {:.unnumlist}
+`(let ((buffer-resource (make-array 100 :fil1-pointer 0)))`
 
-` (defun allocate-buffer ()`
-!!!(p) {:.unnumlist}
+`  (defun allocate-buffer ()`
 
-`  "Get an element from the resource pool, or make one."`
-!!!(p) {:.unnumlist}
+`    "Get an element from the resource pool, or make one."`
 
-`  (if (= (fill-pointer buffer-resource) 0)`
-!!!(p) {:.unnumlist}
+`    (if (= (fill-pointer buffer-resource) 0)`
 
-`   (make-buffer)`
-!!!(p) {:.unnumlist}
+`      (make-buffer)`
 
-`   (vector-pop buffer-resource)))`
-!!!(p) {:.unnumlist}
+`      (vector-pop buffer-resource)))`
 
-` (defun deallocate-buffer (buffer)`
-!!!(p) {:.unnumlist}
+`  (defun deallocate-buffer (buffer)`
 
-`  "Place a no-longer-needed element back in the pool."`
-!!!(p) {:.unnumlist}
+`    "Place a no-longer-needed element back in the pool."`
 
-`  (vector-push-extend buffer buffer-resource))`
-!!!(p) {:.unnumlist}
+`    (vector-push-extend buffer buffer-resource))`
 
-` (mapc #'deallocate-buffer`
-!!!(p) {:.unnumlist}
+`  (mapc #'deallocate-buffer`
 
-`    (loop repeat 10 collect (allocate-buffer)))`
-!!!(p) {:.unnumlist}
+`        (loop repeat 10 collect (allocate-buffer)))`
 
-` 'buffer)`
-!!!(p) {:.unnumlist}
+`  'buffer)`
 
 We could then use:
 
-[ ](#){:#l0175}`(let ((b (allocate-buffer)))`
-!!!(p) {:.unnumlist}
+`(let ((b (allocate-buffer)))`
 
-` …`
-!!!(p) {:.unnumlist}
+`  ...`
 
-` (process b)`
-!!!(p) {:.unnumlist}
+`  (process b)`
 
-` …`
-!!!(p) {:.unnumlist}
+`  ...`
 
-` (deallocate-buffer b)))`
-!!!(p) {:.unnumlist}
+`  (deallocate-buffer b)))`
 
 The important thing to remember is that this works only if the buffer `b` really can be deallocated.
 If the function `process` stored away a pointer to `b` somewhere, then it would be a mistake to deallocate `b,` because a subsequent allocation could unpredictably alter the stored buffer.
 Of course, if `process` stored a *copy* of `b,` then everything is alright.
 This pattern of allocation and deallocation is so common that we can provide a macro for it:
 
-[ ](#){:#l0180}`(defmacro with-resource ((var resource &optional protect) &rest body)`
-!!!(p) {:.unnumlist}
+`(defmacro with-resource ((var resource &optional protect) &rest body)`
 
-` "Execute body with VAR bound to an instance of RESOURCE."`
-!!!(p) {:.unnumlist}
+`  "Execute body with VAR bound to an instance of RESOURCE."`
 
-` (let ((allocate (symbol 'allocate- resource))`
-!!!(p) {:.unnumlist}
+`  (let ((allocate (symbol 'allocate- resource))`
 
-`   (deallocate (symbol 'deallocate- resource)))`
-!!!(p) {:.unnumlist}
+`      (deallocate (symbol 'deallocate- resource)))`
 
-`  (if protect`
-!!!(p) {:.unnumlist}
+`    (if protect`
 
-`   '(let ((,var nil))`
-!!!(p) {:.unnumlist}
+`      '(let ((,var nil))`
 
-`    (unwind-protect`
-!!!(p) {:.unnumlist}
+`        (unwind-protect`
 
-`     (progn (setf ,var (,allocate)) ,©body)`
-!!!(p) {:.unnumlist}
+`          (progn (setf ,var (,allocate)) ,@body)`
 
-`     (unless (null ,var) (,deallocate ,var))))`
-!!!(p) {:.unnumlist}
+`          (unless (null ,var) (,deallocate ,var))))`
 
-`   '(let ((,var (,allocate)))`
-!!!(p) {:.unnumlist}
+`      '(let ((,var (,allocate)))`
 
-`    ,©body`
-!!!(p) {:.unnumlist}
+`        ,@body`
 
-`    (,deallocate ,var)))))`
-!!!(p) {:.unnumlist}
+`        (,deallocate ,var)))))`
 
 The macro allows for an optional argument that sets up an `unwind` - protect environment, so that the buffer gets deallocated even when the body is abnormally exited.
 The following expansions should make this clearer:
 
-[ ](#){:#l0185}`>(macroexpand '(with-resource (b buffer)`
-!!!(p) {:.unnumlist}
+`>(macroexpand '(with-resource (b buffer)`
 
-`        "…" (process b) "…"))`
-!!!(p) {:.unnumlist}
+`                "..." (process b) "..."))`
 
 `(let ((b (allocate-buffer)))`
-!!!(p) {:.unnumlist}
 
-` "…"`
-!!!(p) {:.unnumlist}
+`  "..."`
 
-` (process b)`
-!!!(p) {:.unnumlist}
+`  (process b)`
 
-` "…"`
-!!!(p) {:.unnumlist}
+`  "..."`
 
-` (deallocate-buffer b))`
-!!!(p) {:.unnumlist}
+`  (deallocate-buffer b))`
 
 `> (macroexpand '(with-resource (b buffer t)`
-!!!(p) {:.unnumlist}
 
-`        "…" "…" (process b) "…"))`
-!!!(p) {:.unnumlist}
+`                "..." "..." (process b) "..."))`
 
 `(let ((b nil))`
-!!!(p) {:.unnumlist}
 
-` (unwind-protect`
-!!!(p) {:.unnumlist}
+`  (unwind-protect`
 
-`   (progn (setf b (allocate-buffer))`
-!!!(p) {:.unnumlist}
+`      (progn (setf b (allocate-buffer))`
 
-`     "…"`
-!!!(p) {:.unnumlist}
+`          "..."`
 
-`        (process b)`
-!!!(p) {:.unnumlist}
+`                (process b)`
 
-`        "…")`
-!!!(p) {:.unnumlist}
+`                "...")`
 
-`      (unless (null b)`
-!!!(p) {:.unnumlist}
+`            (unless (null b)`
 
-`      (deallocate-buffer b))))`
-!!!(p) {:.unnumlist}
+`            (deallocate-buffer b))))`
 
 An alternative to full resources is to just save a single data object.
 Such an approach is simpler because there is no need to index into a vector of objects, but it is sufficient for some applications, such as a tail-recursive function call that only uses one object at a time.
@@ -1572,7 +1256,7 @@ In particular, you should be concerned with paging performance on virtual memory
 A common problem is to have only a few live objects on each page, thus forcing the system to do a lot of paging to get any work done.
 Compacting garbage collectors can collect live objects onto the same page, but using resources may interfere with this.
 
-## [ ](#){:#st0030}10.5 Use the Right Data Structures
+## 10.5 Use the Right Data Structures
 {:#s0030}
 {:.h1hd}
 
@@ -1580,7 +1264,7 @@ It is important to implement key data types with the most efficient implementati
 This can vary from machine to machine, but there are a few techniques that are universal.
 Here we consider three case studies.
 
-### [ ](#){:#st9015}The Right Data Structure: Variables
+### The Right Data Structure: Variables
 {:#s9015}
 {:.h2hd}
 
@@ -1590,75 +1274,54 @@ In compiling the matching expressions, I did away with all calls to `variable-p`
 The specification of the data type `variable` will include two operators, the recognizer `variable-p`, and the constructor `make-variable`, which gives a new, previously unused variable.
 (This was not needed in the pattern matchers shown so far, but will be needed for unification with backward chaining.) One implementation of variables is as symbols that begin with the character #\?:
 
-[ ](#){:#l0200}`(defun variable-p (x)`
-!!!(p) {:.unnumlist}
+`(defun variable-p (x)`
 
-` "Is x a variable (a symbol beginning with '?')?"`
-!!!(p) {:.unnumlist}
+`  "Is x a variable (a symbol beginning with '?')?"`
 
-` (and (symbolp x) (equal (elt (symbol-name x) 0) #\?)))`
-!!!(p) {:.unnumlist}
+`  (and (symbolp x) (equal (elt (symbol-name x) 0) #\?)))`
 
 `(defun make-variable O "Generate a new variable" (gentemp "?"))`
-!!!(p) {:.unnumlist}
 
 We could try to speed things up by changing the implementation of variables to be keywords and making the functions inline:
 
-[ ](#){:#l0205}`(proclaim '(inline variable-p make-variable))`
-!!!(p) {:.unnumlist}
+`(proclaim '(inline variable-p make-variable))`
 
 `(defun variable-p (x) "Is x a variable?" (keywordp x))`
-!!!(p) {:.unnumlist}
 
 `(defun make-variable O (gentemp "X" #.(find-package "KEYWORD")))`
-!!!(p) {:.unnumlist}
 
 (The reader character sequence #.
 means to evaluate at read time, rather than at execution time.) On my machine, this implementation is pretty fast, and I accepted it as a viable compromise.
 However, other implementations were also considered.
 One was to have variables as structures, and provide a read macro and print function:
 
-[ ](#){:#l0210}`(defstruct (variable (:print-function print-variable)) name)`
-!!!(p) {:.unnumlist}
+`(defstruct (variable (:print-function print-variable)) name)`
 
 `(defvar *vars* (make-hash-table))`
-!!!(p) {:.unnumlist}
 
 `(set-macro-character #\?`
-!!!(p) {:.unnumlist}
 
-` #'(lambda (stream char)`
-!!!(p) {:.unnumlist}
+`  #'(lambda (stream char)`
 
-`   ;; Find an old var, or make a new one with the given name`
-!!!(p) {:.unnumlist}
+`      ;; Find an old var, or make a new one with the given name`
 
-`   (declare (ignore char))`
-!!!(p) {:.unnumlist}
+`      (declare (ignore char))`
 
-`   (let ((name (read stream t nil t)))`
-!!!(p) {:.unnumlist}
+`      (let ((name (read stream t nil t)))`
 
-`    (or (gethash name *vars*)`
-!!!(p) {:.unnumlist}
+`        (or (gethash name *vars*)`
 
-`     (setf (gethash name *vars*) (make-variable :name name))))))`
-!!!(p) {:.unnumlist}
+`          (setf (gethash name *vars*) (make-variable :name name))))))`
 
 `(defun print-variable (var stream depth)`
-!!!(p) {:.unnumlist}
 
-` (declare (ignore depth))`
-!!!(p) {:.unnumlist}
+`  (declare (ignore depth))`
 
-` (format stream "?~a" (var-name var)))`
-!!!(p) {:.unnumlist}
+`  (format stream "?~a" (var-name var)))`
 
 It turned out that, on all three Lisps tested, structures were slower than keywords or symbols.
-Another alternative is to have the ?
-read macro return a cons whose first is, say, `:var`.
-This requires a special output routine to translate back to the ?
-notation.
+Another alternative is to have the ? read macro return a cons whose first is, say, `:var`.
+This requires a special output routine to translate back to the ? notation.
 Yet another alternative, which turned out to be the fastest of all, was to implement variables as negative integers.
 Of course, this means that the user cannot use negative integers elsewhere in patterns, but that turned out to be acceptable for the application at hand.
 The moral is to know which features are done well in your particular implementation and to go out of your way to use them in critical situations, but to stick with the most straightforward implementation in noncritical sections.
@@ -1669,38 +1332,28 @@ If the sequence can grow, use an adjustable vector.
 Consider the problem of maintaining information about a set of people, and searching that set.
 A naive implementation might look like this:
 
-[ ](#){:#l0215}`(defvar *people* nil "Will hold a list of people")`
-!!!(p) {:.unnumlist}
+`(defvar *people* nil "Will hold a list of people")`
 
 `(defstruct person name address id-number)`
-!!!(p) {:.unnumlist}
 
 `(defun person-with-id (id)`
-!!!(p) {:.unnumlist}
 
-` (find id *people* :key #'person-id-number))`
-!!!(p) {:.unnumlist}
+`  (find id *people* :key #'person-id-number))`
 
 In a traditional language like C, the natural solution is to include in the person structure a pointer to the next person, and to write a loop to follow these pointers.
 Of course, we can do that in Lisp too:
 
-[ ](#){:#l0220}`(defstruct person name address id-number next)`
-!!!(p) {:.unnumlist}
+`(defstruct person name address id-number next)`
 
 `(defun person-with-id (id)`
-!!!(p) {:.unnumlist}
 
-` (loop for person = *people* then (person-next person)`
-!!!(p) {:.unnumlist}
+`  (loop for person = *people* then (person-next person)`
 
-`   until (null person)`
-!!!(p) {:.unnumlist}
+`      until (null person)`
 
-`   do (when (eql id (person-id-number person))`
-!!!(p) {:.unnumlist}
+`      do (when (eql id (person-id-number person))`
 
-`     (RETURN person))))`
-!!!(p) {:.unnumlist}
+`          (RETURN person))))`
 
 This solution takes less space and is probably faster, because it requires less memory accesses: one for each person rather than one for each person plus one for each cons cell.
 So there is a small price to pay for using lists.
@@ -1709,13 +1362,11 @@ But Lisp programmers feel that price is worth it, because of the convenience and
 In any case, if there are going to be a large number of people, the list is definitely the wrong data structure.
 Fortunately, Lisp makes it easy to switch to more efficient data structures, for example:
 
-[ ](#){:#l0225}`(defun person-with-id (id)`
-!!!(p) {:.unnumlist}
+`(defun person-with-id (id)`
 
-` (gethash id *people*))`
-!!!(p) {:.unnumlist}
+`  (gethash id *people*))`
 
-### [ ](#){:#st9020}The Right Data Structure: Queues
+### The Right Data Structure: Queues
 {:#s9020}
 {:.h2hd}
 
@@ -1729,30 +1380,21 @@ An alternative implementation of queues is as a cons of two pointers: one to the
 Initially, both pointers would be nil.
 This implementation in fact existed in BBN Lisp and UCI Lisp under the function name `tconc`:
 
-[ ](#){:#l0230}`;;; A queue is a (contents .
-last) pair`
-!!!(p) {:.unnumlist}
+`;;; A queue is a (contents . last) pair`
 
 `(defun tconc (item q)`
-!!!(p) {:.unnumlist}
 
-` "Insert item at the end of the queue."`
-!!!(p) {:.unnumlist}
+`  "Insert item at the end of the queue."`
 
-` (setf (cdr q)`
-!!!(p) {:.unnumlist}
+`  (setf (cdr q)`
 
-`   (if (null (cdr q))`
-!!!(p) {:.unnumlist}
+`      (if (null (cdr q))`
 
-`     (setf (car q) (cons item nil))`
-!!!(p) {:.unnumlist}
+`          (setf (car q) (cons item nil))`
 
-`     (setf (rest (cdr q))`
-!!!(p) {:.unnumlist}
+`          (setf (rest (cdr q))`
 
-`       (cons item nil)))))`
-!!!(p) {:.unnumlist}
+`              (cons item nil)))))`
 
 The `tconc` implementation has the disadvantage that adding the first element to the contents is different from adding subsequent elements, so an `if` statement is required to decide which action to take.
 The definition of queues given below avoids this disadvantage with a clever trick.
@@ -1761,83 +1403,57 @@ The `car` of the cons cell is the last element, and the `cdr` is the contents.
 Second, the empty queue is a cons cell where the `cdr` (the contents field) is nil, and the `car` (the last field) is the cons itself.
 In the definitions below, we change the name `tconc` to the more standard `enqueue`, and provide the other queue functions as well:
 
-[ ](#){:#l0235}`;;; A queue is a (last .
-contents) pair`
-!!!(p) {:.unnumlist}
+`;;; A queue is a (last . contents) pair`
 
 `(proclaim '(inline queue-contents make-queue enqueue dequeue`
-!!!(p) {:.unnumlist}
 
-`        front empty-queue-p queue-nconc))`
-!!!(p) {:.unnumlist}
+`                front empty-queue-p queue-nconc))`
 
 `(defun queue-contents (q) (cdr q))`
-!!!(p) {:.unnumlist}
 
 `(defun make-queue ()`
-!!!(p) {:.unnumlist}
 
-` "Build a new queue, with no elements."`
-!!!(p) {:.unnumlist}
+`  "Build a new queue, with no elements."`
 
-` (let ((q (cons nil nil)))`
-!!!(p) {:.unnumlist}
+`  (let ((q (cons nil nil)))`
 
-`  (setf (car q) q)))`
-!!!(p) {:.unnumlist}
+`    (setf (car q) q)))`
 
 `(defun enqueue (item q)`
-!!!(p) {:.unnumlist}
 
-` "Insert item at the end of the queue."`
-!!!(p) {:.unnumlist}
+`  "Insert item at the end of the queue."`
 
-` (setf (car q)`
-!!!(p) {:.unnumlist}
+`  (setf (car q)`
 
-`     (setf (rest (car q))`
-!!!(p) {:.unnumlist}
+`          (setf (rest (car q))`
 
-`      (cons item nil)))`
-!!!(p) {:.unnumlist}
+`            (cons item nil)))`
 
-` q)`
-!!!(p) {:.unnumlist}
+`  q)`
 
 `(defun dequeue (q)`
-!!!(p) {:.unnumlist}
 
-` "Remove an item from the front of the queue."`
-!!!(p) {:.unnumlist}
+`  "Remove an item from the front of the queue."`
 
-` (pop (cdr q))`
-!!!(p) {:.unnumlist}
+`  (pop (cdr q))`
 
-` (if (null (cdr q)) (setf (car q) q))`
-!!!(p) {:.unnumlist}
+`  (if (null (cdr q)) (setf (car q) q))`
 
-` q)`
-!!!(p) {:.unnumlist}
+`  q)`
 
 `(defun front (q) (first (queue-contents q)))`
-!!!(p) {:.unnumlist}
 
 `(defun empty-queue-p (q) (null (queue-contents q)))`
-!!!(p) {:.unnumlist}
 
 `(defun queue-nconc (q list)`
-!!!(p) {:.unnumlist}
 
-` "Add the elements of LIST to the end of the queue."`
-!!!(p) {:.unnumlist}
+`  "Add the elements of LIST to the end of the queue."`
 
-` (setf (car q)`
-!!!(p) {:.unnumlist}
+`  (setf (car q)`
 
-`     (last (setf (rest (car q)) list))))`
-!!!(p) {:.unnumlist}
+`          (last (setf (rest (car q)) list))))`
 
-### [ ](#){:#st9030}The Right Data Structure: Tables
+### The Right Data Structure: Tables
 {:#s9030}
 {:.h2hd}
 
@@ -1864,14 +1480,11 @@ If the keys can be arbitrary list structures, rather than a simple sequence of l
 One way to do that makes use of the fact that any tree can be written as a linear sequence of atoms and cons operations, in prefix form.
 Thus, we would make the following transformation:
 
-[ ](#){:#l0240}`(a (b c) d) ≡`
-!!!(p) {:.unnumlist}
+`(a (b c) d) =`
 
-`(cons a (cons (cons b (cons c nil)) (cons d nil)))`≡
-!!!(p) {:.unnumlist}
+`(cons a (cons (cons b (cons c nil)) (cons d nil)))`=
 
 `(cons a cons cons b cons c nil cons d nil)`
-!!!(p) {:.unnumlist}
 
 In the implementation of tries below, this transformation is done on the fly: The four user-level functions are `make-trie` to create a new trie, `put-trie` and `get-trie` to add and retrieve key/value pairs, and `delete-trie` to remove them.
 
@@ -1879,122 +1492,85 @@ Notice that we use a distinguished value to mark deleted elements, and that `get
 This is consistent with the interface to `gethash` and `find`, and allows us to store null values in the trie.
 It is an inobtrusive choice, because the programmer who decides not to store null values can just ignore the second value, and everything will work properly.
 
-[ ](#){:#l0245}`(defstruct trie (value nil) (arcs nil))`
-!!!(p) {:.unnumlist}
+`(defstruct trie (value nil) (arcs nil))`
 
 `(defconstant trie-deleted "deleted")`
-!!!(p) {:.unnumlist}
 
 `(defun put-trie (key trie value)`
-!!!(p) {:.unnumlist}
 
-` "Set the value of key in trie."`
-!!!(p) {:.unnumlist}
+`  "Set the value of key in trie."`
 
-` (setf (trie-value (find-trie key t trie)) value))`
-!!!(p) {:.unnumlist}
+`  (setf (trie-value (find-trie key t trie)) value))`
 
 `(defun get-trie (key trie)`
-!!!(p) {:.unnumlist}
 
-` "Return the value for a key in a trie, and t/nil if found."`
-!!!(p) {:.unnumlist}
+`  "Return the value for a key in a trie, and t/nil if found."`
 
-` (let* ((key-trie (find-trie key nil trie))`
-!!!(p) {:.unnumlist}
+`  (let* ((key-trie (find-trie key nil trie))`
 
-`    (val (if key-trie (trie-value key-trie))))`
-!!!(p) {:.unnumlist}
+`        (val (if key-trie (trie-value key-trie))))`
 
-`  (if (or (null key-trie) (eq val trie-deleted))`
-!!!(p) {:.unnumlist}
+`    (if (or (null key-trie) (eq  val trie-deleted))`
 
-`    (values nil nil )`
-!!!(p) {:.unnumlist}
+`        (values nil nil )`
 
-`    (values val t))))`
-!!!(p) {:.unnumlist}
+`        (values val t))))`
 
 `(defun delete-trie (key trie)`
-!!!(p) {:.unnumlist}
 
-` "Remove a key from a trie."`
-!!!(p) {:.unnumlist}
+`  "Remove a key from a trie."`
 
-` (put-trie key trie trie-deleted))`
-!!!(p) {:.unnumlist}
+`  (put-trie key trie trie-deleted))`
 
 `(defun find-trie (key extend?
 trie)`
-!!!(p) {:.unnumlist}
 
-` "Find the trie node for this key.`
-!!!(p) {:.unnumlist}
+`  "Find the trie node for this key.`
 
-` If EXTEND?
+`  If EXTEND?
 is true, make a new node if need be."`
-!!!(p) {:.unnumlist}
 
-` (cond ((null trie) nil )`
-!!!(p) {:.unnumlist}
+`  (cond ((null trie) nil )`
 
-`    ((atom key)`
-!!!(p) {:.unnumlist}
+`        ((atom key)`
 
-`     (follow-arc key extend?
+`          (follow-arc key extend?
 trie))`
-!!!(p) {:.unnumlist}
 
-`    (t (find-trie`
-!!!(p) {:.unnumlist}
+`        (t (find-trie`
 
-`       (cdr key) extend?`
-!!!(p) {:.unnumlist}
+`              (cdr key) extend?`
 
-`       (find-trie`
-!!!(p) {:.unnumlist}
+`              (find-trie`
 
-`        (car key) extend?`
-!!!(p) {:.unnumlist}
+`                (car key) extend?`
 
-`       (find-trie`
-!!!(p) {:.unnumlist}
+`              (find-trie`
 
-`        "." extend?
+`                "." extend?
 trie))))))`
-!!!(p) {:.unnumlist}
 
 `(defun follow-arc (component extend?
 trie)`
-!!!(p) {:.unnumlist}
 
-` "Find the trie node for this component of the key.`
-!!!(p) {:.unnumlist}
+`  "Find the trie node for this component of the key.`
 
-` If EXTEND?
+`  If EXTEND?
 is true, make a new node if need be."`
-!!!(p) {:.unnumlist}
 
-` (let ((arc (assoc component (trie-arcs trie))))`
-!!!(p) {:.unnumlist}
+`  (let ((arc (assoc component (trie-arcs trie))))`
 
-`  (cond ((not (null arc)) (cdr arc))`
-!!!(p) {:.unnumlist}
+`    (cond ((not (null arc)) (cdr arc))`
 
-`     ((not extend?) nil)`
-!!!(p) {:.unnumlist}
+`          ((not extend?) nil)`
 
-`     (t (let ((new-trie (make-trie)))`
-!!!(p) {:.unnumlist}
+`          (t (let ((new-trie (make-trie)))`
 
-`       (push (cons component new-trie)`
-!!!(p) {:.unnumlist}
+`              (push (cons component new-trie)`
 
-`         (trie-arcs trie))`
-!!!(p) {:.unnumlist}
+`                  (trie-arcs trie))`
 
-`       new-trie)))))`
-!!!(p) {:.unnumlist}
+`              new-trie)))))`
 
 There are a few subtleties in the implementation.
 First, we test for deleted entries with an `eq` comparison to a distinguished marker, the string `trie-deleted`.
@@ -2013,12 +1589,12 @@ It should be noted that Charniak et al.
 call the trie a *discrimination net*.
 In general, that term refers to any tree with tests at the nodes.
 
-A trie is, of course, a kind of tree, but there are cases where it pays to convert a trie into a *dag*—a directed acyclic graph.
+A trie is, of course, a kind of tree, but there are cases where it pays to convert a trie into a *dag*-a directed acyclic graph.
 A dag is a tree where some of the subtrees are shared.
 Imagine you have a spelling corrector program with a list of some 50,000 or so words.
 You could put them into a trie, each word with the value t.
 But there would be many subtrees repeated in this trie.
-For example, given a word list containing *look*, *looks*, *looked*, and *looking* as well as *show*, *shows*, *showed*, and *showing*, there would be repetition of the subtree containing -s, − *ed* and -*ing*.
+For example, given a word list containing *look*, *looks*, *looked*, and *looking* as well as *show*, *shows*, *showed*, and *showing*, there would be repetition of the subtree containing -s, -  *ed* and -*ing*.
 After the trie is built, we could pass the whole trie to un i que, and it would collapse the shared subtrees, saving storage.
 Of course, you can no longer add or delete keys from the dag without risking unintended side effects.
 
@@ -2030,8 +1606,7 @@ Encoding the same word list in a hash table took twice this space, even with a s
 Tries work best when neither the indexing key nor the retrieval key contains variables.
 They work reasonably well when the variables are near the end of the sequence.
 Consider looking up the pattern `"yello?
-"` in the dictionary, where the " ?
-" character indicates a match of any letter.
+"` in the dictionary, where the " ? " character indicates a match of any letter.
 Following the branches for `"yel1o"` leads quickly to the only possible match, `"yel1ow"`.
 In contrast, fetching with the pattern `"??llow"` is much less efficient.
 The table lookup function would have to search all 26 top-level branches, and for each of those consider all possible second letters, and for each of those consider the path `"llow"`.
@@ -2039,69 +1614,52 @@ Quite a bit of searching is required before arriving at the complete set of matc
 
 We will return to the problem of discrimination nets with variables in [section 14.8](B9780080571157500145.xhtml#s0040), [page 472](B9780080571157500145.xhtml#p472).
 
-## [ ](#){:#st0035}10.6 Exercises[ ](#){:#p2640}
+## 10.6 Exercises
 {:#s0035}
 {:.h1hd}
 
-[ ](#){:#l0250}**Exercise 10.1 [h]** Define the macro `deftable,` such that `(deftable person assoc`) will act much like a `defstruct—`it will define a set of functions for manipulating a table of people: `get-person, put-person, clear-person,` and `map-person.` The table should be implemented as an association list.
+**Exercise  10.1 [h]** Define the macro `deftable,` such that `(deftable person assoc`) will act much like a `defstruct-`it will define a set of functions for manipulating a table of people: `get-person, put-person, clear-person,` and `map-person.` The table should be implemented as an association list.
 Later on, you can change the representation of the table simply by changing the form to (`deftable person hash` ), without having to change anything else in your code.
 Other implementation options include property lists and vectors.
 `deftable` should also take three keyword arguments: `inline`, `size` and `test`.
 Here is a possible macroexpansion:
-!!!(p) {:.unnumlist}
 
-[ ](#){:#l0255}`>(macroexpand '(deftableperson hash :-inline t :size 100))`≡
-!!!(p) {:.unnumlist1}
+`>(macroexpand '(deftableperson hash :-inline t :size 100))`=
 
-` (progn`
-!!!(p) {:.unnumlist1}
+`  (progn`
 
-` (proclaim '(inline get-person put-person map-person))`
-!!!(p) {:.unnumlist1}
+`  (proclaim '(inline get-person put-person map-person))`
 
-` (defparameter *person-table*`
-!!!(p) {:.unnumlist1}
+`  (defparameter *person-table*`
 
-`  (make-hash-table :test #eql :size 100))`
-!!!(p) {:.unnumlist1}
+`    (make-hash-table :test #eql :size 100))`
 
-` (defun get-person (x &optional default)`
-!!!(p) {:.unnumlist1}
+`  (defun get-person (x &optional default)`
 
-`  (gethash x *person-table* default))`
-!!!(p) {:.unnumlist1}
+`    (gethash x *person-table* default))`
 
-` (defun put-person (x value)`
-!!!(p) {:.unnumlist1}
+`  (defun put-person (x value)`
 
-`  (setf (gethash x *person-table*) value))`
-!!!(p) {:.unnumlist1}
+`    (setf (gethash x *person-table*) value))`
 
-` (defun clear-person () (clrhash *person-table*))`
-!!!(p) {:.unnumlist1}
+`  (defun clear-person () (clrhash *person-table*))`
 
-` (defun map-person (fn) (maphash fn *person-table*))`
-!!!(p) {:.unnumlist1}
+`  (defun map-person (fn) (maphash fn *person-table*))`
 
-` (defsetf get-person put-person)`
-!!!(p) {:.unnumlist1}
+`  (defsetf get-person put-person)`
 
-` 'person)`
-!!!(p) {:.unnumlist1}
+`  'person)`
 
-**Exercise 10.2 [m]** We can use the :`type` option to `defstruct` to define structures implemented as lists.
+**Exercise  10.2 [m]** We can use the :`type` option to `defstruct` to define structures implemented as lists.
 However, often we have a two-field structure that we would like to implement as a cons cell rather than a two-element list, thereby cutting storage in half.
 Since `defstruct` does not allow this, define a new macro that does.
-!!!(p) {:.unnumlist}
 
-**Exercise 10.3 [m]** Use `reuse - cons` to write a version of `f1atten` (see [page 329](B9780080571157500108.xhtml#p329)) that shares as much of its input with its output as possible.
-!!!(p) {:.unnumlist}
+**Exercise  10.3 [m]** Use `reuse - cons` to write a version of `f1atten` (see [page 329](B9780080571157500108.xhtml#p329)) that shares as much of its input with its output as possible.
 
-**Exercise 10.4 [h]** Consider the data type *set*.
+**Exercise  10.4 [h]** Consider the data type *set*.
 A set has two main operations: adjoin an element and test for membership.
 It is convenient to also add a map-over-elements operation.
 With these primitive operations it is possible to build up more complex operations like union and intersection.
-!!!(p) {:.unnumlist}
 
 As mentioned in [section 3.9](B9780080571157500030.xhtml#s0095), Common Lisp provides several implementations of sets.
 The simplest uses lists as the underlying representation, and provides the functions `adjoin, member, union, intersection`, and `set-difference`.
@@ -2110,68 +1668,51 @@ Analyze the time complexity of each implementation for each operation.
 
 Next, show how *sorted lists* can be used to implement sets, and compare the operations on sorted lists to their counterparts on unsorted lists.
 
-## [ ](#){:#st0040}10.7 Answers
+## 10.7 Answers
 {:#s0040}
 {:.h1hd}
 
 **Answer 10.2**
 
-[ ](#){:#l0260}`(defmacro def-cons-struct (cons car cdr &optional inline?)`
-!!!(p) {:.unnumlist}
+`(defmacro def-cons-struct (cons car cdr &optional inline?)`
 
-` "Define aliases for cons, car and cdr."`
-!!!(p) {:.unnumlist}
+`  "Define aliases for cons, car and cdr."`
 
-` '(progn (proclaim '(,(if inline?
+`  '(progn (proclaim '(,(if inline?
 'inline 'notinline)`
-!!!(p) {:.unnumlist}
 
-`         ,car ,cdr ,cons))`
-!!!(p) {:.unnumlist}
+`                  ,car ,cdr ,cons))`
 
-`     (defun ,car (x) (car x))`
-!!!(p) {:.unnumlist}
+`          (defun ,car (x) (car x))`
 
-`     (defun ,cdr (x) (cdr x))`
-!!!(p) {:.unnumlist}
+`          (defun ,cdr (x) (cdr x))`
 
-`     (defsetf ,car (x) (val) '(setf (car ,x) ,val))`
-!!!(p) {:.unnumlist}
+`          (defsetf ,car (x) (val) '(setf (car ,x) ,val))`
 
-`     (defsetf ,cdr (x) (val) '(setf (cdr ,x) ,val))`
-!!!(p) {:.unnumlist}
+`          (defsetf ,cdr (x) (val) '(setf (cdr ,x) ,val))`
 
-`     (defun ,cons (x y) (cons x y))))`
-!!!(p) {:.unnumlist}
+`          (defun ,cons (x y) (cons x y))))`
 
 **Answer 10.3**
 
-[ ](#){:#l0265}`(defun flatten (exp &optional (so-far nil) last-cons)`
-!!!(p) {:.unnumlist}
+`(defun flatten (exp &optional (so-far nil) last-cons)`
 
-` "Return a flat list of the atoms in the input.`
-!!!(p) {:.unnumlist}
+`  "Return a flat list of the atoms in the input.`
 
-` Ex: (flatten '((a) (b (c) d))) => (a b c d)."`
-!!!(p) {:.unnumlist}
+`  Ex: (flatten '((a) (b (c) d))) => (a b c d)."`
 
-` (cond ((null exp) so-far)`
-!!!(p) {:.unnumlist}
+`  (cond ((null exp) so-far)`
 
-`    ((atom exp) (reuse-cons exp so-far last-cons))`
-!!!(p) {:.unnumlist}
+`        ((atom exp) (reuse-cons exp so-far last-cons))`
 
-`    (t (flatten (first exp)`
-!!!(p) {:.unnumlist}
+`        (t (flatten (first exp)`
 
-`         (flatten (rest exp) so-far exp)`
-!!!(p) {:.unnumlist}
+`                  (flatten (rest exp) so-far exp)`
 
-`         exp))))`
-!!!(p) {:.unnumlist}
+`                  exp))))`
 
 ----------------------
 
-[1](#xfn0015){:#np0015} These are all done with safety 0 and speed 3.
+[1](#xfn0015) These are all done with safety 0 and speed 3.
 !!!(p) {:.ftnote1}
 

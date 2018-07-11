@@ -4,13 +4,13 @@
 > It is wrong to think of Waltz's work only as a statement of the epistemology of line drawings of polyhedra.
 Instead I think it is an elegant case study of a paradigm we can expect to see again and again.
 
-> —Patrick Winston
+> -Patrick Winston
 
 > The Psychology of Computer Vision (1975)
 
 This book touches only the areas of AI that deal with abstract reasoning.
 There is another side of AI, the field of *robotics,* that deals with interfacing abstract reasoning with the real world through sensors and motors.
-A robot receives input from cameras, microphones, sonar, and touch-sensitive devices, and produces “ouput” by moving its appendages or generating sounds.
+A robot receives input from cameras, microphones, sonar, and touch-sensitive devices, and produces "ouput" by moving its appendages or generating sounds.
 The real world is a messier place than the abstract worlds we have been covering.
 A robot must deal with noisy data, faulty components, and other agents and events in the world that can affect changes in the environment.
 
@@ -20,49 +20,49 @@ We will not be concerned with this.
 High-level vision uses the findings of the low-level component to build a three-dimensional model of the objects depicted in the scene.
 This chapter covers one small aspect of high-level vision.
 
-## [ ](#){:#st0010}17.1 The Line-Labeling Problem
+## 17.1 The Line-Labeling Problem
 {:#s0010}
 {:.h1hd}
 
 In this chapter we look at the line-diagram labeling problem: Given a list of lines and the vertexes at which they intersect, how can we determine what the lines represent?
-For example, given the nine lines in [figure 17.1](#f0010), how can we interpret the diagram as a cube?
+For example, given the nine lines in [figure  17.1](#f0010), how can we interpret the diagram as a cube?
 
 ![f17-01-9780080571157](images/B9780080571157500170/f17-01-9780080571157.jpg)     
-Figure 17.1
+Figure  17.1
 !!!(span) {:.fignum}
 A Cube
 Before we can arrive at an interpretation, we have to agree on what the candidates are.
-After all, [figure 17.1](#f0010) could be just a hexagon with three lines in the middle.
-For the purposes of this chapter, we will consider only diagrams that depict one or more *polyhedra—*three-dimensional solid figures whose surfaces are flat faces bounded by straight lines.
+After all, [figure  17.1](#f0010) could be just a hexagon with three lines in the middle.
+For the purposes of this chapter, we will consider only diagrams that depict one or more *polyhedra-*three-dimensional solid figures whose surfaces are flat faces bounded by straight lines.
 In addition, we will only allow *trihedral* vertexes.
 That is, each vertex must be formed by the intersection of three faces, as in the corner of a cube, where the top, front, and side of the cube come together.
 A third restriction on diagrams is that no so-called *accidental* vertexes are allowed.
-For example, [figure 17.1](#f0010) might be a picture of three different cubes hanging in space, which just happen to line up so that the edge of one is aligned with the edge of another from our viewpoint.
+For example, [figure  17.1](#f0010) might be a picture of three different cubes hanging in space, which just happen to line up so that the edge of one is aligned with the edge of another from our viewpoint.
 We will assume that this is not the case.
 
 Given a diagram that fits these three restrictions, our goal is to identify each line, placing it in one of three classes:
 
-[ ](#){:#l0010}1. A convex line separates two visible faces of a polyhedron such that a line from one face to the other would lie inside the polyhedron.
+1.  A convex line separates two visible faces of a polyhedron such that a line from one face to the other would lie inside the polyhedron.
 It will be marked with a plus sign:+.
 !!!(p) {:.numlist}
 
-2. A concave line separates two faces of two polyhedra such that a line between the two spaces would pass through empty space.
-It will be marked with a minus sign:−.
+2.  A concave line separates two faces of two polyhedra such that a line between the two spaces would pass through empty space.
+It will be marked with a minus sign:-.
 !!!(p) {:.numlist}
 
-3. A boundary line denotes the same physical situation as a convex line, but the diagram is oriented in such a way that only one of the two faces of the polyhedron is visible.
+3.  A boundary line denotes the same physical situation as a convex line, but the diagram is oriented in such a way that only one of the two faces of the polyhedron is visible.
 Thus, the line marks the boundary between the polyhedron and the background.
-It will be marked with an arrow:→.
+It will be marked with an arrow:&rarr;.
 Traveling along the line from the tail to the point of the arrow, the polyhedron is on the right, and the background is on the left.
 !!!(p) {:.numlist}
 
-[Figure 17.2](#f0015) shows a labeling of the cube using these conventions.
+[Figure  17.2](#f0015) shows a labeling of the cube using these conventions.
 Vertex A is the near corner of the cube, and the three lines coming out of it are all convex lines.
 Lines GD and DF are concave lines, indicating the junction between the cube and the surface on which it is resting.
 The remaining lines are boundary lines, indicating that there is no physical connection between the cube and the background there, but that there are other sides of the cube that cannot be seen.
 
 ![f17-02-9780080571157](images/B9780080571157500170/f17-02-9780080571157.jpg)     
-Figure 17.2
+Figure  17.2
 !!!(span) {:.fignum}
 A Line-labeled Cube
 The line-labeling technique developed in this chapter is based on a simple idea.
@@ -70,12 +70,12 @@ First we enumerate all the possible vertexes, and all the possible labelings for
 It turns out there are only four different vertex types in the trihedral polygon world.
 We call them L, Y, W, and T vertexes, because of their shape.
 The Y and W vertexes are also known as forks and arrows, respectively.
-The vertexes are listed in [figure 17.3](#f0020).
+The vertexes are listed in [figure  17.3](#f0020).
 Each vertex imposes some constraints on the lines that compose it.
-For example, in a W vertex, the middle line can be labeled with a + or −, but not with an arrow.
+For example, in a W vertex, the middle line can be labeled with a + or -, but not with an arrow.
 
 ![f17-03-9780080571157](images/B9780080571157500170/f17-03-9780080571157.jpg)     
-Figure 17.3
+Figure  17.3
 !!!(span) {:.fignum}
 The Possible Vertexes and Labels
 Each line connects two vertexes, so it must satisfy both constraints.
@@ -90,15 +90,15 @@ We adjust N and V's possible labelings accordingly.
 Every time we add a constraint at a vertex, we repeat the whole process for all the neighboring vertexes, to give the constraint a chance to propagate as far as possible.
 When every vertex has been visited at least once and there are no more constraints to propagate, then we are done.
 
-[Figure 17.4](#f0025) illustrâtes this process.
+[Figure  17.4](#f0025) illustrates this process.
 On the left we start with a cube.
-All vertexes have all possible labelings, except that we know line GD is concave (−), indicating that the cube is resting on a surface.
+All vertexes have all possible labelings, except that we know line GD is concave (-), indicating that the cube is resting on a surface.
 This constrains vertex D in such a way that line DA must be convex (+).
 In the middle picture the constraint on vertex D has propagated to vertex A, and in the right-hand picture it propagates to vertex B.
 Soon, the whole cube will be uniquely labeled.
 
 ![f17-04-9780080571157](images/B9780080571157500170/f17-04-9780080571157.jpg)     
-Figure 17.4
+Figure  17.4
 !!!(span) {:.fignum}
 Propagating Constraints
 Many diagrams will be labeled uniquely by this constraint propagation process.
@@ -110,10 +110,10 @@ Keep going until the diagram is either unambiguous or inconsistent.
 
 That completes the sketch of the line-labeling algorithm.
 We are now ready to implement a labeling program.
-It's glossary is in [figure 17.5](#f0030).
+It's glossary is in [figure  17.5](#f0030).
 
 ![f17-05-9780080571157](images/B9780080571157500170/f17-05-9780080571157.jpg)     
-Figure 17.5
+Figure  17.5
 !!!(span) {:.fignum}
 Glossary for the Line-Labeling Program
 The two main data structures are the di agram and the vertex.
@@ -129,23 +129,17 @@ We give type information on the slots of vertex because it is a complicated data
 The syntax of defstruct is such that you cannot specify a : type without first specifying a default value.
 We chose L as the default value for the type slot at random, but note that it would have been an error to give `nil` as the default value, because `nil` is not of the right type.
 
-[ ](#){:#l0015}`(defstruct diagram "A diagram is a list of vertexes." vertexes)`
-!!!(p) {:.unnumlist}
+`(defstruct diagram "A diagram is a list of vertexes." vertexes)`
 
 `(defstruct (vertex (:print-function print-vertex))`
-!!!(p) {:.unnumlist}
 
-` (name   nil :type atom)`
-!!!(p) {:.unnumlist}
+`  (name      nil :type atom)`
 
-` (type    'L :type (member L Y W T))`
-!!!(p) {:.unnumlist}
+`  (type        'L :type (member L Y W T))`
 
-` (neighbors nil :type list) ; of vertex`
-!!!(p) {:.unnumlist}
+`  (neighbors nil :type list)  ; of vertex`
 
-` (labelings nil :type list)) ; of lists of (member + − L R)))))`
-!!!(p) {:.unnumlist}
+`  (labelings nil :type list)) ; of lists of (member + - L R)))))`
 
 An ambiguous vertex will have several labelings, while an unambiguous vertex has exactly one, and a vertex with no labelings indicates an impossible diagram.
 Initially we don't know which vertexes are what, so they all start with several possible labelings.
@@ -156,125 +150,90 @@ An R means that as you travel from the vertex to its neighbor, the polyhedron is
 Thus, an R is equivalent to an arrow pointing away from the vertex.
 The L is just the reverse.
 
-[ ](#){:#l0020}`(defun ambiguous-vertex-p (vertex)`
-!!!(p) {:.unnumlist}
+`(defun ambiguous-vertex-p (vertex)`
 
-` "A vertex is ambiguous if it has more than one labeling."`
-!!!(p) {:.unnumlist}
+`  "A vertex is ambiguous if it has more than one labeling."`
 
-` (> (number-of-labelings vertex) 1))`
-!!!(p) {:.unnumlist}
+`  (> (number-of-labelings vertex) 1))`
 
 `(defun number-of-labelings (vertex)`
-!!!(p) {:.unnumlist}
 
-` (length (vertex-labelings vertex)))`
-!!!(p) {:.unnumlist}
+`  (length (vertex-labelings vertex)))`
 
 `(defun impossible-vertex-p (vertex)`
-!!!(p) {:.unnumlist}
 
-` "A vertex is impossible if it has no labeling."`
-!!!(p) {:.unnumlist}
+`  "A vertex is impossible if it has no labeling."`
 
-` (null (vertex-labelings vertex)))`
-!!!(p) {:.unnumlist}
+`  (null (vertex-labelings vertex)))`
 
 `(defun impossible-diagram-p (diagram)`
-!!!(p) {:.unnumlist}
 
-` "An impossible diagram is one with an impossible vertex."`
-!!!(p) {:.unnumlist}
+`  "An impossible diagram is one with an impossible vertex."`
 
-` (some #'impossible-vertex-p (diagram-vertexes diagram)))`
-!!!(p) {:.unnumlist}
+`  (some #'impossible-vertex-p (diagram-vertexes diagram)))`
 
 `(defun possible-labelings (vertex-type)\`
-!!!(p) {:.unnumlist}
 
-` "The list of possible labelings for a given vertex type."`
-!!!(p) {:.unnumlist}
+`  "The list of possible labelings for a given vertex type."`
 
-` ;; In these labelings, R means an arrow pointing away from`
-!!!(p) {:.unnumlist}
+`  ;; In these labelings, R means an arrow pointing away from`
 
-` ;; the vertex, L means an arrow pointing towards it.`
-!!!(p) {:.unnumlist}
+`  ;; the vertex, L means an arrow pointing towards it.`
 
-`  (case vertex-type`
-!!!(p) {:.unnumlist}
+`    (case vertex-type`
 
-`  ((L) '((R L) (L R) (+ R) (L +) (- L) (R -)))`
-!!!(p) {:.unnumlist}
+`    ((L) '((R L) (L R) (+ R) (L +) (- L) (R -)))`
 
-`  ((Y) '((+ + +) ( ) (L R -) (− L R) (R - L)))`
-!!!(p) {:.unnumlist}
+`    ((Y) '((+ + +) ( ) (L R -) (- L R) (R - L)))`
 
-`  ((T) '((R L +) (R L -) (R L L) (R L R)))`
-!!!(p) {:.unnumlist}
+`    ((T) '((R L +) (R L -) (R L L) (R L R)))`
 
-`  ((W) '((L R +) (− − +) (+ + −)))))`
-!!!(p) {:.unnumlist}
+`    ((W) '((L R +) (- - +) (+ + -)))))`
 
-## [ ](#){:#st0015}17.2 Combining Constraints and Searching
+## 17.2 Combining Constraints and Searching
 {:#s0015}
 {:.h1hd}
 
 The main function `print-labelings` takes a diagram as input, reduces the number of labelings on each vertex by constraint propagation, and then searches for all consistent interpretations.
 Output is printed before and after each step.
 
-[ ](#){:#l0025}`(defun print-labelings (diagram)`
-!!!(p) {:.unnumlist}
+`(defun print-labelings (diagram)`
 
-` "Label the diagram by propagating constraints and then`
-!!!(p) {:.unnumlist}
+`  "Label the diagram by propagating constraints and then`
 
-` searching for solutions if necessary.
+`  searching for solutions if necessary.
 Print results."`
-!!!(p) {:.unnumlist}
 
-` (show-diagram diagram "~&The initial diagram is:")`
-!!!(p) {:.unnumlist}
+`  (show-diagram diagram "~&The initial diagram is:")`
 
-` (every #'propagate-constraints (diagram-vertexes diagram))`
-!!!(p) {:.unnumlist}
+`  (every #'propagate-constraints (diagram-vertexes diagram))`
 
-` (show-diagram diagram`
-!!!(p) {:.unnumlist}
+`  (show-diagram diagram`
 
-`       "~2&After constraint propagation the diagram is:")`
-!!!(p) {:.unnumlist}
+`              "~2&After constraint propagation the diagram is:")`
 
-` (let* ((solutions (if (impossible-diagram-p diagram)`
-!!!(p) {:.unnumlist}
+`  (let* ((solutions (if (impossible-diagram-p diagram)`
 
-`         nil`
-!!!(p) {:.unnumlist}
+`                  nil`
 
-`         (search-solutions diagram)))`
-!!!(p) {:.unnumlist}
+`                  (search-solutions diagram)))`
 
-`    (n (length solutions)))`
-!!!(p) {:.unnumlist}
+`        (n (length solutions)))`
 
-`  (unless (= n 1)`
-!!!(p) {:.unnumlist}
+`    (unless (= n 1)`
 
-`   (format t "~2&There are ~ r solution~:p:" n)`
-!!!(p) {:.unnumlist}
+`      (format t "~2&There are ~  r solution~:p:" n)`
 
-`   (mapc #'show-diagram solutions)))`
-!!!(p) {:.unnumlist}
+`      (mapc #'show-diagram solutions)))`
 
-` (values))`
-!!!(p) {:.unnumlist}
+`  (values))`
 
 The function `propagate-constraints` takes a vertex and considers the constraints imposed by neighboring vertexes to get a list of all the `consistent-labelings` for the vertex.
 If the number of consistent labelings is less than the number before we started, then the neighbors' constraints have had an effect on this vertex, so we propagate the new-found constraints on this vertex back to each neighbor.
 The function returns nil and thus immediately stops the propagation if there is an impossible vertex.
 Otherwise, propagation continues until there are no more changes to the labelings.
 
-The whole propagation algorithm is started by a call to `every in print−labelings,` which propagates constraints from each vertex in the diagram.
+The whole propagation algorithm is started by a call to `every in print-labelings,` which propagates constraints from each vertex in the diagram.
 But it is not obvious that this is all that is required.
 After propagating from each vertex once, couldn't there be another vertex that needs relabeling?
 The only vertex that could possibly need relabeling would be one that had a neighbor changed since its last update.
@@ -285,79 +244,56 @@ The next question worth asking is if the algorithm is guaranteed to terminate.
 Clearly, it is, because `propagate-constraints` can only produce recursive calls when it removes a labeling.
 But since there are a finite number of labelings initially (no more than six per vertex), there must be a finite number of calls to `propagate-constraints.`
 
-[ ](#){:#l0030}`(defun propagate-constraints (vertex)`
-!!!(p) {:.unnumlist}
+`(defun propagate-constraints (vertex)`
 
-` "Reduce the labelings on vertex by considering neighbors.`
-!!!(p) {:.unnumlist}
+`  "Reduce the labelings on vertex by considering neighbors.`
 
-` If we can reduce, propagate the constraints to each neighbor.`
-!!!(p) {:.unnumlist}
+`  If we can reduce, propagate the constraints to each neighbor.`
 
-` ;; Return nil only when the constraints lead to an impossibility`
-!!!(p) {:.unnumlist}
+`  ;; Return nil only when the constraints lead to an impossibility`
 
-` (let ((old-num (number-of-labelings vertex)))`
-!!!(p) {:.unnumlist}
+`  (let ((old-num (number-of-labelings vertex)))`
 
-`  (setf (vertex-labelings vertex) (consistent-labelings vertex))`
-!!!(p) {:.unnumlist}
+`    (setf (vertex-labelings vertex) (consistent-labelings vertex))`
 
-`  (unless (impossible-vertex-p vertex)`
-!!!(p) {:.unnumlist}
+`    (unless (impossible-vertex-p vertex)`
 
-`   (when (< (number-of-labelings vertex) old-num)`
-!!!(p) {:.unnumlist}
+`      (when (< (number-of-labelings vertex) old-num)`
 
-`    (every #'propagate-constraints (vertex-neighbors vertex)))`
-!!!(p) {:.unnumlist}
+`        (every #'propagate-constraints (vertex-neighbors vertex)))`
 
-`   t)))`
-!!!(p) {:.unnumlist}
+`      t)))`
 
 The function `consistent-labelings` is passed a vertex.
 It gets all the labels for this vertex from the neighboring vertexes, collecting them in `neighbor-labels`.
 It then checks all the labels on the current vertex, keeping only the ones that are consistent with all the neighbors' constraints.
 The auxiliary function `labels-for` finds the labels for a particular neighbor at a vertex, and reverse-1 abel accounts for the fact that L and R labels are interpreted with respect to the vertex they point at.
 
-[ ](#){:#l0035}`(defun consistent-labelings (vertex)`
-!!!(p) {:.unnumlist}
+`(defun consistent-labelings (vertex)`
 
-` "Return the set of labelings that are consistent with neighbors."`
-!!!(p) {:.unnumlist}
+`  "Return the set of labelings that are consistent with neighbors."`
 
-` (let ((neighbor-labels`
-!!!(p) {:.unnumlist}
+`  (let ((neighbor-labels`
 
-`     (mapcar #'(lambda (neighbor) (labels-for neighbor vertex))`
-!!!(p) {:.unnumlist}
+`          (mapcar #'(lambda (neighbor) (labels-for neighbor vertex))`
 
-`       (vertex-neighbors vertex))))`
-!!!(p) {:.unnumlist}
+`              (vertex-neighbors vertex))))`
 
-`  :: Eliminate labelings that don't have` all `lines consistent`
-!!!(p) {:.unnumlist}
+`    :: Eliminate labelings that don't have` all `lines consistent`
 
-`  :: with the corresponding line's label from the neighbor.`
-!!!(p) {:.unnumlist}
+`    :: with the corresponding line's label from the neighbor.`
 
-`  :: Account for the L-R mismatch with reverse-label.`
-!!!(p) {:.unnumlist}
+`    :: Account for the L-R mismatch with reverse-label.`
 
-`  (find-all-if`
-!!!(p) {:.unnumlist}
+`    (find-all-if`
 
-`   #'(lambda (labeling)`
-!!!(p) {:.unnumlist}
+`      #'(lambda (labeling)`
 
-`     (every #'member (mapcar #'reverse-label labeling)`
-!!!(p) {:.unnumlist}
+`          (every #'member (mapcar #'reverse-label labeling)`
 
-`       neighbor-labels))`
-!!!(p) {:.unnumlist}
+`              neighbor-labels))`
 
-`   (vertex-labelings vertex))))`
-!!!(p) {:.unnumlist}
+`      (vertex-labelings vertex))))`
 
 Constraint propagation is often sufficient to yield a unique interpretation.
 But sometimes the diagram is still underconstrained, and we will have to search for solutions.
@@ -368,101 +304,71 @@ In effect, we are guessing that a labeling is a correct one.
 We call `propagate-constraints;` if it falls, then we have guessed wrong, so there are no solutions with this labeling.
 But if it succeeds, then we call `search-solutions` recursively to give us the list of solutions generated by this labeling.
 
-[ ](#){:#l0040}`(defun search-solutions (diagram)`
-!!!(p) {:.unnumlist}
+`(defun search-solutions (diagram)`
 
-` "Try` all `labelings for one ambiguous vertex.
+`  "Try` all `labelings for one ambiguous vertex.
 and pro pagate."`
-!!!(p) {:.unnumlist}
 
-` :: If there is no ambiguous vertex, return the diagram.`
-!!!(p) {:.unnumlist}
+`  :: If there is no ambiguous vertex, return the diagram.`
 
-` :: If there is one.
+`  :: If there is one.
 make copies of the diagram trying each of`
-!!!(p) {:.unnumlist}
 
-` :: the possible labelings.
+`  :: the possible labelings.
 Propagate constraints and append`
-!!!(p) {:.unnumlist}
 
-` ::` all `the solutions together.`
-!!!(p) {:.unnumlist}
+`  ::` all `the solutions together.`
 
-` (let ((v (find-if #'ambiguous-vertex-p`
-!!!(p) {:.unnumlist}
+`  (let ((v (find-if #'ambiguous-vertex-p`
 
-`            (diagram-vertexes diagram))))`
-!!!(p) {:.unnumlist}
+`                        (diagram-vertexes diagram))))`
 
-`  (if (null v)`
-!!!(p) {:.unnumlist}
+`    (if (null v)`
 
-`     (list diagram)`
-!!!(p) {:.unnumlist}
+`          (list diagram)`
 
-`     (mapcan`
-!!!(p) {:.unnumlist}
+`          (mapcan`
 
-`      #'(lambda (v-labeling)`
-!!!(p) {:.unnumlist}
+`            #'(lambda (v-labeling)`
 
-` (let* ((diagram2 (make-copy-diagram diagram))`
-!!!(p) {:.unnumlist}
+`  (let* ((diagram2 (make-copy-diagram diagram))`
 
-`   (v2 (find-vertex (vertex-name v) diagram2)))`
-!!!(p) {:.unnumlist}
+`      (v2 (find-vertex (vertex-name v) diagram2)))`
 
-` (setf (vertex-labelings v2) (list v-labeling))`
-!!!(p) {:.unnumlist}
+`  (setf (vertex-labelings v2) (list v-labeling))`
 
-` (if (propagate-constraints v2)`
-!!!(p) {:.unnumlist}
+`  (if (propagate-constraints v2)`
 
-`   (search-solutions diagram2)`
-!!!(p) {:.unnumlist}
+`      (search-solutions diagram2)`
 
-`   nil)))`
-!!!(p) {:.unnumlist}
+`      nil)))`
 
 `(vertex-labelings v)))))`
-!!!(p) {:.unnumlist}
 
 That's all there is to the algorithm; all that remains are some auxiliary functions.
 Here are three of them:
 
-[ ](#){:#l0045}`(defun labels-for (vertex from)`
-!!!(p) {:.unnumlist}
+`(defun labels-for (vertex from)`
 
-` "Return all the labels for the line going to vertex."`
-!!!(p) {:.unnumlist}
+`  "Return all the labels for the line going to vertex."`
 
-` (let ((pos (position from (vertex-neighbors vertex))))`
-!!!(p) {:.unnumlist}
+`  (let ((pos (position from (vertex-neighbors vertex))))`
 
-`  (mapcar #'(lambda (labeling) (nth pos labeling))`
-!!!(p) {:.unnumlist}
+`    (mapcar #'(lambda (labeling) (nth pos labeling))`
 
-`      (vertex-labelings vertex))))`
-!!!(p) {:.unnumlist}
+`            (vertex-labelings vertex))))`
 
-[ ](#){:#l0050}`(defun reverse-label (label)`
-!!!(p) {:.unnumlist}
+`(defun reverse-label (label)`
 
-` "Account for the fact that one vertex's right is another's left."`
-!!!(p) {:.unnumlist}
+`  "Account for the fact that one vertex's right is another's left."`
 
-` (case label (L 'R) (R 'L) (otherwise label)))`
-!!!(p) {:.unnumlist}
+`  (case label (L 'R) (R 'L) (otherwise label)))`
 
-[ ](#){:#l0055}`(defun find-vertex (name diagram)`
-!!!(p) {:.unnumlist}
+`(defun find-vertex (name diagram)`
 
-` "Find the vertex in the given diagram with the given name."`
-!!!(p) {:.unnumlist}
+`  "Find the vertex in the given diagram with the given name."`
 
-` (find name (diagram-vertexes diagram) :key #'vertex-name))`
-!!!(p) {:.unnumlist}
+`  (find name (diagram-vertexes diagram) :key #'vertex-name))`
 
 Here are the printing functions.
 `print-vertex` prints a vertex in short form.
@@ -470,126 +376,88 @@ It obeys the `print` convention of returning the first argument.
 The functions `show-vertex` and `show-diagram` print more de tailed forms.
 They obey the convention f or `describe`-like functions of returning no values at all.
 
-[ ](#){:#l0060}`(defun print-vertex (vertex stream depth)`
-!!!(p) {:.unnumlist}
+`(defun print-vertex (vertex stream depth)`
 
-` "Print a vertex in the short form."`
-!!!(p) {:.unnumlist}
+`  "Print a vertex in the short form."`
 
-` (d`e`clar`e `(ignore depth))`
-!!!(p) {:.unnumlist}
+`  (d`e`clar`e `(ignore depth))`
 
-` (format stream "~a/~d" (vertex-name vertex)`
-!!!(p) {:.unnumlist}
+`  (format stream "~a/~d" (vertex-name vertex)`
 
-`      (number-of-labelings vertex))`
-!!!(p) {:.unnumlist}
+`            (number-of-labelings vertex))`
 
-` vertex)`
-!!!(p) {:.unnumlist}
+`  vertex)`
 
-[ ](#){:#l0065}`(defun show-vertex (vertex &optional (stream t))`
-!!!(p) {:.unnumlist}
+`(defun show-vertex (vertex &optional (stream t))`
 
-` "Print a vertex in a long form, on a new line."`
-!!!(p) {:.unnumlist}
+`  "Print a vertex in a long form, on a new line."`
 
-` (format stream "~&~a ~d:" vertex (vertex-type vertex))`
-!!!(p) {:.unnumlist}
+`  (format stream "~&~a ~d:" vertex (vertex-type vertex))`
 
-` (mapc #'(lambda (neighbor labels)`
-!!!(p) {:.unnumlist}
+`  (mapc #'(lambda (neighbor labels)`
 
-`      (format stream " ~a~a=[~{~a~}]" (vertex-name vertex)`
-!!!(p) {:.unnumlist}
+`            (format stream " ~a~a=[~{~a~}]" (vertex-name vertex)`
 
-`          (vertex-name neighbor) labels))`
-!!!(p) {:.unnumlist}
+`                    (vertex-name neighbor) labels))`
 
-`   (vertex-neighbors vertex)`
-!!!(p) {:.unnumlist}
+`      (vertex-neighbors vertex)`
 
-`   (matrix-transpose (vertex-labelings vertex)))`
-!!!(p) {:.unnumlist}
+`      (matrix-transpose (vertex-labelings vertex)))`
 
-` (values))`
-!!!(p) {:.unnumlist}
+`  (values))`
 
-[ ](#){:#l0070}`(defun show-diagram (diagram &optional (title "~2&Diagram:")`
-!!!(p) {:.unnumlist}
+`(defun show-diagram (diagram &optional (title "~2&Diagram:")`
 
-`               (stream t))`
-!!!(p) {:.unnumlist}
+`                              (stream t))`
 
-` "Print a diagram in a long form.
+`  "Print a diagram in a long form.
 Include a title."`
-!!!(p) {:.unnumlist}
 
-` (format stream title)`
-!!!(p) {:.unnumlist}
+`  (format stream title)`
 
-` (mapc #'show-vertex (diagram-vertexes diagram))`
-!!!(p) {:.unnumlist}
+`  (mapc #'show-vertex (diagram-vertexes diagram))`
 
-` (let ((n (reduce #'* (mapcar #'number-of-labelings`
-!!!(p) {:.unnumlist}
+`  (let ((n (reduce #'* (mapcar #'number-of-labelings`
 
-`                (diagram-vertexes diagram)))))`
-!!!(p) {:.unnumlist}
+`                                (diagram-vertexes diagram)))))`
 
-` (when (> n 1)`
-!!!(p) {:.unnumlist}
+`  (when (> n 1)`
 
-`  (format stream "~&For ~:d interpretation ~:p." n))`
-!!!(p) {:.unnumlist}
+`    (format stream "~&For ~:d interpretation  ~:p." n))`
 
-` (values)))`
-!!!(p) {:.unnumlist}
+`  (values)))`
 
 `Note` that `matrix-transpose` is called by `show-vertex` to turn the matrix of labelings on its side.
 It works like this:
 
-[ ](#){:#l0075}`(possible-labelings 'Y)`
-!!!(p) {:.unnumlist}
+`(possible-labelings 'Y)`
 
 `((+ + +)`
-!!!(p) {:.unnumlist}
 
-` (- - -)`
-!!!(p) {:.unnumlist}
+`  (- - -)`
 
-` (L R -)`
-!!!(p) {:.unnumlist}
+`  (L R -)`
 
-` (− L R)`
-!!!(p) {:.unnumlist}
+`  (- L R)`
 
-` (R - L))`
-!!!(p) {:.unnumlist}
+`  (R - L))`
 
 `(matrix-transpose (possible-labelings 'Y))`
-!!!(p) {:.unnumlist}
 
-`((+ − L - R)`
-!!!(p) {:.unnumlist}
+`((+ - L - R)`
 
-` (+ − R L -)`
-!!!(p) {:.unnumlist}
+`  (+ - R L -)`
 
-` (+ − − R L))`
-!!!(p) {:.unnumlist}
+`  (+ - - R L))`
 
 The implementation of `matrix-transpose` is surprisingly concise.
 It is an old Lisp trick, and well worth understanding:
 
-[ ](#){:#l0080}`(defun matrix-transpose (matrix)`
-!!!(p) {:.unnumlist}
+`(defun matrix-transpose (matrix)`
 
-` "Turn a matrix on its side."`
-!!!(p) {:.unnumlist}
+`  "Turn a matrix on its side."`
 
-` (if matrix (apply #'mapcar #'list matrix)))`
-!!!(p) {:.unnumlist}
+`  (if matrix (apply #'mapcar #'list matrix)))`
 
 The remaining code has to do with creating diagrams.
 We need some handy way of specifying diagrams.
@@ -599,35 +467,27 @@ But since there is not yet a Common Lisp standard for interacting with such devi
 The macro `defdiagram` defines and names a diagram.
 The name is followed by a list of vertex descriptions.
 Each description is a list consisting of the name of a vertex, the vertex type (Y, A, L, or T), and the names of the neighboring vertexes.
-Here again is the `defdiagram` description for the cube shown in [figure 17.6](#f0035).
+Here again is the `defdiagram` description for the cube shown in [figure  17.6](#f0035).
 
 ![f17-06-9780080571157](images/B9780080571157500170/f17-06-9780080571157.jpg)     
-Figure 17.6
+Figure  17.6
 !!!(span) {:.fignum}
 A Cube
-[ ](#){:#l0085}`(defdiagram cube`
-!!!(p) {:.unnumlist}
+`(defdiagram cube`
 
-` (a Y b c d)`
-!!!(p) {:.unnumlist}
+`  (a Y b c d)`
 
-` (b W g e a)`
-!!!(p) {:.unnumlist}
+`  (b W g e a)`
 
-` (c W e f a)`
-!!!(p) {:.unnumlist}
+`  (c W e f a)`
 
-` (d W f g a)`
-!!!(p) {:.unnumlist}
+`  (d W f g a)`
 
-` (e L c b)`
-!!!(p) {:.unnumlist}
+`  (e L c b)`
 
-` (f L d c)`
-!!!(p) {:.unnumlist}
+`  (f L d c)`
 
-` (g L b d))`
-!!!(p) {:.unnumlist}
+`  (g L b d))`
 
 The macro `defdiagram` calls `construct-diagram` to do the real work.
 It would be feasible to have `defdiagram` expand into a `defvar,` making the names be special variables.
@@ -637,410 +497,283 @@ Thus, the user cannot corrupt the original diagrams stored in the table.
 Another possibility would be to have `defdiagram` expand into a function definition for `name` that returns a copy of the diagram.
 I chose to keep the diagram name space separate from the function name space, since names like `cube` make sense in both spaces.
 
-[ ](#){:#l0090}`(defmacro defdiagram (name &rest vertex-descriptors)`
-!!!(p) {:.unnumlist}
+`(defmacro defdiagram (name &rest vertex-descriptors)`
 
-` "Define a diagram.
+`  "Define a diagram.
 A copy can be gotten by (diagram name)."`
-!!!(p) {:.unnumlist}
 
-` '(put-diagram '.name (construct-diagram '.vertex-descriptors)))`
-!!!(p) {:.unnumlist}
+`  '(put-diagram '.name (construct-diagram '.vertex-descriptors)))`
 
 `(let ((diagrams (make-hash-table)))`
-!!!(p) {:.unnumlist}
 
-[ ](#){:#l0095}`(defun diagram (name)`
-!!!(p) {:.unnumlist}
+`(defun diagram (name)`
 
-` "Get a fresh copy of the diagram with this name."`
-!!!(p) {:.unnumlist}
+`  "Get a fresh copy of the diagram with this name."`
 
-` (make-copy-diagram (gethash name diagrams)))`
-!!!(p) {:.unnumlist}
+`  (make-copy-diagram (gethash name diagrams)))`
 
-[ ](#){:#l0100}`(defun put-diagram (name diagram)`
-!!!(p) {:.unnumlist}
+`(defun put-diagram (name diagram)`
 
-` "Store a diagram under a name."`
-!!!(p) {:.unnumlist}
+`  "Store a diagram under a name."`
 
-` (setf (gethash name diagrams) diagram)`
-!!!(p) {:.unnumlist}
+`  (setf (gethash name diagrams) diagram)`
 
-` name))`
-!!!(p) {:.unnumlist}
+`  name))`
 
 The function `construct-diagram` translates each vertex description, using `construct-vertex`, and then fills in the neighbors of each vertex.
 
-[ ](#){:#l0105}`(defun construct-diagram (vertex-descriptors)`
-!!!(p) {:.unnumlist}
+`(defun construct-diagram (vertex-descriptors)`
 
-` "Build a new diagram from a set of vertex descriptor."`
-!!!(p) {:.unnumlist}
+`  "Build a new diagram from a set of vertex descriptor."`
 
-` (let ((diagram (make-diagram)))`
-!!!(p) {:.unnumlist}
+`  (let ((diagram (make-diagram)))`
 
-`  :: Put in the vertexes`
-!!!(p) {:.unnumlist}
+`    :: Put in the vertexes`
 
-`  (setf (diagram-vertexes diagram)`
-!!!(p) {:.unnumlist}
+`    (setf (diagram-vertexes diagram)`
 
-`     (mapcar #'construct-vertex vertex-descriptors))`
-!!!(p) {:.unnumlist}
+`          (mapcar #'construct-vertex vertex-descriptors))`
 
-`  :: Put in the neighbors for each vertex`
-!!!(p) {:.unnumlist}
+`    :: Put in the neighbors for each vertex`
 
-`  (dolist (v-d vertex-descriptors)`
-!!!(p) {:.unnumlist}
+`    (dolist (v-d vertex-descriptors)`
 
-`   (setf (vertex-neighbors (find-vertex (first v-d) diagram))`
-!!!(p) {:.unnumlist}
+`      (setf (vertex-neighbors (find-vertex (first v-d) diagram))`
 
-`      (mapcar #'(lambda (neighbor)`
-!!!(p) {:.unnumlist}
+`            (mapcar #'(lambda (neighbor)`
 
-`          (find-vertex neighbor diagram))`
-!!!(p) {:.unnumlist}
+`                    (find-vertex neighbor diagram))`
 
-`         (v-d-neighbors v-d))))`
-!!!(p) {:.unnumlist}
+`                  (v-d-neighbors v-d))))`
 
-`  diagram))`
-!!!(p) {:.unnumlist}
+`    diagram))`
 
-[ ](#){:#l0110}`(defun construct-vertex (vertex-descriptor)`
-!!!(p) {:.unnumlist}
+`(defun construct-vertex (vertex-descriptor)`
 
-` "Build the vertex corresponding to the descriptor."`
-!!!(p) {:.unnumlist}
+`  "Build the vertex corresponding to the descriptor."`
 
-` :: Descriptors are like: (x L y z)`
-!!!(p) {:.unnumlist}
+`  :: Descriptors are like: (x L y z)`
 
-` (make-vertex`
-!!!(p) {:.unnumlist}
+`  (make-vertex`
 
-`  :name (first vertex-descriptor)`
-!!!(p) {:.unnumlist}
+`    :name (first vertex-descriptor)`
 
-`  :type (second vertex-descriptor)`
-!!!(p) {:.unnumlist}
+`    :type (second vertex-descriptor)`
 
-`  :labelings (possible-labelings (second vertex-descriptor))))`
-!!!(p) {:.unnumlist}
+`    :labelings (possible-labelings (second vertex-descriptor))))`
 
 `(defun v-d-neighbors (vertex-descriptor)`
-!!!(p) {:.unnumlist}
 
-` "The neighboring vertex names in a vertex descriptor."`
-!!!(p) {:.unnumlist}
+`  "The neighboring vertex names in a vertex descriptor."`
 
-` (rest (rest vertex-descriptor)))`
-!!!(p) {:.unnumlist}
+`  (rest (rest vertex-descriptor)))`
 
 The `defstruct` for `diagram` automatically creates the function `copy-diagram,` but it just copies each field, without copying the contents of each field.
 Thus we need `make-copy-diagram` to create a copy that shares no structure with the original.
 
-[ ](#){:#l0115}`(defun make-copy-diagram (diagram)`
-!!!(p) {:.unnumlist}
+`(defun make-copy-diagram (diagram)`
 
-` "Make a copy of a diagram, preserving connectivity."`
-!!!(p) {:.unnumlist}
+`  "Make a copy of a diagram, preserving connectivity."`
 
-` (let* ((new (make-diagram`
-!!!(p) {:.unnumlist}
+`  (let* ((new (make-diagram`
 
-`      :vertexes (mapcar #'copy-vertex`
-!!!(p) {:.unnumlist}
+`            :vertexes (mapcar #'copy-vertex`
 
-`               (diagram-vertexes diagram)))))`
-!!!(p) {:.unnumlist}
+`                              (diagram-vertexes diagram)))))`
 
-`  :: Put in the neighbors for each vertex`
-!!!(p) {:.unnumlist}
+`    :: Put in the neighbors for each vertex`
 
-`  (dolist (v (diagram-vertexes new))`
-!!!(p) {:.unnumlist}
+`    (dolist (v (diagram-vertexes new))`
 
-`   (setf (vertex-neighbors v)`
-!!!(p) {:.unnumlist}
+`      (setf (vertex-neighbors v)`
 
-`       (mapcar #'(lambda (neighbor)`
-!!!(p) {:.unnumlist}
+`              (mapcar #'(lambda (neighbor)`
 
-`            (find-vertex (vertex-name neighbor) new))`
-!!!(p) {:.unnumlist}
+`                        (find-vertex (vertex-name neighbor) new))`
 
-`          (vertex-neighbors v))))`
-!!!(p) {:.unnumlist}
+`                    (vertex-neighbors v))))`
 
-`  new))`
-!!!(p) {:.unnumlist}
+`    new))`
 
-## [ ](#){:#st0020}17.3 Labeling Diagrams
+## 17.3 Labeling Diagrams
 {:#s0020}
 {:.h1hd}
 
 We are now ready to try labeling diagrams.
 First the cube:
 
-[ ](#){:#l0120}`> (print-labelings (diagram 'cube))`
-!!!(p) {:.unnumlist}
+`> (print-labelings (diagram 'cube))`
 
 `The initial diagram is:`
-!!!(p) {:.unnumlist}
 
-` A/5 Y: AB=[+−L-R] AC=[+−RL-] AD=[+--RL]`
-!!!(p) {:.unnumlist}
+`  A/5 Y: AB=[+-L-R] AC=[+-RL-] AD=[+--RL]`
 
-` B/3 W: BG=[L−+] BE=[R−+] BA=[++−]`
-!!!(p) {:.unnumlist}
+`  B/3 W: BG=[L-+] BE=[R-+] BA=[++-]`
 
-` C/3 W: CE=[L−+] CF=[R−+] CA=[++−]`
-!!!(p) {:.unnumlist}
+`  C/3 W: CE=[L-+] CF=[R-+] CA=[++-]`
 
-` D/3 W: DF=[L−+] DG=[R−+] DA=[++−]`
-!!!(p) {:.unnumlist}
+`  D/3 W: DF=[L-+] DG=[R-+] DA=[++-]`
 
-` E/6 L: EC=[RL+L-R] EB=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  E/6 L: EC=[RL+L-R] EB=[LRR+L-]`
 
-` F/6 L: FD=[RL+L-R] FC=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  F/6 L: FD=[RL+L-R] FC=[LRR+L-]`
 
-` G/6 L: GB=[RL+L-R] GD=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  G/6 L: GB=[RL+L-R] GD=[LRR+L-]`
 
 `For 29,160 interpr`e`tations.`
-!!!(p) {:.unnumlist}
 
-[ ](#){:#l0125}`After constraint propagation the diagram is:`
-!!!(p) {:.unnumlist}
+`After constraint propagation the diagram is:`
 
-` A/1 Y: AB=[+] AC=[+] AD=[+]`
-!!!(p) {:.unnumlist}
+`  A/1 Y: AB=[+] AC=[+] AD=[+]`
 
-` B/2 W: BG=[L-] BE=[R-] BA=[++]`
-!!!(p) {:.unnumlist}
+`  B/2 W: BG=[L-] BE=[R-] BA=[++]`
 
-` C/2 W: CE=[L-] CF=[R-] CA=[++]`
-!!!(p) {:.unnumlist}
+`  C/2 W: CE=[L-] CF=[R-] CA=[++]`
 
-` D/2 W: DF=[L-] DG=[R-] DA=[++]`
-!!!(p) {:.unnumlist}
+`  D/2 W: DF=[L-] DG=[R-] DA=[++]`
 
-` E/3 L: EC=[R-R] EB=[LL-]`
-!!!(p) {:.unnumlist}
+`  E/3 L: EC=[R-R] EB=[LL-]`
 
-` F/3 L: FD=[R-R] FC=[LL-]`
-!!!(p) {:.unnumlist}
+`  F/3 L: FD=[R-R] FC=[LL-]`
 
-` G/3 L: GB=[R-R] GD=[LL-]`
-!!!(p) {:.unnumlist}
+`  G/3 L: GB=[R-R] GD=[LL-]`
 
 `For 216 interpr`e`tations.`
-!!!(p) {:.unnumlist}
 
-[ ](#){:#l0130}`There are four solutions:`
-!!!(p) {:.unnumlist}
+`There are four solutions:`
 
 `Diagram:`
-!!!(p) {:.unnumlist}
 
-` A/1 Y: AB=[+] AC=[+] AD=[+]`
-!!!(p) {:.unnumlist}
+`  A/1 Y: AB=[+] AC=[+] AD=[+]`
 
-` B/1 W: BG=[L] BE=[R] BA=[+]`
-!!!(p) {:.unnumlist}
+`  B/1 W: BG=[L] BE=[R] BA=[+]`
 
-` C/l W: CE=[L] CF=[R] CA=[+]`
-!!!(p) {:.unnumlist}
+`  C/l W: CE=[L] CF=[R] CA=[+]`
 
-` D/1 W: DF=[L] DG=[R] DA=[+]`
-!!!(p) {:.unnumlist}
+`  D/1 W: DF=[L] DG=[R] DA=[+]`
 
-` E/l L: EC=[R] EB=[L]`
-!!!(p) {:.unnumlist}
+`  E/l L: EC=[R] EB=[L]`
 
-` F/1 L: FD=[R] FC=[L]`
-!!!(p) {:.unnumlist}
+`  F/1 L: FD=[R] FC=[L]`
 
-` G/1 L: GB=[R] GD=[L]`
-!!!(p) {:.unnumlist}
+`  G/1 L: GB=[R] GD=[L]`
 
-[ ](#){:#l0135}` Diagram:`
-!!!(p) {:.unnumlist}
+`  Diagram:`
 
-` A/1 Y: AD=[+] AC=[+] AD=[+]`
-!!!(p) {:.unnumlist}
+`  A/1 Y: AD=[+] AC=[+] AD=[+]`
 
-` B/1 W: BG=[L] BE=[R] BA=[+]`
-!!!(p) {:.unnumlist}
+`  B/1 W: BG=[L] BE=[R] BA=[+]`
 
-` C/l W: CE=[L] CF=[R] CA=[+]`
-!!!(p) {:.unnumlist}
+`  C/l W: CE=[L] CF=[R] CA=[+]`
 
-` D/1 W: DF=[-] DG=[-] DA=[+]`
-!!!(p) {:.unnumlist}
+`  D/1 W: DF=[-] DG=[-] DA=[+]`
 
-` E/l L: EC=[R] EB=[L]`
-!!!(p) {:.unnumlist}
+`  E/l L: EC=[R] EB=[L]`
 
-` F/1 L: FD=[-] FC=[L]`
-!!!(p) {:.unnumlist}
+`  F/1 L: FD=[-] FC=[L]`
 
-` G/1 L: GB=[R] GD=[-]`
-!!!(p) {:.unnumlist}
+`  G/1 L: GB=[R] GD=[-]`
 
-[ ](#){:#l0140}`Diagram:`
-!!!(p) {:.unnumlist}
+`Diagram:`
 
-` A/1 Y: AB=[+] AC=[+] AD=[+]`
-!!!(p) {:.unnumlist}
+`  A/1 Y: AB=[+] AC=[+] AD=[+]`
 
-` B/1 W: BG=[L] BE=[R] BA=[+]`
-!!!(p) {:.unnumlist}
+`  B/1 W: BG=[L] BE=[R] BA=[+]`
 
-` C/l W: CE=[-] CF=[-] CA=[+]`
-!!!(p) {:.unnumlist}
+`  C/l W: CE=[-] CF=[-] CA=[+]`
 
-` D/1 W: DF=[L] DG=[R] DA=[+]`
-!!!(p) {:.unnumlist}
+`  D/1 W: DF=[L] DG=[R] DA=[+]`
 
-` E/l L: EC=[-] EB=[L]`
-!!!(p) {:.unnumlist}
+`  E/l L: EC=[-] EB=[L]`
 
-` F/1 L: FD=[R] FC=[-]`
-!!!(p) {:.unnumlist}
+`  F/1 L: FD=[R] FC=[-]`
 
-` G/1 L: GB=[R] GD=[L]`
-!!!(p) {:.unnumlist}
+`  G/1 L: GB=[R] GD=[L]`
 
-[ ](#){:#l0145}`Diagram:`
-!!!(p) {:.unnumlist}
+`Diagram:`
 
-` A/1 Y: AB=[+] AC=[+] AD=[+]`
-!!!(p) {:.unnumlist}
+`  A/1 Y: AB=[+] AC=[+] AD=[+]`
 
-` B/1 W: BG=[-] BE=[-] BA=[+]`
-!!!(p) {:.unnumlist}
+`  B/1 W: BG=[-] BE=[-] BA=[+]`
 
-` C/1 W: CE=[L] CF=[R] CA=[+]`
-!!!(p) {:.unnumlist}
+`  C/1 W: CE=[L] CF=[R] CA=[+]`
 
-` D/1 W: DF=[L] DG=[R] DA=[+]`
-!!!(p) {:.unnumlist}
+`  D/1 W: DF=[L] DG=[R] DA=[+]`
 
-` E/1 L: EC=[R] EB=[-]`
-!!!(p) {:.unnumlist}
+`  E/1 L: EC=[R] EB=[-]`
 
-` F/1 L: FD=[R] FC=[L]`
-!!!(p) {:.unnumlist}
+`  F/1 L: FD=[R] FC=[L]`
 
-` G/1 L: GB=[-] GD=[L]`
-!!!(p) {:.unnumlist}
+`  G/1 L: GB=[-] GD=[L]`
 
-The four interpretations correspond, respectively, to the cases where the cube is free floating, attached to the floor (GD and DF = −), attached to a wall on the right (EC and CF = −), or attached to a wall on the left (BG and BE = −).
-These are shown in [figure 17.7](#f0040).
+The four interpretations correspond, respectively, to the cases where the cube is free floating, attached to the floor (GD and DF = -), attached to a wall on the right (EC and CF = -), or attached to a wall on the left (BG and BE = -).
+These are shown in [figure  17.7](#f0040).
 It would be nice if we could supply information about where the cube is attached, and see if we can get a unique interpretation.
-The function ground takes a diagram and modifies it by making one or more lines be grounded lines-lines that have a concave (−) label, corresponding to a junction with the ground.
+The function ground takes a diagram and modifies it by making one or more lines be grounded lines-lines that have a concave (-) label, corresponding to a junction with the ground.
 
 ![f17-07-9780080571157](images/B9780080571157500170/f17-07-9780080571157.jpg)     
-Figure 17.7
+Figure  17.7
 !!!(span) {:.fignum}
 Four Interpretations of the Cube
-[ ](#){:#l0150}`(defun ground (diagram vertex-a vertex-b)`
-!!!(p) {:.unnumlist}
+`(defun ground (diagram vertex-a vertex-b)`
 
-` "Attach the line between the two vertexes to the ground.`
-!!!(p) {:.unnumlist}
+`  "Attach the line between the two vertexes to the ground.`
 
-` That is, label the line with a -"`
-!!!(p) {:.unnumlist}
+`  That is, label the line with a -"`
 
-` (let* ((A (find-vertex vertex-a diagram))`
-!!!(p) {:.unnumlist}
+`  (let* ((A (find-vertex vertex-a diagram))`
 
-`    (B (find-vertex vertex-b diagram))`
-!!!(p) {:.unnumlist}
+`        (B (find-vertex vertex-b diagram))`
 
-`    (i (position B (vertex-neighbors A))))`
-!!!(p) {:.unnumlist}
+`        (i (position B (vertex-neighbors A))))`
 
-`  (assert (not (null i)))`
-!!!(p) {:.unnumlist}
+`    (assert (not (null i)))`
 
-`  (setf (vertex-labelings A)`
-!!!(p) {:.unnumlist}
+`    (setf (vertex-labelings A)`
 
-`    (find-all-if #'(lambda (1) (eq (nth i 1) '-))`
-!!!(p) {:.unnumlist}
+`        (find-all-if #'(lambda (1) (eq (nth i 1) '-))`
 
-`        (vertex-labelings A)))`
-!!!(p) {:.unnumlist}
+`                (vertex-labelings A)))`
 
-`  diagram))`
-!!!(p) {:.unnumlist}
+`    diagram))`
 
 We can see how this works on the cube:
 
-[ ](#){:#l0155}`> (print-labelings (ground (diagram 'cube) 'g 'd))`
-!!!(p) {:.unnumlist}
+`> (print-labelings (ground (diagram 'cube) 'g 'd))`
 
 `The initial diagram is:`
-!!!(p) {:.unnumlist}
 
-` A/5 Y: AB=[+−L-R] AC=[+−RL-] AD=[+−−RL]`
-!!!(p) {:.unnumlist}
+`  A/5 Y: AB=[+-L-R] AC=[+-RL-] AD=[+--RL]`
 
-` B/3 W: BG=[L−+] BE=[R−+] BA=[++−]`
-!!!(p) {:.unnumlist}
+`  B/3 W: BG=[L-+] BE=[R-+] BA=[++-]`
 
-` C/3 W: CE=[L−+] CF=[R−+] CA=[++−]`
-!!!(p) {:.unnumlist}
+`  C/3 W: CE=[L-+] CF=[R-+] CA=[++-]`
 
-` D/3 W: DF=[L−+] DG=[R−+] DA=[++−]`
-!!!(p) {:.unnumlist}
+`  D/3 W: DF=[L-+] DG=[R-+] DA=[++-]`
 
-` E/6 L: EC=[RL+L-R] EB[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  E/6 L: EC=[RL+L-R] EB[LRR+L-]`
 
-` F/6 L: FD=[RL+L-R] FC=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  F/6 L: FD=[RL+L-R] FC=[LRR+L-]`
 
-` G/1 L: GB=[R] GD=[−]`
-!!!(p) {:.unnumlist}
+`  G/1 L: GB=[R] GD=[-]`
 
 `For 4,860 interpr`e`tations.`
-!!!(p) {:.unnumlist}
 
-[ ](#){:#l0160}`After constraint propagation the diagram is:`
-!!!(p) {:.unnumlist}
+`After constraint propagation the diagram is:`
 
-` A/1 Y: AB=[+] AC=[+] AD=[+]`
-!!!(p) {:.unnumlist}
+`  A/1 Y: AB=[+] AC=[+] AD=[+]`
 
-` B/l W: BG=[L] BE=[R] BA=[+]`
-!!!(p) {:.unnumlist}
+`  B/l W: BG=[L] BE=[R] BA=[+]`
 
-` C/l W: CE=[L] CF=[R] CA=[C +]`
-!!!(p) {:.unnumlist}
+`  C/l W: CE=[L] CF=[R] CA=[C  +]`
 
-` D/l W: DF=[−] DG=[−] DA=[+]`
-!!!(p) {:.unnumlist}
+`  D/l W: DF=[-] DG=[-] DA=[+]`
 
-` E/l L: EC=[R] EB=[L]`
-!!!(p) {:.unnumlist}
+`  E/l L: EC=[R] EB=[L]`
 
-` F/1 L: FD=[-] FC=[L]`
-!!!(p) {:.unnumlist}
+`  F/1 L: FD=[-] FC=[L]`
 
-` G/1 L: GB=[R] GD=[−]`
-!!!(p) {:.unnumlist}
+`  G/1 L: GB=[R] GD=[-]`
 
 Note that the user only had to specify one of the two ground lines, GD.
 The program found that DF is also grounded.
@@ -1048,607 +781,424 @@ Similarly, in programming `ground-line`, we only had to update one of the vertex
 The rest is done by constraint propagation.
 
 The next example yields the same four interpretations, in the same order (free floating, attached at bottom, attached at right, and attached at left) when interpreted ungrounded.
-The grounded version yields the unique solution shown in the following output and in [figure 17.9](#f0050).
+The grounded version yields the unique solution shown in the following output and in [figure  17.9](#f0050).
 
 ![f17-08-9780080571157](images/B9780080571157500170/f17-08-9780080571157.jpg)     
-Figure 17.8
+Figure  17.8
 !!!(span) {:.fignum}
 Cube on a Plate
 ![f17-09-9780080571157](images/B9780080571157500170/f17-09-9780080571157.jpg)     
-Figure 17.9
+Figure  17.9
 !!!(span) {:.fignum}
 Labeled Cube on a Plate
-[ ](#){:#l0165}`(defdiagram cube-on-plate`
-!!!(p) {:.unnumlist}
+`(defdiagram cube-on-plate`
 
-` (a Y b c d)`
-!!!(p) {:.unnumlist}
+`  (a Y b c d)`
 
-` (b W g e a)`
-!!!(p) {:.unnumlist}
+`  (b W g e a)`
 
-` (c W e f a)`
-!!!(p) {:.unnumlist}
+`  (c W e f a)`
 
-` (d W f g a)`
-!!!(p) {:.unnumlist}
+`  (d W f g a)`
 
-` (e L c b)`
-!!!(p) {:.unnumlist}
+`  (e L c b)`
 
-` (f Y d c i)`
-!!!(p) {:.unnumlist}
+`  (f Y d c i)`
 
-` (g Y b d h)`
-!!!(p) {:.unnumlist}
+`  (g Y b d h)`
 
-` (h W l g j)`
-!!!(p) {:.unnumlist}
+`  (h W l g j)`
 
-` (i W f m j)`
-!!!(p) {:.unnumlist}
+`  (i W f m j)`
 
-` (j Y h i k)`
-!!!(p) {:.unnumlist}
+`  (j Y h i k)`
 
-` (k W m l j)`
-!!!(p) {:.unnumlist}
+`  (k W m l j)`
 
-` (l L h k)`
-!!!(p) {:.unnumlist}
+`  (l L h k)`
 
-` (m L k i))`
-!!!(p) {:.unnumlist}
+`  (m L k i))`
 
 `> (print-labelings (ground (diagram 'cube-on-plate) 'k 'm))`
-!!!(p) {:.unnumlist}
 
 `The initial diagram is:`
-!!!(p) {:.unnumlist}
 
-` A/5 Y: AB=[+−L-R] AC=[+−RL-] AD=[+−−RL]`
-!!!(p) {:.unnumlist}
+`  A/5 Y: AB=[+-L-R] AC=[+-RL-] AD=[+--RL]`
 
-` B/3 W: BG=[L−+] BE=[R−+] BA=[++−]`
-!!!(p) {:.unnumlist}
+`  B/3 W: BG=[L-+] BE=[R-+] BA=[++-]`
 
-` C/3 W: CE=[L−+] CF=[R−+] CA=[++−]`
-!!!(p) {:.unnumlist}
+`  C/3 W: CE=[L-+] CF=[R-+] CA=[++-]`
 
-` D/3 W: DF=[L−+] DG=[R−+] DA=[++−]`
-!!!(p) {:.unnumlist}
+`  D/3 W: DF=[L-+] DG=[R-+] DA=[++-]`
 
-` E/6 L: EC=[RL+L-R] EB=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  E/6 L: EC=[RL+L-R] EB=[LRR+L-]`
 
-` F/5 Y: FD=C+−L-R] FC=[+−RL-] FI=[+−−RL]`
-!!!(p) {:.unnumlist}
+`  F/5 Y: FD=C+-L-R] FC=[+-RL-] FI=[+--RL]`
 
-` G/5 Y: GB=[+−L-R] GD=[+−RL-] GH=[+−−RL]`
-!!!(p) {:.unnumlist}
+`  G/5 Y: GB=[+-L-R] GD=[+-RL-] GH=[+--RL]`
 
-` H/3 W: HL=[L−+] HG=[R−+] HJ=[++−]`
-!!!(p) {:.unnumlist}
+`  H/3 W: HL=[L-+] HG=[R-+] HJ=[++-]`
 
-` I/3 W: IF=[L−+] IM=[R−+] IJ=[++−]`
-!!!(p) {:.unnumlist}
+`  I/3 W: IF=[L-+] IM=[R-+] IJ=[++-]`
 
-` J/5 Y: JH=[+−L-R] JI=[+−RL-] JK=[+−−RL]`
-!!!(p) {:.unnumlist}
+`  J/5 Y: JH=[+-L-R] JI=[+-RL-] JK=[+--RL]`
 
-` K/1 W: KM=[−] KL=[−] KJ=[+]`
-!!!(p) {:.unnumlist}
+`  K/1 W: KM=[-] KL=[-] KJ=[+]`
 
-` L/6 L: LH=[RL+L-R] LK=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  L/6 L: LH=[RL+L-R] LK=[LRR+L-]`
 
-` M/6 L: MK=[RL+L-R] MI=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  M/6 L: MK=[RL+L-R] MI=[LRR+L-]`
 
 `For 32.805.000 interpr`e`tations.`
-!!!(p) {:.unnumlist}
 
-[ ](#){:#l0170}`After constraint propagation the diagram is`
-!!!(p) {:.unnumlist}
+`After constraint propagation the diagram is`
 
-` A/1 Y: AB=[+] AC=[+] AD=[+]`
-!!!(p) {:.unnumlist}
+`  A/1 Y: AB=[+] AC=[+] AD=[+]`
 
-` B/2 W: BG=[L-] BE=[R-] BA=[++]`
-!!!(p) {:.unnumlist}
+`  B/2 W: BG=[L-] BE=[R-] BA=[++]`
 
-` C/2 W: CE=[L-] CF=[R-] CA=[++]`
-!!!(p) {:.unnumlist}
+`  C/2 W: CE=[L-] CF=[R-] CA=[++]`
 
-` D/2 W: DF=[L-] DG=[R-] DA=[++]`
-!!!(p) {:.unnumlist}
+`  D/2 W: DF=[L-] DG=[R-] DA=[++]`
 
-` E/1 L: EC=[R] EB=[L]`
-!!!(p) {:.unnumlist}
+`  E/1 L: EC=[R] EB=[L]`
 
-` F/1 Y: FD=[-] FC=[L] FI=[R]`
-!!!(p) {:.unnumlist}
+`  F/1 Y: FD=[-] FC=[L] FI=[R]`
 
-` G/1 Y: GB=[R] GD=[-] GH=[L]`
-!!!(p) {:.unnumlist}
+`  G/1 Y: GB=[R] GD=[-] GH=[L]`
 
-` H/1 W: HL=[L] HG=[R] HJ=[+]`
-!!!(p) {:.unnumlist}
+`  H/1 W: HL=[L] HG=[R] HJ=[+]`
 
-` I/1 W: IF=[L] IM=[R] IJ=[+]`
-!!!(p) {:.unnumlist}
+`  I/1 W: IF=[L] IM=[R] IJ=[+]`
 
-` J/1 Y: JH=[+] JI=[+] JK=[+]`
-!!!(p) {:.unnumlist}
+`  J/1 Y: JH=[+] JI=[+] JK=[+]`
 
-` K/1 W: KM=[-] KL=[-] KJ=[+]`
-!!!(p) {:.unnumlist}
+`  K/1 W: KM=[-] KL=[-] KJ=[+]`
 
-` L/1 L: LH=[R] LK=[-]`
-!!!(p) {:.unnumlist}
+`  L/1 L: LH=[R] LK=[-]`
 
-` M/1 L: MK=[-] MI=[L]`
-!!!(p) {:.unnumlist}
+`  M/1 L: MK=[-] MI=[L]`
 
-It is interesting to try the algorithm on an “impossible” diagram.
+It is interesting to try the algorithm on an "impossible" diagram.
 It turns out the algorithm correctly finds no interpretation for this well-known illusion:
 
-[ ](#){:#l0175}`(defdiagram poiuyt`
-!!!(p) {:.unnumlist}
+`(defdiagram poiuyt`
 
-` (a L b g)`
-!!!(p) {:.unnumlist}
+`  (a L b g)`
 
-` (b L j a)`
-!!!(p) {:.unnumlist}
+`  (b L j a)`
 
-` (c L d l)`
-!!!(p) {:.unnumlist}
+`  (c L d l)`
 
-` (d L h c)`
-!!!(p) {:.unnumlist}
+`  (d L h c)`
 
-` (e L f i)`
-!!!(p) {:.unnumlist}
+`  (e L f i)`
 
-` (f L k e)`
-!!!(p) {:.unnumlist}
+`  (f L k e)`
 
-` (g L a l)`
-!!!(p) {:.unnumlist}
+`  (g L a l)`
 
-` (h L l d)`
-!!!(p) {:.unnumlist}
+`  (h L l d)`
 
-` (i L e k)`
-!!!(p) {:.unnumlist}
+`  (i L e k)`
 
-` (j L k b)`
-!!!(p) {:.unnumlist}
+`  (j L k b)`
 
-` (k W j i f)`
-!!!(p) {:.unnumlist}
+`  (k W j i f)`
 
-` (l W h g c))`
-!!!(p) {:.unnumlist}
+`  (l W h g c))`
 
 `> (print-1 abel ings (diagram 'poiuyt))`
-!!!(p) {:.unnumlist}
 
-[ ](#){:#l0180}`The initial diagram is:`
-!!!(p) {:.unnumlist}
+`The initial diagram is:`
 
-` A/6 L: AB=[RL+L-R] AG=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  A/6 L: AB=[RL+L-R] AG=[LRR+L-]`
 
-` B/6 L: BJ=[RL+L-R] BA=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  B/6 L: BJ=[RL+L-R] BA=[LRR+L-]`
 
-` C/6 L: CD=[RL+L-R] CL=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  C/6 L: CD=[RL+L-R] CL=[LRR+L-]`
 
-` D/6 L: DH=[RL+L-R] DC=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  D/6 L: DH=[RL+L-R] DC=[LRR+L-]`
 
-` E/6 L: EF=[RL+L-R] EI=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  E/6 L: EF=[RL+L-R] EI=[LRR+L-]`
 
-` F/6 L: FK=[RL+L-R] FE=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  F/6 L: FK=[RL+L-R] FE=[LRR+L-]`
 
-` G/6 L: GA=[RL+L-R] GL=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  G/6 L: GA=[RL+L-R] GL=[LRR+L-]`
 
-` H/6 L: HL=[RL+L-R] HD=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  H/6 L: HL=[RL+L-R] HD=[LRR+L-]`
 
-` I/6 L: IE=[RL+L-R] IK=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  I/6 L: IE=[RL+L-R] IK=[LRR+L-]`
 
-` J/6 L: JK=[RL+L-R] JB=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  J/6 L: JK=[RL+L-R] JB=[LRR+L-]`
 
-` K/3 W: KJ=[L−+] KI=[R−+] KF=[++−]`
-!!!(p) {:.unnumlist}
+`  K/3 W: KJ=[L-+] KI=[R-+] KF=[++-]`
 
-` L/3 W: LH=[L−+] LG=[R−+] LC=[++−]`
-!!!(p) {:.unnumlist}
+`  L/3 W: LH=[L-+] LG=[R-+] LC=[++-]`
 
 `For 544,195.584 interpr`e`tations.`
-!!!(p) {:.unnumlist}
 
-[ ](#){:#l0185}`After constraint propagation the diagram is:`
-!!!(p) {:.unnumlist}
+`After constraint propagation the diagram is:`
 
-` A/5 L: AB=[RL+−R] AG=[LRRL-]`
-!!!(p) {:.unnumlist}
+`  A/5 L: AB=[RL+-R] AG=[LRRL-]`
 
-` B/5 L: BJ=[RLL-R] BA=[LR+L-]`
-!!!(p) {:.unnumlist}
+`  B/5 L: BJ=[RLL-R] BA=[LR+L-]`
 
-` C/2 L: CD=[LR] CL=[+−]`
-!!!(p) {:.unnumlist}
+`  C/2 L: CD=[LR] CL=[+-]`
 
-` D/3 L: DH=[RL-] DC=[LRL]`
-!!!(p) {:.unnumlist}
+`  D/3 L: DH=[RL-] DC=[LRL]`
 
-` E/3 L: EF=[RLR] EI=[LR-]`
-!!!(p) {:.unnumlist}
+`  E/3 L: EF=[RLR] EI=[LR-]`
 
-` F/2 L: FK=[+−] FE=[RL]`
-!!!(p) {:.unnumlist}
+`  F/2 L: FK=[+-] FE=[RL]`
 
-` G/4 L: GA=[RL-R] GL=[L+L-]`
-!!!(p) {:.unnumlist}
+`  G/4 L: GA=[RL-R] GL=[L+L-]`
 
-` H/4 L: HL=[R+−R] HD=[LRL-]`
-!!!(p) {:.unnumlist}
+`  H/4 L: HL=[R+-R] HD=[LRL-]`
 
-` I/4 L: IE=[RL-R] IK=[L+L-]`
-!!!(p) {:.unnumlist}
+`  I/4 L: IE=[RL-R] IK=[L+L-]`
 
-` J/4 L: JK=[R+−R] JB=[LRL-]`
-!!!(p) {:.unnumlist}
+`  J/4 L: JK=[R+-R] JB=[LRL-]`
 
-` K/3 W: KJ=[L−+] KI=[R−+] KF=[++−]`
-!!!(p) {:.unnumlist}
+`  K/3 W: KJ=[L-+] KI=[R-+] KF=[++-]`
 
-` L/3 W: LH=[L−+] LG=[R−+] LC=[++−]`
-!!!(p) {:.unnumlist}
+`  L/3 W: LH=[L-+] LG=[R-+] LC=[++-]`
 
 `For 2,073,600 interpr`e`tations.`
-!!!(p) {:.unnumlist}
 
 `There are z`e`ro solutions:`
-!!!(p) {:.unnumlist}
 
 Now we try a more complex diagram:
 
-[ ](#){:#l0190}`(defdiagram tower`
-!!!(p) {:.unnumlist}
+`(defdiagram tower`
 
-` (a Y b c d)  (n L q o)`
-!!!(p) {:.unnumlist}
+`  (a Y b c d)    (n L q o)`
 
-` (b W g e a)  (o W y j n)`
-!!!(p) {:.unnumlist}
+`  (b W g e a)    (o W y j n)`
 
-` (c W e f a)  (P L r i)`
-!!!(p) {:.unnumlist}
+`  (c W e f a)    (P L r i)`
 
-` (d W f g a)  (q W n s w)`
-!!!(p) {:.unnumlist}
+`  (d W f g a)    (q W n s w)`
 
-` (e L c b)   (r W s p x)`
-!!!(p) {:.unnumlist}
+`  (e L c b)      (r W s p x)`
 
-` (f Y d c i)  (s L r q)`
-!!!(p) {:.unnumlist}
+`  (f Y d c i)    (s L r q)`
 
-` (g Y b d h)  (t W w x z)`
-!!!(p) {:.unnumlist}
+`  (g Y b d h)    (t W w x z)`
 
-` (h W l g J)  (u W x y z)`
-!!!(p) {:.unnumlist}
+`  (h W l g J)    (u W x y z)`
 
-` (i W f m p)  (v W y w z)`
-!!!(p) {:.unnumlist}
+`  (i W f m p)    (v W y w z)`
 
-` (j Y h o k)  (w Y t v q)`
-!!!(p) {:.unnumlist}
+`  (j Y h o k)    (w Y t v q)`
 
-` (k W m l j)  (x Y r u t)`
-!!!(p) {:.unnumlist}
+`  (k W m l j)    (x Y r u t)`
 
-` (l L h k)   (y Y v u o)`
-!!!(p) {:.unnumlist}
+`  (l L h k)      (y Y v u o)`
 
-` (m L k i)   (z Y t u v))`
-!!!(p) {:.unnumlist}
+`  (m L k i)      (z Y t u v))`
 
 `> (print-labelings (ground (diagram 'tower) 'l 'k))`
-!!!(p) {:.unnumlist}
 
 `The initial diagram is:`
-!!!(p) {:.unnumlist}
 
-` A/5 Y: AB=[+−L-R] AC=[+−RL-] AD=[+−−RL]`
-!!!(p) {:.unnumlist}
+`  A/5 Y: AB=[+-L-R] AC=[+-RL-] AD=[+--RL]`
 
-` B/3 W: BG=[L−+] BE=[R−+] BA=[++−]`
-!!!(p) {:.unnumlist}
+`  B/3 W: BG=[L-+] BE=[R-+] BA=[++-]`
 
-` C/3 W: CE=[L−+] CF=[R−+] CA=[++−]`
-!!!(p) {:.unnumlist}
+`  C/3 W: CE=[L-+] CF=[R-+] CA=[++-]`
 
-` D/3 W: DF=[L−+] DG=[R−+] DA=[++−]`
-!!!(p) {:.unnumlist}
+`  D/3 W: DF=[L-+] DG=[R-+] DA=[++-]`
 
-` E/6 L: EC[RL+L-R] EB=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  E/6 L: EC[RL+L-R] EB=[LRR+L-]`
 
-` F/5 Y: FD=[+−L-R] FC=[+−RL-] FI=[+−−RL]`
-!!!(p) {:.unnumlist}
+`  F/5 Y: FD=[+-L-R] FC=[+-RL-] FI=[+--RL]`
 
-` G/5 Y: GB=[+−L-R] GD=[+−RL-] GH=[+−−RL]`
-!!!(p) {:.unnumlist}
+`  G/5 Y: GB=[+-L-R] GD=[+-RL-] GH=[+--RL]`
 
-` H/3 W: HL=[L−+] HG=[R−+] HJ=[++−]`
-!!!(p) {:.unnumlist}
+`  H/3 W: HL=[L-+] HG=[R-+] HJ=[++-]`
 
-` I/3 W: IF=[L−+] IM=[R−+] IP=[++−]`
-!!!(p) {:.unnumlist}
+`  I/3 W: IF=[L-+] IM=[R-+] IP=[++-]`
 
-` J/5 Y: JH=[+−L-R] JO=[+−RL-] JK=[+−−RL]`
-!!!(p) {:.unnumlist}
+`  J/5 Y: JH=[+-L-R] JO=[+-RL-] JK=[+--RL]`
 
-` K/3 W: KM=[L−+] KL=[R−+] KJ=[++−]`
-!!!(p) {:.unnumlist}
+`  K/3 W: KM=[L-+] KL=[R-+] KJ=[++-]`
 
-` L/1 L: LH=[R] LK=[−]`
-!!!(p) {:.unnumlist}
+`  L/1 L: LH=[R] LK=[-]`
 
-` M/6 L: MK=[RL+L-R] MI=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  M/6 L: MK=[RL+L-R] MI=[LRR+L-]`
 
-` N/6 L: NQ=[RL+L-R] NO=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  N/6 L: NQ=[RL+L-R] NO=[LRR+L-]`
 
-` O/3 W: OY=[L−+] OJ=[R−+] ON=[++−]`
-!!!(p) {:.unnumlist}
+`  O/3 W: OY=[L-+] OJ=[R-+] ON=[++-]`
 
-` P/6 L: PR=[RL+L-R] PI=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  P/6 L: PR=[RL+L-R] PI=[LRR+L-]`
 
-` Q/3 W: QN=[L−+] QS=[R−+] QW=[++−]`
-!!!(p) {:.unnumlist}
+`  Q/3 W: QN=[L-+] QS=[R-+] QW=[++-]`
 
-` R/3 W: RS=[L−+] RP=[R−+] RX=[++−]`
-!!!(p) {:.unnumlist}
+`  R/3 W: RS=[L-+] RP=[R-+] RX=[++-]`
 
-` S/6 L: SR=[RL+L-R] SQ=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  S/6 L: SR=[RL+L-R] SQ=[LRR+L-]`
 
-` T/3 W:` TW=[L−+] `TX=[R−+] TZ=[++−]`
-!!!(p) {:.unnumlist}
+`  T/3 W:` TW=[L-+] `TX=[R-+] TZ=[++-]`
 
-` U/3 W: UX=[L−+] UY=[R−+] UZ=[++−]`
-!!!(p) {:.unnumlist}
+`  U/3 W: UX=[L-+] UY=[R-+] UZ=[++-]`
 
-` V/3 W: VY=[L−+] VW=[R−+] VZ=[++−]`
-!!!(p) {:.unnumlist}
+`  V/3 W: VY=[L-+] VW=[R-+] VZ=[++-]`
 
-` W/5 Y: WT=[+−L-R] WV=[+−RL-] WQ=[+−−RL]`
-!!!(p) {:.unnumlist}
+`  W/5 Y: WT=[+-L-R] WV=[+-RL-] WQ=[+--RL]`
 
-` X/5 Y: XR=[+−L-R] XU=[+−RL-] XT=[+−−RL]`
-!!!(p) {:.unnumlist}
+`  X/5 Y: XR=[+-L-R] XU=[+-RL-] XT=[+--RL]`
 
-` Y/5 Y: YV=[+−L-R] YU=[+−RL-] YO=[+−−RL]`
-!!!(p) {:.unnumlist}
+`  Y/5 Y: YV=[+-L-R] YU=[+-RL-] YO=[+--RL]`
 
-` Z/5 Y: ZT=[+−L-R] ZU=[+−RL-] ZV=[+−−RL]`
-!!!(p) {:.unnumlist}
+`  Z/5 Y: ZT=[+-L-R] ZU=[+-RL-] ZV=[+--RL]`
 
 `For 1,614,252,037,500,000 interpretations.`
-!!!(p) {:.unnumlist}
 
 After constraint propagation the diagram is:
 
-[ ](#){:#l0195}` A/1 Y: AB=[+] AC=[+] AD=[+]`
-!!!(p) {:.unnumlist}
+`  A/1 Y: AB=[+] AC=[+] AD=[+]`
 
-` B/l W: BG=[L] BE=[R] BA=[+]`
-!!!(p) {:.unnumlist}
+`  B/l W: BG=[L] BE=[R] BA=[+]`
 
-` C/1 W: CE=[L] CF=[R] CA=[+]`
-!!!(p) {:.unnumlist}
+`  C/1 W: CE=[L] CF=[R] CA=[+]`
 
-` D/l W: DF=[−] DG=[−] DA=[+]`
-!!!(p) {:.unnumlist}
+`  D/l W: DF=[-] DG=[-] DA=[+]`
 
-` E/1 L: EC=[R] EB=[L]`
-!!!(p) {:.unnumlist}
+`  E/1 L: EC=[R] EB=[L]`
 
-` F/1 Y: FD=[−] FC=[L] FI=[R]`
-!!!(p) {:.unnumlist}
+`  F/1 Y: FD=[-] FC=[L] FI=[R]`
 
-` G/1 Y: GB=[R] GD=[−]GH=[L]`
-!!!(p) {:.unnumlist}
+`  G/1 Y: GB=[R] GD=[-]GH=[L]`
 
-` H/1 W: HL=[L] HG=[R] HJ=[+]`
-!!!(p) {:.unnumlist}
+`  H/1 W: HL=[L] HG=[R] HJ=[+]`
 
-` I/1 W: IF=[L] IM=[R] IP=[+]`
-!!!(p) {:.unnumlist}
+`  I/1 W: IF=[L] IM=[R] IP=[+]`
 
-` J/l Y: JH=[+] JO=[+] JK=[+]`
-!!!(p) {:.unnumlist}
+`  J/l Y: JH=[+] JO=[+] JK=[+]`
 
-` K/l W: KM=[−] KL=[−] KJ=[+]`
-!!!(p) {:.unnumlist}
+`  K/l W: KM=[-] KL=[-] KJ=[+]`
 
-` L/l L: LH=[R] LK=[−]`
-!!!(p) {:.unnumlist}
+`  L/l L: LH=[R] LK=[-]`
 
-` M/1 L: MK=[−] MI=[L]`
-!!!(p) {:.unnumlist}
+`  M/1 L: MK=[-] MI=[L]`
 
-` N/l L: NQ=[R] NO[−]`
-!!!(p) {:.unnumlist}
+`  N/l L: NQ=[R] NO[-]`
 
-` O/l W: OY=[+] OJ=[+] ON=[−]`
-!!!(p) {:.unnumlist}
+`  O/l W: OY=[+] OJ=[+] ON=[-]`
 
-` P/l L: PR=[L] PI=[+]`
-!!!(p) {:.unnumlist}
+`  P/l L: PR=[L] PI=[+]`
 
-` Q/1 W: QN=[L] QS=[R] QW=[+]`
-!!!(p) {:.unnumlist}
+`  Q/1 W: QN=[L] QS=[R] QW=[+]`
 
-` R/1 W: RS=[L] RP=[R] RX=[+]`
-!!!(p) {:.unnumlist}
+`  R/1 W: RS=[L] RP=[R] RX=[+]`
 
-` S/1 L: SR=[R] SQ=[L]`
-!!!(p) {:.unnumlist}
+`  S/1 L: SR=[R] SQ=[L]`
 
-` T/1 W: TW=[+] TX=[+] TZ=[−]`
-!!!(p) {:.unnumlist}
+`  T/1 W: TW=[+] TX=[+] TZ=[-]`
 
-` U/1 W: UX=[+] UY=[+] UZ=[−]`
-!!!(p) {:.unnumlist}
+`  U/1 W: UX=[+] UY=[+] UZ=[-]`
 
-` V/l W: VY=[+] VW=[+] VZ=[−]`
-!!!(p) {:.unnumlist}
+`  V/l W: VY=[+] VW=[+] VZ=[-]`
 
-` W/l Y: WT=[+] WV=[+] WQ=[+]`
-!!!(p) {:.unnumlist}
+`  W/l Y: WT=[+] WV=[+] WQ=[+]`
 
-` X/1 Y: XR=[+] XU=[+] XT=[+]`
-!!!(p) {:.unnumlist}
+`  X/1 Y: XR=[+] XU=[+] XT=[+]`
 
-` Y/1 Y: YV=[+] YU=[+] YO=[+]`
-!!!(p) {:.unnumlist}
+`  Y/1 Y: YV=[+] YU=[+] YO=[+]`
 
-` Z/l Y: ZT=[−] ZU=[−] ZV=[−]`
-!!!(p) {:.unnumlist}
+`  Z/l Y: ZT=[-] ZU=[-] ZV=[-]`
 
 We see that the algorithm was able to arrive at a single interpretation.
-Moreover, even though there were a large number of possibilities—over a quadrillion—the computation is quite fast.
+Moreover, even though there were a large number of possibilities-over a quadrillion-the computation is quite fast.
 Most of the time is spent printing, so to get a good measurement, we define a function to find solutions without printing anything:
 
-[ ](#){:#l0200}`(defun find-labelings (diagram)`
-!!!(p) {:.unnumlist}
+`(defun find-labelings (diagram)`
 
-` "Return a list of all consistent labelings of the diagram."`
-!!!(p) {:.unnumlist}
+`  "Return a list of all consistent labelings of the diagram."`
 
-` (every #'propagate-constraints (diagram-vertexes diagram))`
-!!!(p) {:.unnumlist}
+`  (every #'propagate-constraints (diagram-vertexes diagram))`
 
-` (search-solutions diagram))`
-!!!(p) {:.unnumlist}
+`  (search-solutions diagram))`
 
 When we time the application of `find-labelings` to the grounded tower and the poiuyt, we find the tower takes 0.11 seconds, and the poiuyt 21 seconds.
 This is over 180 times longer, even though the poiuyt has only half as many vertexes and only about half a million interpretations, compared to the tower's quadrillion.
 The poiuyt takes a long time to process because there are few local constraints, so violations are discovered only by considering several widely separated parts of the figure all at the same time.
 It is interesting that the same fact that makes the processing of the poiuyt take longer is also responsible for its interest as an illusion.
 
-## [ ](#){:#st0025}17.4 Checking Diagrams for Errors
+## 17.4 Checking Diagrams for Errors
 {:#s0025}
 {:.h1hd}
 
 This section considers one more example, and considers what to do when there are apparent errors in the input.
-The example is taken from Charniak and McDermott's *Introduction to Artificial Intelligence*, page 138, and shown in [figure 17.12](#f0065).
+The example is taken from Charniak and McDermott's *Introduction to Artificial Intelligence*, page 138, and shown in [figure  17.12](#f0065).
 
 ![f17-10-9780080571157](images/B9780080571157500170/f17-10-9780080571157.jpg)     
-Figure 17.10
+Figure  17.10
 !!!(span) {:.fignum}
 An Impossible Figure (A Poiuyt)
 ![f17-11-9780080571157](images/B9780080571157500170/f17-11-9780080571157.jpg)     
-Figure 17.11
+Figure  17.11
 !!!(span) {:.fignum}
 A Tower
 ![f17-12-9780080571157](images/B9780080571157500170/f17-12-9780080571157.jpg)     
-Figure 17.12
+Figure  17.12
 !!!(span) {:.fignum}
 Diagram of an arch
-[ ](#){:#l0205}`(defdiagram arch`
-!!!(p) {:.unnumlist}
+`(defdiagram arch`
 
-` (a W e b c)  (p L o q)`
-!!!(p) {:.unnumlist}
+`  (a W e b c)    (p L o q)`
 
-` (b L d a)   (q T P i r)`
-!!!(p) {:.unnumlist}
+`  (b L d a)      (q T P i r)`
 
-` (c Y a d g)  (r T j s q)`
-!!!(p) {:.unnumlist}
+`  (c Y a d g)    (r T j s q)`
 
-` (d Y c b m)  (s L r t)`
-!!!(p) {:.unnumlist}
+`  (d Y c b m)    (s L r t)`
 
-` (e L a f)   (t W v s k)`
-!!!(p) {:.unnumlist}
+`  (e L a f)      (t W v s k)`
 
-` (f T e g n)  (u L t l)`
-!!!(p) {:.unnumlist}
+`  (f T e g n)    (u L t l)`
 
-` (g W h f c)  (v L t l)`
-!!!(p) {:.unnumlist}
+`  (g W h f c)    (v L t l)`
 
-` (h T g i o)  (w W x l y)`
-!!!(p) {:.unnumlist}
+`  (h T g i o)    (w W x l y)`
 
-` (i T h j q)  (x L w z)`
-!!!(p) {:.unnumlist}
+`  (i T h j q)    (x L w z)`
 
-` (j T i k r)  (y Y w 2 z)`
-!!!(p) {:.unnumlist}
+`  (j T i k r)    (y Y w 2 z)`
 
-` (k T J l t)  (z W 3 x y)`
-!!!(p) {:.unnumlist}
+`  (k T J l t)    (z W 3 x y)`
 
-` (l T k m v)  (l T n o w)`
-!!!(p) {:.unnumlist}
+`  (l T k m v)    (l T n o w)`
 
-` (m L l d)   (2 W v 3 y)`
-!!!(p) {:.unnumlist}
+`  (m L l d)      (2 W v 3 y)`
 
-` (n L f 1)   (3 L z 2)`
-!!!(p) {:.unnumlist}
+`  (n L f 1)      (3 L z 2)`
 
-` (o W P 1 h)  (4 T u l v))`
-!!!(p) {:.unnumlist}
+`  (o W P 1 h)    (4 T u l v))`
 
 Unfortunately, running this example results in no consistent interpretations after constraint propagation.
 This seems wrong.
 Worse, when we try to ground the diagram on the line XZ and call `print-labelings` on that, we get the following error:
 
-[ ](#){:#l0210}`>>>ERROR: The first argument to NTH was of the wrong type.`
-!!!(p) {:.unnumlist}
+`>>>ERROR: The first argument to NTH was of the wrong type.`
 
 `The function expected a fixnum >= z`e`ro.`
-!!!(p) {:.unnumlist}
 
-`While in the function LABELS-FOR`⇐ `CONSISTENT-LABELINGS`
-!!!(p) {:.unnumlist}
+`While in the function LABELS-FOR`<= `CONSISTENT-LABELINGS`
 
 `Debugger entered while in the following function:`
-!!!(p) {:.unnumlist}
 
 `LABELS-FOR (P.C.
 = 23)`
-!!!(p) {:.unnumlist}
 
-` Arg 0 (VERTEX): U/6`
-!!!(p) {:.unnumlist}
+`  Arg 0 (VERTEX): U/6`
 
-` Arg 1 (FROM): 4/4`
-!!!(p) {:.unnumlist}
+`  Arg 1 (FROM): 4/4`
 
 What has gone wrong?
-A good guess is that the diagram is somehow inconsistent— somewhere an error was made in transcribing the diagram.
+A good guess is that the diagram is somehow inconsistent- somewhere an error was made in transcribing the diagram.
 It could be that the diagram is in fact impossible, like the poiuyt.
 But that is unlikely, as it is easy for us to provide an intuitive interpretation.
 We need to debug the diagram, and it would also be a good idea to handle the error more gracefully.
@@ -1656,670 +1206,464 @@ We need to debug the diagram, and it would also be a good idea to handle the err
 One property of the diagram that is easy to check for is that every line should be mentioned twice.
 If there is a line between vertexes A and B, there should be two entries in the vertex descriptors of the following form:
 
-[ ](#){:#l0215}`(A ?
-… B …)`
-!!!(p) {:.unnumlist}
+`(A ? ... B ...)`
 
-`(B ?
-… A …)`
-!!!(p) {:.unnumlist}
+`(B ? ... A ...)`
 
-Here the symbol “?” means we aren't concerned about the type of the vertexes, only with the presence of the line in two places.
+Here the symbol "?" means we aren't concerned about the type of the vertexes, only with the presence of the line in two places.
 The following code makes this check when a diagram is defined.
 It also checks that each vertex is one of the four legal types, and has the right number of neighbors.
 
-[ ](#){:#l0220}`(defmacro defdiagram (name &rest vertex-descriptors)`
-!!!(p) {:.unnumlist}
+`(defmacro defdiagram (name &rest vertex-descriptors)`
 
-` "Define a diagram.
+`  "Define a diagram.
 A copy can be gotten by (diagram name)."`
-!!!(p) {:.unnumlist}
 
-` '(put-diagram '.name (construct-diagram`
-!!!(p) {:.unnumlist}
+`  '(put-diagram '.name (construct-diagram`
 
-`          (check-diagram ',vertex-descriptors))))`
-!!!(p) {:.unnumlist}
+`                    (check-diagram ',vertex-descriptors))))`
 
 `(defun check-diagram (vertex-descriptors)`
-!!!(p) {:.unnumlist}
 
-` "Check if the diagram description appears consistent."`
-!!!(p) {:.unnumlist}
+`  "Check if the diagram description appears consistent."`
 
-` (let ((errors 0))`
-!!!(p) {:.unnumlist}
+`  (let ((errors 0))`
 
-`  (dolist (v-d vertex-descriptors)`
-!!!(p) {:.unnumlist}
+`    (dolist (v-d vertex-descriptors)`
 
-`   :: v-d is like: (a Y b c d)`
-!!!(p) {:.unnumlist}
+`      :: v-d is like: (a Y b c d)`
 
-`   (let ((A (first v-d))`
-!!!(p) {:.unnumlist}
+`      (let ((A (first v-d))`
 
-`          (v-type (second v-d)))`
-!!!(p) {:.unnumlist}
+`                    (v-type (second v-d)))`
 
-`    :: Check that the number of neighbors is right for`
-!!!(p) {:.unnumlist}
+`        :: Check that the number of neighbors is right for`
 
-`    :: the vertex type (and that the vertex type is l`e`gal)`
-!!!(p) {:.unnumlist}
+`        :: the vertex type (and that the vertex type is l`e`gal)`
 
-`    (when (/= (length (v-d-neighbors v-d))`
-!!!(p) {:.unnumlist}
+`        (when (/= (length (v-d-neighbors v-d))`
 
-`       (case v-type ((W Y T) 3) ((L) 2) (t − 1)))`
-!!!(p) {:.unnumlist}
+`              (case v-type ((W Y T) 3) ((L) 2) (t -  1)))`
 
-`     (warn "Ill`e`gal type/neighbor combo: ~a" v-d)`
-!!!(p) {:.unnumlist}
+`          (warn "Ill`e`gal type/neighbor combo: ~a" v-d)`
 
-`     (incf errors))`
-!!!(p) {:.unnumlist}
+`          (incf errors))`
 
-`    :: Check that each neighbor B is connected to`
-!!!(p) {:.unnumlist}
+`        :: Check that each neighbor B is connected to`
 
-`    :: this vertex.
+`        :: this vertex.
 A, exactly once`
-!!!(p) {:.unnumlist}
 
-`     (dolist (B (v-d-neighbors v-d))`
-!!!(p) {:.unnumlist}
+`          (dolist (B (v-d-neighbors v-d))`
 
-`      (when (/= 1 (count-if`
-!!!(p) {:.unnumlist}
+`            (when (/= 1 (count-if`
 
-`        #'(lambda (v-d2)`
-!!!(p) {:.unnumlist}
+`                #'(lambda (v-d2)`
 
-`         (and (eql (first v-d2) B)`
-!!!(p) {:.unnumlist}
+`                  (and (eql (first v-d2) B)`
 
-`          (member A (v-d-neighbors v-d2))))`
-!!!(p) {:.unnumlist}
+`                    (member A (v-d-neighbors v-d2))))`
 
-`       vertex-descri ptors))`
-!!!(p) {:.unnumlist}
+`              vertex-descri ptors))`
 
-`    (warn "Inconsistent vertex: ~a-~a" A B)`
-!!!(p) {:.unnumlist}
+`        (warn "Inconsistent vertex: ~a-~a" A B)`
 
-`    (incf errors)))))`
-!!!(p) {:.unnumlist}
+`        (incf errors)))))`
 
-`   (when (> errors 0)`
-!!!(p) {:.unnumlist}
+`      (when (> errors 0)`
 
-`    (error "Inconsistent diagram.
+`        (error "Inconsistent diagram.
 ~d total error~:p."`
-!!!(p) {:.unnumlist}
 
-`      errors)))`
-!!!(p) {:.unnumlist}
+`            errors)))`
 
-`  vertex-descriptors)`
-!!!(p) {:.unnumlist}
+`    vertex-descriptors)`
 
 Now let's try the arch again:
 
-[ ](#){:#l0225}`(defdiagram arch`
-!!!(p) {:.unnumlist}
+`(defdiagram arch`
 
-` (a W e b c)  (p L o q)`
-!!!(p) {:.unnumlist}
+`  (a W e b c)    (p L o q)`
 
-` (b L d a)   (q T p i r)`
-!!!(p) {:.unnumlist}
+`  (b L d a)      (q T p i r)`
 
-` (c Y a d g)  (r T j s q)`
-!!!(p) {:.unnumlist}
+`  (c Y a d g)    (r T j s q)`
 
-` (d Y c b m)  (s L r t)`
-!!!(p) {:.unnumlist}
+`  (d Y c b m)    (s L r t)`
 
-` (e L a f)   (t W v s k)`
-!!!(p) {:.unnumlist}
+`  (e L a f)      (t W v s k)`
 
-` (f T e g n)  (u L t l)`
-!!!(p) {:.unnumlist}
+`  (f T e g n)    (u L t l)`
 
-` (g W h f c)  (v L 2 4)`
-!!!(p) {:.unnumlist}
+`  (g W h f c)    (v L 2 4)`
 
-` (h T g i o)  (w W x l y)`
-!!!(p) {:.unnumlist}
+`  (h T g i o)    (w W x l y)`
 
-` (i T h j q)  (x L w z)`
-!!!(p) {:.unnumlist}
+`  (i T h j q)    (x L w z)`
 
-` (j T i k r)  (y Y w 2 z)`
-!!!(p) {:.unnumlist}
+`  (j T i k r)    (y Y w 2 z)`
 
-` (k T j l t)  (z W 3 x y)`
-!!!(p) {:.unnumlist}
+`  (k T j l t)    (z W 3 x y)`
 
-` (l T k m v)  (1 T n o w)`
-!!!(p) {:.unnumlist}
+`  (l T k m v)    (1 T n o w)`
 
-` (m L l d)   (2 W v 3 y)`
-!!!(p) {:.unnumlist}
+`  (m L l d)      (2 W v 3 y)`
 
-` (n L f 1)   (3 L z 2)`
-!!!(p) {:.unnumlist}
+`  (n L f 1)      (3 L z 2)`
 
-` (o W P 1 h)  (4 T u l v))`
-!!!(p) {:.unnumlist}
+`  (o W P 1 h)    (4 T u l v))`
 
 `Warning: Inconsistent vertex: T-V`
-!!!(p) {:.unnumlist}
 
 `Warning: Inconsistent vertex: U-T`
-!!!(p) {:.unnumlist}
 
 `Warning: Inconsistent vertex: U-L`
-!!!(p) {:.unnumlist}
 
 `Warning: Inconsistent vertex: L-V`
-!!!(p) {:.unnumlist}
 
 `Warning: Inconsistent vertex: 4-U`
-!!!(p) {:.unnumlist}
 
 `Warning: Inconsistent vertex: 4-L`
-!!!(p) {:.unnumlist}
 
-`»ERR0R: Inconsistent diagram.
+`>>ERR0R: Inconsistent diagram.
 6 total errors.`
-!!!(p) {:.unnumlist}
 
-The `defdiagram` was transcribed from a hand-labeled diagram, and it appears that the transcription has fallen prey to one of the oldest problems in mathematical notation: confusing a “u” with a “v.” The other problem was in seeing the line U-L as a single line, when in fact it is broken up into two segments, U-4 and 4-L.
+The `defdiagram` was transcribed from a hand-labeled diagram, and it appears that the transcription has fallen prey to one of the oldest problems in mathematical notation: confusing a "u" with a "v." The other problem was in seeing the line U-L as a single line, when in fact it is broken up into two segments, U-4 and 4-L.
 Repairing these bugs gives the diagram:
 
-[ ](#){:#l0230}`(defdiagram arch`
-!!!(p) {:.unnumlist}
+`(defdiagram arch`
 
-` (a W e b c)  (P L o q)`
-!!!(p) {:.unnumlist}
+`  (a W e b c)    (P L o q)`
 
-` (b L d a)   (q T P i r)`
-!!!(p) {:.unnumlist}
+`  (b L d a)      (q T P i r)`
 
-` (c Y a d g)  (r T j s q)`
-!!!(p) {:.unnumlist}
+`  (c Y a d g)    (r T j s q)`
 
-` (d Y c b m)  (s L r t)`
-!!!(p) {:.unnumlist}
+`  (d Y c b m)    (s L r t)`
 
-` (e L a f)   (t W u s k)    *;t-u not t-v*`
-!!!(p) {:.unnumlist}
+`  (e L a f)      (t W u s k)        *;t-u not t-v*`
 
-` (f T e g n)  (u L t 4)     *;u-4 not u-l*`
-!!!(p) {:.unnumlist}
+`  (f T e g n)    (u L t 4)          *;u-4 not u-l*`
 
-` (g W h f c)  (v L 2 4)`
-!!!(p) {:.unnumlist}
+`  (g W h f c)    (v L 2 4)`
 
-` (h T g i o)  (w W x l y)`
-!!!(p) {:.unnumlist}
+`  (h T g i o)    (w W x l y)`
 
-` (i T h j q)  (x L w z)`
-!!!(p) {:.unnumlist}
+`  (i T h j q)    (x L w z)`
 
-` (j T i k r)  (y Y w 2 z)`
-!!!(p) {:.unnumlist}
+`  (j T i k r)    (y Y w 2 z)`
 
-` (k T J l t)  (z W 3 x y)`
-!!!(p) {:.unnumlist}
+`  (k T J l t)    (z W 3 x y)`
 
-` (l T k m 4)  (1 T n o w)     *;l-4 not l-v*`
-!!!(p) {:.unnumlist}
+`  (l T k m 4)    (1 T n o w)          *;l-4 not l-v*`
 
-` (m L l d)   (2 W v 3 y)`
-!!!(p) {:.unnumlist}
+`  (m L l d)      (2 W v 3 y)`
 
-` (n L f 1)   (3 L z 2)`
-!!!(p) {:.unnumlist}
+`  (n L f 1)      (3 L z 2)`
 
-` (o W P 1 h)  (4 T u l v))`
-!!!(p) {:.unnumlist}
+`  (o W P 1 h)    (4 T u l v))`
 
 This time there arenoerrorsdetected by `check-diagram,` butrunning `print-labelings` again still does not give a solution.
 `To` get more information about which constraints are applied, `I` modified `propagate-constraints` to print out some information:
 
-[ ](#){:#l0235}`(defun propagate-constraints (vertex)`
-!!!(p) {:.unnumlist}
+`(defun propagate-constraints (vertex)`
 
-` "Reduce the number of labelings on vertex by considering neighbors.`
-!!!(p) {:.unnumlist}
+`  "Reduce the number of labelings on vertex by considering neighbors.`
 
-` If we can reduce, propagate the new constraint to each neighbor."`
-!!!(p) {:.unnumlist}
+`  If we can reduce, propagate the new constraint to each neighbor."`
 
-` :: Return nil only when the constraints lead to an impossibility`
-!!!(p) {:.unnumlist}
+`  :: Return nil only when the constraints lead to an impossibility`
 
-` (let ((old-num (number-of-labelings vertex)))`
-!!!(p) {:.unnumlist}
+`  (let ((old-num (number-of-labelings vertex)))`
 
-`  (setf (vertex-labelings vertex) (consistent-labelings vertex))`
-!!!(p) {:.unnumlist}
+`    (setf (vertex-labelings vertex) (consistent-labelings vertex))`
 
-`  (unless (impossible-vertex-p vertex)`
-!!!(p) {:.unnumlist}
+`    (unless (impossible-vertex-p vertex)`
 
-`   (when (< (number-of-labelings vertex) old-num)`
-!!!(p) {:.unnumlist}
+`      (when (< (number-of-labelings vertex) old-num)`
 
-`    (format t "~&; ~a: ~14a ~a" vertex ;***`
-!!!(p) {:.unnumlist}
+`        (format t "~&; ~a: ~14a ~a" vertex ;***`
 
-`        (vertex-neighbors vertex) ;***`
-!!!(p) {:.unnumlist}
+`                (vertex-neighbors vertex) ;***`
 
-`        (vertex-labelings vertex)) ;***`
-!!!(p) {:.unnumlist}
+`                (vertex-labelings vertex)) ;***`
 
-`    (every #'propagate-constraints (vertex-neighbors vertex)))`
-!!!(p) {:.unnumlist}
+`        (every #'propagate-constraints (vertex-neighbors vertex)))`
 
-`   vertex)))`
-!!!(p) {:.unnumlist}
+`      vertex)))`
 
 Running the problem again gives the following trace:
 
-[ ](#){:#l0240}`> (print-labelings (ground (diagram 'arch) 'x 'z))`
-!!!(p) {:.unnumlist}
+`> (print-labelings (ground (diagram 'arch) 'x 'z))`
 
 `The initial diagram is:`
-!!!(p) {:.unnumlist}
 
-` A/3 W: AE=[L−+] AB-CR−+] AC=[++−]`
-!!!(p) {:.unnumlist}
+`  A/3 W: AE=[L-+] AB-CR-+] AC=[++-]`
 
-` P/6 L: P0=[RL+L-R] PQ=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  P/6 L: P0=[RL+L-R] PQ=[LRR+L-]`
 
-` B/6 L: BD=[RL+L-R] BA=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  B/6 L: BD=[RL+L-R] BA=[LRR+L-]`
 
-` Q/4 T: QP=[RRRR] QI=[LLLL] QR=[+−LR]`
-!!!(p) {:.unnumlist}
+`  Q/4 T: QP=[RRRR] QI=[LLLL] QR=[+-LR]`
 
-` C/5 Y: CA=[+−L-R] CD=[+−RL-] CG=[+−−RL]`
-!!!(p) {:.unnumlist}
+`  C/5 Y: CA=[+-L-R] CD=[+-RL-] CG=[+--RL]`
 
-` R/4 T: RJ=[RRRR] RS=[LLLL] RQ=[+−LR]`
-!!!(p) {:.unnumlist}
+`  R/4 T: RJ=[RRRR] RS=[LLLL] RQ=[+-LR]`
 
-` D/5 Y: DC=[+−L-R] DB=[+−RL-] DM=[+−−RL]`
-!!!(p) {:.unnumlist}
+`  D/5 Y: DC=[+-L-R] DB=[+-RL-] DM=[+--RL]`
 
-` S/6 L: SR=[RL+L-R] ST=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  S/6 L: SR=[RL+L-R] ST=[LRR+L-]`
 
-` S/6 L: EA=[RL+L-R] EF=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  S/6 L: EA=[RL+L-R] EF=[LRR+L-]`
 
-` T/3 W: TU=[L-+] TS=[R-+] TK=[++-]`
-!!!(p) {:.unnumlist}
+`  T/3 W: TU=[L-+] TS=[R-+] TK=[++-]`
 
-` F/4 T: FE=[RRRR] FG=[LLLL] FN=[+-LR]`
-!!!(p) {:.unnumlist}
+`  F/4 T: FE=[RRRR] FG=[LLLL] FN=[+-LR]`
 
-` U/6 L: UT=[RL+L-R] U4=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  U/6 L: UT=[RL+L-R] U4=[LRR+L-]`
 
-` G/3 W: GH=[L-+] GF=[R-+] GC=[++-]`
-!!!(p) {:.unnumlist}
+`  G/3 W: GH=[L-+] GF=[R-+] GC=[++-]`
 
-` V/6 L: V2=[RL+L-R] V4=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  V/6 L: V2=[RL+L-R] V4=[LRR+L-]`
 
-` H/4 T: HG=[RRRR] HI=[LLLL] Ho=[+-LR]`
-!!!(p) {:.unnumlist}
+`  H/4 T: HG=[RRRR] HI=[LLLL] Ho=[+-LR]`
 
-` W/3 W: WX=[L-+] W1=[R-+] WY=[++-]`
-!!!(p) {:.unnumlist}
+`  W/3 W: WX=[L-+] W1=[R-+] WY=[++-]`
 
-` I/4 T: IH=[RRRR] IJ=[LLLL] IQ=[+-LR]`
-!!!(p) {:.unnumlist}
+`  I/4 T: IH=[RRRR] IJ=[LLLL] IQ=[+-LR]`
 
-` X/1 L: XW=[R] XZ=[-]`
-!!!(p) {:.unnumlist}
+`  X/1 L: XW=[R] XZ=[-]`
 
-` J/4 T: JI=[RRRR] JK=[LLLL] JR=[+-LR]`
-!!!(p) {:.unnumlist}
+`  J/4 T: JI=[RRRR] JK=[LLLL] JR=[+-LR]`
 
-` Y/5 Y: YW=[+-L-R] Y2=[+-RL-] YZ=[+--RL]`
-!!!(p) {:.unnumlist}
+`  Y/5 Y: YW=[+-L-R] Y2=[+-RL-] YZ=[+--RL]`
 
-` K/4 T: KJ=[RRRR] KL=[LLLL] KT=[+-LR]`
-!!!(p) {:.unnumlist}
+`  K/4 T: KJ=[RRRR] KL=[LLLL] KT=[+-LR]`
 
-` Z/3 W: Z3=[L-+] ZX=[R-+] ZY=[++-]`
-!!!(p) {:.unnumlist}
+`  Z/3 W: Z3=[L-+] ZX=[R-+] ZY=[++-]`
 
-` L/4 T: LK=[RRRR] LM=[LLLL] L4=[+-LR]`
-!!!(p) {:.unnumlist}
+`  L/4 T: LK=[RRRR] LM=[LLLL] L4=[+-LR]`
 
-` 1/4 T: 1N=[RRRR] 10=[LLLL] 1 W=[+-LR]`
-!!!(p) {:.unnumlist}
+`  1/4 T: 1N=[RRRR] 10=[LLLL] 1 W=[+-LR]`
 
-` M/6 L: ML=[RL+L-R] MD=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  M/6 L: ML=[RL+L-R] MD=[LRR+L-]`
 
-` 2/3 W: 2 V=[L-+] 23=[R-+] 2Y=[++-]`
-!!!(p) {:.unnumlist}
+`  2/3 W: 2 V=[L-+] 23=[R-+] 2Y=[++-]`
 
-` N/6 L: NF=[RL+L-R] N1=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  N/6 L: NF=[RL+L-R] N1=[LRR+L-]`
 
-` 3/6 L: 3Z=[RL+L-R] 32=[LRR+L-]`
-!!!(p) {:.unnumlist}
+`  3/6 L: 3Z=[RL+L-R] 32=[LRR+L-]`
 
-` 0/3 W: 0P=[L-+] 01=[R-+] 0H=[++-]`
-!!!(p) {:.unnumlist}
+`  0/3 W: 0P=[L-+] 01=[R-+] 0H=[++-]`
 
-` 4/4 T: 4U=[RRRR] 4 L=[LLLL] 4 V=[+-LR]`
-!!!(p) {:.unnumlist}
+`  4/4 T: 4U=[RRRR] 4 L=[LLLL] 4 V=[+-LR]`
 
 `For 2,888, 816, 545.234, 944,000 interpretations`
-!!!(p) {:.unnumlist}
 
-`: P/2: (0/3 Q/4)    ((R L) (- L))`
-!!!(p) {:.unnumlist}
+`: P/2: (0/3 Q/4)        ((R L) (- L))`
 
-`: 0/1: (P/2 1/4 H/4)  ((L R +))`
-!!!(p) {:.unnumlist}
+`: 0/1: (P/2 1/4 H/4)    ((L R +))`
 
-`: P/1: (0/1 Q/4)    ((R L))`
-!!!(p) {:.unnumlist}
+`: P/1: (0/1 Q/4)        ((R L))`
 
-`: 1/3: (N/6 0/1 W/3)  ((R L +) (R L -) (R L L))`
-!!!(p) {:.unnumlist}
+`: 1/3: (N/6 0/1 W/3)    ((R L +) (R L -) (R L L))`
 
-`: N/2: (F/4 1/3)    ((R L) (- L))`
-!!!(p) {:.unnumlist}
+`: N/2: (F/4 1/3)        ((R L) (- L))`
 
-`: F/2: (E/6 G/3 N/2)  ((R L -) (R L L))`
-!!!(p) {:.unnumlist}
+`: F/2: (E/6 G/3 N/2)    ((R L -) (R L L))`
 
-`: E/2: (A/3 F/2)   ((R L) (- L))`
-!!!(p) {:.unnumlist}
+`: E/2: (A/3 F/2)      ((R L) (- L))`
 
-`: A/2: (E/2 B/6 C/5)  ((L R +) (- - +))`
-!!!(p) {:.unnumlist}
+`: A/2: (E/2 B/6 C/5)    ((L R +) (- - +))`
 
-`: B/3: (D/5 A/2)   ((R L) (- L) (R -))`
-!!!(p) {:.unnumlist}
+`: B/3: (D/5 A/2)      ((R L) (- L) (R -))`
 
-`: D/3: (C/5 B/3 M/6)  ((- - -) (- L R) (R - L))`
-!!!(p) {:.unnumlist}
+`: D/3: (C/5 B/3 M/6)    ((- - -) (- L R) (R - L))`
 
-`: W/1: (X/l 1/3 Y/5)  ((L R +))`
-!!!(p) {:.unnumlist}
+`: W/1: (X/l 1/3 Y/5)    ((L R +))`
 
-`: 1/1: (N/2 0/1 W/l)  ((R L L))`
-!!!(p) {:.unnumlist}
+`: 1/1: (N/2 0/1 W/l)    ((R L L))`
 
-`: Y/1: (W/l 2/3 Z/3)  ((+ + +))`
-!!!(p) {:.unnumlist}
+`: Y/1: (W/l 2/3 Z/3)    ((+ + +))`
 
-`: 2/2: (V/6 3/6 Y/1)  ((L R +) (- - +))`
-!!!(p) {:.unnumlist}
+`: 2/2: (V/6 3/6 Y/1)    ((L R +) (- - +))`
 
-`: V/3: (2/2 4/4)   ((R L) (- L) (R -))`
-!!!(p) {:.unnumlist}
+`: V/3: (2/2 4/4)      ((R L) (- L) (R -))`
 
-`: 4/2: (U/6 L/4 V/3)  ((R L -) (R L R))`
-!!!(p) {:.unnumlist}
+`: 4/2: (U/6 L/4 V/3)    ((R L -) (R L R))`
 
-`: U/2: (T/3 4/2)   ((R L) (- L))`
-!!!(p) {:.unnumlist}
+`: U/2: (T/3 4/2)      ((R L) (- L))`
 
-`: T/2: (U/2 S/6 K/4)  ((L R +) (- - +))`
-!!!(p) {:.unnumlist}
+`: T/2: (U/2 S/6 K/4)    ((L R +) (- - +))`
 
-`: S/2: (R/4 T/2)   ((R L) (R -))`
-!!!(p) {:.unnumlist}
+`: S/2: (R/4 T/2)      ((R L) (R -))`
 
-`: K/1: (J/4 L/4 T/2)  ((R L +))`
-!!!(p) {:.unnumlist}
+`: K/1: (J/4 L/4 T/2)    ((R L +))`
 
-`: J/1: (1/4 K/1 R/4)  ((R L L))`
-!!!(p) {:.unnumlist}
+`: J/1: (1/4 K/1 R/4)    ((R L L))`
 
-`: I/1: (H/4 J/1 Q/4)  ((R L R))`
-!!!(p) {:.unnumlist}
+`: I/1: (H/4 J/1 Q/4)    ((R L R))`
 
-`: L/1: (K/l M/6 4/2)  ((R L R))`
-!!!(p) {:.unnumlist}
+`: L/1: (K/l M/6 4/2)    ((R L R))`
 
-`: M/2: (L/1 D/3)   ((R L) (R -))`
-!!!(p) {:.unnumlist}
+`: M/2: (L/1 D/3)      ((R L) (R -))`
 
-`: 3/3: (Z/3 2/2)   ((R L) (− L) (R -))`
-!!!(p) {:.unnumlist}
+`: 3/3: (Z/3 2/2)      ((R L) (- L) (R -))`
 
-`: Z/1 : (3/3 X/1 Y/1)  ((− − +))`
-!!!(p) {:.unnumlist}
+`: Z/1 : (3/3 X/1 Y/1)    ((- - +))`
 
-`: 3/1: (Z/l 2/2)  ((− L))`
-!!!(p) {:.unnumlist}
+`: 3/1: (Z/l 2/2)    ((- L))`
 
-`: 2/1: (V/3 3/1 Y/1)  ((L R +))`
-!!!(p) {:.unnumlist}
+`: 2/1: (V/3 3/1 Y/1)    ((L R +))`
 
-`: V/2: (2/1 4/2)   ((R L) (R -))`
-!!!(p) {:.unnumlist}
+`: V/2: (2/1 4/2)      ((R L) (R -))`
 
 `After constraint propagation the diagram is:`
-!!!(p) {:.unnumlist}
 
-` A/0 W:`
-!!!(p) {:.unnumlist}
+`  A/0 W:`
 
-` P/l L: P0=[R] PQ=CL]`
-!!!(p) {:.unnumlist}
+`  P/l L: P0=[R] PQ=CL]`
 
-` B/0 L:`
-!!!(p) {:.unnumlist}
+`  B/0 L:`
 
-` Q/4 T: QP=[RRRR] QI=[LLLL] QR=[+−LR]`
-!!!(p) {:.unnumlist}
+`  Q/4 T: QP=[RRRR] QI=[LLLL] QR=[+-LR]`
 
-` C/0 Y:`
-!!!(p) {:.unnumlist}
+`  C/0 Y:`
 
-` R/4 T: RJ=[RRRR] RS=[LLLL] RQ=[+−LR]`
-!!!(p) {:.unnumlist}
+`  R/4 T: RJ=[RRRR] RS=[LLLL] RQ=[+-LR]`
 
-` D/0 Y:`
-!!!(p) {:.unnumlist}
+`  D/0 Y:`
 
-` S/2 L: SR=[RR] ST=[L-]`
-!!!(p) {:.unnumlist}
+`  S/2 L: SR=[RR] ST=[L-]`
 
-` E/2 L: EA=[R-] EF=[LL]`
-!!!(p) {:.unnumlist}
+`  E/2 L: EA=[R-] EF=[LL]`
 
-` T/2 W: TU=[L-] TS=CR-] TK=[++]`
-!!!(p) {:.unnumlist}
+`  T/2 W: TU=[L-] TS=CR-] TK=[++]`
 
-` F/2 T: FE=[RR] FG=[LL] FN=[− L]`
-!!!(p) {:.unnumlist}
+`  F/2 T: FE=[RR] FG=[LL] FN=[-  L]`
 
-` U/2 L: UT=[R-] U4=[LL]`
-!!!(p) {:.unnumlist}
+`  U/2 L: UT=[R-] U4=[LL]`
 
-` G/0 W:`
-!!!(p) {:.unnumlist}
+`  G/0 W:`
 
-` V/2 L: V2=[RR] V4=[L-]`
-!!!(p) {:.unnumlist}
+`  V/2 L: V2=[RR] V4=[L-]`
 
-` H/0 T:`
-!!!(p) {:.unnumlist}
+`  H/0 T:`
 
-` W/l W: WX=[L] W1=[R] WY=[+]`
-!!!(p) {:.unnumlist}
+`  W/l W: WX=[L] W1=[R] WY=[+]`
 
-` I/1 T: IH=[R] IJ=[L] IQ=[R]`
-!!!(p) {:.unnumlist}
+`  I/1 T: IH=[R] IJ=[L] IQ=[R]`
 
-` X/1 L: XW=[R] XZ=[−]`
-!!!(p) {:.unnumlist}
+`  X/1 L: XW=[R] XZ=[-]`
 
-` J/1 T: JI=[R] JK=[L] JR=[L]`
-!!!(p) {:.unnumlist}
+`  J/1 T: JI=[R] JK=[L] JR=[L]`
 
-` Y/1 Y: YW=[+] Y2=[+] YZ=[+]`
-!!!(p) {:.unnumlist}
+`  Y/1 Y: YW=[+] Y2=[+] YZ=[+]`
 
-` K/1 T: KJ=[R] KL=[L] KT=[+]`
-!!!(p) {:.unnumlist}
+`  K/1 T: KJ=[R] KL=[L] KT=[+]`
 
-` Z/1 W: Z3=[−] ZX=[−] ZY=[+]`
-!!!(p) {:.unnumlist}
+`  Z/1 W: Z3=[-] ZX=[-] ZY=[+]`
 
-` L/1 T: LK=[R] LM=[L] L4=[R]`
-!!!(p) {:.unnumlist}
+`  L/1 T: LK=[R] LM=[L] L4=[R]`
 
-` 1/1 T: 1 N=[R] 10=[L] 1 W=[L]`
-!!!(p) {:.unnumlist}
+`  1/1 T: 1 N=[R] 10=[L] 1 W=[L]`
 
-` M/2 L: ML=[RR] MD=[L-]`
-!!!(p) {:.unnumlist}
+`  M/2 L: ML=[RR] MD=[L-]`
 
-` 2/1 W: 2 V=[L] 23=[R] 2Y=[+]`
-!!!(p) {:.unnumlist}
+`  2/1 W: 2 V=[L] 23=[R] 2Y=[+]`
 
-` N/2 L: NF=[R-] N1=[LL]`
-!!!(p) {:.unnumlist}
+`  N/2 L: NF=[R-] N1=[LL]`
 
-` 3/1 L: 3Z=[−] 32=[L]`
-!!!(p) {:.unnumlist}
+`  3/1 L: 3Z=[-] 32=[L]`
 
-` 0/1 W: 0P=[L] 01=[R] 0H=[+]`
-!!!(p) {:.unnumlist}
+`  0/1 W: 0P=[L] 01=[R] 0H=[+]`
 
-` 4/2 T: 4U=[RR] 4 L=[LL] 4 V=[− R]`
-!!!(p) {:.unnumlist}
+`  4/2 T: 4U=[RR] 4 L=[LL] 4 V=[-  R]`
 
 From the diagram after constraint propagation we can see that the vertexes A,B,C,D,G, and H have no interpretations, so they are a good place to look first for an error.
 From the trace generated by `propagate-constraints` (the lines beginning with a semicolon), we see that constraint propagation started at P and after seven propagations reached some of the suspect vertexes:
 
-[ ](#){:#l0245}`: A/2: (E/2 B/6 C/5)  ((L R +) (− − + ))`
-!!!(p) {:.unnumlist}
+`: A/2: (E/2 B/6 C/5)    ((L R +) (- - + ))`
 
-`: B/3: (D/5 A/2)    ((R L) (− L) (R -))`
-!!!(p) {:.unnumlist}
+`: B/3: (D/5 A/2)        ((R L) (- L) (R -))`
 
-`: D/3: (C/5 B/3 M/6)  ((- - -) (− L R) (R - L))`
-!!!(p) {:.unnumlist}
+`: D/3: (C/5 B/3 M/6)    ((- - -) (- L R) (R - L))`
 
 A and B look acceptable, but look at the entry for vertex D.
 It shows three interpretations, and it shows that the neighbors are C, B, and M.
 Note that line DC, the first entry in each of the interpretations, must be either -, - or R.
-But this is an error, because the “correct” interpretation has DC as a + line.
+But this is an error, because the "correct" interpretation has DC as a + line.
 Looking more closely, we notice that D is in fact a W-type vertex, not a Y vertex as written in the definition.
 We should have:
 
-[ ](#){:#l0250}`(defdiagram arch`
-!!!(p) {:.unnumlist}
+`(defdiagram arch`
 
-` (a W e b c)  (p L o q)`
-!!!(p) {:.unnumlist}
+`  (a W e b c)    (p L o q)`
 
-` (b L d a)   (q T p i r)`
-!!!(p) {:.unnumlist}
+`  (b L d a)      (q T p i r)`
 
-` (c Y a d g)  (r T j s q)`
-!!!(p) {:.unnumlist}
+`  (c Y a d g)    (r T j s q)`
 
-` (d W b m c)  (s L r t)     ;*d is a W, not Y*`
-!!!(p) {:.unnumlist}
+`  (d W b m c)    (s L r t)          ;*d is a W, not Y*`
 
-` (e L a f)   (t W u s k)`
-!!!(p) {:.unnumlist}
+`  (e L a f)      (t W u s k)`
 
-` (f T e g n)  (u L t 4)`
-!!!(p) {:.unnumlist}
+`  (f T e g n)    (u L t 4)`
 
-` (g W h f c)  (v L 2 4)`
-!!!(p) {:.unnumlist}
+`  (g W h f c)    (v L 2 4)`
 
-` (h T g i o)  (w W x 1 y)`
-!!!(p) {:.unnumlist}
+`  (h T g i o)    (w W x 1 y)`
 
-` (i T h j q)  (x L w z)`
-!!!(p) {:.unnumlist}
+`  (i T h j q)    (x L w z)`
 
-` (j T i k r)  (y Y w 2 z)`
-!!!(p) {:.unnumlist}
+`  (j T i k r)    (y Y w 2 z)`
 
-` (k T J l t)  (z W 3 x y)`
-!!!(p) {:.unnumlist}
+`  (k T J l t)    (z W 3 x y)`
 
-` (1 T k m 4)  (1 T n o w)`
-!!!(p) {:.unnumlist}
+`  (1 T k m 4)    (1 T n o w)`
 
-` (m L l d)   (2 W v 3 y)`
-!!!(p) {:.unnumlist}
+`  (m L l d)      (2 W v 3 y)`
 
-` (n L f 1)   (3 L z 2)`
-!!!(p) {:.unnumlist}
+`  (n L f 1)      (3 L z 2)`
 
-` (o W P 1 h)  (4 T u l v))`
-!!!(p) {:.unnumlist}
+`  (o W P 1 h)    (4 T u l v))`
 
 By running the problem again and inspecting the trace output, we soon discover the real root of the problem: the most natural interpretation of the diagram is beyond the scope of the program!
 There are many interpretations that involve blocks floating in air, but if we ground lines OP, TU and XZ, we run into trouble.
 Remember, we said that we were considering trihedral vertexes only.
 But vertex 1 would be a quad-hedral vertex, formed by the intersection of four planes: the top and back of the base, and the bottom and left-hand side of the left pillar.
-The intuitively correct labeling for the diagram would have O1 be a concave (−) line and Al be an occluding line, but our repertoire of labelings for T vertexes does not allow this.
+The intuitively correct labeling for the diagram would have O1 be a concave (-) line and Al be an occluding line, but our repertoire of labelings for T vertexes does not allow this.
 Hence, the diagram cannot be labeled consistently.
 
 Let's go back and consider the error that came up in the first version of the diagram.
 Even though the error no longer occurs on this diagram, we want to make sure that it won't show up in another case.
 Here's the error:
 
-[ ](#){:#l0255}`>>>ERROR: The first argument to NTH was of the wrong type.`
-!!!(p) {:.unnumlist}
+`>>>ERROR: The first argument to NTH was of the wrong type.`
 
 `The function expected a fixnum >= z`e`ro.`
-!!!(p) {:.unnumlist}
 
-`While in the function LABELS-FOR`⇐ `CONSISTENT-LABELINGS`
-!!!(p) {:.unnumlist}
+`While in the function LABELS-FOR`<= `CONSISTENT-LABELINGS`
 
 `Debugger entered while in the following function:`
-!!!(p) {:.unnumlist}
 
 `LABELS-FOR (P.C.
 = 23)`
-!!!(p) {:.unnumlist}
 
-`   Arg 0 (VERTEX): U/6`
-!!!(p) {:.unnumlist}
+`      Arg 0 (VERTEX): U/6`
 
-`   Arg 1 (FROM): 4/4`
-!!!(p) {:.unnumlist}
+`      Arg 1 (FROM): 4/4`
 
 Looking at the definition of `labels-for`, we see that it is looking for the from vertex, which in this case is 4, among the neighbors of U.
 It was not found, so pos became nil, and the function nth complained that it was not given an integer as an argument.
 So this error, if we had pursued it earlier, would have pointed out that 4 was not listed as a neighbor of U, when it should have been.
 Of course, we found that out by other means.
-In any case, there is no bug here to fix—as long as a diagram is guaranteed to be consistent, the `labels-for` bug will not appear again.
+In any case, there is no bug here to fix-as long as a diagram is guaranteed to be consistent, the `labels-for` bug will not appear again.
 
 This section has made two points: First, write code that checks the input as thoroughly as possible.
 Second, even when input checking is done, it is still up to the user to understand the limitations of the program.
 
-## [ ](#){:#st0030}17.5 History and References
+## 17.5 History and References
 {:#s0030}
 {:.h1hd}
 
@@ -2338,25 +1682,25 @@ Many introductory AI texts give vision short coverage, but [Charniak and McDermo
 [Ramsey and Barrett (1987)](B9780080571157500285.xhtml#bb0975) give an implementation of a line-recognition program.
 It would make a good project to connect their program to the one presented in this chapter, and thereby go all the way from pixels to 3-D descriptions.
 
-## [ ](#){:#st0035}17.6 Exercises
+## 17.6 Exercises
 {:#s0035}
 {:.h1hd}
 
 This chapter has solved the problem of line-labeling for polyhedra made of trihedral vertexes.
 The following exercises extend this solution.
 
-**Exercise 17.1 [h]** Use the line-labeling to produce a face labeling.
+**Exercise  17.1 [h]** Use the line-labeling to produce a face labeling.
 Write a function that takes a labeled diagram as input and produces a list of the faces (planes) that comprise the diagram.
 
-**Exercise 17.2 [h]** Use the face labeling to produce a polyhedron labeling.
+**Exercise  17.2 [h]** Use the face labeling to produce a polyhedron labeling.
 Write a function that takes a list of faces and a diagram and produces a list of polyhedra (blocks) that comprise the diagram.
 
-**Exercise 17.3 [d]** Extend the system to include quad-hedral vertexes and/or shadows.
+**Exercise  17.3 [d]** Extend the system to include quad-hedral vertexes and/or shadows.
 There is no conceptual difficulty in this, but it is a very demanding task to find all the possible vertex types and labelings for them.
 Consult [Waltz 1975](B9780080571157500285.xhtml#bb1300).
 
-**Exercise 17.4 [d]** Implement a program to recognize lines from pixels.
+**Exercise  17.4 [d]** Implement a program to recognize lines from pixels.
 
-**Exercise 17.5 [d]** If you have access to a workstation with a graphical interface, implement a program to allow a user to draw diagrams with a mouse.
+**Exercise  17.5 [d]** If you have access to a workstation with a graphical interface, implement a program to allow a user to draw diagrams with a mouse.
 Have the program generate output in the form expected by `construct-diagram`
 

@@ -4,14 +4,14 @@
 
 > **paradigm***n***1** an example or pattern; *esp* an outstandingly clear or typical example.
 
-> –*Longman’s Dictionary of the English Language*, 1984
+> -*Longman's Dictionary of the English Language*, 1984
 
 This book is concerned with three related topics: the field of artificial intelligence, or AI; the skill of computer programming; and the programming language Common Lisp.
 Careful readers of this book can expect to come away with an appreciation of the major questions and techniques of AI, an understanding of some important AI programs, and an ability to read, modify, and create programs using Common Lisp.
-The examples in this book are designed to be clear examples of good programming style–paradigms of programming.
-They are also paradigms of AI research–historically significant programs that use widely applicable techniques to solve important problems.
+The examples in this book are designed to be clear examples of good programming style-paradigms of programming.
+They are also paradigms of AI research-historically significant programs that use widely applicable techniques to solve important problems.
 
-Just as a liberal arts education includes a course in “the great books” of a culture, so this book is, at one level, a course in “the great programs” that define the AI culture.[1](#fn0010){:#xfn0010}
+Just as a liberal arts education includes a course in "the great books" of a culture, so this book is, at one level, a course in "the great programs" that define the AI culture.[1](#fn0010)
 
 At another level, this book is a highly technical compendium of the knowledge you will need to progress from being an intermediate Lisp programmer to being an expert.
 Parts I and II are designed to help the novice get up to speed, but the complete beginner may have a hard time even with this material.
@@ -30,16 +30,16 @@ Careful study and imitation of good programs leads to better writing.
 
 The proud craftsman is often tempted to display only the finished work, without any indication of the false starts and mistakes that are an unfortunate but unavoidable part of the creative process.
 Unfortunately, this reluctance to unveil the process is a barrier to learning; a student of mathematics who sees a beautiful 10-line proof in a textbook can marvel at its conciseness but does not learn how to construct such a proof.
-This book attempts to show the complete programming process, “warts and all.” Each chapter starts with a simple version of a program, one that works on some examples but fails on others.
+This book attempts to show the complete programming process, "warts and all." Each chapter starts with a simple version of a program, one that works on some examples but fails on others.
 Each chapter shows how these failures can be analyzed to build increasingly sophisticated versions of the basic program.
 Thus, the reader can not only appreciate the final result but also see how to learn from mistakes and refine an initially incomplete design.
 Furthermore, the reader who finds a particular chapter is becoming too difficult can skip to the next chapter, having gained some appreciation of the problem area, and without being overwhelmed by the details.
 
-This book presents a body of knowledge loosely known as “AI programming techniques,” but it must be recognized that there are no clear-cut boundaries on this body of knowledge.
+This book presents a body of knowledge loosely known as "AI programming techniques," but it must be recognized that there are no clear-cut boundaries on this body of knowledge.
 To be sure, no one can be a good AI programmer without first being a good programmer.
 Thus, this book presents topics (especially in parts III and V) that are not AI per se, but are essential background for any AI practitioner.
 
-## [ ](#){:#st0015}Why Lisp? Why Common Lisp?
+## Why Lisp? Why Common Lisp?
 {:#s0015}
 {:.h1hd}
 
@@ -50,7 +50,7 @@ Lisp has been chosen for three reasons.
 !!!(p) {:.para_fl}
 
 First, Lisp is the most popular language for AI programming, particularly in the United States.
-If you’re going to learn a language, it might as well be one with a growing literature, rather than a dead tongue.
+If you're going to learn a language, it might as well be one with a growing literature, rather than a dead tongue.
 
 Second, Lisp makes it easy to capture relevant generalizations in defining new objects.
 In particular, Lisp makes it easy to define new languages especially targeted to the problem at hand.
@@ -65,7 +65,7 @@ The programming environment (such as debugging tools, incremental compilers, int
 And the dynamic, interactive nature of Lisp makes it easy to experiment and change a program while it is being developed.
 
 It must be mentioned that in Europe and Japan, Prolog has been as popular as Lisp for AI work.
-Prolog shares most of Lisp’s advantages in terms of flexibility and conciseness.
+Prolog shares most of Lisp's advantages in terms of flexibility and conciseness.
 Recently, Lisp has gained popularity worldwide, and Prolog is becoming more well known in the United States.
 As a result, the average AI worker today is likely to be bilingual.
 This book presents the key ideas behind Prolog in [chapters 11](B978008057115750011X.xhtml) and [12](B9780080571157500121.xhtml), and uses these ideas in subsequent chapters, particularly [20](B9780080571157500200.xhtml) and [21](B9780080571157500212.xhtml).
@@ -78,7 +78,7 @@ A few dialects of Lisp live on as embedded extension languages.
 For example, the Gnu Emacs text editor uses elisp, and the AutoCad computer-aided design package uses AutoLisp, a derivative of Xlisp.
 In the future, it is likely that Scheme will become a popular extension language, since it is small but powerful and has an officially sanctioned standard definition.
 
-There is a myth that Lisp (and Prolog) are “special-purpose” languages, while languages like Pascal and C are “general purpose.” Actually, just the reverse is true.
+There is a myth that Lisp (and Prolog) are "special-purpose" languages, while languages like Pascal and C are "general purpose." Actually, just the reverse is true.
 Pascal and C are special-purpose languages for manipulating the registers and memory of a von Neumann-style computer.
 The majority of their syntax is devoted to arithmetic and Boolean expressions, and while they provide some facilities for forming data structures, they have poor mechanisms for procedural abstraction or control abstraction.
 In addition, they are designed for the state-oriented style of programming: computing a result by changing the value of variables through assignment statements.
@@ -92,10 +92,10 @@ This flexibility derives from two key features of Lisp: First, Lisp has a powerf
 When new styles of programming were invented, other languages died out; Lisp simply incorporated the new styles by defining some new macros.
 The macro facility is possible because Lisp programs are composed of a simple data structure: the list.
 In the early days, when Lisp was interpreted, most manipulation of programs was done through this data structure.
-Nowadays, Lisp is more often compiled than interpreted, and programmers rely more on Lisp’s second great flexible feature: the *function*.
+Nowadays, Lisp is more often compiled than interpreted, and programmers rely more on Lisp's second great flexible feature: the *function*.
 Of course, other languages have functions, but Lisp is rare in allowing the creation of new functions while a program is running.
 
-Lisp’s flexibility allows it to adapt as programming styles change, but more importantly, Lisp can adapt to your particular programming problem.
+Lisp's flexibility allows it to adapt as programming styles change, but more importantly, Lisp can adapt to your particular programming problem.
 In other languages you fit your problem to the language; with Lisp you extend the language to fit your problem.
 
 Because of its flexibility, Lisp has been succesful as a high-level language user for rapid prototyping in areas such as AI, graphics, and interfaces.
@@ -103,14 +103,14 @@ Lisp has also been the dominant language for exploratory programming, where the 
 Much of AI falls under this heading.
 
 The size of Common Lisp can be either an advantage or a disadvantage, depending on your outlook.
-In [David Touretzky’s (1989)](B9780080571157500285.xhtml#bb1240) fine book for beginning programmers, the emphasis is on simplicity.
+In [David Touretzky's (1989)](B9780080571157500285.xhtml#bb1240) fine book for beginning programmers, the emphasis is on simplicity.
 He chooses to write some programs slightly less concisely, rather than introduce an esoteric new feature (he cites `pushnew` as an example).
 That approach is entirely appropriate for beginners, but this book goes well past the level of beginner.
 This means exposing the reader to new features of the language whenever they are appropriate.
 Most of the time, new features are described as they are introduced, but sometimes explaining the details of a low-level function would detract from the explanation of the workings of a program.
-In accepting the privilege of being treated as an “adult,” the reader also accepts a responsibility–to look up unfamiliar terms in an appropriate reference source.
+In accepting the privilege of being treated as an "adult," the reader also accepts a responsibility-to look up unfamiliar terms in an appropriate reference source.
 
-## [ ](#){:#st0020}Outline of the Book
+## Outline of the Book
 {:#s0020}
 {:.h1hd}
 
@@ -164,8 +164,7 @@ The aim is two-fold: to show how to write an interpreter for another language, a
 
 **[Part IV](partiv.xhtml)** covers some advanced AI programs.
 
-[Chapter 15](B9780080571157500157.xhtml) uses the techniques of [part III](partiii.xhtml) to come up with a much more efficient implementation of MACSYMA !!!(span) {:.smallcaps} .
-It uses the idea of a canonical form, and replaces the very general rewrite rule approach with a series of more specific functions.
+[Chapter 15](B9780080571157500157.xhtml) uses the techniques of [part III](partiii.xhtml) to come up with a much more efficient implementation of MACSYMA !!!(span) {:.smallcaps} . It uses the idea of a canonical form, and replaces the very general rewrite rule approach with a series of more specific functions.
 
 [Chapter 16](B9780080571157500169.xhtml) covers the EMYCIN !!!(span) {:.smallcaps} expert system shell, a backward chaining rule-based system based on certainty factors.
 The MYCIN !!!(span) {:.smallcaps} medical expert system is also covered briefly.
@@ -198,7 +197,7 @@ This includes the `loop` macro, as well as error handling, pretty printing, seri
 The bibliography lists over 200 sources, and there is a comprehensive index.
 In addition, the appendix provides a directory of publicly available Lisp programs.
 
-## [ ](#){:#st0025}How to Use This Book
+## How to Use This Book
 {:#s0025}
 {:.h1hd}
 
@@ -206,21 +205,21 @@ The intended audience for this book is broad: anyone who wants to become an adva
 There are several recommended paths through the book:
 !!!(p) {:.para_fl}
 
-* [ ](#){:#l0010}• *In an Introductory AI Course:* Concentrate on parts I and II, and at least one example from [part IV](partiv.xhtml).
+*   *In an Introductory AI Course:* Concentrate on parts I and II, and at least one example from [part IV](partiv.xhtml).
 
-* • *In an Advanced AI Programming Course:* Concentrate on parts I, II and IV, skipping chapters that are of less interest and adding as much of [part III](partiii.xhtml) as time permits.
+*   *In an Advanced AI Programming Course:* Concentrate on parts I, II and IV, skipping chapters that are of less interest and adding as much of [part III](partiii.xhtml) as time permits.
 
-* • *In an Advanced Programming Languages Course:* Concentrate on parts I and V, with selections from [part III](partiii.xhtml).
+*   *In an Advanced Programming Languages Course:* Concentrate on parts I and V, with selections from [part III](partiii.xhtml).
 Cover [chapters 11](B978008057115750011X.xhtml) and [13](B9780080571157500133.xhtml) if similar material is not presented with another text.
 
-* • *For the Professional Lisp Programmer:* Read as much of the book as possible, and refer back to it often.
+*   *For the Professional Lisp Programmer:* Read as much of the book as possible, and refer back to it often.
 [Part III](partiii.xhtml) and [chapter 25](B978008057115750025X.xhtml) are particularly important.
 
-## [ ](#){:#st0030}Supplementary Texts and Reference Books
+## Supplementary Texts and Reference Books
 {:#s0030}
 {:.h1hd}
 
-The definitive reference source is Steele’s *Common Lisp the Language*.
+The definitive reference source is Steele's *Common Lisp the Language*.
 From 1984 to 1990, this unambiguously defined the language Common Lisp.
 However, in 1990 the picture became more complicated by the publication of *Common Lisp the Language*, 2d edition.
 This book, also by Steele, contains the recommendations of ANSI subcommittee X3J13, whose charter is to define a standard for Lisp.
@@ -228,11 +227,11 @@ These recommendations include many minor changes and clarifications, as well as 
 The new material doubles the size of the book from 465 to 1029 pages.
 !!!(p) {:.para_fl}
 
-Until the ANSI recommendations are formally accepted, Common Lisp users are in the unfortunate situation of having two distinct and incompatible standards: “original” Common Lisp and ANSI Common Lisp.
+Until the ANSI recommendations are formally accepted, Common Lisp users are in the unfortunate situation of having two distinct and incompatible standards: "original" Common Lisp and ANSI Common Lisp.
 Most of the code in this book is compliant with both standards.
 The most significant use of an ANSI function is the `loop` macro.
 The ANSI `map-into`, `complement`, and `reduce` functions are also used, although rarely.
-Definitions for all these functions are included, so even those using an “original” Common Lisp system can still run all the code in the book.
+Definitions for all these functions are included, so even those using an "original" Common Lisp system can still run all the code in the book.
 
 While *Common Lisp the Language* is the definitive standard, it is sometimes terse and can be difficult for a beginner.
 *Common Lisp: the Reference*, published by Franz Inc., offers complete coverage of the language with many helpful examples.
@@ -241,56 +240,56 @@ They are not as comprehensive, but that can be a blessing, because it can lead t
 
 It is a good idea to read this book with a computer at hand, to try out the examples and experiment with examples of your own.
 A computer is also handy because Lisp is self-documenting, through the functions `apropos`, `describe`, and `documentation`.
-Many implementations also provide more extensive documentation through some kind of ‘help’ command or menu.
+Many implementations also provide more extensive documentation through some kind of 'help' command or menu.
 
 The five introductory Lisp textbooks I recommend are listed below.
 The first is more elementary than the others.
 
-* [ ](#){:#l0015}• *Common Lisp: A Gentle Introduction to Symbolic Computation* by David Touretzky.
+*   *Common Lisp: A Gentle Introduction to Symbolic Computation* by David Touretzky.
 Most appropriate for beginners, including those who are not computer scientists.
 
-* • *A Programmer’s Guide to Common Lisp* by Deborah G.
+*   *A Programmer's Guide to Common Lisp* by Deborah G.
 Tatar.
 Appropriate for those with experience in another programming language, but none in Lisp.
 
-* • *Common LISPcraft* by Robert Wilensky.
+*   *Common LISPcraft* by Robert Wilensky.
 More comprehensive and faster paced, but still useful as an introduction as well as a reference.
 
-* • *Common Lisp* by Wade L.
+*   *Common Lisp* by Wade L.
 Hennessey.
 Somewhat hit-and-miss in terms of the topics it covers, but with an enlightened discussion of implementation and efficiency issues that do not appear in the other texts.
 
-* • *LISP* (3d edition) by Patrick H.
+*   *LISP* (3d edition) by Patrick H.
 Winston and Bertold Horn.
 Covers the most ground in terms of programming advice, but not as comprehensive as a reference.
 May be difficult for beginners.
 Includes some AI examples.
 
-While it may be distracting for the beginner to be continually looking at some reference source, the alternative–to have this book explain every new function in complete detail as it is introduced–would be even more distracting.
+While it may be distracting for the beginner to be continually looking at some reference source, the alternative-to have this book explain every new function in complete detail as it is introduced-would be even more distracting.
 It would interrupt the description of the AI programs, which is what this book is all about.
 
 There are a few texts that show how to write AI programs and tools, but none that go into the depth of this book.
 Nevertheless, the expert AI programmer will want to be familiar with all the following texts, listed in rough order of increasing sophistication:
 
-* [ ](#){:#l0020}• *LISP* (3d edition).
+*   *LISP* (3d edition).
 (See above.)
 
-* • *Programming Paradigms in Lisp* by Rajeev Sangal.
+*   *Programming Paradigms in Lisp* by Rajeev Sangal.
 Presents the different styles of programming that Lisp accommodates, illustrating them with some useful AI tools.
 
-* • *Programming for Artificial Intelligence* by Wolfgang Kreutzer and Bruce McKenzie.
+*   *Programming for Artificial Intelligence* by Wolfgang Kreutzer and Bruce McKenzie.
 Covers some of the basics of rule-based and pattern-matching systems well, but covers Lisp, Prolog, and Smalltalk, and thus has no time left for details in any of the languages.
 
-* • *Artificial Intelligence Programming* (2d edition) by Eugene Charniak, Christopher Riesbeck, Drew McDermott, and James Meehan.
+*   *Artificial Intelligence Programming* (2d edition) by Eugene Charniak, Christopher Riesbeck, Drew McDermott, and James Meehan.
 Contains 150 pages of Lisp overview, followed by an advanced discussion of AI tools, but no actual AI programs.
 
-* • *AI in Practice: Examples in Pop-11* by Allan Ramsey and Rosalind Barrett.
+*   *AI in Practice: Examples in Pop-11* by Allan Ramsey and Rosalind Barrett.
 Advanced, high-quality implementations of five AI programs, unfortunately using a language that has not gained popularity.
 
 The current text combines the virtues of the last two entries: it presents both actual AI programs and the tools necessary to build them.
 Furthermore, the presentation is in an incremental fashion, with simple versions presented first for clarity, followed by more sophisticated versions for completeness.
 
-## [ ](#){:#st0035}A Note on Exercises
+## A Note on Exercises
 {:#s0035}
 {:.h1hd}
 
@@ -299,7 +298,6 @@ Readers can test their level of understanding by faithfully doing the exercises.
 The exercises are graded on the scale [s], [m], [h], [d], which can be interpreted either as a level of difficulty or as an expected time it will take to do the exercise:
 !!!(p) {:.para_fl}
 
-[ ](#){:#t0010}
 !!!(table)
 
 | []() | | | | | | | | | |
@@ -314,12 +312,12 @@ The time to do the exercise is measured from the point that the concepts have be
 If the reader is unclear on the underlying concepts, it might take hours of review to understand a [m] problem.
 Answers to the exercises can be found in a separate section at the end of each chapter.
 
-## [ ](#){:#st0010}Acknowledgments
+## Acknowledgments
 {:#s0010}
 {:.h1hd}
 
 A great many people contributed to this book.
-First of all I would like to thank my students at USC and Berkeley, as well as James Martin’s students at Colorado and Michael Pazzani’s students at Irvine, who course-tested earlier versions of this book.
+First of all I would like to thank my students at USC and Berkeley, as well as James Martin's students at Colorado and Michael Pazzani's students at Irvine, who course-tested earlier versions of this book.
 Useful suggestions, corrections, and additions were made by:
 !!!(p) {:.para_fl}
 
@@ -328,7 +326,7 @@ Babcock and John Paxton (Montana State), Bryan A.
 Bentz (BBN), Mary P.
 Boelk (Johnson Controls), Michael Braverman (Berkeley), R.
 Chandrasekar and M.
-Sasikumar (National Centre for Software Technology, Bombay), Mike Clancy (Berkeley), Michael Covington (Georgia), Bruce D’Ambrosio (Oregon State), Piew Datta (Irvine), Shawn Dettrey (USC), J.
+Sasikumar (National Centre for Software Technology, Bombay), Mike Clancy (Berkeley), Michael Covington (Georgia), Bruce D'Ambrosio (Oregon State), Piew Datta (Irvine), Shawn Dettrey (USC), J.
 A.
 Durieux (AI Engineering BV, Amsterdam), Joseph Faletti (ETS), Paul Fuqua (Texas Instruments), Robert Goldman (Tulane), Marty Hall (Johns Hopkins), Marti Hearst (Berkeley), Jim Hendler (Maryland), Phil Laird (NASA), Raymond Lang (Tulane), David D.
 Loeffler (MCC), George Luger (New Mexico), Rob MacLachlan (CMU), Barry Margolin (Thinking Machines), James Mayfield (UMBC), Sanjay Manchandi (Arizona), Robert McCartney (Connecticut), James Meehan (DEC), Andrew L.
@@ -336,11 +334,11 @@ Ressler, Robert S.
 Rist (University of Technology, Sydney), Paul Snively (Apple), Peter Van Roy (Berkeley), David Gumby Wallace (Cygnus), and Jeff Wu (Colorado).
 
 Sam Dooley and Eric Wefald both wrote Othello-playing programs without which I would not have written [chapter 18](B9780080571157500182.xhtml).
-Eric also showed me Aristotle’s quotes on means-ends analysis.
+Eric also showed me Aristotle's quotes on means-ends analysis.
 Tragically, Eric died in August 1989.
 He is sorely missed by his friends and colleagues.
 Richard Fateman made suggestions for [chapter 8](B978008057115750008X.xhtml), convinced me to write [chapter 15](B9780080571157500157.xhtml), and, with help from Peter Klier, wrote a substantial program from which I adapted some code for that chapter.
-Charley Cox (Franz Inc.), Jamie Zawinski (Lucid Inc.), and Paul Fuqua (Texas Instruments) explained the inner workings of their respective companies’ compilers.
+Charley Cox (Franz Inc.), Jamie Zawinski (Lucid Inc.), and Paul Fuqua (Texas Instruments) explained the inner workings of their respective companies' compilers.
 Mike Harrison, Paul Hilfinger, Marc Luria, Ethan Munson, and Stephan Slade helped with LA !!!(span) {:.smallcaps} TE !!!(span) {:.smallcaps} X.
 Narciso Jarimillo tested all the code and separated it into the files that are available to the reader (see page 897).
 
@@ -352,7 +350,7 @@ Finally, thanks to Mike Morgan and Yonie Overton for overseeing the production o
 
 ----------------------
 
-[1](#xfn0010){:#np0010} This does not imply that the programs chosen are the best of all AI programs–just that they are representative.
+[1](#xfn0010) This does not imply that the programs chosen are the best of all AI programs-just that they are representative.
 !!!(p) {:.ftnote1}
 
 Part I
