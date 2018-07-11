@@ -1,1 +1,10 @@
 .DS_Store
+.byebug_history
+
+# from splitting chapters
+docs/paradigmsofartificialintelligenceprogramming.md
+docs/copyright.md
+docs/dedication.md
+docs/index.md
+docs/paradigmsofartificialintelligenceprogramming.md
+docs/tableofcontents.md
