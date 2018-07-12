@@ -10,12 +10,12 @@ Aho A.V., Ullman J.D.
 *The Theory of Parsing, Translation, and Compiling.* Prentice-Hall; 1972.
 !!!(p) {:.reflist}
 
-Aït-Kaci Hassan.
-*Warren’s Abstract Machine: A Tutorial Reconstruction.* MIT Press; 1991 An earlier version was published as “The WAM: A (Real) Tutorial.” Digital Equipment Corporation Paris Research Lab, Report no.
+A&iuml;t-Kaci Hassan.
+*Warren's Abstract Machine: A Tutorial Reconstruction.* MIT Press; 1991 An earlier version was published as "The WAM: A (Real) Tutorial." Digital Equipment Corporation Paris Research Lab, Report no.
 5.
 !!!(p) {:.reflist}
 
-Aït-Kaci Hassan, Lincoln Patrick, Nasr Roger.
+A&iuml;t-Kaci Hassan, Lincoln Patrick, Nasr Roger.
 Le Fun: Logic, Equations and Functions.
 1987.
 *Proceedings of the IEEE.* CH2472-9/87.
@@ -54,27 +54,25 @@ Pragmatic Parsing in Common Lisp; or, Putting defmacro on Steroids.
 !!!(p) {:.reflist}
 
 Barr Avron, Feigenbaum Edward A.
-Morgan Kaufmann; .
-*The Handbook of Artificial Intelligence.* 1981;3 vols.
+Morgan Kaufmann; . *The Handbook of Artificial Intelligence.* 1981;3 vols.
 !!!(p) {:.reflist}
 
 Batali John, Goodhue Edmund, Hanson Chris, Shrobe Howie, Stallman Richard M., Sussman Gerald Jay.
-*The Scheme-81 Architecture–System and Chip.* In: Proceedings, Conference on Advanced Research in VLSI; 1982:69–77.
+*The Scheme-81 Architecture-System and Chip.* In: Proceedings, Conference on Advanced Research in VLSI; 1982:69-77.
 !!!(p) {:.reflist}
 
 Bennett James S.
 Roget: A Knowledge-Based System for Acquiring the Conceptual Structure of a Diagnostic Expert System.
-*Journal of Automated Reasoning.* 1985;1:49–74.
+*Journal of Automated Reasoning.* 1985;1:49-74.
 !!!(p) {:.reflist}
 
 Berlekamp E.R., Conway J.H., Guy R.K.
-Academic Press; .
-*Winning Ways.* 1982;2 vols.
+Academic Press; . *Winning Ways.* 1982;2 vols.
 !!!(p) {:.reflist}
 
 Berlin Andrew, Weise Daniel.
 Compiling scientific code using partial evaluation.
-In: *IEEE Computer.* 1990:25–37.
+In: *IEEE Computer.* 1990:25-37.
 !!!(p) {:.reflist}
 
 Bobrow Daniel G.
@@ -150,7 +148,7 @@ On Understanding Types, Data Abstraction and Polymorphism.
 
 Chapman David.
 Planning for Conjunctive Goals.
-*Artificial Intelligence.* 1987;32:333–377 Reprinted in Allen, Hendler, and Tate 1990.
+*Artificial Intelligence.* 1987;32:333-377 Reprinted in Allen, Hendler, and Tate 1990.
 !!!(p) {:.reflist}
 
 Charniak Eugene, McDermott Drew.
@@ -162,7 +160,7 @@ Charniak Eugene, Riesbeck Christopher, McDermott Drew, Meehan James.
 !!!(p) {:.reflist}
 
 Cheeseman Peter.
-*In Defense of Probability.* In: Proceedings of the Ninth IJCAI; 1985:1002–1009.
+*In Defense of Probability.* In: Proceedings of the Ninth IJCAI; 1985:1002-1009.
 !!!(p) {:.reflist}
 
 Chomsky Noam.
@@ -171,15 +169,14 @@ Chomsky Noam.
 
 Church Alonzo.
 The Calculi of Lambda-Conversion.
-In: Princeton University Press; .
-*Annals of Mathematical Studies.* 1941;Vol.
+In: Princeton University Press; . *Annals of Mathematical Studies.* 1941;Vol.
 6.
 !!!(p) {:.reflist}
 
 Church Kenneth, Patil Ramesh.
 Coping with Syntactic Ambiguity, or How to Put the Block in the Box on the Table.
 *American Journal of Computational Linguistics.* 1982;8(nos.
-3-4):139–149.
+3-4):139-149.
 !!!(p) {:.reflist}
 
 Clinger William, Rees Jonathan.
@@ -192,7 +189,7 @@ Clocksin William F., Mellish Christopher S.
 
 Clowes Maxwell B.
 On Seeing Things.
-*Artificial Intelligence.* 1971;2:79–116.
+*Artificial Intelligence.* 1971;2:79-116.
 !!!(p) {:.reflist}
 
 Coelho Helder, Cotta Jose C.
@@ -202,13 +199,13 @@ Coelho Helder, Cotta Jose C.
 Cohen Jacques.
 Describing Prolog by its interpretation and compilation.
 *Communications of the ACM.* 1985;28(no.
-12):1311–1324.
+12):1311-1324.
 !!!(p) {:.reflist}
 
 Cohen Jacques.
 Constraint Logic Programming Languages.
 *Communications of the ACM.* 1990;33(no.
-7):52–68.
+7):52-68.
 !!!(p) {:.reflist}
 
 Colby Kenneth.
@@ -224,17 +221,17 @@ In: Waltz David, ed.
 Colmerauer Alain.
 Prolog in 10 figures.
 *Communications of the ACM.* 1985;28(no.
-12):1296–1310.
+12):1296-1310.
 !!!(p) {:.reflist}
 
 Colmerauer Alain.
 An Introduction to Prolog III.
 *Communications of the ACM.* 1990;33(no.
-7):69–90.
+7):69-90.
 !!!(p) {:.reflist}
 
 Colmerauer Alain, Kanoui Henri, Pasero Robert, Roussel Phillipe.
-*Un Système de Communication Homme-Machine en Français.* 1973 Rapport, Groupe d’Intelligence Artificielle, Université d’Aix-Marseille II.
+*Un Syst&egrave;me de Communication Homme-Machine en Fran&ccedil;ais.* 1973 Rapport, Groupe d'Intelligence Artificielle, Universit&eacute; d'Aix-Marseille II.
 !!!(p) {:.reflist}
 
 Cooper Thomas A., Wogrin Nancy.
@@ -242,9 +239,9 @@ Cooper Thomas A., Wogrin Nancy.
 !!!(p) {:.reflist}
 
 Dahl Ole-Johan, Nygaard Kristen.
-SIMULA–An Algol-based Simulation Language.
+SIMULA-An Algol-based Simulation Language.
 *Communications of the ACM.* 1966;9(no.
-9):671–678.
+9):671-678.
 !!!(p) {:.reflist}
 
 Davenport J.H., Siret Y., Tournier E.
@@ -264,12 +261,12 @@ Davis Lawrence.
 !!!(p) {:.reflist}
 
 Davis Randall.
-*Meta-Level Knowledge.* In: Proceedings of the Fifth IJCAI; 1977:920–928 Reprinted in Buchanan and Shortliffe 1984.
+*Meta-Level Knowledge.* In: Proceedings of the Fifth IJCAI; 1977:920-928 Reprinted in Buchanan and Shortliffe 1984.
 !!!(p) {:.reflist}
 
 Davis Randall.
 Interactive Transfer of Expertise.
-*Artificial Intelligence.* 1979;12:121–157 Reprinted in Buchanan and Shortliffe 1984.
+*Artificial Intelligence.* 1979;12:121-157 Reprinted in Buchanan and Shortliffe 1984.
 !!!(p) {:.reflist}
 
 Davis Randall, Lenat Douglas B.
@@ -288,39 +285,38 @@ In: Kleinmuntz B., ed.
 
 de Kleer Johan.
 An Assumption-Based Truth Maintenance System.
-*Artificial Intelligence.* 1986a;28:127–162 Reprinted in Ginsberg 1987.
+*Artificial Intelligence.* 1986a;28:127-162 Reprinted in Ginsberg 1987.
 !!!(p) {:.reflist}
 
 de Kleer Johan.
 Extending the ATMS.
-*Artificial Intelligence.* 1986b;28:163–196.
+*Artificial Intelligence.* 1986b;28:163-196.
 !!!(p) {:.reflist}
 
 de Kleer Johan.
 Problem-Solving with the ATMS.
-*Artificial Intelligence.* 1986c;28:197–224.
+*Artificial Intelligence.* 1986c;28:197-224.
 !!!(p) {:.reflist}
 
 de Kleer Johan.
 A General Labelling Algorithm for Assumption-Based Truth Maintenance.
-In: *Proceedings of the AAAI.* 1988:188–192.
+In: *Proceedings of the AAAI.* 1988:188-192.
 !!!(p) {:.reflist}
 
 Dowty David R., Wall Robert E., Peters Stanley.
 Introduction to Montague Semantics.
 In: D.
-Reidel; .
-*Synthese Language Library.* 1981;vol.
+Reidel; . *Synthese Language Library.* 1981;vol.
 11.
 !!!(p) {:.reflist}
 
 Doyle Jon.
 A Truth Maintenance System.
-*Artificial Intelligence.* 1979;12:231–272.
+*Artificial Intelligence.* 1979;12:231-272.
 !!!(p) {:.reflist}
 
 Doyle Jon.
-*The Ins and Outs of Reason Maintenance.* In: Proceedings of the Eighth IJCAI; 1983:349–351.
+*The Ins and Outs of Reason Maintenance.* In: Proceedings of the Eighth IJCAI; 1983:349-351.
 !!!(p) {:.reflist}
 
 Dubois Didier, Prade Henri.
@@ -331,16 +327,16 @@ An Introduction to Possibilistic and Fuzzy Logics.
 Earley Jay.
 An Efficient Context-Free Parsing Algorithm.
 *CACM.* 1970;6(no.
-2):451–455 Reprinted in Grosz et al.
+2):451-455 Reprinted in Grosz et al.
 1986.
 !!!(p) {:.reflist}
 
 Elcock E.W., Hoddinott P.
-*Comments on Kornfeld’s ‘Equality for Prolog’: E-Unification as a Mechanism for Augmenting the Prolog Search Strategy.* In: Proceedings of the AAAI; 1986:766–775.
+*Comments on Kornfeld's 'Equality for Prolog': E-Unification as a Mechanism for Augmenting the Prolog Search Strategy.* In: Proceedings of the AAAI; 1986:766-775.
 !!!(p) {:.reflist}
 
 Emanuelson P., Haraldsson A.
-*On Compiling Embedded Languages in Lisp.* In: Lisp Conference, Stanford, Calif; 1980:208–215.
+*On Compiling Embedded Languages in Lisp.* In: Lisp Conference, Stanford, Calif; 1980:208-215.
 !!!(p) {:.reflist}
 
 Ernst G.W., Newell Alan.
@@ -349,23 +345,23 @@ Ernst G.W., Newell Alan.
 
 Fateman Richard J.
 Reply to an Editorial.
-*ACM SIGSAM Bulletin.* 1973;25(March):9–11.
+*ACM SIGSAM Bulletin.* 1973;25(March):9-11.
 !!!(p) {:.reflist}
 
 Fateman Richard J.
 Polynomial Multiplication, Powers and Asymptotic Analysis: Some Comments.
 *SIAM Journal of Computation.* 1974;no.
-3(3):196–213.
+3(3):196-213.
 !!!(p) {:.reflist}
 
 Fateman Richard J.
-*MACSYMA’s general simplifier: philosophy and operation.* In: Lewis VE, ed.
-*Proceedings of the 1979 MACSYMA Users’ Conference* (MUC-79); MIT: Lab for Computer Science; 1979:563–582.
+*MACSYMA's general simplifier: philosophy and operation.* In: Lewis VE, ed.
+*Proceedings of the 1979 MACSYMA Users' Conference* (MUC-79); MIT: Lab for Computer Science; 1979:563-582.
 !!!(p) {:.reflist}
 
 Fateman Richard J.
 FRPOLY: A Benchmark Revisited.
-*Lisp and Symbolic Computation.* 1991;4:155–164.
+*Lisp and Symbolic Computation.* 1991;4:155-164.
 !!!(p) {:.reflist}
 
 Feigenbaum Edward A., Feldman Julian.
@@ -378,7 +374,7 @@ Field A.J., Harrison P.G.
 
 Fikes Richard E., Nilsson Nils J.
 STRIPS: A New Approach to the Application of Theorem Proving to Problem Solving.
-*Artificial Intelligence.* 1971;2:189–208 Reprinted in Allen, Hendler, and Tate 1990.
+*Artificial Intelligence.* 1971;2:189-208 Reprinted in Allen, Hendler, and Tate 1990.
 !!!(p) {:.reflist}
 
 Fodor Jerry A.
@@ -386,13 +382,13 @@ Fodor Jerry A.
 !!!(p) {:.reflist}
 
 Forgy Charles L.
-OPS5 User’s Manual.
+OPS5 User's Manual.
 *Report CMU-CS-81-135.* Carnegie Mellon University; 1981.
 !!!(p) {:.reflist}
 
 Forgy Charles L.
 RETE: A Fast Algorithm for the Many Pattern/Many Object Pattern Match Problem.
-*Artificial Intelligence.* 1982;19:17–37.
+*Artificial Intelligence.* 1982;19:17-37.
 !!!(p) {:.reflist}
 
 Franz Inc.
@@ -412,7 +408,7 @@ In: Shapiro Stuart C., ed.
 Galler B.A., Fisher M.J.
 An Improved Equivalence Algorithm.
 *Communications of the ACM.* 1964;7(no.
-5):301–303.
+5):301-303.
 !!!(p) {:.reflist}
 
 Gazdar Richard, Mellish Chris.
@@ -422,7 +418,7 @@ Gazdar Richard, Mellish Chris.
 Genesereth Michael R., Ginsberg Matthew L.
 Logic Programming.
 *Communications of the ACM.* 1985;28(no.
-9):933–941.
+9):933-941.
 !!!(p) {:.reflist}
 
 Genesereth Michael R., Nilsson Nils J.
@@ -438,7 +434,7 @@ Ginsberg Matthew L.
 !!!(p) {:.reflist}
 
 Ginsberg Matthew L., Harvey William D.
-*Iterative Broadening.* In: Proceedings, Eighth National Conference on AI; 1990:216–220.
+*Iterative Broadening.* In: Proceedings, Eighth National Conference on AI; 1990:216-220.
 !!!(p) {:.reflist}
 
 Goldberg Adele, Robinson David.
@@ -456,7 +452,7 @@ Gordon Jean, Shortliffe Edward H.
 Green Cordell.
 Theorem-proving by resolution as a basis for question-answering systems.
 In: Meltzer Bernard, Michie Donald, eds.
-*Machine Intelligence 4.* Edinburgh University Press; 1968:183–205.
+*Machine Intelligence 4.* Edinburgh University Press; 1968:183-205.
 !!!(p) {:.reflist}
 
 Grosz Barbara J., Sparck-Jones Karen, Webber Bonnie Lynn.
@@ -469,7 +465,7 @@ thesis, MAC-TR-59, Project MAC, MIT.
 !!!(p) {:.reflist}
 
 Hafner Carole, Wilcox Bruce.
-*LISP/MTS Programmer’s Guide.* Mental Health Research Institute Communication no.
+*LISP/MTS Programmer's Guide.* Mental Health Research Institute Communication no.
 302, University of Michigan; 1974.
 !!!(p) {:.reflist}
 
@@ -482,12 +478,12 @@ Hasemer Tony, Domingue John.
 !!!(p) {:.reflist}
 
 Hayes, Patrick.
-“Naive Physics I: Ontology for Liquids”.
+"Naive Physics I: Ontology for Liquids".
 In Hobbs and Moore 1985.
 !!!(p) {:.reflist}
 
 Heckerman David.
-Probabilistic Interpretations for Mycin’s Certainty Factors.
+Probabilistic Interpretations for Mycin's Certainty Factors.
 In: Kanal L.N., Lemmer J.F., eds.
 *Uncertainty in Artificial Intelligence.* North-Holland: Elsevier; 1986 Reprinted in Shafer and Pearl 1990.
 !!!(p) {:.reflist}
@@ -499,7 +495,7 @@ Hennessey Wade L.
 Hewitt Carl.
 Viewing Control Structures as Patterns of Passing Messages.
 *Artificial Intelligence.* 1977;8(no.
-3):323–384.
+3):323-384.
 !!!(p) {:.reflist}
 
 Hobbs Jerry R., Moore Robert C.
@@ -510,7 +506,7 @@ Hofstader Douglas R.
 *Godel, Escher, Bach: An Eternal Golden Braid.* Vintage; 1979.
 !!!(p) {:.reflist}
 
-Hölldobler Steffen.
+H&ouml;lldobler Steffen.
 *Foundations of Equational Logic Programming.* Springer-Verlag; 1987 Lecture Notes in Artificial Intelligence.
 !!!(p) {:.reflist}
 
@@ -521,22 +517,22 @@ Huddleston Rodney.
 Huffman David A.
 Impossible Objects as Nonsense Pictures.
 In: Meltzer B., Michie D., eds.
-*Machine Intelligence 6.* Edinburgh University Press; 1971:295–323.
+*Machine Intelligence 6.* Edinburgh University Press; 1971:295-323.
 !!!(p) {:.reflist}
 
 Hughes R.J.M.
-*Lazy Memo Functions.* In: Proceedings of the Conference on Functional Programming and Computer Architecture, Nancy; Springer-Verlag; 1985:129–146.
+*Lazy Memo Functions.* In: Proceedings of the Conference on Functional Programming and Computer Architecture, Nancy; Springer-Verlag; 1985:129-146.
 !!!(p) {:.reflist}
 
 Ingerman Peter Z.
 Thunks.
 *Communications of the ACM.* 1961;4(no.
-1):55–58.
+1):55-58.
 !!!(p) {:.reflist}
 
 Jaffar Joxan, Lassez Jean-Louis, Maher Michael J.
 A Theory of Complete Logic Programs with Equality.
-*Journal of Logic Programming.* 1984;3:211–223.
+*Journal of Logic Programming.* 1984;3:211-223.
 !!!(p) {:.reflist}
 
 Jackson Peter.
@@ -575,19 +571,19 @@ Kernighan B.W., Plauger P.J.
 !!!(p) {:.reflist}
 
 Keene Sonya.
-*Object-Oriented Programming in Common Lisp: A Programmer’s Guide to CLOS.* Addison-Wesley; 1989.
+*Object-Oriented Programming in Common Lisp: A Programmer's Guide to CLOS.* Addison-Wesley; 1989.
 !!!(p) {:.reflist}
 
 Knight K.
 Unification: A Multidisciplinary Survey.
 *ACM Computing Surveys.* 1989;21(no.
-1):93–121.
+1):93-121.
 !!!(p) {:.reflist}
 
 Knuth Donald E., Moore Robert W.
 An Analysis of Alpha-Beta Pruning.
 *Artificial Intelligence.* 1975;6(no.
-4):293–326.
+4):293-326.
 !!!(p) {:.reflist}
 
 Kohlbecker Jr.
@@ -598,12 +594,12 @@ thesis, Indiana University.
 
 Korf RE.
 Depth-first Iterative Deepening: an Optimal Admissible Tree Search.
-*Artificial Intelligence.* 1985;27:97–109.
+*Artificial Intelligence.* 1985;27:97-109.
 !!!(p) {:.reflist}
 
 Kornfeld WA.
 Equality for Prolog.
-In: 1983:514–519.
+In: 1983:514-519.
 *Proceedings of the Seventh IJCAI.*.
 !!!(p) {:.reflist}
 
@@ -612,12 +608,12 @@ Koschman Timothy.
 !!!(p) {:.reflist}
 
 Kowalski Robert.
-*Predicate logic as a programming language.* In: Proceedings of the IFIP-74 Congress; North-Holland; 1974:569–574.
+*Predicate logic as a programming language.* In: Proceedings of the IFIP-74 Congress; North-Holland; 1974:569-574.
 !!!(p) {:.reflist}
 
 Kowalski Robert.
 Algorithm = Logic + Control.
-*Communications of the ACM.* 1979;22:424–436.
+*Communications of the ACM.* 1979;22:424-436.
 !!!(p) {:.reflist}
 
 Kowalski Robert.
@@ -626,7 +622,7 @@ Kowalski Robert.
 
 Kowalski Robert.
 The Early Years of Logic Programming.
-*Communications of the ACM.* 1988;31:38–43.
+*Communications of the ACM.* 1988;31:38-43.
 !!!(p) {:.reflist}
 
 Kranz David, Kelsey Richard, Rees Jonathan, Hudak Paul, Philbin James, Adams Norman.
@@ -642,14 +638,14 @@ Lakoff George.
 !!!(p) {:.reflist}
 
 Landin Peter.
-A Correspondence Between Algol 60 and Church’s Lambda Notation.
+A Correspondence Between Algol 60 and Church's Lambda Notation.
 *Communications of the ACM.* 1965;8(no.
-2):89–101.
+2):89-101.
 !!!(p) {:.reflist}
 
 Lang Kevin J., Perlmutter Barak A.
 Oaklisp: An Object-Oriented Dialect of Scheme.
-*Lisp and Symbolic Computing.* 1988;1:39–51.
+*Lisp and Symbolic Computing.* 1988;1:39-51.
 !!!(p) {:.reflist}
 
 Langacker Ronald W.
@@ -659,7 +655,7 @@ Langacker Ronald W.
 Lassez J.-L., Maher M.J., Marriott K.
 Unification Revisited.
 In: Minker J., ed.
-*Foundations of Deductive Databases and Logic Programming.* Morgan Kaufmann; 1988:587–625.
+*Foundations of Deductive Databases and Logic Programming.* Morgan Kaufmann; 1988:587-625.
 !!!(p) {:.reflist}
 
 Lee Kai-Fu, Mahajan Sanjoy.
@@ -668,12 +664,12 @@ Lee Kai-Fu, Mahajan Sanjoy.
 
 Lee Kai-Fu., Mahajan Sanjoy.
 The Development of a World Class Othello Program.
-*Artificial Intelligence.* 1990;43:21–36.
+*Artificial Intelligence.* 1990;43:21-36.
 !!!(p) {:.reflist}
 
 Levesque Hector.
 Making Believers out of Computers.
-*Artificial Intelligence.* 1986;30:81–108.
+*Artificial Intelligence.* 1986;30:81-108.
 !!!(p) {:.reflist}
 
 Levy David N.L.
@@ -701,7 +697,7 @@ Loomis Lynn.
 !!!(p) {:.reflist}
 
 Loveland DW.
-*Near-Horn Prolog.* In: Proceedings of the Fourth International Conference on Logic Programming; 1987:456–469.
+*Near-Horn Prolog.* In: Proceedings of the Fourth International Conference on Logic Programming; 1987:456-469.
 !!!(p) {:.reflist}
 
 Luger George F., Stubblefield William A.
@@ -719,7 +715,7 @@ In: Shapiro Stuart C., ed.
 !!!(p) {:.reflist}
 
 Martin William A., Fateman Richard J.
-*The MACSYMA System.* In: Proceedings of the Second Symposium on Symbolic and Algebraic Manipulation; ACM SIGSAM; 1971:59–75.
+*The MACSYMA System.* In: Proceedings of the Second Symposium on Symbolic and Algebraic Manipulation; ACM SIGSAM; 1971:59-75.
 !!!(p) {:.reflist}
 
 Masinter Larry, Deutsch Peter.
@@ -727,7 +723,7 @@ Masinter Larry, Deutsch Peter.
 !!!(p) {:.reflist}
 
 McAllester David.
-*Reasoning Utility Package User’s Manual.* 1982 AI Memo 667, AI Lab, MIT.
+*Reasoning Utility Package User's Manual.* 1982 AI Memo 667, AI Lab, MIT.
 !!!(p) {:.reflist}
 
 McCarthy John.
@@ -738,7 +734,7 @@ McCarthy John.
 McCarthy John.
 Recursive functions of symbolic expressions and their computation by machine.
 *Communications of the ACM.* 1960;3(no.
-3):184–195.
+3):184-195.
 !!!(p) {:.reflist}
 
 McCarthy John.
@@ -760,17 +756,17 @@ In: Wexelblat Richard W., ed.
 !!!(p) {:.reflist}
 
 McCarthy John, Abrahams P.W., Edwards D.J., Fox P.A., Hart T.P., Levin M.J.
-*Lisp 1.5 Programmer’s Manual.* MIT Press; 1962.
+*Lisp 1.5 Programmer's Manual.* MIT Press; 1962.
 !!!(p) {:.reflist}
 
 McDermott Drew.
 Tarskian Semantics, or No Notation without Denotation!.
-*Cognitive Science.* 1978;2:277–282 Reprinted in Grosz, Sparck-Jones and Webber 1986.
+*Cognitive Science.* 1978;2:277-282 Reprinted in Grosz, Sparck-Jones and Webber 1986.
 !!!(p) {:.reflist}
 
 McDermott Drew.
 A Critique of Pure Reason.
-*Computational Intelligence.* 1987;3:151–160.
+*Computational Intelligence.* 1987;3:151-160.
 !!!(p) {:.reflist}
 
 Meyer Bertrand.
@@ -779,7 +775,7 @@ Meyer Bertrand.
 
 Michie Donald.
 Memo Functions and Machine Learning.
-*Nature.* 1968;218:19–22.
+*Nature.* 1968;218:19-22.
 !!!(p) {:.reflist}
 
 Miller Molly M., Benson Eric.
@@ -831,12 +827,12 @@ Naish Lee.
 
 Newell Alan, Shaw J.C., Simon Herbert A.
 Chess-Playing Programs and the Problem of Complexity.
-In: *In Feigenbaum and Feldman 1963.* 1963:39–70.
+In: *In Feigenbaum and Feldman 1963.* 1963:39-70.
 !!!(p) {:.reflist}
 
 Newell Alan, Simon Herbert A.
 GPS, A Program that Simulates Human Thought.
-In: *In Feigenbaum and Feldman 1963.* 1963:279–293 Reprinted in Allen, Hendler, and Tate 1990.
+In: *In Feigenbaum and Feldman 1963.* 1963:279-293 Reprinted in Allen, Hendler, and Tate 1990.
 !!!(p) {:.reflist}
 
 Newell Alan, Simon Herbert A.
@@ -850,7 +846,7 @@ Nilsson Nils.
 Norvig Peter.
 Correcting a Widespread Error in Unification Algorithms.
 *Software Practice and Experience.* 1991;21(no.
-2):231–233.
+2):231-233.
 !!!(p) {:.reflist}
 
 Nygaard Kristen, Dahl Ole-Johan.
@@ -859,7 +855,7 @@ In: Wexelblat Richard W., ed.
 *History of Programming Languages.* 1981.
 !!!(p) {:.reflist}
 
-O’Keefe Richard.
+O'Keefe Richard.
 *The Craft of Prolog.* MIT Press; 1990.
 !!!(p) {:.reflist}
 
@@ -881,8 +877,8 @@ Pereira Fernando C.N., Shieber Stuart M.
 !!!(p) {:.reflist}
 
 Pereira Fernando C.N., Warren David H.D.
-Definite clause grammars for language analysis–a survey of the formalism and a comparison with augmented transition networks.
-*Artificial Intelligence.* 1980;13:231–278 Reprinted in Grosz et al.
+Definite clause grammars for language analysis-a survey of the formalism and a comparison with augmented transition networks.
+*Artificial Intelligence.* 1980;13:231-278 Reprinted in Grosz et al.
 1986.
 !!!(p) {:.reflist}
 
@@ -894,13 +890,13 @@ Epigrams on Programming.
 
 Plaisted David A.
 Non-Horn Clause Logic Programming Without Contra-positives.
-*Journal of Automated Reasoning.* 1988;4:287–325.
+*Journal of Automated Reasoning.* 1988;4:287-325.
 !!!(p) {:.reflist}
 
 Quillian M.
 Ross.
 Word Concepts: A Theory of Simulation of Some Basic Semantic Capabilities.
-*Behavioral Science.* 1967;12:410–430 Reprinted in Brachman and Levesque 1985.
+*Behavioral Science.* 1967;12:410-430 Reprinted in Brachman and Levesque 1985.
 !!!(p) {:.reflist}
 
 Quirk Randolph, Greenbaum Sidney, Leech Geoffrey, Svartik Jan.
@@ -917,27 +913,27 @@ Rich Elaine, Knight Kevin.
 
 Risch RH.
 The Problem of Integration in Finite Terms.
-*Translations of the A.M.S.* 1969;139:167–189.
+*Translations of the A.M.S.* 1969;139:167-189.
 !!!(p) {:.reflist}
 
 Risch RH.
 Algebraic Properties of the Elementary Functions of Analysis.
-*American Journal of Mathematics.* 1979;101:743–759.
+*American Journal of Mathematics.* 1979;101:743-759.
 !!!(p) {:.reflist}
 
 Robinson JA.
 A Machine-Oriented Logic Based on the Resolution Principle.
 *Journal of the ACM.* 1965;12(no.
-1):23–41.
+1):23-41.
 !!!(p) {:.reflist}
 
 Rosenbloom Paul S.
 A World-Championship-Level Othello Program.
-*Artificial Intelligence.* 1982;19:279–320.
+*Artificial Intelligence.* 1982;19:279-320.
 !!!(p) {:.reflist}
 
 Roussel Phillipe.
-*Prolog: manual de reference et d’utilization.* Groupe d’Intelligence Artificielle, Université d’Aix-Marseille; 1975.
+*Prolog: manual de reference et d'utilization.* Groupe d'Intelligence Artificielle, Universit&eacute; d'Aix-Marseille; 1975.
 !!!(p) {:.reflist}
 
 Rowe Neal.
@@ -947,7 +943,7 @@ Rowe Neal.
 Ruf Erik, Weise Daniel.
 LogScheme: Integrating Logic Programming into Scheme.
 *Lisp and Symbolic Computation.* 1990;3(no.
-3):245–288.
+3):245-288.
 !!!(p) {:.reflist}
 
 Russell Stuart.
@@ -957,12 +953,12 @@ STAN-CS-85-1080,
 !!!(p) {:.reflist}
 
 Russell Stuart, Wefald Eric.
-*On Optimal Game-Tree Search using Rational Meta-Reasoning.* In: Proceedings of the International Joint Conference on Artificial Intelligence; 1989:334–340.
+*On Optimal Game-Tree Search using Rational Meta-Reasoning.* In: Proceedings of the International Joint Conference on Artificial Intelligence; 1989:334-340.
 !!!(p) {:.reflist}
 
 Sacerdoti Earl.
 Planning in a Hierarchy of Abstraction Spaces.
-*Artificial Intelligence.* 1974;5:115–135 Reprinted in Allen, Hendler, and Tate 1990.
+*Artificial Intelligence.* 1974;5:115-135 Reprinted in Allen, Hendler, and Tate 1990.
 !!!(p) {:.reflist}
 
 Sager Naomi.
@@ -971,7 +967,7 @@ Sager Naomi.
 
 Samuel AL.
 Some Studies in Machine Learning Using the Game of Checkers.
-*IBM Journal of Research and Development.* 1959;3:210–229 Reprinted in Feigenbaum and Feldman 1963.
+*IBM Journal of Research and Development.* 1959;3:210-229 Reprinted in Feigenbaum and Feldman 1963.
 !!!(p) {:.reflist}
 
 Sangal Rajeev.
@@ -987,7 +983,7 @@ Schank Roger C., Riesbeck Christopher.
 !!!(p) {:.reflist}
 
 Schmolze J.G., Lipkis T.A.
-*Classification in the KL-ONE Knowledge Representation System.* In: Proceedings of the Eighth IJCAI; 1983:330–332.
+*Classification in the KL-ONE Knowledge Representation System.* In: Proceedings of the Eighth IJCAI; 1983:330-332.
 !!!(p) {:.reflist}
 
 Sedgewick Robert.
@@ -996,7 +992,7 @@ Sedgewick Robert.
 
 Shannon Claude E.
 Programming a Digital Computer for Playing Chess.
-*Philosophy Magazine.* 1950a;41:356–375.
+*Philosophy Magazine.* 1950a;41:356-375.
 !!!(p) {:.reflist}
 
 Shannon Claude E.
@@ -1007,7 +1003,7 @@ In: *Scientific American.* 1950b:182 Feb.,
 Shebs Stan T., Kessler Robert R.
 Automatic Design and Implementation of Language Data Types.
 *SIGPLAN 87 Symposium on Interpreters and Interpretive Techniques (ACM SIGPLAN Notices.* 1987;22(no.
-7):26–37.
+7):26-37.
 !!!(p) {:.reflist}
 
 Shapiro Stuart C., ed.
@@ -1020,7 +1016,7 @@ Shafer Glenn, Pearl Judea.
 
 Sheil BA.
 Power Tools for Programmers.
-In: *Datamation.* 1983:131–144 Feb.,
+In: *Datamation.* 1983:131-144 Feb.,
 !!!(p) {:.reflist}
 
 Shortliffe Edward H.
@@ -1029,7 +1025,7 @@ Shortliffe Edward H.
 
 Shortliffe Edward H., Buchanan Bruce G.
 A Model of Inexact reasoning in Medicine.
-*Mathematical Biosciences.* 1975;23:351–379 Reprinted in Shafer and Pearl 1990.
+*Mathematical Biosciences.* 1975;23:351-379 Reprinted in Shafer and Pearl 1990.
 !!!(p) {:.reflist}
 
 Slade Richard.
@@ -1039,7 +1035,7 @@ Slade Richard.
 Slagle J.R.
 A heuristic program that solves symbolic integration problems in freshman calculus.
 In: Feigenbaum and Feldman, eds.
-*Computers and Thought.* 1963:191–203 Also in journal of the ACM 10:507–520.
+*Computers and Thought.* 1963:191-203 Also in journal of the ACM 10:507-520.
 !!!(p) {:.reflist}
 
 Spiegelhalter David J.
@@ -1051,7 +1047,7 @@ Addison-Wesley; 1986:.
 
 Staples John, Robinson Peter J.
 Efficient Unification of Quantified Terms.
-*Journal of Logic Programming.* 1988;5:133–149.
+*Journal of Logic Programming.* 1988;5:133-149.
 !!!(p) {:.reflist}
 
 Steele Jr.
@@ -1066,7 +1062,7 @@ Guy L.
 
 Steele Jr.
 Guy L.
-*Debunking the ‘Expensive Procedure Call’ Myth or, Procedure Call Implementations Considered Harmful or, LAMBDA: The Ultimate GOTO.* 1977 AI Lab Memo 443, MIT.
+*Debunking the 'Expensive Procedure Call' Myth or, Procedure Call Implementations Considered Harmful or, LAMBDA: The Ultimate GOTO.* 1977 AI Lab Memo 443, MIT.
 !!!(p) {:.reflist}
 
 Steele Jr.
@@ -1077,8 +1073,7 @@ Guy L.
 Steele Jr.
 Guy L.
 Compiler optimization based on viewing lambda as Rename Plus Goto.
-In: MIT Press; .
-*AI: An MIT Perspective.* 1983;vol.
+In: MIT Press; . *AI: An MIT Perspective.* 1983;vol.
 2.
 !!!(p) {:.reflist}
 
@@ -1111,7 +1106,7 @@ Steele Jr.
 Guy L., Sussman Gerald J.
 Design of a Lisp-Based Processor.
 *Communications of the ACM.* 1980;23(no.
-11):628–645.
+11):628-645.
 !!!(p) {:.reflist}
 
 Stefik Mark, Bobrow Daniel G.
@@ -1124,20 +1119,20 @@ Sterling Leon, Shapiro Ehud.
 *The Art of Prolog.* MIT Press; 1986.
 !!!(p) {:.reflist}
 
-Sterling L., Bundy A., Byrd L., O’Keefe R., Silver B.
+Sterling L., Bundy A., Byrd L., O'Keefe R., Silver B.
 Solving Symbolic Equations with PRESS.
 In: Calmet J., ed.
 *Computer Algebra, Lecture Notes in Computer Science No.
-144.* Springer-Verlag; 1982:109–116 Also in Journal of Symbolic Computation 7 (1989):71–84.
+144.* Springer-Verlag; 1982:109-116 Also in Journal of Symbolic Computation 7 (1989):71-84.
 !!!(p) {:.reflist}
 
 Stickel Mark.
 A Prolog Technology Theorem Prover: Implementation by an Extended Prolog Compiler.
-*Journal of Automated Reasoning.* 1988;4:353–380.
+*Journal of Automated Reasoning.* 1988;4:353-380.
 !!!(p) {:.reflist}
 
 Stoyan Herbert.
-*Early Lisp History.* In: Proceedings of the Lisp and Functional Programming Conference; 1984:299–310.
+*Early Lisp History.* In: Proceedings of the Lisp and Functional Programming Conference; 1984:299-310.
 !!!(p) {:.reflist}
 
 Stroustrup Bjarne.
@@ -1171,27 +1166,27 @@ Touretzky David.
 
 Tversky Amos, Kahneman Daniel.
 Judgement Under Uncertainty: Heuristics and Biases.
-*Science.* 1974;185:1124–1131 Reprinted in Shafer and Pearl 1990.
+*Science.* 1974;185:1124-1131 Reprinted in Shafer and Pearl 1990.
 !!!(p) {:.reflist}
 
 Tversky Amos, Kahneman Daniel.
 Extensional Versus Intuitive Reasoning: The Conjunction Fallacy in Probability Judgement.
-*Psychological Review.* 1983;90:29–315.
+*Psychological Review.* 1983;90:29-315.
 !!!(p) {:.reflist}
 
 Tversky Amos, Kahneman Daniel.
 Rational Choices and the Framing of Decisions.
-*Journal of Business.* 1986;59:S251–S278 Reprinted in Shafer and Pearl 1990.
+*Journal of Business.* 1986;59:S251-S278 Reprinted in Shafer and Pearl 1990.
 !!!(p) {:.reflist}
 
 Ungar David.
-*Generation Scavenging: A Non-Disruptive High Performance Storage Reclamation Algorithm.* In: Proceedings of the ACM SIGSOFT/ SIGPLAN Software Engineering Symposium on Practical Software Development En vironments (Pittsburgh, Pa., April); 1984:157–167 ACM SIGPLAN Notices 19, no.
+*Generation Scavenging: A Non-Disruptive High Performance Storage Reclamation Algorithm.* In: Proceedings of the ACM SIGSOFT/ SIGPLAN Software Engineering Symposium on Practical Software Development En vironments (Pittsburgh, Pa., April); 1984:157-167 ACM SIGPLAN Notices 19, no.
 5.
 !!!(p) {:.reflist}
 
 van Emden Maarten H., Yukawa Keitaro.
 Logic Programming with Equations.
-*Journal of Logic Programming.* 1987;4:265–288.
+*Journal of Logic Programming.* 1987;4:265-288.
 !!!(p) {:.reflist}
 
 van Melle WJ.
@@ -1234,7 +1229,7 @@ In: Shapiro Stuart C., ed.
 Wand Mitchell.
 Continuation-Based Program Transformation Strategies.
 *Journal of the ACM.* 1980;27(no.
-1):174–180.
+1):174-180.
 !!!(p) {:.reflist}
 
 Warren David H.D.
@@ -1257,12 +1252,12 @@ Warren David H.D.
 !!!(p) {:.reflist}
 
 Warren David H.D., Pereira L.M., Pereira Fernando C.N.
-*Prolog–the Language and its Implementation Compared with Lisp.* In: Proceedings of the ACM SIGART-SIGPLAN Symposium on AI and Programming Languages; 1977.
+*Prolog-the Language and its Implementation Compared with Lisp.* In: Proceedings of the ACM SIGART-SIGPLAN Symposium on AI and Programming Languages; 1977.
 !!!(p) {:.reflist}
 
 Warren David H.D., Pereira Fernando C.N.
 An Efficient Easily Adaptable System for Interpreting Natural Language Queries.
-*American Journal of Computational Linguistics.* 1982;8(nos.3–4):110–122.
+*American Journal of Computational Linguistics.* 1982;8(nos.3-4):110-122.
 !!!(p) {:.reflist}
 
 Waterman David A.
@@ -1272,12 +1267,12 @@ Waterman David A.
 Waters Richard C.
 Supporting the Regression Testing of Lisp Programs.
 *Lisp Pointers.* 1991;4(no.
-2):47–53.
+2):47-53.
 !!!(p) {:.reflist}
 
 Wegner Peter.
 Dimensions of object-based language design.
-In: *ACM SIG-PLAN Notices.* 1987:168–182.
+In: *ACM SIG-PLAN Notices.* 1987:168-182.
 !!!(p) {:.reflist}
 
 Weinreb Daniel, Moon David A.
@@ -1294,8 +1289,8 @@ Weissman Clark.
 !!!(p) {:.reflist}
 
 Weizenbaum Joseph.
-ELIZA—A computer program for the study of natural language communication between men and machines.
-*Communications of the ACM.* 1966;9:36–45.
+ELIZA-A computer program for the study of natural language communication between men and machines.
+*Communications of the ACM.* 1966;9:36-45.
 !!!(p) {:.reflist}
 
 Weizenbaum Joseph.
@@ -1331,17 +1326,17 @@ Wirth N.
 !!!(p) {:.reflist}
 
 Wong Douglas.
-*Language Comprehension in a Problem Solver.* In: Proceedings of the International Joint Conference on Artificial Intelligence; 1981:7–12.
+*Language Comprehension in a Problem Solver.* In: Proceedings of the International Joint Conference on Artificial Intelligence; 1981:7-12.
 !!!(p) {:.reflist}
 
 Woods William A.
 Transition Network Grammars for Natural Language Analysis.
-*Communications of the ACM.* 1970;13:591–606 Reprinted in Grosz et al.
+*Communications of the ACM.* 1970;13:591-606 Reprinted in Grosz et al.
 1986.
 !!!(p) {:.reflist}
 
 Woods William A.
-What’s in a Link: Foundations for Semantic Networks.
+What's in a Link: Foundations for Semantic Networks.
 In: Bobrow D.G., Collins A.M., eds.
 *Representation and Understanding.* Academic Press; 1975.
 !!!(p) {:.reflist}
@@ -1358,7 +1353,7 @@ Zabih Ramin, McAllester David, Chapman David.
 
 Zadeh Lotfi.
 Fuzzy Sets as a Basis for a Theory of Possibility.
-*Fuzzy Sets Systems.* 1978;1:3–28.
+*Fuzzy Sets Systems.* 1978;1:3-28.
 !!!(p) {:.reflist}
 
 Zucker S.W.

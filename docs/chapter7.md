@@ -1,21 +1,23 @@
 # Chapter 7
-## STUDENT: Solving Algebra Word Problems
+## STUDENT
+!!!(span) {:.smallcaps}
+: Solving Algebra Word Problems
 
 > *[This] is an example par excellence* of the power of using meaning to solve linguistic problems
 
-> –[Marvin Minsky (1968)](B9780080571157500285.xhtml#bb0845)
+> -[Marvin Minsky (1968)](B9780080571157500285.xhtml#bb0845)
 
 > MIT computer scientist
 
 STUDENT !!!(span) {:.smallcaps} was another early language understanding program, written by Daniel Bobrow as his Ph.D.
 research project in 1964.
 It was designed to read and solve the kind of word problems found in high school algebra books.
-An example is:[ ](#){:#p0020}
+An example is:
 
 > If the number of customers Tom gets is twice the square of 20% of the number of advertisements he runs, and the number of advertisements is 45, then what is the number of customers Tom gets?
 
 STUDENT !!!(span) {:.smallcaps} could correctly reply that the number of customers is 162.
-To do this, STUDENT !!!(span) {:.smallcaps} must be far more sophisticated than ELIZA !!!(span) {:.smallcaps} ; it must process and “understand” a great deal of the input, rather than just concentrate on a few key words.
+To do this, STUDENT !!!(span) {:.smallcaps} must be far more sophisticated than ELIZA !!!(span) {:.smallcaps} ; it must process and "understand" a great deal of the input, rather than just concentrate on a few key words.
 And it must compute a response, rather than just fill in blanks.
 However, we shall see that the STUDENT !!!(span) {:.smallcaps} program uses little more than the pattern-matching techniques of ELIZA !!!(span) {:.smallcaps} to translate the input into a set of algebraic equations.
 From there, it must know enough algebra to solve the equations, but that is not very difficult.
@@ -23,30 +25,30 @@ From there, it must know enough algebra to solve the equations, but that is not 
 The version of STUDENT !!!(span) {:.smallcaps} we develop here is nearly a full implementation of the original.
 However, remember that while the original was state-of-the-art as of 1964, AI has made some progress in a quarter century, as subsequent chapters will attempt to show.
 
-## [ ](#){:#st0010}7.1 Translating English into Equations
+## 7.1 Translating English into Equations
 {:#s0010}
 {:.h1hd}
 
 The description of STUDENT !!!(span) {:.smallcaps} is:
 
-[ ](#){:#l0010}1. Break the input into phrases that will represent equations.
+1.  Break the input into phrases that will represent equations.
 !!!(p) {:.numlist}
 
-2. Break each phrase into a pair of phrases on either side of the = sign.
+2.  Break each phrase into a pair of phrases on either side of the  =  sign.
 !!!(p) {:.numlist}
 
-3. Break these phrases down further into sums and products, and so on, until finally we bottom out with numbers and variables.
-(By “variable” here, I mean “mathematical variable,” which is distinct from the idea of a “pattern-matching variable” as used in `pat-match` in [chapter 6](B9780080571157500066.xhtml)).
+3.  Break these phrases down further into sums and products, and so on, until finally we bottom out with numbers and variables.
+(By "variable" here, I mean "mathematical variable," which is distinct from the idea of a "pattern-matching variable" as used in `pat-match` in [chapter 6](B9780080571157500066.xhtml)).
 !!!(p) {:.numlist}
 
-4. Translate each English phrase into a mathematical expression.
+4.  Translate each English phrase into a mathematical expression.
 We use the idea of a rule-based translator as developed for ELIZA !!!(span) {:.smallcaps} .
 !!!(p) {:.numlist}
 
-5. Solve the resulting mathematical equations, coming up with a value for each unknown variable.
+5.  Solve the resulting mathematical equations, coming up with a value for each unknown variable.
 !!!(p) {:.numlist}
 
-6. Print the values of all the variables.
+6.  Print the values of all the variables.
 !!!(p) {:.numlist}
 
 For example, we might have a pattern of the form (`If ?x then ?y`), with an associated response that says that `?x` and `?y` will each be equations or lists of equations.
@@ -63,59 +65,49 @@ With that in mind, we can define a list of pattern-response rules corresponding 
 The structure definition for a rule is repeated here, and the structure `exp`, an expression, is added.
 `lhs` and `rhs` stand for left-and right-hand side, respectively.
 Note that the constructor `mkexp` is defined as a constructor that builds expressions without taking keyword arguments.
-In general, the notation (`:constructor`*fn args*) creates a constructor function with the given name and argument list.[1](#fn0015){:#xfn0015}
+In general, the notation (`:constructor`*fn args*) creates a constructor function with the given name and argument list.[1](#fn0015)
 
-[ ](#){:#l0015}`(defstruct (rule (:type list)) pattern response)`
-!!!(p) {:.unnumlist}
+`(defstruct (rule (:type list)) pattern response)`
 
 `(defstruct (exp (:type list)`
-!!!(p) {:.unnumlist}
 
-            `(:constructor mkexp (lhs op rhs)))`
-!!!(p) {:.unnumlist}
+                        `(:constructor mkexp (lhs op rhs)))`
 
-   `op lhs rhs)`
-!!!(p) {:.unnumlist}
+      `op lhs rhs)`
 
 `(defun exp-p (x) (consp x))`
-!!!(p) {:.unnumlist}
 
 `(defun exp-args (x) (rest x))`
-!!!(p) {:.unnumlist}
 
 We ignored commas and periods in ELIZA !!!(span) {:.smallcaps} , but they are crucial for STUDENT !!!(span) {:.smallcaps} , so we must make allowances for them.
 The problem is that a `","` in Lisp normally can be used only within a backquote construction, and a `"."` normally can be used only as a decimal point or in a dotted pair.
 The special meaning of these characters to the Lisp reader can be escaped either by preceding the character with a backslash (\,) or by surrounding the character by vertical bars (| , |).
 
-[ ](#){:#l0020}`(pat-match-abbrev '?x* '(?* ?x))`
-!!!(p) {:.unnumlist}
+`(pat-match-abbrev '?x* '(?* ?x))`
 
 `(pat-match-abbrev '?y* '(?* ?y))`
-!!!(p) {:.unnumlist}
 
-[ ](#){:#l0025}`(defparameter *student-rules* (mapcar #'expand-pat-match-abbrev`
-!!!(p) {:.unnumlist}
+`(defparameter *student-rules* (mapcar #'expand-pat-match-abbrev`
 
-[ ](#){:#t0010}
 !!!(table)
 
 | []() | | | | | | | | | |
 |---|---|---|---|---|---|---|---|---|---|
-| `'(((?x* |.|)` | `    ?x)` |
-| `  ((?x* |.| ?y*)` | `(?x ?y))` |
-| `  ((if ?x* |,| then ?y*)` | `(?x ?y))` |
-| `  ((if ?x* then ?y*)` | `(?x ?y))` |
-| `  ((if ?x* |,| ?y*)` | `(?x ?y))` |
-| `  ((?x* |,| and ?y*)` | `(?x ?y))` |
-| `  ((find ?x* and ?y*)` | `((= to-find-1 ?x) (= to-find-2 ?y)))` |
-| `  ((find ?x*)` | `(= to-find ?x))` |
-| `  ((?x* equals ?y*)` | `(= ?x ?y))` |
-| `  ((?x* same as ?y*)` | `(= ?x ?y))` |
-| `  ((?x* = ?y*)` | `(= ?x ?y))` |
-| `  ((?x* is equal to ?y*)` | `(= ?x ?y))` |
-| `  ((?x* is ?y*)` | `(= ?x ?y))` |
-| `  ((?x* - ?y*)` | `(- ?x ?y))` |
-| `  ((?x* minus ?y*)` | `(- ?x ?y))` |
+| `'(((?x* |.|)` | `        ?x)` |
+| `    ((?x*  |.| ?y*)` | `(?x ?y))` |
+| `    ((if ?x* |,| then ?y*)` | `(?x ?y))` |
+| `    ((if ?x* then ?y*)` | `(?x ?y))` |
+| `    ((if ?x* |,| ?y*)` | `(?x ?y))` |
+| `    ((?x* |,| and ?y*)` | `(?x ?y))` |
+| `    ((find ?x* and ?y*)` | `((= to-find-1 ?x) (= to-find-2 ?y)))` |
+| `    ((find ?x*)` | `(= to-find ?x))` |
+| `    ((?x* equals ?y*)` | `(= ?x ?y))` |
+| `    ((?x* same as ?y*)` | `(= ?x ?y))` |
+| `    ((?x* = ?y*)` | `(= ?x ?y))` |
+| `    ((?x* is equal to ?y*)` | `(= ?x ?y))` |
+| `    ((?x* is ?y*)` | `(= ?x ?y))` |
+| `    ((?x* - ?y*)` | `(- ?x ?y))` |
+| `    ((?x* minus ?y*)` | `(- ?x ?y))` |
 | `((difference between ?x* and ?y*)` | `(- ?y ?x))` |
 | `((difference ?x* and ?y*)` | `(- ?y ?x))` |
 | `((?x* + ?y*)` | `(+ ?x ?y))` |
@@ -137,62 +129,44 @@ The special meaning of these characters to the Lisp reader can be escaped either
 
 The main section of STUDENT !!!(span) {:.smallcaps} will search through the list of rules for a response, just as ELIZA !!!(span) {:.smallcaps} did.
 The first point of deviation is that before we substitute the values of the `pat-match` variables into the response, we must first recursively translate the value of each variable, using the same list of pattern-response rules.
-The other difference is that once we're done, we don’t just print the response; instead we have to solve the set of equations and print the answers.
+The other difference is that once we're done, we don't just print the response; instead we have to solve the set of equations and print the answers.
 The program is summarized in [figure 7.1](#f0010).
 
 ![f08-01-9780080571157](images/B9780080571157500078/f08-01-9780080571157.jpg)     
-Figure 7.1
+Figure  7.1
 !!!(span) {:.fignum}
 Glossary for the STUDENT
 !!!(span) {:.smallcaps}
 Program
-Before looking carefully at the program, let’s try a sample problem: “If z is 3, what is twice z?” Applying the rules to the input gives the following trace:
+Before looking carefully at the program, let's try a sample problem: "If z is 3, what is twice z?" Applying the rules to the input gives the following trace:
 
-[ ](#){:#l0030}`Input: (If z is 3, what is twice z)`
-!!!(p) {:.unnumlist}
+`Input: (If z is 3, what is twice z)`
 
-`Rule: ((if ?x |,| ?y)      (?x ?y))`
-!!!(p) {:.unnumlist}
+`Rule: ((if ?x |,| ?y)            (?x ?y))`
 
-`Binding: ((?x .
-(z is 3)) (?y .
-(what is twice z)))`
-!!!(p) {:.unnumlist}
+`Binding: ((?x . (z is 3)) (?y . (what is twice z)))`
 
-` Input: (z is 3)`
-!!!(p) {:.unnumlist}
+`  Input: (z is 3)`
 
-` Rule: ((?x is ?y)         (= ?x ?y))`
-!!!(p) {:.unnumlist}
+`  Rule: ((?x is ?y)                  (= ?x ?y))`
 
-` Result: (= z 3)`
-!!!(p) {:.unnumlist}
+`  Result: (= z 3)`
 
-[ ](#){:#l0035}` Input: (what is twice z ?)`
-!!!(p) {:.unnumlist}
+`  Input: (what is twice z ?)`
 
-` Rule: ((?x is ?y)         (= ?x ?y))`
-!!!(p) {:.unnumlist}
+`  Rule: ((?x is ?y)                  (= ?x ?y))`
 
-` Binding:((?x .
-what) (?y .
-(twice z)))`
-!!!(p) {:.unnumlist}
+`  Binding:((?x . what) (?y . (twice z)))`
 
-`  Input: (twice z)`
-!!!(p) {:.unnumlist}
+`    Input: (twice z)`
 
-`  Rule: ((twice ?x)        (* 2 ?x))`
-!!!(p) {:.unnumlist}
+`    Rule: ((twice ?x)                (* 2 ?x))`
 
-`  Result: (* 2 z)`
-!!!(p) {:.unnumlist}
+`    Result: (* 2 z)`
 
-` Result: (= what (* 2 z))`
-!!!(p) {:.unnumlist}
+`  Result: (= what (* 2 z))`
 
 `Result: ((= z 3) (= what (* 2 z)))`
-!!!(p) {:.unnumlist}
 
 There are two minor complications.
 First, we agreed to implement sets of equations as lists of equations.
@@ -203,146 +177,109 @@ The other complication is choosing variable names.
 Given a list of words like (`the number of customers Tom gets`), we want to choose a symbol to represent it.
 We will see below that the symbol `customers` is chosen, but that there are other possibilities.
 
-Here is the main function for STUDENT !!!(span) {:.smallcaps} .
-It first removes words that have no content, then translates the input to one big expression with `translate-to-expression`, and breaks that into separate equations with `create-list-of-equations`.
+Here is the main function for STUDENT !!!(span) {:.smallcaps} . It first removes words that have no content, then translates the input to one big expression with `translate-to-expression`, and breaks that into separate equations with `create-list-of-equations`.
 Finally, the function `solve-equations` does the mathematics and prints the solution.
 
-[ ](#){:#l0040}`(defun student (words)`
-!!!(p) {:.unnumlist}
+`(defun student (words)`
 
-`  "Solve certain Algebra Word Problems."`
-!!!(p) {:.unnumlist}
+`    "Solve certain Algebra Word Problems."`
 
-`  (solve-equations`
-!!!(p) {:.unnumlist}
+`    (solve-equations`
 
-`    (create-list-of-equations`
-!!!(p) {:.unnumlist}
+`        (create-list-of-equations`
 
-`      (translate-to-expression (remove-if #'noise-word-p words)))))`
-!!!(p) {:.unnumlist}
+`            (translate-to-expression (remove-if #'noise-word-p words)))))`
 
 The function `translate-to-expression` is a rule-based translator.
 It either finds some rule in `*student-rules*` to transform the input, or it assumes that the entire input represents a single variable.
 The function `translate-pair` takes a variable/value binding pair and translates the value by a recursive call to `translate-to-expression.`
 
-[ ](#){:#l0045}`(defun translate-to-expression (words)`
-!!!(p) {:.unnumlist}
+`(defun translate-to-expression (words)`
 
-`  "Translate an English phrase into an equation or expression."`
-!!!(p) {:.unnumlist}
+`    "Translate an English phrase into an equation or expression."`
 
-`  (or (rule-based-translator`
-!!!(p) {:.unnumlist}
+`    (or (rule-based-translator`
 
-`      words *student-rules*`
-!!!(p) {:.unnumlist}
+`            words *student-rules*`
 
-`      :rule-if #'rule-pattern :rule-then #'rule-response`
-!!!(p) {:.unnumlist}
+`            :rule-if #'rule-pattern :rule-then #'rule-response`
 
-`      :action #'(lambda (bindings response)`
-!!!(p) {:.unnumlist}
+`            :action #'(lambda (bindings response)`
 
-`               (sublis (mapcar #'translate-pair bindings)`
-!!!(p) {:.unnumlist}
+`                              (sublis (mapcar #'translate-pair bindings)`
 
-`                       response)))`
-!!!(p) {:.unnumlist}
+`                                              response)))`
 
-`     (make-variable words)))`
-!!!(p) {:.unnumlist}
+`          (make-variable words)))`
 
-[ ](#){:#l0050}`(defun translate-pair (pair)`
-!!!(p) {:.unnumlist}
+`(defun translate-pair (pair)`
 
-`  "Translate the value part of the pair into an equation or expression."`
-!!!(p) {:.unnumlist}
+`    "Translate the value part of the pair into an equation or expression."`
 
-`  (cons (binding-var pair)`
-!!!(p) {:.unnumlist}
+`    (cons (binding-var pair)`
 
-`      (translate-to-expression (binding-val pair))))`
-!!!(p) {:.unnumlist}
+`            (translate-to-expression (binding-val pair))))`
 
 The function `create-list-of-equations` takes a single expression containing embedded equations and separates them into a list of equations:
 
-[ ](#){:#l0055}`(defun create-list-of-equations (exp)`
-!!!(p) {:.unnumlist}
+`(defun create-list-of-equations (exp)`
 
-`  "Separate out equations embedded in nested parens."`
-!!!(p) {:.unnumlist}
+`    "Separate out equations embedded in nested parens."`
 
-`  (cond ((null exp) nil)`
-!!!(p) {:.unnumlist}
+`    (cond ((null exp) nil)`
 
-`      ((atom (first exp)) (list exp))`
-!!!(p) {:.unnumlist}
+`            ((atom (first exp)) (list exp))`
 
-`      (t (append (create-list-of-equations (first exp))`
-!!!(p) {:.unnumlist}
+`            (t (append (create-list-of-equations (first exp))`
 
-`              (create-list-of-equations (rest exp))))))`
-!!!(p) {:.unnumlist}
+`                            (create-list-of-equations (rest exp))))))`
 
 Finally, the function `make-variable` creates a variable to represent a list of words.
-We do that by first removing all “noise words“ from the input, and then taking the first symbol that remains.
-So, for example, “the distance John traveled” and “the distance traveled by John” will both be represented by the same variable, `distance,` which is certainly the right thing to do.
-However, “the distance Mary traveled” will also be represented by the same variable, which is certainly a mistake.
+We do that by first removing all "noise words" from the input, and then taking the first symbol that remains.
+So, for example, "the distance John traveled" and "the distance traveled by John" will both be represented by the same variable, `distance,` which is certainly the right thing to do.
+However, "the distance Mary traveled" will also be represented by the same variable, which is certainly a mistake.
 For (`the number of customers Tom gets`), the variable will be `customers`, since `the, of` and `number` are all noise words.
-This will match (`the customers mentioned above`) and (`the number of customers`), but not (`Tom’s customers`).
+This will match (`the customers mentioned above`) and (`the number of customers`), but not (`Tom's customers`).
 For now, we will accept the first-non-noise-word solution, but note that exercise 7.3 asks for a correction.
 
-[ ](#){:#l0060}`(defun make-variable (words)`
-!!!(p) {:.unnumlist}
+`(defun make-variable (words)`
 
-`  "Create a variable name based on the given list of words"`
-!!!(p) {:.unnumlist}
+`    "Create a variable name based on the given list of words"`
 
-`  ;; The list of words will already have noise words removed`
-!!!(p) {:.unnumlist}
+`    ;; The list of words will already have noise words removed`
 
-`  (first words))`
-!!!(p) {:.unnumlist}
+`    (first words))`
 
-[ ](#){:#l0065}`(defun noise-word-p (word)`
-!!!(p) {:.unnumlist}
+`(defun noise-word-p (word)`
 
-`  "Is this a low-content word that can be safely ignored?"`
-!!!(p) {:.unnumlist}
+`    "Is this a low-content word that can be safely ignored?"`
 
-`  (member word '(a an the this number of $)))`
-!!!(p) {:.unnumlist}
+`    (member word '(a an the this number of $)))`
 
-## [ ](#){:#st0015}7.2 Solving Algebraic Equations
+## 7.2 Solving Algebraic Equations
 {:#s0015}
 {:.h1hd}
 
-The next step is to write the equation-solving section of STUDENT !!!(span) {:.smallcaps} .
-This is more an exercise in elementary algebra than in AI, but it is a good example of a symbol-manipulation task, and thus an interesting programming problem.
+The next step is to write the equation-solving section of STUDENT !!!(span) {:.smallcaps} . This is more an exercise in elementary algebra than in AI, but it is a good example of a symbol-manipulation task, and thus an interesting programming problem.
 
 The STUDENT !!!(span) {:.smallcaps} program mentioned the function `solve-equations`, passing it one argument, a list of equations to be solved.
 `solve-equations` prints the list of equations, attempts to solve them using `solve`, and prints the result.
 
-[ ](#){:#l0070}`(defun solve-equations (equations)`
-!!!(p) {:.unnumlist}
+`(defun solve-equations (equations)`
 
-`  "Print the equations and their solution"`
-!!!(p) {:.unnumlist}
+`    "Print the equations and their solution"`
 
-`  (print-equations "The equations to be solved are:" equations)`
-!!!(p) {:.unnumlist}
+`    (print-equations "The equations to be solved are:" equations)`
 
-`  (print-equations "The solution is:" (solve equations nil)))`
-!!!(p) {:.unnumlist}
+`    (print-equations "The solution is:" (solve equations nil)))`
 
 The real work is done by solve, which has the following specification: (1) Find an equation with exactly one occurrence of an unknown in it.
 (2) Transform that equation so that the unknown is isolated on the left-hand side.
-This can be done if we limit the operators to +, -, *,and /.
+This can be done if we limit the operators to  +, -, *,and /.
 (3) Evaluate the arithmetic on the right-hand side, yielding a numeric value for the unknown.
 (4) Substitute the numeric value for the unknown in all the other equations, and remember the known value.
 Then try to solve the resulting set of equations.
-(5) If step (1) fails—if there is no equation with exactly one unknown—then just return the known values and don’t try to solve anything else.
+(5) If step (1) fails-if there is no equation with exactly one unknown-then just return the known values and don't try to solve anything else.
 
 The function `solve` is passed a system of equations, along with a list of known variable/value pairs.
 Initially no variables are known, so this list will be empty.
@@ -352,160 +289,118 @@ If it can find such an equation, it calls `isolate` to solve the equation in ter
 Each time `solve` calls itself, it removes one equation from the list of equations to be solved, and adds one to the list of known variable/value pairs.
 Since the list of equations is always growing shorter, `solve` must eventually terminate.
 
-[ ](#){:#l0075}`(defun solve (equations known)`
-!!!(p) {:.unnumlist}
+`(defun solve (equations known)`
 
-`  "Solve a system of equations by constraint propagation."`
-!!!(p) {:.unnumlist}
+`    "Solve a system of equations by constraint propagation."`
 
-`  ;; Try to solve for one equation, and substitute its value into`
-!!!(p) {:.unnumlist}
+`    ;; Try to solve for one equation, and substitute its value into`
 
-`  ;; the others.
+`    ;; the others.
 If that doesn't work, return what is known.`
-!!!(p) {:.unnumlist}
 
-`  (or (some #'(lambda (equation)`
-!!!(p) {:.unnumlist}
+`    (or (some #'(lambda (equation)`
 
-`        (let ((x (one-unknown equation)))`
-!!!(p) {:.unnumlist}
+`                (let ((x (one-unknown equation)))`
 
-`          (when x`
-!!!(p) {:.unnumlist}
+`                    (when x`
 
-`            (let ((answer (solve-arithmetic`
-!!!(p) {:.unnumlist}
+`                        (let ((answer (solve-arithmetic`
 
-`                      (isolate equation x))))`
-!!!(p) {:.unnumlist}
+`                                            (isolate equation x))))`
 
-`              (solve (subst (exp-rhs answer) (exp-lhs answer)`
-!!!(p) {:.unnumlist}
+`                            (solve (subst (exp-rhs answer) (exp-lhs answer)`
 
-`                      (remove equation equations))`
-!!!(p) {:.unnumlist}
+`                                            (remove equation equations))`
 
-`                (cons answer known))))))`
-!!!(p) {:.unnumlist}
+`                                (cons answer known))))))`
 
-`       equations)`
-!!!(p) {:.unnumlist}
+`              equations)`
 
-`    known))`
-!!!(p) {:.unnumlist}
+`        known))`
 
 `isolate` is passed an equation guaranteed to have one unknown.
 It returns an equivalent equation with the unknown isolated on the left-hand side.
-There are five cases to consider: when the unknown is alone on the left, we’re done.
+There are five cases to consider: when the unknown is alone on the left, we're done.
 The second case is when the unknown is anywhere on the right-hand side.
-Because ‘=’ is commutative, we can reduce the problem to solving the equivalent equation with left- and right-hand sides reversed.
+Because '=' is commutative, we can reduce the problem to solving the equivalent equation with left- and right-hand sides reversed.
 
 Next we have to deal with the case where the unknown is in a complex expression on the left-hand side.
 Because we are allowing four operators and the unknown can be either on the right or the left, there are eight possibilities.
 Letting X stand for an expression containing the unknown and A and B stand for expressions with no unknowns, the possibilities and their solutions are as follows:
 
-[ ](#){:#t0015}
 !!!(table)
 
 | []() | | | | | | | | | |
 |---|---|---|---|---|---|---|---|---|---|
-| (1) `X*A=B` ⇒ `X=B/A` | (5) `A*X=B` ⇒ `X=B/A` |
-| (2) `X+A=B` ⇒ `X=B-A` | (6) `A+X=B` ⇒ `X=B-A` |
-| (3) `X/A=B` ⇒ `X=B*A` | (7) `A/X=B` ⇒ `X=A/B` |
-| (4) `X-A=B` ⇒ `X=B+A` | (8) `A-X=B` ⇒ `X=A-B` |
+| (1) `X*A=B`  =>  `X=B/A` | (5) `A*X=B`  =>  `X=B/A` |
+| (2) `X+A=B`  =>  `X=B-A` | (6) `A+X=B`  =>  `X=B-A` |
+| (3) `X/A=B`  =>  `X=B*A` | (7) `A/X=B`  =>  `X=A/B` |
+| (4) `X-A=B`  =>  `X=B+A` | (8) `A-X=B`  =>  `X=A-B` |
 
 Possibilities (1) through (4) are handled by case III, (5) and (6) by case IV, and (7) and (8) by case V.
 In each case, the transformation does not give us the final answer, since X need not be the unknown; it might be a complex expression involving the unknown.
 So we have to call isolate again on the resulting equation.
 The reader should try to verify that transformations (1) to (8) are valid, and that cases III to V implement them properly.
 
-[ ](#){:#l0080}`(defun isolate (e x)`
-!!!(p) {:.unnumlist}
+`(defun isolate (e x)`
 
-`  "Isolate the lone x in e on the left-hand side of e."`
-!!!(p) {:.unnumlist}
+`    "Isolate the lone x in e on the left-hand side of e."`
 
-`  ;; This assumes there is exactly one x in e,`
-!!!(p) {:.unnumlist}
+`    ;; This assumes there is exactly one x in e,`
 
-`  ;; and that e is an equation.`
-!!!(p) {:.unnumlist}
+`    ;; and that e is an equation.`
 
-`  (cond ((eq (exp-lhs e) x)`
-!!!(p) {:.unnumlist}
+`    (cond ((eq (exp-lhs e) x)`
 
-`      ;; Case I: X = A -> X = n`
-!!!(p) {:.unnumlist}
+`            ;; Case I: X = A -> X = n`
 
-`      e)`
-!!!(p) {:.unnumlist}
+`            e)`
 
-`     ((in-exp x (exp-rhs e))`
-!!!(p) {:.unnumlist}
+`          ((in-exp x (exp-rhs e))`
 
-`      ;; Case II: A = f(X) -> f(X) = A`
-!!!(p) {:.unnumlist}
+`            ;; Case II: A = f(X) -> f(X) = A`
 
-`      (isolate (mkexp (exp-rhs e) '= (exp-lhs e)) x))`
-!!!(p) {:.unnumlist}
+`            (isolate (mkexp (exp-rhs e) '= (exp-lhs e)) x))`
 
-`     ((in-exp x (exp-lhs (exp-lhs e)))`
-!!!(p) {:.unnumlist}
+`          ((in-exp x (exp-lhs (exp-lhs e)))`
 
-`      ;; Case III: f(X)*A = B -> f(X) = B/A`
-!!!(p) {:.unnumlist}
+`            ;; Case III: f(X)*A = B -> f(X) = B/A`
 
-`      (isolate (mkexp (exp-lhs (exp-lhs e)) '=`
-!!!(p) {:.unnumlist}
+`            (isolate (mkexp (exp-lhs (exp-lhs e)) '=`
 
-`            (mkexp (exp-rhs e)`
-!!!(p) {:.unnumlist}
+`                        (mkexp (exp-rhs e)`
 
-`               (inverse-op (exp-op (exp-lhs e)))`
-!!!(p) {:.unnumlist}
+`                              (inverse-op (exp-op (exp-lhs e)))`
 
-`               (exp-rhs (exp-lhs e)))) x))`
-!!!(p) {:.unnumlist}
+`                              (exp-rhs (exp-lhs e)))) x))`
 
-`     ((commutative-p (exp-op (exp-lhs e)))`
-!!!(p) {:.unnumlist}
+`          ((commutative-p (exp-op (exp-lhs e)))`
 
-`      ;; Case IV: A*f(X) = B -> f(X) = B/A`
-!!!(p) {:.unnumlist}
+`            ;; Case IV: A*f(X) = B -> f(X) = B/A`
 
-`      (isolate (mkexp (exp-rhs (exp-lhs e)) '=`
-!!!(p) {:.unnumlist}
+`            (isolate (mkexp (exp-rhs (exp-lhs e)) '=`
 
-`            (mkexp (exp-rhs e)`
-!!!(p) {:.unnumlist}
+`                        (mkexp (exp-rhs e)`
 
-`               (inverse-op (exp-op (exp-lhs e)))`
-!!!(p) {:.unnumlist}
+`                              (inverse-op (exp-op (exp-lhs e)))`
 
-`               (exp-lhs (exp-lhs e)))) x))`
-!!!(p) {:.unnumlist}
+`                              (exp-lhs (exp-lhs e)))) x))`
 
-`     (t ;; Case V: A/f(X) = B -> f(X) = A/B`
-!!!(p) {:.unnumlist}
+`          (t ;; Case V: A/f(X) = B -> f(X) = A/B`
 
-`      (isolate (mkexp (exp-rhs (exp-lhs e)) '=`
-!!!(p) {:.unnumlist}
+`            (isolate (mkexp (exp-rhs (exp-lhs e)) '=`
 
-`            (mkexp (exp-lhs (exp-lhs e))`
-!!!(p) {:.unnumlist}
+`                        (mkexp (exp-lhs (exp-lhs e))`
 
-`               (exp-op (exp-lhs e))`
-!!!(p) {:.unnumlist}
+`                              (exp-op (exp-lhs e))`
 
-`               (exp-rhs e))) x))))`
-!!!(p) {:.unnumlist}
+`                              (exp-rhs e))) x))))`
 
 Recall that to prove a function is correct, we have to prove both that it gives the correct answer when it terminates and that it will eventually terminate.
-For a recursive function with several alternative cases, we must show that each alternative is valid, and also that each alternative gets closer to the end in some way (that any recursive calls involve ‘simpler’ arguments).
-For `isolate`, elementary algebra will show that each step is valid—or at least *nearly* valid.
+For a recursive function with several alternative cases, we must show that each alternative is valid, and also that each alternative gets closer to the end in some way (that any recursive calls involve 'simpler' arguments).
+For `isolate`, elementary algebra will show that each step is valid-or at least *nearly* valid.
 Dividing both sides of an equation by 0 does not yield an equivalent equation, and we never checked for that.
-It’s also possible that similar errors could sneak in during the call to `eval`.
+It's also possible that similar errors could sneak in during the call to `eval`.
 However, if we assume the equation does have a single valid solution, then `isolate` performs only legal transformations.
 
 The hard part is to prove that `isolate` terminates.
@@ -516,11 +411,11 @@ Therefore, assuming the input is of finite size, we must eventually reach a recu
 
 When `isolate` returns, the right-hand side must consist only of numbers and operators.
 We could easily write a function to evaluate such an expression.
-However, we don’t have to go to that effort, since the function already exists.
+However, we don't have to go to that effort, since the function already exists.
 The data structure exp was carefully selected to be the same structure (lists with prefix functions) used by Lisp itself for its own expressions.
 So Lisp will find the right-hand side to be an acceptable expression, one that could be evaluated if typed in to the top level.
 Lisp evaluates expressions by calling the function `eval`, so we can call `eval` directly and have it return a number.
-The function `solve-arithmetic` returns an equation of the form (= *var number*).
+The function `solve-arithmetic` returns an equation of the form (=  *var number*).
 
 Auxiliary functions for `solve` are shown below.
 Most are straightforward, but I will remark on a few of them.
@@ -528,238 +423,162 @@ The function `prefix->infix` takes an expression in prefix notation and converts
 Unlike `isolate`, it assumes the expressions will be implemented as lists.
 `prefix->infix` is used by `print-equations` to produce more readable output.
 
-[ ](#){:#l0085}`(defun print-equations (header equations)`
-!!!(p) {:.unnumlist}
+`(defun print-equations (header equations)`
 
-`  "Print a list of equations."`
-!!!(p) {:.unnumlist}
+`    "Print a list of equations."`
 
-`  (format t "~%~a~{~% ~ a ~}~}~%" header`
-!!!(p) {:.unnumlist}
+`    (format t "~%~a~{~% ~  a  ~}~}~%" header`
 
-`      (mapcar #'prefix->infix equations)))`
-!!!(p) {:.unnumlist}
+`            (mapcar #'prefix->infix equations)))`
 
-[ ](#){:#l0090}`(defconstant operators-and-inverses`
-!!!(p) {:.unnumlist}
+`(defconstant operators-and-inverses`
 
-`  '((+ -) (- +) (* /) (/ *) (= =)))`
-!!!(p) {:.unnumlist}
+`    '((+ -) (- +) (* /) (/ *) (= =)))`
 
-[ ](#){:#l0095}`(defun inverse-op (op)`
-!!!(p) {:.unnumlist}
+`(defun inverse-op (op)`
 
-`  (second (assoc op operators-and-inverses)))`
-!!!(p) {:.unnumlist}
+`    (second (assoc op operators-and-inverses)))`
 
-[ ](#){:#l0100}`(defun unknown-p (exp)`
-!!!(p) {:.unnumlist}
+`(defun unknown-p (exp)`
 
-`  (symbolp exp))`
-!!!(p) {:.unnumlist}
+`    (symbolp exp))`
 
-[ ](#){:#l0105}`(defun in-exp (x exp)`
-!!!(p) {:.unnumlist}
+`(defun in-exp (x exp)`
 
-`  "True if x appears anywhere in exp"`
-!!!(p) {:.unnumlist}
+`    "True if x appears anywhere in exp"`
 
-`  (or (eq x exp)`
-!!!(p) {:.unnumlist}
+`    (or (eq x exp)`
 
-`      (and (exp-p exp)`
-!!!(p) {:.unnumlist}
+`            (and (exp-p exp)`
 
-`          (or (in-exp x (exp-lhs exp)) (in-exp x (exp-rhs exp))))))`
-!!!(p) {:.unnumlist}
+`                    (or (in-exp x (exp-lhs exp)) (in-exp x (exp-rhs exp))))))`
 
-[ ](#){:#l0110}`(defun no-unknown (exp)`
-!!!(p) {:.unnumlist}
+`(defun no-unknown (exp)`
 
-`  "Returns true if there are no unknowns in exp."`
-!!!(p) {:.unnumlist}
+`    "Returns true if there are no unknowns in exp."`
 
-`  (cond ((unknown-p exp) nil)`
-!!!(p) {:.unnumlist}
+`    (cond ((unknown-p exp) nil)`
 
-`       ((atom exp) t)`
-!!!(p) {:.unnumlist}
+`              ((atom exp) t)`
 
-`       ((no-unknown (exp-lhs exp)) (no-unknown (exp-rhs exp)))`
-!!!(p) {:.unnumlist}
+`              ((no-unknown (exp-lhs exp)) (no-unknown (exp-rhs exp)))`
 
-`       (t nil)))`
-!!!(p) {:.unnumlist}
+`              (t nil)))`
 
-[ ](#){:#l0115}`(defun one-unknown (exp)`
-!!!(p) {:.unnumlist}
+`(defun one-unknown (exp)`
 
-`  "Returns the single unknown in exp, if there is exactly one."`
-!!!(p) {:.unnumlist}
+`    "Returns the single unknown in exp, if there is exactly one."`
 
-`  (cond ((unknown-p exp) exp)`
-!!!(p) {:.unnumlist}
+`    (cond ((unknown-p exp) exp)`
 
-`       ((atom exp) nil)`
-!!!(p) {:.unnumlist}
+`              ((atom exp) nil)`
 
-`       ((no-unknown (exp-lhs exp)) (one-unknown (exp-rhs exp)))`
-!!!(p) {:.unnumlist}
+`              ((no-unknown (exp-lhs exp)) (one-unknown (exp-rhs exp)))`
 
-`       ((no-unknown (exp-rhs exp)) (one-unknown (exp-lhs exp)))`
-!!!(p) {:.unnumlist}
+`              ((no-unknown (exp-rhs exp)) (one-unknown (exp-lhs exp)))`
 
-`       (t nil)))`
-!!!(p) {:.unnumlist}
+`              (t nil)))`
 
-[ ](#){:#l0120}`(defun commutative-p (op)`
-!!!(p) {:.unnumlist}
+`(defun commutative-p (op)`
 
-`  "Is operator commutative?"`
-!!!(p) {:.unnumlist}
+`    "Is operator commutative?"`
 
-`  (member op '(+*=)))`
-!!!(p) {:.unnumlist}
+`    (member op '(+*=)))`
 
-[ ](#){:#l0125}`(defun solve-arithmetic (equation)`
-!!!(p) {:.unnumlist}
+`(defun solve-arithmetic (equation)`
 
-`  "Do the arithmetic for the right-hand side."`
-!!!(p) {:.unnumlist}
+`    "Do the arithmetic for the right-hand side."`
 
-`  ;; This assumes that the right-hand side is in the right form.`
-!!!(p) {:.unnumlist}
+`    ;; This assumes that the right-hand side is in the right form.`
 
-`  (mkexp (exp-lhs equation) '= (eval (exp-rhs equation))))`
-!!!(p) {:.unnumlist}
+`    (mkexp (exp-lhs equation) '= (eval (exp-rhs equation))))`
 
-[ ](#){:#l0130}`(defun binary-exp-p (x)`
-!!!(p) {:.unnumlist}
+`(defun binary-exp-p (x)`
 
-`  (and (exp-p x) (= (length (exp-args x)) 2)))`
-!!!(p) {:.unnumlist}
+`    (and (exp-p x) (= (length (exp-args x)) 2)))`
 
-[ ](#){:#l0135}`(defun prefix->infix (exp)`
-!!!(p) {:.unnumlist}
+`(defun prefix->infix (exp)`
 
-`  "Translate prefix to infix expressions."`
-!!!(p) {:.unnumlist}
+`    "Translate prefix to infix expressions."`
 
-`  (if (atom exp) exp`
-!!!(p) {:.unnumlist}
+`    (if (atom exp) exp`
 
-`     (mapcar #'prefix->infix`
-!!!(p) {:.unnumlist}
+`          (mapcar #'prefix->infix`
 
-`           (if (binary-exp-p exp)`
-!!!(p) {:.unnumlist}
+`                      (if (binary-exp-p exp)`
 
-`               (list (exp-lhs exp) (exp-op exp) (exp-rhs exp))`
-!!!(p) {:.unnumlist}
+`                              (list (exp-lhs exp) (exp-op exp) (exp-rhs exp))`
 
-`               exp))))`
-!!!(p) {:.unnumlist}
+`                              exp))))`
 
-Here’s an example of `solve-equations` in action, with a system of two equations.
+Here's an example of `solve-equations` in action, with a system of two equations.
 The reader should go through the trace, discovering which case was used at each call to `isolate`, and verifying that each step is accurate.
 
-[ ](#){:#l0140}`> (trace isolate solve)`
-!!!(p) {:.unnumlist}
+`> (trace isolate solve)`
 
 `(isolate solve)`
-!!!(p) {:.unnumlist}
 
-[ ](#){:#l0145}`> (solve-equations '((= (+ 3 4) (* (- 5 (+ 2 x)) 7))`
-!!!(p) {:.unnumlist}
+`> (solve-equations '((= (+  3 4) (* (- 5 (+  2 x)) 7))`
 
-`              (= (+ (* 3 x) y) 12)))`
-!!!(p) {:.unnumlist}
+`                            (= (+ (* 3 x) y) 12)))`
 
 `The equations to be solved are:`
-!!!(p) {:.unnumlist}
 
-`   (3 + 4) = ((5 - (2 + X)) * 7)`
-!!!(p) {:.unnumlist}
+`      (3 + 4) = ((5 - (2 + X)) * 7)`
 
-`   ((3 * X) + Y) = 12`
-!!!(p) {:.unnumlist}
+`      ((3 * X) + Y) = 12`
 
-`(1 ENTER SOLVE: ((= (+ 3 4) (* (- 5 (+ 2 X)) 7))`
-!!!(p) {:.unnumlist}
+`(1 ENTER SOLVE: ((= (+  3 4) (* (- 5 (+  2 X)) 7))`
 
-`              (= (+ (* 3 X) Y) 12)) NIL)`
-!!!(p) {:.unnumlist}
+`                            (= (+ (* 3 X) Y) 12)) NIL)`
 
-`  (1 ENTER ISOLATE: (= (+ 3 4) (* (- 5 (+ 2 X)) 7)) X)`
-!!!(p) {:.unnumlist}
+`    (1 ENTER ISOLATE: (= (+  3 4) (* (- 5 (+  2 X)) 7)) X)`
 
-`    (2 ENTER ISOLATE: (= (* (- 5 (+ 2 X)) 7) (+ 3 4)) X)`
-!!!(p) {:.unnumlist}
+`        (2 ENTER ISOLATE: (= (* (- 5 (+  2 X)) 7) (+  3 4)) X)`
 
-`      (3 ENTER ISOLATE: (= (- 5 (+ 2 X)) (/ (+ 3 4) 7)) X)`
-!!!(p) {:.unnumlist}
+`            (3 ENTER ISOLATE: (= (- 5 (+  2 X)) (/ (+  3 4) 7)) X)`
 
-`        (4 ENTER ISOLATE: (= (+ 2 X) (- 5 (/ (+ 3 4) 7))) X)`
-!!!(p) {:.unnumlist}
+`                (4 ENTER ISOLATE: (= (+  2 X) (- 5 (/ (+  3 4) 7))) X)`
 
-`          (5 ENTER ISOLATE: (= X (- (- 5 (/ (+ 3 4) 7)) 2)) X)`
-!!!(p) {:.unnumlist}
+`                    (5 ENTER ISOLATE: (= X (- (- 5 (/ (+  3 4) 7)) 2)) X)`
 
-`          (5 EXIT ISOLATE: (= X (- (- 5 (/ (+ 3 4) 7)) 2)))`
-!!!(p) {:.unnumlist}
+`                    (5 EXIT ISOLATE: (= X (- (- 5 (/ (+  3 4) 7)) 2)))`
 
-`        (4 EXIT ISOLATE: (= X (- (- 5 (/ (+ 3 4) 7)) 2)))`
-!!!(p) {:.unnumlist}
+`                (4 EXIT ISOLATE: (= X (- (- 5 (/ (+  3 4) 7)) 2)))`
 
-`      (3 EXIT ISOLATE: (= X (- (- 5 (/ (+ 3 4) 7)) 2)))`
-!!!(p) {:.unnumlist}
+`            (3 EXIT ISOLATE: (= X (- (- 5 (/ (+  3 4) 7)) 2)))`
 
-`    (2 EXIT ISOLATE: (= X (- (- 5 (/ (+ 3 4) 7)) 2)))`
-!!!(p) {:.unnumlist}
+`        (2 EXIT ISOLATE: (= X (- (- 5 (/ (+  3 4) 7)) 2)))`
 
-`  (1 EXIT ISOLATE: (= X (- (- 5 (/ (+ 3 4) 7)) 2)))`
-!!!(p) {:.unnumlist}
+`    (1 EXIT ISOLATE: (= X (- (- 5 (/ (+  3 4) 7)) 2)))`
 
-`  (2 ENTER SOLVE: ((= (+ (* 3 2) Y) 12)) ((= X 2)))`
-!!!(p) {:.unnumlist}
+`    (2 ENTER SOLVE: ((= (+ (* 3 2) Y) 12)) ((= X 2)))`
 
-`    (1 ENTER ISOLATE: (= (+ (* 3 2) Y) 12) Y)`
-!!!(p) {:.unnumlist}
+`        (1 ENTER ISOLATE: (= (+ (* 3 2) Y) 12) Y)`
 
-`     (2 ENTER ISOLATE: (= Y (- 12 (* 3 2))) Y)`
-!!!(p) {:.unnumlist}
+`          (2 ENTER ISOLATE: (= Y (- 12 (* 3 2))) Y)`
 
-`     (2 EXIT ISOLATE: (= Y (- 12 (* 3 2))))`
-!!!(p) {:.unnumlist}
+`          (2 EXIT ISOLATE: (= Y (- 12 (* 3 2))))`
 
-`    (1 EXIT ISOLATE: (= Y (- 12 (* 3 2))))`
-!!!(p) {:.unnumlist}
+`        (1 EXIT ISOLATE: (= Y (- 12 (* 3 2))))`
 
-`    (3 ENTER SOLVE: NIL ((= Y 6) (= X 2)))`
-!!!(p) {:.unnumlist}
+`        (3 ENTER SOLVE: NIL ((= Y 6) (= X 2)))`
 
-`    (3 EXIT SOLVE: ((= Y 6) (= X 2)))`
-!!!(p) {:.unnumlist}
+`        (3 EXIT SOLVE: ((= Y 6) (= X 2)))`
 
-`  (2 EXIT SOLVE: ((= Y 6) (= X 2)))`
-!!!(p) {:.unnumlist}
+`    (2 EXIT SOLVE: ((= Y 6) (= X 2)))`
 
 `(1 EXIT SOLVE: ((= Y 6) (= X 2)))`
-!!!(p) {:.unnumlist}
 
 `The solution is:`
-!!!(p) {:.unnumlist}
 
-`   Y = 6`
-!!!(p) {:.unnumlist}
+`      Y = 6`
 
-`   X = 2`
-!!!(p) {:.unnumlist}
+`      X = 2`
 
 `NIL`
-!!!(p) {:.unnumlist}
 
-Now let’s tackle the `format` string `"~%~a~{~% ~{ ~ a ~}~}~*%"*` in `print-equations.` This may look like random gibberish, but there is actually sense behind it.
+Now let's tackle the `format` string `"~%~a~{~% ~{ ~  a  ~}~}~*%"*` in `print-equations.` This may look like random gibberish, but there is actually sense behind it.
 `format` processes the string by printing each character, except that `"~"` indicates some special formatting action, depending on the following character.
 The combination `"~%"` prints a newline, and `"~a"` prints the next argument to `format` that has not been used yet.
 Thus the first four characters of the format string, `"~%~a"`, print a newline followed by the argument `header`.
@@ -770,10 +589,9 @@ The `t` given as the first argument to `format` means to print to the standard o
 One of the annoying minor holes in Lisp is that there is no standard convention on where to print newlines!
 In C, for example, the very first line of code in the reference manual is
 
-[ ](#){:#l0150}`printf("hello, world\n");`
-!!!(p) {:.unnumlist}
+`printf("hello, world\n");`
 
-[ ](#){:#l0155}This makes it clear that newlines are printed *after* each line.
+This makes it clear that newlines are printed *after* each line.
 This convention is so ingrained in the UNIX world that some UNIX programs will go into an infinite loop if the last line in a file is not terminated by a newline.
 In Lisp, however, the function `print` puts in a newline *before* the object to be printed, and a space after.
 Some Lisp programs carry the newline-before policy over to `format`, and others use the newline-after policy.
@@ -781,407 +599,312 @@ This only becomes a problem when you want to combine two programs written under 
 How did the two competing policies arise?
 In UNIX there was only one reasonable policy, because all input to the UNIX interpreter (the shell) is terminated by newlines, so there is no need for a newline-before.
 In some Lisp interpreters, however, input can be terminated by a matching right parenthesis.
-In that case, a newline-before is needed, lest the output appear on the same line as the input.[ ](#){:#p1075}
+In that case, a newline-before is needed, lest the output appear on the same line as the input.
 
-[ ](#){:#l0160}**Exercise 7.1 [m]** Implement `print-equations` using only primitive printing functions such as `terpri` and `princ`, along with explicit loops.
-!!!(p) {:.unnumlist}
+**Exercise  7.1 [m]** Implement `print-equations` using only primitive printing functions such as `terpri` and `princ`, along with explicit loops.
 
-## [ ](#){:#st0020}7.3 Examples
+## 7.3 Examples
 {:#s0020}
 {:.h1hd}
 
-Now we move on to examples, taken from Bobrow’s thesis.
-In the first example, it is necessary to insert a “then” before the word “what” to get the right answer:
+Now we move on to examples, taken from Bobrow's thesis.
+In the first example, it is necessary to insert a "then" before the word "what" to get the right answer:
 
-[ ](#){:#l0165}`> (student '(If the number of customers Tom gets is twice the square of`
-!!!(p) {:.unnumlist}
+`> (student '(If the number of customers Tom gets is twice the square of`
 
-`      20 % of the number of advertisements he runs |,|`
-!!!(p) {:.unnumlist}
+`            20 % of the number of advertisements he runs |,|`
 
-`      and the number of advertisements is 45 |,|`
-!!!(p) {:.unnumlist}
+`            and the number of advertisements is 45 |,|`
 
-`      then what is the number of customers Tom gets ?))`
-!!!(p) {:.unnumlist}
+`            then what is the number of customers Tom gets ?))`
 
 `The equations to be solved are:`
-!!!(p) {:.unnumlist}
 
-`   CUSTOMERS = (2 * (((20 / 100) * ADVERTISEMENTS) *`
-!!!(p) {:.unnumlist}
+`      CUSTOMERS = (2 * (((20 / 100) * ADVERTISEMENTS) *`
 
-`           ((20 / 100) * ADVERTISEMENTS)))`
-!!!(p) {:.unnumlist}
+`                      ((20 / 100) * ADVERTISEMENTS)))`
 
-`   ADVERTISEMENTS = 45`
-!!!(p) {:.unnumlist}
+`      ADVERTISEMENTS = 45`
 
-`   WHAT = CUSTOMERS`
-!!!(p) {:.unnumlist}
+`      WHAT = CUSTOMERS`
 
-[ ](#){:#l0170}`The solution is:`
-!!!(p) {:.unnumlist}
+`The solution is:`
 
-`   WHAT = 162`
-!!!(p) {:.unnumlist}
+`      WHAT = 162`
 
-`   CUSTOMERS = 162`
-!!!(p) {:.unnumlist}
+`      CUSTOMERS = 162`
 
-`   ADVERTISEMENTS = 45`
-!!!(p) {:.unnumlist}
+`      ADVERTISEMENTS = 45`
 
 `NIL`
-!!!(p) {:.unnumlist}
 
-Notice that our program prints the values for all variables it can solve for, while Bobrow’s program only printed the values that were explicitly asked for in the text.
-This is an example of “more is less”—it may look impressive to print all the answers, but it is actually easier to do so than to decide just what answers should be printed.
+Notice that our program prints the values for all variables it can solve for, while Bobrow's program only printed the values that were explicitly asked for in the text.
+This is an example of "more is less"-it may look impressive to print all the answers, but it is actually easier to do so than to decide just what answers should be printed.
 The following example is not solved correctly:
 
-[ ](#){:#l0175}`> (student '(The daily cost of living for a group is the overhead cost plus`
-!!!(p) {:.unnumlist}
+`> (student '(The daily cost of living for a group is the overhead cost plus`
 
-`      the running cost for each person times the number of people in`
-!!!(p) {:.unnumlist}
+`            the running cost for each person times the number of people in`
 
-`      the group |.| This cost for one group equals $ 100 |,|`
-!!!(p) {:.unnumlist}
+`            the group |.| This cost for one group equals $ 100 |,|`
 
-`      and the number of people in the group is 40 |.|`
-!!!(p) {:.unnumlist}
+`            and the number of people in the group is 40 |.|`
 
-`      If the overhead cost is 10 times the running cost |,|`
-!!!(p) {:.unnumlist}
+`            If the overhead cost is 10 times the running cost |,|`
 
-`      find the overhead and running cost for each person |.|))`
-!!!(p) {:.unnumlist}
+`            find the overhead and running cost for each person |.|))`
 
 `The equations to be solved are:`
-!!!(p) {:.unnumlist}
 
-`   DAILY = (OVERHEAD + (RUNNING * PEOPLE))`
-!!!(p) {:.unnumlist}
+`      DAILY = (OVERHEAD + (RUNNING * PEOPLE))`
 
-`   COST = 100`
-!!!(p) {:.unnumlist}
+`      COST = 100`
 
-`   PEOPLE = 40`
-!!!(p) {:.unnumlist}
+`      PEOPLE = 40`
 
-`   OVERHEAD = (10 * RUNNING)`
-!!!(p) {:.unnumlist}
+`      OVERHEAD = (10 * RUNNING)`
 
-`   TO-FIND-1 = OVERHEAD`
-!!!(p) {:.unnumlist}
+`      TO-FIND-1 = OVERHEAD`
 
-`   TO-FIND-2 = RUNNING`
-!!!(p) {:.unnumlist}
+`      TO-FIND-2 = RUNNING`
 
-[ ](#){:#l0180}`The solution is:`
-!!!(p) {:.unnumlist}
+`The solution is:`
 
-`   PEOPLE = 40`
-!!!(p) {:.unnumlist}
+`      PEOPLE = 40`
 
-`   COST = 100`
-!!!(p) {:.unnumlist}
+`      COST = 100`
 
 `NIL`
-!!!(p) {:.unnumlist}
 
-This example points out two important limitations of our version of student as compared to Bobrow’s.
+This example points out two important limitations of our version of student as compared to Bobrow's.
 The first problem is in naming of variables.
-The phrases “the daily cost of living for a group” and “this cost” are meant to refer to the same quantity, but our program gives them the names `daily` and `cost` respectively.
-Bobrow’s program handled naming by first considering phrases to be the same only if they matched perfectly.
+The phrases "the daily cost of living for a group" and "this cost" are meant to refer to the same quantity, but our program gives them the names `daily` and `cost` respectively.
+Bobrow's program handled naming by first considering phrases to be the same only if they matched perfectly.
 If the resulting set of equations could not be solved, he would try again, this time considering phrases with words in common to be identical.
 (See the following exercises.)
 
 The other problem is in our `solve` function.
 Assuming we got the variables equated properly, `solve` would be able to boil the set of equations down to two:
 
-[ ](#){:#l0185}`100 = (OVERHEAD + (RUNNING * 40))`
-!!!(p) {:.unnumlist}
+`100 = (OVERHEAD + (RUNNING * 40))`
 
 `OVERHEAD = (10 * RUNNING)`
-!!!(p) {:.unnumlist}
 
 This is a set of two linear equations in two unknowns and has a unique solution at `RUNNING = 2, OVERHEAD = 20`.
-But our version of `solve` couldn’t find this solution, since it looks for equations with one unknown.
+But our version of `solve` couldn't find this solution, since it looks for equations with one unknown.
 Here is another example that `student` handles well:
 
-[ ](#){:#l0190}`> (student '(Fran’s age divided by Robin’s height is one half Kelly's IQ |.|`
-!!!(p) {:.unnumlist}
+`> (student '(Fran's age divided by Robin's height is one half Kelly's IQ |.|`
 
-`      Kelly's IQ minus 80 is Robin's height |.|`
-!!!(p) {:.unnumlist}
+`            Kelly's IQ minus 80 is Robin's height |.|`
 
-`      If Robin is 4 feet tall |,| how old is Fran ?))`
-!!!(p) {:.unnumlist}
+`            If Robin is 4 feet tall |,| how old is Fran ?))`
 
 `The equations to be solved are:`
-!!!(p) {:.unnumlist}
 
-`   (FRAN / ROBIN) = (KELLY / 2)`
-!!!(p) {:.unnumlist}
+`      (FRAN / ROBIN) = (KELLY / 2)`
 
-`   (KELLY - 80) = ROBIN`
-!!!(p) {:.unnumlist}
+`      (KELLY - 80) = ROBIN`
 
-`   ROBIN = 4`
-!!!(p) {:.unnumlist}
+`      ROBIN = 4`
 
-`   HOW = FRAN`
-!!!(p) {:.unnumlist}
+`      HOW = FRAN`
 
-[ ](#){:#l0195}`The solution is:`
-!!!(p) {:.unnumlist}
+`The solution is:`
 
-`   HOW = 168`
-!!!(p) {:.unnumlist}
+`      HOW = 168`
 
-`   FRAN = 168`
-!!!(p) {:.unnumlist}
+`      FRAN = 168`
 
-`   KELLY = 84`
-!!!(p) {:.unnumlist}
+`      KELLY = 84`
 
-`   ROBIN = 4`
-!!!(p) {:.unnumlist}
+`      ROBIN = 4`
 
 `NIL`
-!!!(p) {:.unnumlist}
 
 But a slight variation leads to a problem:
 
-[ ](#){:#l0200}`> (student '(Fran's age divided by Robin's height is one half Kelly's IQ |.|`
-!!!(p) {:.unnumlist}
+`> (student '(Fran's age divided by Robin's height is one half Kelly's IQ |.|`
 
-`      Kelly's IQ minus 80 is Robin's height |.|`
-!!!(p) {:.unnumlist}
+`            Kelly's IQ minus 80 is Robin's height |.|`
 
-`      If Robin is 0 feet tall |,| how old is Fran ?))`
-!!!(p) {:.unnumlist}
+`            If Robin is 0 feet tall |,| how old is Fran ?))`
 
 `The equations to be solved are:`
-!!!(p) {:.unnumlist}
 
-`   (FRAN / ROBIN) = (KELLY / 2)`
-!!!(p) {:.unnumlist}
+`      (FRAN / ROBIN) = (KELLY / 2)`
 
-`   (KELLY - 80) = ROBIN`
-!!!(p) {:.unnumlist}
+`      (KELLY - 80) = ROBIN`
 
-`   ROBIN = 0`
-!!!(p) {:.unnumlist}
+`      ROBIN = 0`
 
-`   HOW = FRAN`
-!!!(p) {:.unnumlist}
+`      HOW = FRAN`
 
-[ ](#){:#l0205}`The solution is:`
-!!!(p) {:.unnumlist}
+`The solution is:`
 
-`   HOW = 0`
-!!!(p) {:.unnumlist}
+`      HOW = 0`
 
-`   FRAN = 0`
-!!!(p) {:.unnumlist}
+`      FRAN = 0`
 
-`   KELLY = 80`
-!!!(p) {:.unnumlist}
+`      KELLY = 80`
 
-`   ROBIN = 0`
-!!!(p) {:.unnumlist}
+`      ROBIN = 0`
 
 `NIL`
-!!!(p) {:.unnumlist}
 
 There is no valid solution to this problem, because it involves dividing by zero (Robin's height).
 But `student` is willing to transform the first equation into:
 
-[ ](#){:#l0210}`FRAN = ROBIN * (KELLY / 2)`
-!!!(p) {:.unnumlist}
+`FRAN = ROBIN * (KELLY / 2)`
 
 and then substitutes to get `0` for `FRAN`.
 Worse, dividing by zero could also come up inside `eval`:
 
-[ ](#){:#l0215}`> (student '(Fran's age times Robin's height is one half Kelly's IQ |.|`
-!!!(p) {:.unnumlist}
+`> (student '(Fran's age times Robin's height is one half Kelly's IQ |.|`
 
-`      Kelly's IQ minus 80 is Robin's height |.|`
-!!!(p) {:.unnumlist}
+`            Kelly's IQ minus 80 is Robin's height |.|`
 
-`      If Robin is 0 feet tall |,| how old is Fran ?))`
-!!!(p) {:.unnumlist}
+`            If Robin is 0 feet tall |,| how old is Fran ?))`
 
 `The equations to be solved are:`
-!!!(p) {:.unnumlist}
 
-`   (FRAN * ROBIN) = (KELLY / 2)`
-!!!(p) {:.unnumlist}
+`      (FRAN * ROBIN) = (KELLY / 2)`
 
-`   (KELLY - 80) = ROBIN`
-!!!(p) {:.unnumlist}
+`      (KELLY - 80) = ROBIN`
 
-`   ROBIN = 0`
-!!!(p) {:.unnumlist}
+`      ROBIN = 0`
 
-`   HOW = FRAN`
-!!!(p) {:.unnumlist}
+`      HOW = FRAN`
 
 `>>Error: There was an attempt to divide a number by zero`
-!!!(p) {:.unnumlist}
 
-However, one could claim that nasty examples with division by zero don’t show up in algebra texts.
+However, one could claim that nasty examples with division by zero don't show up in algebra texts.
 
-In summary, STUDENT !!!(span) {:.smallcaps} behaves reasonably well, doing far more than the toy program ELIZA !!!(span) {:.smallcaps} .
-STUDENT !!!(span) {:.smallcaps} is also quite efficient; on my machine it takes less than one second for each of the prior examples.
+In summary, STUDENT !!!(span) {:.smallcaps} behaves reasonably well, doing far more than the toy program ELIZA !!!(span) {:.smallcaps} . STUDENT !!!(span) {:.smallcaps} is also quite efficient; on my machine it takes less than one second for each of the prior examples.
 However, it could still be extended to have more powerful equation-solving capabilities.
 Its linguistic coverage is another matter.
-While one could add new patterns, such patterns are really just tricks, and don’t capture the underlying structure of English sentences.
+While one could add new patterns, such patterns are really just tricks, and don't capture the underlying structure of English sentences.
 That is why the STUDENT !!!(span) {:.smallcaps} approach was abandoned as a research topic.
 
-## [ ](#){:#st0025}7.4 History and References
+## 7.4 History and References
 {:#s0025}
 {:.h1hd}
 
-Bobrow’s Ph.D.
-thesis contains a complete description of STUDENT !!!(span) {:.smallcaps} .
-It is reprinted in [Minsky 1968](B9780080571157500285.xhtml#bb0845).
+Bobrow's Ph.D.
+thesis contains a complete description of STUDENT !!!(span) {:.smallcaps} . It is reprinted in [Minsky 1968](B9780080571157500285.xhtml#bb0845).
 Since then, there have been several systems that address the same task, with increased sophistication in both their mathematical and linguistic ability.
 [Wong (1981)](B9780080571157500285.xhtml#bb1420) describes a system that uses its understanding of the problem to get a better linguistic analysis.
 [Sterling et al.
 (1982)](B9780080571157500285.xhtml#bb1195) present a much more powerful equation solver, but it does not accept natural language input.
-Certainly Bobrow’s language analysis techniques were not very sophisticated by today’s measures.
-But that was largely the point: if you know that the language is describing an algebraic problem of a certain type, then you don’t need to know very much linguistics to get the right answer most of the time.
+Certainly Bobrow's language analysis techniques were not very sophisticated by today's measures.
+But that was largely the point: if you know that the language is describing an algebraic problem of a certain type, then you don't need to know very much linguistics to get the right answer most of the time.
 
-## [ ](#){:#st0030}7.5 Exercises[ ](#){:#p1495}
+## 7.5 Exercises
 {:#s0030}
 {:.h1hd}
 
-[ ](#){:#l0220}**Exercise 7.2 [h]** We said earlier that our program was unable to solve pairs of linear equations, such as:
-!!!(p) {:.unnumlist}
+**Exercise  7.2 [h]** We said earlier that our program was unable to solve pairs of linear equations, such as:
 
-[ ](#){:#l0225}`100 = (OVERHEAD + (RUNNING * 40))`
-!!!(p) {:.unnumlist1}
+`100 = (OVERHEAD + (RUNNING * 40))`
 
 `OVERHEAD = (10 * RUNNING)`
-!!!(p) {:.unnumlist1}
 
 The original STUDENT !!!(span) {:.smallcaps} could solve these equations.
 Write a routine to do so.
 You may assume there will be only two equations in two unknowns if you wish, or if you are more ambitious, you could solve a system of *n* linear equations with *n* unknowns.
 
-**Exercise 7.3 [h]** Implement a version of Bobrow’s variable-naming algorithm.
+**Exercise  7.3 [h]** Implement a version of Bobrow's variable-naming algorithm.
 Instead of taking the first word of each equation, create a unique symbol, and associate with it the entire list of words.
 In the first pass, each nonequal list of words will be considered a distinct variable.
 If no solution is reached, word lists that share words in common are considered to be the same variable, and the solution is attempted again.
-For example, an input that contains the phrases “the rectangle’s width” and “the width of the rectangle” might assign these two phrases the variables `v1` and `v2`.
-If an attempt to solve the problem yields no solutions, the program should realize that `v1` and `v2` have the words “rectangle” and “width” in common, and add the equation (`= v1 v2`) and try again.
+For example, an input that contains the phrases "the rectangle's width" and "the width of the rectangle" might assign these two phrases the variables `v1` and `v2`.
+If an attempt to solve the problem yields no solutions, the program should realize that `v1` and `v2` have the words "rectangle" and "width" in common, and add the equation (`= v1 v2`) and try again.
 Since the variables are arbitrary symbols, the printing routine should probably print the phrases associated with each variable rather than the variable itself.
-!!!(p) {:.unnumlist}
 
-**Exercise 7.4 [h]** The original STUDENT !!!(span) {:.smallcaps} also had a set of “common knowledge” equations that it could use when necessary.
-These were mostly facts about conversion factors, such as (`1 inch = 2.54 cm`).
-Also included were equations like (`distance equal s rate times time`), which could be used to solve problems like “If the distance from Anabru to Champaign is 10 miles and the time it takes Sandy to travel this distance is 2 hours, what is Sandy’s rate of speed?” Make changes to incorporate this facility.
+**Exercise  7.4 [h]** The original STUDENT !!!(span) {:.smallcaps} also had a set of "common knowledge" equations that it could use when necessary.
+These were mostly facts about conversion factors, such as (`1 inch = 2.54  cm`).
+Also included were equations like (`distance equal s rate times time`), which could be used to solve problems like "If the distance from Anabru to Champaign is 10 miles and the time it takes Sandy to travel this distance is 2 hours, what is Sandy's rate of speed?" Make changes to incorporate this facility.
 It probably only helps in conjunction with a solution to the previous exercise.
-!!!(p) {:.unnumlist}
 
-**Exercise 7.5 [h]** Change `student` so that it prints values only for those variables that are being asked for in the problem.
-That is, given the problem “X is 3.
+**Exercise  7.5 [h]** Change `student` so that it prints values only for those variables that are being asked for in the problem.
+That is, given the problem "X is 3.
 Y is 4.
-How much is X + Y ?” it should not print values for X and Y.
-!!!(p) {:.unnumlist}
+How much is X  +  Y ?" it should not print values for X and Y.
 
-**Exercise 7.6 [m]** Try STUDENT !!!(span) {:.smallcaps} on the following examples.
+**Exercise  7.6 [m]** Try STUDENT !!!(span) {:.smallcaps} on the following examples.
 Make sure you handle special characters properly:
-!!!(p) {:.unnumlist}
 
-[ ](#){:#l0230}(a) The price of a radio is 69.70 dollars.
+(a)  The price of a radio is 69.70 dollars.
 If this price is 15% less than the marked The number of soldiers the Russians have is one half of the number of guns
 !!!(p) {:.numlist1}
 
-(b) The number of soldiers the Russians have is one half of the number of guns they have.
+(b)  The number of soldiers the Russians have is one half of the number of guns they have.
 The number of guns they have is 7000.
 What is the number of soldiers they have?
 !!!(p) {:.numlist1}
 
-(c) If the number of customers Tom gets is twice the square of 20 % of the number of advertisements he runs, and the number of advertisements is 45, and the profit Tom receives is 10 times the number of customers he gets, then what is the profit?
+(c)  If the number of customers Tom gets is twice the square of 20 % of the number of advertisements he runs, and the number of advertisements is 45, and the profit Tom receives is 10 times the number of customers he gets, then what is the profit?
 !!!(p) {:.numlist1}
 
-(d) The average score is 73.
+(d)  The average score is 73.
 The maximum score is 97.
 What is the square of the difference between the average and the maximum?
 !!!(p) {:.numlist1}
 
-(e) Tom is twice Mary’s age, and Jane’s age is half the difference between Mary and Tom.
+(e)  Tom is twice Mary's age, and Jane's age is half the difference between Mary and Tom.
 If Mary is 18 years old, how old is Jane?
 !!!(p) {:.numlist1}
 
-(f) What is 4 + 5* 14/7?
+(f)  What is 4  +  5* 14/7?
 !!!(p) {:.numlist1}
 
-(g) *x × b = c + d.
-b × c = x.
-x = b + b.
-b = 5.*
+(g)  *x  x  b  =  c  +  d.
+b  x  c  =  x.
+x  =  b  +  b.
+b  =  5.*
 !!!(p) {:.numlist1}
 
-**Exercise 7.7 [h]**`Student’s` infix-to-prefix rules account for the priority of operators properly, but they don’t handle associativity in the standard fashion.
+**Exercise  7.7 [h]**`Student's` infix-to-prefix rules account for the priority of operators properly, but they don't handle associativity in the standard fashion.
 For example, (`12 - 6 - 3`) translates to (`- 12 (- 6 3)`) or `9`, when the usual convention is to interpret this as (`- (- 12 6) 3`) or `3`.
 Fix student to handle this convention.
-!!!(p) {:.unnumlist}
 
-**Exercise 7.8 [d]** Find a mathematically oriented domain that is sufficiently limited so that STUDENT !!!(span) {:.smallcaps} can solve problems in it.
+**Exercise  7.8 [d]** Find a mathematically oriented domain that is sufficiently limited so that STUDENT !!!(span) {:.smallcaps} can solve problems in it.
 The chemistry of solutions (calculating pH concentrations) might be an example.
 Write the necessary `*student-rules*`, and test the resulting program.
-!!!(p) {:.unnumlist}
 
-**Exercise 7.9 [m]** Analyze the complexity of `one-unknown` and implement a more efficient version.
-!!!(p) {:.unnumlist}
+**Exercise  7.9 [m]** Analyze the complexity of `one-unknown` and implement a more efficient version.
 
-**Exercise 7.10 [h]** Bobrow’s paper on STUDENT !!!(span) {:.smallcaps} (1968) includes an appendix that abstractly characterizes all the problems that his system can solve.
+**Exercise  7.10 [h]** Bobrow's paper on STUDENT !!!(span) {:.smallcaps} (1968) includes an appendix that abstractly characterizes all the problems that his system can solve.
 Generate a similar characterization for this version of the program.
-!!!(p) {:.unnumlist}
 
-## [ ](#){:#st0035}7.6 Answers
+## 7.6 Answers
 {:#s0035}
 {:.h1hd}
 
 **Answer 7.1**
 
-[ ](#){:#l0235}`(defun print-equations (header equations)`
-!!!(p) {:.unnumlist}
+`(defun print-equations (header equations)`
 
-`  (terpri)`
-!!!(p) {:.unnumlist}
+`    (terpri)`
 
-`  (princ header)`
-!!!(p) {:.unnumlist}
+`    (princ header)`
 
-`  (dolist (equation equations)`
-!!!(p) {:.unnumlist}
+`    (dolist (equation equations)`
 
-`    (terpri)`
-!!!(p) {:.unnumlist}
+`        (terpri)`
 
-`    (princ " ")`
-!!!(p) {:.unnumlist}
+`        (princ " ")`
 
-`    (dolist (x (prefix->infix equation))`
-!!!(p) {:.unnumlist}
+`        (dolist (x (prefix->infix equation))`
 
-`      (princ " ")`
-!!!(p) {:.unnumlist}
+`            (princ " ")`
 
-`      (princ x))))`
-!!!(p) {:.unnumlist}
+`            (princ x))))`
 
 **Answer 7.9**`one-unknown` is very inefficient because it searches each subcomponent of an expression twice.
 For example, consider the equation:
 
-[ ](#){:#l0240}`(= (+ (+` × `2) (+ 3 4)) (+ (+ 5 6) (+ 7 8)))`
-!!!(p) {:.unnumlist}
+`(= (+ (+`  x  `2) (+  3 4)) (+ (+  5 6) (+  7 8)))`
 
 To decide if this has one unknown, `one-unknown` will call `no-unknown` on the left-hand side, and since it fails, call it again on the right-hand side.
 Although there are only eight atoms to consider, it ends up calling `no-unknown 17` times and `one-unknown 4` times.
@@ -1194,71 +917,50 @@ The function `find-one-unknown` has four cases: (1) If we have already found two
 (3) If the expression is an unknown, and if it is the second one found, return `2`; otherwise return the unknown itself.
 (4) If the expression is an atom that is not an unknown, then just return the accumulated result.
 
-[ ](#){:#l0245}`(defun one-unknown (exp)`
-!!!(p) {:.unnumlist}
+`(defun one-unknown (exp)`
 
-`  "Returns the single unknown in exp, if there is exactly one."`
-!!!(p) {:.unnumlist}
+`    "Returns the single unknown in exp, if there is exactly one."`
 
-`  (let ((answer (find-one-unknown exp nil)))`
-!!!(p) {:.unnumlist}
+`    (let ((answer (find-one-unknown exp nil)))`
 
-`    ;; If there were two unknowns, return nil;`
-!!!(p) {:.unnumlist}
+`        ;; If there were two unknowns, return nil;`
 
-`    ;; otherwise return the unknown (if there was one)`
-!!!(p) {:.unnumlist}
+`        ;; otherwise return the unknown (if there was one)`
 
-`    (if (eql answer 2)`
-!!!(p) {:.unnumlist}
+`        (if (eql answer 2)`
 
-`       nil`
-!!!(p) {:.unnumlist}
+`              nil`
 
-`       answer)))`
-!!!(p) {:.unnumlist}
+`              answer)))`
 
-[ ](#){:#l0250}`(defun find-one-unknown (exp unknown)`
-!!!(p) {:.unnumlist}
+`(defun find-one-unknown (exp unknown)`
 
-`  "Assuming UNKNOWN is the unknown(s) found so far, decide`
-!!!(p) {:.unnumlist}
+`    "Assuming UNKNOWN is the unknown(s) found so far, decide`
 
-`  if there is exactly one unknown in the entire expression."`
-!!!(p) {:.unnumlist}
+`    if there is exactly one unknown in the entire expression."`
 
-`  (cond ((eql unknown 2) 2)`
-!!!(p) {:.unnumlist}
+`    (cond ((eql unknown 2) 2)`
 
-`        ((exp-p exp)`
-!!!(p) {:.unnumlist}
+`                ((exp-p exp)`
 
-`          (find-one-unknown`
-!!!(p) {:.unnumlist}
+`                    (find-one-unknown`
 
-`            (exp-rhs exp)`
-!!!(p) {:.unnumlist}
+`                        (exp-rhs exp)`
 
-`            (find-one-unknown (exp-lhs exp) unknown)))`
-!!!(p) {:.unnumlist}
+`                        (find-one-unknown (exp-lhs exp) unknown)))`
 
-`        ((unknown-p exp)`
-!!!(p) {:.unnumlist}
+`                ((unknown-p exp)`
 
-`          (if unknown`
-!!!(p) {:.unnumlist}
+`                    (if unknown`
 
-`              2`
-!!!(p) {:.unnumlist}
+`                            2`
 
-`              exp))`
-!!!(p) {:.unnumlist}
+`                            exp))`
 
-`        (t unknown)))`
-!!!(p) {:.unnumlist}
+`                (t unknown)))`
 
 ----------------------
 
-[1](#xfn0015){:#np0015}[Page 316](B9780080571157500108.xhtml#p316) of *Common Lisp the Language* says, “Because a constructor of this type operates By Order of Arguments, it is sometimes known as a BOA constructor.”
+[1](#xfn0015)[Page 316](B9780080571157500108.xhtml#p316) of *Common Lisp the Language* says, "Because a constructor of this type operates By Order of Arguments, it is sometimes known as a BOA constructor."
 !!!(p) {:.ftnote1}
 

@@ -23,59 +23,43 @@ There is one complication: after failing we have to undo any bindings made by `u
 Consider an example.
 The clauses
 
-[ ](#){:#l0010}`(<− (likes Robin cats))`
-!!!(p) {:.unnumlist}
+`(<- (likes Robin cats))`
 
-`(<− (likes Sandy ?x) (likes ?x cats))`
-!!!(p) {:.unnumlist}
+`(<- (likes Sandy ?x) (likes ?x cats))`
 
-`(<− (likes Kim ?x) (likes ?x Lee) (likes ?x Kim))`
-!!!(p) {:.unnumlist}
+`(<- (likes Kim ?x) (likes ?x Lee) (likes ?x Kim))`
 
 could be compiled into this:
 
-[ ](#){:#l0015}`(defun likes/2 (?arg1 ?arg2 cont)`
-!!!(p) {:.unnumlist}
+`(defun likes/2 (?arg1 ?arg2 cont)`
 
-` ;; First clause:`
-!!!(p) {:.unnumlist}
+`  ;; First clause:`
 
-` (if (and (unify!
+`  (if (and (unify!
 ?arg1 'Robin) (unify!
 ?arg2 'cats))`
-!!!(p) {:.unnumlist}
 
-`   (funcall cont))`
-!!!(p) {:.unnumlist}
+`      (funcall cont))`
 
-` (undo-bindings)`
-!!!(p) {:.unnumlist}
+`  (undo-bindings)`
 
-` ;; Second clause:`
-!!!(p) {:.unnumlist}
+`  ;; Second clause:`
 
-` (if (unify!
+`  (if (unify!
 ?argl 'Sandy)`
-!!!(p) {:.unnumlist}
 
-`   (likes/2 ?arg2 'cats cont))`
-!!!(p) {:.unnumlist}
+`      (likes/2 ?arg2 'cats cont))`
 
-` (undo-bindings)`
-!!!(p) {:.unnumlist}
+`  (undo-bindings)`
 
-` ;; Third clause:`
-!!!(p) {:.unnumlist}
+`  ;; Third clause:`
 
-` (if (unify!
+`  (if (unify!
 ?argl 'Kim)`
-!!!(p) {:.unnumlist}
 
-`   (likes/2 ?arg2 'Lee`
-!!!(p) {:.unnumlist}
+`      (likes/2 ?arg2 'Lee`
 
-`     #'(lambda () (likes/2 ?arg2 'Kim cont))))))`
-!!!(p) {:.unnumlist}
+`          #'(lambda () (likes/2 ?arg2 'Kim cont))))))`
 
 In the first clause, we just check the two arguments and, if the unifications succeed, call the continuation directly, because the first clause has no body.
 In the second clause, `likes/2` is called recursively, to see if `?arg2` likes `cats`.
@@ -92,200 +76,145 @@ Note that the code for `likes/2` given before has eliminated some unnecessary ca
 The most obvious implementation would have one call to `unify!` for each argument.
 Thus, for the second clause, we would have the code:
 
-[ ](#){:#l0020}`(if (and (unify!
+`(if (and (unify!
 ?argl 'Sandy) (unify!
 ?arg2 ?x))`
-!!!(p) {:.unnumlist}
 
-` (likes/2 ?x 'cats cont))`
-!!!(p) {:.unnumlist}
+`  (likes/2 ?x 'cats cont))`
 
 where we would need a suitable let binding for the variable `?x`.
 
-## [ ](#){:#st0010}12.1 A Prolog Compiler
+## 12.1 A Prolog Compiler
 {:#s0010}
 {:.h1hd}
 
-This section presents the compiler summarized in [figure 12.1](#f0010).
+This section presents the compiler summarized in [figure  12.1](#f0010).
 At the top level is the function `prolog-compile`, which takes a symbol, looks at the clauses defined for that symbol, and groups the clauses by arity.
 Each symbol/arity is compiled into a separate Lisp function by `compile-predicate`.
 
 ![f12-01-9780080571157](images/B9780080571157500121/f12-01-9780080571157.jpg)     
-Figure 12.1
+Figure  12.1
 !!!(span) {:.fignum}
 Glossary for the Prolog Compiler
-[ ](#){:#l9025}`(defun prolog-compile (symbol &optional`
-!!!(p) {:.unnumlist}
+`(defun prolog-compile (symbol &optional`
 
-`      (clauses (get-clauses symbol)))`
-!!!(p) {:.unnumlist}
+`            (clauses (get-clauses symbol)))`
 
-` "Compile a symbol; make a separate function for each arity."`
-!!!(p) {:.unnumlist}
+`  "Compile a symbol; make a separate function for each arity."`
 
-` (unless (null clauses)`
-!!!(p) {:.unnumlist}
+`  (unless (null clauses)`
 
-`  (let ((arity (relation-arity (clause-head (first clauses)))))`
-!!!(p) {:.unnumlist}
+`    (let ((arity (relation-arity (clause-head (first clauses)))))`
 
-`   ;; Compile the clauses with this arity`
-!!!(p) {:.unnumlist}
+`      ;; Compile the clauses with this arity`
 
-`   (compile-predicate`
-!!!(p) {:.unnumlist}
+`      (compile-predicate`
 
-`    symbol arity (clauses-with-arity clauses #'= arity))`
-!!!(p) {:.unnumlist}
+`        symbol arity (clauses-with-arity clauses #'= arity))`
 
-`   ;; Compile all the clauses with any other arity`
-!!!(p) {:.unnumlist}
+`      ;; Compile all the clauses with any other arity`
 
-`   (prolog-compile`
-!!!(p) {:.unnumlist}
+`      (prolog-compile`
 
-`    symbol (clauses-with-arity clauses #'/= arity)))))`
-!!!(p) {:.unnumlist}
+`        symbol (clauses-with-arity clauses #'/= arity)))))`
 
 Three utility functions are included here:
 
-[ ](#){:#l0030}`(defun clauses-with-arity (clauses test arity)`
-!!!(p) {:.unnumlist}
+`(defun clauses-with-arity (clauses test arity)`
 
-` "Return all clauses whose head has given arity."`
-!!!(p) {:.unnumlist}
+`  "Return all clauses whose head has given arity."`
 
-` (find-all arity clauses`
-!!!(p) {:.unnumlist}
+`  (find-all arity clauses`
 
-`     :key #'(lambda (clause)`
-!!!(p) {:.unnumlist}
+`          :key #'(lambda (clause)`
 
-`        (relation-arity (clause-head clause)))`
-!!!(p) {:.unnumlist}
+`                (relation-arity (clause-head clause)))`
 
-`     :test test))`
-!!!(p) {:.unnumlist}
+`          :test test))`
 
 `(defun relation-arity (relation)`
-!!!(p) {:.unnumlist}
 
-` "The number of arguments to a relation.`
-!!!(p) {:.unnumlist}
+`  "The number of arguments to a relation.`
 
-` Example: (relation-arity '(p a b c)) => 3"`
-!!!(p) {:.unnumlist}
+`  Example: (relation-arity '(p a b c)) => 3"`
 
-` (length (args relation)))`
-!!!(p) {:.unnumlist}
+`  (length (args relation)))`
 
 `(defun args (x) "The arguments of a relation" (rest x))`
-!!!(p) {:.unnumlist}
 
 The next step is to compile the clauses for a given predicate with a fixed arity into a Lisp function.
 For now, that will be done by compiling each clause indepently and wrapping them in a `lambda` with the right parameter list.
 
-[ ](#){:#l0035}`(defun compile-predicate (symbol arity clauses)`
-!!!(p) {:.unnumlist}
+`(defun compile-predicate (symbol arity clauses)`
 
-` "Compile all the clauses for a given symbol/arity`
-!!!(p) {:.unnumlist}
+`  "Compile all the clauses for a given symbol/arity`
 
-` into a single LISP function."`
-!!!(p) {:.unnumlist}
+`  into a single LISP function."`
 
-` (let ((predicate (make-predicate symbol arity))`
-!!!(p) {:.unnumlist}
+`  (let ((predicate (make-predicate symbol arity))`
 
-`    (parameters (make-parameters arity°)))`
-!!!(p) {:.unnumlist}
+`        (parameters (make-parameters arity!!!(char) °)))`
 
-`  (compile`
-!!!(p) {:.unnumlist}
+`    (compile`
 
-`   (eval`
-!!!(p) {:.unnumlist}
+`      (eval`
 
-`    '(defun ,predicate (,©parameters cont)`
-!!!(p) {:.unnumlist}
+`        '(defun ,predicate (,@parameters cont)`
 
-`      ..(mapcar #'(lambda (clause)`
-!!!(p) {:.unnumlist}
+`            ..(mapcar #'(lambda (clause)`
 
-`            (compile-clause parameters clause 'cont))`
-!!!(p) {:.unnumlist}
+`                        (compile-clause parameters clause 'cont))`
 
-`       clauses))))))`
-!!!(p) {:.unnumlist}
+`              clauses))))))`
 
 `(defun make-parameters (arity)`
-!!!(p) {:.unnumlist}
 
-` "Return the list (?arg1 ?arg2 … ?arg-arity)"`
-!!!(p) {:.unnumlist}
+`  "Return the list (?arg1 ?arg2 ... ?arg-arity)"`
 
-` (loop for i from 1 to arity`
-!!!(p) {:.unnumlist}
+`  (loop for i from 1 to arity`
 
-`    collect (new-symbol '?arg i)))`
-!!!(p) {:.unnumlist}
+`        collect (new-symbol '?arg i)))`
 
 `(defun make-predicate (symbol arity)`
-!!!(p) {:.unnumlist}
 
-` "Return the symbol: symbol/arity"`
-!!!(p) {:.unnumlist}
+`  "Return the symbol: symbol/arity"`
 
-` (symbol symbol '/ arity))`
-!!!(p) {:.unnumlist}
+`  (symbol symbol '/ arity))`
 
 Now for the hard part: we must actually generate the code for a clause.
 Here again is an example of the code desired for one clause.
 We'll start by setting as a target the simple code:
 
-[ ](#){:#l0040}`(<− (likes Kim ?x) (likes ?x Lee) (likes ?x Kim))`
-!!!(p) {:.unnumlist}
+`(<- (likes Kim ?x) (likes ?x Lee) (likes ?x Kim))`
 
 `(defun likes/2 (?arg1 ?arg2 cont)`
-!!!(p) {:.unnumlist}
 
-` …`
-!!!(p) {:.unnumlist}
+`  ...`
 
-` (if (and (unify!
+`  (if (and (unify!
 ?argl 'Kim) (unify!
 ?arg2 ?x)`
-!!!(p) {:.unnumlist}
 
-`   (likes/2 ?arg2 'Lee`
-!!!(p) {:.unnumlist}
+`      (likes/2 ?arg2 'Lee`
 
-`      #'(lambda () (likes/2 ?x 'Kim))))`
-!!!(p) {:.unnumlist}
+`            #'(lambda () (likes/2 ?x 'Kim))))`
 
- …)
-!!!(p) {:.unnumlist}
+  ...)
 
 but we'll also consider the possibility of upgrading to the improved code:
 
-[ ](#){:#l0045}`(defun likes/2 (?arg1 ?arg2 cont)`
-!!!(p) {:.unnumlist}
+`(defun likes/2 (?arg1 ?arg2 cont)`
 
-` …`
-!!!(p) {:.unnumlist}
+`  ...`
 
-` (if (unify!
+`  (if (unify!
 ?arg1 'Kim)`
-!!!(p) {:.unnumlist}
 
-   `(likes/2 ?arg2 'Lee`
-!!!(p) {:.unnumlist}
+      `(likes/2 ?arg2 'Lee`
 
-      `#'(lambda () (likes/2 ?arg2 'Kim))))`
-!!!(p) {:.unnumlist}
+            `#'(lambda () (likes/2 ?arg2 'Kim))))`
 
- …)
-!!!(p) {:.unnumlist}
+  ...)
 
 One approach would be to write two functions, `compile-head` and `compile-body`, and then combine them into the code (if *head body*).
 This approach could easily generate the prior code.
@@ -299,19 +228,15 @@ An alternate approach is to eliminate `compile-head` and just write `compile-bod
 This is possible if we in effect do a source-code transformation on the clause.
 Instead of treating the clause as:
 
-[ ](#){:#l0050}`(<− (likes Kim ?x)`
-!!!(p) {:.unnumlist}
+`(<- (likes Kim ?x)`
 
-` (likes ?x Lee) (likes ?x Kim))`
-!!!(p) {:.unnumlist}
+`  (likes ?x Lee) (likes ?x Kim))`
 
 we transform it to the equivalent:
 
-[ ](#){:#l0055}`(<− (likes ?arg1 ?arg2)`
-!!!(p) {:.unnumlist}
+`(<- (likes ?arg1 ?arg2)`
 
-` (= ?arg1 Kim) (= ?arg2 ?x) (likes ?x Lee) (likes ?x Kim))`
-!!!(p) {:.unnumlist}
+`  (= ?arg1 Kim) (= ?arg2 ?x) (likes ?x Lee) (likes ?x Kim))`
 
 Now the arguments in the head of the clause match the arguments in the function `likes/2`, so there is no need to generate any code for the head.
 This makes things simpler by eliminating `compile-head`, and it is a better decomposition for another reason: instead of adding optimizations to `compile-head`, we will add them to the code in `compile`-`body` that handles =.
@@ -319,58 +244,42 @@ That way, we can optimize calls that the user makes to =, in addition to the cal
 
 To get an overview, the calling sequence of functions will turn out to be as follows:
 
-[ ](#){:#l0060}`prolog-compile`
-!!!(p) {:.unnumlist}
+`prolog-compile`
 
-` compile-predicate`
-!!!(p) {:.unnumlist}
+`  compile-predicate`
 
-`  compile-clause`
-!!!(p) {:.unnumlist}
+`    compile-clause`
 
-`   compile-body`
-!!!(p) {:.unnumlist}
+`      compile-body`
 
-`    compile-call`
-!!!(p) {:.unnumlist}
+`        compile-call`
 
-`    compile-arg`
-!!!(p) {:.unnumlist}
+`        compile-arg`
 
-`    compile-unify`
-!!!(p) {:.unnumlist}
+`        compile-unify`
 
-`      compile-arg`
-!!!(p) {:.unnumlist}
+`            compile-arg`
 
 where each function calls the ones below it that are indented one level.
 We have already defined the first two functions.
 Here then is our first version of `compile-clause`:
 
-[ ](#){:#l0065}`(defun compile-clause (parms clause cont)`
-!!!(p) {:.unnumlist}
+`(defun compile-clause (parms clause cont)`
 
-` "Transform away the head.
+`  "Transform away the head.
 and compile the resulting body."`
-!!!(p) {:.unnumlist}
 
-` (compile-body`
-!!!(p) {:.unnumlist}
+`  (compile-body`
 
-`  (nconc`
-!!!(p) {:.unnumlist}
+`    (nconc`
 
-`   (mapcar #'make-= parms (args (clause-head clause)))`
-!!!(p) {:.unnumlist}
+`      (mapcar #'make-= parms (args (clause-head clause)))`
 
-`   (clause-body clause))`
-!!!(p) {:.unnumlist}
+`      (clause-body clause))`
 
-`  cont))`
-!!!(p) {:.unnumlist}
+`    cont))`
 
 `(defun make-= (x y) '(= .x .y))`
-!!!(p) {:.unnumlist}
 
 The bulk of the work is in `compile-body`, which is a little more complicated.
 There are three cases.
@@ -384,135 +293,95 @@ So instead of explicitly checking for =, we will do a data-driven dispatch, look
 Like Lisp compiler macros, the macro can decline to handle the goal.
 We will adopt the convention that returning `:pass` means the macro decided not to handle i t, and thus it should be compiled as a normal goal.
 
-[ ](#){:#l0070}`(defun compile-body (body cont)`
-!!!(p) {:.unnumlist}
+`(defun compile-body (body cont)`
 
-` "Compile the body of a clause."`
-!!!(p) {:.unnumlist}
+`  "Compile the body of a clause."`
 
-` (if (null body)`
-!!!(p) {:.unnumlist}
+`  (if (null body)`
 
-`  '(funcall ,cont)`
-!!!(p) {:.unnumlist}
+`    '(funcall ,cont)`
 
-`  (let* ((goal (first body))`
-!!!(p) {:.unnumlist}
+`    (let* ((goal (first body))`
 
-`    (macro (prolog-compiler-macro (predicate goal)))`
-!!!(p) {:.unnumlist}
+`        (macro (prolog-compiler-macro (predicate goal)))`
 
-`    (macro-val (if macro`
-!!!(p) {:.unnumlist}
+`        (macro-val (if macro`
 
-`        (funcall macro goal (rest body) cont))))`
-!!!(p) {:.unnumlist}
+`                (funcall macro goal (rest body) cont))))`
 
-`  (if (and macro (not (eq macro-val :pass)))`
-!!!(p) {:.unnumlist}
+`    (if (and macro (not (eq macro-val :pass)))`
 
-`    macro-val`
-!!!(p) {:.unnumlist}
+`        macro-val`
 
-`    (compile-call`
-!!!(p) {:.unnumlist}
+`        (compile-call`
 
-`     (make-predicate (predicate goal)`
-!!!(p) {:.unnumlist}
+`          (make-predicate (predicate goal)`
 
-`        (relation-arity goal))`
-!!!(p) {:.unnumlist}
+`                (relation-arity goal))`
 
-`     (mapcar #'(lambda (arg) (compile-arg arg))`
-!!!(p) {:.unnumlist}
+`          (mapcar #'(lambda (arg) (compile-arg arg))`
 
-`      (args goal))`
-!!!(p) {:.unnumlist}
+`            (args goal))`
 
-`     (if (null (rest body))`
-!!!(p) {:.unnumlist}
+`          (if (null (rest body))`
 
-`       cont`
-!!!(p) {:.unnumlist}
+`              cont`
 
-`       '#'(lambda ()`
-!!!(p) {:.unnumlist}
+`              '#'(lambda ()`
 
-`        ,(compile-body (rest body) cont))))))))`
-!!!(p) {:.unnumlist}
+`                ,(compile-body (rest body) cont))))))))`
 
 `(defun compile-call (predicate args cont)`
-!!!(p) {:.unnumlist}
 
-` "Compile a call to a prolog predicate."`
-!!!(p) {:.unnumlist}
+`  "Compile a call to a prolog predicate."`
 
-` '(,predicate ,@args ,cont))`
-!!!(p) {:.unnumlist}
+`  '(,predicate ,@args ,cont))`
 
 `(defun prolog-compiler-macro (name)`
-!!!(p) {:.unnumlist}
 
-` "Fetch the compiler macro for a Prolog predicate."`
-!!!(p) {:.unnumlist}
+`  "Fetch the compiler macro for a Prolog predicate."`
 
-` ;; Note NAME is the raw name, not the name/arity`
-!!!(p) {:.unnumlist}
+`  ;; Note NAME is the raw name, not the name/arity`
 
-` (get name 'prolog-compiler-macro))`
-!!!(p) {:.unnumlist}
+`  (get name 'prolog-compiler-macro))`
 
 `(defmacro def-prolog-compiler-macro (name arglist &body body)`
-!!!(p) {:.unnumlist}
 
-` "Define a compiler macro for Prolog."`
-!!!(p) {:.unnumlist}
+`  "Define a compiler macro for Prolog."`
 
-` '(setf (get '.name 'prolog-compiler-macro)`
-!!!(p) {:.unnumlist}
+`  '(setf (get '.name 'prolog-compiler-macro)`
 
-`    #'(lambda .arglist .,body)))`
-!!!(p) {:.unnumlist}
+`        #'(lambda .arglist .,body)))`
 
 `(def-prolog-compiler-macro = (goal body cont)`
-!!!(p) {:.unnumlist}
 
-` (let ((args (args goal)))`
-!!!(p) {:.unnumlist}
+`  (let ((args (args goal)))`
 
-`  (if (/= (length args) 2)`
-!!!(p) {:.unnumlist}
+`    (if (/= (length args) 2)`
 
-`    :pass`
-!!!(p) {:.unnumlist}
+`        :pass`
 
-`    '(if ,(compile-unify (first args) (second args))`
-!!!(p) {:.unnumlist}
+`        '(if ,(compile-unify (first args) (second args))`
 
-`      ,(compile-body body cont)))))`
-!!!(p) {:.unnumlist}
+`            ,(compile-body body cont)))))`
 
 `(defun compile-unify (x y)`
-!!!(p) {:.unnumlist}
 
-` "Return code that tests if var and term unify."`
-!!!(p) {:.unnumlist}
+`  "Return code that tests if var and term unify."`
 
-` '(unify!
+`  '(unify!
 ,(compile-arg x) ,(compile-arg y)))`
-!!!(p) {:.unnumlist}
 
 All that remains is `compile-arg`, a function to compile the arguments to goals in the body.
 There are three cases to consider, as shown in the compilation to the argument of `q` below:
 
-[ ](#){:#t0010}
 !!!(table)
 
 | []() | | | | | | | | | |
 |---|---|---|---|---|---|---|---|---|---|
-| `1 (<− (p ?x) (q ?x))` | `(q/1 ?x cont)` |
-| `2 (<− (p ?x) (q (f a b)))` | `(q/1 '(f a b) cont)` |
-| `3 (<− (p ?x) (q (f ?x b)))` | `(q/1 (list 'f ?x 'b) cont)` |
+| `1 (<- (p ?x) (q ?x))` | `(q/1 ?x cont)` |
+| `2 (<- (p ?x) (q (f a b)))` | `(q/1 '(f a b) cont)` |
+| `3 (<- (p ?x) (q (f ?x b)))` | `(q/1 (list 'f ?x 'b) cont)` |
 
 In case 1, the argument is a variable, and it is compiled as is.
 In case 2, the argument is a constant expression (one without any variables) that compiles into a quoted expression.
@@ -521,150 +390,109 @@ Case 3 is actually split into two in the list below: one compiles into a call to
 It is important to remember that the goal `(q (f ?x b))` does *not* involve a call to the function `f`.
 Rather, it involves the term `(f ?x b)`, which is just a list of three elements.
 
-[ ](#){:#l0075}`(defun compile-arg (arg)`
-!!!(p) {:.unnumlist}
+`(defun compile-arg (arg)`
 
-` "Generate code for an argument to a goal in the body."`
-!!!(p) {:.unnumlist}
+`  "Generate code for an argument to a goal in the body."`
 
-` (cond ((variable-p arg) arg)`
-!!!(p) {:.unnumlist}
+`  (cond ((variable-p arg) arg)`
 
-`    ((not (has-variable-p arg)) ".arg)`
-!!!(p) {:.unnumlist}
+`        ((not (has-variable-p arg)) ".arg)`
 
-`    ((proper-listp arg)`
-!!!(p) {:.unnumlist}
+`        ((proper-listp arg)`
 
-`      '(list .,(mapcar #'compile-arg arg)))`
-!!!(p) {:.unnumlist}
+`            '(list .,(mapcar #'compile-arg arg)))`
 
-`    (t '(cons ,(compile-arg (first arg))`
-!!!(p) {:.unnumlist}
+`        (t '(cons ,(compile-arg (first arg))`
 
-`        ,(compile-arg (rest arg))))))`
-!!!(p) {:.unnumlist}
+`                ,(compile-arg (rest arg))))))`
 
 `(defun has-variable-p (x)`
-!!!(p) {:.unnumlist}
 
-` "Is there a variable anywhere in the expression x?"`
-!!!(p) {:.unnumlist}
+`  "Is there a variable anywhere in the expression x?"`
 
-` (find-if-anywhere #'variable-p x))`
-!!!(p) {:.unnumlist}
+`  (find-if-anywhere #'variable-p x))`
 
 `(defun proper-listp (x)`
-!!!(p) {:.unnumlist}
 
-` "Is x a proper (non-dotted) list?"`
-!!!(p) {:.unnumlist}
+`  "Is x a proper (non-dotted) list?"`
 
-` (or (null x)`
-!!!(p) {:.unnumlist}
+`  (or (null x)`
 
-`  (and (consp x) (proper-listp (rest x)))))`
-!!!(p) {:.unnumlist}
+`    (and (consp x) (proper-listp (rest x)))))`
 
 Let's see how it works.
 We will consider the following clauses:
 
-[ ](#){:#l0080}`(<− (likes Robin cats))`
-!!!(p) {:.unnumlist}
+`(<- (likes Robin cats))`
 
-`(<− (likes Sandy ?x) (likes ?x cats))`
-!!!(p) {:.unnumlist}
+`(<- (likes Sandy ?x) (likes ?x cats))`
 
-`(<− (likes Kim ?x) (likes ?x Lee) (likes ?x Kim))`
-!!!(p) {:.unnumlist}
+`(<- (likes Kim ?x) (likes ?x Lee) (likes ?x Kim))`
 
-`(<− (member ?item (?item .
-?rest)))`
-!!!(p) {:.unnumlist}
+`(<- (member ?item (?item . ?rest)))`
 
-`(<− (member ?item (?x .
-?rest)) (member ?item ?rest))`
-!!!(p) {:.unnumlist}
+`(<- (member ?item (?x . ?rest)) (member ?item ?rest))`
 
 Here's what `prolog-compile` gives us:
 
-[ ](#){:#l0085}`(DEFUN LIKES/2 (?ARG1 ?ARG2 CONT)`
-!!!(p) {:.unnumlist}
+`(DEFUN LIKES/2 (?ARG1 ?ARG2 CONT)`
 
-` (IF (UNIFY!
+`  (IF (UNIFY!
 ?ARG1 'ROBIN)`
-!!!(p) {:.unnumlist}
 
-`  (IF (UNIFY!
+`    (IF (UNIFY!
 ?ARG2 'CATS)`
-!!!(p) {:.unnumlist}
 
-`   (FUNCALL CONT)))`
-!!!(p) {:.unnumlist}
+`      (FUNCALL CONT)))`
 
-` (IF (UNIFY!
+`  (IF (UNIFY!
 ?ARG1 'SANDY)`
-!!!(p) {:.unnumlist}
 
-`  (IF (UNIFY!
+`    (IF (UNIFY!
 ?ARG2 ?X)`
-!!!(p) {:.unnumlist}
 
-`   (LIKES/2 ?X 'CATS CONT)))`
-!!!(p) {:.unnumlist}
+`      (LIKES/2 ?X 'CATS CONT)))`
 
-` (IF (UNIFY!
+`  (IF (UNIFY!
 ?ARG1 'KIM)`
-!!!(p) {:.unnumlist}
 
-`  (IF (UNIFY!
+`    (IF (UNIFY!
 ?ARG2 ?X)`
-!!!(p) {:.unnumlist}
 
-`   (LIKES/2 ?X 'LEE (LAMBDA ()`
-!!!(p) {:.unnumlist}
+`      (LIKES/2 ?X 'LEE (LAMBDA ()`
 
-`      (LIKES/2 ?X 'KIM CONT))))))`
-!!!(p) {:.unnumlist}
+`            (LIKES/2 ?X 'KIM CONT))))))`
 
 `(DEFUN MEMBER/2 (?ARG1 ?ARG2 CONT)`
-!!!(p) {:.unnumlist}
 
-` (IF (UNIFY!
+`  (IF (UNIFY!
 ?ARG1 ?ITEM)`
-!!!(p) {:.unnumlist}
 
-`  (IF (UNIFY!
+`    (IF (UNIFY!
 ?ARG2 (CONS ?ITEM ?REST))`
-!!!(p) {:.unnumlist}
 
-`   (FUNCALL CONT)))`
-!!!(p) {:.unnumlist}
+`      (FUNCALL CONT)))`
 
-` (IF (UNIFY!
+`  (IF (UNIFY!
 ?ARG1 ?ITEM)`
-!!!(p) {:.unnumlist}
 
-`  (IF (UNIFY!
+`    (IF (UNIFY!
 ?ARG2 (CONS ?X ?REST))`
-!!!(p) {:.unnumlist}
 
-`   (MEMBER/2 ?ITEM ?REST CONT))))`
-!!!(p) {:.unnumlist}
+`      (MEMBER/2 ?ITEM ?REST CONT))))`
 
-## [ ](#){:#st0015}12.2 Fixing the Errors in the Compiler
+## 12.2 Fixing the Errors in the Compiler
 {:#s0015}
 {:.h1hd}
 
 There are some problems in this version of the compiler:
 
-* [ ](#){:#l0090}• We forgot to undo the bindings after each call to `unify!`.
+*   We forgot to undo the bindings after each call to `unify!`.
 
-* • The definition of `undo-bindings` !
-defined previously requires as an argument an index into the `*trail*` array.
+*   The definition of `undo-bindings` ! defined previously requires as an argument an index into the `*trail*` array.
 So we will have to save the current top of the trail when we enter each function.
 
-* • Local variables, such as `?x`, were used without being introduced.
+*   Local variables, such as `?x`, were used without being introduced.
 They should be bound to new variables.
 
 Undoing the bindings is simple: we add a single line to `compile-predicate,` a call to the function `maybe-add-undo-bindings.` This function inserts a call to `undo-bindings!` after every failure.
@@ -672,446 +500,316 @@ If there is only one clause, no undoing is necessary, because the predicate high
 If there are multiple clauses, the function wraps the whole function body in a let that captures the initial value of the trail's fill pointer, so that the bindings can be undone to the right point.
 Similarly, we can handle the unbound-variable problem by wrapping a call to `bind-unbound-vars` around each compiled clause:
 
-[ ](#){:#l0095}`(defun compile-predicate (symbol arity clauses)`
-!!!(p) {:.unnumlist}
+`(defun compile-predicate (symbol arity clauses)`
 
-` "Compile all the clauses for a given symbol/arity`
-!!!(p) {:.unnumlist}
+`  "Compile all the clauses for a given symbol/arity`
 
-` into a single LISP function."`
-!!!(p) {:.unnumlist}
+`  into a single LISP function."`
 
-` (let ((predicate (make-predicate symbol arity))`
-!!!(p) {:.unnumlist}
+`  (let ((predicate (make-predicate symbol arity))`
 
-`    (parameters (make-parameters arity)))`
-!!!(p) {:.unnumlist}
+`        (parameters (make-parameters arity)))`
 
-`  (compile`
-!!!(p) {:.unnumlist}
+`    (compile`
 
-`   (eval`
-!!!(p) {:.unnumlist}
+`      (eval`
 
-`    '(defun .predicate (.©parameters cont)`
-!!!(p) {:.unnumlist}
+`        '(defun .predicate (.@parameters cont)`
 
-`     .,(maybe-add-undo-bindings       ;***`
-!!!(p) {:.unnumlist}
+`          .,(maybe-add-undo-bindings             ;***`
 
-`       (mapcar #'(lambda (clause)`
-!!!(p) {:.unnumlist}
+`              (mapcar #'(lambda (clause)`
 
-`            (compile-clause parameters`
-!!!(p) {:.unnumlist}
+`                        (compile-clause parameters`
 
-`                  clause 'cont))`
-!!!(p) {:.unnumlist}
+`                                    clause 'cont))`
 
-`            clauses)))))))`
-!!!(p) {:.unnumlist}
+`                        clauses)))))))`
 
 `(defun compile-clause (parms clause cont)`
-!!!(p) {:.unnumlist}
 
-` "Transform away the head, and compile the resulting body."`
-!!!(p) {:.unnumlist}
+`  "Transform away the head, and compile the resulting body."`
 
-` (bind-unbound-vars      ;***`
-!!!(p) {:.unnumlist}
+`  (bind-unbound-vars            ;***`
 
-`  parms      ;***`
-!!!(p) {:.unnumlist}
+`    parms            ;***`
 
-`  (compile-body`
-!!!(p) {:.unnumlist}
+`    (compile-body`
 
-`   (nconc`
-!!!(p) {:.unnumlist}
+`      (nconc`
 
-`    (mapcar #'make-= parms (args (clause-head clause)))`
-!!!(p) {:.unnumlist}
+`        (mapcar #'make-= parms (args (clause-head clause)))`
 
-`    (clause-body clause))`
-!!!(p) {:.unnumlist}
+`        (clause-body clause))`
 
-`   cont)))`
-!!!(p) {:.unnumlist}
+`      cont)))`
 
 `(defun maybe-add-undo-bindings (compiled-exps)`
-!!!(p) {:.unnumlist}
 
-` "Undo any bindings that need undoing.`
-!!!(p) {:.unnumlist}
+`  "Undo any bindings that need undoing.`
 
-` If there are any, bind the trail before we start."`
-!!!(p) {:.unnumlist}
+`  If there are any, bind the trail before we start."`
 
-` (if (length=1 compiled-exps)`
-!!!(p) {:.unnumlist}
+`  (if (length=1 compiled-exps)`
 
-`  compiled-exps`
-!!!(p) {:.unnumlist}
+`    compiled-exps`
 
-`  '((let ((old-trail (fill-pointer *trail*)))`
-!!!(p) {:.unnumlist}
+`    '((let ((old-trail (fill-pointer *trail*)))`
 
-`    ,(first compiled-exps)`
-!!!(p) {:.unnumlist}
+`        ,(first compiled-exps)`
 
-`    ,@(loop for exp in (rest compiled-exps)`
-!!!(p) {:.unnumlist}
+`        ,@(loop for exp in (rest compiled-exps)`
 
-`      collect '(undo-bindings!
+`            collect '(undo-bindings!
 old-trail)`
-!!!(p) {:.unnumlist}
 
-`      collect exp)))))`
-!!!(p) {:.unnumlist}
+`            collect exp)))))`
 
 `(defun bind-unbound-vars (parameters exp)`
-!!!(p) {:.unnumlist}
 
-` "If there are any variables in exp (besides the parameters)`
-!!!(p) {:.unnumlist}
+`  "If there are any variables in exp (besides the parameters)`
 
-` then bind them to new vars."`
-!!!(p) {:.unnumlist}
+`  then bind them to new vars."`
 
-` (let ((exp-vars (set-difference (variables-in exp)`
-!!!(p) {:.unnumlist}
+`  (let ((exp-vars (set-difference (variables-in exp)`
 
-`        parameters)))`
-!!!(p) {:.unnumlist}
+`                parameters)))`
 
-`  (if exp-vars`
-!!!(p) {:.unnumlist}
+`    (if exp-vars`
 
-`   '(let ,(mapcar #'(lambda (var) '(.var (?)))`
-!!!(p) {:.unnumlist}
+`      '(let ,(mapcar #'(lambda (var) '(.var (?)))`
 
-`      exp-vars)`
-!!!(p) {:.unnumlist}
+`            exp-vars)`
 
-`     ,exp)`
-!!!(p) {:.unnumlist}
+`          ,exp)`
 
-`   exp)))`
-!!!(p) {:.unnumlist}
+`      exp)))`
 
 With these improvements, here's the code we get for `likes` and `member`:
 
-[ ](#){:#l0100}`(DEFUN LIKES/2 (?ARG1 ?ARG2 CONT)`
-!!!(p) {:.unnumlist}
+`(DEFUN LIKES/2 (?ARG1 ?ARG2 CONT)`
 
-` (LET ((OLD-TRAIL (FILL-POINTER *TRAIL*)))`
-!!!(p) {:.unnumlist}
+`  (LET ((OLD-TRAIL (FILL-POINTER *TRAIL*)))`
 
-`  (IF (UNIFY!
+`    (IF (UNIFY!
 ?ARG1 'ROBIN)`
-!!!(p) {:.unnumlist}
 
-`   (IF (UNIFY!
+`      (IF (UNIFY!
 ?ARG2 'CATS)`
-!!!(p) {:.unnumlist}
 
-`      (FUNCALL CONT)))`
-!!!(p) {:.unnumlist}
+`            (FUNCALL CONT)))`
 
-`  (UNDO-BINDINGS!
+`    (UNDO-BINDINGS!
 OLD-TRAIL)`
-!!!(p) {:.unnumlist}
 
-`  (LET ((?X (?)))`
-!!!(p) {:.unnumlist}
+`    (LET ((?X (?)))`
 
-`   (IF (UNIFY!
+`      (IF (UNIFY!
 ?ARG1 'SANDY)`
-!!!(p) {:.unnumlist}
 
-`    (IF (UNIFY!
+`        (IF (UNIFY!
 ?ARG2 ?X)`
-!!!(p) {:.unnumlist}
 
-`      (LIKES/2 ?X 'CATS CONT))))`
-!!!(p) {:.unnumlist}
+`            (LIKES/2 ?X 'CATS CONT))))`
 
-`  (UNDO-BINDINGS!
+`    (UNDO-BINDINGS!
 OLD-TRAIL)`
-!!!(p) {:.unnumlist}
 
-`  (LET ((?X (?)))`
-!!!(p) {:.unnumlist}
+`    (LET ((?X (?)))`
 
-`   (IF (UNIFY!
+`      (IF (UNIFY!
 ?ARG1 'KIM)`
-!!!(p) {:.unnumlist}
 
-`    (IF (UNIFY!
+`        (IF (UNIFY!
 ?ARG2 ?X)`
-!!!(p) {:.unnumlist}
 
-`      (LIKES/2 ?X 'LEE (LAMBDA ()`
-!!!(p) {:.unnumlist}
+`            (LIKES/2 ?X 'LEE (LAMBDA ()`
 
-`          (LIKES/2 ?X 'KIM CONT))))))))`
-!!!(p) {:.unnumlist}
+`                    (LIKES/2 ?X 'KIM CONT))))))))`
 
 `(DEFUN MEMBER/2 (?ARG1 ?ARG2 CONT)`
-!!!(p) {:.unnumlist}
 
-` (LET ((OLD-TRAIL (FILL-POINTER *TRAIL*)))`
-!!!(p) {:.unnumlist}
+`  (LET ((OLD-TRAIL (FILL-POINTER *TRAIL*)))`
 
-`  (LET ((?ITEM (?))`
-!!!(p) {:.unnumlist}
+`    (LET ((?ITEM (?))`
 
-`      (?REST (?)))`
-!!!(p) {:.unnumlist}
+`            (?REST (?)))`
 
-`   (IF (UNIFY!
+`      (IF (UNIFY!
 ?ARG1 ?ITEM)`
-!!!(p) {:.unnumlist}
 
-`      (IF (UNIFY!
+`            (IF (UNIFY!
 ?ARG2 (CONS ?ITEM ?REST))`
-!!!(p) {:.unnumlist}
 
-`            (FUNCALL CONT))))`
-!!!(p) {:.unnumlist}
+`                        (FUNCALL CONT))))`
 
-`  (UNDO-BINDINGS!
+`    (UNDO-BINDINGS!
 OLD-TRAIL)`
-!!!(p) {:.unnumlist}
 
-`  (LET ((?X (?))`
-!!!(p) {:.unnumlist}
+`    (LET ((?X (?))`
 
-`      (?
+`            (?
 ITEM (?))`
-!!!(p) {:.unnumlist}
 
-`      (?REST (?)))`
-!!!(p) {:.unnumlist}
+`            (?REST (?)))`
 
-`  (IF (UNIFY!
+`    (IF (UNIFY!
 ?ARG1 ?ITEM)`
-!!!(p) {:.unnumlist}
 
-`   (IF (UNIFY!
+`      (IF (UNIFY!
 ?ARG2 (CONS ?X ?REST))`
-!!!(p) {:.unnumlist}
 
-`            (MEMBER/2 ?ITEM ?REST CONT))))))`
-!!!(p) {:.unnumlist}
+`                        (MEMBER/2 ?ITEM ?REST CONT))))))`
 
-## [ ](#){:#st0020}12.3 Improving the Compiler
+## 12.3 Improving the Compiler
 {:#s0020}
 {:.h1hd}
 
 This is fairly good, although there is still room for improvement.
 One minor improvement is to eliminate unneeded variables.
-For example, `?rest` in the first clause of `member` and `?x` in the second clause are bound to new variables—the result of the (?) call—and then only used once.
+For example, `?rest` in the first clause of `member` and `?x` in the second clause are bound to new variables-the result of the (?) call-and then only used once.
 The generated code could be made a little tighter by just putting (?) inline, rather than binding it to a variable and then referencing that variable.
 There are two parts to this change: updating `compile-arg` to compile an anonymous variable inline, and changing the <- macro so that it converts all variables that only appear once in a clause into anonymous variables:
 
-[ ](#){:#l0105}`(defmacro <− (&rest clause)`
-!!!(p) {:.unnumlist}
+`(defmacro <- (&rest clause)`
 
-` "Add a clause to the data base."`
-!!!(p) {:.unnumlist}
+`  "Add a clause to the data base."`
 
-` '(add-clause ',(make-anonymous clause)))`
-!!!(p) {:.unnumlist}
+`  '(add-clause ',(make-anonymous clause)))`
 
 `(defun compile-arg (arg)`
-!!!(p) {:.unnumlist}
 
-` "Generate code for an argument to a goal in the body."`
-!!!(p) {:.unnumlist}
+`  "Generate code for an argument to a goal in the body."`
 
-` (cond ((eq arg '?) '(?))      ;***`
-!!!(p) {:.unnumlist}
+`  (cond ((eq arg '?) '(?))            ;***`
 
-`   ((variable-p arg) arg)`
-!!!(p) {:.unnumlist}
+`      ((variable-p arg) arg)`
 
-`   ((not (has-variable-p arg)) '',arg)`
-!!!(p) {:.unnumlist}
+`      ((not (has-variable-p arg)) '',arg)`
 
-`   ((proper-listp arg)`
-!!!(p) {:.unnumlist}
+`      ((proper-listp arg)`
 
-`   '(list (mapcar #'compile-arg arg)))`
-!!!(p) {:.unnumlist}
+`      '(list (mapcar #'compile-arg arg)))`
 
-`   (t '(cons ,(compile-arg (first arg))`
-!!!(p) {:.unnumlist}
+`      (t '(cons ,(compile-arg (first arg))`
 
-`          ,(compile-arg (rest arg))))))`
-!!!(p) {:.unnumlist}
+`                    ,(compile-arg (rest arg))))))`
 
 `(defun make-anonymous (exp &optional`
-!!!(p) {:.unnumlist}
 
-`             (anon-vars (anonymous-variables-in exp)))`
-!!!(p) {:.unnumlist}
+`                          (anon-vars (anonymous-variables-in exp)))`
 
-` "Replace variables that are only used once with ?."`
-!!!(p) {:.unnumlist}
+`  "Replace variables that are only used once with ?."`
 
-` (cond ((consp exp)`
-!!!(p) {:.unnumlist}
+`  (cond ((consp exp)`
 
-`   (reuse-cons (make-anonymous (first exp) anon-vars)`
-!!!(p) {:.unnumlist}
+`      (reuse-cons (make-anonymous (first exp) anon-vars)`
 
-`     (make-anonymous (rest exp) anon-vars)`
-!!!(p) {:.unnumlist}
+`          (make-anonymous (rest exp) anon-vars)`
 
-`     exp))`
-!!!(p) {:.unnumlist}
+`          exp))`
 
 `((member exp anon-vars) '?)`
-!!!(p) {:.unnumlist}
 
 `(t exp)))`
-!!!(p) {:.unnumlist}
 
 Finding anonymous variables is tricky.
 The following function keeps two lists: the variables that have been seen once, and the variables that have been seen twice or more.
 The local function `walk` is then used to walk over the tree, recursively considering the components of each cons cell and updating the two lists as each variable is encountered.
 This use of local functions should be remembered, as well as an alternative discussed in [exercise 12.23](#p4625) on [page 428](#p428).
 
-[ ](#){:#l0110}`(defun anonymous-variables-in (tree)`
-!!!(p) {:.unnumlist}
+`(defun anonymous-variables-in (tree)`
 
-` "Return a list of all variables that occur only once in tree."`
-!!!(p) {:.unnumlist}
+`  "Return a list of all variables that occur only once in tree."`
 
-` (let ((seen-once nil)`
-!!!(p) {:.unnumlist}
+`  (let ((seen-once nil)`
 
-`      (seen-more nil))`
-!!!(p) {:.unnumlist}
+`            (seen-more nil))`
 
-`  (labels ((walk (x)`
-!!!(p) {:.unnumlist}
+`    (labels ((walk (x)`
 
-`      (cond`
-!!!(p) {:.unnumlist}
+`            (cond`
 
-`        ((variable-p x)`
-!!!(p) {:.unnumlist}
+`                ((variable-p x)`
 
-`          (cond ((member x seen-once)`
-!!!(p) {:.unnumlist}
+`                    (cond ((member x seen-once)`
 
-`               (setf seen-once (delete x seen-once))`
-!!!(p) {:.unnumlist}
+`                              (setf seen-once (delete x seen-once))`
 
-`               (push x seen-more))`
-!!!(p) {:.unnumlist}
+`                              (push x seen-more))`
 
-`            ((member x seen-more) nil)`
-!!!(p) {:.unnumlist}
+`                        ((member x seen-more) nil)`
 
-`            (t (push x seen-once))))`
-!!!(p) {:.unnumlist}
+`                        (t (push x seen-once))))`
 
-`        ((consp x)`
-!!!(p) {:.unnumlist}
+`                ((consp x)`
 
-`          (walk (first x))`
-!!!(p) {:.unnumlist}
+`                    (walk (first x))`
 
-`          (walk (rest x))))))`
-!!!(p) {:.unnumlist}
+`                    (walk (rest x))))))`
 
-`   (walk tree)`
-!!!(p) {:.unnumlist}
+`      (walk tree)`
 
-`   seen-once)))`
-!!!(p) {:.unnumlist}
+`      seen-once)))`
 
 Now `member` compiles into this:
 
-[ ](#){:#l0115}`(DEFUN MEMBER/2 (?ARG1 ?ARG2 CONT)`
-!!!(p) {:.unnumlist}
+`(DEFUN MEMBER/2 (?ARG1 ?ARG2 CONT)`
 
- `(LET ((OLD-TRAIL (FILL-POINTER *TRAIL*)))`
-!!!(p) {:.unnumlist}
+  `(LET ((OLD-TRAIL (FILL-POINTER *TRAIL*)))`
 
-  `(LET ((?ITEM (?)))`
-!!!(p) {:.unnumlist}
+    `(LET ((?ITEM (?)))`
 
-   `(IF (UNIFY!
+      `(IF (UNIFY!
 ?ARG1 ?ITEM)`
-!!!(p) {:.unnumlist}
 
-    `(IF (UNIFY!
+        `(IF (UNIFY!
 ?ARG2 (CONS ?ITEM (?)))`
-!!!(p) {:.unnumlist}
 
-        `(FUNCALL CONT))))`
-!!!(p) {:.unnumlist}
+                `(FUNCALL CONT))))`
 
-  `(UNDO-BINDINGS!
+    `(UNDO-BINDINGS!
 OLD-TRAIL)`
-!!!(p) {:.unnumlist}
 
-`  (LET ((?ITEM (?))`
-!!!(p) {:.unnumlist}
+`    (LET ((?ITEM (?))`
 
-`    (?REST (?)))`
-!!!(p) {:.unnumlist}
+`        (?REST (?)))`
 
-`   (IF (UNIFY!
+`      (IF (UNIFY!
 ?ARG1 ?ITEM)`
-!!!(p) {:.unnumlist}
 
-`    (IF (UNIFY!
+`        (IF (UNIFY!
 ?ARG2 (CONS (?) ?REST))`
-!!!(p) {:.unnumlist}
 
-`      (MEMBER/2 ?ITEM ?REST CONT))))))`
-!!!(p) {:.unnumlist}
+`            (MEMBER/2 ?ITEM ?REST CONT))))))`
 
-## [ ](#){:#st0025}12.4 Improving the Compilation of Unification
+## 12.4 Improving the Compilation of Unification
 {:#s0025}
 {:.h1hd}
 
 Now we turn to the improvement of `compile-unify`.
 Recall that we want to elimina te certain calls to `unify!` so that, for example, the first clause of `member:`
 
-[ ](#){:#l0120}`(<− (member ?item (?item .
-?rest)))`
-!!!(p) {:.unnumlist}
+`(<- (member ?item (?item . ?rest)))`
 
 compiles into:
 
-[ ](#){:#l9120}`(LET ((?ITEM (?)))`
-!!!(p) {:.unnumlist}
+`(LET ((?ITEM (?)))`
 
-` (IF (UNIFY!
+`  (IF (UNIFY!
 ?ARG1 ?ITEM)`
-!!!(p) {:.unnumlist}
 
-`  (IF (UNIFY!
+`    (IF (UNIFY!
 ?ARG2 (CONS ?ITEM (?)))`
-!!!(p) {:.unnumlist}
 
-`    (FUNCALL CONT))))`
-!!!(p) {:.unnumlist}
+`        (FUNCALL CONT))))`
 
 when it could compile to the more efficient:
 
-[ ](#){:#l9420}`(IF (UNIFY!
+`(IF (UNIFY!
 ?ARG2 (CONS ?ARG1 (?)))`
-!!!(p) {:.unnumlist}
 
-`  (FUNCALL CONT))`
-!!!(p) {:.unnumlist}
+`    (FUNCALL CONT))`
 
 Eliminating the unification in one goal has repercussions in other goals later on, so we will need to keep track of expressions that have been unified together.
 We have a design choice.
@@ -1124,34 +822,31 @@ We want it to return no code (or more precisely, the trivially true test, t).
 For the second value, it should return a new binding list, with `?item` bound to `?arg1.` That binding will be used to replace `?item` with `?arg1` in subsequent code.
 
 How do we know to bind `?item` to `?arg1` rather than the other way around?
-Because `?arg1` is already bound to something—the value passed in to `member.` We don't know what this value is, but we can't ignore it.
+Because `?arg1` is already bound to something-the value passed in to `member.` We don't know what this value is, but we can't ignore it.
 Thus, the initial binding list will have to indicate that the parameters are bound to something.
 A simple convention is to bind the parameters to themselves.
 Thus, the initial binding list will be:
 
-[ ](#){:#l0125}`((?arg1 .?arg1) (?arg2 .
-?arg2))`
-!!!(p) {:.unnumlist}
+`((?arg1 .?arg1) (?arg2 . ?arg2))`
 
 We saw in the previous chapter ([page 354](B978008057115750011X.xhtml#p354)) that binding a variable to itself can lead to problems; we will have to be careful.
 
 Besides eliminating unifications of new variables against parameters, there are quite a few other improvements that can be made.
 For example, unifications involving only constants can be done at compile time.
-The call `(= (f a) (f a ))` always succeeds, while `(= 3 4)` always fails.
+The call `(= (f a) (f a ))` always succeeds, while `(=  3 4)` always fails.
 In addition, unification of two cons cells can be broken into components at compile time: `(= (f ?x) (f a))` reduces to `(= ?x a)` and `(= f f)`, where the latter trivially succeeds.
 We can even do some occurs checking at compile time: `(= ?x (f ?x))` should fail.
 
 The following table lists these improvements, along with a breakdown for the cases of unifying a bound `(?arg1)` or unbound `(?x)` variable agains another expression.
 The first column is the unification call, the second is the generated code, and the third is the bindings that will be added as a resuit of the call:
 
-[ ](#){:#t0015}
 !!!(table)
 
 | []() | | | | | | | | | |
 |---|---|---|---|---|---|---|---|---|---|
 | | Unification | Code | Bindings |
-| 1 | `(= 3 3)` | `t` | `—` |
-| 2 | `(= 3 4)` | `nil` | `—` |
+| 1 | `(= 3 3)` | `t` | `-` |
+| 2 | `(= 3 4)` | `nil` | `-` |
 | 3 | `(= (f ?x) (?p 3))` | `t` | `(?x . 3) (?p . f)` |
 | 4 | `(= ?arg1 ?y)` | `t` | `(?y . ?arg1)` |
 | 5 | `(= ?arg1 ?arg2)` | `(unify! ?arg1 ?arg2)` | `(?arg1 . ?arg2)` |
@@ -1160,8 +855,8 @@ The first column is the unification call, the second is the generated code, and 
 | 8 | `(= ?x ?y)` | `t` | `(?y . ?y)` |
 | 9 | `(= ?x 3)` | `t` | `(?x . 3)` |
 | 10 | `(= ?x (f ? y))` | `(unify! ?x . . . )` | `(?y . ?y)` |
-| 11 | `(= ?x (f ? x))` | `nil` | `—` |
-| 12 | `(= ?x ?)` | `t` | `—` |
+| 11 | `(= ?x (f ? x))` | `nil` | `-` |
+| 12 | `(= ?x ?)` | `t` | `-` |
 
 ![t0015](images/B9780080571157500121/t0015.png)
 
@@ -1169,73 +864,51 @@ From this table we can craft our new version of `compile-unify`.
 The first part is fairly easy.
 It takes care of the first three cases in this table and makes sure that `compile-unify-variable` is called with a variable as the first argument for the other cases.
 
-[ ](#){:#l0130}`(defun compile-unify (x y bindings)`
-!!!(p) {:.unnumlist}
+`(defun compile-unify (x y bindings)`
 
-` "Return 2 values: code to test if x and y unify,`
-!!!(p) {:.unnumlist}
+`  "Return 2 values: code to test if x and y unify,`
 
-` and a new binding list."`
-!!!(p) {:.unnumlist}
+`  and a new binding list."`
 
-` (cond`
-!!!(p) {:.unnumlist}
+`  (cond`
 
-`  ;; Unify constants and conses:          ; Case`
-!!!(p) {:.unnumlist}
+`    ;; Unify constants and conses:                    ; Case`
 
-`  ((not (or (has-variable-p x) (has-variable-p y)))          ; 1.2`
-!!!(p) {:.unnumlist}
+`    ((not (or (has-variable-p x) (has-variable-p y)))                    ; 1.2`
 
-`   (values (equal x y) bindings))`
-!!!(p) {:.unnumlist}
+`      (values (equal x y) bindings))`
 
-`  ((and (consp x) (consp y))          ; 3`
-!!!(p) {:.unnumlist}
+`    ((and (consp x) (consp y))                    ; 3`
 
-`   (multiple-value-bind (code1 bindings1)`
-!!!(p) {:.unnumlist}
+`      (multiple-value-bind (code1 bindings1)`
 
-`     (compile-unify (first x) (first y) bindings)`
-!!!(p) {:.unnumlist}
+`          (compile-unify (first x) (first y) bindings)`
 
-`    (multiple-value-bind (code2 bindings2)`
-!!!(p) {:.unnumlist}
+`        (multiple-value-bind (code2 bindings2)`
 
-`      (compile-unify (rest x) (rest y) bindings1)`
-!!!(p) {:.unnumlist}
+`            (compile-unify (rest x) (rest y) bindings1)`
 
-`     (values (compile-if code1 code2) bindings2))))`
-!!!(p) {:.unnumlist}
+`          (values (compile-if code1 code2) bindings2))))`
 
-`  ;; Here x or y is a variable.
+`    ;; Here x or y is a variable.
 Pick the right one:`
-!!!(p) {:.unnumlist}
 
-`  ((variable-p x) (compile-unify-variable x y bindings))`
-!!!(p) {:.unnumlist}
+`    ((variable-p x) (compile-unify-variable x y bindings))`
 
-`  (t      (compile-unify-variable y x bindings))))`
-!!!(p) {:.unnumlist}
+`    (t            (compile-unify-variable y x bindings))))`
 
 `(defun compile-if (pred then-part)`
-!!!(p) {:.unnumlist}
 
-` "Compile a Lisp IF form.
+`  "Compile a Lisp IF form.
 No else-part allowed."`
-!!!(p) {:.unnumlist}
 
-` (case pred`
-!!!(p) {:.unnumlist}
+`  (case pred`
 
-`  ((t) then-part)`
-!!!(p) {:.unnumlist}
+`    ((t) then-part)`
 
-`  ((nil) nil)`
-!!!(p) {:.unnumlist}
+`    ((nil) nil)`
 
-`  (otherwise '(if .pred .then-part))))`
-!!!(p) {:.unnumlist}
+`    (otherwise '(if .pred .then-part))))`
 
 The function `compile-unify-variable` following is one of the most complex we have seen.
 For each argument, we see if it has a binding (the local variables `xb` and `yb`), and then use the bindings to get the value of each argument (`x1` and `y1`).
@@ -1244,431 +917,301 @@ If either of the pairs of values is not equal, we should use the new ones (`x1` 
 After that point, we just go through the cases, one at a time.
 It turns out that it was easier to change the order slightly from the preceding table, but each clause is commented with the corresponding number:
 
-[ ](#){:#l0135}`(defun compile-unify-variable (x y bindings)`
-!!!(p) {:.unnumlist}
+`(defun compile-unify-variable (x y bindings)`
 
-` "X is a variable, and Y may be."`
-!!!(p) {:.unnumlist}
+`  "X is a variable, and Y may be."`
 
-` (let* ((xb (follow-binding x bindings))`
-!!!(p) {:.unnumlist}
+`  (let* ((xb (follow-binding x bindings))`
 
-`   (x1 (if xb (cdr xb) x))`
-!!!(p) {:.unnumlist}
+`      (x1 (if xb (cdr xb) x))`
 
-`   (yb (if (variable-p y) (follow-binding y bindings)))`
-!!!(p) {:.unnumlist}
+`      (yb (if (variable-p y) (follow-binding y bindings)))`
 
-`   (y1 (if yb (cdr yb) y)))`
-!!!(p) {:.unnumlist}
+`      (y1 (if yb (cdr yb) y)))`
 
-` (cond       ; Case:`
-!!!(p) {:.unnumlist}
+`  (cond             ; Case:`
 
-`  ((or (eq x '?) (eq y '?)) (values t bindings))      ; 12`
-!!!(p) {:.unnumlist}
+`    ((or (eq x '?) (eq y '?)) (values t bindings))            ; 12`
 
-`  ((not (and (equal x x1) (equal y y1)))      ; deref`
-!!!(p) {:.unnumlist}
+`    ((not (and (equal x x1) (equal y y1)))            ; deref`
 
-`    (compile-unify x1 y1 bindings))`
-!!!(p) {:.unnumlist}
+`        (compile-unify x1 y1 bindings))`
 
-`  ((find-anywhere x1 y1) (values nil bindings))      ; 11`
-!!!(p) {:.unnumlist}
+`    ((find-anywhere x1 y1) (values nil bindings))            ; 11`
 
-`  ((consp y1)      ; 7.10`
-!!!(p) {:.unnumlist}
+`    ((consp y1)            ; 7.10`
 
-`  (values '(unify!
+`    (values '(unify!
 ,xl ,(compile-arg y1 bindings))`
-!!!(p) {:.unnumlist}
 
-`      (bind-variables-in y1 bindings)))`
-!!!(p) {:.unnumlist}
+`            (bind-variables-in y1 bindings)))`
 
-`  ((not (null xb))`
-!!!(p) {:.unnumlist}
+`    ((not (null xb))`
 
-`  ;; i.e.
+`    ;; i.e.
 x is an ?arg variable`
-!!!(p) {:.unnumlist}
 
-`  (if (and (variable-p y1) (null yb))`
-!!!(p) {:.unnumlist}
+`    (if (and (variable-p y1) (null yb))`
 
-`   (values 't (extend-bindings y1 x1 bindings))      ; 4`
-!!!(p) {:.unnumlist}
+`      (values 't (extend-bindings y1 x1 bindings))            ; 4`
 
-`   (values '(unify!
+`      (values '(unify!
 ,xl .(compile-arg y1 bindings))`
-!!!(p) {:.unnumlist}
 
-`      (extend-bindings x1 y1 bindings))))      ; 5.6`
-!!!(p) {:.unnumlist}
+`            (extend-bindings x1 y1 bindings))))            ; 5.6`
 
-`  ((not (null yb))`
-!!!(p) {:.unnumlist}
+`    ((not (null yb))`
 
-`   (compile-unify-variable y1 x1 bindings))`
-!!!(p) {:.unnumlist}
+`      (compile-unify-variable y1 x1 bindings))`
 
-`  (t (values 't (extend-bindings x1 y1 bindings))))))      ; 8.9`
-!!!(p) {:.unnumlist}
+`    (t (values 't (extend-bindings x1 y1 bindings))))))            ; 8.9`
 
 Take some time to understand just how this function works.
 Then go on to the following auxiliary functions:
 
-[ ](#){:#l0140}`(defun bind-variables-in (exp bindings)`
-!!!(p) {:.unnumlist}
+`(defun bind-variables-in (exp bindings)`
 
-` "Bind all variables in exp to themselves.
+`  "Bind all variables in exp to themselves.
 and add that to`
-!!!(p) {:.unnumlist}
 
-` bindings (except for variables already bound)."`
-!!!(p) {:.unnumlist}
+`  bindings (except for variables already bound)."`
 
-` (dolist (var (variables-in exp))`
-!!!(p) {:.unnumlist}
+`  (dolist (var (variables-in exp))`
 
-`  (unless (get-binding var bindings)`
-!!!(p) {:.unnumlist}
+`    (unless (get-binding var bindings)`
 
-`   (setf bindings (extend-bindings var var bindings))))`
-!!!(p) {:.unnumlist}
+`      (setf bindings (extend-bindings var var bindings))))`
 
-` bindings)`
-!!!(p) {:.unnumlist}
+`  bindings)`
 
 `(defun follow-binding (var bindings)`
-!!!(p) {:.unnumlist}
 
-` "Get the ultimate binding of var according to bindings."`
-!!!(p) {:.unnumlist}
+`  "Get the ultimate binding of var according to bindings."`
 
-` (let ((b (get-binding var bindings)))`
-!!!(p) {:.unnumlist}
+`  (let ((b (get-binding var bindings)))`
 
-`  (if (eq (car b) (cdr b)) b`
-!!!(p) {:.unnumlist}
+`    (if (eq (car b) (cdr b)) b`
 
-`    b`
-!!!(p) {:.unnumlist}
+`        b`
 
-`      (or (follow-binding (cdr b) bindings)`
-!!!(p) {:.unnumlist}
+`            (or (follow-binding (cdr b) bindings)`
 
-`          b))))`
-!!!(p) {:.unnumlist}
+`                    b))))`
 
 Now we need to integrate the new `compile-unify` into the rest of the compiler.
 The problem is that the new version takes an extra argument and returns an extra value, so all the functions that call it need to be changed.
 Let's look again at the calling sequence:
 
-[ ](#){:#l0145}`prolog-compile`
-!!!(p) {:.unnumlist}
+`prolog-compile`
 
-` compile-predicate`
-!!!(p) {:.unnumlist}
+`  compile-predicate`
 
-`  compile-clause`
-!!!(p) {:.unnumlist}
+`    compile-clause`
 
-`   compile-body`
-!!!(p) {:.unnumlist}
+`      compile-body`
 
-`    compile-call`
-!!!(p) {:.unnumlist}
+`        compile-call`
 
-`    compile-arg`
-!!!(p) {:.unnumlist}
+`        compile-arg`
 
-`     compile-unify`
-!!!(p) {:.unnumlist}
+`          compile-unify`
 
-`      compile-arg`
-!!!(p) {:.unnumlist}
+`            compile-arg`
 
 First, going downward, we see that `compile-arg` needs to take a binding list as an argument, so that it can look up and substitute in the appropriate values.
 But it will not alter the binding list, so it still returns one value:
 
-[ ](#){:#l0150}`(defun compile-arg (arg bindings)`
-!!!(p) {:.unnumlist}
+`(defun compile-arg (arg bindings)`
 
-` "Generate code for an argument to a goal in the body."`
-!!!(p) {:.unnumlist}
+`  "Generate code for an argument to a goal in the body."`
 
-` (cond ((eq arg '?) '(?))`
-!!!(p) {:.unnumlist}
+`  (cond ((eq arg '?) '(?))`
 
-`   ((variable-p arg)`
-!!!(p) {:.unnumlist}
+`      ((variable-p arg)`
 
-`    (let ((binding (get-binding arg bindings)))`
-!!!(p) {:.unnumlist}
+`        (let ((binding (get-binding arg bindings)))`
 
-`      (if (and (not (null binding))`
-!!!(p) {:.unnumlist}
+`            (if (and (not (null binding))`
 
-`        (not (eq arg (binding-val binding))))`
-!!!(p) {:.unnumlist}
+`                (not (eq arg (binding-val binding))))`
 
-`       (compile-arg (binding-val binding) bindings)`
-!!!(p) {:.unnumlist}
+`              (compile-arg (binding-val binding) bindings)`
 
-`       arg)))`
-!!!(p) {:.unnumlist}
+`              arg)))`
 
-`    ((not (find-if-anywhere #'variable-p arg)) ",arg)`
-!!!(p) {:.unnumlist}
+`        ((not (find-if-anywhere #'variable-p arg)) ",arg)`
 
-`    ((proper-listp arg)`
-!!!(p) {:.unnumlist}
+`        ((proper-listp arg)`
 
-`     '(1ist .,(mapcar #'(lambda (a) (compile-arg a bindings))`
-!!!(p) {:.unnumlist}
+`          '(1ist .,(mapcar #'(lambda (a) (compile-arg a bindings))`
 
-`          arg)))`
-!!!(p) {:.unnumlist}
+`                    arg)))`
 
-`       (t '(cons ,(compile-arg (first arg) bindings)`
-!!!(p) {:.unnumlist}
+`              (t '(cons ,(compile-arg (first arg) bindings)`
 
-`         ,(compile-arg (rest arg) bindings)))))`
-!!!(p) {:.unnumlist}
+`                  ,(compile-arg (rest arg) bindings)))))`
 
 Now, going upward, `compile-body` needs to take a binding list and pass it on to various functions:
 
-[ ](#){:#l0155}`(defun compile-body (body cont bindings)`
-!!!(p) {:.unnumlist}
+`(defun compile-body (body cont bindings)`
 
-` "Compile the body of a clause."`
-!!!(p) {:.unnumlist}
+`  "Compile the body of a clause."`
 
-` (cond`
-!!!(p) {:.unnumlist}
+`  (cond`
 
-`  ((null body)`
-!!!(p) {:.unnumlist}
+`    ((null body)`
 
-`   '(funcall .cont))`
-!!!(p) {:.unnumlist}
+`      '(funcall .cont))`
 
-`  (t (let* ((goal (first body))`
-!!!(p) {:.unnumlist}
+`    (t (let* ((goal (first body))`
 
-`     (macro (prolog-compiler-macro (predicate goal)))`
-!!!(p) {:.unnumlist}
+`          (macro (prolog-compiler-macro (predicate goal)))`
 
-`     (macro-val (if macro`
-!!!(p) {:.unnumlist}
+`          (macro-val (if macro`
 
-`        (funcall macro goal (rest body)`
-!!!(p) {:.unnumlist}
+`                (funcall macro goal (rest body)`
 
-`          cont bindings))))`
-!!!(p) {:.unnumlist}
+`                    cont bindings))))`
 
-`   (if (and macro (not (eq macro-val :pass)))`
-!!!(p) {:.unnumlist}
+`      (if (and macro (not (eq macro-val :pass)))`
 
-`     macro-val`
-!!!(p) {:.unnumlist}
+`          macro-val`
 
-`     (compile-call`
-!!!(p) {:.unnumlist}
+`          (compile-call`
 
-`      (make-predicate (predicate goal)`
-!!!(p) {:.unnumlist}
+`            (make-predicate (predicate goal)`
 
-`         (relation-arity goal))`
-!!!(p) {:.unnumlist}
+`                  (relation-arity goal))`
 
-`      (mapcar #'(lambda (arg)`
-!!!(p) {:.unnumlist}
+`            (mapcar #'(lambda (arg)`
 
-`        (compile-arg arg bindings))`
-!!!(p) {:.unnumlist}
+`                (compile-arg arg bindings))`
 
-`       (args goal))`
-!!!(p) {:.unnumlist}
+`              (args goal))`
 
-`      (if (null (rest body))`
-!!!(p) {:.unnumlist}
+`            (if (null (rest body))`
 
-`       cont`
-!!!(p) {:.unnumlist}
+`              cont`
 
-`        '#'(lambda ()`
-!!!(p) {:.unnumlist}
+`                '#'(lambda ()`
 
-`         .(compile-body`
-!!!(p) {:.unnumlist}
+`                  .(compile-body`
 
-`           (rest body) cont`
-!!!(p) {:.unnumlist}
+`                      (rest body) cont`
 
-`           (bind-new-variables bindings goal))))))))))`
-!!!(p) {:.unnumlist}
+`                      (bind-new-variables bindings goal))))))))))`
 
 The function `bind-new-variables` takes any variables mentioned in the goal that have not been bound yet and binds these variables to themselves.
 This is because the goal, whatever it is, may bind its arguments.
 
-[ ](#){:#l0160}`(defun bind-new-variables (bindings goal)`
-!!!(p) {:.unnumlist}
+`(defun bind-new-variables (bindings goal)`
 
-` "Extend bindings to include any unbound variables in goal."`
-!!!(p) {:.unnumlist}
+`  "Extend bindings to include any unbound variables in goal."`
 
-` (let ((variables (remove-if #'(lambda (v) (assoc v bindings))`
-!!!(p) {:.unnumlist}
+`  (let ((variables (remove-if #'(lambda (v) (assoc v bindings))`
 
-`          (variables-in goal))))`
-!!!(p) {:.unnumlist}
+`                    (variables-in goal))))`
 
-`   (nconc (mapcar #'self-cons variables) bindings)))`
-!!!(p) {:.unnumlist}
+`      (nconc (mapcar #'self-cons variables) bindings)))`
 
 `(defun self-cons (x) (cons x x))`
-!!!(p) {:.unnumlist}
 
 One of the functions that needs to be changed to accept a binding list is the compiler macro for =:
 
-[ ](#){:#l0165}`(def-prolog-compi1er-macro = (goal body cont bindings)`
-!!!(p) {:.unnumlist}
+`(def-prolog-compi1er-macro = (goal body cont bindings)`
 
-` "Compile a goal which is a call to =."`
-!!!(p) {:.unnumlist}
+`  "Compile a goal which is a call to =."`
 
-` (let ((args (args goal)))`
-!!!(p) {:.unnumlist}
+`  (let ((args (args goal)))`
 
-`  (if (/= (length args) 2)`
-!!!(p) {:.unnumlist}
+`    (if (/= (length args) 2)`
 
-`    :pass ;; decline to handle this goal`
-!!!(p) {:.unnumlist}
+`        :pass ;; decline to handle this goal`
 
-`    (multiple-value-bind (code1 bindings1)`
-!!!(p) {:.unnumlist}
+`        (multiple-value-bind (code1 bindings1)`
 
-`      (compile-unify (first args) (second args) bindings)`
-!!!(p) {:.unnumlist}
+`            (compile-unify (first args) (second args) bindings)`
 
-`     (compile-if`
-!!!(p) {:.unnumlist}
+`          (compile-if`
 
-`      code1`
-!!!(p) {:.unnumlist}
+`            code1`
 
-`      (compile-body body cont bindings1))))))`
-!!!(p) {:.unnumlist}
+`            (compile-body body cont bindings1))))))`
 
 The last step upward is to change `compile-clause` so that it starts everything off by passing in to `compile-body` a binding list with all the parameters bound to themselves:
 
-[ ](#){:#l0170}`(defun compile-clause (parms clause cont)`
-!!!(p) {:.unnumlist}
+`(defun compile-clause (parms clause cont)`
 
-` "Transform away the head, and compile the resulting body."`
-!!!(p) {:.unnumlist}
+`  "Transform away the head, and compile the resulting body."`
 
-` (bind-unbound-vars`
-!!!(p) {:.unnumlist}
+`  (bind-unbound-vars`
 
-`  parms`
-!!!(p) {:.unnumlist}
+`    parms`
 
-`  (compile-body`
-!!!(p) {:.unnumlist}
+`    (compile-body`
 
-`    (nconc`
-!!!(p) {:.unnumlist}
+`        (nconc`
 
-`      (mapcar #'make-= parms (args (clause-head clause)))`
-!!!(p) {:.unnumlist}
+`            (mapcar #'make-= parms (args (clause-head clause)))`
 
-`      (clause-body clause))`
-!!!(p) {:.unnumlist}
+`            (clause-body clause))`
 
-`    cont`
-!!!(p) {:.unnumlist}
+`        cont`
 
-`    (mapcar #'self-cons parms)))) ;***`
-!!!(p) {:.unnumlist}
+`        (mapcar #'self-cons parms)))) ;***`
 
 Finally, we can see the fruits of our efforts:
 
-[ ](#){:#l0175}`(DEFUN MEMBER/2 (?ARG1 ?ARG2 CONT)`
-!!!(p) {:.unnumlist}
+`(DEFUN MEMBER/2 (?ARG1 ?ARG2 CONT)`
 
-` (LET ((OLD-TRAIL (FILL-POINTER *TRAIL*)))`
-!!!(p) {:.unnumlist}
+`  (LET ((OLD-TRAIL (FILL-POINTER *TRAIL*)))`
 
-`  (IF (UNIFY!
+`    (IF (UNIFY!
 ?ARG2 (CONS ?ARG1 (?)))`
-!!!(p) {:.unnumlist}
 
-`      (FUNCALL CONT))`
-!!!(p) {:.unnumlist}
+`            (FUNCALL CONT))`
 
-`  (UNDO-BINDINGS!
+`    (UNDO-BINDINGS!
 OLD-TRAIL)`
-!!!(p) {:.unnumlist}
 
-`  (LET ((?REST (?)))`
-!!!(p) {:.unnumlist}
+`    (LET ((?REST (?)))`
 
-`    (IF (UNIFY!
+`        (IF (UNIFY!
 ?ARG2 (CONS (?) ?REST))`
-!!!(p) {:.unnumlist}
 
-`        (MEMBER/2 ?ARG1 ?REST CONT)))))`
-!!!(p) {:.unnumlist}
+`                (MEMBER/2 ?ARG1 ?REST CONT)))))`
 
-` (DEFUN LIKES/2 (?ARG1 ?ARG2 CONT)`
-!!!(p) {:.unnumlist}
+`  (DEFUN LIKES/2 (?ARG1 ?ARG2 CONT)`
 
-`  (LET ((OLD-TRAIL (FILL-POINTER *TRAIL*)))`
-!!!(p) {:.unnumlist}
+`    (LET ((OLD-TRAIL (FILL-POINTER *TRAIL*)))`
 
-`    (IF (UNIFY!
+`        (IF (UNIFY!
 ?ARG1 'ROBIN)`
-!!!(p) {:.unnumlist}
 
-`        (IF (UNIFY!
+`                (IF (UNIFY!
 ?ARG2 'CATS)`
-!!!(p) {:.unnumlist}
 
-`          (FUNCALL CONT)))`
-!!!(p) {:.unnumlist}
+`                    (FUNCALL CONT)))`
 
-`    (UNDO-BINDINGS!
+`        (UNDO-BINDINGS!
 OLD-TRAIL)`
-!!!(p) {:.unnumlist}
 
-`    (IF (UNIFY!
+`        (IF (UNIFY!
 ?ARG1 'SANDY)`
-!!!(p) {:.unnumlist}
 
-`      (LIKES/2 ?ARG2 'CATS CONT))`
-!!!(p) {:.unnumlist}
+`            (LIKES/2 ?ARG2 'CATS CONT))`
 
-`    (UNDO-BINDINGS!
+`        (UNDO-BINDINGS!
 OLD-TRAIL)`
-!!!(p) {:.unnumlist}
 
-`    (IF (UNIFY!
+`        (IF (UNIFY!
 ?ARG1 'KIM)`
-!!!(p) {:.unnumlist}
 
-`      (LIKES/2 ?ARG2 'LEE (LAMBDA ()`
-!!!(p) {:.unnumlist}
+`            (LIKES/2 ?ARG2 'LEE (LAMBDA ()`
 
-`            (LIKES/2 ?ARG2 'KIM CONT))))))`
-!!!(p) {:.unnumlist}
+`                        (LIKES/2 ?ARG2 'KIM CONT))))))`
 
-## [ ](#){:#st0030}12.5 Further Improvements to Unification
+## 12.5 Further Improvements to Unification
 {:#s0030}
 {:.h1hd}
 
@@ -1681,213 +1224,162 @@ But the first thing `unify!` does is redundantly test if the first argument is a
 We could eliminate unnecessary tests by calling more specialized functions rather than the general-purpose function `unify!`.
 Consider this call:
 
-[ ](#){:#l0180}`(unify!
+`(unify!
 ?arg2 (cons ?arg1 (?)))`
-!!!(p) {:.unnumlist}
 
 If `?arg2` is an unbound variable, this code is appropriate.
 But if `?arg2` is a constant atom, we should fail immediately, without allowing `cons` and `?` to generate garbage.
 We could change the test to:
 
-[ ](#){:#l0185}`(and (consp-or-variable-p ?arg2)`
-!!!(p) {:.unnumlist}
+`(and (consp-or-variable-p ?arg2)`
 
-`  (unify-first!
+`    (unify-first!
 ?arg2 ?arg1)`
-!!!(p) {:.unnumlist}
 
-`  (unify-rest!
+`    (unify-rest!
 ?arg2 (?)))`
-!!!(p) {:.unnumlist}
 
 with suitable definitions for the functions referenced here.
 This change should speed execution time and limit the amount of garbage generated.
 Of course, it makes the generated code longer, so that could slow things down if the program ends up spending too much time bringing the code to the processor.
 
-**Exercise 12.1 [h]** Write definitions for `consp-or-variable-p, unify-first!,` and `unify-rest!`, and change the compiler to generate code like that outlined previously.
+**Exercise  12.1 [h]** Write definitions for `consp-or-variable-p, unify-first!,` and `unify-rest!`, and change the compiler to generate code like that outlined previously.
 You might want to look at the function `compile-rule` in [section 9.6](B9780080571157500091.xhtml#s0035), starting on [page 300](B9780080571157500091.xhtml#p300).
 This function compiled a call to `pat-match` into individual tests; now we want to do the same thing to `unify!`.
 Run some benchmarks to compare the altered compiler to the original version.
 
-**Exercise 12.2 [h]** We can gain some more efficiency by keeping track of which variables have been dereferenced and calling an appropriate unification function: either one that dereferences the argument or one that assumes the argument has already been dereferenced.
+**Exercise  12.2 [h]** We can gain some more efficiency by keeping track of which variables have been dereferenced and calling an appropriate unification function: either one that dereferences the argument or one that assumes the argument has already been dereferenced.
 Implement this approach.
 
-**Exercise 12.3 [m]** What code is generated for `(= (f (g ?x) ?y) (f ?y (?p a)))?`What more efficient code represents the same unification?
+**Exercise  12.3 [m]** What code is generated for `(= (f (g ?x) ?y) (f ?y (?p a)))?`What more efficient code represents the same unification?
 How easy is it to change the compiler to get this more efficient result?
 
-**Exercise 12.4 [h]** In retrospect, it seems that binding variables to themselves, as in `(?argl .
-?argl`), was not such a good idea.
+**Exercise  12.4 [h]** In retrospect, it seems that binding variables to themselves, as in `(?argl . ?argl`), was not such a good idea.
 It complicates the meaning of bindings, and prohibits us from using existing tools.
 For example, I had to use `find-anywhere` instead of `occur-check` for case 11, because `occur-check` expects a noncircular binding list.
 But find-anywhere does not do as complete a job as `occur-check`.
 Write a version of `compile-unify` that returns three values: the code, a noncircular binding list, and a list of variables that are bound to unknown values.
 
-**Exercise 12.5 [h]** An alternative to the previous exercise is not to use binding lists at ail.
-Instead, we could pass in a list of equivalence classes—that is, a list of lists, where each sublist contains one or more elements that have been unified.
+**Exercise  12.5 [h]** An alternative to the previous exercise is not to use binding lists at ail.
+Instead, we could pass in a list of equivalence classes-that is, a list of lists, where each sublist contains one or more elements that have been unified.
 In this approach, the initial equivalence class list would be `((?arg1) (?arg2))`.
 After unifying `?arg1` with `?x`, `?arg2` with `?y`, and `?x` with 4, the list would be ( `(4 ?arg1 ?x) (?arg2 ?y))`.
 This assumes the convention that the canonical member of an equivalence class (the one that will be substituted for all others) cornes first.
 Implement this approach.
 What advantages and disadvantages does it have?
 
-## [ ](#){:#st0035}12.6 The User Interface to the Compiler
+## 12.6 The User Interface to the Compiler
 {:#s0035}
 {:.h1hd}
 
 The compiler can translate Prolog to Lisp, but that does us no good unless we can conveniently arrange to compile the right Prolog relations and call the right Lisp functions.
-In other words, we have to integrate the compiler with the `<−` and `?` macros.
+In other words, we have to integrate the compiler with the `<-` and `?` macros.
 Surprisingly, we don't need to change these macros at all.
 Rather, we will change the functions these macros call.
 When a new clause is entered, we will enter the clause's predicate in the list `*uncompiled*`.
 This is a one-line addition to `add-clause:`
 
-[ ](#){:#l0190}`(defvar *uncompiled* nil`
-!!!(p) {:.unnumlist}
+`(defvar *uncompiled* nil`
 
-`      "Prolog symbols that have not been compiled.")`
-!!!(p) {:.unnumlist}
+`            "Prolog symbols that have not been compiled.")`
 
 `(defun add-clause (clause)`
-!!!(p) {:.unnumlist}
 
-` "Add a clause to the data base, indexed by head's predicate."`
-!!!(p) {:.unnumlist}
+`  "Add a clause to the data base, indexed by head's predicate."`
 
-` ;; The predicate must be a non-variable symbol.`
-!!!(p) {:.unnumlist}
+`  ;; The predicate must be a non-variable symbol.`
 
-` (let ((pred (predicate (clause-head clause))))`
-!!!(p) {:.unnumlist}
+`  (let ((pred (predicate (clause-head clause))))`
 
-`   (assert (and (symbolp pred) (not (variable-p pred))))`
-!!!(p) {:.unnumlist}
+`      (assert (and (symbolp pred) (not (variable-p pred))))`
 
-`   (pushnew pred *db-predicates*)`
-!!!(p) {:.unnumlist}
+`      (pushnew pred *db-predicates*)`
 
-`   (pushnew pred *uncompiled*)      ;***`
-!!!(p) {:.unnumlist}
+`      (pushnew pred *uncompiled*)            ;***`
 
-`   (setf (get pred 'clauses)`
-!!!(p) {:.unnumlist}
+`      (setf (get pred 'clauses)`
 
-`       (nconc (get-clauses pred) (list clause)))`
-!!!(p) {:.unnumlist}
+`              (nconc (get-clauses pred) (list clause)))`
 
-`     pred))`
-!!!(p) {:.unnumlist}
+`          pred))`
 
 Now when a query is made, the ?- macro expands into a call to `top-level-prove.` The list of goals in the query, along with the `show-prolog-vars` goal, is added as the sole clause for the relation `top-level-query.` Next, that query, along with any others that are on the uncompiled list, are compiled.
 Finally, the newly compiled top-level query function is called.
 
-[ ](#){:#l0195}`(defun top-level-prove (goals)`
-!!!(p) {:.unnumlist}
+`(defun top-level-prove (goals)`
 
-` "Prove the list of goals by compiling and calling it."`
-!!!(p) {:.unnumlist}
+`  "Prove the list of goals by compiling and calling it."`
 
-` ;; First redefine top-level-query`
-!!!(p) {:.unnumlist}
+`  ;; First redefine top-level-query`
 
-` (clear-predicate 'top-level-query)`
-!!!(p) {:.unnumlist}
+`  (clear-predicate 'top-level-query)`
 
-` (let ((vars (delete '?
+`  (let ((vars (delete '?
 (variables-in goals))))`
-!!!(p) {:.unnumlist}
 
-`  (add-clause '((top-level-query)`
-!!!(p) {:.unnumlist}
+`    (add-clause '((top-level-query)`
 
-`        ,@goals`
-!!!(p) {:.unnumlist}
+`                ,@goals`
 
-`       (show-prolog-vars ,(mapcar #'symbol-name vars)`
-!!!(p) {:.unnumlist}
+`              (show-prolog-vars ,(mapcar #'symbol-name vars)`
 
-`          ,vars))))`
-!!!(p) {:.unnumlist}
+`                    ,vars))))`
 
-` ;; Now run it`
-!!!(p) {:.unnumlist}
+`  ;; Now run it`
 
-` (run-prolog 'top-level-query/0 #'ignore)`
-!!!(p) {:.unnumlist}
+`  (run-prolog 'top-level-query/0 #'ignore)`
 
-` (format t "~&No.")`
-!!!(p) {:.unnumlist}
+`  (format t "~&No.")`
 
-` (values))`
-!!!(p) {:.unnumlist}
+`  (values))`
 
 `(defun run-prolog (procedure cont)`
-!!!(p) {:.unnumlist}
 
-` "Run a 0-ary prolog procedure with a given continuation."`
-!!!(p) {:.unnumlist}
+`  "Run a 0-ary prolog procedure with a given continuation."`
 
-` ;; First compile anything else that needs it`
-!!!(p) {:.unnumlist}
+`  ;; First compile anything else that needs it`
 
-` (prolog-compi1e-symbols)`
-!!!(p) {:.unnumlist}
+`  (prolog-compi1e-symbols)`
 
-` ;; Reset the trail and the new variable counter`
-!!!(p) {:.unnumlist}
+`  ;; Reset the trail and the new variable counter`
 
-` (setf (fill-pointer *trail*) 0)`
-!!!(p) {:.unnumlist}
+`  (setf (fill-pointer *trail*) 0)`
 
-` (setf *var-counter* 0)`
-!!!(p) {:.unnumlist}
+`  (setf *var-counter* 0)`
 
-` ;; Finally.
+`  ;; Finally.
 call the query`
-!!!(p) {:.unnumlist}
 
-` (catch 'top-level-prove`
-!!!(p) {:.unnumlist}
+`  (catch 'top-level-prove`
 
-`   (funcall procedure cont)))`
-!!!(p) {:.unnumlist}
+`      (funcall procedure cont)))`
 
 `(defun prolog-compile-symbols &optional (symbols *uncompiled*))`
-!!!(p) {:.unnumlist}
 
-` "Compile a list of Prolog symbols.`
-!!!(p) {:.unnumlist}
+`  "Compile a list of Prolog symbols.`
 
-` By default.
+`  By default.
 the list is all symbols that need it."`
-!!!(p) {:.unnumlist}
 
-` (mapc #'prolog-compile symbols)`
-!!!(p) {:.unnumlist}
+`  (mapc #'prolog-compile symbols)`
 
-` (setf *uncompiled* (set-difference *uncompiled* symbols)))`
-!!!(p) {:.unnumlist}
+`  (setf *uncompiled* (set-difference *uncompiled* symbols)))`
 
 `(defun ignore (&rest args)`
-!!!(p) {:.unnumlist}
 
-` (declare (ignore args))`
-!!!(p) {:.unnumlist}
+`  (declare (ignore args))`
 
-` nil)`
-!!!(p) {:.unnumlist}
+`  nil)`
 
 Note that at the top level, we don't need the continuation to do anything.
 Arbitrarily, we chose to pass in the function `ignore`, which is defined to ignore its arguments.
 This function is useful in a variety of places; some programmers will proclaim it inline and then use a call to `ignore` in place of an ignore declaration:
 
-[ ](#){:#l0200}`(defun third-arg (x y z)`
-!!!(p) {:.unnumlist}
+`(defun third-arg (x y z)`
 
-` (ignore x y)`
-!!!(p) {:.unnumlist}
+`  (ignore x y)`
 
-` z)`
-!!!(p) {:.unnumlist}
+`  z)`
 
 The compiler's calling convention is different from the interpreter, so the primitives need to be redefined.
 The old definition of the primitive `show-prolog-vars` had three parameters: the list of arguments to the goal, a binding list, and a list of pending goals.
@@ -1896,66 +1388,46 @@ The first two parameters are the two separate arguments to the goal: a list of v
 The last parameter is a continuation function.
 To continue, we call that function, but to fail, we throw to the catch point set up in `top-level-prove`.
 
-[ ](#){:#l0205}`(defun show-prolog-vars/2 (var-names vars cont)`
-!!!(p) {:.unnumlist}
+`(defun show-prolog-vars/2 (var-names vars cont)`
 
-` "Display the variables, and prompt the user to see`
-!!!(p) {:.unnumlist}
+`  "Display the variables, and prompt the user to see`
 
-` if we should continue.
+`  if we should continue.
 If not, return to the top level."`
-!!!(p) {:.unnumlist}
 
-` (if (null vars)`
-!!!(p) {:.unnumlist}
+`  (if (null vars)`
 
-`  (format t "~&Yes")`
-!!!(p) {:.unnumlist}
+`    (format t "~&Yes")`
 
-`  (loop for name in var-names`
-!!!(p) {:.unnumlist}
+`    (loop for name in var-names`
 
-`    for var in vars do`
-!!!(p) {:.unnumlist}
+`        for var in vars do`
 
-`    (format t "~&~a = "a" name (deref-exp var))))`
-!!!(p) {:.unnumlist}
+`        (format t "~&~a = "a" name (deref-exp var))))`
 
-` (if (continue-p)`
-!!!(p) {:.unnumlist}
+`  (if (continue-p)`
 
-`  (funcall cont)`
-!!!(p) {:.unnumlist}
+`    (funcall cont)`
 
-`  (throw 'top-level-prove nil)))`
-!!!(p) {:.unnumlist}
+`    (throw 'top-level-prove nil)))`
 
 `(defun deref-exp (exp)`
-!!!(p) {:.unnumlist}
 
-` "Build something equivalent to EXP with variables dereferenced."`
-!!!(p) {:.unnumlist}
+`  "Build something equivalent to EXP with variables dereferenced."`
 
-` (if (atom (deref exp))`
-!!!(p) {:.unnumlist}
+`  (if (atom (deref exp))`
 
-`  exp`
-!!!(p) {:.unnumlist}
+`    exp`
 
-`  (reuse-cons`
-!!!(p) {:.unnumlist}
+`    (reuse-cons`
 
-`   (deref-exp (first exp))`
-!!!(p) {:.unnumlist}
+`      (deref-exp (first exp))`
 
-`   (deref-exp (rest exp))`
-!!!(p) {:.unnumlist}
+`      (deref-exp (rest exp))`
 
-`   exp)))`
-!!!(p) {:.unnumlist}
+`      exp)))`
 
-With these definitions in place, we can invoke the compiler automatically just by making a query with the ?
-- macro.
+With these definitions in place, we can invoke the compiler automatically just by making a query with the ? - macro.
 
 **Exercise 12.6 [m]** Suppose you define a predicate `p`, which calls `q`, and then define `q`.
 In some implementations of Lisp, when you make a query like `(?
@@ -1964,7 +1436,7 @@ The problem is that each function is compiled separately, so warnings detected d
 In ANSI Common Lisp there is a way to delay the printing of warnings until a series of compilations are done: wrap the compilation with the macro `with-compi`l`ation-unit.` Even if your implementation does not provide this macro, it may provide the same functionality under a different name.
 Find out if `with-compilation-unit` is already defined in your implementation, or if it can be defined.
 
-## [ ](#){:#st0040}12.7 Benchmarking the Compiler
+## 12.7 Benchmarking the Compiler
 {:#s0040}
 {:.h1hd}
 
@@ -1972,98 +1444,70 @@ Our compiled Prolog code runs the zebra puzzle in 17.4 seconds, a 16-fold speed-
 
 Another popular benchmark is Lisp's reverse function, which we can code as the rev relation:
 
-[ ](#){:#l0210}`(<− (rev () ()))`
-!!!(p) {:.unnumlist}
+`(<- (rev () ()))`
 
-`(<− (rev (?x .
-?a) ?b) (rev ?a ?c) (concat ?c (?x) ?b))`
-!!!(p) {:.unnumlist}
+`(<- (rev (?x . ?a) ?b) (rev ?a ?c) (concat ?c (?x) ?b))`
 
-`(<− (concat () ?1 ?1)`
-!!!(p) {:.unnumlist}
+`(<- (concat () ?1 ?1)`
 
-`(<− (concat (?x .
-?a) ?b (?x .
-?c)) (concat ?a ?b ?c))`
-!!!(p) {:.unnumlist}
+`(<- (concat (?x . ?a) ?b (?x . ?c)) (concat ?a ?b ?c))`
 
 rev uses the relation concat, which stands for concatenation, (`concat ?a ?b ?c`)is true when `?a` concatenated to `?b` yields `?c`.
 This relationlike name is preferred over more procedural names like append.
 But `rev` is very similar to the following Lisp definitions:
 
-[ ](#){:#l0215}`(defun rev (1)`
-!!!(p) {:.unnumlist}
+`(defun rev (1)`
 
-` (if (null 1)`
-!!!(p) {:.unnumlist}
+`  (if (null 1)`
 
-`  nil`
-!!!(p) {:.unnumlist}
+`    nil`
 
-`  (app (rev (rest 1 ))`
-!!!(p) {:.unnumlist}
+`    (app (rev (rest 1 ))`
 
-`    (list (first 1)))))`
-!!!(p) {:.unnumlist}
+`        (list (first 1)))))`
 
 `(defun app (x y)`
-!!!(p) {:.unnumlist}
 
-` (if (null x)`
-!!!(p) {:.unnumlist}
+`  (if (null x)`
 
-`  y`
-!!!(p) {:.unnumlist}
+`    y`
 
-`   (cons (first x)`
-!!!(p) {:.unnumlist}
+`      (cons (first x)`
 
-`    (app (rest x) y))))`
-!!!(p) {:.unnumlist}
+`        (app (rest x) y))))`
 
 Both versions are inefficient.
 It is possible to write an iterative version of `reverse` that does no extra consing and is tail-recursive:
 
-[ ](#){:#l0220}`(<− (irev ?l ?r) (irev3 ?l () ?r))`
-!!!(p) {:.unnumlist}
+`(<- (irev ?l ?r) (irev3 ?l () ?r))`
 
-`(<− (irev3 (?x .
-?l) ?so-far ?r) (irev3 ?l (?x .
-?so-far) ?r))`
-!!!(p) {:.unnumlist}
+`(<- (irev3 (?x . ?l) ?so-far ?r) (irev3 ?l (?x . ?so-far) ?r))`
 
-`(<− (irev3 () ?r ?r))`
-!!!(p) {:.unnumlist}
+`(<- (irev3 () ?r ?r))`
 
 The Prolog `irev` is equivalent to this Lisp program:
 
-[ ](#){:#l0225}`(defun irev (list) (irev2 list nil))`
-!!!(p) {:.unnumlist}
+`(defun irev (list) (irev2 list nil))`
 
 `(defun irev2 (list so-far)`
-!!!(p) {:.unnumlist}
 
-` (if (consp list)`
-!!!(p) {:.unnumlist}
+`  (if (consp list)`
 
-`   (irev2 (rest list) (cons (first list) so-far))`
-!!!(p) {:.unnumlist}
+`      (irev2 (rest list) (cons (first list) so-far))`
 
-`   so-far))`
-!!!(p) {:.unnumlist}
+`      so-far))`
 
 The following table shows times in seconds to execute these routines on lists of length 20 and 100, for both Prolog and Lisp, both interpreted and compiled.
 (Only compiled Lisp could execute rev on a 100-element list without running out of stack space.) Times for the zebra puzzle are also included, although there is no Lisp version of this program.
 
-[ ](#){:#t0020}
 !!!(table)
 
 | []() | | | | | | | | | |
 |---|---|---|---|---|---|---|---|---|---|
 | Problem | Interp. Prolog | Comp. Prolog | Speed-up | Interp. Lisp | Comp. Lisp |
-| `zebra` | 278.000 | 17.241 | 16 | — | — |
+| `zebra` | 278.000 | 17.241 | 16 | - | - |
 | `rev 20` | 4.24 | .208 | 20 | .241 | .0023 |
-| `rev 100` | — | — | — | — | .0614 |
+| `rev 100` | - | - | - | - | .0614 |
 | `irev 20` | .22 | .010 | 22 | .028 | .0005 |
 | `irev 100` | 9.81 | .054 | 181 | .139 | .0014 |
 
@@ -2073,36 +1517,27 @@ This benchmark is too small to be conclusive, but on these examples the Prolog c
 This suggests that the Prolog interpreter cannot be used as a practical programming tool, but the Prolog compiler can.
 
 Before moving on, it is interesting to note that Prolog provides for optional arguments automatically.
-Although there is no special syntax for optional arguments, an often-used convention is to have two versions of a relation, one with *n* arguments and one with *n —* 1.
-A single clause for the *n —* 1 case provides the missing, and therefore "optional," argument.
+Although there is no special syntax for optional arguments, an often-used convention is to have two versions of a relation, one with *n* arguments and one with *n -* 1.
+A single clause for the *n -* 1 case provides the missing, and therefore "optional," argument.
 In the following example, `irev/2` can be considered as a version of `irev/3` where the missing optional argument is ().
 
-[ ](#){:#l0230}`(<− (irev ?l ?r) (irev ?l () ?r))`
-!!!(p) {:.unnumlist}
+`(<- (irev ?l ?r) (irev ?l () ?r))`
 
-`(<− (irev (?x .
-?l ) ?so-far ?r) (irev ?l (?x .
-?so-far) ?r))`
-!!!(p) {:.unnumlist}
+`(<- (irev (?x . ?l ) ?so-far ?r) (irev ?l (?x . ?so-far) ?r))`
 
-`(<− (irev () ?r ?r))`
-!!!(p) {:.unnumlist}
+`(<- (irev () ?r ?r))`
 
 This is roughly equivalent to the following Lisp verison:
 
-[ ](#){:#l0235}`(defun irev (list &optional (so-far nil))`
-!!!(p) {:.unnumlist}
+`(defun irev (list &optional (so-far nil))`
 
-` (if (consp list)`
-!!!(p) {:.unnumlist}
+`  (if (consp list)`
 
-`   (irev (rest list) (cons (first list) so-far))`
-!!!(p) {:.unnumlist}
+`      (irev (rest list) (cons (first list) so-far))`
 
-`   so-far))`
-!!!(p) {:.unnumlist}
+`      so-far))`
 
-## [ ](#){:#st0045}12.8 Adding More Primitives
+## 12.8 Adding More Primitives
 {:#s0045}
 {:.h1hd}
 
@@ -2111,24 +1546,18 @@ For the Prolog interpreter, primitives were implemented by function symbols.
 When the interpreter went to fetch a list of clauses, if it got a function instead, it called that function, passing it the arguments to the current relation, the current bindings, and a list of unsatisfied goals.
 For the Prolog compiler, primitives can be installed simply by writing a Lisp function that respects the convention of taking a continuation as the final argument and has a name of the form *symbol/arity.* For example, here's an easy way to handle input and output:
 
-[ ](#){:#l0240}`(defun read/1 (exp cont)`
-!!!(p) {:.unnumlist}
+`(defun read/1 (exp cont)`
 
-` (if (unify!
+`  (if (unify!
 exp (read))`
-!!!(p) {:.unnumlist}
 
-`   (funcall cont)))`
-!!!(p) {:.unnumlist}
+`      (funcall cont)))`
 
 `(defun write/1 (exp cont)`
-!!!(p) {:.unnumlist}
 
-` (write (deref-exp exp) :pretty t)`
-!!!(p) {:.unnumlist}
+`  (write (deref-exp exp) :pretty t)`
 
-` (funcall cont))`
-!!!(p) {:.unnumlist}
+`  (funcall cont))`
 
 Calling `(write ?x)` will always succeed, so the continuation will always be called.
 Similarly, one could use `(read ?x)` to read a value and unify it with `?x`.
@@ -2140,26 +1569,21 @@ Other optional arguments could also be supported, if desired.
 
 The primitive nl outputs a newline:
 
-[ ](#){:#l0245}`(defun nl/0 (cont) (terpri) (funcall cont))`
-!!!(p) {:.unnumlist}
+`(defun nl/0 (cont) (terpri) (funcall cont))`
 
 We provided special support for the unification predicate, =.
 However, we could have simplified the compiler greatly by having a simple definition for `=/2`:
 
-[ ](#){:#l0250}`(defun =/2 (?arg1 ?arg2 cont)`
-!!!(p) {:.unnumlist}
+`(defun =/2 (?arg1 ?arg2 cont)`
 
-` (if (unify!
+`  (if (unify!
 ?arg1 ?arg2)`
-!!!(p) {:.unnumlist}
 
-`  (funcall cont)))`
-!!!(p) {:.unnumlist}
+`    (funcall cont)))`
 
 In fact, if we give our compiler the single clause:
 
-[ ](#){:#l0255}(<- (= ?x `?x))`
-!!!(p) {:.unnumlist}
+(<- (= ?x `?x))`
 
 it produces just this code for the definition of `=/ 2`.
 There are other equality predicates to worry about.
@@ -2168,105 +1592,75 @@ It does no unification, but instead tests if two structures are equal with regar
 A variable is considered equal only to itself.
 Here's an implementation:
 
-[ ](#){:#l0260}`(defun =/2 (?arg1 ?arg2 cont)`
-!!!(p) {:.unnumlist}
+`(defun =/2 (?arg1 ?arg2 cont)`
 
-` "Are the two arguments EQUAL with no unification,`
-!!!(p) {:.unnumlist}
+`  "Are the two arguments EQUAL with no unification,`
 
-` but with dereferencing?
+`  but with dereferencing?
 If so, succeed."`
-!!!(p) {:.unnumlist}
 
-` (if (deref-equal ?arg1 ?arg2)`
-!!!(p) {:.unnumlist}
+`  (if (deref-equal ?arg1 ?arg2)`
 
-`  (funcall cont)))`
-!!!(p) {:.unnumlist}
+`    (funcall cont)))`
 
 `(defun deref-equal (x y)`
-!!!(p) {:.unnumlist}
 
-` "Are the two arguments EQUAL with no unification,`
-!!!(p) {:.unnumlist}
+`  "Are the two arguments EQUAL with no unification,`
 
-` but with dereferencing?"`
-!!!(p) {:.unnumlist}
+`  but with dereferencing?"`
 
-` (or (eql (deref x) (deref y))`
-!!!(p) {:.unnumlist}
+`  (or (eql (deref x) (deref y))`
 
-`  (and (consp x)`
-!!!(p) {:.unnumlist}
+`    (and (consp x)`
 
-`   (consp y)`
-!!!(p) {:.unnumlist}
+`      (consp y)`
 
-`   (deref-equal (first x) (first y))`
-!!!(p) {:.unnumlist}
+`      (deref-equal (first x) (first y))`
 
-`   (deref-equal (rest x) (rest y)))))`
-!!!(p) {:.unnumlist}
+`      (deref-equal (rest x) (rest y)))))`
 
 One of the most important primitives is `call`.
 Like `funcall` in Lisp, `call` allows us to build up a goal and then try to prove it.
 
-[ ](#){:#l0265}`(defun call/1 (goal cont)`
-!!!(p) {:.unnumlist}
+`(defun call/1 (goal cont)`
 
-` "Try to prove goal by calling it."`
-!!!(p) {:.unnumlist}
+`  "Try to prove goal by calling it."`
 
-` (deref goal)`
-!!!(p) {:.unnumlist}
+`  (deref goal)`
 
-` (apply (make-predicate (first goal)`
-!!!(p) {:.unnumlist}
+`  (apply (make-predicate (first goal)`
 
-`     (length (args goal)))`
-!!!(p) {:.unnumlist}
+`          (length (args goal)))`
 
-`   (append (args goal) (list cont))))`
-!!!(p) {:.unnumlist}
+`      (append (args goal) (list cont))))`
 
 This version of `call` will give a run-time error if the goal is not instantiated to a list whose first element is a properly defined predicate; one might want to check for that, and fail silently if there is no defined predicate.
 Here's an example of `call` where the goal is legal:
 
-[ ](#){:#l0270}`> (?- (= ?p member) (call (?p ?x (a b c))))`
-!!!(p) {:.unnumlist}
+`> (?- (= ?p member) (call (?p ?x (a b c))))`
 
 `?P = MEMBER`
-!!!(p) {:.unnumlist}
 
 `?X = A;`
-!!!(p) {:.unnumlist}
 
 `?P = MEMBER`
-!!!(p) {:.unnumlist}
 
 `?X = B;`
-!!!(p) {:.unnumlist}
 
 `?P = MEMBER`
-!!!(p) {:.unnumlist}
 
 `?X = C;`
-!!!(p) {:.unnumlist}
 
 `No.`
-!!!(p) {:.unnumlist}
 
 Now that we have `call`, a lot of new things can be implemented.
 Here are the logical connectives and and or:
 
-[ ](#){:#l0275}`(<− (or ?a ?b) (call ?a))`
-!!!(p) {:.unnumlist}
+`(<- (or ?a ?b) (call ?a))`
 
-`(<− (or ?a ?b) (call ?b))`
-!!!(p) {:.unnumlist}
+`(<- (or ?a ?b) (call ?b))`
 
-`(<− (and ?a ?b) (call ?a) (call ?b))`
-!!!(p) {:.unnumlist}
+`(<- (and ?a ?b) (call ?a) (call ?b))`
 
 Note that these are only binary connectives, not the *n*-ary special forms used in Lisp.
 Also, this definition negates most of the advantage of compilation.
@@ -2279,74 +1673,53 @@ See [Lloyd 1987](B9780080571157500285.xhtml#bb0745) for more on the formal seman
 Here's an implementation of `not/1`.
 Since it has to manipulate the trail, and we may have other predicates that will want to do the same, we'll package up what was done in `maybe-add-undo-bindings` into the macro `with-undo-bindings:`
 
-[ ](#){:#l0280}`(defmacro with-undo-bindings (&body body)`
-!!!(p) {:.unnumlist}
+`(defmacro with-undo-bindings (&body body)`
 
-` "Undo bindings after each expression in body except the last."`
-!!!(p) {:.unnumlist}
+`  "Undo bindings after each expression in body except the last."`
 
-` (if (length=1 body)`
-!!!(p) {:.unnumlist}
+`  (if (length=1 body)`
 
-`  (first body)`
-!!!(p) {:.unnumlist}
+`    (first body)`
 
-`  '(let ((old-trail (fill-pointer *trail*)))`
-!!!(p) {:.unnumlist}
+`    '(let ((old-trail (fill-pointer *trail*)))`
 
-`   ,(first body)`
-!!!(p) {:.unnumlist}
+`      ,(first body)`
 
-`    ,@(loop for exp in (rest body)`
-!!!(p) {:.unnumlist}
+`        ,@(loop for exp in (rest body)`
 
-`        collect '(undo-bindings!
+`                collect '(undo-bindings!
 old-trail)`
-!!!(p) {:.unnumlist}
 
-`        collect exp))))`
-!!!(p) {:.unnumlist}
+`                collect exp))))`
 
 `(defun not/1 (relation cont)`
-!!!(p) {:.unnumlist}
 
-` "Negation by failure: If you can't prove G.
+`  "Negation by failure: If you can't prove G.
 then (not G) true."`
-!!!(p) {:.unnumlist}
 
-` ;; Either way, undo the bindings.`
-!!!(p) {:.unnumlist}
+`  ;; Either way, undo the bindings.`
 
-` (with-undo-bindings`
-!!!(p) {:.unnumlist}
+`  (with-undo-bindings`
 
-`  (call/1 relation #'(lambda () (return-from not/1 nil)))`
-!!!(p) {:.unnumlist}
+`    (call/1 relation #'(lambda () (return-from not/1 nil)))`
 
-`  (funcall cont)))`
-!!!(p) {:.unnumlist}
+`    (funcall cont)))`
 
 Here's an example where `not` works fine:
 
-[ ](#){:#l0285}`> (?- (member ?x (a b c)) (not (= ?x b)))`
-!!!(p) {:.unnumlist}
+`> (?- (member ?x (a b c)) (not (= ?x b)))`
 
 `?X = A;`
-!!!(p) {:.unnumlist}
 
 `?X = C;`
-!!!(p) {:.unnumlist}
 
 `No.`
-!!!(p) {:.unnumlist}
 
 Now see what happens when we simply reverse the order of the two goals:
 
-[ ](#){:#l0290}`> (?- (not (= ?x b)) (member ?x (a b c)))`
-!!!(p) {:.unnumlist}
+`> (?- (not (= ?x b)) (member ?x (a b c)))`
 
 `No.`
-!!!(p) {:.unnumlist}
 
 The first example succeeds unless `?x` is bound to `b.` In the second example, `?x` is unbound at the start, so `(= ?x b )` succeeds, the not fails, and the `member` goal is never reached.
 So our implementation of `not` has a consistent procedural interpretation, but it is not equivalent to the declarative interpretation usually given to logical negation.
@@ -2365,191 +1738,137 @@ Bags stands in contrast to *sets,* which are unordered collections with no dupli
 The set {*a*, *b*} is the same as the set {*b*, *a*}.
 Here is an implementation of `bagof:`
 
-[ ](#){:#l0295}`(defun bagof/3 (exp goal resuit cont)`
-!!!(p) {:.unnumlist}
+`(defun bagof/3 (exp goal resuit cont)`
 
-` "Find all solutions to GOAL, and for each solution,`
-!!!(p) {:.unnumlist}
+`  "Find all solutions to GOAL, and for each solution,`
 
-` collect the value of EXP into the list RESULT."`
-!!!(p) {:.unnumlist}
+`  collect the value of EXP into the list RESULT."`
 
-` ;; Ex: Assume (p 1) (p 2) (p 3).
+`  ;; Ex: Assume (p 1) (p 2) (p 3).
 Then:`
-!!!(p) {:.unnumlist}
 
-` ;: (bagof ?x (p ?x) ?1) => ?1 = (1 2 3)`
-!!!(p) {:.unnumlist}
+`  ;: (bagof ?x (p ?x) ?1) => ?1 = (1 2 3)`
 
-` (let ((answers nil))`
-!!!(p) {:.unnumlist}
+`  (let ((answers nil))`
 
-` (call/1 goal #'(lambda ()`
-!!!(p) {:.unnumlist}
+`  (call/1 goal #'(lambda ()`
 
-`   (push (deref-copy exp) answers)))`
-!!!(p) {:.unnumlist}
+`      (push (deref-copy exp) answers)))`
 
-` (if (and (not (null answers))`
-!!!(p) {:.unnumlist}
+`  (if (and (not (null answers))`
 
-`  (unify!
+`    (unify!
 resuit (nreverse answers)))`
-!!!(p) {:.unnumlist}
 
-` (funcall cont))))`
-!!!(p) {:.unnumlist}
+`  (funcall cont))))`
 
-` (defun deref-copy (exp)`
-!!!(p) {:.unnumlist}
+`  (defun deref-copy (exp)`
 
-` "Copy the expression, replacing variables with new ones.`
-!!!(p) {:.unnumlist}
+`  "Copy the expression, replacing variables with new ones.`
 
-` The part without variables can be returned as is."`
-!!!(p) {:.unnumlist}
+`  The part without variables can be returned as is."`
 
-` (sublis (mapcar #'(lambda (var) (cons (deref var) (?))`
-!!!(p) {:.unnumlist}
+`  (sublis (mapcar #'(lambda (var) (cons (deref var) (?))`
 
-`  (unique-find-anywhere-if #'var-p exp))`
-!!!(p) {:.unnumlist}
+`    (unique-find-anywhere-if #'var-p exp))`
 
-` exp))`
-!!!(p) {:.unnumlist}
+`  exp))`
 
 Below we use `bagof` to collect a list of everyone Sandy likes.
 Note that the result is a bag, not a set: Sandy appears more than once.
 
-[ ](#){:#l0300}`> (?- (bagof ?who (likes Sandy ?who) ?bag))`
-!!!(p) {:.unnumlist}
+`> (?- (bagof ?who (likes Sandy ?who) ?bag))`
 
 `?WHO = SANDY`
-!!!(p) {:.unnumlist}
 
 `?BAG = (LEE KIM ROBIN SANDY CATS SANDY);`
-!!!(p) {:.unnumlist}
 
 `No.`
-!!!(p) {:.unnumlist}
 
 In the next example, we form the bag of every list of length three that has `A` and `B` as members:
 
-[ ](#){:#l9000}`> (?- (bagof ?l (and (length ?l (1 + (1 + (1 + 0))))`
-!!!(p) {:.unnumlist}
+`> (?- (bagof ?l (and (length ?l (1  + (1  + (1  + 0))))`
 
-`   (and (member a ?l) (member b ?l)))`
-!!!(p) {:.unnumlist}
+`      (and (member a ?l) (member b ?l)))`
 
-`  ?bag))`
-!!!(p) {:.unnumlist}
+`    ?bag))`
 
 `?L = (?5 ?8 ?11 ?68 ?66)`
-!!!(p) {:.unnumlist}
 
 `?BAG = ((A B ?17) (A ?21 B) (B A ?31) (?38 A B) (B ?48 A) (?52 B A))`
-!!!(p) {:.unnumlist}
 
 `No.`
-!!!(p) {:.unnumlist}
 
 Those who are disappointed with a bag containing multiple versions of the same answer may prefer the primitive `setof`, which does the same computation as `bagof` but then discards the duplicates.
 
-[ ](#){:#l0305}`(defun setof/3 (exp goal resuit cont)`
-!!!(p) {:.unnumlist}
+`(defun setof/3 (exp goal resuit cont)`
 
-` "Find all unique solutions to GOAL, and for each solution,`
-!!!(p) {:.unnumlist}
+`  "Find all unique solutions to GOAL, and for each solution,`
 
-` collect the value of EXP into the list RESULT."`
-!!!(p) {:.unnumlist}
+`  collect the value of EXP into the list RESULT."`
 
-` ;; Ex: Assume (p 1) (p 2) (p 3).
+`  ;; Ex: Assume (p 1) (p 2) (p 3).
 Then:`
-!!!(p) {:.unnumlist}
 
-` ;; (setof ?x (p ?x) ?l ) => ?l = (1 2 3)`
-!!!(p) {:.unnumlist}
+`  ;;  (setof ?x (p ?x) ?l ) => ?l = (1 2 3)`
 
-` (let ((answers nil))`
-!!!(p) {:.unnumlist}
+`  (let ((answers nil))`
 
-` (call/1 goal #'(lambda ()`
-!!!(p) {:.unnumlist}
+`  (call/1 goal #'(lambda ()`
 
-`   (push (deref-copy exp) answers)))`
-!!!(p) {:.unnumlist}
+`      (push (deref-copy exp) answers)))`
 
-` (if (and (not (null answers))`
-!!!(p) {:.unnumlist}
+`  (if (and (not (null answers))`
 
-`  (unify!
+`    (unify!
 resuit (delete-duplicates`
-!!!(p) {:.unnumlist}
 
-`    answers`
-!!!(p) {:.unnumlist}
+`        answers`
 
-`    :test #'deref-equal)))`
-!!!(p) {:.unnumlist}
+`        :test #'deref-equal)))`
 
-` (funcall cont))))`
-!!!(p) {:.unnumlist}
+`  (funcall cont))))`
 
 Prolog supports arithmetic with the operator `is`.
 For example, `(is ?x (+ ?y 1))` unifies `?x` with the value of `?y` plus one.
 This expression fails if `?y` is unbound, and it gives a run-time error if `?y` is not a number.
 For our version of Prolog, we can support not just arithmetic but any Lisp expression:
 
-[ ](#){:#l0310}`(defun is/2 (var exp cont)`
-!!!(p) {:.unnumlist}
+`(defun is/2 (var exp cont)`
 
-` ;; Example: (is ?x (+ 3 (* ?y (+ ?z 4))))`
-!!!(p) {:.unnumlist}
+`  ;; Example: (is ?x (+  3 (* ?y (+ ?z 4))))`
 
-` ;; Or even: (is (?x ?y ?x) (cons (first ?z) ?l))`
-!!!(p) {:.unnumlist}
+`  ;; Or even: (is (?x ?y ?x) (cons (first ?z) ?l))`
 
-` (if (and (not (find-if-anywhere #'unbound-var-p exp))`
-!!!(p) {:.unnumlist}
+`  (if (and (not (find-if-anywhere #'unbound-var-p exp))`
 
-`  (unify!
+`    (unify!
 var (eval (deref-exp exp))))`
-!!!(p) {:.unnumlist}
 
-` (funcall cont)))`
-!!!(p) {:.unnumlist}
+`  (funcall cont)))`
 
 `(defun unbound-var-p (exp)`
-!!!(p) {:.unnumlist}
 
-` "Is EXP an unbound var?"`
-!!!(p) {:.unnumlist}
+`  "Is EXP an unbound var?"`
 
-` (and (var-p exp) (not (bound-p exp))))`
-!!!(p) {:.unnumlist}
+`  (and (var-p exp) (not (bound-p exp))))`
 
 As an aside, we might as well give the Prolog programmer access to the function `unbound-var-p`.
 The standard name for this predicate is `var/1`:
 
-[ ](#){:#l0315}`(defun var/1 (?arg1 cont)`
-!!!(p) {:.unnumlist}
+`(defun var/1 (?arg1 cont)`
 
-` "Succeeds if ?arg1 is an uninstantiated variable."`
-!!!(p) {:.unnumlist}
+`  "Succeeds if ?arg1 is an uninstantiated variable."`
 
-` (if (unbound-var-p ?arg1)`
-!!!(p) {:.unnumlist}
+`  (if (unbound-var-p ?arg1)`
 
-` (funcall cont)))`
-!!!(p) {:.unnumlist}
+`  (funcall cont)))`
 
 The is primitive fails if any part of the second argument is unbound.
 However, there are expressions with variables that can be solved, although not with a direct call to `eval`.
 For example, the following goal could be solved by binding `?x` to `2`:
 
-[ ](#){:#l0320}`(solve (= 12 (* (+ ?x 1) 4)))`
-!!!(p) {:.unnumlist}
+`(solve (=  12 (* (+ ?x 1) 4)))`
 
 We might want to have more direct access to Lisp from Prolog.
 The problem with `is` is that it requires a check for unbound variables, and it calls `eval` to evaluate arguments recursively.
@@ -2557,49 +1876,44 @@ In some cases, we just want to get at Lisp's `apply`, without going through the 
 The primitive `lisp` does that.
 Needless to say, `lisp` is not a part of standard Prolog.
 
-[ ](#){:#l0325}`(defun lisp/2 (?result exp cont)`
-!!!(p) {:.unnumlist}
+`(defun lisp/2 (?result exp cont)`
 
-` "Apply (first exp) to (rest exp), and return the result."`
-!!!(p) {:.unnumlist}
+`  "Apply (first exp) to (rest exp), and return the result."`
 
-` (if (and (consp (deref exp))`
-!!!(p) {:.unnumlist}
+`  (if (and (consp (deref exp))`
 
-`  (unify!
+`    (unify!
 ?result (apply (first exp) (rest exp))))`
-!!!(p) {:.unnumlist}
 
-` (funcall cont)))`
-!!!(p) {:.unnumlist}
+`  (funcall cont)))`
 
-**Exercise 12.7 [m]** Define the primitive `solve/1`, which works like the function `solve` used in student ([page 225](B9780080571157500078.xhtml#p225)).
+**Exercise  12.7 [m]** Define the primitive `solve/1`, which works like the function `solve` used in student ([page 225](B9780080571157500078.xhtml#p225)).
 Decide if it should take a single equation as argument or a list of equations.
 
-**Exercise 12.8 [h]** Assume we had a goal of the form `(solve (= 12 (* (+ ?x 1) 4)))`.
+**Exercise  12.8 [h]** Assume we had a goal of the form `(solve (=  12 (* (+ ?x 1) 4)))`.
 Rather than manipulate the equation when `solve/1` is called at run time, we might prefer to do part of the work at compile time, treating the call as if it were `(solve (= ?x 2))`.
 Write a Prolog compiler macro for `solve`.
 Notice that even when you have defined a compiler macro, you still need the underlying primitive, because the predicate might be invoked through a `call/1`.
 The same thing happens in Lisp: even when you supply a compiler macro, you still need the actual function, in case of a `funcall` or `apply`.
 
-**Exercise 12.9 [h]** Which of the predicates `call`, and, `or`, `not`, or `repeat` could benefit from compiler macros?
+**Exercise  12.9 [h]** Which of the predicates `call`, and, `or`, `not`, or `repeat` could benefit from compiler macros?
 Write compiler macros for those predicates that could use one.
 
-**Exercise 12.10 [m]** You might have noticed that `call/1` is inefficient in two important ways.
+**Exercise  12.10 [m]** You might have noticed that `call/1` is inefficient in two important ways.
 First, it calls `make-predicate`, which must build a symbol by appending strings and then look the string up in the Lisp symbol table.
 Alter `make-predicate` to store the predicate symbol the first time it is created, so it can do a faster lookup on subsequent calls.
 The second inefficiency is the call to append.
 Change the whole compiler so that the continuation argument comes first, not last, thus eliminating the need for append in `call`.
 
-**Exercise 12.11 [s]** The primitive `true/0` always succeeds, and `fail/0` always fails.
+**Exercise  12.11 [s]** The primitive `true/0` always succeeds, and `fail/0` always fails.
 Define these primitives.
 Hint: the first corresponds to a Common Lisp function, and the second is a function already defined in this chapter.
 
-**Exercise 12.12 [s]** Would it be possible to write `= =/2` as a list of clauses rather than as a primitive?
+**Exercise  12.12 [s]** Would it be possible to write `= =/2` as a list of clauses rather than as a primitive?
 
-**Exercise 12.13 [m]** Write a version of `deref-copy` that traverses the argument expression only once.
+**Exercise  12.13 [m]** Write a version of `deref-copy` that traverses the argument expression only once.
 
-## [ ](#){:#st0050}12.9 The Cut
+## 12.9 The Cut
 {:#s0050}
 {:.h1hd}
 
@@ -2614,21 +1928,17 @@ Here's an example.
 Suppose we wanted to define a predicate, `max/3`, which holds when the third argument is the maximum of the first two arguments, where the first two arguments will always be instantiated to numbers.
 The straightforward definition is:
 
-[ ](#){:#l0330}`(<− (max ?x ?y ?x) (>= ?x ?y))`
-!!!(p) {:.unnumlist}
+`(<- (max ?x ?y ?x) (>= ?x ?y))`
 
-`(<− (max ?x ?y ?y) (< ?x ?y))`
-!!!(p) {:.unnumlist}
+`(<- (max ?x ?y ?y) (< ?x ?y))`
 
 Declaratively, this is correct, but procedurally it is a waste of time to compute the < relation if the >= has succeeded: in that case the < can never succeed.
 The cut symbol, written !, can be used to stop the wasteful computation.
 We could write:
 
-[ ](#){:#l0335}`(<− (max ?x ?y ?x) (>= ?x ?y) !)`
-!!!(p) {:.unnumlist}
+`(<- (max ?x ?y ?x) (>= ?x ?y) !)`
 
-`(<− (max ?x ?y ?y))`
-!!!(p) {:.unnumlist}
+`(<- (max ?x ?y ?y))`
 
 The cut in the first clause says that if the first clause succeeds, then no other clauses will be considered.
 So now the second clause can not be interpreted on its own.
@@ -2641,12 +1951,9 @@ But in addition to succeeding, it sets up a fence that cannot be crossed by subs
 The cut serves to cut off backtracking both from goals to the right of the cut (in the same clause) and from clauses below the cut (in the same predicate).
 Let's look at a more abstract example:
 
-[ ](#){:#l0340}`(<− (p) (q) (r) !
-(s) (t))`
-!!!(p) {:.unnumlist}
+`(<- (p) (q) (r) ! (s) (t))`
 
-`(<− (p) (s))`
-!!!(p) {:.unnumlist}
+`(<- (p) (s))`
 
 In processing the first clause of `p`, backtracking can occur freely while attempting to solve `q` and `r`.
 Once `r` is solved, the cut is encountered.
@@ -2656,237 +1963,165 @@ On the other hand, if `q` or `r` failed (before the cut is encountered), then Pr
 Now that the intent of the cut is clear, let's think of how it should be implemented.
 We'll look at a slightly more complex predicate, one with variables and multiple cuts:
 
-[ ](#){:#l0345}`(<− (p ?x a) !
-(q ?x))`
-!!!(p) {:.unnumlist}
+`(<- (p ?x a) ! (q ?x))`
 
-`(<− (p ?x b) (r ?x) !
-(s ?x))`
-!!!(p) {:.unnumlist}
+`(<- (p ?x b) (r ?x) ! (s ?x))`
 
 We have to arrange it so that as soon as we backtrack into a cut, no more goals are considered.
 In the first clause, when `q/1` fails, we want to return from `p/2` immediately, rather than considering the second clause.
 Similarly, the first time `s/1` fails, we want to return from `p/2`, rather than going on to consider other solutions to `r/1`.
 Thus, we want code that looks something like this:
 
-[ ](#){:#l0350}`(defun p/2 (argl arg2 cont)`
-!!!(p) {:.unnumlist}
+`(defun p/2 (argl arg2 cont)`
 
-` (let ((old-trail (fill-pointer *trail*)))`
-!!!(p) {:.unnumlist}
+`  (let ((old-trail (fill-pointer *trail*)))`
 
-`  (if (unify!
+`    (if (unify!
 arg2 'a)`
-!!!(p) {:.unnumlist}
 
-`   (progn (q/1 argl cont)`
-!!!(p) {:.unnumlist}
+`      (progn (q/1 argl cont)`
 
-`     (return-from p/2 nil)))`
-!!!(p) {:.unnumlist}
+`          (return-from p/2 nil)))`
 
-`  (undo-bindings!
+`    (undo-bindings!
 old-trail)`
-!!!(p) {:.unnumlist}
 
-`  (if (unify!
+`    (if (unify!
 arg2 'b)`
-!!!(p) {:.unnumlist}
 
-`   (r/1 argl #'(lambda ()`
-!!!(p) {:.unnumlist}
+`      (r/1 argl #'(lambda ()`
 
-`       (progn (s/1 argl cont)`
-!!!(p) {:.unnumlist}
+`              (progn (s/1 argl cont)`
 
-`        (return-from p/2 nil)))))))`
-!!!(p) {:.unnumlist}
+`                (return-from p/2 nil)))))))`
 
 We can get this code by making a single change to `compile-body:` when the first goal in a body (or what remains of the body) is the cut symbol, then we should generate a `progn` that contains the code for the rest of the body, followed by a `return-from` the predicate being compiled.
 Unfortunately, the name of the predicate is not available to `compile-body.` We could change `compile-clause` and `compile-body` to take the predicate name as an extra argument, or we could bind the predicate as a special variable in `compile-predicate`.
 I choose the latter:
 
-[ ](#){:#l0355}`(defvar *predicate* nil`
-!!!(p) {:.unnumlist}
+`(defvar *predicate* nil`
 
-` "The Prolog predicate currently being compiled")`
-!!!(p) {:.unnumlist}
+`  "The Prolog predicate currently being compiled")`
 
 `(defun compile-predicate (symbol arity clauses)`
-!!!(p) {:.unnumlist}
 
-` "Compile all the clauses for a given symbol/arity`
-!!!(p) {:.unnumlist}
+`  "Compile all the clauses for a given symbol/arity`
 
-` into a single LISP function."`
-!!!(p) {:.unnumlist}
+`  into a single LISP function."`
 
-` (let ((*predicate* (make-predicate symbol arity)) ;***`
-!!!(p) {:.unnumlist}
+`  (let ((*predicate* (make-predicate symbol arity)) ;***`
 
-`   (parameters (make-parameters arity)))`
-!!!(p) {:.unnumlist}
+`      (parameters (make-parameters arity)))`
 
-` (compile`
-!!!(p) {:.unnumlist}
+`  (compile`
 
-`  (eval`
-!!!(p) {:.unnumlist}
+`    (eval`
 
-`   '(defun ,*predicate* (,©parameters cont) ;***`
-!!!(p) {:.unnumlist}
+`      '(defun ,*predicate* (,@parameters cont) ;***`
 
-`    .,(maybe-add-undo-bindings`
-!!!(p) {:.unnumlist}
+`        .,(maybe-add-undo-bindings`
 
-`     (mapcar #'(lambda (clause)`
-!!!(p) {:.unnumlist}
+`          (mapcar #'(lambda (clause)`
 
-`        (compile-clause parameters`
-!!!(p) {:.unnumlist}
+`                (compile-clause parameters`
 
-`          clause 'cont))`
-!!!(p) {:.unnumlist}
+`                    clause 'cont))`
 
-`       clauses)))))))`
-!!!(p) {:.unnumlist}
+`              clauses)))))))`
 
 `(defun compile-body (body cont bindings)`
-!!!(p) {:.unnumlist}
 
-` "Compile the body of a clause."`
-!!!(p) {:.unnumlist}
+`  "Compile the body of a clause."`
 
-` (cond`
-!!!(p) {:.unnumlist}
+`  (cond`
 
-` ((null body)`
-!!!(p) {:.unnumlist}
+`  ((null body)`
 
-`  '(funcall ,cont))`
-!!!(p) {:.unnumlist}
+`    '(funcall ,cont))`
 
-` ((eq (first body) '!) ;***`
-!!!(p) {:.unnumlist}
+`  ((eq (first body) '!) ;***`
 
-`  '(progn ,(compile-body (rest body) cont bindings) ;***`
-!!!(p) {:.unnumlist}
+`    '(progn ,(compile-body (rest body) cont bindings) ;***`
 
-`    (return-from ,*predicate* nil))) ;***`
-!!!(p) {:.unnumlist}
+`        (return-from ,*predicate* nil))) ;***`
 
-` (t (let* ((goal (first body))`
-!!!(p) {:.unnumlist}
+`  (t (let* ((goal (first body))`
 
-`    (macro (prolog-compiler-macro (predicate goal)))`
-!!!(p) {:.unnumlist}
+`        (macro (prolog-compiler-macro (predicate goal)))`
 
-`    (macro-val (if macro`
-!!!(p) {:.unnumlist}
+`        (macro-val (if macro`
 
-`        (funcall macro goal (rest body)`
-!!!(p) {:.unnumlist}
+`                (funcall macro goal (rest body)`
 
-`          contbindings))))`
-!!!(p) {:.unnumlist}
+`                    contbindings))))`
 
-`   (if (and macro (not (eq macro-val :pass)))`
-!!!(p) {:.unnumlist}
+`      (if (and macro (not (eq macro-val :pass)))`
 
-`    macro-val`
-!!!(p) {:.unnumlist}
+`        macro-val`
 
-`    '(,(make-predicate (predicate goal)`
-!!!(p) {:.unnumlist}
+`        '(,(make-predicate (predicate goal)`
 
-`        (relation-arity goal))`
-!!!(p) {:.unnumlist}
+`                (relation-arity goal))`
 
-`      ,@(mapcar #'(lambda (arg)`
-!!!(p) {:.unnumlist}
+`            ,@(mapcar #'(lambda (arg)`
 
-`       (compile-arg arg bindings))`
-!!!(p) {:.unnumlist}
+`              (compile-arg arg bindings))`
 
-`      (args goal))`
-!!!(p) {:.unnumlist}
+`            (args goal))`
 
-`      , (if (null (rest body))`
-!!!(p) {:.unnumlist}
+`            , (if (null (rest body))`
 
-`      cont`
-!!!(p) {:.unnumlist}
+`            cont`
 
-`      '#'(lambda ()`
-!!!(p) {:.unnumlist}
+`            '#'(lambda ()`
 
-`        ,(compile-body`
-!!!(p) {:.unnumlist}
+`                ,(compile-body`
 
-`        (rest body) cont`
-!!!(p) {:.unnumlist}
+`                (rest body) cont`
 
-`        (bind-new-variables bindings goal))))))))))`
-!!!(p) {:.unnumlist}
+`                (bind-new-variables bindings goal))))))))))`
 
-**Exercise 12.14 [m]** Given the definitions below, figure out what a call to `test-cut` will do, and what it will write:
+**Exercise  12.14 [m]** Given the definitions below, figure out what a call to `test-cut` will do, and what it will write:
 
-[ ](#){:#l0360}`(<− (test-cut) (p a) (p b) !
-(p c) (p d))`
-!!!(p) {:.unnumlist}
+`(<- (test-cut) (p a) (p b) ! (p c) (p d))`
 
-`(<− (test-cut) (p e))`
-!!!(p) {:.unnumlist}
+`(<- (test-cut) (p e))`
 
-`(<− (p ?x) (write (?x 1)))`
-!!!(p) {:.unnumlist}
+`(<- (p ?x) (write (?x 1)))`
 
-`(<− (p ?x) (write (?x 2)))`
-!!!(p) {:.unnumlist}
+`(<- (p ?x) (write (?x 2)))`
 
 Another way to use the cut is in a *repeat/fail* loop.
 The predicate repeat is defined with the following two clauses:
 
-[ ](#){:#l0365}`(<− (repeat))`
-!!!(p) {:.unnumlist}
+`(<- (repeat))`
 
-`(<− (repeat) (repeat))`
-!!!(p) {:.unnumlist}
+`(<- (repeat) (repeat))`
 
 An alterna te definition as a primitive is:
 
-[ ](#){:#l0370}`(defun repeat/0 (cont)`
-!!!(p) {:.unnumlist}
+`(defun repeat/0 (cont)`
 
-` (loop (funcall cont)))`
-!!!(p) {:.unnumlist}
+`  (loop (funcall cont)))`
 
 Unfortunately, `repeat` is one of the most abused predicates.
 Several Prolog books present programs like this:
 
-[ ](#){:#l0375}`(<− (main)`
-!!!(p) {:.unnumlist}
+`(<- (main)`
 
-` (write "Hello.")`
-!!!(p) {:.unnumlist}
+`  (write "Hello.")`
 
-` (repeat)`
-!!!(p) {:.unnumlist}
+`  (repeat)`
 
-` (write "Command: ")`
-!!!(p) {:.unnumlist}
+`  (write "Command: ")`
 
-` (read ?command)`
-!!!(p) {:.unnumlist}
+`  (read ?command)`
 
-` (process ?command)`
-!!!(p) {:.unnumlist}
+`  (process ?command)`
 
-` (= ?command exit)`
-!!!(p) {:.unnumlist}
+`  (= ?command exit)`
 
-` (write "Good bye."))`
-!!!(p) {:.unnumlist}
+`  (write "Good bye."))`
 
 The intent is that commands are read one at a time, and then processed.
 For each command except `exit, process` takes the appropriate action and then fails.
@@ -2902,32 +2137,23 @@ A predicate should be understandable as a separate unit.
 But here the predicate process can only be understood by considering the context in which it is called: a context that requires it to fail after processing each command.
 As [Richard O'Keefe 1990](B9780080571157500285.xhtml#bb0925) points out, the correct way to write this clause is as follows:
 
-[ ](#){:#l0380}`(<− (main)`
-!!!(p) {:.unnumlist}
+`(<- (main)`
 
-` (write "Hello.")`
-!!!(p) {:.unnumlist}
+`  (write "Hello.")`
 
-` (repeat)`
-!!!(p) {:.unnumlist}
+`  (repeat)`
 
-`   (write "Command: ")`
-!!!(p) {:.unnumlist}
+`      (write "Command: ")`
 
-`   (read ?command)`
-!!!(p) {:.unnumlist}
+`      (read ?command)`
 
-`   (process ?command)`
-!!!(p) {:.unnumlist}
+`      (process ?command)`
 
-`   (or (= ?command exit) (fail))`
-!!!(p) {:.unnumlist}
+`      (or (= ?command exit) (fail))`
 
-` !`
-!!!(p) {:.unnumlist}
+`  !`
 
-` (write "Good bye."))`
-!!!(p) {:.unnumlist}
+`  (write "Good bye."))`
 
 The indentation clearly indicates the limits of the repeat loop.
 The loop is terminated by an explicit test and is followed by a cut, so that a calling program won't accidently backtrack into the loop after it has exited.
@@ -2937,39 +2163,29 @@ But O'Keefe shows that well-structured readable programs can be written in Prolo
 The if-then and if-then-else constructions can easily be written as clauses.
 Note that the if-then-else uses a cut to commit to the `then` part if the test is satisfied.
 
-[ ](#){:#l0385}`(<− (if ?test ?then) (if ?then ?else (fail)))`
-!!!(p) {:.unnumlist}
+`(<- (if ?test ?then) (if ?then ?else (fail)))`
 
-`(<− (if ?test ?then ?else)`
-!!!(p) {:.unnumlist}
+`(<- (if ?test ?then ?else)`
 
-` (call ?test)`
-!!!(p) {:.unnumlist}
+`  (call ?test)`
 
-` !`
-!!!(p) {:.unnumlist}
+`  !`
 
-` (call ?then))`
-!!!(p) {:.unnumlist}
+`  (call ?then))`
 
-`(<− (if ?test ?then ?else)`
-!!!(p) {:.unnumlist}
+`(<- (if ?test ?then ?else)`
 
-` (call ?else))`
-!!!(p) {:.unnumlist}
+`  (call ?else))`
 
 The cut can be used to implement the nonlogical `not`.
 The following two clauses are often given before as the definition of `not`.
 Our compiler succesfully turns these two clauses into exactly the same code as was given before for the primitive `not/1`:
 
-[ ](#){:#l0390}`(<− (not ?p) (call ?p) !
-(fail))`
-!!!(p) {:.unnumlist}
+`(<- (not ?p) (call ?p) ! (fail))`
 
-`(<− (not ?p))`
-!!!(p) {:.unnumlist}
+`(<- (not ?p))`
 
-## [ ](#){:#st0055}12.10 “Real” Prolog
+## 12.10 "Real" Prolog
 {:#s0055}
 {:.h1hd}
 
@@ -2985,7 +2201,6 @@ D.
 Warren and his colleagues.
 The names for the primitives in the last section are also taken from Edinburgh Prolog.
 
-[ ](#){:#t0025}
 !!!(table)
 
 | []() | | | | | | | | | |
@@ -3019,12 +2234,12 @@ Instead, when a choice is made, the address of the code for the next choice is p
 Upon failure, the next choice is popped off the stack.
 This is reminiscent of the backtracking approach using Scheme's `call/cc` facility outlined on [page 772](B9780080571157500224.xhtml#p772).
 
-**Exercise 12.15 [m]** Assuming an approach using a stack of failure continuations instead of success continuations, show what the code for `p` and `member` would look like.
+**Exercise  12.15 [m]** Assuming an approach using a stack of failure continuations instead of success continuations, show what the code for `p` and `member` would look like.
 Note that you need not pass failure continuations around; you can just push them onto a stack that `top-level-prove` will invoke.
 How would the cut be implemented?
 Did we make the right choice in implementing our compiler with success continuations, or would failure continuations have been better?
 
-## [ ](#){:#st0060}12.11 History and References
+## 12.11 History and References
 {:#s0060}
 {:.h1hd}
 
@@ -3042,46 +2257,44 @@ Warren's pioneering work on compiling Prolog has never been published in a widel
 His main contribution was the description of the Warren Abstract Machine (WAM), an instruction set for compiled Prolog.
 Most existing compilers use this instruction set, or a slight modification of it.
 This can be done either through byte-code interpretation or through macroexpansion to native machine instructions.
-[Aït-Kaci 1991](B9780080571157500285.xhtml#bb0020) provides a good tutorial on the WAM, much less terse than the original ([Warren 1983](B9780080571157500285.xhtml#bb1330)).
+[A&iuml;t-Kaci 1991](B9780080571157500285.xhtml#bb0020) provides a good tutorial on the WAM, much less terse than the original ([Warren 1983](B9780080571157500285.xhtml#bb1330)).
 The compiler presented in this chapter does not use the WAM.
 Instead, it is modeled after Mark [Stickel's (1988)](B9780080571157500285.xhtml#bb1200) theorem prover.
 A similar compiler is briefly sketched by Jacques [Cohen 1985](B9780080571157500285.xhtml#bb0225).
 
-## [ ](#){:#st0065}12.12 Exercises
+## 12.12 Exercises
 {:#s0065}
 {:.h1hd}
 
-**Exercise 12.16 [m]** Change the Prolog compiler to allow implicit `calls`.
+**Exercise  12.16 [m]** Change the Prolog compiler to allow implicit `calls`.
 That is, if a goal is not a cons cell headed by a predicate, compile it as if it were a `call`.
 The clause:
 
-[ ](#){:#l0395}`(<- (p ?x ?y) (?x c) ?y)`
-!!!(p) {:.unnumlist}
+`(<- (p ?x ?y) (?x c) ?y)`
 
 should be compiled as if it were:
 
-[ ](#){:#l0400}`(<− (p ?x ?y) (call (?x c)) (call ?y))`
-!!!(p) {:.unnumlist}
+`(<- (p ?x ?y) (call (?x c)) (call ?y))`
 
-**Exercise 12.17 [h]** Here are some standard Prolog primitives:
+**Exercise  12.17 [h]** Here are some standard Prolog primitives:
 
-* [ ](#){:#l0405}• `get/1` Read a single character and unify it with the argument.
+*   `get/1` Read a single character and unify it with the argument.
 
-* • `put/1` Print a single character.
+*   `put/1` Print a single character.
 
-* • `nonvar/1, /=, /==` The opposites of `var, = and = =` , respectively.
+*   `nonvar/1, /=, /==` The opposites of `var, = and = =` , respectively.
 
-* • `integer/1` True if the argument is an integer.
+*   `integer/1` True if the argument is an integer.
 
-* • `atom/1` True if the argument is a symbol (like Lisp's `symbol p`).
+*   `atom/1` True if the argument is a symbol (like Lisp's `symbol p`).
 
-* • `atomic/1` True if the argument is a number or symbol (like Lisp's `atom`).
+*   `atomic/1` True if the argument is a number or symbol (like Lisp's `atom`).
 
-* • <,>,=<,>= Arithmetic comparison; succeeds when the arguments are both instantiated to numbers and the comparison is true.
+*   <,>,=<,>= Arithmetic comparison; succeeds when the arguments are both instantiated to numbers and the comparison is true.
 
-* • `listing/0` Print out the clauses for all defined predicates.
+*   `listing/0` Print out the clauses for all defined predicates.
 
-* • `listing/1` Print out the clauses for the argument predicate.
+*   `listing/1` Print out the clauses for the argument predicate.
 
 Implement these predicates.
 In each case, decide if the predicate should be implemented as a primitive or a list of clauses, and if it should have a compiler macro.
@@ -3091,14 +2304,14 @@ Terms like `atom` have one meaning in Prolog and another in Lisp.
 Also, in Prolog the normal notation is \= and \==, not /= and /==.
 For Prolog-In-Lisp, you need to decide which notations to use: Prolog's or Lisp's.
 
-**Exercise 12.18 [s]** In Lisp, we are used to writing n-ary calls like `(< 1 n 10 ) or (= x y z )`.
+**Exercise  12.18 [s]** In Lisp, we are used to writing n-ary calls like `(<  1 n 10 ) or (= x y z )`.
 Write compiler macros that expand n-ary calls into a series of binary calls.
-For example, `(< 1 n 10)` should expand into `(and (< 1 n) (< n 10))`.
+For example, `(<  1 n 10)` should expand into `(and (<  1 n) (< n 10))`.
 
-**Exercise 12.19 [m]** One feature of Lisp that is absent in Prolog is the `quote` mechanism.
+**Exercise  12.19 [m]** One feature of Lisp that is absent in Prolog is the `quote` mechanism.
 Is there a use for `quote?` If so, implement it; if not, explain why it is not needed.
 
-**Exercise 12.20 [h]** Write a tracing mechanism for Prolog.
+**Exercise  12.20 [h]** Write a tracing mechanism for Prolog.
 Add procedures `p-trace` and `p-untrace` to trace and untrace Prolog predicates.
 Add code to the compiler to generate calls to a printing procedure for goals that are traced.
 In Lisp, we have to trace procedures when they are called and when they return.
@@ -3106,254 +2319,181 @@ In Prolog, there are four cases to consider: the call, successful completion, ba
 We will call these four `cases call`, `exit`, `redo,` and `fail`, respectively.
 If we traced `member,` we would expect tracing output to look something like this:
 
-[ ](#){:#l0410}`> (?- (member ?x (a b c d)) (fail))`
-!!!(p) {:.unnumlist}
+`> (?- (member ?x (a b c d)) (fail))`
 
-` CALL MEMBER: ?1 (A B C D)`
-!!!(p) {:.unnumlist}
+`  CALL MEMBER: ?1 (A B C D)`
 
-` EXIT MEMBER: A (A B C D)`
-!!!(p) {:.unnumlist}
+`  EXIT MEMBER: A (A B C D)`
 
-` REDO MEMBER: ?1 (A B C D)`
-!!!(p) {:.unnumlist}
+`  REDO MEMBER: ?1 (A B C D)`
 
-`  CALL MEMBER: ?1 (B C D)`
-!!!(p) {:.unnumlist}
+`    CALL MEMBER: ?1 (B C D)`
 
-`  EXIT MEMBER: B (B C D)`
-!!!(p) {:.unnumlist}
+`    EXIT MEMBER: B (B C D)`
 
-`  REDO MEMBER: ?1 (B C D)`
-!!!(p) {:.unnumlist}
+`    REDO MEMBER: ?1 (B C D)`
 
-`   CALL MEMBER: ?1 (C D)`
-!!!(p) {:.unnumlist}
+`      CALL MEMBER: ?1 (C D)`
 
-`   EXIT MEMBER: C (C D)`
-!!!(p) {:.unnumlist}
+`      EXIT MEMBER: C (C D)`
 
-`   REDO MEMBER: ?1 (C D)`
-!!!(p) {:.unnumlist}
+`      REDO MEMBER: ?1 (C D)`
 
-`    CALL MEMBER: ?1 (D)`
-!!!(p) {:.unnumlist}
+`        CALL MEMBER: ?1 (D)`
 
-`    EXIT MEMBER: D (D)`
-!!!(p) {:.unnumlist}
+`        EXIT MEMBER: D (D)`
 
-`    REDO MEMBER: ?1 (D)`
-!!!(p) {:.unnumlist}
+`        REDO MEMBER: ?1 (D)`
 
-`     CALL MEMBER: ?1 NIL`
-!!!(p) {:.unnumlist}
+`          CALL MEMBER: ?1 NIL`
 
-`     REDO MEMBER: ?1 NIL`
-!!!(p) {:.unnumlist}
+`          REDO MEMBER: ?1 NIL`
 
-`     FAIL MEMBER: ?1 NIL`
-!!!(p) {:.unnumlist}
+`          FAIL MEMBER: ?1 NIL`
 
-`    FAIL MEMBER: ?1 (D)`
-!!!(p) {:.unnumlist}
+`        FAIL MEMBER: ?1 (D)`
 
-`   FAIL MEMBER: ?1 (C D)`
-!!!(p) {:.unnumlist}
+`      FAIL MEMBER: ?1 (C D)`
 
-`  FAIL MEMBER: ?1 (B C D)`
-!!!(p) {:.unnumlist}
+`    FAIL MEMBER: ?1 (B C D)`
 
-` FAIL MEMBER: ?1 (A B C D)`
-!!!(p) {:.unnumlist}
+`  FAIL MEMBER: ?1 (A B C D)`
 
 `No.`
-!!!(p) {:.unnumlist}
 
-**Exercise 12.21 [m]** Some Lisp systems are very slow at compiling functions.
+**Exercise  12.21 [m]** Some Lisp systems are very slow at compiling functions.
 `KCL` is an example; it compiles by translating to `C` and then calling the `C` compiler and assembler.
 In `KCL` it is best to compile only code that is completely debugged, and run interpreted while developing a program.
 
 Alter the Prolog compiler so that calling the Lisp compiler is optional.
 In all cases, Prolog functions are translated into Lisp, but they are only compiled to machine language when a variable is set.
 
-**Exercise 12.22 [d]** Some Prolog systems provide the predicate `freeze` to "freeze" a goal until its variables are instantiated.
+**Exercise  12.22 [d]** Some Prolog systems provide the predicate `freeze` to "freeze" a goal until its variables are instantiated.
 For example, the goal `(freeze x (> x 0))` is interpreted as follows: if `x` is instantiated, then just evaluate the goal `(> x 0)`, and succeed or fail depending on the result.
 However, if `x` is unbound, then succeed and continue the computation, but remember the goal `(> x 0)` and evaluate it as soon as `x` becomes instantiated.
 Implement freeze.
 
-**Exercise 12.23 [m]** Write a recursive version of `anonymous-variables-in` that does not use a local function.
+**Exercise  12.23 [m]** Write a recursive version of `anonymous-variables-in` that does not use a local function.
 
-## [ ](#){:#st0070}12.13 Answers
+## 12.13 Answers
 {:#s0070}
 {:.h1hd}
 
 **Answer 12.6** Here's a version that works for Texas Instruments and Lucid implementations:
 
-[ ](#){:#l0415}`(defmacro with-compilation-unit (options &body body)`
-!!!(p) {:.unnumlist}
+`(defmacro with-compilation-unit (options &body body)`
 
-` "Do the body, but delay compiler warnings until the end."`
-!!!(p) {:.unnumlist}
+`  "Do the body, but delay compiler warnings until the end."`
 
-` ;; This is defined in Common Lisp the Language, 2nd ed.`
-!!!(p) {:.unnumlist}
+`  ;; This is defined in Common Lisp the Language, 2nd ed.`
 
-` '(,(read-time-case`
-!!!(p) {:.unnumlist}
+`  '(,(read-time-case`
 
-`  #+TI 'compi1er:compi1er-warnings-context-bind`
-!!!(p) {:.unnumlist}
+`    #+TI 'compi1er:compi1er-warnings-context-bind`
 
-`  #+Lucid 'with-deferred-warnings`
-!!!(p) {:.unnumlist}
+`    #+Lucid 'with-deferred-warnings`
 
-`    'progn)`
-!!!(p) {:.unnumlist}
+`        'progn)`
 
-`  .,body))`
-!!!(p) {:.unnumlist}
+`    .,body))`
 
 `(defun prolog-compile-symbols (&optional (symbols *uncompiled*))`
-!!!(p) {:.unnumlist}
 
-` "Compile a list of Prolog symbols.`
-!!!(p) {:.unnumlist}
+`  "Compile a list of Prolog symbols.`
 
-` By default, the list is all symbols that need it."`
-!!!(p) {:.unnumlist}
+`  By default, the list is all symbols that need it."`
 
-` (with-compilation-unit ()`
-!!!(p) {:.unnumlist}
+`  (with-compilation-unit ()`
 
-` (mapc #'prolog-compile symbols)`
-!!!(p) {:.unnumlist}
+`  (mapc #'prolog-compile symbols)`
 
-` (setf *uncompiled* (set-difference *uncompiled* symbols))))`
-!!!(p) {:.unnumlist}
+`  (setf *uncompiled* (set-difference *uncompiled* symbols))))`
 
 **Answer 12.9** Macros for `and` and `or` are very important, since these are commonly used.
 The macro for `and` is trivial:
 
-[ ](#){:#l0420}`(def-prolog-compiler-macro and (goal body cont bindings)`
-!!!(p) {:.unnumlist}
+`(def-prolog-compiler-macro and (goal body cont bindings)`
 
-` (compile-body (append (args goal) body) cont bindings))`
-!!!(p) {:.unnumlist}
+`  (compile-body (append (args goal) body) cont bindings))`
 
 The macro for or is trickier:
 
-[ ](#){:#l0425}`(def-prolog-compiler-macro or (goal body cont bindings)`
-!!!(p) {:.unnumlist}
+`(def-prolog-compiler-macro or (goal body cont bindings)`
 
-` (let ((disjuncts (args goal)))`
-!!!(p) {:.unnumlist}
+`  (let ((disjuncts (args goal)))`
 
-`  (case (length disjuncts)`
-!!!(p) {:.unnumlist}
+`    (case (length disjuncts)`
 
-`   (0 fail)`
-!!!(p) {:.unnumlist}
+`      (0 fail)`
 
-`   (1 (compile-body (cons (first disjuncts) body) cont bindings))`
-!!!(p) {:.unnumlist}
+`      (1 (compile-body (cons (first disjuncts) body) cont bindings))`
 
-`   (t (let ((fn (gensym "F")))`
-!!!(p) {:.unnumlist}
+`      (t (let ((fn (gensym "F")))`
 
-`    '(flèt ((,fn () ,(compile-body body cont bindings)))`
-!!!(p) {:.unnumlist}
+`        '(fl&egrave;t ((,fn () ,(compile-body body cont bindings)))`
 
-`     .,(maybe-add-undo-bindings`
-!!!(p) {:.unnumlist}
+`          .,(maybe-add-undo-bindings`
 
-`      (loop for g in disjuncts collect`
-!!!(p) {:.unnumlist}
+`            (loop for g in disjuncts collect`
 
-`       (compile-body (list g) '#',fn`
-!!!(p) {:.unnumlist}
+`              (compile-body (list g) '#',fn`
 
-`        bindings)))))))))`
-!!!(p) {:.unnumlist}
+`                bindings)))))))))`
 
 **Answer 12.11**`true/0` is `funcall` : when a goal succeeds, we call the continuation, `fail/0` is `ignore`: when a goal fails, we ignore the continuation.
 We could also define compiler macros for these primitives:
 
-[ ](#){:#l0430}`(def-prolog-compiler-macro true (goal body cont bindings)`
-!!!(p) {:.unnumlist}
+`(def-prolog-compiler-macro true (goal body cont bindings)`
 
-` (compile-body body cont bindings))`
-!!!(p) {:.unnumlist}
+`  (compile-body body cont bindings))`
 
 `(def-prolog-compiler-macro fail (goal body cont bindings)`
-!!!(p) {:.unnumlist}
 
-` (declare (ignore goal body cont bindings))`
-!!!(p) {:.unnumlist}
+`  (declare (ignore goal body cont bindings))`
 
-` nil)`
-!!!(p) {:.unnumlist}
+`  nil)`
 
 **Answer 12.13**
 
-[ ](#){:#l0435}`(defun deref-copy (exp)`
-!!!(p) {:.unnumlist}
+`(defun deref-copy (exp)`
 
-` "Build a copy of the expression, which may have variables.`
-!!!(p) {:.unnumlist}
+`  "Build a copy of the expression, which may have variables.`
 
-` The part without variables can be returned as is."`
-!!!(p) {:.unnumlist}
+`  The part without variables can be returned as is."`
 
-` (let ((var-alist nil ))`
-!!!(p) {:.unnumlist}
+`  (let ((var-alist nil ))`
 
-`  (labels`
-!!!(p) {:.unnumlist}
+`    (labels`
 
-`   ((walk (exp)`
-!!!(p) {:.unnumlist}
+`      ((walk (exp)`
 
-`    (deref exp)`
-!!!(p) {:.unnumlist}
+`        (deref exp)`
 
-`    (cond ((consp exp)`
-!!!(p) {:.unnumlist}
+`        (cond ((consp exp)`
 
-`     (reuse-cons (walk (first exp))`
-!!!(p) {:.unnumlist}
+`          (reuse-cons (walk (first exp))`
 
-`       (walk (rest exp))`
-!!!(p) {:.unnumlist}
+`              (walk (rest exp))`
 
-`       exp))`
-!!!(p) {:.unnumlist}
+`              exp))`
 
-`     ((var-p exp)`
-!!!(p) {:.unnumlist}
+`          ((var-p exp)`
 
-`     (let ((entry (assoc exp var-alist)))`
-!!!(p) {:.unnumlist}
+`          (let ((entry (assoc exp var-alist)))`
 
-`      (if (not (null entry))`
-!!!(p) {:.unnumlist}
+`            (if (not (null entry))`
 
-`      (cdr entry)`
-!!!(p) {:.unnumlist}
+`            (cdr entry)`
 
-`      (let ((var-copy (?)))`
-!!!(p) {:.unnumlist}
+`            (let ((var-copy (?)))`
 
-`        (push (cons exp var-copy) var-alist)`
-!!!(p) {:.unnumlist}
+`                (push (cons exp var-copy) var-alist)`
 
-`        var-copy))))`
-!!!(p) {:.unnumlist}
+`                var-copy))))`
 
-`     (t exp))))`
-!!!(p) {:.unnumlist}
+`          (t exp))))`
 
-`  (walk exp))))`
-!!!(p) {:.unnumlist}
+`    (walk exp))))`
 
 **Answer 12.14** In the first clause of `test-cut`, all four calls to `p` will succeed via the first clause of `p`.
 Then backtracking will occur over the calls to `(p c)` and `(p d)`.
@@ -3362,55 +2502,39 @@ After that, backtracking would normally go back to the call to `(p b)`.
 But the cut prevents this, and the whole `(test-cut)` goal fails, without ever considering the second clause.
 Here's the actual output:
 
-[ ](#){:#l0440}`(?- (test-cut))`
-!!!(p) {:.unnumlist}
+`(?- (test-cut))`
 
 `(A 1)(B 1)(C 1) (D 1)`
-!!!(p) {:.unnumlist}
 
 `Yes;`
-!!!(p) {:.unnumlist}
 
 `(D 2)`
-!!!(p) {:.unnumlist}
 
 `Yes;`
-!!!(p) {:.unnumlist}
 
 `(C 2)(D 1)`
-!!!(p) {:.unnumlist}
 
 `Yes;`
-!!!(p) {:.unnumlist}
 
 `(D 2)`
-!!!(p) {:.unnumlist}
 
 `Yes;`
-!!!(p) {:.unnumlist}
 
 `No.`
-!!!(p) {:.unnumlist}
 
 **Answer 12.17** For example:
 
-[ ](#){:#l0445}`(defun >/2 (x y cont)`
-!!!(p) {:.unnumlist}
+`(defun >/2 (x y cont)`
 
-` (if (and (numberp (deref x)) (numberp (deref y)) (> x y))`
-!!!(p) {:.unnumlist}
+`  (if (and (numberp (deref x)) (numberp (deref y)) (> x y))`
 
-`  (funcall cont)))`
-!!!(p) {:.unnumlist}
+`    (funcall cont)))`
 
 `(defun numberp/1 (x cont)`
-!!!(p) {:.unnumlist}
 
-` (if (numberp (deref x))`
-!!!(p) {:.unnumlist}
+`  (if (numberp (deref x))`
 
-`  (funcall cont)))`
-!!!(p) {:.unnumlist}
+`    (funcall cont)))`
 
 **Answer 12.19** Lisp uses quote in two ways: to distinguish a symbol from the value of the variable represented by that symbol, and to distinguish a literal list from the value that would be returned by evaluating a function call.
 The first distinction Prolog makes by a lexical convention: variables begin with a question mark in our Prolog, and they are capitalized in real Prolog.
@@ -3419,127 +2543,88 @@ An expression is a goal if it is a member of the body of a clause, and is a lite
 
 **Answer 12.20** Hint: Here's how `member` could be augmented with calls to a procedure, `prolog-trace`, which will print information about the four kinds of tracing events:
 
-[ ](#){:#l0450}`(defun member/2 (?arg1 ?arg2 cont)`
-!!!(p) {:.unnumlist}
+`(defun member/2 (?arg1 ?arg2 cont)`
 
-` (let ((old-trail (fill-pointer *tra1l*))`
-!!!(p) {:.unnumlist}
+`  (let ((old-trail (fill-pointer *tra1l*))`
 
-`   (exit-cont #'(lambda ()`
-!!!(p) {:.unnumlist}
+`      (exit-cont #'(lambda ()`
 
-`     (prolog-trace 'exit 'member ?arg1 ?arg2 )`
-!!!(p) {:.unnumlist}
+`          (prolog-trace 'exit 'member ?arg1 ?arg2 )`
 
-`     (funcall cont))))`
-!!!(p) {:.unnumlist}
+`          (funcall cont))))`
 
-`  (prolog-trace 'call 'member ?arg1 ?arg2)`
-!!!(p) {:.unnumlist}
+`    (prolog-trace 'call 'member ?arg1 ?arg2)`
 
-`  (if (unify!
+`    (if (unify!
 ?arg2 (cons ?arg1 (?)))`
-!!!(p) {:.unnumlist}
 
-`   (funcall exit-cont))`
-!!!(p) {:.unnumlist}
+`      (funcall exit-cont))`
 
-`  (undo-bindings!
+`    (undo-bindings!
 old-trail)`
-!!!(p) {:.unnumlist}
 
-`  (prolog-trace 'redo 'member ?arg1 ?arg2)`
-!!!(p) {:.unnumlist}
+`    (prolog-trace 'redo 'member ?arg1 ?arg2)`
 
-`  (let ((?rest (?)))`
-!!!(p) {:.unnumlist}
+`    (let ((?rest (?)))`
 
-`   (if (unify!
+`      (if (unify!
 ?arg2 (cons (?) ?rest))`
-!!!(p) {:.unnumlist}
 
-`   (member/2 ?arg1 ?rest exit-cont)))`
-!!!(p) {:.unnumlist}
+`      (member/2 ?arg1 ?rest exit-cont)))`
 
-`  (prolog-trace 'fail 'member ?arg1 ?arg2)))`
-!!!(p) {:.unnumlist}
+`    (prolog-trace 'fail 'member ?arg1 ?arg2)))`
 
 The definition of `prolog-trace` is:
 
-[ ](#){:#l9005}`(defvar *prolog-trace-indent* 0)`
-!!!(p) {:.unnumlist}
+`(defvar *prolog-trace-indent* 0)`
 
 `(defun prolog-trace (kind predicate &rest args)`
-!!!(p) {:.unnumlist}
 
-` (if (member kind '(call redo))`
-!!!(p) {:.unnumlist}
+`  (if (member kind '(call redo))`
 
-` (incf *prolog-trace-indent* 3))`
-!!!(p) {:.unnumlist}
+`  (incf *prolog-trace-indent* 3))`
 
-` (format t "~&~VT~a ~ a:~{ ~ a ~}"`
-!!!(p) {:.unnumlist}
+`  (format t "~&~VT~a ~  a:~{ ~  a  ~}"`
 
-`   *prolog-trace-indent* kind predicate args)`
-!!!(p) {:.unnumlist}
+`      *prolog-trace-indent* kind predicate args)`
 
-` (if (member kind '(fail exit))`
-!!!(p) {:.unnumlist}
+`  (if (member kind '(fail exit))`
 
-` (decf *prolog-trace-indent* 3)))`
-!!!(p) {:.unnumlist}
+`  (decf *prolog-trace-indent* 3)))`
 
 **Answer 12.23**
 
-[ ](#){:#l0455}`(defun anonymous-variables-in (tree)`
-!!!(p) {:.unnumlist}
+`(defun anonymous-variables-in (tree)`
 
-` "Return a list of all variables that occur only once in tree."`
-!!!(p) {:.unnumlist}
+`  "Return a list of all variables that occur only once in tree."`
 
-` (values (anon-vars-in tree nil nil)))`
-!!!(p) {:.unnumlist}
+`  (values (anon-vars-in tree nil nil)))`
 
 `(defun anon-vars-in (tree seen-once seen-more)`
-!!!(p) {:.unnumlist}
 
-` "Walk the data structure TREE, returning a list of variables`
-!!!(p) {:.unnumlist}
+`  "Walk the data structure TREE, returning a list of variables`
 
-` seen once, and a list of variables seen more than once."`
-!!!(p) {:.unnumlist}
+`  seen once, and a list of variables seen more than once."`
 
-` (cond`
-!!!(p) {:.unnumlist}
+`  (cond`
 
-`  ((consp tree)`
-!!!(p) {:.unnumlist}
+`    ((consp tree)`
 
-`  (multiple-value-bind (new-seen-once new-seen-more)`
-!!!(p) {:.unnumlist}
+`    (multiple-value-bind (new-seen-once new-seen-more)`
 
-`   (anon-vars-in (first tree) seen-once seen-more)`
-!!!(p) {:.unnumlist}
+`      (anon-vars-in (first tree) seen-once seen-more)`
 
-`   (anon-vars-in (rest tree) new-seen-once new-seen-more)))`
-!!!(p) {:.unnumlist}
+`      (anon-vars-in (rest tree) new-seen-once new-seen-more)))`
 
-`  ((not (variable-p tree)) (values seen-once seen-more))`
-!!!(p) {:.unnumlist}
+`    ((not (variable-p tree)) (values seen-once seen-more))`
 
-`  ((member tree seen-once)`
-!!!(p) {:.unnumlist}
+`    ((member tree seen-once)`
 
-`  (values (delete tree seen-once) (cons tree seen-more)))`
-!!!(p) {:.unnumlist}
+`    (values (delete tree seen-once) (cons tree seen-more)))`
 
-`  ((member tree seen-more)`
-!!!(p) {:.unnumlist}
+`    ((member tree seen-more)`
 
-`  (values seen-once seen-more))`
-!!!(p) {:.unnumlist}
+`    (values seen-once seen-more))`
 
-`  (t (values (cons tree seen-once) seen-more))))`
-!!!(p) {:.unnumlist}
+`    (t (values (cons tree seen-once) seen-more))))`
 

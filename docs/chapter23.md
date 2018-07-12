@@ -8,32 +8,30 @@ The simplest compiler need not be much more complex than an interpreter.
 One thing that makes a compiler more complex is that we have to describe the output of the compiler: the instruction set of the machine we are compiling for.
 For the moment let's assume a stack-based machine.
 The calling sequence on this machine for a function call with *n* arguments is to push the *n* arguments onto the stack and then push the function to be called.
-A `“CALL *n*”` instruction saves the return point on the stack and goes to the first instruction of the called function.
+A `"CALL *n*"` instruction saves the return point on the stack and goes to the first instruction of the called function.
 By convention, the first instruction of a function will always be `"ARGS *n*"`, which pops *n* arguments off the stack, putting them in the new function's environment, where they can be accessed by `LVAR` and `LSET` instructions.
 The function should return with a `RETURN` instruction, which resets the program counter and the environment to the point of the original `CALL` instruction.
 
 In addition, our machine has three `JUMP` instructions; one that branches unconditionally, and two that branch depending on if the top of the stack is nil or non-nil.
 There is also an instruction for popping unneeded values off the stack, and for accessing and altering global variables.
-The instruction set is shown in [figure 23.1](#f0010).
-A glossary for the compiler program is given in [figure 23.2](#f0015).
+The instruction set is shown in [figure  23.1](#f0010).
+A glossary for the compiler program is given in [figure  23.2](#f0015).
 A summary of a more complex version of the compiler appears on [page 795](#p795).
 
 ![f23-01-9780080571157](images/B9780080571157500236/f23-01-9780080571157.jpg)     
-Figure 23.1
+Figure  23.1
 !!!(span) {:.fignum}
 Instruction Set for Hypothetical Stack Machine
 ![f23-02-9780080571157](images/B9780080571157500236/f23-02-9780080571157.jpg)     
-Figure 23.2
+Figure  23.2
 !!!(span) {:.fignum}
 Glossary for the Scheme Compiler
 As an example, the procedure
 
-[ ](#){:#l0010}`(lambda () (if (= x y) (f (g x)) (h x y (h 1 2))))`
-!!!(p) {:.unnumlist}
+`(lambda () (if (= x y) (f (g x)) (h x y (h 1 2))))`
 
 should compile into the following instructions:
 
-[ ](#){:#t0010}
 !!!(table)
 
 | []() | | | | | | | | | |
@@ -64,152 +62,107 @@ The first version of the Scheme compiler is quite simple.
 It mimics the structure of the Scheme evaluator.
 The difference is that each case generates code rather than evaluating a subexpression:
 
-[ ](#){:#l0015}`(defun comp (x env)`
-!!!(p) {:.unnumlist}
+`(defun comp (x env)`
 
-`  "Compile the expression x into a list of instructions."`
-!!!(p) {:.unnumlist}
+`    "Compile the expression x into a list of instructions."`
 
-`  (cond`
-!!!(p) {:.unnumlist}
+`    (cond`
 
-`    ((symbolp x) (gen-var x env))`
-!!!(p) {:.unnumlist}
+`        ((symbolp x) (gen-var x env))`
 
-`    ((atom x) (gen 'CONST x))`
-!!!(p) {:.unnumlist}
+`        ((atom x) (gen 'CONST x))`
 
-`    ((scheme-macro (first x)) (comp (scheme-macro-expand x) env))`
-!!!(p) {:.unnumlist}
+`        ((scheme-macro (first x)) (comp (scheme-macro-expand x) env))`
 
-`    ((case (first x)`
-!!!(p) {:.unnumlist}
+`        ((case (first x)`
 
-`      (QUOTE (gen 'CONST (second x)))`
-!!!(p) {:.unnumlist}
+`            (QUOTE (gen 'CONST (second x)))`
 
-`      (BEGIN (comp-begin (rest x) env))`
-!!!(p) {:.unnumlist}
+`            (BEGIN (comp-begin (rest x) env))`
 
-`      (SET!
+`            (SET!
 (seq (comp (third x) env) (gen-set (second x) env)))`
-!!!(p) {:.unnumlist}
 
-`      (IF (comp-if (second x) (third x) (fourth x) env))`
-!!!(p) {:.unnumlist}
+`            (IF (comp-if (second x) (third x) (fourth x) env))`
 
-`      (LAMBDA (gen 'FN (comp-lambda (second x) (rest (rest x)) env)))`
-!!!(p) {:.unnumlist}
+`            (LAMBDA (gen 'FN (comp-lambda (second x) (rest (rest x)) env)))`
 
-`      ;; Procedure application:`
-!!!(p) {:.unnumlist}
+`            ;; Procedure application:`
 
-`      ;; Compile args, then fn, then the call`
-!!!(p) {:.unnumlist}
+`            ;; Compile args, then fn, then the call`
 
-`      (t  (seq (mappend #'(lambda (y) (comp y env)) (rest x))`
-!!!(p) {:.unnumlist}
+`            (t    (seq (mappend #'(lambda (y) (comp y env)) (rest x))`
 
-`               (comp (first x) env)`
-!!!(p) {:.unnumlist}
+`                              (comp (first x) env)`
 
-`          (gen 'call (length (rest x)))))))))`
-!!!(p) {:.unnumlist}
+`                    (gen 'call (length (rest x)))))))))`
 
-The compiler `comp` has the same nine cases–in fact the exact same structure–as the interpreter `interp` from [chapter 22](B9780080571157500224.xhtml).
+The compiler `comp` has the same nine cases-in fact the exact same structure-as the interpreter `interp` from [chapter 22](B9780080571157500224.xhtml).
 Each case is slightly more complex, so the three main cases have been made into separate functions: `comp-begin`, `comp-if`, and `comp-lambda.` A `begin` expression is compiled by compiling each argument in turn but making sure to pop each value but the last off the stack after it is computed.
 The last element in the `begin` stays on the stack as the value of the whole expression.
 Note that the function `gen` generates a single instruction (actually a list of one instruction), and `seq` makes a sequence of instructions out of two or more subsequences.
 
-[ ](#){:#l0020}`(defun comp-begin (exps env)`
-!!!(p) {:.unnumlist}
+`(defun comp-begin (exps env)`
 
-`  "Compile a sequence of expressions, popping all but the last."`
-!!!(p) {:.unnumlist}
+`    "Compile a sequence of expressions, popping all but the last."`
 
-`  (cond ((null exps) (gen 'CONST nil))`
-!!!(p) {:.unnumlist}
+`    (cond ((null exps) (gen 'CONST nil))`
 
-`        ((length=l exps) (comp (first exps) env))`
-!!!(p) {:.unnumlist}
+`                ((length=l exps) (comp (first exps) env))`
 
-`        (t (seq (comp (first exps) env)`
-!!!(p) {:.unnumlist}
+`                (t (seq (comp (first exps) env)`
 
-`                (gen 'POP)`
-!!!(p) {:.unnumlist}
+`                                (gen 'POP)`
 
-`                (comp-begin (rest exps) env)))))`
-!!!(p) {:.unnumlist}
+`                                (comp-begin (rest exps) env)))))`
 
 An `if` expression is compiled by compiling the predicate, then part, and else part, and by inserting appropriate branch instructions.
 
-[ ](#){:#l0025}`(defun comp-if (pred then else env)`
-!!!(p) {:.unnumlist}
+`(defun comp-if (pred then else env)`
 
-`  "Compile a conditional expression."`
-!!!(p) {:.unnumlist}
+`    "Compile a conditional expression."`
 
-`  (let ((L1 (gen-label))`
-!!!(p) {:.unnumlist}
+`    (let ((L1 (gen-label))`
 
-`        (L2 (gen-label)))`
-!!!(p) {:.unnumlist}
+`                (L2 (gen-label)))`
 
-`    (seq (comp pred env) (gen 'FJUMP L1)`
-!!!(p) {:.unnumlist}
+`        (seq (comp pred env) (gen 'FJUMP L1)`
 
-`         (comp then env) (gen 'JUMP L2)`
-!!!(p) {:.unnumlist}
+`                  (comp then env) (gen 'JUMP L2)`
 
-`         (list L1) (comp else env)`
-!!!(p) {:.unnumlist}
+`                  (list L1) (comp else env)`
 
-`         (list L2))))`
-!!!(p) {:.unnumlist}
+`                  (list L2))))`
 
 Finally, a `lambda` expression is compiled by compiling the body, surrounding it with one instruction to set up the arguments and another to return from the function, and then storing away the resulting compiled code, along with the environment.
 The data type `fn` is implemented as a structure with slots for the body of the code, the argument list, and the name of the function (for printing purposes only).
 
-[ ](#){:#l0030}`(defstruct (fn (:print-function print-fn))`
-!!!(p) {:.unnumlist}
+`(defstruct (fn (:print-function print-fn))`
 
-`  code (env nil)(name nil) (args nil))`
-!!!(p) {:.unnumlist}
+`    code (env nil)(name nil) (args nil))`
 
 `(defun comp-lambda (args body env)`
-!!!(p) {:.unnumlist}
 
-`  "Compile a lambda form into a closure with compiled code."`
-!!!(p) {:.unnumlist}
+`    "Compile a lambda form into a closure with compiled code."`
 
-`  (assert (and (listp args) (every #'symbolp args)) ()`
-!!!(p) {:.unnumlist}
+`    (assert (and (listp args) (every #'symbolp args)) ()`
 
-`          "Lambda arglist must be a list of symbols, not ~ a" args)`
-!!!(p) {:.unnumlist}
+`                    "Lambda arglist must be a list of symbols, not ~  a" args)`
 
-`  ;; For now.
+`    ;; For now.
 no &rest parameters.`
-!!!(p) {:.unnumlist}
 
-`  ;; The next version will support Scheme's version of &rest`
-!!!(p) {:.unnumlist}
+`    ;; The next version will support Scheme's version of &rest`
 
-`  (make-fn`
-!!!(p) {:.unnumlist}
+`    (make-fn`
 
-`    :env env :args args`
-!!!(p) {:.unnumlist}
+`        :env env :args args`
 
-`    :code (seq (gen 'ARGS (length args))`
-!!!(p) {:.unnumlist}
+`        :code (seq (gen 'ARGS (length args))`
 
-`               (comp-begin body (cons args env))`
-!!!(p) {:.unnumlist}
+`                              (comp-begin body (cons args env))`
 
-`               (gen 'RETURN))))`
-!!!(p) {:.unnumlist}
+`                              (gen 'RETURN))))`
 
 The advantage of compiling over interpreting is that much can be decided at compile time.
 For example, the compiler can determine if a variable reference is to a global or lexical variable, and if it is to a lexical variable, exactly where that lexical variable is stored.
@@ -223,260 +176,181 @@ It would be too expensive to make such checks in an interpreter, but in a compil
 
 Before we show the rest of the compiler, here's a useful top-level interface to `comp`:
 
-[ ](#){:#l0035}`(defvar *label-num* 0)`
-!!!(p) {:.unnumlist}
+`(defvar *label-num* 0)`
 
 `(defun compiler (x)`
-!!!(p) {:.unnumlist}
 
-`  "Compile an expression as if it were in a parameterless lambda."`
-!!!(p) {:.unnumlist}
+`    "Compile an expression as if it were in a parameterless lambda."`
 
-`  (setf *label-num* 0)`
-!!!(p) {:.unnumlist}
+`    (setf *label-num* 0)`
 
-`  (comp-lambda '() (list x) nil))`
-!!!(p) {:.unnumlist}
+`    (comp-lambda '() (list x) nil))`
 
 `(defun comp-show (x)`
-!!!(p) {:.unnumlist}
 
-`  "Compile an expression and show the resulting code"`
-!!!(p) {:.unnumlist}
+`    "Compile an expression and show the resulting code"`
 
-` (show-fn (compiler x))`
-!!!(p) {:.unnumlist}
+`  (show-fn (compiler x))`
 
-`  (values))`
-!!!(p) {:.unnumlist}
+`    (values))`
 
 Now here's the code to generate individual instructions and sequences of instructions.
 A sequence of instructions is just a list, but we provide the function `seq` rather than using `append` directly for purposes of data abstraction.
 A label is just an atom.
 
-[ ](#){:#l0040}`(defun gen (opcode &rest args)`
-!!!(p) {:.unnumlist}
+`(defun gen (opcode &rest args)`
 
-`  "Return a one-element list of the specified instruction."`
-!!!(p) {:.unnumlist}
+`    "Return a one-element list of the specified instruction."`
 
-`  (list (cons opcode args)))`
-!!!(p) {:.unnumlist}
+`    (list (cons opcode args)))`
 
 `(defun seq (&rest code)`
-!!!(p) {:.unnumlist}
 
-`  "Return a sequence of instructions"`
-!!!(p) {:.unnumlist}
+`    "Return a sequence of instructions"`
 
-`  (apply #'append code))`
-!!!(p) {:.unnumlist}
+`    (apply #'append code))`
 
 `(defun gen-label (&optional (label 'L))`
-!!!(p) {:.unnumlist}
 
-`  "Generate a label (a symbol of the form Lnnn)"`
-!!!(p) {:.unnumlist}
+`    "Generate a label (a symbol of the form Lnnn)"`
 
-`  (intern (format nil "~a~d" label (incf *label-num*))))`
-!!!(p) {:.unnumlist}
+`    (intern (format nil "~a~d" label (incf *label-num*))))`
 
 Environments are now represented as lists of frames, where each frame is a sequence of variables.
 Local variables are referred to not by their name but by two integers: the index into the list of frames and the index into the individual frame.
 As usual, the indexes are zero-based.
 For example, given the code:
 
-[ ](#){:#l0045}`(let ((a 2.0)`
-!!!(p) {:.unnumlist}
+`(let ((a 2.0)`
 
-`     (b 2.1))`
-!!!(p) {:.unnumlist}
+`          (b 2.1))`
 
-` (let ((c 1.0)`
-!!!(p) {:.unnumlist}
+`  (let ((c 1.0)`
 
-`      (d 1.1))`
-!!!(p) {:.unnumlist}
+`            (d 1.1))`
 
-`  (let ((e 0.0)`
-!!!(p) {:.unnumlist}
+`    (let ((e 0.0)`
 
-`     (f 0.1))`
-!!!(p) {:.unnumlist}
+`          (f 0.1))`
 
-`   (+ a b c d e f))))`
-!!!(p) {:.unnumlist}
+`      (+ a b c d e f))))`
 
 the innermost environment is `((e f) (c d) (a b))`.
 The function `in-env-p` tests if a variable appears in an environment.
 If this environment were called `env`, then `(in-env-p 'f env)` would return `(2 1)` and `(in-env-p 'x env)` would return `nil`.
 
-[ ](#){:#l0050}`(defun gen-var (var env)`
-!!!(p) {:.unnumlist}
+`(defun gen-var (var env)`
 
-`  "Generate an instruction to reference a variable's value."`
-!!!(p) {:.unnumlist}
+`    "Generate an instruction to reference a variable's value."`
 
-`  (let ((p (in-env-p var env)))`
-!!!(p) {:.unnumlist}
+`    (let ((p (in-env-p var env)))`
 
-`    (if p`
-!!!(p) {:.unnumlist}
+`        (if p`
 
-`        (gen 'LVAR (first p) (second p) ";" var)`
-!!!(p) {:.unnumlist}
+`                (gen 'LVAR (first p) (second p) ";" var)`
 
-`        (gen 'GVAR var))))`
-!!!(p) {:.unnumlist}
+`                (gen 'GVAR var))))`
 
 `(defun gen-set (var env)`
-!!!(p) {:.unnumlist}
 
-`  "Generate an instruction to set a variable to top-of-stack."`
-!!!(p) {:.unnumlist}
+`    "Generate an instruction to set a variable to top-of-stack."`
 
-`  (let ((p (in-env-p var env)))`
-!!!(p) {:.unnumlist}
+`    (let ((p (in-env-p var env)))`
 
-`    (if p`
-!!!(p) {:.unnumlist}
+`        (if p`
 
-`        (gen 'LSET (first p) (second p) ";" var)`
-!!!(p) {:.unnumlist}
+`                (gen 'LSET (first p) (second p) ";" var)`
 
-`        (gen 'GSET var))))`
-!!!(p) {:.unnumlist}
+`                (gen 'GSET var))))`
 
 Finally, we have some auxiliary functions to print out the results, to distinguish between labels and instructions, and to determine the index of a variable in an environment.
 Scheme functions now are implemented as structures, which must have a field for the code, and one for the environment.
-In addition, we provide a field for the name of the function and for the argument list; these are used only for debugging purposes, We'll adopt the convention that the `define` macro sets the function's name field, by calling `name` !
-(which is not part of standard Scheme).
+In addition, we provide a field for the name of the function and for the argument list; these are used only for debugging purposes, We'll adopt the convention that the `define` macro sets the function's name field, by calling `name` ! (which is not part of standard Scheme).
 
-[ ](#){:#l0055}`(def-scheme-macro define (name &rest body)`
-!!!(p) {:.unnumlist}
+`(def-scheme-macro define (name &rest body)`
 
-` (if (atom name)`
-!!!(p) {:.unnumlist}
+`  (if (atom name)`
 
-`   '(name!
+`      '(name!
 (set!
-,name .
-,body) ',name)`
-!!!(p) {:.unnumlist}
+,name . ,body) ',name)`
 
-`  (scheme-macro-expand`
-!!!(p) {:.unnumlist}
+`    (scheme-macro-expand`
 
-`    '(define ,(first name)`
-!!!(p) {:.unnumlist}
+`        '(define ,(first name)`
 
-`     (lambda ,(rest name) .
-,body)))))`
-!!!(p) {:.unnumlist}
+`          (lambda ,(rest name) . ,body)))))`
 
 `(defun name!
 (fn name)`
-!!!(p) {:.unnumlist}
 
-` "Set the name field of fn, if it is an un-named fn."`
-!!!(p) {:.unnumlist}
+`  "Set the name field of fn, if it is an un-named fn."`
 
-` (when (and (fn-p fn) (null (fn-name fn)))`
-!!!(p) {:.unnumlist}
+`  (when (and (fn-p fn) (null (fn-name fn)))`
 
-`  (setf (fn-name fn) name))`
-!!!(p) {:.unnumlist}
+`    (setf (fn-name fn) name))`
 
-` name)`
-!!!(p) {:.unnumlist}
+`  name)`
 
 `;; This should also go in init-scheme-interp:`
-!!!(p) {:.unnumlist}
 
 `(set-global-var!
 'name!
 #'name!)`
-!!!(p) {:.unnumlist}
 
 `(defun print-fn (fn &optional (stream *standard-output*) depth)`
-!!!(p) {:.unnumlist}
 
-` (declare (ignore depth))`
-!!!(p) {:.unnumlist}
+`  (declare (ignore depth))`
 
-` (format stream "{~ a}" (or (fn-name fn) '??)))`
-!!!(p) {:.unnumlist}
+`  (format stream "{~  a}" (or (fn-name fn) '??)))`
 
 `(defun show-fn (fn &optional (stream *standard-output*) (depth 0))`
-!!!(p) {:.unnumlist}
 
-`  "Print all the instructions in a function.`
-!!!(p) {:.unnumlist}
+`    "Print all the instructions in a function.`
 
-`  If the argument is not a function, just princ it,`
-!!!(p) {:.unnumlist}
+`    If the argument is not a function, just princ it,`
 
-`  but in a column at least 8 spaces wide."`
-!!!(p) {:.unnumlist}
+`    but in a column at least 8 spaces wide."`
 
-`  (if (not (fn-p fn))`
-!!!(p) {:.unnumlist}
+`    (if (not (fn-p fn))`
 
-`      (format stream "~8a" fn)`
-!!!(p) {:.unnumlist}
+`            (format stream "~8a" fn)`
 
-`      (progn`
-!!!(p) {:.unnumlist}
+`            (progn`
 
-`        (fresh-line)`
-!!!(p) {:.unnumlist}
+`                (fresh-line)`
 
-`        (incf depth 8)`
-!!!(p) {:.unnumlist}
+`                (incf depth 8)`
 
-`        (dolist (instr (fn-code fn))`
-!!!(p) {:.unnumlist}
+`                (dolist (instr (fn-code fn))`
 
-`          (if (label-p instr)`
-!!!(p) {:.unnumlist}
+`                    (if (label-p instr)`
 
-`              (format stream "~a:" instr)`
-!!!(p) {:.unnumlist}
+`                            (format stream "~a:" instr)`
 
-`              (progn`
-!!!(p) {:.unnumlist}
+`                            (progn`
 
-`                (format stream "~VT" depth)`
-!!!(p) {:.unnumlist}
+`                                (format stream "~VT" depth)`
 
-`                (dolist (arg instr)`
-!!!(p) {:.unnumlist}
+`                                (dolist (arg instr)`
 
-`                  (show-fn arg stream depth))`
-!!!(p) {:.unnumlist}
+`                                    (show-fn arg stream depth))`
 
-`                (fresh-line)))))))`
-!!!(p) {:.unnumlist}
+`                                (fresh-line)))))))`
 
 `(defun label-p (x) "Is x a label?" (atom x))`
-!!!(p) {:.unnumlist}
 
 `(defun in-env-p (symbol env)`
-!!!(p) {:.unnumlist}
 
-`  "If symbol is in the environment.
+`    "If symbol is in the environment.
 return its index numbers."`
-!!!(p) {:.unnumlist}
 
-`  (let ((frame (find symbol env :test #'find)))`
-!!!(p) {:.unnumlist}
+`    (let ((frame (find symbol env :test #'find)))`
 
-`    (if frame (list (position frame env) (position symbol frame)))))`
-!!!(p) {:.unnumlist}
+`        (if frame (list (position frame env) (position symbol frame)))))`
 
 Now we are ready to show the compiler at work:
 
-[ ](#){:#t0015}
 !!!(table)
 
 | []() | | | | | | | | | |
@@ -511,7 +385,6 @@ This example should give the reader a feeling for the code generated by the comp
 Another reason a compiler has an advantage over an interpreter is that the compiler can afford to spend some time trying to find a more efficient encoding of an expression, while for the interpreter, the overhead of searching for a more efficient interpretation usually offsets any advantage gained.
 Here are some places where a compiler could do better than an interpreter (although our compiler currently does not):
 
-[ ](#){:#t0020}
 !!!(table)
 
 | []() | | | | | | | | | |
@@ -530,10 +403,9 @@ Here are some places where a compiler could do better than an interpreter (altho
 ![t0020](images/B9780080571157500236/t0020.png)
 
 In this example, code is generated to push the constant "`doc`" on the stack and then immediately pop it off.
-If we have the compiler keep track of what expressions are compiled "for value"—as y is the value of the expression above-and which are only compiled "for effect," then we can avoid generating any code at all for a reference to a constant or variable for effect.
+If we have the compiler keep track of what expressions are compiled "for value"-as y is the value of the expression above-and which are only compiled "for effect," then we can avoid generating any code at all for a reference to a constant or variable for effect.
 Here's another example:
 
-[ ](#){:#t0025}
 !!!(table)
 
 | []() | | | | | | | | | |
@@ -562,7 +434,6 @@ Many compilers spend a significant portion of their time optimizing arithmetic o
 Besides arithmetic, compilers often have expertise in conditional expressions.
 Consider the following:
 
-[ ](#){:#t0030}
 !!!(table)
 
 | []() | | | | | | | | | |
@@ -593,7 +464,6 @@ Third, the `FJUMP` to `L3` could be replaced by an `FJUMP` to `L1`, since we now
 Finally, some compilers, particularly Lisp compilers, have expertise in function calling.
 Consider the following:
 
-[ ](#){:#t0035}
 !!!(table)
 
 | []() | | | | | | | | | |
@@ -615,14 +485,13 @@ But this last return is wasteful; we push a return address on the stack, and the
 An alternative function-calling protocol involves pushing the return address before calling `g,` but then not pushing a return address before calling `f;` when `f` returns, it returns directly to the calling function, whatever that is.
 
 Such an optimization looks like a small gain; we basically eliminate a single instruction.
-In fact, the implications of this new protocol are enormous: we can now invoke a recursive function to an arbitrary depth without growing the stack at all—as long as the recursive call is the last statement in the function (or in a branch of the function when there are conditionals).
+In fact, the implications of this new protocol are enormous: we can now invoke a recursive function to an arbitrary depth without growing the stack at all-as long as the recursive call is the last statement in the function (or in a branch of the function when there are conditionals).
 A function that obeys this constraint on its recursive calls is known as a *properly tail-recursive* function.
 This subject was discussed in [section 22.3.](B9780080571157500224.xhtml#s0020)
 
 All the examples so far have only dealt with global variables.
 Here's an example using local variables:
 
-[ ](#){:#t0040}
 !!!(table)
 
 | []() | | | | | | | | | |
@@ -655,26 +524,25 @@ This function loads the constant 3 and the local variable `x`, which is the firs
 It then calls the double-nested function on these two arguments.
 This function loads `x, y`, and `z: x` is now the 0th element in the next-to-top (1st) frame, and `y` and `z` are the 0th and 1st elements of the top frame.
 With all the arguments in place, the function `f` is finally called.
-Note that no continuations are stored–`f` can return directly to the caller of this function.
+Note that no continuations are stored-`f` can return directly to the caller of this function.
 
 However, all this explicit manipulation of environments is inefficient; in this case we could have compiled the whole thing by simply pushing 4, 3, and 4 on the stack and calling `f`.
 
-## [ ](#){:#st0010}23.1 A Properly Tail-Recursive Lisp Compiler
+## 23.1 A Properly Tail-Recursive Lisp Compiler
 {:#s0010}
 {:.h1hd}
 
-In this section we describe a new version of the compiler, first by showing examples of its output, and then by examining the compiler itself, which is summarized in [figure 23.3](#f0020).
+In this section we describe a new version of the compiler, first by showing examples of its output, and then by examining the compiler itself, which is summarized in [figure  23.3](#f0020).
 The new version of the compiler also makes use of a different function calling sequence, using two new instructions, `CALLJ` and `SAVE`.
 As the name implies, `SAVE` saves a return address on the stack.
-The `CALLJ` instruction no longer saves anything; it can be seen as an unconditional jump–hence the `J` in its name.
+The `CALLJ` instruction no longer saves anything; it can be seen as an unconditional jump-hence the `J` in its name.
 
 ![f23-03-9780080571157](images/B9780080571157500236/f23-03-9780080571157.jpg)     
-Figure 23.3
+Figure  23.3
 !!!(span) {:.fignum}
 Glossary of the Scheme Compiler, Second Version
 First, we see how nested function calls work:
 
-[ ](#){:#t0045}
 !!!(table)
 
 | []() | | | | | | | | | |
@@ -696,7 +564,6 @@ The final `CALL` is like an unconditional branch.
 
 The following example shows that all functions but the last `(f)` need a continuation point:
 
-[ ](#){:#t0050}
 !!!(table)
 
 | []() | | | | | | | | | |
@@ -726,7 +593,6 @@ Since whatever `f` returns will also be the final value of the function we are c
 
 In the next example we see that unneeded constants and variables in `begin` expressions are ignored:
 
-[ ](#){:#t0055}
 !!!(table)
 
 | []() | | | | | | | | | |
@@ -748,7 +614,6 @@ We fix that problem by augmenting the machine with instructions to do arithmetic
 Unneeded primitive operations, like variables constants, and arithmetic operations are ignored when they are in the nonfinal position within `begins`.
 Contrast the following two expressions:
 
-[ ](#){:#t0060}
 !!!(table)
 
 | []() | | | | | | | | | |
@@ -788,7 +653,6 @@ The parameter `val?` is true when the expression we are compiling returns a valu
 The parameter `more?` is false when the expression represents the final value, and it is true when there is more to compute.
 In summary, there are three possibilities:
 
-[ ](#){:#t0065}
 !!!(table)
 
 | []() | | | | | | | | | |
@@ -801,95 +665,69 @@ In summary, there are three possibilities:
 
 The code for the compiler employing these conventions follows:
 
-[ ](#){:#l0060}`(defun comp (x env val?
+`(defun comp (x env val?
 more?)`
-!!!(p) {:.unnumlist}
 
-`  "Compile the expression x into a list of instructions."`
-!!!(p) {:.unnumlist}
+`    "Compile the expression x into a list of instructions."`
 
-`   (cond`
-!!!(p) {:.unnumlist}
+`      (cond`
 
-`    ((member x '(t nil)) (comp-const x val?
+`        ((member x '(t nil)) (comp-const x val?
 more?))`
-!!!(p) {:.unnumlist}
 
-`    ((symbolp x) (comp-var x env val?
+`        ((symbolp x) (comp-var x env val?
 more?))`
-!!!(p) {:.unnumlist}
 
-`    ((atom x) (comp-const x val?
+`        ((atom x) (comp-const x val?
 more?))`
-!!!(p) {:.unnumlist}
 
-`   ((scheme-macro (first x)) (comp (scheme-macro-expand x) env val?
+`      ((scheme-macro (first x)) (comp (scheme-macro-expand x) env val?
 more?))`
-!!!(p) {:.unnumlist}
 
-`    ((case (first x)`
-!!!(p) {:.unnumlist}
+`        ((case (first x)`
 
-`       (QUOTE (arg-count x 1)`
-!!!(p) {:.unnumlist}
+`              (QUOTE (arg-count x 1)`
 
-`              (comp-const (second x) val?
+`                            (comp-const (second x) val?
 more?))`
-!!!(p) {:.unnumlist}
 
-`       (BEGIN (comp-begin (rest x) env val?
+`              (BEGIN (comp-begin (rest x) env val?
 more?))`
-!!!(p) {:.unnumlist}
 
-`       (SET!
- (arg-count x 2)`
-!!!(p) {:.unnumlist}
+`              (SET!
+  (arg-count x 2)`
 
-`              (assert (symbolp (second x)) (x)`
-!!!(p) {:.unnumlist}
+`                            (assert (symbolp (second x)) (x)`
 
-`                      "Only symbols can be set!, not ~ a in ~ a"`
-!!!(p) {:.unnumlist}
+`                                            "Only symbols can be set!, not ~  a in ~  a"`
 
-`                      (second x) x)`
-!!!(p) {:.unnumlist}
+`                                            (second x) x)`
 
-`              (seq (comp (third x) env t t)`
-!!!(p) {:.unnumlist}
+`                            (seq (comp (third x) env t t)`
 
-`                   (gen-set (second x) env)`
-!!!(p) {:.unnumlist}
+`                                      (gen-set (second x) env)`
 
-`                   (if (not val?) (gen 'POP))`
-!!!(p) {:.unnumlist}
+`                                      (if (not val?) (gen 'POP))`
 
-`                   (unless more?
+`                                      (unless more?
 (gen 'RETURN))))`
-!!!(p) {:.unnumlist}
 
-`      (IF  (arg-count x 2 3)`
-!!!(p) {:.unnumlist}
+`            (IF    (arg-count x 2 3)`
 
-`           (comp-if (second x) (third x) (fourth x)`
-!!!(p) {:.unnumlist}
+`                      (comp-if (second x) (third x) (fourth x)`
 
-`                    env val?
+`                                        env val?
 more?))`
-!!!(p) {:.unnumlist}
 
-`      (LAMBDA (when val?`
-!!!(p) {:.unnumlist}
+`            (LAMBDA (when val?`
 
-`               (let ((f (comp-lambda (second x) (rest2 x) env)))`
-!!!(p) {:.unnumlist}
+`                              (let ((f (comp-lambda (second x) (rest2 x) env)))`
 
-`                 (seq (gen 'FN f) (unless more?
+`                                  (seq (gen 'FN f) (unless more?
 (gen 'RETURN))))))`
-!!!(p) {:.unnumlist}
 
-`      (t (comp-funcall (first x) (rest x) env val?
+`            (t (comp-funcall (first x) (rest x) env val?
 more?))))))`
-!!!(p) {:.unnumlist}
 
 Here we've added one more case: `t` and `nil` compile directly into primitive instructions, rather than relying on them being bound as global variables.
 (In real Scheme, the Boolean values are `#t` and `#f`, which need not be quoted, the empty list is `()`, which must be quoted, and `t` and `nil` are ordinary symbols with no special significance.)
@@ -898,31 +736,23 @@ I've also added some error checking for the number of arguments supplied to quot
 Note that it is reasonable to do more error checking in a compiler than in an interpreter, since the checking need be done only once, not each time through.
 The function to check arguments is as follows:
 
-[ ](#){:#l0065}`(defun arg-count (form min &optional (max min))`
-!!!(p) {:.unnumlist}
+`(defun arg-count (form min &optional (max min))`
 
-`  "Report an error if form has wrong number of args."`
-!!!(p) {:.unnumlist}
+`    "Report an error if form has wrong number of args."`
 
-`  (let ((n-args (length (rest form))))`
-!!!(p) {:.unnumlist}
+`    (let ((n-args (length (rest form))))`
 
-`    (assert (<= min n-args max) (form)`
-!!!(p) {:.unnumlist}
+`        (assert (<= min n-args max) (form)`
 
-`      "Wrong number of arguments for ~ a in ~ a:`
-!!!(p) {:.unnumlist}
+`            "Wrong number of arguments for ~  a in ~  a:`
 
-`      ~d supplied, ~ d~@[ to ~ d ~] expected"`
-!!!(p) {:.unnumlist}
+`            ~d supplied, ~  d~@[ to ~  d  ~] expected"`
 
-`     (first form) form n-args min (if (/= min max) max))))`
-!!!(p) {:.unnumlist}
+`          (first form) form n-args min (if (/= min max) max))))`
 
-**Exercise 23.1 [m]** Modify the compiler to check for additional compile-time errors suggested by the following erroneous expression:
+**Exercise  23.1 [m]** Modify the compiler to check for additional compile-time errors suggested by the following erroneous expression:
 
-[ ](#){:#l0070}`(cdr (+ (list x y) 'y (3 x) (car 3 x)))`
-!!!(p) {:.unnumlist}
+`(cdr (+ (list x y) 'y (3 x) (car 3 x)))`
 
 The tail-recursive compiler still has the familiar nine cases, but I have introduced `comp-var, comp-const, comp-if,` and `comp-funcall` to handle the increased complexity introduced by the `var?` and `more?` parameters.
 
@@ -930,45 +760,33 @@ Let's go through the `comp-` functions one at a time.
 First, `comp-begin` and `comp-list` just handle and pass on the additional parameters.
 `comp-list` will be used in `comp-funcall`, a new function that will be introduced to compile a procedure application.
 
-[ ](#){:#l0075}`(defun comp-begin (exps env val?
+`(defun comp-begin (exps env val?
 more?)`
-!!!(p) {:.unnumlist}
 
-`  "Compile a sequence of expressions,`
-!!!(p) {:.unnumlist}
+`    "Compile a sequence of expressions,`
 
-`  returning the last one as the value."`
-!!!(p) {:.unnumlist}
+`    returning the last one as the value."`
 
-`  (cond ((null exps) (comp-const nil val?
+`    (cond ((null exps) (comp-const nil val?
 more?))`
-!!!(p) {:.unnumlist}
 
-`        ((length=l exps) (comp (first exps) env val?
+`                ((length=l exps) (comp (first exps) env val?
 more?))`
-!!!(p) {:.unnumlist}
 
-`        (t (seq (comp (first exps) env nil t)`
-!!!(p) {:.unnumlist}
+`                (t (seq (comp (first exps) env nil t)`
 
-`                (comp-begin (rest exps) env val?
+`                                (comp-begin (rest exps) env val?
 more?)))))`
-!!!(p) {:.unnumlist}
 
 `(defun comp-list (exps env)`
-!!!(p) {:.unnumlist}
 
-`  "Compile a list, leaving them all on the stack."`
-!!!(p) {:.unnumlist}
+`    "Compile a list, leaving them all on the stack."`
 
-`  (if (null exps) nil`
-!!!(p) {:.unnumlist}
+`    (if (null exps) nil`
 
-`      (seq (comp (first exps) env t t)`
-!!!(p) {:.unnumlist}
+`            (seq (comp (first exps) env t t)`
 
-`           (comp-list (rest exps) env))))`
-!!!(p) {:.unnumlist}
+`                      (comp-list (rest exps) env))))`
 
 Then there are two trivial functions to compile variable access and constants.
 If the value is not needed, these produce no instructions at all.
@@ -976,161 +794,117 @@ If there is no more to be done, then these functions have to generate the return
 This is a change from the previous version of `comp`, where the caller generated the return instruction.
 Note I have extended the machine to include instructions for the most common constants: t, nil, and some small integers.
 
-[ ](#){:#l0080}`(defun comp-const (x val?
+`(defun comp-const (x val?
 more?)`
-!!!(p) {:.unnumlist}
 
-`  "Compile a constant expression."`
-!!!(p) {:.unnumlist}
+`    "Compile a constant expression."`
 
-`  (if val?
-(seq (if (member x '(t nil − 1 0 1 2))`
-!!!(p) {:.unnumlist}
+`    (if val?
+(seq (if (member x '(t nil -  1 0 1 2))`
 
-`                    (gen x)`
-!!!(p) {:.unnumlist}
+`                                        (gen x)`
 
-`                    (gen 'CONST x))`
-!!!(p) {:.unnumlist}
+`                                        (gen 'CONST x))`
 
-`                 (unless more?
+`                                  (unless more?
 (gen 'RETURN)))))`
-!!!(p) {:.unnumlist}
 
 `(defun comp-var (x env val?
 more?)`
-!!!(p) {:.unnumlist}
 
-`  "Compile a variable reference."`
-!!!(p) {:.unnumlist}
+`    "Compile a variable reference."`
 
-`  (if val?
+`    (if val?
 (seq (gen-var x env) (unless more?
 (gen 'RETURN)))))`
-!!!(p) {:.unnumlist}
 
 The remaining two functions are more complex.
-First consider `comp-if` .
-Rather than blindly generating code for the predicate and both branches, we will consider some special cases.
+First consider `comp-if` . Rather than blindly generating code for the predicate and both branches, we will consider some special cases.
 First, it is clear that `(if t x y)` can reduce to `x` and `(if nil x y)` can reduce to `y`.
 It is perhaps not as obvious that `(if p x x)` can reduce to `(begin p x)`, or that the comparison of equality between the two branches should be done on the object code, not the source code.
 Once these trivial special cases have been considered, we're left with three more cases: `(if p x nil), (if p nil y),` and `(if p x y)`.
 The pattern of labels and jumps is different for each.
 
-[ ](#){:#l0085}`(defun comp-if (pred then else env val?
+`(defun comp-if (pred then else env val?
 more?)`
-!!!(p) {:.unnumlist}
 
-`  "Compile a conditional (IF) expression."`
-!!!(p) {:.unnumlist}
+`    "Compile a conditional (IF) expression."`
 
-`  (cond`
-!!!(p) {:.unnumlist}
+`    (cond`
 
-`    ((null pred) ; (if nil x y) ==> y`
-!!!(p) {:.unnumlist}
+`        ((null pred) ; (if nil x y) ==> y`
 
-`     (comp else env val?
+`          (comp else env val?
 more?))`
-!!!(p) {:.unnumlist}
 
-`    ((constantp pred) ; (if t x y) ==> x`
-!!!(p) {:.unnumlist}
+`        ((constantp pred) ; (if t x y) ==> x`
 
-`     (comp then env val?
+`          (comp then env val?
 more?))`
-!!!(p) {:.unnumlist}
 
-`    ((and (listp pred) ; (if (not p) x y) ==> (if p y x)`
-!!!(p) {:.unnumlist}
+`        ((and (listp pred) ; (if (not p) x y) ==> (if p y x)`
 
-`          (length=l (rest pred))`
-!!!(p) {:.unnumlist}
+`                    (length=l (rest pred))`
 
-`          (primitive-p (first pred) env 1)`
-!!!(p) {:.unnumlist}
+`                    (primitive-p (first pred) env 1)`
 
-`          (eq (prim-opcode (primitive-p (first pred) env 1)) 'not))`
-!!!(p) {:.unnumlist}
+`                    (eq (prim-opcode (primitive-p (first pred) env 1)) 'not))`
 
-`     (comp-if (second pred) else then env val?
+`          (comp-if (second pred) else then env val?
 more?))`
-!!!(p) {:.unnumlist}
 
-`    (t (let ((pcode (comp pred env t t))`
-!!!(p) {:.unnumlist}
+`        (t (let ((pcode (comp pred env t t))`
 
-`             (tcode (comp then env val?
+`                          (tcode (comp then env val?
 more?))`
-!!!(p) {:.unnumlist}
 
-`             (ecode (comp else env val?
+`                          (ecode (comp else env val?
 more?)))`
-!!!(p) {:.unnumlist}
 
-`         (cond`
-!!!(p) {:.unnumlist}
+`                  (cond`
 
-`           ((equal tcode ecode) ; (if p x x) ==> (begin p x)`
-!!!(p) {:.unnumlist}
+`                      ((equal tcode ecode) ; (if p x x) ==> (begin p x)`
 
-`            (seq (comp pred env nil t) ecode))`
-!!!(p) {:.unnumlist}
+`                        (seq (comp pred env nil t) ecode))`
 
-`           ((null tcode) ; (if p nil y) ==> p (TJUMP L2) y L2:`
-!!!(p) {:.unnumlist}
+`                      ((null tcode) ; (if p nil y) ==> p (TJUMP L2) y L2:`
 
-`            (let ((L2 (gen-label)))`
-!!!(p) {:.unnumlist}
+`                        (let ((L2 (gen-label)))`
 
-`             (seq pcode (gen 'TJUMP L2) ecode (list L2)`
-!!!(p) {:.unnumlist}
+`                          (seq pcode (gen 'TJUMP L2) ecode (list L2)`
 
-`                  (unless more?
+`                                    (unless more?
 (gen 'RETURN)))))`
-!!!(p) {:.unnumlist}
 
-`           ((null ecode) ; (if p x) ==> p (FJUMP L1) x L1:`
-!!!(p) {:.unnumlist}
+`                      ((null ecode) ; (if p x) ==> p (FJUMP L1) x L1:`
 
-`            (let ((L1 (gen-label)))`
-!!!(p) {:.unnumlist}
+`                        (let ((L1 (gen-label)))`
 
-`             (seq pcode (gen 'FJUMP L1) tcode (list L1)`
-!!!(p) {:.unnumlist}
+`                          (seq pcode (gen 'FJUMP L1) tcode (list L1)`
 
-`                  (unless more?
+`                                    (unless more?
 (gen 'RETURN)))))`
-!!!(p) {:.unnumlist}
 
-`           (t             ; (if p x y) ==> p (FJUMP L1) x L1: y`
-!!!(p) {:.unnumlist}
+`                      (t                          ; (if p x y) ==> p (FJUMP L1) x L1: y`
 
-`                          ; or p (FJUMP L1) x (JUMP L2) L1: y L2:`
-!!!(p) {:.unnumlist}
+`                                                    ; or p (FJUMP L1) x (JUMP L2) L1: y L2:`
 
-`            (let ((L1 (gen-label))`
-!!!(p) {:.unnumlist}
+`                        (let ((L1 (gen-label))`
 
-`                  (L2 (if more?
+`                                    (L2 (if more?
 (gen-label))))`
-!!!(p) {:.unnumlist}
 
-`              (seq pcode (gen 'FJUMP L1) tcode`
-!!!(p) {:.unnumlist}
+`                            (seq pcode (gen 'FJUMP L1) tcode`
 
-`                   (if more?
+`                                      (if more?
 (gen 'JUMP L2))`
-!!!(p) {:.unnumlist}
 
-`                   (list L1) ecode (if more?
+`                                      (list L1) ecode (if more?
 (list L2))))))))))`
-!!!(p) {:.unnumlist}
 
 Here are some examples of `if` expressions.
 First, a very simple example:
 
-[ ](#){:#t0070}
 !!!(table)
 
 | []() | | | | | | | | | |
@@ -1154,7 +928,6 @@ Each branch has its own `RETURN` instruction.
 But note that the code generated is sensitive to its context.
 For example, if we put the same expression inside a `begin` expression, we get something quite different:
 
-[ ](#){:#t0075}
 !!!(table)
 
 | []() | | | | | | | | | |
@@ -1171,7 +944,6 @@ Thus, the `if` expression reduces to `(if p nil nil)`, which is compiled like `(
 The compiler can only do this optimization because it knows that `+` and `*` are side-effect-free operations.
 Consider what happens when we replace + with `f` :
 
-[ ](#){:#t0080}
 !!!(table)
 
 | []() | | | | | | | | | |
@@ -1203,97 +975,68 @@ Nonprimitive functions require a function call.
 There are two cases: when there is more to compile we have to save a continuation point, and when we are compiling the final value of a function, we can just branch to the called function.
 The whole thing looks like this:
 
-[ ](#){:#l0090}`(defun comp-funcall (f args env val?
+`(defun comp-funcall (f args env val?
 more?)`
-!!!(p) {:.unnumlist}
 
-`  "Compile an application of a function to arguments."`
-!!!(p) {:.unnumlist}
+`    "Compile an application of a function to arguments."`
 
-`  (let ((prim (primitive-p f env (length args))))`
-!!!(p) {:.unnumlist}
+`    (let ((prim (primitive-p f env (length args))))`
 
-`    (cond`
-!!!(p) {:.unnumlist}
+`        (cond`
 
-`      (prim ; function compilable to a primitive instruction`
-!!!(p) {:.unnumlist}
+`            (prim ; function compilable to a primitive instruction`
 
-`       (if (and (not val?) (not (prim-side-effects prim)))`
-!!!(p) {:.unnumlist}
+`              (if (and (not val?) (not (prim-side-effects prim)))`
 
-`            ;; Side-effect free primitive when value unused`
-!!!(p) {:.unnumlist}
+`                        ;; Side-effect free primitive when value unused`
 
-`            (comp-begin args env nil more?)`
-!!!(p) {:.unnumlist}
+`                        (comp-begin args env nil more?)`
 
-`            ;; Primitive with value or call needed`
-!!!(p) {:.unnumlist}
+`                        ;; Primitive with value or call needed`
 
-`            (seq (comp-list args env)`
-!!!(p) {:.unnumlist}
+`                        (seq (comp-list args env)`
 
-`                 (gen (prim-opcode prim))`
-!!!(p) {:.unnumlist}
+`                                  (gen (prim-opcode prim))`
 
-`                 (unless val?
+`                                  (unless val?
 (gen 'POP))`
-!!!(p) {:.unnumlist}
 
-`                 (unless more?
+`                                  (unless more?
 (gen 'RETURN)))))`
-!!!(p) {:.unnumlist}
 
-`      ((and (starts-with f 'lambda) (null (second f)))`
-!!!(p) {:.unnumlist}
+`            ((and (starts-with f 'lambda) (null (second f)))`
 
-`       ;; ((lambda () body)) => (begin body)`
-!!!(p) {:.unnumlist}
+`              ;; ((lambda () body)) => (begin body)`
 
-`       (assert (null args) () "Too many arguments supplied")`
-!!!(p) {:.unnumlist}
+`              (assert (null args) () "Too many arguments supplied")`
 
-`       (comp-begin` (`rest2 f) env val?
+`              (comp-begin` (`rest2 f) env val?
 more?))`
-!!!(p) {:.unnumlist}
 
-`      (more?
+`            (more?
 ; Need to save the continuation point`
-!!!(p) {:.unnumlist}
 
-`       (let ((k (gen-label 'k)))`
-!!!(p) {:.unnumlist}
+`              (let ((k (gen-label 'k)))`
 
-`         (seq (gen 'SAVE k)`
-!!!(p) {:.unnumlist}
+`                  (seq (gen 'SAVE k)`
 
-`              (comp-list args env)`
-!!!(p) {:.unnumlist}
+`                            (comp-list args env)`
 
-`              (comp f env t t)`
-!!!(p) {:.unnumlist}
+`                            (comp f env t t)`
 
-`              (gen 'CALLJ (length args))`
-!!!(p) {:.unnumlist}
+`                            (gen 'CALLJ (length args))`
 
-`              (list k)`
-!!!(p) {:.unnumlist}
+`                            (list k)`
 
-`              (if (not val?) (gen 'POP)))))`
-!!!(p) {:.unnumlist}
+`                            (if (not val?) (gen 'POP)))))`
 
-`       (t     ; function call as rename plus goto`
-!!!(p) {:.unnumlist}
+`              (t          ; function call as rename plus goto`
 
-`        (seq (comp-list args env)`
-!!!(p) {:.unnumlist}
+`                (seq (comp-list args env)`
 
-`             (comp f env t t)`
-!!!(p) {:.unnumlist}
+`                          (comp f env t t)`
 
-`             (gen 'CALLJ (length args)))))))`
-!!!(p) {:.unnumlist}
+`                          (gen 'CALLJ (length args)))))))`
 
 The support for primitives is straightforward.
 The `prim` data type has five slots.
@@ -1306,143 +1049,101 @@ The `always` field is true if the primitive always returns non-nil, `false` if i
 It is used in exercise 23.6.
 Finally, the `side-effects` field says if the function has any side effects, like doing I/O or changing the value of an object.
 
-[ ](#){:#l0095}`(defstruct (prim (:type list))`
-!!!(p) {:.unnumlist}
+`(defstruct (prim (:type list))`
 
-`  symbol n-args opcode always side-effects)`
-!!!(p) {:.unnumlist}
+`    symbol n-args opcode always side-effects)`
 
 `(defparameter *primitive-fns*`
-!!!(p) {:.unnumlist}
 
-`  '((+ 2 + true) (− 2 - true) (* 2 * true) (/ 2 / true)`
-!!!(p) {:.unnumlist}
+`    '((+  2 + true) (-  2 - true) (* 2 * true) (/ 2 / true)`
 
-`    (< 2 <) (> 2 >) (<= 2 <=) (>= 2 >=) (/= 2 /=) (= 2 =)`
-!!!(p) {:.unnumlist}
+`        (< 2 <) (> 2 >) (<= 2 <=) (>= 2 >=) (/= 2 /=) (=  2 =)`
 
-`    (eq?
-2 eq) (equal?
+`        (eq?
+2  eq) (equal?
 2 equal) (eqv?
 2 eql)`
-!!!(p) {:.unnumlist}
 
-`    (not 1 not) (null?
+`        (not 1 not) (null?
 1 not)`
-!!!(p) {:.unnumlist}
 
-`    (car 1 car) (cdr 1 cdr) (cadr 1 cadr) (cons 2 cons true)`
-!!!(p) {:.unnumlist}
+`        (car 1 car) (cdr 1 cdr) (cadr 1 cadr) (cons 2 cons true)`
 
-`    (list 1 list1 true) (list 2 list2 true) (list 3 list3 true)`
-!!!(p) {:.unnumlist}
+`        (list 1 list1 true) (list 2 list2 true) (list 3 list3 true)`
 
-`    (read 0 read nil t) (write 1 write nil t) (display 1 display nil t)`
-!!!(p) {:.unnumlist}
+`        (read 0 read nil t) (write 1 write nil t) (display 1 display nil t)`
 
-`    (newline 0 newline nil t) (compiler 1 compiler t)`
-!!!(p) {:.unnumlist}
+`        (newline 0 newline nil t) (compiler 1 compiler t)`
 
-`    (name!
+`        (name!
 2 name!
 true t) (random 1 random true nil)))`
-!!!(p) {:.unnumlist}
 
 `(defun primitive-p (f env n-args)`
-!!!(p) {:.unnumlist}
 
-`  "F is a primitive if it is in the table, and is not shadowed`
-!!!(p) {:.unnumlist}
+`    "F is a primitive if it is in the table, and is not shadowed`
 
-`  by something in the environment, and has the right number of args."`
-!!!(p) {:.unnumlist}
+`    by something in the environment, and has the right number of args."`
 
-`  (and (not (in-env-p f env))`
-!!!(p) {:.unnumlist}
+`    (and (not (in-env-p f env))`
 
-`       (find f *primitive-fns*`
-!!!(p) {:.unnumlist}
+`              (find f *primitive-fns*`
 
-`             :test #'(lambda (f prim)`
-!!!(p) {:.unnumlist}
+`                          :test #'(lambda (f prim)`
 
-`                       (and (eq f (prim-symbol prim))`
-!!!(p) {:.unnumlist}
+`                                              (and (eq f (prim-symbol prim))`
 
-`                            (= n-args (prim-n-args prim)))))))`
-!!!(p) {:.unnumlist}
+`                                                        (= n-args (prim-n-args prim)))))))`
 
 `(defun list1 (x) (list x))`
-!!!(p) {:.unnumlist}
 
 `(defun list2 (x y) (list x y))`
-!!!(p) {:.unnumlist}
 
 `(defun list3 (x y z) (list x y z))`
-!!!(p) {:.unnumlist}
 
 `(defun display (x) (princ x))`
-!!!(p) {:.unnumlist}
 
 `(defun newline () (terpri))`
-!!!(p) {:.unnumlist}
 
 These optimizations only work if the symbols are permanently bound to the global values given here.
 We can enforce that by altering `gen-set` to preserve them as constants:
 
-[ ](#){:#l0100}`(defun gen-set (var env)`
-!!!(p) {:.unnumlist}
+`(defun gen-set (var env)`
 
-`  "Generate an instruction to set a variable to top-of-stack."`
-!!!(p) {:.unnumlist}
+`    "Generate an instruction to set a variable to top-of-stack."`
 
-`  (let ((p (in-env-p var env)))`
-!!!(p) {:.unnumlist}
+`    (let ((p (in-env-p var env)))`
 
-`    (if p`
-!!!(p) {:.unnumlist}
+`        (if p`
 
-`        (gen 'LSET (first p) (second p) ";" var)`
-!!!(p) {:.unnumlist}
+`                (gen 'LSET (first p) (second p) ";" var)`
 
-`        (if (assoc var *primitive-fns*)`
-!!!(p) {:.unnumlist}
+`                (if (assoc var *primitive-fns*)`
 
-`            (error "Can't alter the constant ~ a" var)`
-!!!(p) {:.unnumlist}
+`                        (error "Can't alter the constant ~  a" var)`
 
-`            (gen 'GSET var)))))`
-!!!(p) {:.unnumlist}
+`                        (gen 'GSET var)))))`
 
-Now an expression like `(+ x 1)` will be properly compiled using the + instruction rather than a subroutine call, and an expression like `(set !
-+ *)` will be flagged as an error when + is a global variable, but allowed when it has been locally bound.
-However, we still need to be able to handle expressions like `(set !
-add +)` and then `(add x y)`.
+Now an expression like `(+ x 1)` will be properly compiled using the + instruction rather than a subroutine call, and an expression like `(set ! + *)` will be flagged as an error when + is a global variable, but allowed when it has been locally bound.
+However, we still need to be able to handle expressions like `(set ! add +)` and then `(add x y)`.
 Thus, we need some function object that + will be globally bound to, even if the compiler normally optimizes away references to that function.
 The function `init-scheme-comp` takes care of this requirement:
 
-[ ](#){:#l0105}`(defun init-scheme-comp ()`
-!!!(p) {:.unnumlist}
+`(defun init-scheme-comp ()`
 
-`  "Initialize the primitive functions."`
-!!!(p) {:.unnumlist}
+`    "Initialize the primitive functions."`
 
-`  (dolist (prim *primitive-fns*)`
-!!!(p) {:.unnumlist}
+`    (dolist (prim *primitive-fns*)`
 
-`     (setf (get (prim-symbol prim) 'global-val)`
-!!!(p) {:.unnumlist}
+`          (setf (get (prim-symbol prim) 'global-val)`
 
-`           (new-fn :env nil :name (prim-symbol prim)`
-!!!(p) {:.unnumlist}
+`                      (new-fn :env nil :name (prim-symbol prim)`
 
-`                   :code (seq (gen 'PRIM (prim-symbol prim))`
-!!!(p) {:.unnumlist}
+`                                      :code (seq (gen 'PRIM (prim-symbol prim))`
 
-`                              (gen 'RETURN))))))`
-!!!(p) {:.unnumlist}
+`                                                            (gen 'RETURN))))))`
 
-There is one more change to make–rewriting `comp-lambda`.
+There is one more change to make-rewriting `comp-lambda`.
 We still need to get the arguments off the stack, but we no longer generate a `RETURN` instruction, since that is done by `comp-begin`, if necessary.
 At this point we'll provide a hook for a peephole optimizer, which will be introduced in [section 23.4](#s0025), and for an assembler to convert the assembly language to machine code, `new-fn` provides this interface, but for now, `new-fn` acts just like `make-fn`.
 
@@ -1452,96 +1153,69 @@ It introduces a new instruction, `ARGS`., into the abstract machine.
 This instruction works just like `ARGS`, except it also conses any remaining arguments on the stack into a list and stores that list as the value of the rest argument.
 With this innovation, the new version of `comp-lambda` looks like this:
 
-[ ](#){:#l0110}`(defun comp-lambda (args body env)`
-!!!(p) {:.unnumlist}
+`(defun comp-lambda (args body env)`
 
-`  "Compile a lambda form into a closure with compiled code."`
-!!!(p) {:.unnumlist}
+`    "Compile a lambda form into a closure with compiled code."`
 
-`  (new-fn :env env :args args`
-!!!(p) {:.unnumlist}
+`    (new-fn :env env :args args`
 
-`          :code (seq (gen-args args 0)`
-!!!(p) {:.unnumlist}
+`                    :code (seq (gen-args args 0)`
 
-`                     (comp-begin body`
-!!!(p) {:.unnumlist}
+`                                          (comp-begin body`
 
-`                                 (cons (make-true-list args) env)`
-!!!(p) {:.unnumlist}
+`                                                                  (cons (make-true-list args) env)`
 
-`                                 t nil))))`
-!!!(p) {:.unnumlist}
+`                                                                  t nil))))`
 
 `(defun gen-args (args n-so-far)`
-!!!(p) {:.unnumlist}
 
-`  "Generate an instruction to load the arguments."`
-!!!(p) {:.unnumlist}
+`    "Generate an instruction to load the arguments."`
 
-`  (cond ((null args) (gen 'ARGS n-so-far))`
-!!!(p) {:.unnumlist}
+`    (cond ((null args) (gen 'ARGS n-so-far))`
 
-`        ((symbolp args) (gen 'ARGS.
+`                ((symbolp args) (gen 'ARGS.
 n-so-far))`
-!!!(p) {:.unnumlist}
 
-`        ((and (consp args) (symbolp (first args)))`
-!!!(p) {:.unnumlist}
+`                ((and (consp args) (symbolp (first args)))`
 
-`         (gen-args (rest args) (+ n-so-far 1)))`
-!!!(p) {:.unnumlist}
+`                  (gen-args (rest args) (+ n-so-far 1)))`
 
-`        (t (error "Illegal argument list"))))`
-!!!(p) {:.unnumlist}
+`                (t (error "Illegal argument list"))))`
 
 `(defun make-true-list (dotted-list)`
-!!!(p) {:.unnumlist}
 
-`  "Convert a possibly dotted list into a true, non-dotted list."`
-!!!(p) {:.unnumlist}
+`    "Convert a possibly dotted list into a true, non-dotted list."`
 
-`  (cond ((null dotted-list) nil)`
-!!!(p) {:.unnumlist}
+`    (cond ((null dotted-list) nil)`
 
-`        ((atom dotted-list) (list dotted-list))`
-!!!(p) {:.unnumlist}
+`                ((atom dotted-list) (list dotted-list))`
 
-`        (t (cons (first dotted-list)`
-!!!(p) {:.unnumlist}
+`                (t (cons (first dotted-list)`
 
-`                 (make-true-list (rest dotted-list))))))`
-!!!(p) {:.unnumlist}
+`                                  (make-true-list (rest dotted-list))))))`
 
 `(defun new-fn (&key code env name args)`
-!!!(p) {:.unnumlist}
 
-`  "Build a new function."`
-!!!(p) {:.unnumlist}
+`    "Build a new function."`
 
-`  (assemble (make-fn :env env :name name :args args`
-!!!(p) {:.unnumlist}
+`    (assemble (make-fn :env env :name name :args args`
 
-`                     :code (optimize code))))`
-!!!(p) {:.unnumlist}
+`                                          :code (optimize code))))`
 
 `new-fn` includes calls to an assembler and an optimizer to generate actual machine code.
 For the moment, both will be identity functions:
 
-[ ](#){:#l0115}`(defun optimize (code) code)`
-!!!(p) {:.unnumlist}
+`(defun optimize (code) code)`
 
 `(defun assemble (fn) fn)`
-!!!(p) {:.unnumlist}
 
 Here are some more examples of the compiler at work:
 
-[ ](#){:#t0085}
 !!!(table)
 
 | []() | | | | | | | | | |
 |---|---|---|---|---|---|---|---|---|---|
-| `> (comp-show ’(if (null? (car l)) (f (+ (* a x) b)) (g (/ x 2))))` |
+| `> (comp-show '(if (null? (car l)) (f (+ (* a x) b)) (g (/ x 2))))` |
 | | `ARGS` | `0` | |
 | | `GVAR` | `L` | |
 | | `CAR` | | |
@@ -1563,17 +1237,13 @@ Here are some more examples of the compiler at work:
 
 There is no need to save any continuation points in this code, because the only calls to nonprimitive functions occur as the final values of the two branches of the function.
 
-[ ](#){:#l0120}`> (comp-show ’(define (lastl l)`
-!!!(p) {:.unnumlist}
+`> (comp-show '(define (lastl l)`
 
-`              (if (null?
+`                            (if (null?
 (cdr l)) (car l)`
-!!!(p) {:.unnumlist}
 
-`                  (last1 (cdr l)))))`
-!!!(p) {:.unnumlist}
+`                                    (last1 (cdr l)))))`
 
-[ ](#){:#t0090}
 !!!(table)
 
 | []() | | | | | | | | | |
@@ -1604,14 +1274,11 @@ Since `last1` is tail-recursive, it has only one return point, for the terminati
 Contrast that to the non-tail-recursive definition of `length` below.
 It is not tail-recursive because before it calls `length` recursively, it must save a continuation point, `K1`, so that it will know where to return to to add 1.
 
-[ ](#){:#l0125}`> (comp-show ’(define (length l)`
-!!!(p) {:.unnumlist}
+`> (comp-show '(define (length l)`
 
-`                (if (null?
-l) 0 (+ 1 (length (cdr l))))))`
-!!!(p) {:.unnumlist}
+`                                (if (null?
+l) 0 (+  1 (length (cdr l))))))`
 
-[ ](#){:#t0095}
 !!!(table)
 
 | []() | | | | | | | | | |
@@ -1640,23 +1307,17 @@ l) 0 (+ 1 (length (cdr l))))))`
 
 Of course, it is possible to write `length` in tail-recursive fashion:
 
-[ ](#){:#l0130}`> (comp-show ’(define (length l)`
-!!!(p) {:.unnumlist}
+`> (comp-show '(define (length l)`
 
-`              (letrec ((len (lambda (l n)`
-!!!(p) {:.unnumlist}
+`                            (letrec ((len (lambda (l n)`
 
-`                              (if (null?
+`                                                            (if (null?
 l) n`
-!!!(p) {:.unnumlist}
 
-`                                  (len (rest l) (+ n l))))))`
-!!!(p) {:.unnumlist}
+`                                                                    (len (rest l) (+ n l))))))`
 
-`                (len l 0))))`
-!!!(p) {:.unnumlist}
+`                                (len l 0))))`
 
-[ ](#){:#t0100}
 !!!(table)
 
 | []() | | | | | | | | | |
@@ -1696,14 +1357,13 @@ l) n`
 
 ![t0100](images/B9780080571157500236/t0100.png)
 
-Let’s look once again at an example with nested conditionals:
+Let's look once again at an example with nested conditionals:
 
-[ ](#){:#t0105}
 !!!(table)
 
 | []() | | | | | | | | | |
 |---|---|---|---|---|---|---|---|---|---|
-| `> (comp-show ’(if (not (and p q (not r))) x y))` |
+| `> (comp-show '(if (not (and p q (not r))) x y))` |
 | | `ARGS` | `0` |
 | | `GVAR` | `P` |
 | | `FJUMP` | `L3` |
@@ -1729,7 +1389,6 @@ The code does in fact return `x`, but it first jumps to `L3`, loads `NIL`, and t
 Other branches have similar inefficiencies.
 A sufficiently clever compiler should be able to generate the following code:
 
-[ ](#){:#t0110}
 !!!(table)
 
 | []() | | | | | | | | | |
@@ -1746,7 +1405,7 @@ A sufficiently clever compiler should be able to generate the following code:
 | `L1:` | `GVAR X` | |
 | | `RETURN` | |
 
-## [ ](#){:#st0015}23.2 Introducing Call/cc
+## 23.2 Introducing Call/cc
 {:#s0015}
 {:.h1hd}
 
@@ -1759,12 +1418,12 @@ We need to introduce one new instruction, `CC`, which places on the stack a func
 This requires one more instruction, `SET-CC`.
 The details of this, and of all the other instructions, are revealed in the next section.
 
-## [ ](#){:#st0020}23.3 The Abstract Machine
+## 23.3 The Abstract Machine
 {:#s0020}
 {:.h1hd}
 
 So far we have defined the instruction set of a mythical abstract machine and generated assembly code for that instruction set.
-It’s now time to actually execute the assembly code and hence have a useful compiler.
+It's now time to actually execute the assembly code and hence have a useful compiler.
 There are several paths we could pursue: we could implement the machine in hardware, software, or microcode, or we could translate the assembly code for our abstract machine into the assembly code of some existing machine.
 Each of these approaches has been taken in the past.
 
@@ -1772,9 +1431,9 @@ Each of these approaches has been taken in the past.
 The Scheme-79 and Scheme-81 Chips ([Steele and Sussman 1980](B9780080571157500285.xhtml#bb1180); [Batali et al.
 1982](B9780080571157500285.xhtml#bb0070)) were VLSI implementations of a machine designed specifically to run Scheme.
 
-**Macro-Assembler.** In the translation or macro-assembler approach, each instruction in the abstract machine language is translated into one or more instructions in the host computer’s instruction set.
-This can be done either directly or by generating assembly code and passing it to the host computer’s assembler.
-In general this will lead to code expansion, because the host computer probably will not provide direct support for Scheme’s data types.
+**Macro-Assembler.** In the translation or macro-assembler approach, each instruction in the abstract machine language is translated into one or more instructions in the host computer's instruction set.
+This can be done either directly or by generating assembly code and passing it to the host computer's assembler.
+In general this will lead to code expansion, because the host computer probably will not provide direct support for Scheme's data types.
 Thus, whereas in our abstract machine we could write a single instruction for addition, with native code we might have to execute a series of instructions to check the type of the arguments, do an integer add if they are both integers, a floating-point add if they are both floating-point numbers, and so on.
 We might also have to check the result for overflow, and perhaps convert to bignum representation.
 Compilers that generate native code often include more sophisticated data-flow analysis to know when such checks are required and when they can be omitted.
@@ -1809,565 +1468,385 @@ We can now handle branches by changing the program counter to an index into the 
 Another source of inefficiency is implementing the stack as a list, and consing up new cells every time something is added to the stack.
 The alternative is to implement the stack as a vector with a fill-pointer.
 That way a push requires no consing, only a change to the pointer (and a check for overflow).
-The check is worthwhile, however, because it allows us to detect infinite loops in the user’s code.
+The check is worthwhile, however, because it allows us to detect infinite loops in the user's code.
 
 Here follows an assembler that generates a sequence of instructions (as a vector).
 This is a compromise between byte codes and the assembly language format.
 First, we need some accessor functions to get at parts of an instruction:
 
-[ ](#){:#l0135}`(defun opcode (instr) (if (label-p instr) :label (first instr)))`
-!!!(p) {:.unnumlist}
+`(defun opcode (instr) (if (label-p instr) :label (first instr)))`
 
 `(defun args (instr) (if (listp instr) (rest instr)))`
-!!!(p) {:.unnumlist}
 
 `(defun arg1 (instr) (if (listp instr) (second instr)))`
-!!!(p) {:.unnumlist}
 
 `(defun arg2 (instr) (if (listp instr) (third instr)))`
-!!!(p) {:.unnumlist}
 
 `(defun arg3 (instr) (if (listp instr) (fourth instr)))`
-!!!(p) {:.unnumlist}
 
-`(defsetf arg1 (instr) (val) ‘(setf (second ,instr) ,val))`
-!!!(p) {:.unnumlist}
+`(defsetf arg1 (instr) (val) '(setf (second ,instr) ,val))`
 
 Now we write the assembler, which already is integrated into the compiler with a hook in `new-fn`.
 
-[ ](#){:#l0140}`(defun assemble (fn)`
-!!!(p) {:.unnumlist}
+`(defun assemble (fn)`
 
-`  "Turn a list of instructions into a vector."`
-!!!(p) {:.unnumlist}
+`    "Turn a list of instructions into a vector."`
 
-`  (multiple-value-bind (length labels)`
-!!!(p) {:.unnumlist}
+`    (multiple-value-bind (length labels)`
 
-`     (asm-first-pass (fn-code fn))`
-!!!(p) {:.unnumlist}
+`          (asm-first-pass (fn-code fn))`
 
-`   (setf (fn-code fn)`
-!!!(p) {:.unnumlist}
+`      (setf (fn-code fn)`
 
-`         (asm-second-pass (fn-code fn)`
-!!!(p) {:.unnumlist}
+`                  (asm-second-pass (fn-code fn)`
 
-`                          length labels))`
-!!!(p) {:.unnumlist}
+`                                                    length labels))`
 
-`   fn))`
-!!!(p) {:.unnumlist}
+`      fn))`
 
 `(defun asm-first-pass (code)`
-!!!(p) {:.unnumlist}
 
-`  "Return the labels and the total code length."`
-!!!(p) {:.unnumlist}
+`    "Return the labels and the total code length."`
 
-`  (let ((length 0)`
-!!!(p) {:.unnumlist}
+`    (let ((length 0)`
 
-`        (labels nil))`
-!!!(p) {:.unnumlist}
+`                (labels nil))`
 
-`    (dolist (instr code)`
-!!!(p) {:.unnumlist}
+`        (dolist (instr code)`
 
-`      (if (label-p instr)`
-!!!(p) {:.unnumlist}
+`            (if (label-p instr)`
 
-`          (push (cons instr length) labels)`
-!!!(p) {:.unnumlist}
+`                    (push (cons instr length) labels)`
 
-`          (incf length)))`
-!!!(p) {:.unnumlist}
+`                    (incf length)))`
 
-`      (values length labels)))`
-!!!(p) {:.unnumlist}
+`            (values length labels)))`
 
 `(defun asm-second-pass (code length labels)`
-!!!(p) {:.unnumlist}
 
-`  "Put code into code-vector, adjusting for labels."`
-!!!(p) {:.unnumlist}
+`    "Put code into code-vector, adjusting for labels."`
 
-`  (let ((addr 0)`
-!!!(p) {:.unnumlist}
+`    (let ((addr 0)`
 
-`        (code-vector (make-array length)))`
-!!!(p) {:.unnumlist}
+`                (code-vector (make-array length)))`
 
-`    (dolist (instr code)`
-!!!(p) {:.unnumlist}
+`        (dolist (instr code)`
 
-`      (unless (label-p instr)`
-!!!(p) {:.unnumlist}
+`            (unless (label-p instr)`
 
-`        (if (is instr ‘(JUMP TJUMP FJUMP SAVE))`
-!!!(p) {:.unnumlist}
+`                (if (is instr '(JUMP TJUMP FJUMP SAVE))`
 
-`            (setf (arg1 instr)`
-!!!(p) {:.unnumlist}
+`                        (setf (arg1 instr)`
 
-`                  (cdr (assoc (arg1 instr) labels))))`
-!!!(p) {:.unnumlist}
+`                                    (cdr (assoc (arg1 instr) labels))))`
 
-`        (setf (aref code-vector addr) instr)`
-!!!(p) {:.unnumlist}
+`                (setf (aref code-vector addr) instr)`
 
-`        (incf addr)))`
-!!!(p) {:.unnumlist}
+`                (incf addr)))`
 
-`    code-vector))`
-!!!(p) {:.unnumlist}
+`        code-vector))`
 
 If we want to be able to look at assembled code, we need a new printing function:
 
-[ ](#){:#l0145}`(defun show-fn (fn &optional (stream *standard-output*) (indent 2))`
-!!!(p) {:.unnumlist}
+`(defun show-fn (fn &optional (stream *standard-output*) (indent 2))`
 
-`  "Print all the instructions in a function.`
-!!!(p) {:.unnumlist}
+`    "Print all the instructions in a function.`
 
-`  If the argument is not a function, just princ it,`
-!!!(p) {:.unnumlist}
+`    If the argument is not a function, just princ it,`
 
-`  but in a column at least 8 spaces wide."`
-!!!(p) {:.unnumlist}
+`    but in a column at least 8 spaces wide."`
 
-`  ;; This version handles code that has been assembled into a vector`
-!!!(p) {:.unnumlist}
+`    ;; This version handles code that has been assembled into a vector`
 
-`  (if (not (fn-p fn))`
-!!!(p) {:.unnumlist}
+`    (if (not (fn-p fn))`
 
-`      (format stream "~8a" fn)`
-!!!(p) {:.unnumlist}
+`            (format stream "~8a" fn)`
 
-`      (progn`
-!!!(p) {:.unnumlist}
+`            (progn`
 
-`        (fresh-line)`
-!!!(p) {:.unnumlist}
+`                (fresh-line)`
 
-`        (dotimes (i (length (fn-code fn)))`
-!!!(p) {:.unnumlist}
+`                (dotimes (i (length (fn-code fn)))`
 
-`          (let ((instr (elt (fn-code fn) i)))`
-!!!(p) {:.unnumlist}
+`                    (let ((instr (elt (fn-code fn) i)))`
 
-`            (if (label-p instr)`
-!!!(p) {:.unnumlist}
+`                        (if (label-p instr)`
 
-`       (format stream "~a:" instr)`
-!!!(p) {:.unnumlist}
+`              (format stream "~a:" instr)`
 
-`       (progn`
-!!!(p) {:.unnumlist}
+`              (progn`
 
-`        (format stream "~VT~2d: " indent i)`
-!!!(p) {:.unnumlist}
+`                (format stream "~VT~2d: " indent i)`
 
-`        (dolist (arg instr)`
-!!!(p) {:.unnumlist}
+`                (dolist (arg instr)`
 
-`         (show-fn arg stream (+ indent 8)))`
-!!!(p) {:.unnumlist}
+`                  (show-fn arg stream (+ indent 8)))`
 
-`        (fresh-line))))))))`
-!!!(p) {:.unnumlist}
+`                (fresh-line))))))))`
 
 `(defstruct ret-addr fn pc env)`
-!!!(p) {:.unnumlist}
 
 `(defun is (instr op)`
-!!!(p) {:.unnumlist}
 
-`   "True if instr’s opcode is OP, or one of OP when OP is a list."`
-!!!(p) {:.unnumlist}
+`      "True if instr's opcode is OP, or one of OP when OP is a list."`
 
-`   (if (listp op)`
-!!!(p) {:.unnumlist}
+`      (if (listp op)`
 
-`       (member (opcode instr) op)`
-!!!(p) {:.unnumlist}
+`              (member (opcode instr) op)`
 
-`       (eq (opcode instr) op)))`
-!!!(p) {:.unnumlist}
+`              (eq (opcode instr) op)))`
 
 `(defun top (stack) (first stack))`
-!!!(p) {:.unnumlist}
 
 `(defun machine (f)`
-!!!(p) {:.unnumlist}
 
-`   "Run the abstract machine on the code for f."`
-!!!(p) {:.unnumlist}
+`      "Run the abstract machine on the code for f."`
 
-`   (let* ((code (fn-code f))`
-!!!(p) {:.unnumlist}
+`      (let* ((code (fn-code f))`
 
-`            (pc 0)`
-!!!(p) {:.unnumlist}
+`                        (pc 0)`
 
-`            (env nil )`
-!!!(p) {:.unnumlist}
+`                        (env nil )`
 
-`            (stack nil)`
-!!!(p) {:.unnumlist}
+`                        (stack nil)`
 
-`            (n-args 0)`
-!!!(p) {:.unnumlist}
+`                        (n-args 0)`
 
-`            (instr))`
-!!!(p) {:.unnumlist}
+`                        (instr))`
 
-`   (loop`
-!!!(p) {:.unnumlist}
+`      (loop`
 
-`      (setf instr (elt code pc))`
-!!!(p) {:.unnumlist}
+`            (setf instr (elt code pc))`
 
-`      (incf pc)`
-!!!(p) {:.unnumlist}
+`            (incf pc)`
 
-`      (case (opcode instr)`
-!!!(p) {:.unnumlist}
+`            (case (opcode instr)`
 
-`         ;; Variable/stack manipulation instructions:`
-!!!(p) {:.unnumlist}
+`                  ;; Variable/stack manipulation instructions:`
 
-`         (LVAR (push (elt (elt env (arg1 instr)) (arg2 instr))`
-!!!(p) {:.unnumlist}
+`                  (LVAR (push (elt (elt env (arg1 instr)) (arg2 instr))`
 
-`                                     stack))`
-!!!(p) {:.unnumlist}
+`                                                                          stack))`
 
-`         (LSET (setf (elt (elt env (arg1 instr)) (arg2 instr))`
-!!!(p) {:.unnumlist}
+`                  (LSET (setf (elt (elt env (arg1 instr)) (arg2 instr))`
 
-`                                     (top stack)))`
-!!!(p) {:.unnumlist}
+`                                                                          (top stack)))`
 
-`         (GVAR (push (get (arg1 instr) ’global-val) stack))`
-!!!(p) {:.unnumlist}
+`                  (GVAR (push (get (arg1 instr) 'global-val) stack))`
 
-`         (GSET (setf (get (arg1 instr) ’global-val) (top stack)))`
-!!!(p) {:.unnumlist}
+`                  (GSET (setf (get (arg1 instr) 'global-val) (top stack)))`
 
-`         (POP (pop stack))`
-!!!(p) {:.unnumlist}
+`                  (POP (pop stack))`
 
-`         (CONST (push (arg1 instr) stack))`
-!!!(p) {:.unnumlist}
+`                  (CONST (push (arg1 instr) stack))`
 
-`         ;; Branching instructions:`
-!!!(p) {:.unnumlist}
+`                  ;; Branching instructions:`
 
-`         (JUMP (setf pc (arg1 instr)))`
-!!!(p) {:.unnumlist}
+`                  (JUMP (setf pc (arg1 instr)))`
 
-`         (FJUMP (if (null (pop stack)) (setf pc (arg1 instr))))`
-!!!(p) {:.unnumlist}
+`                  (FJUMP (if (null (pop stack)) (setf pc (arg1 instr))))`
 
-`         (TJUMP (if (pop stack) (setf pc (arg1 instr))))`
-!!!(p) {:.unnumlist}
+`                  (TJUMP (if (pop stack) (setf pc (arg1 instr))))`
 
-`         ;; Function call/return instructions:`
-!!!(p) {:.unnumlist}
+`                  ;; Function call/return instructions:`
 
-`         (SAVE (push (make-ret-addr :pc (arg1 instr)`
-!!!(p) {:.unnumlist}
+`                  (SAVE (push (make-ret-addr :pc (arg1 instr)`
 
-`                                                       :fn f :env env)`
-!!!(p) {:.unnumlist}
+`                                                                                                              :fn f :env env)`
 
-`                               stack))`
-!!!(p) {:.unnumlist}
+`                                                              stack))`
 
-`         (RETURN ;; return value is top of stack; ret-addr is second`
-!!!(p) {:.unnumlist}
+`                  (RETURN ;; return value is top of stack; ret-addr is second`
 
-`           (setf f (ret-addr-fn (second stack))`
-!!!(p) {:.unnumlist}
+`                      (setf f (ret-addr-fn (second stack))`
 
-`                   code (fn-code f)`
-!!!(p) {:.unnumlist}
+`                                      code (fn-code f)`
 
-`                   env (ret-addr-env (second stack))`
-!!!(p) {:.unnumlist}
+`                                      env (ret-addr-env (second stack))`
 
-`                   pc (ret-addr-pc (second stack)))`
-!!!(p) {:.unnumlist}
+`                                      pc (ret-addr-pc (second stack)))`
 
-`           ;; Get rid of the ret-addr, but keep the value`
-!!!(p) {:.unnumlist}
+`                      ;; Get rid of the ret-addr, but keep the value`
 
-`           (setf stack (cons (first stack) (rest2 stack))))`
-!!!(p) {:.unnumlist}
+`                      (setf stack (cons (first stack) (rest2 stack))))`
 
-`         (CALLJ (pop env)                  ; discard the top frame`
-!!!(p) {:.unnumlist}
+`                  (CALLJ (pop env)                                   ; discard the top frame`
 
-`                       (setf f (pop stack)`
-!!!(p) {:.unnumlist}
+`                                              (setf f (pop stack)`
 
-`                       code (fn-code f)`
-!!!(p) {:.unnumlist}
+`                                              code (fn-code f)`
 
-`                       env (fn-env f)`
-!!!(p) {:.unnumlist}
+`                                              env (fn-env f)`
 
-`                       pc 0`
-!!!(p) {:.unnumlist}
+`                                              pc 0`
 
-`                       n-args (arg1 instr)))`
-!!!(p) {:.unnumlist}
+`                                              n-args (arg1 instr)))`
 
-`         (ARGS (assert (= n-args (arg1 instr)) ()`
-!!!(p) {:.unnumlist}
+`                  (ARGS (assert (= n-args (arg1 instr)) ()`
 
-`                                         "Wrong number of arguments:~`
-!!!(p) {:.unnumlist}
+`                                                                                  "Wrong number of arguments:~`
 
-`                                         ~d expected, ~ d supplied"`
-!!!(p) {:.unnumlist}
+`                                                                                  ~d expected, ~  d supplied"`
 
-`                                         (arg1 instr) n-args)`
-!!!(p) {:.unnumlist}
+`                                                                                  (arg1 instr) n-args)`
 
-`                          (push (make-array (arg1 instr)) env)`
-!!!(p) {:.unnumlist}
+`                                                    (push (make-array (arg1 instr)) env)`
 
-`                          (loop for i from (− n-args 1) downto 0 do`
-!!!(p) {:.unnumlist}
+`                                                    (loop for i from (- n-args 1) downto 0 do`
 
-`                                   (setf (elt (first env) i) (pop stack))))`
-!!!(p) {:.unnumlist}
+`                                                                      (setf (elt (first env) i) (pop stack))))`
 
-`        (ARGS.
+`                (ARGS.
 (assert (>= n-args (arg1 instr)) ()`
-!!!(p) {:.unnumlist}
 
-`                                         "Wrong number of arguments:~`
-!!!(p) {:.unnumlist}
+`                                                                                  "Wrong number of arguments:~`
 
-`                                         ~d or more expected, ~ d supplied"`
-!!!(p) {:.unnumlist}
+`                                                                                  ~d or more expected, ~  d supplied"`
 
-`                                         (arg1 instr) n-args)`
-!!!(p) {:.unnumlist}
+`                                                                                  (arg1 instr) n-args)`
 
-`                          (push (make-array (+ 1 (arg1 instr))) env)`
-!!!(p) {:.unnumlist}
+`                                                    (push (make-array (+  1 (arg1 instr))) env)`
 
-`                          (loop repeat (− n-args (arg1 instr)) do`
-!!!(p) {:.unnumlist}
+`                                                    (loop repeat (- n-args (arg1 instr)) do`
 
-`                                    (push (pop stack) (elt (first env) (arg1 instr))))`
-!!!(p) {:.unnumlist}
+`                                                                        (push (pop stack) (elt (first env) (arg1 instr))))`
 
-`                          (loop for i from (- (arg1 instr) 1) downto 0 do`
-!!!(p) {:.unnumlist}
+`                                                    (loop for i from (- (arg1 instr) 1) downto 0 do`
 
-`                                    (setf (elt (first env) i) (pop stack))))`
-!!!(p) {:.unnumlist}
+`                                                                        (setf (elt (first env) i) (pop stack))))`
 
-`        (FN (push (make-fn :code (fn-code (arg1 instr))`
-!!!(p) {:.unnumlist}
+`                (FN (push (make-fn :code (fn-code (arg1 instr))`
 
-`                                       :env env) stack))`
-!!!(p) {:.unnumlist}
+`                                                                              :env env) stack))`
 
-`        (PRIM (push (apply (arg1 instr)`
-!!!(p) {:.unnumlist}
+`                (PRIM (push (apply (arg1 instr)`
 
-`                                    (loop with args = nil repeat n-args`
-!!!(p) {:.unnumlist}
+`                                                                        (loop with args = nil repeat n-args`
 
-`                                              do (push (pop stack) args)`
-!!!(p) {:.unnumlist}
+`                                                                                            do (push (pop stack) args)`
 
-`                                              finally (return args)))`
-!!!(p) {:.unnumlist}
+`                                                                                            finally (return args)))`
 
-`                              stack))`
-!!!(p) {:.unnumlist}
+`                                                            stack))`
 
-`        ;; Continuation instructions:`
-!!!(p) {:.unnumlist}
+`                ;; Continuation instructions:`
 
-`        (SET-CC (setf stack (top stack)))`
-!!!(p) {:.unnumlist}
+`                (SET-CC (setf stack (top stack)))`
 
-`        (CC    (push(make-fn`
-!!!(p) {:.unnumlist}
+`                (CC       (push(make-fn`
 
-`                             :env (list (vector stack))`
-!!!(p) {:.unnumlist}
+`                                                          :env (list (vector stack))`
 
-`                             :code ’((ARGS 1) (LVAR 1 0 ";" stack) (SET-CC)`
-!!!(p) {:.unnumlist}
+`                                                          :code '((ARGS 1) (LVAR 1 0 ";" stack) (SET-CC)`
 
-`                                        (LVAR 0 0) (RETURN)))`
-!!!(p) {:.unnumlist}
+`                                                                                (LVAR 0 0) (RETURN)))`
 
-`                              stack))`
-!!!(p) {:.unnumlist}
+`                                                            stack))`
 
-`        ;; Nullary operations:`
-!!!(p) {:.unnumlist}
+`                ;; Nullary operations:`
 
-`        ((SCHEME-READ NEWLINE)`
-!!!(p) {:.unnumlist}
+`                ((SCHEME-READ NEWLINE)`
 
-`          (push (funcall (opcode instr)) stack))`
-!!!(p) {:.unnumlist}
+`                    (push (funcall (opcode instr)) stack))`
 
-`        ;; Unary operations:`
-!!!(p) {:.unnumlist}
+`                ;; Unary operations:`
 
-`        ((CAR CDR CADR NOT LIST1 COMPILER DISPLAY WRITE RANDOM)`
-!!!(p) {:.unnumlist}
+`                ((CAR CDR CADR NOT LIST1 COMPILER DISPLAY WRITE RANDOM)`
 
-`        (push (funcall (opcode instr) (pop stack)) stack))`
-!!!(p) {:.unnumlist}
+`                (push (funcall (opcode instr) (pop stack)) stack))`
 
-`        ;; Binary operations:`
-!!!(p) {:.unnumlist}
+`                ;; Binary operations:`
 
-`        ((+−*/<><= >=/== CONS LIST2 NAME!
+`                ((+-*/<><= >=/== CONS LIST2 NAME!
 EQ EQUAL EQL)`
-!!!(p) {:.unnumlist}
 
-`         (setf stack (cons (funcall (opcode instr) (second stack)`
-!!!(p) {:.unnumlist}
+`                  (setf stack (cons (funcall (opcode instr) (second stack)`
 
-`                                              (first stack))`
-!!!(p) {:.unnumlist}
+`                                                                                            (first stack))`
 
-`                                    (rest2 stack))))`
-!!!(p) {:.unnumlist}
+`                                                                        (rest2 stack))))`
 
-`        ;; Ternary operations:`
-!!!(p) {:.unnumlist}
+`                ;; Ternary operations:`
 
-`        (LIST3`
-!!!(p) {:.unnumlist}
+`                (LIST3`
 
-`         (setf stack (cons (funcall (opcode instr) (third stack)`
-!!!(p) {:.unnumlist}
+`                  (setf stack (cons (funcall (opcode instr) (third stack)`
 
-`                                               (second stack) (first stack))`
-!!!(p) {:.unnumlist}
+`                                                                                              (second stack) (first stack))`
 
-`                                    (rest3 stack))))`
-!!!(p) {:.unnumlist}
+`                                                                        (rest3 stack))))`
 
-`        ;; Constants:`
-!!!(p) {:.unnumlist}
+`                ;; Constants:`
 
-`        ((T NIL -1 0 12)`
-!!!(p) {:.unnumlist}
+`                ((T NIL -1 0 12)`
 
-`         (push (opcode instr) stack))`
-!!!(p) {:.unnumlist}
+`                  (push (opcode instr) stack))`
 
-`        ;; Other:`
-!!!(p) {:.unnumlist}
+`                ;; Other:`
 
-`        ((HALT) (RETURN (top stack)))`
-!!!(p) {:.unnumlist}
+`                ((HALT) (RETURN (top stack)))`
 
-`        (otherwise (error "Unknown opcode: ~ a" instr))))))`
-!!!(p) {:.unnumlist}
+`                (otherwise (error "Unknown opcode: ~  a" instr))))))`
 
 `(defun init-scheme-comp ()`
-!!!(p) {:.unnumlist}
 
-`   "Initialize values (including call/cc) for the Scheme compiler."`
-!!!(p) {:.unnumlist}
+`      "Initialize values (including call/cc) for the Scheme compiler."`
 
-`   (set-global-var!
-’exit`
-!!!(p) {:.unnumlist}
+`      (set-global-var!
+'exit`
 
-`      (new-fn :name ’exit :args ’(val) :code ’((HALT))))`
-!!!(p) {:.unnumlist}
+`            (new-fn :name 'exit :args '(val) :code '((HALT))))`
 
-`   (set-global-var!
-’call/cc`
-!!!(p) {:.unnumlist}
+`      (set-global-var!
+'call/cc`
 
-`      (new-fn :name ’call/cc :args ’(f)`
-!!!(p) {:.unnumlist}
+`            (new-fn :name 'call/cc :args '(f)`
 
-`                   :code ’((ARGS 1) (CC) (LVAR 0 0 “;” f) (CALLJ 1))))`
-!!!(p) {:.unnumlist}
+`                                      :code '((ARGS 1) (CC) (LVAR 0 0 ";" f) (CALLJ 1))))`
 
-`   (dolist (prim *primitive-fns*)`
-!!!(p) {:.unnumlist}
+`      (dolist (prim *primitive-fns*)`
 
-`       (setf (get (prim-symbol prim) ’global-val)`
-!!!(p) {:.unnumlist}
+`              (setf (get (prim-symbol prim) 'global-val)`
 
-`                   (new-fn :env nil :name (prim-symbol prim)`
-!!!(p) {:.unnumlist}
+`                                      (new-fn :env nil :name (prim-symbol prim)`
 
-`                                           :code (seq (gen ’PRIM (prim-symbol prim))`
-!!!(p) {:.unnumlist}
+`                                                                                      :code (seq (gen 'PRIM (prim-symbol prim))`
 
-`                                                      (gen ’RETURN))))))`
-!!!(p) {:.unnumlist}
+`                                                                                                            (gen 'RETURN))))))`
 
-Here’s the Scheme top level.
-Note that it is written in Scheme itself; we compile the definition of the read-eval-print loop,[1](#fn0010){:#xfn0010} load it into the machine, and then start executing it.
-There’s also an interface to compile and execute a single expression, `comp-go`.
+Here's the Scheme top level.
+Note that it is written in Scheme itself; we compile the definition of the read-eval-print loop,[1](#fn0010) load it into the machine, and then start executing it.
+There's also an interface to compile and execute a single expression, `comp-go`.
 
-[ ](#){:#l0150}`(defconstant scheme-top-level`
-!!!(p) {:.unnumlist}
+`(defconstant scheme-top-level`
 
-`   ’(begin(define (scheme)`
-!!!(p) {:.unnumlist}
+`      '(begin(define (scheme)`
 
-`                 (newline)`
-!!!(p) {:.unnumlist}
+`                                  (newline)`
 
-`                 (display "=> ")`
-!!!(p) {:.unnumlist}
+`                                  (display "=> ")`
 
-`                 (write ((compiler (read))))`
-!!!(p) {:.unnumlist}
+`                                  (write ((compiler (read))))`
 
-`                 (scheme))`
-!!!(p) {:.unnumlist}
+`                                  (scheme))`
 
-`             (scheme)))`
-!!!(p) {:.unnumlist}
+`                          (scheme)))`
 
 `(defun scheme ( )`
-!!!(p) {:.unnumlist}
 
-`   "A compiled Scheme read-eval-print loop"`
-!!!(p) {:.unnumlist}
+`      "A compiled Scheme read-eval-print loop"`
 
-`   (init-scheme-comp)`
-!!!(p) {:.unnumlist}
+`      (init-scheme-comp)`
 
-`   (machine (compiler scheme-top-level)))`
-!!!(p) {:.unnumlist}
+`      (machine (compiler scheme-top-level)))`
 
 `(defun comp-go (exp)`
-!!!(p) {:.unnumlist}
 
-`   "Compile and execute the expression."`
-!!!(p) {:.unnumlist}
+`      "Compile and execute the expression."`
 
-`   (machine (compiler ‘(exit ,exp))))`
-!!!(p) {:.unnumlist}
+`      (machine (compiler '(exit ,exp))))`
 
-**Exercise 23.2 [m]** This implementation of the machine is wasteful in its representation of environments.
+**Exercise  23.2 [m]** This implementation of the machine is wasteful in its representation of environments.
 For example, consider what happens in a tail-recursive function.
 Each `ARG` instruction builds a new frame and pushes it on the environment.
 Then each `CALL` pops the latest frame off the environment.
@@ -2375,7 +1854,7 @@ So, while the stack does not grow with tail-recursive calls, the heap certainly 
 Eventually, we will have to garbage-collect all those unused frames (and the cons cells used to make lists out of them).
 How could we avoid or limit this garbage collection?
 
-## [ ](#){:#st0025}23.4 A Peephole Optimizer
+## 23.4 A Peephole Optimizer
 {:#s0025}
 {:.h1hd}
 
@@ -2384,12 +1863,11 @@ The idea is to look at short sequences of instructions for prespecified patterns
 
 In the following example, `comp-if` has already done some source-level optimization, such as eliminating the `(f x)` call.
 
-[ ](#){:#t0115}
 !!!(table)
 
 | []() | | | | | | | | | |
 |---|---|---|---|---|---|---|---|---|---|
-| `> (comp-show ’(begin (if (if t 1 (f x)) (set! x 2)) x))` |
+| `> (comp-show '(begin (if (if t 1 (f x)) (set! x 2)) x))` |
 | `0:` | `ARGS` | `0` |
 | 1: | 1 | |
 | `2:` | `FJUMP` | `6` |
@@ -2407,12 +1885,11 @@ x 2)`.
 Alternatively, it could also be done by looking at the preceding instruction sequence and transforming local inefficiencies.
 The optimizer presented in this section is capable of generating the following code:
 
-[ ](#){:#t0120}
 !!!(table)
 
 | []() | | | | | | | | | |
 |---|---|---|---|---|---|---|---|---|---|
-| `> (comp-show ‘(begin (if (if t 1 (f x)) (set! x 2)) x))` |
+| `> (comp-show '(begin (if (if t 1 (f x)) (set! x 2)) x))` |
 | `0:` | `ARGS` | `0` |
 | 1: | 2 | |
 | `2:` | `GSET` | `X` |
@@ -2424,38 +1901,27 @@ The function `optimize` is implemented as a data-driven function that looks at t
 To be more specific, `optimize` takes a list of assembly language instructions and looks at each instruction in order, trying to apply an optimization.
 If any changes at all are made, then `optimize` will be called again on the whole instruction list, because further changes might be triggered by the first round of changes.
 
-[ ](#){:#l0155}`(defun optimize (code)`
-!!!(p) {:.unnumlist}
+`(defun optimize (code)`
 
-`   "Perform peephole optimization on assembly code."`
-!!!(p) {:.unnumlist}
+`      "Perform peephole optimization on assembly code."`
 
-`   (let ((any-change nil))`
-!!!(p) {:.unnumlist}
+`      (let ((any-change nil))`
 
-`       ;; Optimize each tail`
-!!!(p) {:.unnumlist}
+`              ;; Optimize each tail`
 
-`       (loop for code-tail on code do`
-!!!(p) {:.unnumlist}
+`              (loop for code-tail on code do`
 
-`                (setf any-change (or (optimize-1 code-tail code)`
-!!!(p) {:.unnumlist}
+`                                (setf any-change (or (optimize-1 code-tail code)`
 
-`                                                any-change)))`
-!!!(p) {:.unnumlist}
+`                                                                                                any-change)))`
 
-`       ;; If any changes were made, call optimize again`
-!!!(p) {:.unnumlist}
+`              ;; If any changes were made, call optimize again`
 
-`       (if any-change`
-!!!(p) {:.unnumlist}
+`              (if any-change`
 
-`           (optimize code)`
-!!!(p) {:.unnumlist}
+`                      (optimize code)`
 
-`           code)))`
-!!!(p) {:.unnumlist}
+`                      code)))`
 
 The function `optimize-1` is responsible for each individual attempt to optimize.
 It is passed two arguments: a list of instructions starting at the current one and going to the end of the list, and a list of all the instructions.
@@ -2464,246 +1930,170 @@ The whole idea of a peephole optimizer is that it should look at only a few inst
 `optimize-1` is data-driven, based on the opcode of the first instruction.
 Note that the optimizer functions do their work by destructively modifying the instruction sequence, *not* by consing up and returning a new sequence.
 
-[ ](#){:#l0160}`(defun optimize-1 (code all-code)`
-!!!(p) {:.unnumlist}
+`(defun optimize-1 (code all-code)`
 
-`   "Perform peephole optimization on a tail of the assembly code.`
-!!!(p) {:.unnumlist}
+`      "Perform peephole optimization on a tail of the assembly code.`
 
-`   If a change is made, return true."`
-!!!(p) {:.unnumlist}
+`      If a change is made, return true."`
 
-`   ;; Data-driven by the opcode of the first instruction`
-!!!(p) {:.unnumlist}
+`      ;; Data-driven by the opcode of the first instruction`
 
-`   (let* ((instr (first code))`
-!!!(p) {:.unnumlist}
+`      (let* ((instr (first code))`
 
-`             (optimizer (get-optimizer (opcode instr))))`
-!!!(p) {:.unnumlist}
+`                          (optimizer (get-optimizer (opcode instr))))`
 
-`      (when optimizer`
-!!!(p) {:.unnumlist}
+`            (when optimizer`
 
-`        (funcall optimizer instr code all-code))))`
-!!!(p) {:.unnumlist}
+`                (funcall optimizer instr code all-code))))`
 
 We need a table to associate the individual optimizer functions with the opcodes.
 Since opcodes include numbers as well as symbols, an `eql` hash table is an appropriate choice:
 
-[ ](#){:#l0165}`(let ((optimizers (make-hash-table :test #’eql)))`
-!!!(p) {:.unnumlist}
+`(let ((optimizers (make-hash-table :test #'eql)))`
 
-`   (defun get-optimizer (opcode)`
-!!!(p) {:.unnumlist}
+`      (defun get-optimizer (opcode)`
 
-`       "Get the assembly language optimizer for this opcode."`
-!!!(p) {:.unnumlist}
+`              "Get the assembly language optimizer for this opcode."`
 
-`       (gethash opcode optimizers))`
-!!!(p) {:.unnumlist}
+`              (gethash opcode optimizers))`
 
-`   (defun put-optimizer (opcode fn)`
-!!!(p) {:.unnumlist}
+`      (defun put-optimizer (opcode fn)`
 
-`       "Store an assembly language optimizer for this opcode."`
-!!!(p) {:.unnumlist}
+`              "Store an assembly language optimizer for this opcode."`
 
-`       (setf (gethash opcode optimizers) fn)))`
-!!!(p) {:.unnumlist}
+`              (setf (gethash opcode optimizers) fn)))`
 
 We could now build a table with `put-optimizer`, but it is worth defining a macro to make this a little neater:
 
-[ ](#){:#l0170}`(defmacro def-optimizer (opcodes args &body body)`
-!!!(p) {:.unnumlist}
+`(defmacro def-optimizer (opcodes args &body body)`
 
-`   "Define assembly language optimizers for these opcodes."`
-!!!(p) {:.unnumlist}
+`      "Define assembly language optimizers for these opcodes."`
 
-`   (assert (and (listp opcodes) (listp args) (= (length args) 3)))`
-!!!(p) {:.unnumlist}
+`      (assert (and (listp opcodes) (listp args) (= (length args) 3)))`
 
-`   ‘(dolist (op ’.opcodes)`
-!!!(p) {:.unnumlist}
+`      '(dolist (op '.opcodes)`
 
-`        (put-optimizer op #’(lambda .args ..body))))`
-!!!(p) {:.unnumlist}
+`                (put-optimizer op #'(lambda .args ..body))))`
 
 Before showing example optimizer functions, we will introduce three auxiliary functions.
 `gen1` generates a single instruction, `target` finds the code sequence that a jump instruction branches to, and `next-instr` finds the next actual instruction in a sequence, skipping labels.
 
-[ ](#){:#l0175}`(defun gen1 (&rest args) "Generate a single instruction" args)`
-!!!(p) {:.unnumlist}
+`(defun gen1 (&rest args) "Generate a single instruction" args)`
 
 `(defun target (instr code) (second (member (arg1 instr) code)))`
-!!!(p) {:.unnumlist}
 
-`(defun next-instr (code) (find-if (complement #’label-p) code))`
-!!!(p) {:.unnumlist}
+`(defun next-instr (code) (find-if (complement #'label-p) code))`
 
 Here are six optimizer functions that implement a few important peephole optimizations.
 
-[ ](#){:#l0180}`(def-optimizer (: LABEL) (instr code all-code)`
-!!!(p) {:.unnumlist}
+`(def-optimizer (: LABEL) (instr code all-code)`
 
-`   ;; … L … => ;if no reference to L`
-!!!(p) {:.unnumlist}
+`      ;; ... L ... => ;if no reference to L`
 
-`   (when (not (find instr all-code :key #’arg1))`
-!!!(p) {:.unnumlist}
+`      (when (not (find instr all-code :key #'arg1))`
 
-`        (setf (first code) (second code)`
-!!!(p) {:.unnumlist}
+`                (setf (first code) (second code)`
 
-`                (rest code) (rest2 code))`
-!!!(p) {:.unnumlist}
+`                                (rest code) (rest2 code))`
 
-`        t))`
-!!!(p) {:.unnumlist}
+`                t))`
 
 `(def-optimizer (GSET LSET) (instr code all-code)`
-!!!(p) {:.unnumlist}
 
-`   ;; ex: (begin (set!
+`      ;; ex: (begin (set!
 x y) (if x z))`
-!!!(p) {:.unnumlist}
 
-`   ;; (SET X) (POP) (VAR X) ==> (SET X)`
-!!!(p) {:.unnumlist}
+`      ;; (SET X) (POP) (VAR X) ==> (SET X)`
 
-`   (when (and (is (second code) ’POP)`
-!!!(p) {:.unnumlist}
+`      (when (and (is (second code) 'POP)`
 
-`              (is (third code) ’(GVAR LVAR))`
-!!!(p) {:.unnumlist}
+`                            (is (third code) '(GVAR LVAR))`
 
-`              (eq (arg1 instr) (arg1 (third code))))`
-!!!(p) {:.unnumlist}
+`                            (eq (arg1 instr) (arg1 (third code))))`
 
-`       (setf (rest code) (nthcdr 3 code))`
-!!!(p) {:.unnumlist}
+`              (setf (rest code) (nthcdr 3 code))`
 
-`       t))`
-!!!(p) {:.unnumlist}
+`              t))`
 
 `(def-optimizer (JUMP CALL CALLJ RETURN) (instr code all-code)`
-!!!(p) {:.unnumlist}
 
-`   ;; (JUMP L1) …dead code… L2 ==> (JUMP L1) L2`
-!!!(p) {:.unnumlist}
+`      ;; (JUMP L1) ...dead code... L2 ==> (JUMP L1) L2`
 
-`   (setf (rest code) (member-if #’label-p (rest code)))`
-!!!(p) {:.unnumlist}
+`      (setf (rest code) (member-if #'label-p (rest code)))`
 
-`   ;; (JUMP L1) … L1 (JUMP L2) ==> (JUMP L2) … L1 (JUMP L2)`
-!!!(p) {:.unnumlist}
+`      ;; (JUMP L1) ... L1 (JUMP L2) ==> (JUMP L2) ... L1 (JUMP L2)`
 
-`   (when (and (is instr ’JUMP)`
-!!!(p) {:.unnumlist}
+`      (when (and (is instr 'JUMP)`
 
-`                      (is (target instr code) ’(JUMP RETURN))`
-!!!(p) {:.unnumlist}
+`                                            (is (target instr code) '(JUMP RETURN))`
 
-`      (setf (first code) (copy-list (target instr code)))`
-!!!(p) {:.unnumlist}
+`            (setf (first code) (copy-list (target instr code)))`
 
-`      t)))`
-!!!(p) {:.unnumlist}
+`            t)))`
 
 `(def-optimizer (TJUMP FJUMP) (instr code all-code)`
-!!!(p) {:.unnumlist}
 
-`   ;; (FJUMP L1) … L1 (JUMP L2) ==> (FJUMP L2) … L1 (JUMP L2)`
-!!!(p) {:.unnumlist}
+`      ;; (FJUMP L1) ... L1 (JUMP L2) ==> (FJUMP L2) ... L1 (JUMP L2)`
 
-`   (when (is (target instr code) ‘JUMP)`
-!!!(p) {:.unnumlist}
+`      (when (is (target instr code) 'JUMP)`
 
-`      (setf (second instr) (arg1 (target instr code)))`
-!!!(p) {:.unnumlist}
+`            (setf (second instr) (arg1 (target instr code)))`
 
-`      t))`
-!!!(p) {:.unnumlist}
+`            t))`
 
 `(def-optimizer (T -1 0 1 2) (instr code all-code)`
-!!!(p) {:.unnumlist}
 
-`   (case (opcode (second code))`
-!!!(p) {:.unnumlist}
+`      (case (opcode (second code))`
 
-`      (NOT ;; (T) (NOT) ==> NIL`
-!!!(p) {:.unnumlist}
+`            (NOT ;; (T) (NOT) ==> NIL`
 
-`        (setf (first code) (gen1 ’NIL)`
-!!!(p) {:.unnumlist}
+`                (setf (first code) (gen1 'NIL)`
 
-`                (rest code) (rest2 code))`
-!!!(p) {:.unnumlist}
+`                                (rest code) (rest2 code))`
 
-`        t)`
-!!!(p) {:.unnumlist}
+`                t)`
 
-`      (FJUMP ;; (T) (FJUMP L) … =>…`
-!!!(p) {:.unnumlist}
+`            (FJUMP ;; (T) (FJUMP L) ... =>...`
 
-`        (setf (first code) (third code)`
-!!!(p) {:.unnumlist}
+`                (setf (first code) (third code)`
 
-`                (rest code) (rest3 code))`
-!!!(p) {:.unnumlist}
+`                                (rest code) (rest3 code))`
 
-`        t)`
-!!!(p) {:.unnumlist}
+`                t)`
 
-`      (TJUMP ;; (T) (TJUMP L) … => (JUMP L) …`
-!!!(p) {:.unnumlist}
+`            (TJUMP ;; (T) (TJUMP L) ... => (JUMP L) ...`
 
-`        (setf (first code) (gen1 ‘JUMP (arg1 (next-instr code))))`
-!!!(p) {:.unnumlist}
+`                (setf (first code) (gen1 'JUMP (arg1 (next-instr code))))`
 
-`        t)))`
-!!!(p) {:.unnumlist}
+`                t)))`
 
 `(def-optimizer (NIL) (instr code all-code)`
-!!!(p) {:.unnumlist}
 
-`   (case (opcode (second code))`
-!!!(p) {:.unnumlist}
+`      (case (opcode (second code))`
 
-`     (NOT ;; (NIL) (NOT) ==> T`
-!!!(p) {:.unnumlist}
+`          (NOT ;; (NIL) (NOT) ==> T`
 
-`        (setf (first code) (gen1 ’T)`
-!!!(p) {:.unnumlist}
+`                (setf (first code) (gen1 'T)`
 
-`              (rest code) (rest2 code))`
-!!!(p) {:.unnumlist}
+`                            (rest code) (rest2 code))`
 
-`        t)`
-!!!(p) {:.unnumlist}
+`                t)`
 
-`   (TJUMP ;; (NIL) (TJUMP L) … =>…`
-!!!(p) {:.unnumlist}
+`      (TJUMP ;; (NIL) (TJUMP L) ... =>...`
 
-`   (setf (first code) (third code)`
-!!!(p) {:.unnumlist}
+`      (setf (first code) (third code)`
 
-`           (rest code) (rest3 code))`
-!!!(p) {:.unnumlist}
+`                      (rest code) (rest3 code))`
 
-`   t)`
-!!!(p) {:.unnumlist}
+`      t)`
 
-`   (FJUMP ;; (NIL) (FJUMP L) ==> (JUMP L)`
-!!!(p) {:.unnumlist}
+`      (FJUMP ;; (NIL) (FJUMP L) ==> (JUMP L)`
 
-`   (setf (first code) (gen1 ’JUMP (arg1 (next-instr code))))`
-!!!(p) {:.unnumlist}
+`      (setf (first code) (gen1 'JUMP (arg1 (next-instr code))))`
 
-`   t)))`
-!!!(p) {:.unnumlist}
+`      t)))`
 
-## [ ](#){:#st0030}23.5 Languages with Different Lexical Conventions
+## 23.5 Languages with Different Lexical Conventions
 {:#s0030}
 {:.h1hd}
 
@@ -2720,26 +2110,20 @@ Because the readtable is stored in a special variable, it is possible to alter c
 The new function `scheme - read` temporarily changes the readtable to a new one, the Scheme readtable.
 It also accepts an optional argument, the stream to read from, and it returns a special marker on end of file.
 This can be tested for with the predicate `eof-object?`.
-Note that once `scheme-read` is installed as the value of the Scheme `symbol-read` we need do no more—`scheme-read` will always be called when appropriate (by the top level of Scheme, and by any user Scheme program).
+Note that once `scheme-read` is installed as the value of the Scheme `symbol-read` we need do no more-`scheme-read` will always be called when appropriate (by the top level of Scheme, and by any user Scheme program).
 
-[ ](#){:#l0185}`(defconstant eof "EoF")`
-!!!(p) {:.unnumlist}
+`(defconstant eof "EoF")`
 
 `(defun eof-object?
 (x) (eq x eof))`
-!!!(p) {:.unnumlist}
 
 `(defvar *scheme-readtable* (copy-readtable))`
-!!!(p) {:.unnumlist}
 
 `(defun scheme-read (&optional (stream *standard-input*))`
-!!!(p) {:.unnumlist}
 
-`   (let ((*readtable* *scheme-readtable*))`
-!!!(p) {:.unnumlist}
+`      (let ((*readtable* *scheme-readtable*))`
 
-`      (read stream nil eof)))`
-!!!(p) {:.unnumlist}
+`            (read stream nil eof)))`
 
 The point of having a special `eof` constant is that it is unforgeable.
 The user cannot type in a sequence of characters that will be read as something `eq` to `eof`.
@@ -2752,364 +2136,271 @@ The next step in implementing `scheme-read` is to alter `*scheme-readtable*`, ad
 Here we define macros for `#t` and `#f` (the true and false values), for `#d` (decimal numbers) and for the backquote read macro (called quasiquote in Scheme).
 Note that the backquote and comma characters are defined as read macros, but the `@` in ,`@` is processed by reading the next character, not by a read macro on `@`.
 
-[ ](#){:#l0190}`(set-dispatch-macro-character #\# #\t`
-!!!(p) {:.unnumlist}
+`(set-dispatch-macro-character #\# #\t`
 
-`   #’(lambda (&rest ignore) t)`
-!!!(p) {:.unnumlist}
+`      #'(lambda (&rest ignore) t)`
 
-`   *scheme-readtable*)`
-!!!(p) {:.unnumlist}
+`      *scheme-readtable*)`
 
 `(set-dispatch-macro-character #\# #\f`
-!!!(p) {:.unnumlist}
 
-`   #’(lambda (&rest ignore) nil)`
-!!!(p) {:.unnumlist}
+`      #'(lambda (&rest ignore) nil)`
 
-`   *scheme-readtable*)`
-!!!(p) {:.unnumlist}
+`      *scheme-readtable*)`
 
 `(set-dispatch-macro-character #\# #\d`
-!!!(p) {:.unnumlist}
 
-`   ;; In both Common Lisp and Scheme,`
-!!!(p) {:.unnumlist}
+`      ;; In both Common Lisp and Scheme,`
 
-`   ;; #x, #o and #b are hexidecimal, octal, and binary,`
-!!!(p) {:.unnumlist}
+`      ;; #x, #o and #b are hexidecimal, octal, and binary,`
 
-`   ;; e.g.
+`      ;; e.g.
 #xff - #o377 - #b11111111 - 255`
-!!!(p) {:.unnumlist}
 
-`   ;; In Scheme only, #d255 is decimal 255.`
-!!!(p) {:.unnumlist}
+`      ;; In Scheme only, #d255 is decimal 255.`
 
-`   #’(lambda (stream &rest ignore)`
-!!!(p) {:.unnumlist}
+`      #'(lambda (stream &rest ignore)`
 
-`          (let ((*read-base* 10)) (scheme-read stream)))`
-!!!(p) {:.unnumlist}
+`                    (let ((*read-base* 10)) (scheme-read stream)))`
 
-`   *scheme-readtable*)`
-!!!(p) {:.unnumlist}
+`      *scheme-readtable*)`
 
-`(set-macro-character #\‘`
-!!!(p) {:.unnumlist}
+`(set-macro-character #\'`
 
-`   #’(lambda (s ignore) (list ‘quasiquote (scheme-read s)))`
-!!!(p) {:.unnumlist}
+`      #'(lambda (s ignore) (list 'quasiquote (scheme-read s)))`
 
-`   nil *scheme-readtable*)`
-!!!(p) {:.unnumlist}
+`      nil *scheme-readtable*)`
 
 `(set-macro-character #\,`
-!!!(p) {:.unnumlist}
 
-`   #’(lambda (stream ignore)`
-!!!(p) {:.unnumlist}
+`      #'(lambda (stream ignore)`
 
-`          (let ((ch (read-char stream)))`
-!!!(p) {:.unnumlist}
+`                    (let ((ch (read-char stream)))`
 
-`             (if (char = ch #\@)`
-!!!(p) {:.unnumlist}
+`                          (if (char  = ch #\@)`
 
-`                 (list ’unquote-splicing (read stream))`
-!!!(p) {:.unnumlist}
+`                                  (list 'unquote-splicing (read stream))`
 
-`                 (progn (unread-char ch stream)`
-!!!(p) {:.unnumlist}
+`                                  (progn (unread-char ch stream)`
 
-`                        (list ’unquote (read stream))))))`
-!!!(p) {:.unnumlist}
+`                                                (list 'unquote (read stream))))))`
 
-`   nil *scheme-readtable*)`
-!!!(p) {:.unnumlist}
+`      nil *scheme-readtable*)`
 
 Finally, we install `scheme-read` and `eof-object?` as primitives:
 
-[ ](#){:#l0195}`(defparameter *primitive-fns*`
-!!!(p) {:.unnumlist}
+`(defparameter *primitive-fns*`
 
-`   ’((+ 2 + true nil) (- 2 - true nil) (* 2 * true nil) (/ 2 / true nil)`
-!!!(p) {:.unnumlist}
+`      '((+  2 + true nil) (-  2 - true nil) (* 2 * true nil) (/ 2 / true nil)`
 
-`    (< 2 < nil nil) (> 2 > nil nil) (<= 2 <= nil nil) (>= 2 >= nil nil)`
-!!!(p) {:.unnumlist}
+`        (<  2 < nil nil) (> 2 > nil nil) (<= 2 <= nil nil) (>= 2 >= nil nil)`
 
-`    (/= 2 /= nil nil) (= 2 = nil nil)`
-!!!(p) {:.unnumlist}
+`        (/= 2 /= nil nil) (=  2 = nil nil)`
 
-`    (eq?
-2 eq nil nil) (equal?
+`        (eq?
+2  eq nil nil) (equal?
 2 equal nil nil) (eqv?
 2 eql nil nil)`
-!!!(p) {:.unnumlist}
 
-`    (not 1 not nil nil) (null?
+`        (not 1 not nil nil) (null?
 1 not nil nil) (cons 2 cons true nil)`
-!!!(p) {:.unnumlist}
 
-`    (car 1 car nil nil) (cdr 1 cdr nil nil) (cadr 1 cadr nil nil)`
-!!!(p) {:.unnumlist}
+`        (car 1 car nil nil) (cdr 1 cdr nil nil) (cadr 1 cadr nil nil)`
 
-`    (list 1 list1 true nil) (list 2 list2 true nil) (list 3 list3 true nil)`
-!!!(p) {:.unnumlist}
+`        (list 1 list1 true nil) (list 2 list2 true nil) (list 3 list3 true nil)`
 
-`    (read 0 read nil t) (write 1 write nil t) (display 1 display nil t)`
-!!!(p) {:.unnumlist}
+`        (read 0 read nil t) (write 1 write nil t) (display 1 display nil t)`
 
-`    (newline 0 newline nil t) (compiler 1 compiler t nil)`
-!!!(p) {:.unnumlist}
+`        (newline 0 newline nil t) (compiler 1 compiler t nil)`
 
-`    (name!
+`        (name!
 2 name!
 true t) (random 1 random true nil)))`
-!!!(p) {:.unnumlist}
 
 Here we test `scheme-read`.
 The characters in italics were typed as a response to the `scheme-read`.
 
-[ ](#){:#l0200}`> (scheme-read) #*t*`
-!!!(p) {:.unnumlist}
+`> (scheme-read) #*t*`
 
 `T`
-!!!(p) {:.unnumlist}
 
 `> (scheme-read) #f`
-!!!(p) {:.unnumlist}
 
 `NIL`
-!!!(p) {:.unnumlist}
 
-`> (scheme-read) *‘(a,b,@cd)*`
-!!!(p) {:.unnumlist}
+`> (scheme-read) *'(a,b,@cd)*`
 
 `(QUASIQUOTE (A (UNQUOTE B) (UNQUOTE-SPLICING C) D))`
-!!!(p) {:.unnumlist}
 
 The final step is to make quasi quote a macro that expands into the proper sequence of calls to `cons`, `list`, and `append`.
 The careful reader will keep track of the difference between the form returned by `scheme-read` (something starting with `quasiquote`), the expansion of this form with the Scheme macro `quasiquote` (which is implemented with the Common Lisp function `quasi-q`), and the eventual evaluation of the expansion.
 In an environment where `b` is bound to the number 2 and `c` is bound to the list `(c1 c2)`, we might have:
 
-[ ](#){:#t0125}
 !!!(table)
 
 | []() | | | | | | | | | |
 |---|---|---|---|---|---|---|---|---|---|
-| Typed: | `‘(a ,b ,@c d)` |
+| Typed: | `'(a ,b ,@c d)` |
 | Read: | `(quasiquote (a (unquote b) (unquote-splicing c) d))` |
-| Expanded: | `(cons ‘a (cons b (append c ‘(d))))` |
+| Expanded: | `(cons 'a (cons b (append c '(d))))` |
 | Evaluated: | `(a 2 c1 c2 d)` |
 
-The implementation of the `quasiquote` macro is modeled closely on the one given in Charniak et al.’s *Artificial Intelligence Programming.* I added support for vectors.
+The implementation of the `quasiquote` macro is modeled closely on the one given in Charniak et al.'s *Artificial Intelligence Programming.* I added support for vectors.
 In `combine-quasiquote` I add the trick of reusing the old cons cell `x` rather than consing together `left` and `right` when that is possible.
-However, the implementation still wastes cons cells—a more efficient version would pass back multiple values rather than consing `quote` onto a list, only to strip it off again.
+However, the implementation still wastes cons cells-a more efficient version would pass back multiple values rather than consing `quote` onto a list, only to strip it off again.
 
-[ ](#){:#l0205}`(setf (scheme-macro ’quasiquote) ’quasi-q)`
-!!!(p) {:.unnumlist}
+`(setf (scheme-macro 'quasiquote) 'quasi-q)`
 
 `(defun quasi-q (x)`
-!!!(p) {:.unnumlist}
 
-`   "Expand a quasiquote form into append, list.
+`      "Expand a quasiquote form into append, list.
 and cons calls."`
-!!!(p) {:.unnumlist}
 
-`   (cond`
-!!!(p) {:.unnumlist}
+`      (cond`
 
-`      ((vectorp x)`
-!!!(p) {:.unnumlist}
+`            ((vectorp x)`
 
-`       (list ‘apply ‘vector (quasi-q (coerce x ’list))))`
-!!!(p) {:.unnumlist}
+`              (list 'apply 'vector (quasi-q (coerce x 'list))))`
 
-`      ((atom x)`
-!!!(p) {:.unnumlist}
+`            ((atom x)`
 
-`       (if (constantp x) x (list ’quote x)))`
-!!!(p) {:.unnumlist}
+`              (if (constantp x) x (list 'quote x)))`
 
-`      ((starts-with x ’unquote)`
-!!!(p) {:.unnumlist}
+`            ((starts-with x 'unquote)`
 
-`       (assert (and (rest x) (null (rest2 x))))`
-!!!(p) {:.unnumlist}
+`              (assert (and (rest x) (null (rest2 x))))`
 
-`       (second x))`
-!!!(p) {:.unnumlist}
+`              (second x))`
 
-`      ((starts-with x ’quasiquote)`
-!!!(p) {:.unnumlist}
+`            ((starts-with x 'quasiquote)`
 
-`       (assert (and (rest x) (null (rest2 x))))`
-!!!(p) {:.unnumlist}
+`              (assert (and (rest x) (null (rest2 x))))`
 
-`       (quasi-q (quasi-q (second x))))`
-!!!(p) {:.unnumlist}
+`              (quasi-q (quasi-q (second x))))`
 
-`      ((starts-with (first x) ’unquote-splicing)`
-!!!(p) {:.unnumlist}
+`            ((starts-with (first x) 'unquote-splicing)`
 
-`       (if (null (rest x))`
-!!!(p) {:.unnumlist}
+`              (if (null (rest x))`
 
-`           (second (first x))`
-!!!(p) {:.unnumlist}
+`                      (second (first x))`
 
-`           (list ’append (second (first x)) (quasi-q (rest x)))))`
-!!!(p) {:.unnumlist}
+`                      (list 'append (second (first x)) (quasi-q (rest x)))))`
 
-`       (t (combine-quasiquote (quasi-q (car x))`
-!!!(p) {:.unnumlist}
+`              (t (combine-quasiquote (quasi-q (car x))`
 
-`                              (quasi-q (cdr x))`
-!!!(p) {:.unnumlist}
+`                                                            (quasi-q (cdr x))`
 
-`                              x))))`
-!!!(p) {:.unnumlist}
+`                                                            x))))`
 
 `(defun combine-quasiquote (left right x)`
-!!!(p) {:.unnumlist}
 
-`   "Combine left and right (car and cdr), possibly re-using x."`
-!!!(p) {:.unnumlist}
+`      "Combine left and right (car and cdr), possibly re-using x."`
 
-`   (cond ((and (constantp left) (constantp right))`
-!!!(p) {:.unnumlist}
+`      (cond ((and (constantp left) (constantp right))`
 
-`              (if (and (eql (eval left) (first x))`
-!!!(p) {:.unnumlist}
+`                            (if (and (eql (eval left) (first x))`
 
-`                          (eql (eval right) (rest x)))`
-!!!(p) {:.unnumlist}
+`                                                    (eql (eval right) (rest x)))`
 
-`                     (list ’quote x)`
-!!!(p) {:.unnumlist}
+`                                          (list 'quote x)`
 
-`                     (list ’quote (cons (eval left) (eval right)))))`
-!!!(p) {:.unnumlist}
+`                                          (list 'quote (cons (eval left) (eval right)))))`
 
-`              ((null right) (list ‘list left))`
-!!!(p) {:.unnumlist}
+`                            ((null right) (list 'list left))`
 
-`              ((starts-with right ‘list)`
-!!!(p) {:.unnumlist}
+`                            ((starts-with right 'list)`
 
-`              (list* ‘list left (rest right)))`
-!!!(p) {:.unnumlist}
+`                            (list* 'list left (rest right)))`
 
-`              (t (list ‘cons left right))))`
-!!!(p) {:.unnumlist}
+`                            (t (list 'cons left right))))`
 
 Actually, there is a major problem with the `quasiquote` macro, or more accurately, in the entire approach to macro-expansion based on textual substitution.
 Suppose we wanted a function that acted like this:
 
-[ ](#){:#l0210}`(extrema ’(3 1 10 5 20 2))`
-!!!(p) {:.unnumlist}
+`(extrema '(3 1 10 5 20 2))`
 
 `((max 20) (min 1))`
-!!!(p) {:.unnumlist}
 
 We could write the Scheme function:
 
-[ ](#){:#l0215}`(define (extrema list)`
-!!!(p) {:.unnumlist}
+`(define (extrema list)`
 
-`   ;; Given a list of numbers.
+`      ;; Given a list of numbers.
 return an a-list`
-!!!(p) {:.unnumlist}
 
-`   ;; with max and min values`
-!!!(p) {:.unnumlist}
+`      ;; with max and min values`
 
-`   ‘((max ,(apply max list)) (min ,(apply min list))))`
-!!!(p) {:.unnumlist}
+`      '((max ,(apply max list)) (min ,(apply min list))))`
 
 After expansion of the quasiquote, the definition of `extrema` will be:
 
-[ ](#){:#l0220}`(define extrema`
-!!!(p) {:.unnumlist}
+`(define extrema`
 
-`   (lambda (list)`
-!!!(p) {:.unnumlist}
+`      (lambda (list)`
 
-`     (list (list ’max (apply max list))`
-!!!(p) {:.unnumlist}
+`          (list (list 'max (apply max list))`
 
-`           (list ’min (apply min list)))))`
-!!!(p) {:.unnumlist}
+`                      (list 'min (apply min list)))))`
 
 The problem is that `list` is an argument to the function `extrema`, and the argument shadows the global definition of `list` as a function.
 Thus, the function will fail.
 One way around this dilemma is to have the macro-expansion use the global value of `list` rather than the symbol `list` itself.
-In other words, replace the `’list` in `quasi-q` with (`get-globa1-var ’list`).
+In other words, replace the `'list` in `quasi-q` with (`get-globa1-var 'list`).
 Then the expansion can be used even in an environment where `list` is locally bound.
 One has to be careful, though: if this tack is taken, then `comp-funcall` should be changed to recognize function constants, and to do the right thing with respect to primitives.
 
-It is problems like these that made the designers of Scheme admit that they don’t know the best way to specify macros, so there is no standard macro definition mechanism in Scheme.
+It is problems like these that made the designers of Scheme admit that they don't know the best way to specify macros, so there is no standard macro definition mechanism in Scheme.
 Such problems rarely come up in Common Lisp because functions and variables have different name spaces, and because local function definitions (with `flet` or `labels`) are not widely used.
 Those who do define local functions tend not to use already established names like `list` and `append.`
 
-## [ ](#){:#st0035}23.6 History and References
+## 23.6 History and References
 {:#s0035}
 {:.h1hd}
 
-Guy Steele’s 1978 MIT master’s thesis on the language Scheme, rewritten as Steele 1983, describes an innovative and influential compiler for Scheme, called RABBIT.
-!!!(span) {:.smallcaps} [2](#fn0015){:#xfn0015} A good article on an “industrial-strength” Scheme compiler based on this approach is described in [Kranz et al.’s 1986](B9780080571157500285.xhtml#bb0675) paper on ORBIT, !!!(span) {:.smallcaps} the compiler for the T dialect of Scheme.
+Guy Steele's 1978 MIT master's thesis on the language Scheme, rewritten as Steele 1983, describes an innovative and influential compiler for Scheme, called RABBIT.
+!!!(span) {:.smallcaps} [2](#fn0015) A good article on an "industrial-strength" Scheme compiler based on this approach is described in [Kranz et al.'s 1986](B9780080571157500285.xhtml#bb0675) paper on ORBIT, !!!(span) {:.smallcaps} the compiler for the T dialect of Scheme.
 
-Abelson and Sussman’s *Structure and Interpretation of Computer Programs* (1985) contains an excellent chapter on compilation, using slightly different techniques and compiling into a somewhat more confusing machine language.
-Another good text is [John Allen’s *Anatomy of Lisp* (1978)](B9780080571157500285.xhtml#bb0040).
+Abelson and Sussman's *Structure and Interpretation of Computer Programs* (1985) contains an excellent chapter on compilation, using slightly different techniques and compiling into a somewhat more confusing machine language.
+Another good text is [John Allen's *Anatomy of Lisp* (1978)](B9780080571157500285.xhtml#bb0040).
 It presents a very clear, simple compiler, although it is for an older, dynamically scoped dialect of Lisp and it does not address tail-recursion or `call/cc`.
 
 The peephole optimizer described here is based on the one in [Masinter and Deutsch 1980](B9780080571157500285.xhtml#bb0780).
 
-## [ ](#){:#st0040}23.7 Exercises
+## 23.7 Exercises
 {:#s0040}
 {:.h1hd}
 
-**Exercise 23.3 [h]** Scheme’s syntax for numbers is slightly different from Common Lisp’s.
+**Exercise  23.3 [h]** Scheme's syntax for numbers is slightly different from Common Lisp's.
 In particular, complex numbers are written like `3+4i` rather than `#c(3 4)`.
 How could you make `scheme-read` account for this?
 
-**Exercise 23.4 [m]** Is it possible to make the core Scheme language even smaller, by eliminating any of the five special forms `(quote, begin, set!, if, lambda)` and replacing them with macros?
+**Exercise  23.4 [m]** Is it possible to make the core Scheme language even smaller, by eliminating any of the five special forms `(quote, begin, set!, if, lambda)` and replacing them with macros?
 
-**Exercise 23.5 [m]** Add the ability to recognize internal defines (see [page 779](B9780080571157500224.xhtml#p779)).
+**Exercise  23.5 [m]** Add the ability to recognize internal defines (see [page 779](B9780080571157500224.xhtml#p779)).
 
-**Exercise 23.6 [h]** In `comp-if` we included a special case for `(if t x y)` and `(if nil x y)`.
+**Exercise  23.6 [h]** In `comp-if` we included a special case for `(if t x y)` and `(if nil x y)`.
 But there are other cases where we know the value of the predicate.
 For example, `(if (*a b) x y)` can also reduce to `x`.
 Arrange for these optimizations to be made.
 Note the `prim-always` field of the `prim structure` has been provided for this purpose.
 
-**Exercise 23.7 [m]** Consider the following version of the quicksort algorithm for sorting a vector:
+**Exercise  23.7 [m]** Consider the following version of the quicksort algorithm for sorting a vector:
 
-[ ](#){:#l0225}`(define (sort-vector vector test)`
-!!!(p) {:.unnumlist}
+`(define (sort-vector vector test)`
 
-`   (define (sort lo hi)`
-!!!(p) {:.unnumlist}
+`      (define (sort lo hi)`
 
-`       (if (>= lo hi)`
-!!!(p) {:.unnumlist}
+`              (if (>= lo hi)`
 
-`            vector`
-!!!(p) {:.unnumlist}
+`                        vector`
 
-`            (let ((pivot (partition vector lo hi test)))`
-!!!(p) {:.unnumlist}
+`                        (let ((pivot (partition vector lo hi test)))`
 
-`                (sort lo pivot)`
-!!!(p) {:.unnumlist}
+`                                (sort lo pivot)`
 
-`            (sort (+ pivot 1) hi))))`
-!!!(p) {:.unnumlist}
+`                        (sort (+ pivot 1) hi))))`
 
-`   (sort 0 (− (vector-length vector 1))))`
-!!!(p) {:.unnumlist}
+`      (sort 0 (- (vector-length vector 1))))`
 
 Here the function `partition` takes a vector, two indices into the vector, and a comparison function, `test`.
 It modifies the vector and returns an index, `pivot`, such that all elements of the vector below `pivot` are less than all elements at `pivot` or above.
@@ -3123,42 +2414,31 @@ Besides the vector itself, how much additional storage must be temporarily alloc
 Now consider the following modified version of quicksort.
 What time and space complexity does it have?
 
-[ ](#){:#l0230}`(define (sort-vector vector test)`
-!!!(p) {:.unnumlist}
+`(define (sort-vector vector test)`
 
-`   (define (sort lo hi)`
-!!!(p) {:.unnumlist}
+`      (define (sort lo hi)`
 
-`     (if (>= lo hi)`
-!!!(p) {:.unnumlist}
+`          (if (>= lo hi)`
 
-`         vector`
-!!!(p) {:.unnumlist}
+`                  vector`
 
-`         (let ((pivot (partition vector lo hi)))`
-!!!(p) {:.unnumlist}
+`                  (let ((pivot (partition vector lo hi)))`
 
-`            (if (> (- hi pivot) (− pivot lo))`
-!!!(p) {:.unnumlist}
+`                        (if (> (- hi pivot) (- pivot lo))`
 
-`                 (begin (sort lo pivot)`
-!!!(p) {:.unnumlist}
+`                                  (begin (sort lo pivot)`
 
-`                           (sort (+ pivot 1) hi))`
-!!!(p) {:.unnumlist}
+`                                                      (sort (+ pivot 1) hi))`
 
-`                 (begin (sort (+ pivot 1) hi)`
-!!!(p) {:.unnumlist}
+`                                  (begin (sort (+ pivot 1) hi)`
 
-`                           (sort lo pivot))))))`
-!!!(p) {:.unnumlist}
+`                                                      (sort lo pivot))))))`
 
-`   (sort 0 (− (vector-length vector 1))))`
-!!!(p) {:.unnumlist}
+`      (sort 0 (- (vector-length vector 1))))`
 
 The next three exercises describe extensions that are not part of the Scheme standard.
 
-**Exercise 23.8 [h]** The set!
+**Exercise  23.8 [h]** The set!
 special form is defined only when its first argument is a symbol.
 Extend `set!` to work like `setf` when the first argument is a list.
 That is, `(set!
@@ -3166,53 +2446,46 @@ That is, `(set!
 You will need to add some new primitive functions, and you should also provide a way for the user to define new `set!` procedures.
 One way to do that would be with a `setter` function for `set!`, for example:
 
-[ ](#){:#l0235}`(set!
+`(set!
 (setter third)`
-!!!(p) {:.unnumlist}
 
-`      (lambda (val list) (set-car!
+`            (lambda (val list) (set-car!
 (cdr (cdr list)) val)))`
-!!!(p) {:.unnumlist}
 
-**Exercise 23.9 [m]** It is a curious asymmetry of Scheme that there is a special notation for lambda expressions within `define` expressions, but not within `let`.
+**Exercise  23.9 [m]** It is a curious asymmetry of Scheme that there is a special notation for lambda expressions within `define` expressions, but not within `let`.
 Thus, we see the following:
 
-[ ](#){:#l0240}`(define square (lambda (x) (* x x)))`*;is the same as*
-!!!(p) {:.unnumlist}
+`(define square (lambda (x) (* x x)))`*;is the same as*
 
 `(define (square x) (* x x))`
-!!!(p) {:.unnumlist}
 
-`(let ((square (lambda (x) (* x x)))) …) ;`*is not the same as*
-!!!(p) {:.unnumlist}
+`(let ((square (lambda (x) (* x x)))) ...) ;`*is not the same as*
 
-`(let (((square x) (* x x))) …) ;`*             <= illegal!*
-!!!(p) {:.unnumlist}
+`(let (((square x) (* x x))) ...) ;`*                          <= illegal!*
 
 Do you think this last expression should be legal?
 If so, modify the macros for `let, let*`, and `letrec` to allow the new syntax.
 If not, explain why it should not be included in the language.
 
-**Exercise 23.10 [m]** Scheme does not define `funcall`, because the normal function-call syntax does the work of funcall.
+**Exercise  23.10 [m]** Scheme does not define `funcall`, because the normal function-call syntax does the work of funcall.
 This suggests two problems.
 (1) Is it possible to define `funcall` in Scheme?
-Show a definition or explain why there can’t be one.
+Show a definition or explain why there can't be one.
 Would you ever have reason to use `funcall` in a Scheme program?
 (2) Scheme does define `apply`, as there is no syntax for an application.
-One might want to extend the syntax to make `(+ .
-numbers)` equivalent to `(apply + numbers)`.
+One might want to extend the syntax to make `(+ . numbers)` equivalent to `(apply + numbers)`.
 Would this bea good idea?
 
-**Exercise 23.11 [d]** Write a compiler that translates Scheme to Common Lisp.
-This will involve changing the names of some procedures and special forms, figuring out a way to map Scheme’s single name space into Common Lisp’s distinct function and variable name spaces, and dealing with Scheme’s continuations.
+**Exercise  23.11 [d]** Write a compiler that translates Scheme to Common Lisp.
+This will involve changing the names of some procedures and special forms, figuring out a way to map Scheme's single name space into Common Lisp's distinct function and variable name spaces, and dealing with Scheme's continuations.
 One possibility is to translate a `call/cc` into a `catch` and `throw`, and disallow dynamic continuations.
 
-## [ ](#){:#st0045}23.8 Answers
+## 23.8 Answers
 {:#s0045}
 {:.h1hd}
 
 **Answer 23.2** We can save frames by making a resource for frames, as was done on page 337.
-Unfortunately, we can’t just use the def resource macro as is, because we need a separate resource for each size frame.
+Unfortunately, we can't just use the def resource macro as is, because we need a separate resource for each size frame.
 Thus, a two-dimensional array or a vector of vectors is necessary.
 Furthermore, one must be careful in determining when a frame is no longer needed, and when it has been saved and may be used again.
 Some compilers will generate a special calling sequence for a tail-recursive call where the environment can be used as is, without discarding and then creating a new frame for the arguments.
@@ -3222,143 +2495,105 @@ An environment may never be represented explicitly as a list of frames; instead 
 **Answer 23.3** We could read in Scheme expressions as before, and then convert any symbols that looked like complex numbers into numbers.
 The following routines do this without consing.
 
-[ ](#){:#l0245}`(defun scheme-read (&optional (stream *standard-input*))`
-!!!(p) {:.unnumlist}
+`(defun scheme-read (&optional (stream *standard-input*))`
 
-`   (let ((*readtable* *scheme-readtable*))`
-!!!(p) {:.unnumlist}
+`      (let ((*readtable* *scheme-readtable*))`
 
-`     (convert-numbers (read stream nil eof))))`
-!!!(p) {:.unnumlist}
+`          (convert-numbers (read stream nil eof))))`
 
 `(defun convert-numbers (x)`
-!!!(p) {:.unnumlist}
 
-`   "Replace symbols that look like Scheme numbers with their values."`
-!!!(p) {:.unnumlist}
+`      "Replace symbols that look like Scheme numbers with their values."`
 
-`   ;; Don’t copy structure, make changes in place.`
-!!!(p) {:.unnumlist}
+`      ;; Don't copy structure, make changes in place.`
 
-`   (typecase x`
-!!!(p) {:.unnumlist}
+`      (typecase x`
 
-`     (cons (setf (car x) (convert-numbers (car x)))`
-!!!(p) {:.unnumlist}
+`          (cons (setf (car x) (convert-numbers (car x)))`
 
-`             (setf (cdr x) (convert-numbers (cdr x)))`
-!!!(p) {:.unnumlist}
+`                          (setf (cdr x) (convert-numbers (cdr x)))`
 
-`             x)`
-!!!(p) {:.unnumlist}
+`                          x)`
 
-`     (symbol (or (convert-number x) x))`
-!!!(p) {:.unnumlist}
+`          (symbol (or (convert-number x) x))`
 
-`     (vector (dotimes (i (length x))`
-!!!(p) {:.unnumlist}
+`          (vector (dotimes (i (length x))`
 
-`                (setf (aref x i) (convert-numbers (aref x i))))`
-!!!(p) {:.unnumlist}
+`                                (setf (aref x i) (convert-numbers (aref x i))))`
 
-`               x)`
-!!!(p) {:.unnumlist}
+`                              x)`
 
-`        (t x)))`
-!!!(p) {:.unnumlist}
+`                (t x)))`
 
 `(defun convert-number (symbol)`
-!!!(p) {:.unnumlist}
 
-`   "If str looks like a complex number, return the number."`
-!!!(p) {:.unnumlist}
+`      "If str looks like a complex number, return the number."`
 
-`   (let* ((str (symbol-name symbol))`
-!!!(p) {:.unnumlist}
+`      (let* ((str (symbol-name symbol))`
 
-`            (pos (position-if #’sign-p str))`
-!!!(p) {:.unnumlist}
+`                        (pos (position-if #'sign-p str))`
 
-`            (end (− (length str) 1)))`
-!!!(p) {:.unnumlist}
+`                        (end (- (length str) 1)))`
 
-`       (when (and pos (char-equal (char str end) #\i))`
-!!!(p) {:.unnumlist}
+`              (when (and pos (char-equal (char str end) #\i))`
 
-`         (let ((re (read-from-string str nil nil :start 0 :end pos))`
-!!!(p) {:.unnumlist}
+`                  (let ((re (read-from-string str nil nil :start 0 :end pos))`
 
-`                (im (read-from-string str nil nil :start pos rend end)))`
-!!!(p) {:.unnumlist}
+`                                (im (read-from-string str nil nil :start pos rend end)))`
 
-`            (when (and (numberp re) (numberp im))`
-!!!(p) {:.unnumlist}
+`                        (when (and (numberp re) (numberp im))`
 
-`              (complex re im))))))`
-!!!(p) {:.unnumlist}
+`                            (complex re im))))))`
 
-`(defun sign-p (char) (find char "+−"))`
-!!!(p) {:.unnumlist}
+`(defun sign-p (char) (find char "+-"))`
 
-Actually, that’s not quite good enough, because a Scheme complex number can have multiple signs in it, as in `3.
+Actually, that's not quite good enough, because a Scheme complex number can have multiple signs in it, as in `3.
 4e- 5+6.
-7e+8i`, and it need not have two numbers, as in `3i` or `4+i` or just `+ i`.
+7e+8i`, and it need not have two numbers, as in `3i` or `4+i` or just `+  i`.
 The other problem is that complex numbers can only have a lowercase `i`, but read does not distinguish between the symbols `3+4i` and `3+4I`.
 
 **Answer 23.4** Yes, it is possible to implement `begin` as a macro:
 
-[ ](#){:#l0250}`(setf (scheme-macro ’begin)`
-!!!(p) {:.unnumlist}
+`(setf (scheme-macro 'begin)`
 
-`        #’(lambda (&rest exps) ‘((lambda () .,exps))))`
-!!!(p) {:.unnumlist}
+`                #'(lambda (&rest exps) '((lambda () .,exps))))`
 
 With some work we could also eliminate quote.
-Instead of `’x`, we could use `(string->symbol "X" )`, and instead of `’(1 2)`, wecoulduse something like `(list 1 2)`.
+Instead of `'x`, we could use `(string->symbol "X" )`, and instead of `'(1 2)`, wecoulduse something like `(list 1 2)`.
 The problem is in knowing when to reuse the same list.
 Consider:
 
-[ ](#){:#l0255}`=> (define (one-two) ’(1 2))`
-!!!(p) {:.unnumlist}
+`=> (define (one-two) '(1 2))`
 
 `ONE-TWO`
-!!!(p) {:.unnumlist}
 
 `=> (eq?
 (one-two) (one-two))`
-!!!(p) {:.unnumlist}
 
 `T`
-!!!(p) {:.unnumlist}
 
 `=> (eq?
-’(1 2) ’(1 2))`
-!!!(p) {:.unnumlist}
+'(1 2) '(1 2))`
 
 `NIL`
-!!!(p) {:.unnumlist}
 
 A clever memoized macro for quote could handle this, but it would be less efficient than having `quote` as a special form.
-In short, what’s the point?
+In short, what's the point?
 
 It is also (nearly) possible to replace `if` with alternate code.
 The idea is to replace:
 
-[ ](#){:#l0260}`(if`*test then-part else-part*)
-!!!(p) {:.unnumlist}
+`(if`*test then-part else-part*)
 
 with
 
-[ ](#){:#l0265}(*test*`(delay`*then-part*) `(delay`*else-part*))
-!!!(p) {:.unnumlist}
+(*test*`(delay`*then-part*) `(delay`*else-part*))
 
 Now if we are assured that any *test* returns either `#t` or `#f`, then we can make the following definitions:
 
-[ ](#){:#l0270}`(define #t (lambda (then-part else-part) (force then-part)))`
-!!!(p) {:.unnumlist}
+`(define #t (lambda (then-part else-part) (force then-part)))`
 
 `(define #f (lambda (then-part else-part) (force else-part)))`
-!!!(p) {:.unnumlist}
 
 The only problem with this is that any value, not just `#t`, counts as true.
 
@@ -3369,279 +2604,197 @@ Common Lisp attempts to get the advantages of both by allowing implementations t
 
 **Answer 23.6** We define the predicate `always` and install it in two places in `comp-if` :
 
-[ ](#){:#l0275}`(defun always (pred env)`
-!!!(p) {:.unnumlist}
+`(defun always (pred env)`
 
-`   "Does predicate always evaluate to true or false?"`
-!!!(p) {:.unnumlist}
+`      "Does predicate always evaluate to true or false?"`
 
-`   (cond ((eq pred t) ‘true)`
-!!!(p) {:.unnumlist}
+`      (cond ((eq pred t) 'true)`
 
-`            ((eq pred nil) ’false)`
-!!!(p) {:.unnumlist}
+`                        ((eq pred nil) 'false)`
 
-`            ((symbolp pred) nil)`
-!!!(p) {:.unnumlist}
+`                        ((symbolp pred) nil)`
 
-`            ((atom pred) ’true)`
-!!!(p) {:.unnumlist}
+`                        ((atom pred) 'true)`
 
-`            ((scheme-macro (first pred))`
-!!!(p) {:.unnumlist}
+`                        ((scheme-macro (first pred))`
 
-`             (always (scheme-macro-expand pred) env))`
-!!!(p) {:.unnumlist}
+`                          (always (scheme-macro-expand pred) env))`
 
-`            ((case (first pred)`
-!!!(p) {:.unnumlist}
+`                        ((case (first pred)`
 
-`                (QUOTE (if (null (second pred)) ’false ’true))`
-!!!(p) {:.unnumlist}
+`                                (QUOTE (if (null (second pred)) 'false 'true))`
 
-`                (BEGIN (if (null (rest pred)) ’false`
-!!!(p) {:.unnumlist}
+`                                (BEGIN (if (null (rest pred)) 'false`
 
-`                                  (always (last1 pred) env)))`
-!!!(p) {:.unnumlist}
+`                                                                    (always (last1 pred) env)))`
 
-`                (SET!
+`                                (SET!
 (always (third pred) env))`
-!!!(p) {:.unnumlist}
 
-`    (IF (let ((test (always (second pred)) env)`
-!!!(p) {:.unnumlist}
+`        (IF (let ((test (always (second pred)) env)`
 
-`      (then (always (third pred)) env)`
-!!!(p) {:.unnumlist}
+`            (then (always (third pred)) env)`
 
-`      (else (always (fourth pred)) env))`
-!!!(p) {:.unnumlist}
+`            (else (always (fourth pred)) env))`
 
-`                (cond ((eq test ’true) then)`
-!!!(p) {:.unnumlist}
+`                                (cond ((eq test 'true) then)`
 
-`                                  ((eq test ’false) else)`
-!!!(p) {:.unnumlist}
+`                                                                    ((eq test 'false) else)`
 
-`                                  ((eq then else) then))))`
-!!!(p) {:.unnumlist}
+`                                                                    ((eq then else) then))))`
 
-`    (LAMBDA ’true)`
-!!!(p) {:.unnumlist}
+`        (LAMBDA 'true)`
 
-`    (t (let ((prim (primitive-p (first pred) env`
-!!!(p) {:.unnumlist}
+`        (t (let ((prim (primitive-p (first pred) env`
 
-`                       (length (rest pred)))))`
-!!!(p) {:.unnumlist}
+`                                              (length (rest pred)))))`
 
-`           (if prim (prim-always prim))))))))`
-!!!(p) {:.unnumlist}
+`                      (if prim (prim-always prim))))))))`
 
 `(defun comp-if (pred then else env val?
 more?)`
-!!!(p) {:.unnumlist}
 
-`   (case (always pred env)`
-!!!(p) {:.unnumlist}
+`      (case (always pred env)`
 
-`     (true ; (if nil x y) = => y ; ***`
-!!!(p) {:.unnumlist}
+`          (true ; (if nil x y) = => y ; ***`
 
-`       (comp then env val?
+`              (comp then env val?
 more?)) ; ***`
-!!!(p) {:.unnumlist}
 
-`     (false ; (if t x y) = => x ; ***`
-!!!(p) {:.unnumlist}
+`          (false ; (if t x y) = => x ; ***`
 
-`       (comp else env val?
+`              (comp else env val?
 more?)) ; ***`
-!!!(p) {:.unnumlist}
 
-`     (otherwise`
-!!!(p) {:.unnumlist}
+`          (otherwise`
 
-`       (let ((pcode (comp pred env t t))`
-!!!(p) {:.unnumlist}
+`              (let ((pcode (comp pred env t t))`
 
-`              (tcode (comp then env val?
+`                            (tcode (comp then env val?
 more?))`
-!!!(p) {:.unnumlist}
 
-`              (ecode (comp else env val?
+`                            (ecode (comp else env val?
 more?)))`
-!!!(p) {:.unnumlist}
 
-`       (cond`
-!!!(p) {:.unnumlist}
+`              (cond`
 
-`         ((and (listp pred) ; (if (not p) x y) ==> (if p y x)`
-!!!(p) {:.unnumlist}
+`                  ((and (listp pred) ; (if (not p) x y) ==> (if p y x)`
 
-`                  (length=1 (rest pred))`
-!!!(p) {:.unnumlist}
+`                                    (length=1 (rest pred))`
 
-`                  (primitive-p (first pred) env 1)`
-!!!(p) {:.unnumlist}
+`                                    (primitive-p (first pred) env 1)`
 
-`                  (eq (prim-opcode (primitive-p (first pred) env 1))`
-!!!(p) {:.unnumlist}
+`                                    (eq (prim-opcode (primitive-p (first pred) env 1))`
 
-`                         ’not))`
-!!!(p) {:.unnumlist}
+`                                                  'not))`
 
-`         (comp-if (second pred) else then env val?
+`                  (comp-if (second pred) else then env val?
 more?))`
-!!!(p) {:.unnumlist}
 
-`        ((equal tcode ecode) ; (if p x x) ==> (begin p x)`
-!!!(p) {:.unnumlist}
+`                ((equal tcode ecode) ; (if p x x) ==> (begin p x)`
 
-`         (seq (comp pred env nil t) ecode))`
-!!!(p) {:.unnumlist}
+`                  (seq (comp pred env nil t) ecode))`
 
-`        ((null tcode) ; (if p nil y) ==> p (TJUMP L2) y L2:`
-!!!(p) {:.unnumlist}
+`                ((null tcode) ; (if p nil y) ==> p (TJUMP L2) y L2:`
 
-`         (let ((L2 (gen-label)))`
-!!!(p) {:.unnumlist}
+`                  (let ((L2 (gen-label)))`
 
-`             (seq pcode (gen ‘TJUMP L2) ecode (list L2)`
-!!!(p) {:.unnumlist}
+`                          (seq pcode (gen 'TJUMP L2) ecode (list L2)`
 
-`         (unless more?
-(gen ’RETURN)))))`
-!!!(p) {:.unnumlist}
+`                  (unless more?
+(gen 'RETURN)))))`
 
-`      ((null ecode) ; (if p x) ==> p (FJUMP L1) x L1:`
-!!!(p) {:.unnumlist}
+`            ((null ecode) ; (if p x) ==> p (FJUMP L1) x L1:`
 
-`      (let ((L1 (gen-label)))`
-!!!(p) {:.unnumlist}
+`            (let ((L1 (gen-label)))`
 
-`          (seq pcode (gen TJUMP L1) tcode (list L1)`
-!!!(p) {:.unnumlist}
+`                    (seq pcode (gen TJUMP L1) tcode (list L1)`
 
-`                 (unless more?
-(gen ’RETURN)))))`
-!!!(p) {:.unnumlist}
+`                                  (unless more?
+(gen 'RETURN)))))`
 
-`      (t                               ; (if p x y) ==> p (FJUMP L1) x L1: y`
-!!!(p) {:.unnumlist}
+`            (t                                                             ; (if p x y) ==> p (FJUMP L1) x L1: y`
 
-`                                       ; or p (FJUMP L1) x (JUMP L2) L1: y L2:`
-!!!(p) {:.unnumlist}
+`                                                                              ; or p (FJUMP L1) x (JUMP L2) L1: y L2:`
 
-`      (let ((L1 (gen-label))`
-!!!(p) {:.unnumlist}
+`            (let ((L1 (gen-label))`
 
-`             (L2 (if more?
+`                          (L2 (if more?
 (gen-label))))`
-!!!(p) {:.unnumlist}
 
-`        (seq pcode (gen ‘FJUMP L1) tcode`
-!!!(p) {:.unnumlist}
+`                (seq pcode (gen 'FJUMP L1) tcode`
 
-`               (if more?
-(gen ’JUMP L2))`
-!!!(p) {:.unnumlist}
+`                              (if more?
+(gen 'JUMP L2))`
 
-`               (list L1) ecode (if more?
+`                              (list L1) ecode (if more?
 (list L2))))))))))`
-!!!(p) {:.unnumlist}
 
 Development note: originally, I had coded `always` as a predicate that took a Boolean value as input and returned true if the expression always had that value.
 Thus, you had to ask first if the predicate was always true, and then if it was always false.
 Then I realized this was duplicating much effort, and that the duplication was exponential, not just linear: for a triply-nested conditional I would have to do eight times the work, not twice the work.
 Thus I switched to the above formulation, where `always` is a three-valued function, returning `true`, `false`, or `nil` for none-of-the-above.
-But to demonstrate that the right solution doesn’t always appear the first time, I give my original definition as well:
+But to demonstrate that the right solution doesn't always appear the first time, I give my original definition as well:
 
-[ ](#){:#l0280}`(defun always (boolean pred env)`
-!!!(p) {:.unnumlist}
+`(defun always (boolean pred env)`
 
-`   "Does predicate always evaluate to boolean in env?"`
-!!!(p) {:.unnumlist}
+`      "Does predicate always evaluate to boolean in env?"`
 
-`   (if (atom pred)`
-!!!(p) {:.unnumlist}
+`      (if (atom pred)`
 
-`     (and (constantp pred) (equiv boolean pred))`
-!!!(p) {:.unnumlist}
+`          (and (constantp pred) (equiv boolean pred))`
 
-`     (case (first pred)`
-!!!(p) {:.unnumlist}
+`          (case (first pred)`
 
-`        (QUOTE (equiv boolean pred))`
-!!!(p) {:.unnumlist}
+`                (QUOTE (equiv boolean pred))`
 
-`        (BEGIN (if (null (rest pred)) (equiv boolean nil)`
-!!!(p) {:.unnumlist}
+`                (BEGIN (if (null (rest pred)) (equiv boolean nil)`
 
-`                          (always boolean (last1 pred) env)))`
-!!!(p) {:.unnumlist}
+`                                                    (always boolean (last1 pred) env)))`
 
-`        (SET!
+`                (SET!
 (always boolean (third pred) env))`
-!!!(p) {:.unnumlist}
 
-`        (IF (or (and (always t (second pred) env)`
-!!!(p) {:.unnumlist}
+`                (IF (or (and (always t (second pred) env)`
 
-`                           (always boolean (third pred) env))`
-!!!(p) {:.unnumlist}
+`                                                      (always boolean (third pred) env))`
 
-`                     (and (always nil (second pred) env)`
-!!!(p) {:.unnumlist}
+`                                          (and (always nil (second pred) env)`
 
-`                           (always boolean (fourth pred) env))`
-!!!(p) {:.unnumlist}
+`                                                      (always boolean (fourth pred) env))`
 
-`                     (and (always boolean (third pred) env)`
-!!!(p) {:.unnumlist}
+`                                          (and (always boolean (third pred) env)`
 
-`                           (always boolean (fourth pred) env))))`
-!!!(p) {:.unnumlist}
+`                                                      (always boolean (fourth pred) env))))`
 
-`        (LAMBDA (equiv boolean t))`
-!!!(p) {:.unnumlist}
+`                (LAMBDA (equiv boolean t))`
 
-`        (t (let ((prim (primitive-p (first pred) env`
-!!!(p) {:.unnumlist}
+`                (t (let ((prim (primitive-p (first pred) env`
 
-`                                             (length (rest pred)))))`
-!!!(p) {:.unnumlist}
+`                                                                                          (length (rest pred)))))`
 
-`            (and prim`
-!!!(p) {:.unnumlist}
+`                        (and prim`
 
-`                    (eq (prim-always prim)`
-!!!(p) {:.unnumlist}
+`                                        (eq (prim-always prim)`
 
-`                          (if boolean ’true ’false))))))))`
-!!!(p) {:.unnumlist}
+`                                                    (if boolean 'true 'false))))))))`
 
 `(defun equiv (x y) "Boolean equivalence" (eq (not x) (not y)))`
-!!!(p) {:.unnumlist}
 
 **Answer 23.7** The original version requires *O*(*n*) stack space for poorly chosen pivots.
 Assuming a properly tail-recursive compiler, the modified version will never require more than *O*(log *n*) space, because at each step at least half of the vector is being sorted tail-recursively.
 
-**Answer 23.10** (1) `(defun (funcall fn .
-args) (apply fn args))` (2) Suppose you changed the piece of code `(+ .
-numbers)` to `(+ .
-(map sqrt numbers))`.
+**Answer 23.10** (1) `(defun (funcall fn . args) (apply fn args))` (2) Suppose you changed the piece of code `(+ . numbers)` to `(+ . (map sqrt numbers))`.
 The latter is the same expression as (+ `map sqrt numbers),` which is not the intended resuit at all.
 So there would be an arbitrary restriction: the last argument in an apply form would have to be an atom.
 This kind of restriction goes against the grain of Scheme.
 
 ----------------------
 
-[1](#xfn0010){:#np0010} Strictly speaking, this is a read-compile-funcall-write loop.
+[1](#xfn0010) Strictly speaking, this is a read-compile-funcall-write loop.
 !!!(p) {:.ftnote1}
 
-[2](#xfn0015){:#np0015} At the time, the MacLisp compiler dealt with something called "lisp assembly code" or LAP.
+[2](#xfn0015) At the time, the MacLisp compiler dealt with something called "lisp assembly code" or LAP.
 The function to input LAP was called `lapin`.
 Those who know French will get the pun.
 !!!(p) {:.ftnote1}
