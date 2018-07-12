@@ -1,9 +1,6 @@
 # Preface
-{:#pre0005}
-{:.fmtitle}
 
-> **paradigm***n***1** an example or pattern; *esp* an outstandingly clear or typical example.
-
+> **paradigm** *n* **1** an example or pattern; *esp* an outstandingly clear or typical example.  
 > -*Longman's Dictionary of the English Language*, 1984
 
 This book is concerned with three related topics: the field of artificial intelligence, or AI; the skill of computer programming; and the programming language Common Lisp.
@@ -11,7 +8,8 @@ Careful readers of this book can expect to come away with an appreciation of the
 The examples in this book are designed to be clear examples of good programming style-paradigms of programming.
 They are also paradigms of AI research-historically significant programs that use widely applicable techniques to solve important problems.
 
-Just as a liberal arts education includes a course in "the great books" of a culture, so this book is, at one level, a course in "the great programs" that define the AI culture.[1](#fn0010)
+<a id="tfnpreface-1"></a>
+Just as a liberal arts education includes a course in "the great books" of a culture, so this book is, at one level, a course in "the great programs" that define the AI culture.[1](#fnpreface-1)
 
 At another level, this book is a highly technical compendium of the knowledge you will need to progress from being an intermediate Lisp programmer to being an expert.
 Parts I and II are designed to help the novice get up to speed, but the complete beginner may have a hard time even with this material.
@@ -40,14 +38,11 @@ To be sure, no one can be a good AI programmer without first being a good progra
 Thus, this book presents topics (especially in parts III and V) that are not AI per se, but are essential background for any AI practitioner.
 
 ## Why Lisp? Why Common Lisp?
-{:#s0015}
-{:.h1hd}
 
 Lisp is one of the oldest programming languages still in widespread use today.
 There have been many versions of Lisp, each sharing basic features but differing in detail.
 In this book we use the version called Common Lisp, which is the most widely accepted standard.
 Lisp has been chosen for three reasons.
-!!!(p) {:.para_fl}
 
 First, Lisp is the most popular language for AI programming, particularly in the United States.
 If you're going to learn a language, it might as well be one with a growing literature, rather than a dead tongue.
@@ -68,10 +63,10 @@ It must be mentioned that in Europe and Japan, Prolog has been as popular as Lis
 Prolog shares most of Lisp's advantages in terms of flexibility and conciseness.
 Recently, Lisp has gained popularity worldwide, and Prolog is becoming more well known in the United States.
 As a result, the average AI worker today is likely to be bilingual.
-This book presents the key ideas behind Prolog in [chapters 11](B978008057115750011X.xhtml) and [12](B9780080571157500121.xhtml), and uses these ideas in subsequent chapters, particularly [20](B9780080571157500200.xhtml) and [21](B9780080571157500212.xhtml).
+This book presents the key ideas behind Prolog in [chapters 11](chapter11) and [12](chapter12), and uses these ideas in subsequent chapters, particularly [20](chapter20) and [21](chapter21).
 
 The dialect of Lisp known as Scheme is also gaining in popularity, but primarily for teaching and experimenting with programming language design and techniques, and not so much for writing large AI programs.
-Scheme is presented in [chapters 22](B9780080571157500224.xhtml) and [23](B9780080571157500236.xhtml).
+Scheme is presented in [chapters 22](chapter22) and [23](chapter23).
 Other dialects of Lisp such as Franz Lisp, MacLisp, InterLisp, ZetaLisp, and Standard Lisp are now considered obsolete.
 The only new dialect of Lisp to be proposed recently is EuLisp, the European Lisp.
 A few dialects of Lisp live on as embedded extension languages.
@@ -98,12 +93,12 @@ Of course, other languages have functions, but Lisp is rare in allowing the crea
 Lisp's flexibility allows it to adapt as programming styles change, but more importantly, Lisp can adapt to your particular programming problem.
 In other languages you fit your problem to the language; with Lisp you extend the language to fit your problem.
 
-Because of its flexibility, Lisp has been succesful as a high-level language user for rapid prototyping in areas such as AI, graphics, and interfaces.
+Because of its flexibility, Lisp has been succesful as a high-level language for rapid prototyping in areas such as AI, graphics, and user interfaces.
 Lisp has also been the dominant language for exploratory programming, where the problems are so complex that no clear solution is available at the start of the project.
 Much of AI falls under this heading.
 
 The size of Common Lisp can be either an advantage or a disadvantage, depending on your outlook.
-In [David Touretzky's (1989)](B9780080571157500285.xhtml#bb1240) fine book for beginning programmers, the emphasis is on simplicity.
+In David Touretzky's (1989) fine book for beginning programmers, the emphasis is on simplicity.
 He chooses to write some programs slightly less concisely, rather than introduce an esoteric new feature (he cites `pushnew` as an example).
 That approach is entirely appropriate for beginners, but this book goes well past the level of beginner.
 This means exposing the reader to new features of the language whenever they are appropriate.
@@ -111,113 +106,105 @@ Most of the time, new features are described as they are introduced, but sometim
 In accepting the privilege of being treated as an "adult," the reader also accepts a responsibility-to look up unfamiliar terms in an appropriate reference source.
 
 ## Outline of the Book
-{:#s0020}
-{:.h1hd}
 
 This book is organized into five parts.
-!!!(p) {:.para_fl}
 
-**[Part I](parti.xhtml)** introduces the Common Lisp programming language.
+**Part I** introduces the Common Lisp programming language.
 
-[Chapter 1](B9780080571157500017.xhtml) gives a quick introduction by way of small examples that demonstrate the novel features of Lisp.
+[Chapter 1](chapter1) gives a quick introduction by way of small examples that demonstrate the novel features of Lisp.
 It can be safely skipped or skimmed by the experienced programmer.
 
-[Chapter 2](B9780080571157500029.xhtml) is a more extended example showing how the Lisp primitives can be put together to form a program.
+[Chapter 2](chapter2) is a more extended example showing how the Lisp primitives can be put together to form a program.
 It should be studied carefully by the novice, and even the experienced programmer will want to look through it to get a feel for my programming style.
 
-[Chapter 3](B9780080571157500030.xhtml) provides an overview of the Lisp primitives.
+[Chapter 3](chapter3) provides an overview of the Lisp primitives.
 It can be skimmed on first reading and used as a reference whenever an unfamiliar function is mentioned in the text.
 
-[Part I](parti.xhtml) has been kept intentionally brief, so that there is more room for presenting actual AI programs.
+Part I has been kept intentionally brief, so that there is more room for presenting actual AI programs.
 Unfortunately, that means that another text or reference book (or online help) may be needed to clarify some of the more esoteric features of the language.
 My recommendations for texts are on page xiii.
 
-The reader may also want to refer to [chapter 25](B978008057115750025X.xhtml), which offers some debugging and troubleshooting hints.
+The reader may also want to refer to [chapter 25](chapter25), which offers some debugging and troubleshooting hints.
 
-**[Part II](partii.xhtml)** covers four early AI programs that all use rule-based pattern-matching techniques.
+**Part II** covers four early AI programs that all use rule-based pattern-matching techniques.
 By starting with relatively simple versions of the programs and then improving them and moving on to more complex programs, the reader is able to gradually acquire increasingly advanced programming skills.
 
-[Chapter 4](B9780080571157500042.xhtml) presents a reconstruction of GPS !!!(span) {:.smallcaps} , the General Problem Solver.
-The implementation follows the STRIPS !!!(span) {:.smallcaps} approach.
+[Chapter 4](chapter4) presents a reconstruction of GPS, the General Problem Solver.
+The implementation follows the STRIPS approach.
 
-[Chapter 5](B9780080571157500054.xhtml) describes ELIZA !!!(span) {:.smallcaps} , a program that mimics human dialogue.
-This is followed by a chapter that generalizes some of the techniques used in GPS !!!(span) {:.smallcaps} and ELIZA !!!(span) {:.smallcaps} and makes them available as tools for use in subsequent programs.
+[Chapter 5](chapter5) describes ELIZA, a program that mimics human dialogue.
+This is followed by a chapter that generalizes some of the techniques used in GPS and ELIZA and makes them available as tools for use in subsequent programs.
 
-[Chapter 7](B9780080571157500078.xhtml) covers STUDENT !!!(span) {:.smallcaps} , a program that solves high-school-level algebra word problems.
+[Chapter 7](chapter7) covers STUDENT, a program that solves high-school-level algebra word problems.
 
-[Chapter 8](B978008057115750008X.xhtml) develops a small subset of the MACSYMA !!!(span) {:.smallcaps} program for doing symbolic algebra, including differential and integral calculus.
+[Chapter 8](chapter8) develops a small subset of the MACSYMA program for doing symbolic algebra, including differential and integral calculus.
 It may be skipped by those who shy away from heavy mathematics.
 
-**[Part III](partiii.xhtml)** detours from AI for a moment to present some general tools for more efficient programming.
+**Part III** detours from AI for a moment to present some general tools for more efficient programming.
 The reader who masters the material in this part can be considered an advanced Lisp programmer.
 
-[Chapter 9](B9780080571157500091.xhtml) is a detailed study of efficiency techniques, concentrating on caching, indexing, compilation, and delaying computation.
-[Chapter 10](B9780080571157500108.xhtml) covers lower-level efficiency issues such as using declarations, avoiding garbage generation, and choosing the right data structure.
+[Chapter 9](chapter9) is a detailed study of efficiency techniques, concentrating on caching, indexing, compilation, and delaying computation.
+[Chapter 10](chapter10) covers lower-level efficiency issues such as using declarations, avoiding garbage generation, and choosing the right data structure.
 
-[Chapter 11](B978008057115750011X.xhtml) presents the Prolog language.
+[Chapter 11](chapter11) presents the Prolog language.
 The aim is two-fold: to show how to write an interpreter for another language, and to introduce the important features of Prolog, so that they can be used where appropriate.
-[Chapter 12](B9780080571157500121.xhtml) shows how a compiler for Prolog can be 20 to 200 times faster than the interpreter.
+[Chapter 12](chapter12) shows how a compiler for Prolog can be 20 to 200 times faster than the interpreter.
 
-[Chapter 13](B9780080571157500133.xhtml) introduces object-oriented programming in general, then explores the Common Lisp Object System (CLOS).
+[Chapter 13](chapter13) introduces object-oriented programming in general, then explores the Common Lisp Object System (CLOS).
 
-[Chapter 14](B9780080571157500145.xhtml) discusses the advantages and limitations of both logic-oriented and object-oriented programming, and develops a knowledge representation formalism using all the techniques of [part III](partiii.xhtml).
+[Chapter 14](chapter14) discusses the advantages and limitations of both logic-oriented and object-oriented programming, and develops a knowledge representation formalism using all the techniques of part III.
 
-**[Part IV](partiv.xhtml)** covers some advanced AI programs.
+**Part IV** covers some advanced AI programs.
 
-[Chapter 15](B9780080571157500157.xhtml) uses the techniques of [part III](partiii.xhtml) to come up with a much more efficient implementation of MACSYMA !!!(span) {:.smallcaps} . It uses the idea of a canonical form, and replaces the very general rewrite rule approach with a series of more specific functions.
+[Chapter 15](chapter15) uses the techniques of part III to come up with a much more efficient implementation of MACSYMA. It uses the idea of a canonical form, and replaces the very general rewrite rule approach with a series of more specific functions.
 
-[Chapter 16](B9780080571157500169.xhtml) covers the EMYCIN !!!(span) {:.smallcaps} expert system shell, a backward chaining rule-based system based on certainty factors.
-The MYCIN !!!(span) {:.smallcaps} medical expert system is also covered briefly.
+[Chapter 16](chapter16) covers the EMYCIN expert system shell, a backward chaining rule-based system based on certainty factors.
+The MYCIN medical expert system is also covered briefly.
 
-[Chapter 17](B9780080571157500170.xhtml) covers the Waltz line-labeling algorithm for polyhedra (using Huffman-Clowes labels).
+[Chapter 17](chapter17) covers the Waltz line-labeling algorithm for polyhedra (using Huffman-Clowes labels).
 Different approaches to constraint propagation and backtracking are discussed.
 
-[Chapter 18](B9780080571157500182.xhtml) presents a program that plays an excellent game of Othello.
+[Chapter 18](chapter18) presents a program that plays an excellent game of Othello.
 The technique used, alpha-beta searching, is appropriate to a wide variety of two-person games.
 
-[Chapter 19](B9780080571157500194.xhtml) is an introduction to natural language processing.
+[Chapter 19](chapter19) is an introduction to natural language processing.
 It covers context-free grammar, top-down and bottom-up parsing, chart parsing, and some semantic interpretation and preferences.
 
-[Chapter 20](B9780080571157500200.xhtml) extends the linguistic coverage of the previous chapter and introduces logic grammars, using the Prolog compiler developed in [chapter 11](B978008057115750011X.xhtml).
+[Chapter 20](chapter20) extends the linguistic coverage of the previous chapter and introduces logic grammars, using the Prolog compiler developed in [chapter 11](chapter11).
 
-[Chapter 21](B9780080571157500212.xhtml) is a fairly comprehensive grammar of English using the logic grammar formalism.
+[Chapter 21](chapter21) is a fairly comprehensive grammar of English using the logic grammar formalism.
 The problems of going from a simple idea to a realistic, comprehensive program are discussed.
 
-**[Part V](partv.xhtml)** includes material that is peripheral to AI but important for any serious Lisp programmer.
+**Part V** includes material that is peripheral to AI but important for any serious Lisp programmer.
 
-[Chapter 22](B9780080571157500224.xhtml) presents the Scheme dialect of Lisp.
+[Chapter 22](chapter22) presents the Scheme dialect of Lisp.
 A simple Scheme interpreter is developed, then a properly tail-recursive interpreter, then an interpreter that explicitly manipulates continuations and supports `call/cc`.
-[Chapter 23](B9780080571157500236.xhtml) presents a Scheme compiler.
+[Chapter 23](chapter23) presents a Scheme compiler.
 
-[Chapter 24](B9780080571157500248.xhtml) presents the features that are unique to American National Standards Institute (ANSI) Common Lisp.
+[Chapter 24](chapter24) presents the features that are unique to American National Standards Institute (ANSI) Common Lisp.
 This includes the `loop` macro, as well as error handling, pretty printing, series and sequences, and the package facility.
 
-[Chapter 25](B978008057115750025X.xhtml) is a guide to troubleshooting and debugging Lisp programs.
+[Chapter 25](chapter25) is a guide to troubleshooting and debugging Lisp programs.
 
 The bibliography lists over 200 sources, and there is a comprehensive index.
 In addition, the appendix provides a directory of publicly available Lisp programs.
 
 ## How to Use This Book
-{:#s0025}
-{:.h1hd}
 
 The intended audience for this book is broad: anyone who wants to become an advanced Lisp programmer, and anyone who wants to be an advanced AI practitioner.
 There are several recommended paths through the book:
-!!!(p) {:.para_fl}
 
-*   *In an Introductory AI Course:* Concentrate on parts I and II, and at least one example from [part IV](partiv.xhtml).
+*   *In an Introductory AI Course:* Concentrate on parts I and II, and at least one example from part IV.
 
-*   *In an Advanced AI Programming Course:* Concentrate on parts I, II and IV, skipping chapters that are of less interest and adding as much of [part III](partiii.xhtml) as time permits.
+*   *In an Advanced AI Programming Course:* Concentrate on parts I, II and IV, skipping chapters that are of less interest and adding as much of part III as time permits.
 
-*   *In an Advanced Programming Languages Course:* Concentrate on parts I and V, with selections from [part III](partiii.xhtml).
-Cover [chapters 11](B978008057115750011X.xhtml) and [13](B9780080571157500133.xhtml) if similar material is not presented with another text.
+*   *In an Advanced Programming Languages Course:* Concentrate on parts I and V, with selections from part III.
+Cover [chapters 11](chapter11) and [13](chapter13) if similar material is not presented with another text.
 
 *   *For the Professional Lisp Programmer:* Read as much of the book as possible, and refer back to it often.
-[Part III](partiii.xhtml) and [chapter 25](B978008057115750025X.xhtml) are particularly important.
+Part III and [chapter 25](chapter25) are particularly important.
 
 ## Supplementary Texts and Reference Books
-{:#s0030}
-{:.h1hd}
 
 The definitive reference source is Steele's *Common Lisp the Language*.
 From 1984 to 1990, this unambiguously defined the language Common Lisp.
@@ -225,7 +212,6 @@ However, in 1990 the picture became more complicated by the publication of *Comm
 This book, also by Steele, contains the recommendations of ANSI subcommittee X3J13, whose charter is to define a standard for Lisp.
 These recommendations include many minor changes and clarifications, as well as brand new material on object-oriented programming, error condition handling, and the loop macro.
 The new material doubles the size of the book from 465 to 1029 pages.
-!!!(p) {:.para_fl}
 
 Until the ANSI recommendations are formally accepted, Common Lisp users are in the unfortunate situation of having two distinct and incompatible standards: "original" Common Lisp and ANSI Common Lisp.
 Most of the code in this book is compliant with both standards.
@@ -248,19 +234,16 @@ The first is more elementary than the others.
 *   *Common Lisp: A Gentle Introduction to Symbolic Computation* by David Touretzky.
 Most appropriate for beginners, including those who are not computer scientists.
 
-*   *A Programmer's Guide to Common Lisp* by Deborah G.
-Tatar.
+*   *A Programmer's Guide to Common Lisp* by Deborah G. Tatar.
 Appropriate for those with experience in another programming language, but none in Lisp.
 
 *   *Common LISPcraft* by Robert Wilensky.
 More comprehensive and faster paced, but still useful as an introduction as well as a reference.
 
-*   *Common Lisp* by Wade L.
-Hennessey.
+*   *Common Lisp* by Wade L. Hennessey.
 Somewhat hit-and-miss in terms of the topics it covers, but with an enlightened discussion of implementation and efficiency issues that do not appear in the other texts.
 
-*   *LISP* (3d edition) by Patrick H.
-Winston and Bertold Horn.
+*   *LISP* (3d edition) by Patrick H. Winston and Bertold Horn.
 Covers the most ground in terms of programming advice, but not as comprehensive as a reference.
 May be difficult for beginners.
 Includes some AI examples.
@@ -290,19 +273,13 @@ The current text combines the virtues of the last two entries: it presents both 
 Furthermore, the presentation is in an incremental fashion, with simple versions presented first for clarity, followed by more sophisticated versions for completeness.
 
 ## A Note on Exercises
-{:#s0035}
-{:.h1hd}
 
 Sample exercises are provided throughout.
 Readers can test their level of understanding by faithfully doing the exercises.
 The exercises are graded on the scale [s], [m], [h], [d], which can be interpreted either as a level of difficulty or as an expected time it will take to do the exercise:
-!!!(p) {:.para_fl}
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
 | Code | Difficulty | Time to Do |
+|---|---|---|
 | [s] | Simple | Seconds |
 | [m] | Medium | Minutes |
 | [h] | Hard | Hours |
@@ -313,13 +290,10 @@ If the reader is unclear on the underlying concepts, it might take hours of revi
 Answers to the exercises can be found in a separate section at the end of each chapter.
 
 ## Acknowledgments
-{:#s0010}
-{:.h1hd}
 
 A great many people contributed to this book.
 First of all I would like to thank my students at USC and Berkeley, as well as James Martin's students at Colorado and Michael Pazzani's students at Irvine, who course-tested earlier versions of this book.
 Useful suggestions, corrections, and additions were made by:
-!!!(p) {:.para_fl}
 
 Nina Amenta (Berkeley), Ray S.
 Babcock and John Paxton (Montana State), Bryan A.
@@ -333,13 +307,13 @@ Loeffler (MCC), George Luger (New Mexico), Rob MacLachlan (CMU), Barry Margolin 
 Ressler, Robert S.
 Rist (University of Technology, Sydney), Paul Snively (Apple), Peter Van Roy (Berkeley), David Gumby Wallace (Cygnus), and Jeff Wu (Colorado).
 
-Sam Dooley and Eric Wefald both wrote Othello-playing programs without which I would not have written [chapter 18](B9780080571157500182.xhtml).
+Sam Dooley and Eric Wefald both wrote Othello-playing programs without which I would not have written [chapter 18](chapter18).
 Eric also showed me Aristotle's quotes on means-ends analysis.
 Tragically, Eric died in August 1989.
 He is sorely missed by his friends and colleagues.
-Richard Fateman made suggestions for [chapter 8](B978008057115750008X.xhtml), convinced me to write [chapter 15](B9780080571157500157.xhtml), and, with help from Peter Klier, wrote a substantial program from which I adapted some code for that chapter.
+Richard Fateman made suggestions for [chapter 8](chapter8), convinced me to write [chapter 15](chapter15), and, with help from Peter Klier, wrote a substantial program from which I adapted some code for that chapter.
 Charley Cox (Franz Inc.), Jamie Zawinski (Lucid Inc.), and Paul Fuqua (Texas Instruments) explained the inner workings of their respective companies' compilers.
-Mike Harrison, Paul Hilfinger, Marc Luria, Ethan Munson, and Stephan Slade helped with LA !!!(span) {:.smallcaps} TE !!!(span) {:.smallcaps} X.
+Mike Harrison, Paul Hilfinger, Marc Luria, Ethan Munson, and Stephan Slade helped with LATEX.
 Narciso Jarimillo tested all the code and separated it into the files that are available to the reader (see page 897).
 
 During the writing of this book I was supported by a grant from the Defense Advanced Research Projects Agency (DoD), Arpa Order No.
@@ -350,10 +324,5 @@ Finally, thanks to Mike Morgan and Yonie Overton for overseeing the production o
 
 ----------------------
 
-[1](#xfn0010) This does not imply that the programs chosen are the best of all AI programs-just that they are representative.
-!!!(p) {:.ftnote1}
-
-Part I
-Introduction to Common Lisp
-!!!(p) {:.parttitle}
-
+<a id="fnpreface-1"></a>
+[1](#tfnpreface-1) This does not imply that the programs chosen are the best of all AI programs-just that they are representative.
