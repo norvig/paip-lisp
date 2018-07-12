@@ -1,4 +1,4 @@
-# Frontmatter {docsify-ignore}
+# Frontmatter
 Paradigms of 
 Artificial Intelligence 
 Programming: 

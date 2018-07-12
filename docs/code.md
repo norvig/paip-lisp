@@ -1,4 +1,4 @@
-## Code highlighting {docsify-ignore}
+## Code highlighting
 
 
 Here I'm testing the code highlighing functionality
