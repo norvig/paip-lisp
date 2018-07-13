@@ -5,14 +5,13 @@
 
 # Table of Contents
 
-  
 - Preface
-- Why Lisp?  Why Common Lisp?
-- Outline of the Book
-- How to use This Book
-- Supplementary Texts and Reference Books
-- A Note on Exercises
-- Acknowledgments
+  * Why Lisp?  Why Common Lisp?
+  * Outline of the Book
+  * How to use This Book
+  * Supplementary Texts and Reference Books
+  * A Note on Exercises
+  * Acknowledgments
 - **Part I  Introduction to Common Lisp**
 - **1  Introduction to Lisp**
   * 1.1  Symbolic Computation
@@ -59,7 +58,7 @@
   * 3.12  Input/Output
   * 3.13  Debugging tools
   * 3.14  Antibugging Tools
-        * Timing Tools
+      * Timing Tools
   * 3.15  Evaluation
   * 3.16  Closures
   * 3.17  Special Variables
@@ -84,7 +83,7 @@
   * 4.12  The New Domain problem:  Monkey and Bananas
   * 4.13  The Maze Searching Domain
   * 4.14  The Blocks World Domain
-        * The Sussman Anomaly
+      * The Sussman Anomaly
   * 4.15  Stage 5 Repeated:  Analysis of Version 2
   * 4.16  The Not Looking after You Don&#39;t Leap Problem
   * 4.17  The Lack of Descriptive Power Problem
@@ -107,11 +106,11 @@
   * 6.2  A Pattern-Matching Tool
   * 6.3  A Rule-Based Translator Tool
   * 6.4  A Set of Searching Tools
-        * Searching Trees
-        * Guiding the Search
-        * Search Paths
-        * Guessing versus Guaranteeing a Good Solution
-        * Searching Graphs
+      * Searching Trees
+      * Guiding the Search
+      * Search Paths
+      * Guessing versus Guaranteeing a Good Solution
+      * Searching Graphs
   * 6.5  GPS as Search
   * 6.6  History and References
   * 6.7  Exercises
@@ -140,11 +139,11 @@
   * 9.4  Indexing Data
   * 9.5  Instrumentation:  Deciding What to Optimize
   * 9.6  A Case Study in Efficiency:  The SIMPLIFY Program
-        * Memoization
-        * Indexing
-        * Compilation
-        * The Single-Rule Compiler
-        * The Rule-Set Compiler
+      * Memoization
+      * Indexing
+      * Compilation
+      * The Single-Rule Compiler
+      * The Rule-Set Compiler
   * 9.7  History and References
   * 9.8  Exercises
   * 9.9  Answers
@@ -153,22 +152,22 @@
   * 10.2  Avoid Generic Functions
   * 10.3  Avoid Complex Argument Lists
   * 10.4  Avoid Unnecessary Consing
-        * Avoid Consing:  Unique Lists
-        * Avoid Consing:  Multiple Values
-        * Avoid Consing:  Resources
+      * Avoid Consing:  Unique Lists
+      * Avoid Consing:  Multiple Values
+      * Avoid Consing:  Resources
   * 10.5  Use the Right Data Structures
-        * The Right Data Structure:  Variables
-        * The Right Data Structure:  Queues
-        * The Right Data Structure:  Tables
+      * The Right Data Structure:  Variables
+      * The Right Data Structure:  Queues
+      * The Right Data Structure:  Tables
   * 10.6  Exercises
   * 10.7  Answers
 - **11  Logic Programming**
   * 11.1  Idea 1:  A Uniform Data Base
   * 11.2  Idea 2:  Unification of Logic Variables
-        * Programming with Prolog
+      * Programming with Prolog
   * 11.3  Idea 3:  Automatic Backtracking
-        * Approaches to Backtracking
-        * Anonymous Variables
+      * Approaches to Backtracking
+      * Anonymous Variables
   * 11.4  The Zebra Puzzle
   * 11.5  The Synergy of Backtracking and Unification
   * 11.6  Destructive Unification
@@ -200,7 +199,7 @@
   * 13.6  Inheritance
   * 13.7  CLOS:  The Common Lisp Object System
   * 13.8  A CLOS Example:  Searching Tools
-        * Best-First Search
+      * Best-First Search
   * 13.9  Is CLOS Object-Oriented?
   * 13.10  Advantages of Object-Oriented programming
   * 13.11  History and References
@@ -216,11 +215,11 @@
   * 14.8  A Solution to the Indexing Problem
   * 14.9  A Solution to the Completeness Problem
   * 14.10  Solutions to the Expressiveness Problems
-        * Higher-Order Predications
-        * Improvements
-        * A Frame Language
-        * Possible Worlds:  Truth, Negation, and Disjunction
-        * Unification, Equality, Types, and Skolem Constants
+      * Higher-Order Predications
+      * Improvements
+      * A Frame Language
+      * Possible Worlds:  Truth, Negation, and Disjunction
+      * Unification, Equality, Types, and Skolem Constants
   * 14.11  History and References
   * 14.12  Exercises
   * 14.13  Answers
@@ -268,19 +267,19 @@
   * 18.10  It Pays to Precycle
   * 18.11  Killer Moves
   * 18.12  Championship Programs:  Iago and Bill
-        * Mobility
-        * Edge Stability
-        * Combining the Factors
+      * Mobility
+      * Edge Stability
+      * Combining the Factors
   * 18.13  Other Techniques
-        * Interative Deepening
-        * Forward Pruning
-        * Nonspeculative Forward Pruning
-        * Aspiration Search
-        * Think-Ahead
-        * Hashing and Opening Book Moves
-        * The End Game
-        * Metareasoning
-        * Learning
+      * Interative Deepening
+      * Forward Pruning
+      * Nonspeculative Forward Pruning
+      * Aspiration Search
+      * Think-Ahead
+      * Hashing and Opening Book Moves
+      * The End Game
+      * Metareasoning
+      * Learning
   * 18.14  History and References
   * 18.15  Exercises
   * 18.16  Answers
@@ -318,16 +317,16 @@
   * 21.9  XPs
   * 21.10  Word Categories
   * 21.11  The Lexicon
-        * Verbs
-        * Auxiliary Verbs
-        * Nouns
-        * Pronouns
-        * Names
-        * Adjectives
-        * Adverbs
-        * Articles
-        * Cardinal and Ordinal Numbers
-        * Prepositions
+      * Verbs
+      * Auxiliary Verbs
+      * Nouns
+      * Pronouns
+      * Names
+      * Adjectives
+      * Adverbs
+      * Articles
+      * Cardinal and Ordinal Numbers
+      * Prepositions
   * 21.12  Supporting the Lexicon
   * 21.13  Other Primitives
   * 21.14  Examples
@@ -356,24 +355,24 @@
   * 24.1  Packages
   * The Seven Name Spaces
   * 24.2  Conditions and Error Handling
-        * Signaling Errors
-        * Handling Errors
+      * Signaling Errors
+      * Handling Errors
   * 24.3  Pretty Printing
   * 24.4  Series
   * 24.5  The Loop Macro
-        * Anatomy of a Loop
-        * Iteration Control (26.6)
-        * End-Test Control (26.7)
-        * Value Accumulation (26.8)
-        * Variable Initialization (26.9)
-        * Conditional Execution (26.10)
-        * Unconditional Execution (26.11)
-        * Miscellaneous Features (26.12)
+      * Anatomy of a Loop
+      * Iteration Control (26.6)
+      * End-Test Control (26.7)
+      * Value Accumulation (26.8)
+      * Variable Initialization (26.9)
+      * Conditional Execution (26.10)
+      * Unconditional Execution (26.11)
+      * Miscellaneous Features (26.12)
   * 24.6  Sequence Functions
-        * Once-only:  A Lesson in Macrology
-        * Avoid Overusing Macros
-        * MAP-INTO
-        * REDUCE with :key
+      * Once-only:  A Lesson in Macrology
+      * Avoid Overusing Macros
+      * MAP-INTO
+      * REDUCE with :key
   * 24.7  Exercises
   * 24.8  Answers
 - **25  Troubleshooting**
@@ -392,11 +391,11 @@
   * 25.13  Syntax of LET and LET*
   * 25.14  Problems with Macros
   * 25.15  A Style Guide to Lisp
-        * When to Define a Function
-        * When to Define a Special Variable
-        * When to Bind a Lexical Variable
-        * How to Choose a Name
-        * Deciding on the Order of Parameters
+      * When to Define a Function
+      * When to Define a Special Variable
+      * When to Bind a Lexical Variable
+      * How to Choose a Name
+      * Deciding on the Order of Parameters
   * 25.16  Dealing with Files, Packages, and Systems
   * 25.17  Portability Problems
   * 25.18  Exercises
