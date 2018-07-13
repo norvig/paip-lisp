@@ -39,10 +39,12 @@ Assuming we have managed to start up Lisp, we are likely to see a *prompt* of so
 On my computer, Lisp types "`>`" to indicate it is ready to accept the next computation.
 So we are faced with a screen that looks like this:
 
-`>`
+```lisp
+>
+```
 
 We may now type in our computation and see the result displayed.
-It turns out that the Lisp convention for arithemtic expressions is slightly different: a computation consists of a parenthesized list with the operation name first, followed by any number of operands, or arguments.
+It turns out that the Lisp convention for arithmetic expressions is slightly different: a computation consists of a parenthesized list with the operation name first, followed by any number of operands, or arguments.
 This is called *prefix notation.*
 
 ```lisp
@@ -466,7 +468,7 @@ In other words, the `mapcar` call above is equivalent to:
       (last-name (third names))
 ```
 
-`mapcar`'s name cornes from the fact that it "maps" the function across each of the arguments.
+`mapcar`'s name comes from the fact that it "maps" the function across each of the arguments.
 The `car` part of the name refers to the Lisp function `car`, an old name for `first`.
 `cdr` is the old name for `rest`.
 The names stand for "contents of the address register" and "contents of the decrement register," the instructions that were used in the first implementation of Lisp on the IBM 704.
@@ -596,17 +598,14 @@ Any function is required to return the correct value for the given input(s).
 Another way to look at this requirement is to break it into two parts: a function must return a value, and it must not return any incorrect values.
 This two-part requirement is equivalent to the first one, but it makes it easier to think about and design function definitions.
 
-### wip
-
 Next I show an abstract description of the `first-name` problem, to emphasize the design of the function and the fact that recursive solutions are not tied to Lisp in any way:
 
-    `function first-name(name):`
-
-      `  if *the first element of name is a title*`
-
-            `  then *do something complicated to get the first-name*`
-
-            `  else *return the first element of the name*`
+```lisp
+function first-name(name):
+  if *the first element of name is a title*
+    then *do something complicated to get the first-name*
+    else *return the first element of the name*
+```
 
 This breaks up the problem into two cases.
 In the second case, we return an answer, and it is in fact the correct answer.
@@ -614,13 +613,12 @@ We have not yet specified what to do in the first case.
 But we do know that it has something to do with the rest of the name after the first element, and that what we want is to extract the first name out of those elements.
 The leap of faith is to go ahead and use `first-name`, even though it has not been fully defined yet:
 
-    `function first-name(name):`
-
-      `  if *the first element of name is a title*`
-
-            `  then *return the* first-name *of the rest of the name*`
-
-            `  else *return the first element of the name*`
+```lisp
+function first-name(name):
+  if *the first element of name is a title*
+    then *return the* first-name *of the rest of the name*
+    else *return the first element of the name*
+```
 
 Now the first case in `first-name` is recursive, and the second case remains unchanged.
 We already agreed that the second case returns the correct answer, and the first case only returns what `first-name` returns.
@@ -637,38 +635,46 @@ A function that takes another function as an argument is called a *higher-order 
 `mapcar` is an example.
 To demonstrate the higher-order-function style of programming, we will define a new function called `mappend.` It takes two arguments, a function and a list.
 `mappend` maps the function over each element of the list and appends together all the results.
-The first definition follows immediately from the description and the fact that the function `appl`y can be used to apply a function to a list of arguments.
+The first definition follows immediately from the description and the fact that the function `apply` can be used to apply a function to a list of arguments.
 
-    `(defun mappend (fn the-list)`
+```lisp
+(defun mappend (fn the-list)
+  "Apply fn to each element of list and append the results."
+  (apply #'append (mapcar fn the-list)))
+```
 
-        `  "Apply fn to each element of list and append the results."`
-
-        `  (apply #'append (mapcar fn the-list)))`
-
-Now we experiment a little to see how `appl`y and `mappend` work.
+Now we experiment a little to see how `apply` and `mappend` work.
 The first example applies the addition function to a list of four numbers.
 
-    `> (apply #'+ '(1 2 3 4)) => 10`
+```lisp
+> (apply #'+ '(1 2 3 4)) => 10
+```
 
 The next example applies append to a list of two arguments, where each argument is a list.
 If the arguments were not lists, it would be an error.
 
-    `> (apply #'append '((1 2 3) (a b c))) => (l 2 3 A B C)`
+```lisp
+> (apply #'append '((1 2 3) (a b c))) => (1 2 3 A B C)
+```
 
 Now we define a new function, `self-and-double`, and apply it to a variety of arguments.
 
-    `> (defun self-and-double (x) (list x (+ x x)))`
+```lisp
+> (defun self-and-double (x) (list x (+ x x)))
 
-    `> (self-and-double 3) => (3 6)`
+> (self-and-double 3) => (3 6)
 
-    `> (apply #' self-and-double ' (3)) => (3 6)`
+> (apply #'self-and-double '(3)) => (3 6)
+```
 
-If we had tried to apply `self-and-double` to a list of more than one argument, or to a list that did not contain a number, it would be an error, just as it would be an error to evaluate `(self-and-double 3 4`) or `(self-and-double 'Kim`).
+If we had tried to apply `self-and-double` to a list of more than one argument, or to a list that did not contain a number, it would be an error, just as it would be an error to evaluate (`self-and-double 3 4`) or (`self-and-double 'Kim`).
 Now let's return to the mapping functions:
 
-    `> (mapcar #'self-and-double '(1 10 300)) => ((1 2) (10 20) (300 600))`
+```lisp
+> (mapcar #'self-and-double '(1 10 300)) => ((1 2) (10 20) (300 600))
 
-    `> (mappend #'self-and-double '(1 10 300)) => (1 2 10 20 300 600)`
+> (mappend #'self-and-double '(1 10 300)) => (1 2 10 20 300 600)
+```
 
 When `mapcar` is passed a function and a list of three arguments, it always returns a list of three values.
 Each value is the result of calling the function on the respective argument.
@@ -676,80 +682,80 @@ In contrast, when `mappend` is called, it returns one big list, which is equal t
 It would be an error to call `mappend` with a function that didn't return lists, because `append` expects to see lists as its arguments.
 
 Now consider the following problem: given a list of elements, return a list consisting of all the numbers in the original list and the negation of those numbers.
-For example, given the list `(testing 1 2 3 test`), return `(1 -1 2 -2 3 -3`).
+For example, given the list (`testing 1 2 3 test`), return (`1 -1 2 -2 3 -3`).
 This problem can be solved very easily using `mappend` as a component:
 
-    `(defun numbers-and-negations (input)`
+```lisp
+(defun numbers-and-negations (input)
+  "Given a list, return only the numbers and their negations."
+  (mappend #' number-and-negation input))
 
-        `  "Given a list, return only the numbers and their negations."`
+(defun number-and-negation (x)
+  "If x is a number, return a list of x and -x."
+  (if (numberp x)
+      (list x (- x))
+      nil))
 
-        `  (mappend #' number-and-negation input))`
-
-    `(defun number-and-negation (x)`
-
-        `  "If x is a number, return a list of x and -x."`
-
-        `  (if (numberp x)`
-
-                      `  (list x (- x))`
-
-                        `  nil))`
-
-    `> (numbers-and-negations '(testing 1 2 3 test)) => (1 -1 2 -2 3 -3)`
+> (numbers-and-negations '(testing 1 2 3 test)) => (1 -1 2 -2 3 -3)
+```
 
 The alternate definition of `mappend` shown in the following doesn't make use of `mapcar;` instead it builds up the list one element at a time:
 
-    `(defun mappend (fn the-list)`
-
-        `  "Apply fn to each element of list and append the results."`
-
-        `  (if (null the-list)`
-
-                        `  nil`
-
-                        `  (append (funcall fn (first the-list))`
-
-                                                    `  (mappend fn (rest the-list)))))`
+```lisp
+(defun mappend (fn the-list)
+  "Apply fn to each element of list and append the results."
+  (if (null the-list)
+      nil
+      (append (funcall fn (first the-list))
+              (mappend fn (rest the-list)))))
+```
 
 `funcall` is similar to `apply;` it too takes a function as its first argument and applies the function to a list of arguments, but in the case of `funcall`, the arguments are listed separately:
 
-    `> (funcall #'+ 2 3) => 5`
+```lisp
+> (funcall #'+ 2 3) => 5
 
-    `> (apply #' + '(2 3)) => 5`
+> (apply #' + '(2 3)) => 5
 
-    `> (funcall #' + '(2 3)) => *Error: (2 3) is not a number.*`
+> (funcall #' + '(2 3)) => *Error: (2 3) is not a number.*
+```
 
-These are equivalent to `(+  2 3), (+  2 3)`,and`(+ '(2 3))`, respectively.
+These are equivalent to `(+  2 3), (+ 2 3)`,and`(+ '(2 3))`, respectively.
 
 So far, every function we have used has been either predefined in Common Lisp or introduced with a `defun`, which pairs a function with a name.
 It is also possible to introduce a function without giving it a name, using the special syntax `lambda`.
 
-The name *lambda* cornes from the mathematician Alonzo Church's notation for functions (Church 1941).
+The name *lambda* comes from the mathematician Alonzo Church's notation for functions (Church 1941).
 Lisp usually prefers expressive names over terse Greek letters, but lambda is an exception.
 A better name would be `make-function`.
-Lambda derives from the notation in Russell and Whitehead's *Principia Mathematica,* which used a caret over bound variables: x^x+x !!!(span) {:.hiddenClass} ![si1_e](images/B9780080571157500017/si1_e.gif).
-Church wanted a one-dimensional string, so he moved the caret in front: x^x+x !!!(span) {:.hiddenClass} ![si2_e](images/B9780080571157500017/si2_e.gif).
-The caret looked funny with nothing below it, so Church switched to the closest thing, an uppercase lambda, &Lambda;*x*(*x + x*).
+Lambda derives from the notation in Russell and Whitehead's *Principia Mathematica,* which used a caret over bound variables: *x&#x302;*(*x + x*).
+
+Church wanted a one-dimensional string, so he moved the caret in front: *^x*(*x + x*).
+The caret looked funny with nothing below it, so Church switched to the closest thing, an uppercase lambda, *&Lambda;x*(*x + x*).
 The &Lambda; was easily confused with other symbols, so eventually the lowercase lambda was substituted: *&lambda;x*(*x + x*).
 John McCarthy was a student of Church's at Princeton, so when McCarthy invented Lisp in 1958, he adopted the lambda notation.
 There were no Greek letters on the keypunches of that era, so McCarthy used (`lambda (x) (+ x x)`), and it has survived to this day.
 In general, the form of a lambda expression is
 
-    `(lambda (*parameters...*) *body...*)`
+```lisp
+(lambda (*parameters...*) *body...*)
+```
 
 A lambda expression is just a nonatomic *name* for a function, just as `append` is an atomic name for a built-in function.
 As such, it is appropriate for use in the first position of a function call, but if we want to get at the actual function, rather than its name, we still have to use the `#'` notation.
 For example:
 
-    `> ((lambda (x) (+ x 2)) 4) => 6`
+```lisp
+> ((lambda (x) (+ x 2)) 4) => 6
 
-    `*>* (funcall #'(lambda (x) (+ x 2)) 4) => 6`
+> (funcall #'(lambda (x) (+ x 2)) 4) => 6
+```
 
 To understand the distinction we have to be clear on how expressions are evaluated in Lisp.
 The normal rule for evaluation states that symbols are evaluated by looking up the value of the variable that the symbol refers to.
 So the `x` in `(+ x 2)` is evaluated by looking up the value of the variable named `x`.
 A list is evaluated in one of two ways.
-If the first element of the list is a special form opera tor, then the list is evaluated according to the syntax rule for that special form.
+If the first element of the list is a special form operator, then the list is evaluated according to the syntax rule for that special form.
 Otherwise, the list represents a function call.
 The first element is evaluated in a unique way, as a function.
 This means it can either be a symbol or a lambda expression.
@@ -759,23 +765,23 @@ If we want to refer to a function in a position other than the first element of 
 Otherwise, the expressions will be evaluated by the normal evaluation rule, and will not be treated as functions.
 For example:
 
-    `> append => *Error: APPEND is not a bound variable*`
+```lisp
+> append => *Error: APPEND is not a bound variable*
 
-    `> (lambda (x) (+ x 2)) => *Error: LAMBDA is not a function*`
+> (lambda (x) (+ x 2)) => *Error: LAMBDA is not a function*
+```
 
 Here are some more examples of the correct use of functions:
 
-    `>(mapcar #'(lambda (x) (+ x x))`
+```lisp
+>(mapcar #'(lambda (x) (+ x x))
+         '(1 2 3 4 5)) =>
+(2 4 6 8 10)
 
-                                `  '(1 2 3 4 5)) =>`
-
-    `(2 4 6 8 10)`
-
-    `> (mappend #'(lambda (l) (list l (reverse l)))`
-
-                                    `  ((1 2 3) (a b c))) =>`
-
-    `((1 2 3) (3 2 1) (A B C) (C B A))`
+> (mappend #'(lambda (l) (list l (reverse l)))
+           ((1 2 3) (a b c))) =>
+((1 2 3) (3 2 1) (A B C) (C B A))
+```
 
 Programmers who are used to other languages sometimes fail to see the point of lambda expressions.
 There are two reasons why lambda expressions are very useful.
@@ -785,7 +791,7 @@ Just as it is clearer to write `(a+b)*(c+d)` rather than to invent variable name
 
 Second, and more importantly, lambda expressions make it possible to create new functions at run time.
 This is a powerful technique that is not possible in most programming languages.
-These run-time functions, known as *closures,* will be covered in [section 3.16](B9780080571157500030.xhtml#s0085).
+These run-time functions, known as *closures,* will be covered in section 3.16.
 
 ## 1.8 Other Data Types
 
@@ -796,11 +802,13 @@ As you can see in the following, strings, like numbers, evaluate to themselves.
 Strings are used mainly for printing out messages, while symbols are used for their relationships to other objects, and to name variables.
 The printed representation of a string has a double quote mark `(")` at each end.
 
-    `> "a string" => "a string"`
+```lisp
+> "a string" => "a string"
 
-    `> (length "a string") => 8`
+> (length "a string") => 8
 
-    `> (length "") => 0`
+> (length "") => 0
+```
 
 ## 1.9 Summary: The Lisp Evaluation Rule
 
@@ -810,27 +818,30 @@ We can now summarize the evaluation rule for Lisp.
 
 *   Every list to be evaluated is either a *special form expression* or a *function application*.
 
-*   A *special form expression* is def ined to be a list whose first element is a special form operator.
+*   A *special form expression* is defined to be a list whose first element is a special form operator.
 The expression is evaluated according to the operator's idiosyncratic evaluation rule.
-For example, the evaluation rule for setf is to evaluate the second argument according to the normal evaluation rule, set the first argument to that value, and return the value as the result.
+For example, the evaluation rule for `setf` is to evaluate the second argument according to the normal evaluation rule, set the first argument to that value, and return the value as the result.
 The rule for `defun` is to define a new function, and return the name of the function.
 The rule for quote is to return the first argument unevaluated.
-The notation `'*x*` is actually an abbreviation for the special form expression `(quote *x*)`.
-Similarly, the notation `*#*'*f*` is an abbreviation for the special form expression `(function *f*)`.
+The notation `'x` is actually an abbreviation for the special form expression `(quote x)`.
+Similarly, the notation `#'f` is an abbreviation for the special form expression `(function f)`.
 
-`'John = (quote John) => JOHN`
+```lisp
+'John = (quote John) => JOHN
 
-`(setf p 'John) => JOHN`
+(setf p 'John) => JOHN
 
-`defun twice (x) (+ x x)) => TWICE`
+defun twice (x) (+ x x)) => TWICE
 
-`(if (=  2 3) (error) (+  5 6)) => 11`
+(if (=  2 3) (error) (+  5 6)) => 11
+```
 
 *   A *function application* is evaluated by first evaluating the arguments (the rest of the list) and then finding the function named by the first element of the list and applying it to the list of evaluated arguments.
 
-`(+  2 3) => 5`
-
-`(- (+  90 9) (+  50 5 (length '(Pat Kim)))) => 42`
+```lisp
+(+  2 3) => 5
+(- (+  90 9) (+  50 5 (length '(Pat Kim)))) => 42
+```
 
 Note that if `'(Pat Kim)` did not have the quote, it would betreated as a function application of the function `pat` to the value of the variable `kim.`
 
@@ -841,11 +852,11 @@ Symbols are composed of letters, and possibly digits and, rarely, punctuation ch
 <a id="tfn01-6"></a>
 To avoid confusion, we will use symbols composed mostly of the letters `a-z` and the `'-'` character, with a few exceptions.[6](#fn01-6)
 
-`names`
-
-`p`
-
-`*print-pretty*`
+```lisp
+names
+p
+*print-pretty*
+```
 
 *   A *nonsymbol atom* evaluates to itself.
 For now, numbers and strings are the only such non-symbol atoms we know of.
@@ -853,18 +864,20 @@ Numbers are composed of digits, and possibly a decimal point and sign.
 There are also provisions for scientific notation, rational and complex numbers, and numbers with different bases, but we won't describe the details here.
 Strings are delimited by double quote marks on both sides.
 
-`42 => 42`
-
-`-  273.15 => -273.15`
-
-`"a string" => "a string"`
+```lisp
+42 => 42
+-273.15 => -273.15
+"a string" => "a string"
+```
 
 There are some minor details of Common Lisp that complicate the evaluation rules, but this definition will suffice for now.
 
 One complication that causes confusion for beginning Lispers is the difference between *reading* and *evaluating* an expression.
 Beginners often imagine that when they type an expression, such as
 
-    `> (+ (* 3 4) (* 5 6))`
+```lisp
+> (+ (* 3 4) (* 5 6))
+```
 
 the Lisp system first reads the (`+`, then fetches the addition function, then reads `(* 3 4)` and computes `12`, then reads `(* 5 6)` and computes 30, and finally computes 42.
 In fact, what actually happens is that the system first reads the entire expression, the list `(+ (* 3 4) (* 5 6))`.
@@ -887,19 +900,12 @@ Why is it a good language for AI applications?
 There are at least eight important factors:
 
 *   Built-in Support for Lists
-
 *   Automatic Storage Management
-
 *   Dynamic Typing
-
 *   First-Class Functions
-
 *   Uniform Syntax
-
 *   Interactive Environment
-
 *   Extensibility
-
 *   History
 
 In sum, these factors allow a programmer to delay making decisions.
@@ -928,27 +934,23 @@ This is an efficient use of storage, but it rules out functions that return comp
 The other choice is for the programmer to explicitly allocate and free storage.
 This makes the functional style possible but can lead to errors.
 
-For example, consider the trivial problem of Computing the expression *a*x (b + c), where *a*, *b*, and *c* are numbers.
+For example, consider the trivial problem of computing the expression *a* x (b + c), where *a*, *b*, and *c* are numbers.
 The code is trivial in any language; here it is in Pascal and in Lisp:
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
+| []() | |
+|---|---|
 | `/* Pascal */` | `;;; Lisp` |
 | `a * (b + c)` | `(* a (+ b c))` |
 
 The only difference is that Pascal uses infix notation and Lisp uses prefix.
-Now consider Computing *a*x (b + c) when *a*, *b*, and *c* are matrices.
+Now consider computing *a* x (b + c) when *a*, *b*, and *c* are matrices.
 Assume we have procedures for matrix multiplication and addition.
 In Lisp the form is exactly the same; only the names of the functions are changed.
 In Pascal we have the choice of approaches mentioned before.
 We could declare temporary variables to hold intermediate results on the stack, and replace the functional expression with a series of procedure calls:
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
+| []() | |
+|---|---|
 | `/* Pascal */` | `;;; Lisp` |
 | `var temp, result: matrix;` | |
 | `add(b,c,temp);` | `(mult a (add b c))` |
@@ -959,10 +961,8 @@ The other choice is to write Pascal functions that allocate new matrices on the 
 Then one can write nice functional expressions like `mult(a,add(b,c))` even in Pascal.
 However, in practice it rarely works this nicely, because of the need to manage storage explicitly:
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
+| []() | |
+|---|---|
 | `/* Pascal */` | `;;; Lisp` |
 | `var a,b,c,x,y: matrix;` | |
 | `x := add(b.c);` | `(mult a (add b c))` |
@@ -982,10 +982,10 @@ In Pascal, we can write a procedure to sort an array of 100 integers, but we can
 In Lisp, one `sort` fits all.
 One way to appreciate this kind of flexibility is to see how hard it is to achieve in other languages.
 It is impossible in Pascal; in fact, the language Modula was invented primarily to fix this problem in Pascal.
-The language Ada was designed to allow flexible generic functions, and a book by [Musser and Stepanov (1989)](B9780080571157500285.xhtml#bb0885) describes an Ada package that gives some of the functionality of Common Lisp's sequence functions.
-But the Ada solution is less than ideal: it takes a 264-page book to duplicate only part of the functionality of the 20-page chapter 14 from [Steele (1990)](B9780080571157500285.xhtml#bb1160), and Musser and Stepanov went through five Ada compilers before they found one that would correctly compile their package.
+The language Ada was designed to allow flexible generic functions, and a book by Musser and Stepanov (1989) describes an Ada package that gives some of the functionality of Common Lisp's sequence functions.
+But the Ada solution is less than ideal: it takes a 264-page book to duplicate only part of the functionality of the 20-page chapter 14 from Steele (1990), and Musser and Stepanov went through five Ada compilers before they found one that would correctly compile their package.
 Also, their package is considerably less powerful, since it does not handle vectors or optional keyword parameters.
-In Common Lisp, all this functionality cornes for free, and it is easy to add more.
+In Common Lisp, all this functionality comes for free, and it is easy to add more.
 On the other hand, dynamic typing means that some errors will go undetected until run time.
 The great advantage of strongly typed languages is that they are able to give error messages at compile time.
 The great frustration with strongly typed languages is that they are only able to warn about a small class of errors.
@@ -995,7 +995,7 @@ They can tell you that you are mistakenly passing a string to a function that ex
 A *first-class* object is one that can be used anywhere and can be manipulated in the same ways as any other kind of object.
 In Pascal or C, for example, functions can be passed as arguments to other functions, but they are not first-class, because it is not possible to create new functions while the program is running, nor is it possible to create an anonymous function without giving it a name.
 In Lisp we can do both those things using `lambda`.
-This is explained in [section 3.16](B9780080571157500030.xhtml#s0085), [page 92](B9780080571157500030.xhtml#p92).
+This is explained in section 3.16, page 92.
 
 *   *Uniform Syntax.*
 The syntax of Lisp programs is simple.
@@ -1009,7 +1009,7 @@ There are two answers to this objection.
 First, consider the alternative: in a language with "conventional" syntax, Lisp's parentheses pairs would be replaced either by an implicit operator precedence rule (in the case of arithmetic and logical expressions) or by a `begin/end` pair (in the case of control structures).
 But neither of these is necessarily an advantage.
 Implicit precedence is notoriously error-prone, and `begin/end` pairs clutter up the page without adding any content.
-Many languages are moving away from `begin/end: C` uses { and }, which are equivalent to parentheses, and several modem functional languages (such as Haskell) use horizontal blank space, with no explicit grouping at all.
+Many languages are moving away from `begin/end: C` uses { and }, which are equivalent to parentheses, and several modern functional languages (such as Haskell) use horizontal blank space, with no explicit grouping at all.
 Second, many Lisp programmers *have* considered the alternative.
 There have been a number of preprocessors that translate from "conventional" syntax into Lisp.
 None of these has caught on.
@@ -1030,7 +1030,7 @@ This is known as the *batch* mode of interaction.
 For long programs, waiting for the compiler occupied a large portion of the debugging time.
 In Lisp one normally writes a few small functions at a time, getting feedback from the Lisp system after evaluating each one.
 This is known as an *interactive* environment.
-When it cornes time to make a change, only the changed functions need to be recompiled, so the wait is much shorter.
+When it comes time to make a change, only the changed functions need to be recompiled, so the wait is much shorter.
 In addition, the Lisp programmer can debug by typing in arbitrary expressions at any time.
 This is a big improvement over editing the program to introduce print statements and recompiling.
 Notice that the distinction between *interactive* and a *batch* languages is separate from the distinction between *interpreted* and *compiled* languages.
@@ -1060,109 +1060,84 @@ Many AI applications are based on the idea of *rule-based* programming.
 <a id="tfn01-8"></a>
 Another new style is *object-oriented* programming, which has been incorporated with the Common Lisp Object System (CLOS),[8](#fn01-8) a set of macros, functions, and data types that have been integrated into ANSI Common Lisp.
 
-To show how far Lisp has come, here's the only sample program given in the *Lisp/MTS Programmer's Guide* ([Hafner and Wilcox 1974](B9780080571157500285.xhtml#bb0505)):
+To show how far Lisp has come, here's the only sample program given in the *Lisp/MTS Programmer's Guide* (Hafner and Wilcox 1974):
 
-    `(PROG (LIST DEPTH TEMP RESTLIST)`
+```lisp
+(PROG (LIST DEPTH TEMP RESTLIST)
+(SETQ RESTLIST (LIST (CONS (READ) O)))
+A (COND
+((NOT RESTLIST) (RETURN 'DONE))
+(T (SETQ LIST (UNCONS (UNCONS RESTLIST
+     RESTLIST) DEPTH))
+(COND ((ATOM LIST)
+(MAPC 'PRIN1 (LIST '"ATOM:" LIST '"," 'DEPTH DEPTH))
+(TERPRI))
+(T (SETQ TEMP (UNCONS LIST LIST))
+(COND (LIST
+(SETQ RESTLIST (CONS(CONS LIST DEPTH) RESTLIST))))
+(SETQ RESTLIST (CONS (CONS TEMP
+     (ADD1 DEPTH)) RESTLIST))
+))))
+))))(GO A))
+```
 
-    `(SETQ RESTLIST (LIST (CONS (READ) O)))`
-
-    `A (COND`
-
-    `((NOT RESTLIST) (RETURN 'DONE))`
-
-    `(T (SETQ LIST (UNCONS (UNCONS RESTLIST`
-
-                `  RESTLIST) DEPTH))`
-
-    `(COND ((ATOM LIST)`
-
-    `(MAPC 'PRIN1 (LIST '"ATOM:" LIST '"," 'DEPTH DEPTH))`
-
-    `(TERPRI))`
-
-    `(T (SETQ TEMP (UNCONS LIST LIST))`
-
-    `(COND (LIST`
-
-    `(SETQ RESTLIST (CONS(CONS LIST DEPTH) RESTLIST))))`
-
-    `(SETQ RESTLIST (CONS (CONS TEMP`
-
-                `  (ADD1 DEPTH)) RESTLIST))`
-
-    `))))`
-
-    `))))(GO A))`
-
-Note the use of the now-deprecated goto `(GO)` statement, and the lack of consistent indexation conventions.
+Note the use of the now-deprecated goto `(GO)` statement, and the lack of consistent indentation conventions.
 The manual also gives a recursive version of the same program:
 
-    `(PROG NIL (`
-
-    `(LABEL ATOMPRINT (LAMBDA (RESTLIST)`
-
-    `(COND ((NOT RESTLIST) (RETURN 'DONE))`
-
-    `((ATOM (CAAR RESTLIST)) (MAPC 'PRIN1`
-
-                `  (LIST '"ATOM:" (CAAR RESTLIST)`
-
-                            `  '"," DEPTH (CDAR RESTLIST)))`
-
-    `(TERPRI)`
-
-    `(ATOMPRINT (CDR RESTLIST)))`
-
-    `( T (ATOMPRINT (GRAFT`
-
-    `(LIST (CONS (CAAAR RESTLIST) (ADD1 (CDAR RESTLIST))))`
-
-    `(AND (CDAAR RESTLIST) (LIST (CONS (CDAAR RESTLIST)`
-
-                  `  (CDAR RESTLIST))))`
-
-                                      `  (CDR RESTLIST)))))))`
-
-    `(LIST (CONS (READ) 0))))`
+```lisp
+(PROG NIL (
+(LABEL ATOMPRINT (LAMBDA (RESTLIST)
+(COND ((NOT RESTLIST) (RETURN 'DONE))
+((ATOM (CAAR RESTLIST)) (MAPC 'PRIN1
+     (LIST '"ATOM:" (CAAR RESTLIST)
+          '"," 'DEPTH (CDAR RESTLIST)))
+(TERPRI)
+(ATOMPRINT (CDR RESTLIST)))
+( T (ATOMPRINT (GRAFT
+(LIST (CONS (CAAAR RESTLIST) (ADD1 (CDAR RESTLIST))))
+(AND (CDAAR RESTLIST) (LIST (CONS (CDAAR RESTLIST)
+     (CDAR RESTLIST))))
+           (CDR RESTLIST)))))))
+(LIST (CONS (READ) 0))))
+```
 
 Both versions are very difficult to read.
-With our modem insight (and text editors that automatically indent), a much simpler program is possible:
+With our modern insight (and text editors that automatically indent), a much simpler program is possible:
 
-    `(defun atomprint (exp &optional (depth 0))`
-
-        `  "Print each atom in exp, along with its depth of nesting."`
-
-        `  (if (atom exp)`
-
-                      `  (format t "~&ATOM: ~  a, DEPTH ~  d" exp depth)`
-
-                      `  (dolist (element exp)`
-
-                            `  (atomprint element (+ depth 1)))))`
+```lisp
+(defun atomprint (exp &optional (depth 0))
+  "Print each atom in exp, along with its depth of nesting."
+  (if (atom exp)
+      (format t "~&ATOM: ~a, DEPTH ~d" exp depth)
+      (dolist (element exp)
+        (atomprint element (+ depth 1)))))
+```
 
 ## 1.11 Exercises
 
-    **Exercise  1.1 [m]** Define a version of `last-name` that handles "Rex Morgan MD," "Morton Downey, Jr.," and whatever other cases you can think of.
+&#9635; **Exercise  1.1 [m]** Define a version of `last-name` that handles "Rex Morgan MD," "Morton Downey, Jr.," and whatever other cases you can think of.
 
-    **Exercise  1.2 [m]** Write a function to exponentiate, or raise a number to an integer power.
-For example: `(power 3 2) = 32 = 9`.
+&#9635; **Exercise  1.2 [m]** Write a function to exponentiate, or raise a number to an integer power.
+For example: `(power 3 2)` = 3<sup>2</sup> = 9.
 
-    **Exercise  1.3 [m]** Write a function that counts the number of atoms in an expression.
+&#9635; **Exercise  1.3 [m]** Write a function that counts the number of atoms in an expression.
 For example: `(count-atoms '(a (b) c)) = 3`.
 Notice that there is something of an ambiguity in this: should (`a nil c`) count as three atoms, or as two, because it is equivalent to (`a () c`)?
 
-    **Exercise  1.4 [m]** Write a function that counts the number of times an expression occurs anywhere within another expression.
+&#9635; **Exercise  1.4 [m]** Write a function that counts the number of times an expression occurs anywhere within another expression.
 Example: `(count-anywhere 'a '(a ((a) b) a)) => 3.`
 
-    **Exercise  1.5 [m]** Write a function to compute the dot product of two sequences of numbers, represented as lists.
+&#9635; **Exercise  1.5 [m]** Write a function to compute the dot product of two sequences of numbers, represented as lists.
 The dot product is computed by multiplying corresponding elements and then adding up the resulting products.
 Example:
 
-`(dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110`
+```lisp
+(dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110
+```
 
 ## 1.12 Answers
 
-**Answer 1.2**
+### Answer 1.2
 ```lisp
 (defun power (x n)
   "Power raises x to the nth power.  N must be an integer >= 0.
@@ -1173,7 +1148,7 @@ Example:
 
 ```
 
-**Answer 1.3**
+### Answer 1.3
 
 ```lisp
 (defun count-atoms (exp)
@@ -1192,7 +1167,7 @@ Example:
               (count-all-atoms (rest exp) 0)))))
 ```
 
-**Answer 1.4**
+### Answer 1.4
 
 ```lisp
 (defun count-anywhere (item tree)
@@ -1203,7 +1178,8 @@ Example:
               (count-anywhere item (rest tree))))))
 ```
 
-**Answer 1.5** Here are three versions:
+### Answer 1.5
+Here are three versions:
 
 
 ```lisp
@@ -1229,40 +1205,31 @@ Example:
 ----------------------
 
 <a id="fn01-1"></a>
-[1](#tfn01-1) This list of symbols is not a legal Lisp assignaient statement, but it is a Lisp data object.
-!!!(p) {:.ftnote1}
+[1](#tfn01-1) This list of symbols is not a legal Lisp assignment statement, but it is a Lisp data object.
 
 <a id="fn01-2"></a>
 [2](#tfn01-2) The variable `*print-case*` controls how symbols will be printed.
-By default, the value of this variable is :`upcase`, but it can be changed to :`downcaseor :capitalize`.
-!!!(p) {:.ftnote1}
+By default, the value of this variable is :`upcase`, but it can be changed to :`downcase` or `:capitalize`.
 
 <a id="fn01-3"></a>
 [3](#tfn01-3) Later we will see what happens when the second argument is not a list.
-!!!(p) {:.ftnote1}
 
 <a id="fn01-4"></a>
-[4](#tfn01-4) In ANSI Common Lisp, `last` is defined to return a list of the last *n* elements, where n defaults to i.
+[4](#tfn01-4) In ANSI Common Lisp, `last` is defined to return a list of the last *n* elements, where n defaults to 1.
 Thus `(last p) = (last p 1) = (PUBLIC)`,and `(last p 2) = (Q PUBLIC)`.
-This may make the definition of last seem less perverse.
-!!!(p) {:.ftnote1}
+This may make the definition of `last` seem less perverse.
 
 <a id="fn01-5"></a>
 [5](#tfn01-5) Just as we can change the value of a variable, we can also change the value of a function in Lisp.
 It is not necessary to recompile everything when a change is made, as it would be in other languages.
-!!!(p) {:.ftnote1}
 
 <a id="fn01-6"></a>
 [6](#tfn01-6) For example, symbols that denote so-called *special* variables usually begin and end in asterisks.
-Also, note that I did not hesitate to use the symbol `won !` on page 11.
-!!!(p) {:.ftnote1}
+Also, note that I did not hesitate to use the symbol `won!` on page 11.
 
 <a id="fn01-7"></a>
 [7](#tfn01-7) Actually, there can be several symbol tables.
 They are known as *packages* in Common Lisp.
-!!!(p) {:.ftnote1}
 
 <a id="fn01-8"></a>
 [8](#tfn01-8) Pronounced "see-loss." An alternate pronunciation, "klaus," seems to be losing favor.
-!!!(p) {:.ftnote1}
-
