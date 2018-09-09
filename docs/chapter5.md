@@ -842,13 +842,13 @@ Explain.
 **Exercise  5.5 [h]** Alter the input mechanism to handle commas and other punctuation characters.
 Also arrange so that the user doesn't have to type parentheses around the whole input expression.
 (Hint: this can only be done using some Lisp functions we have not seen yet.
-Lookat `read-lineand read-from-string`.)
+Look at `read-line` and `read-from-string`.)
 
 **Exercise  5.6 [m]** Modify ELIZA !!!(span) {:.smallcaps} to have an explicit exit.
 Also arrange so that the output is not printed in parentheses either.
 
 **Exercise 5.7 [m]** Add the "memory mechanism" discussed previously to ELIZA.
-!!!(span) {:.smallcaps} Also add some way of definining synonyms like "everyone" and "everybody."
+!!!(span) {:.smallcaps} Also add some way of defining synonyms like "everyone" and "everybody."
 
 **Exercise 5.8 [h]** It turns out that none of the rules in the given script uses a variable more than once-there is no rule of the form `(?x... ?x)`.
 Write a pattern matcher that only adds bindings, never checks variables against previous bindings.
@@ -885,7 +885,7 @@ Is it more or less efficient?
 
 **Exercise  5.11 [m]** Weigh the advantages of changing `no-bindings` to `nil`, and `fail` to something else.
 
-**Exercise  5.12 [m]** Weigh the advantagesof making `pat-match` return multiple values: the first would be true for a match and false for failure, and the second would be the binding list.
+**Exercise  5.12 [m]** Weigh the advantages of making `pat-match` return multiple values: the first would be true for a match and false for failure, and the second would be the binding list.
 
 **Exercise  5.13 [m]** Suppose that there is a call to `segment-match` where the variable already has a binding.
 The current definition will keep making recursive calls to `segment-match`, one for each possible matching position.

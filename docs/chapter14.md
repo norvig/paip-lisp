@@ -108,10 +108,10 @@ This is easy to show: assuming the computer's memory has *n* bits, and the equat
 
 b0=0&and;b1=0&and;b2=1...&and;bn=0
 
-![si1_e](images/B9780080571157500145/si1_e.gif)
+![si1_e](images/si1_e.gif)
 
 Once we can represent a state of the computer, it becomes possible to represent any computer program in predicate calculus as a set of axioms that map one state onto another.
-Thus, predicate calculus is shown to be a *sufficient* langaage for representing anything that goes on inside a computer-it can be used as a tool for analyzing any program from the outside.
+Thus, predicate calculus is shown to be a *sufficient* language for representing anything that goes on inside a computer-it can be used as a tool for analyzing any program from the outside.
 
 This does not prove that predicate calculus is an *appropriate* tool for all applications.
 There are good reasons why we may want to represent knowledge in a form that is quite different from predicate calculus, and manipulate the knowledge with procedures that are quite different from logical inference.
@@ -132,7 +132,7 @@ But the most straightforward version of predicate calculus suffers from a number
 
 *   *Decidability-*given a set of axioms and a goal, it may be that neither the goal nor its negation can be derived from the axioms.
 
-*   *Tractability-even* when a goal is provable, it may take too long to find the proof using the avallable inferencing mechanisms.
+*   *Tractability-even* when a goal is provable, it may take too long to find the proof using the available inferencing mechanisms.
 
 *   *Uncertainty-*it can be inconvenient to deal with relations that are probable to a degree but not known to be definitely true or false.
 

@@ -1167,7 +1167,7 @@ The other strong influence on CLOS was the CommonLoops system developed at Xerox
 1986](B9780080571157500285.xhtml#bb0105), [Stefik and Bobrow 1986](B9780080571157500285.xhtml#bb1185).) CommonLoops continued the New Flavors trend away from message passing by introducing *multimethods*: methods that specialize on more than one argument.
 
 As of summer 1991, CLOS itself is in a state of limbo.
-It was legitimitized by its appearance in *Common Lisp the Language*, 2d edition, but it is not yet official, and an important part, the metaobject protocol, is not yet complete.
+It was legitimized by its appearance in *Common Lisp the Language*, 2d edition, but it is not yet official, and an important part, the metaobject protocol, is not yet complete.
 A tutorial on CLOS is [Keene 1989](B9780080571157500285.xhtml#bb0620).
 
 We have seen how easy it is to build an object-oriented system on top of Lisp, using `lambda` as the primary tool.

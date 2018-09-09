@@ -2226,7 +2226,7 @@ Even evaluating a single edge is a time-consuming task, so Bill and Iago compile
 An "edge" according to Bill is ten squares: the eight actual edge squares and the two X-squares.
 Since each square can be black, white, or empty, there are 310 or 59,049 possible edge positions-a large but manageable number.
 
-The value of each edge position is determined by a process of succesive approximation.
+The value of each edge position is determined by a process of successive approximation.
 Just as in a minimax search, we will need a static edge evaluation function to determine the value of a edge position without search.
 This static edge evaluation function is applied to every possible edge position, and the results are stored in a 59,049 element vector.
 The static evaluation is just a weighted sum of the occupied squares, with different weights given depending on if the piece is stable or unstable.

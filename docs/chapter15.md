@@ -39,7 +39,7 @@ The best we can do is choose one that works well for the problems we are most li
 {:.h1hd}
 
 This section will concentrate on a canonical form for *polynomials.* Mathematically speaking, a polynomial is a function (of one or more variables) that can be computed using only addition and multiplication.
-We will speak of a polynomial's *main variable, coefficents,* and *degree.* In the polynomial:
+We will speak of a polynomial's *main variable, coefficients,* and *degree.* In the polynomial:
 
 5xx3+bxx2+cxx+1
 

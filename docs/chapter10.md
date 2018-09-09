@@ -778,7 +778,7 @@ Therefore, if any calling function needs to hang on to the returned value after 
 So it is not quite right to say that this version of `pat-match` eliminates all consing.
 It will cons when `vector-push-extend` runs out of space, or when the user needs to make a copy of a returned value.
 
-Here is the new definition of `pat-match.` It is implemented by closing the definition of `pat-match` and its two auxilliary functions inside a `let` that establishes the bindings of `vars, vals`, and `success`, but that is not crucial.
+Here is the new definition of `pat-match.` It is implemented by closing the definition of `pat-match` and its two auxiliary functions inside a `let` that establishes the bindings of `vars, vals`, and `success`, but that is not crucial.
 Those three variables could have been implemented as global variables instead.
 Note that it does not support segment variables, or any of the other options implemented in the `pat-match` of [chapter 6](B9780080571157500066.xhtml).
 
@@ -1249,7 +1249,7 @@ The following expansions should make this clearer:
 An alternative to full resources is to just save a single data object.
 Such an approach is simpler because there is no need to index into a vector of objects, but it is sufficient for some applications, such as a tail-recursive function call that only uses one object at a time.
 
-Another possibility is to make the system slower but safer by having the `deal1ocate` function check that its argument is indeed an object of the correct type.
+Another possibility is to make the system slower but safer by having the `deallocate` function check that its argument is indeed an object of the correct type.
 
 Keep in mind that using resources may put you at odds with the Lisp system's own storage management scheme.
 In particular, you should be concerned with paging performance on virtual memory systems.
@@ -1576,7 +1576,7 @@ There are a few subtleties in the implementation.
 First, we test for deleted entries with an `eq` comparison to a distinguished marker, the string `trie-deleted`.
 No other object will be `eq` to this string except `trie-deleted` itself, so this is a good test.
 We also use a distinguished marker, the string "." to mark cons cells.
-Components are implicitly compared against this marker with an `eql` test by the `associn fol1ow - arc`.
+Components are implicitly compared against this marker with an `eql` test by the `associn follow - arc`.
 Maintaining the identity of this string is crucial; if, for example, you recompiled the definition of `find-trie` (without changing the definition at all), then you could no longer find keys that were indexed in an existing trie, because the ".
 " used by `find-trie` would be a different one from the ".
 " in the existing trie.
@@ -1654,7 +1654,7 @@ Here is a possible macroexpansion:
 However, often we have a two-field structure that we would like to implement as a cons cell rather than a two-element list, thereby cutting storage in half.
 Since `defstruct` does not allow this, define a new macro that does.
 
-**Exercise  10.3 [m]** Use `reuse - cons` to write a version of `f1atten` (see [page 329](B9780080571157500108.xhtml#p329)) that shares as much of its input with its output as possible.
+**Exercise  10.3 [m]** Use `reuse - cons` to write a version of `flatten` (see [page 329](B9780080571157500108.xhtml#p329)) that shares as much of its input with its output as possible.
 
 **Exercise  10.4 [h]** Consider the data type *set*.
 A set has two main operations: adjoin an element and test for membership.

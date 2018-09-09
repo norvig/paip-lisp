@@ -1258,7 +1258,7 @@ The cost for a state is the air distance to the destination city:
 
 `  "Search for a way from the start to dest."`
 
-`  (beam-search start (is dest) #'ne1ghbors`
+`  (beam-search start (is dest) #'neighbors`
 
 `          #'(lambda (c) (air-distance c dest))`
 

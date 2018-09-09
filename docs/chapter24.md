@@ -566,7 +566,7 @@ The loop keyword `for` is more complicated, but each case can be analyzed in the
 
     `"4 of the 7 cases for FOR are covered here:`
 
-    `(LOOP FOR i FROM s TO e BY inc ...) does arithemtic iteration`
+    `(LOOP FOR i FROM s TO e BY inc ...) does arithmetic iteration`
 
     `(LOOP FOR v IN l ...) iterates for each element of l`
 

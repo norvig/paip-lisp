@@ -589,7 +589,7 @@ The *** indicates no mapping:
 `(<- (slot-constituent (?role ?n (P ?particle)) *** ? ?))`
 
 We are now ready to define compi ement.
-It takes a slot descrption, maps it into a constituent, and then calls `XP` to parse that constituent:
+It takes a slot description, maps it into a constituent, and then calls `XP` to parse that constituent:
 
 `(rule (complement ?cat ?1nfo (?role ?n ?xp) ?h ?gapl ?gap2 :sem) ==>`
 
