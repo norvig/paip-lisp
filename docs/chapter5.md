@@ -68,29 +68,20 @@ When given "I need gibble plix zzq," ELIZA would reply "What would it mean to yo
 Another example of the original ELIZA program has it communicating with another program, PARRY, which was written by Dr. Kenneth Colby to mimic paranoid behavior.
 Part of the conversation follows, with ELIZA again in capitals and PARRY in mixed case:
 
-`I don't understand your motives.`
-
-`WHY DON'T YOU UNDERSTAND MY MOTIVES?`
-
-`Shouldn't I be?`
-
-`WHY DO YOU SAY THAT JUST NOW?`
-
-`That's just the way it is.`
-
-`SUPPOSE THAT'S JUST THE WAY IT WERE NOT.`
-
-`So?`
-
-`I AM NOT SURE I UNDERSTAND YOU FULLY.`
-
-`You harp on the same questions too much.`
-
-`WHAT DOES THAT SIMILARITY SUGGEST TO YOU?`
-
-`I don't get you.`
-
-`DO YOU WISH THAT YOU DID GET I?`
+```text
+I don't understand your motives.
+WHY DON'T YOU UNDERSTAND MY MOTIVES?
+Shouldn't I be?
+WHY DO YOU SAY THAT JUST NOW?
+That's just the way it is.
+SUPPOSE THAT'S JUST THE WAY IT WERE NOT.
+So?
+I AM NOT SURE I UNDERSTAND YOU FULLY.
+You harp on the same questions too much.
+WHAT DOES THAT SIMILARITY SUGGEST TO YOU?
+I don't get you.
+DO YOU WISH THAT YOU DID GET I?
+```
 
 This suggests that neither ELIZA nor PARRY had a deep understanding of the dialog.
 When there is a human to take on most of the burden of carrying forth the conversation, these programs can be convincing, but when the human is taken out of the conversation, the weaknesses of the programs are revealed.
@@ -113,13 +104,13 @@ There are four things to be concerned with: a general pattern and response, and 
 Since we have agreed to represent the input as a list, it makes sense for the other components to be lists too.
 For example, we might have:
 
-Pattern: `(i need a X)`
+```text
+Pattern: (i need a X)
+Response: (what would it mean to you if you got a X ?)
 
-Response: `(what would it mean to you if you got a X ?)`
-
-Input: `(i need a vacation)`
-
-Transformation: `(what would it mean to you if you got a vacation ?)`
+Input: (i need a vacation)
+Transformation: (what would it mean to you if you got a vacation ?)
+```
 
 The pattern matcher must match the literals `i` with `i`, `need` with `need`, and `a` with `a`, as well as match the variable `X` with `vacation`.
 This presupposes that there is some way of deciding that `X` is a variable and that `need` is not.
@@ -128,35 +119,23 @@ We must then arrange to substitute `vacation` for `X` within the response, in or
 Ignoring for a moment the problem of transforming the pattern into the response, we can see that this notion of pattern matching is just a generalization of the Lisp function `equal`.
 Below we show the function `simple-equal`, which is like the built-in function `equal`,[1](#fn0010) and the function `pat-match`, which is extended to handle pattern-matching variables:
 
-`(defun simple-equal (x y)`
+```lisp
+(defun simple-equal (x y)
+  "Are x and y equal?  (Don't check inside strings.)"
+  (if (or (atom x) (atom y))
+      (eql x y)
+      (and (simple-equal (first x) (first y))
+     (simple-equal (rest x) (rest y)))))
 
-`  "Are x and y equal?
-(Don't check inside strings.)"`
-
-`  (if (or (atom x) (atom y))`
-
-`    (eql x y)`
-
-`    (and (simple-equal (first x) (first y))`
-
-`      (simple-equal (rest x) (rest y)))))`
-
-`(defun pat-match (pattern input)`
-
-`  "Does pattern match input?
-Any variable can match anything."`
-
-`  (if (variable-p pattern)`
-
-`    t`
-
-`    (if (or (atom pattern) (atom input))`
-
-`      (eql pattern input)`
-
-`      (and (pat-match (first pattern) (first input))`
-
-`        (pat-match (rest pattern) (rest input))))))`
+(defun pat-match (pattern input)
+  "Does pattern match input? Any variable can match anything."
+  (if (variable-p pattern)
+      t
+    (if (or (atom pattern) (atom input))
+  (eql pattern input)
+        (and (pat-match (first pattern) (first input))
+       (pat-match (rest pattern) (rest input))))))
+```
 
 **Exercise 5.1 [s]** Would it be a good idea to replace the complex and form in `pat-match` with the simpler `(every #'pat-match pattern input)?`
 
@@ -175,19 +154,17 @@ Strings in turn have elements that are characters, accessible through the functi
 The character '?' is denoted by the self-evaluating escape sequence #\?.
 So the predicate `variable-p` can be defined as follows, and we now have a complete pattern matcher:
 
-`(defun variable-p (x)`
+```lisp
+(defun variab1e-p (x)
+  "Is X a variable (a symbol beginning with '?')?"
+  (and (symbolp x) (equal (char (symbol-name x) 0) #\?)))
 
-`  "Is x a variable (a symbol beginning with '?')?"`
+> (pat-match '(I need a ?X) '(I need a vacation))
+T
 
-`  (and (symbolp x) (equal (char (symbol-name x) 0) #\?)))`
-
-`> (pat-match '(I need a ?X) '(I need a vacation))`
-
-`T`
-
-`> (pat-match '(I need a ?X) '(I really need a vacation))`
-
-`NIL`
+> (pat-match '(I need a ?X) ' (I really need a vacation))
+NIL
+```
 
 In each case we get the right answer, but we don't get any indication of what `?X` is, so we couldn't substitute it into the response.
 We need to modify `pat-match` to return some kind of table of variables and corresponding values.
@@ -202,31 +179,25 @@ In other words, we would form each pair with something like `(cons old new)`.
 (Such a list of pairs is known as an *association list*, or *a-list,* because it associates keys with values.
 See [section 3.6.](B9780080571157500030.xhtml#s0035)) In terms of the example above, we would use:
 
-`(sublis '((?X . vacation))`
-
-`      '(what would it mean to you if you got a ?X ?))`
-
-`(WHAT WOULD IT MEAN TO YOU IF YOU GOT A VACATION ?)`
+```lisp
+> (sublis '((?X . vacation))
+          '(what would it mean to you if you got a ?X ?))
+(WHAT WOULD IT MEAN TO YOU IF YOU GOT A VACATION ?)
+```
 
 Now we need to arrange for `pat-match` to return an a-list, rather than just T for success.
 Here's a first attempt:
 
-`(defun pat-match (pattern input)`
-
-`  "Does pattern match input?
-WARNING: buggy version."`
-
-`  (if (variable-p pattern)`
-
-`    (list (cons pattern input))`
-
-`    (if (or (atom pattern) (atom input))`
-
-`      (eql pattern input)`
-
-`      (append (pat-match (first pattern) (first input))`
-
-`        (pat-match (rest pattern) (rest input))))))`
+```lisp
+(defun pat-match (pattern input)
+  "Does pattern match input? WARNING: buggy version."
+  (if (variable-p pattern)
+      (list (cons pattern input))
+      (if (or (atom pattern) (atom input))
+    (eql pattern input)
+    (append (pat-match (first pattern) (first input))
+      (pat-match (rest pattern) (rest input))))))
+```
 
 This implementation looks reasonable: it returns an a-list of one element if the pattern is a variable, and it appends alists if the pattern and input are both lists.
 However, there are several problems.
@@ -250,37 +221,32 @@ The special form `defconstant` is used to indicate that these values will not ch
 The reasoning is that asterisks shout out, "Careful!
 I may be changed by something outside of this lexical scope." Constants, of course, will not be changed.)
 
-`(defconstant fail nil "Indicates pat-match failure")`
+```lisp
+(defconstant fail nil "Indicates pat-match failure")
 
-`(defconstant no-bindings '((t . t))`
-
-`  "Indicates pat-match success, with no variables.")`
+(defconstant no-bindings '((t . t))
+  "Indicates pat-match success, with no variables.")
+```
 
 Next, we abstract away from assoc by introducing the following four functions:
 
-`(defun get-binding (var bindings)`
+```lisp
+(defun get-binding (var bindings)
+  "Find a (variable . value) pair in a binding list."
+  (assoc var bindings))
 
-`  "Find a (variable . value) pair in a binding list."`
+(defun binding-val (binding)
+  "Get the value part of a single binding."
+  (cdr binding))
 
-`  (assoc var bindings))`
+(defun lookup (var bindings)
+  "Get the value part (for var) from a binding list."
+  (binding-val (get-binding var bindings)))
 
-`(defun binding-val (binding)`
-
-`  "Get the value part of a single binding."`
-
-`  (cdr binding))`
-
-`(defun lookup (var bindings)`
-
-`  "Get the value part (for var) from a binding list."`
-
-`  (binding-val (get-binding var bindings)))`
-
-`(defun extend-bindings (var val bindings)`
-
-`  "Add a (var . value) pair to a binding list."`
-
-`  (cons (cons var val) bindings))`
+(defun extend-bindings (var val bindings)
+  "Add a (var . value) pair to a binding list."
+  (cons (cons var val) bindings))
+```
 
 Now that variables and bindings are defined, `pat-match` is easy.
 It consists of five cases.
@@ -291,92 +257,67 @@ This returns a binding list (or `fai1`), which we use to match the rest of the l
 This is the only case that invokes a nontrivial function, so it is a good idea to informally prove that the function will terminate: each of the two recursive calls reduces the size of both pattern and input, and `pat-match` checks the case of atomic patterns and inputs, so the function as a whole must eventually return an answer (unless both pattern and input are of infinite size).
 If none of these four cases succeeds, then the match fails.
 
-`(defun pat-match (pattern input &optional (bindings no-bindings))`
+```lisp
+(defun pat-match (pattern input &optional (bindings no-bindings))
+  "Match pattern against input in the context of the bindings"
+  (cond ((eq bindings fail) fail)
+  ((variable-p pattern)
+   (match-variable pattern input bindings))
+  ((eql pattern input) bindings)
+  ((and (consp pattern) (consp input))
+   (pat-match (rest pattern) (rest input)
+        (pat-match (first pattern) (first input)
+             bindings)))
+  (t fail)))
 
-`  "Match pattern against input in the context of the bindings"`
-
-`  (cond ((eq bindings fail) fail)`
-
-`      ((variable-p pattern)`
-
-`        (match-variable pattern input bindings))`
-
-`      ((eql pattern input) bindings)`
-
-`      ((and (consp pattern) (consp input))`
-
-`        (pat-match (rest pattern) (rest input)`
-
-`          (pat-match (first pattern) (first input)`
-
-`            bindings)))`
-
-`      (t fail)))`
-
-`(defun match-variable (var input bindings)`
-
-`  "Does VAR match input?
-Uses (or updates) and returns bindings."`
-
-`  (let ((binding (get-binding var bindings)))`
-
-`    (cond ((not binding) (extend-bindings var input bindings))`
-
-`        ((equal input (binding-val binding)) bindings)`
-
-`        (t fail))))`
+(defun match-variable (var input bindings)
+  "Does VAR match input? Uses (or updates) and returns bindings."
+  (let ((binding (get-binding var bindings)))
+    (cond ((not binding) (extend-bindings var input bindings))
+    ((equal input (binding-val binding)) bindings)
+    (t fail))))
+```
 
 We can now test `pat-match` and see how it works:
 
-`> (pat-match '(i need a ?X) '(i need a vacation))`
-
-`((?X . VACATION) (T . T))`
+```lisp
+> (pat-match '(i need a ?X) '(i need a vacation))
+((?X . VACATION) (T . T))
+```
 
 The answer is a list of variable bindings in dotted pair notation; each element of the list is a (`*variable . value*`) pair.
 The `(T . T)` is a remnant from `no-bindings`.
 It does no real harm, but we can eliminate it by making `extend-bindings` a little more complicated:
 
-`(defun extend-bindings (var val bindings)`
+```lisp
+(defun extend-bindings (var val bindings)
+  "Add a (var . value) pair to a binding list. "
+  (cons (cons var val)
+  ;; Once we add a "real" binding,
+  ;; we can get rid of the dummy no-bindings
+  (if (eq bindings no-bindings)
+      nil
+      bindings)))
 
-`  "Add a (var . value) pair to a binding list."`
+> (sublis (pat-match ' (i need a ?X) ' (i need a vacation))
+          '(what would it mean to you if you got a ?X ?))
+(WHAT WOULD IT MEAN TO YOU IF YOU GOT A VACATION ?)
 
-`  (cons (cons var val)`
+> (pat-match ' (i need a ?X) ' (i really need a vacation))
+NIL
 
-`      ;; Once we add a "real" binding,`
+> (pat-match ' (this is easy) ' (this is easy))
+((T . T))
 
-`      ;; we can get rid of the dummy no-bindings`
+> (pat-match ' (?X is ?X) ' ((2 + 2) is 4))
+NIL
 
-`        (if (eq bindings no-bindings)`
+> (pat-match ' (?X is ?X) ' ((2 + 2) is (2 + 2)))
+((?X 2 + 2))
 
-`          nil`
-
-`          bindings)`
-
-`> (sublis (pat-match '(i need a ?X) '(i need a vacation))`
-
-`          '(what would it mean to you if you got a ?X ?))`
-
-`(WHAT WOULD IT MEAN TO YOU IF YOU GOT A VACATION ?)`
-
-`> (pat-match '(i need a ?X) '(i really need a vacation))`
-
-`NIL`
-
-`> (pat-match '(this is easy) '(this is easy))`
-
-`((T . T))`
-
-`> (pat-match '(?X is ?X) '((2 + 2) is 4))`
-
-`NIL`
-
-`> (pat-match '(?X is ?X) '((2 + 2) is (2 + 2)))`
-
-`((?X 2  +  2))`
-
-`> (pat-match '(?P need . ?X) '(i need a long vacation))`
-
-`((?X A LONG VACATION) (?P . I))`
+> (pat-match ' (?P need . ?X) ' (i need a long vacation))
+((?X A LONG VACATION) (?P . I ))
+```
 
 Notice the distinction between `NIL` and `((T . T))`.
 The latter means that the match succeeded, but there were no bindings to return.
@@ -397,49 +338,36 @@ We will choose the latter, using a list of the form (`?*`*variable*) to denote s
 The symbol `?*` is chosen because it combines the notion of variable with the Kleenestar notation.
 So, the behavior we want from `pat-match` is now:
 
-`> (pat-match '((?* ?p) need (?* ?x))`
-
-`        '(Mr Hulot and I need a vacation))`
-
-`((?P MR HULOT AND I) (?X A VACATION))`
+```lisp
+> (pat-match '((?* ?p) need (?* ?x))
+             '(Mr Hulot and I need a vacation))
+((?P MR HULOT AND I) (?X A VACATION))
+```
 
 In other words, when both pattern and input are lists and the first element of the pattern is a segment variable, then the variable will match some initial part of the input, and the rest of the pattern will attempt to match the rest.
 We can update `pat-match` to account for this by adding a single cond-clause.
 Defining the predicate to test for segment variables is also easy:
 
-`(defun pat-match (pattern input &optional (bindings no-bindings))`
+```lisp
+(defun pat-match (pattern input &optional (bindings no-bindings))
+  "Match pattern against input in the context of the bindings"
+  (cond ((eq bindings fail) fail)
+  ((variable-p pattern)
+   (match-variable pattern input bindings))
+  ((eql pattern input) bindings)
+  ((segment-pattern-p pattern)                ; ***
+   (segment-match pattern input bindings))    ; ***
+  ((and (consp pattern) (consp input))
+   (pat-match (rest pattern) (rest input)
+        (pat-match (first pattern) (first input)
+             bindings)))
+  (t fail)))
 
-`  "Match pattern against input in the context of the bindings"`
-
-`  (cond ((eq bindings fail) fail)`
-
-`      ((variable-p pattern)`
-
-`        (match-variable pattern input bindings))`
-
-`      ((eql pattern input) bindings)`
-
-`      ((segment-pattern-p pattern); ***`
-
-`        (segment-match pattern input bindings)); ***`
-
-`      ((and (consp pattern) (consp input))`
-
-`        (pat-match (rest pattern) (rest input)`
-
-`          (pat-match (first pattern) (first input)`
-
-`            bindings)))`
-
-`      (t fail)))`
-
-`(defun segment-pattern-p (pattern)`
-
-`  "Is this a segment matching pattern: ((?* var) . pat)"`
-
-`  (and (consp pattern)`
-
-`    (starts-with (first pattern) '?*)))`
+(defun segment-pattern-p (pattern)
+  "Is this a segment matching pattern: ((?* var) . pat)"
+  (and (consp pattern)
+       (starts-with (first pattern) '?*)))
+```
 
 In writing `segment-match`, the important question is how much of the input the segment variable should match.
 One answer is to look at the next element of the pattern (the one after the segment variable) and see at what position it occurs in the input.
@@ -458,53 +386,37 @@ This is done by introducing an optional parameter, `start`, which is initially 0
 Notice that this policy rules out the possibility of any kind of variable following a segment variable.
 (Later we will remove this constraint.)
 
-`(defun segment-match (pattern input bindings &optiona1 (start 0))`
-
-`  "Match the segment pattern ((?* var) . pat) against input."`
-
-`  (let ((var (second (first pattern)))`
-
-`      (pat (rest pattern))) (if (null pat)`
-
-`    (if (null pat)`
-
-`      (match-variable var input bindings)`
-
-`      ;; We assume that pat starts with a constant`
-
-`      ;; In other words, a pattern can't have 2 consecutive vars`
-
-`      (let ((pos (position (first pat) input`
-
-`                :start start :test #'equal)))`
-
-`        (if (null pos)`
-
-`          fail`
-
-`          (let ((b2 (pat-match pat (subseq input pos) bindings)))`
-
-`            ;; If this match failed, try another longer one`
-
-`            ;; If it worked, check that the variables match`
-
-`            (if (eq b2 fail)`
-
-`              (segment-match pattern input bindings (+ pos 1))`
-
-`              (match-variable var (subseq input 0 pos) b2))))))))`
+```lisp
+(defun segment-match (pattern input bindings &optional (start 0))
+  "Match the segment pattern ((?* var) . pat) against input."
+  (let ((var (second (first pattern)))
+  (pat (rest pattern)))
+    (if (null pat)
+  (match-variable var input bindings)
+        ;; We assume that pat starts with a constant
+        ;; In other words, a pattern can't have 2 consecutive vars
+        (let ((pos (position (first pat) input
+           :start start :test #'equal)))
+    (if (null pos)
+      fail
+      (let ((b2 (pat-match pat (subseq input pos) bindings)))
+        ;; If this match failed, try another longer one
+        ;; If it worked, check that the variables match
+        (if (eq b2 fail)
+      (segment-match pattern input bindings (+ pos 1))
+      (match-variable var (subseq input 0 pos) b2))))))))
+```
 
 Some examples of segment matching follow:
 
-`> (pat-match '((?* ?p) need (?* ?x))`
+```lisp
+> (pat-match '((?* ?p) need (?* ?x))
+       '(Mr Hulot and I need a vacation))
+((?P MR HULOT AND I) (?X A VACATION))
 
-`            '(Mr Hulot and I need a vacation))`
-
-`((?P MR HULOT AND I) (?X A VACATION))`
-
-`> (pat-match '((?* ?x) is a (?* ?y)) '(what he is is a fool))`
-
-`((?X WHAT HE IS) (?Y FOOL))`
+> (pat-match '((?* ?x) is a (?* ?y)) '(what he is is a fool))
+((?X WHAT HE IS) (?Y FOOL))
+```
 
 The first of these examples shows a fairly simple case: `?p` matches everything up to need, and `?x` matches the rest.
 The next example involves the more complicated backup case.
@@ -515,54 +427,42 @@ This time everything works; `is` matches `is`, `a` matches a, and `(?* ?y)` matc
 Unfortunately, this version of `segment-match` does not match as much as it should.
 Consider the following example:
 
-`> (pat-match '((?* ?x) a b (?* ?x)) '(1 2 a b a b 1 2 a b)) => NIL`
+```lisp
+> (pat-match '((?* ?x) a b (?* ?x)) '(1 2 a b a b 1 2 a b)) ⇒ NIL
+```
 
 This fails because `?x` is matched against the subsequence `(1 2)`, and then the remaining pattern succesfully matches the remaining input, but the final call to `match-variable` fails, because `?x` has two different values.
 The fix is to call `match-variable` before testing whether the `b2` fails, so that we will be sure to try `segment-match` again with a longer match no matter what the cause of the failure.
 
-`(defun segment-match (pattern input bindings &optional (start 0))`
-
-`  "Match the segment pattern ((?* var) . pat) against input."`
-
-`  (let ((var (second (first pattern)))`
-
-`      (pat (rest pattern)))`
-
-`    (if (null pat)`
-
-`      (match-variable var input bindings)`
-
-`      ;; We assume that pat starts with a constant`
-
-`      ;; In other words, a pattern can't have 2 consecutive vars`
-
-`      (let ((pos (position (first pat) input`
-
-`                :start start :test #'equal)))`
-
-`      (if (null pos)`
-
-`        fail`
-
-`        (let ((b2 (pat-match`
-
-`          pat (subseq input pos)`
-
-`          (match-variable var (subseq input 0 pos)`
-
-`                  bindings))))`
-
-`          ;; If this match failed, try another longer one`
-
-`          (if (eq b2 fail)`
-
-`            (segment-match pattern input bindings (+ pos 1))`
-
-`            b2)))))))`
+```lisp
+(defun segment-match (pattern input bindings optional (start 0))
+  "Match the segment pattern ((?* var) . pat) against input."
+  (let ((var (second (first pattern)))
+  (pat (rest pattern)))
+    (if (null pat)
+  (match-variable var input bindings)
+        ;; We assume that pat starts with a constant
+        ;; In other words, a pattern can't have 2 consecutive vars
+        (let ((pos (position (first pat) input
+           :start start :test #'equal)))
+    (if (null pos)
+        fail
+      (let ((b2 (pat-match
+             pat (subseq input pos)
+       (match-variable var (subseq input 0 pos)
+           bindings))))
+        ;; If this match failed, try another longer one
+        (if (eq b2 fail)
+      (segment-match pattern input bindings (+ pos 1))
+      b2)))))))
+```
 
 Now we see that the match goes through:
 
-`> (pat-match '((?* ?x) a b (?* ?x)) '(1 2 a b a b 1 2 a b)) ((?X 1 2 A B))`
+```lisp
+> (pat-match '((?* ?x) a b (?* ?x)) '(1 2 a b a b 1 2 a b))
+((?X 1 2 A B))
+```
 
 Note that this version of `segment-match` tries the shortest possible match first.
 It would also be possible to try the longest match first.
@@ -573,19 +473,19 @@ What's more, we want the patterns to be associated with responses.
 We can do this by inventing a data structure called a `rule`, which consists of a pattern and one or more associated responses.
 These are rules in the sense that they assert, "If you see A, then respond with B or C, chosen at random." We will choose the simplest possible implementation for rules: as lists, where the first element is the pattern and the rest is a list of responses:
 
-`(defun rule-pattern (rule) (first rule))`
-
-`(defun rule-responses (rule) (rest rule))`
+```lisp
+(defun rule-pattern (rule) (first rule))
+(defun rule-responses (rule) (rest rule))
+```
 
 Here's an example of a rule:
 
-`(((?* ?x) I want (?* ?y))`
-
-`  (What would it mean if you got ?y)`
-
-`  (Why do you want ?y)`
-
-`  (Suppose you got ?y soon))`
+```lisp
+(((?* ?x) I want (?* ?y))
+ (What would it mean if you got ?y)
+ (Why do you want ?y)
+ (Suppose you got ?y soon))
+```
 
 When applied to the input `(I want to test this program)`, this rule (when interpreted by the ELIZA program) would pick a response at random, substitute in the value of `?y`, and respond with, say, `(why do you want to test this program)`.
 
@@ -605,44 +505,27 @@ Note that putting the rules in order achieves the same effect as having a priori
 Here is a short list of rules, selected from Weizenbaum's original article, but with the form of the rules updated to the form we are using.
 The answer to exercise 5.19 contains a longer list of rules.
 
-`(defparameter *eliza-rules*`
-
-`  '((((?* ?x) hello (?* ?y))`
-
-`      (How do you do.
-Please state your problem.))`
-
-`    (((?* ?x) I want (?* ?y))`
-
-`      (What would it mean if you got ?y)`
-
-`      (Why do you want ?y) (Suppose you got ?y soon))`
-
-`    (((?* ?x) if (?* ?y))`
-
-`      (Do you really think its likely that ?y) (Do you wish that ?y)`
-
-`      (What do you think about ?y) (Really-- if ?y))`
-
-`    (((?* ?x) no (?* ?y))`
-
-`      (Why not?) (You are being a bit negative)`
-
-`      (Are you saying "NO" just to be negative?))`
-
-`    (((?* ?x) I was (?* ?y))`
-
-`      (Were you really?) (Perhaps I already knew you were ?y)`
-
-`      (Why do you tell me you were ?y now?))`
-
-`    (((?* ?x) I feel (?* ?y))`
-
-`      (Do you often feel ?y ?))`
-
-`    (((?* ?x) I felt (?* ?y))`
-
-`      (What other feelings do you have?))))`
+```lisp
+(defparameter *eliza-rules*
+  '((((?* ?x) hello (?* ?y))
+     (How do you do.  Please state your problem.))
+    (((?* ?x) I want (?* ?y))
+     (What would i t mean if you got ?y)
+     (Why do you want ?y) (Suppose you got ?y soon))
+    (((?* ?x) if (?* ?y))
+     (Do you really think i t s l i k e l y that ?y) (Do you wish that ?y)
+     (What do you think about ?y) (Really-- if ?y))
+    (((?* ?x) no (?* ?y))
+     (Why not?) (You are being a bit negative)
+     (Are you saying "NO" just to be negative?))
+    (((?* ?x) I was (?* ?y))
+     (Were you really ?) (Perhaps I already knew you were ?y)
+     (Why do you t e l l me you were ?y now?))
+    (((?* ?x) I feel (?* ?y))
+     (Do you often feel ?y ?))
+    (((?* ?x) I felt (?* ?y))
+     (What other feelings do you have?))))
+```
 
 Finally we are ready to define ELIZA proper.
 As we said earlier, the main program should be a loop that reads input, transforms it, and prints the result.
@@ -659,71 +542,51 @@ We use the function `flatten` to insure that the output won't have imbedded list
 An important trick is to alter the input by swapping "you" for "me" and so on, since these terms are relative to the speaker.
 Here is the complete program:
 
-`(defun eliza ()`
+```lisp
+(defun eliza ()
+  "Respond to user input using pattern matching rules."
+  (loop
+   (print 'eliza>)
+   (write (flatten (use-eliza-rules (read))) :pretty t)))
 
-`  "Respond to user input using pattern matching rules."`
+(defun use-eliza-rules (input)
+  "Find some rule with which to transform the input."
+  (some #*(lambda (rule)
+      (let ((result (pat-match (rule-pattern rule) input)))
+        (if (not (eq result fail))
+      (sublis (switch-viewpoint result)
+        (random-elt (rule-responses rule))))))
+  *eliza-rules*))
 
-`  (loop`
-
-`    (print 'eliza  >)`
-
-`    (write (flatten (use-eliza-rules (read))) :pretty t)))`
-
-`(defun use-eliza-rules (input)`
-
-`  "Find some rule with which to transform the input."`
-
-`  (some #'(lambda (rule)`
-
-`        (let ((result (pat-match (rule-pattern rule) input)))`
-
-`          (if (not (eq result fail))`
-
-`            (sublis (switch-viewpoint result)`
-
-`                    (random-elt (rule-responses rule))))))`
-
-`      *eliza-rules*))`
-
-`(defun switch-viewpoint (words)`
-
-`  "Change I to you and vice versa, and so on."`
-
-`  (sublis '((I . you) (you . I) (me . you) (am . are))`
-
-`        words))`
+(defun switch-viewpoint (words)
+  "Change I to you and vice versa, and so on."
+  (sublis '((I . you) (you . I) (me . you) (am . are))
+          words))
+```
 
 Note the use of `write` with the : `pretty` keyword true.
 This will give better formatted output in some cases.
 The program makes use of the previously defined `random-elt`, and `flatten`, which is defined here using `mappend` and `mklist`, a function that is defined in the InterLisp dialect but not in Common Lisp.
 
-`(defun flatten (the-list)`
+```lisp
+(defun flatten (the-list)
+  "Append together elements (or lists) in the list."
+  (mappend #'mklist the-list))
 
-`  "Append together elements (or lists) in the list."`
+(defun mklist (x)
+  "Return x if it is a list, otherwise (x)."
+  (if (listp x)
+      x
+    (list x)))
 
-`  (mappend #'mklist the-list))`
+(defun mappend (fn the-list)
+  "Apply fn to each element of list and append the result."
+  (apply #'append (mapcar fn the-list)))
 
-`(defun mklist (x)`
-
-`  "Return x if it is a list, otherwise (x)."`
-
-`  (if (listp x)`
-
-`    x`
-
-`    (list x)))`
-
-`(defun mappend (fn the-list)`
-
-`  "Apply fn to each element of list and append the results."`
-
-`  (apply #'append (mapcar fn the-list)))`
-
-`(defun random-elt (choices)`
-
-`  "Choose an element from a list at random."`
-
-`  (elt choices (random (length choices))))`
+(defun random-elt (choices)
+  "Choose an element from a list at random."
+  (elt choices (random (length choices))))
+```
 
 The actual ELIZA program had a few complications that don't show up in this version.
 First, there was an alias method for associating several words with the same pattern; both "mother" and "father" could be associated with the "family" pattern.
@@ -734,44 +597,26 @@ When no pattern matched the input, it said something like "Tell me more about X,
 Finally, our version has fewer rules.
 Despite the shortcomings of our version, it can occasionally hold up its end of a conversation, as shown below:
 
-`> (eliza)`
-
-`ELIZA  > (hello there)`
-
-`(HOW DO YOU DO.
-PLEASE STATE YOUR PROBLEM.)`
-
-`ELIZA  > (i want to test this program)`
-
-`(WHAT WOULD IT MEAN IF YOU GOT TO TEST THIS PROGRAM)`
-
-`ELIZA  > (i could see if it works)`
-
-`(DO YOU REALLY THINK ITS LIKELY THAT IT WORKS)`
-
-`ELIZA  > (no not really)`
-
-`(ARE YOU SAYING "NO" JUST TO BE NEGATIVE?)`
-
-`ELIZA  > (no)`
-
-`(ARE YOU SAYING "NO" JUST TO BE NEGATIVE?)`
-
-`ELIZA  > (forget it-- i was wondering how general the program is)`
-
-`(WHY DO YOU TELL ME YOU WERE WONDERING HOW GENERAL THE PROGRAM IS NOW?)`
-
-`ELIZA  > (i felt like it)`
-
-`(WHAT OTHER FEELINGS DO YOU HAVE?)`
-
-`ELIZA  > (i feel this is enough)`
-
-`(DO YOU OFTEN FEEL THIS IS ENOUGH ?)`
-
-`ELIZA  > [Abort]`
-
-`>`
+```text
+> (eliza)
+ELIZA> (hello there)
+(HOW DO YOU DO. PLEASE STATE YOUR PROBLEM.)
+ELIZA> (i want to test this program)
+(WHAT WOULD IT MEAN IF YOU GOT TO TEST THIS PROGRAM)
+ELIZA> (i could see if it works)
+(DO YOU REALLY THINK ITS LIKELY THAT IT WORKS)
+ELIZA> (no not really)
+(ARE YOU SAYING "NO" JUST TO BE NEGATIVE?)
+ELIZA> (no)
+(ARE YOU SAYING "NO" JUST TO BE NEGATIVE?)
+ELIZA> (forget it-- i was wondering how general the program i s)
+(WHY DO YOU TELL ME YOU WERE WONDERING HOW GENERAL THE PROGRAM I S NOW?)
+ELIZA> (i felt like it)
+(WHAT OTHER FEELINGS DO YOU HAVE?)
+ELIZA> (i feel this is enough)
+(DO YOU OFTEN FEEL THIS IS ENOUGH ?)
+ELIZA> [Abort]
+```
 
 In the end, it is the technique that is important-not the program.
 ELIZA has been "explained away" and should rightfully be moved to the curio shelf.
@@ -824,9 +669,10 @@ Use the `time` special form to compare your function against the current version
 Compare their implementation with this one.
 One difference is that they handle the case where the first element of the pattern is a segment variable with the following code (translated into our notation):
 
-`(or (pat-match (rest pattern) (rest input) bindings)`
-
-`      (pat-match pattern (rest input) bindings))`
+```lisp
+(or (pat-match (rest pattern) (rest input) bindings)
+  (pat-match pattern (rest input) bindings))
+```
 
 This says that a segment variable matches either by matching the first element of the input, or by matching more than the first element.
 It is much simpler than our approach using `position`, partly because they don't update the binding list.
@@ -835,19 +681,15 @@ Is it more or less efficient?
 
 **Exercise 5.10** What is wrong with the following definition of `simple-equal?`
 
-`(defun simple-equal (x y)`
-
-`  "Test if two lists or atoms are equal."`
-
-`  ;; Warning - incorrect`
-
-`  (or (eql x y)`
-
-`      (and (listp x) (listp y)`
-
-`        (simple-equal (first x) (first y))`
-
-`        (simple-equal (rest x) (rest y)))))`
+```lisp
+(defun simple-equal (x y)
+  "Test if two lists or atoms are equal."
+  ;; Warning - incorrect
+  (or (eql x y)
+      (and (listp x) (listp y)
+     (simple-equal (first x) (first y))
+     (simple-equal (rest x) (rest y)))))
+```
 
 **Exercise 5.11 [m]** Weigh the advantages of changing `no-bindings` to `nil`, and `fail` to something else.
 
@@ -876,11 +718,15 @@ If so, in what way?
 **Answer 5.1** No.
 If either the pattern or the input were shorter, but matched every existing element, the every expression would incorrectly return true.
 
-`(every #'pat-match '(a b c) '(a))`=> `T`
+```lisp
+(every #'pat-match *(a b c) '(a)) ⇒ T
+```
 
 Furthermore, if either the pattern or the input were a dotted list, then the result of the every would be undefined-some implementations might signal an error, and others might just ignore the expression after the dot.
 
-`(every #'pat-match '(a b . c) '(a b . d))`=> `T, NIL.or error.`
+```lisp
+(every #'pat-match '(a b . c) '(a b . d)) ⇒ T, NIL, or error.
+```
 
 **Answer 5.4** The expression `don't` may look like a single word, but to the Lisp reader it is composed of the two elements `don` and `'t`, or `(quote t )`.
 If these elements are used consistently, they will match correctly, but they won't print quite right-there will be a space before the quote mark.
@@ -890,59 +736,51 @@ In fact the `:pretty t` argument to `write` is specified primarily to make `(quo
 Then, substitute spaces for any punctuation character in that string.
 Finally, wrap the string in parentheses, and read it back in as a list:
 
-`(defun read-line-no-punct ()`
+```lisp
+(defun read-line-no-punct ()
+  "Read an input line, ignoring punctuation."
+  (read-from-string
+   (concatenate 'string "(" (substitute-if #\space #'punctuation-p
+             (read-line))
+    ")")))
 
-`  "Read an input line, ignoring punctuation."`
-
-`  (read-from-string`
-
-`    (concatenate 'string "(" (substitute-if #\space#'punctuation-p`
-
-`                    (read-line))`
-
-`          ")")))`
-
-`(defun punctuation-p (char) (find char ".,;:'!?#-()\\\""))`
+(defun punctuation-p (char) (find char ".,;:'!?#-()\\\""))
+```
 
 This could also be done by altering the readtable, as in [section 23.5](B9780080571157500236.xhtml#s0030), [page 821](B9780080571157500236.xhtml#p821).
 
 **Answer 5.6**
 
-`(defun eliza ()`
+```lisp
+(defun eliza ()
+  "Respond to user input using pattern matching rules."
+  (loop
+   (print *eliza>)
+   (l e t * ((input (read-line-no-punct))
+       (response (flatten (use-eliza-rules input))))
+      (print-with-spaces response)
+      (if (equal response '(good bye)) (RETURN)))))
 
-`  "Respond to user input using pattern matching rules."`
-
-`  (loop`
-
-`    (print 'eliza  >)`
-
-`    (let* ((input (read-line-no-punct))`
-
-`        (response (flatten (use-eliza-rules input))))`
-
-`      (print-with-spaces response)`
-
-`      (if (equal response '(good bye)) (RETURN)))))`
-
-`(defun print-with-spaces (list)`
-
-`  (mapc #'(lambda (x) (prinl x) (princ " ")) list))`
+(defun print-with-spaces (list)
+  (mapc #'(lambda (x) (prin1 x) (princ " ")) list))
+```
 
 ***`or`***
 
-`(defun print-with-spaces (list)`
-
-`  (format t "~{~a ~}H list))`
+```lisp
+(defun print-with-spaces (list)
+  (format t "~{~a ~}" list))
+```
 
 **Answer 5.10** Hint: consider `(simple-equal '() '(nil . nil))`.
 
 **Answer 5.14**
 
-`(defun mappend (fn &rest list)`
-
-`  "Apply fn to each element of lists and append the results."`
-
-`  (apply #'append (apply #'mapcar fn lists)))`
+```lisp
+(defun mappend (fn &rest list)
+  "Apply fn to each element of lists and append the results."
+  (apply #'append (apply #'mapcar fn lists)))
+```
 
 **Answer 5.16** It must be a symbol, because for nonsymbols, `variable-p` justreturns nil.
 Getting the `symbol-name` of a symbol is just accessing a slot, so that can't cause an error.
@@ -955,248 +793,128 @@ That way, the other rules need only work on inputs matching "do not."
 
 **Answer 5.19** The following includes most of Weizenbaum's rules:
 
-`(defparameter *eliza-rules*`
-
-`  '((((?* ?x) hello (?* ?y))`
-
-`      (How do you do.
-Please state your problem.))`
-
-`    (((?* ?x) computer (?* ?y))`
-
-`      (Do computers worry you?) (What do you think about machines?)`
-
-`      (Why do you mention computers?)`
-
-`      (What do you think machines have to do with your problem?))`
-
-`    (((?* ?x) name (?* ?y))`
-
-`      (I am not interested in names))`
-
-`    (((?* ?x) sorry (?* ?y))`
-
-`      (Please don't apologize) (Apologies are not necessary)`
-
-`      (What feelings do you have when you apologize))`
-
-`    (((?* ?x) I remember (?* ?y))`
-
-`      (Do you often think of ?y)`
-
-`      (Does thinking of ?y bring anything else to mind?)`
-
-`      (What else do you remember) (Why do you recall ?y right now?)`
-
-`      (What in the present situation reminds you of ?y)`
-
-`      (What is the connection between me and ?y))`
-
-`    (((?* ?x) do you remember (?* ?y))`
-
-`      (Did you think I would forget ?y ?)`
-
-`      (Why do you think I should recall ?y now)`
-
-`      (What about ?y) (You mentioned ?y))`
-
-`    (((?* ?x) if (?* ?y))`
-
-`      (Do you really think its likely that ?y) (Do you wish that ?y)`
-
-`      (What do you think about ?y) (Really-- if ?y))`
-
-`    (((?* ?x) I dreamt (?* ?y))`
-
-`      (Really-- ?y) (Have you ever fantasized ?y while you were awake?)`
-
-`      (Have you dreamt ?y before?))`
-
-`    (((?* ?x) dream about (?* ?y))`
-
-`      (How do you feel about ?y in reality?))`
-
-`    (((?* ?x) dream (?* ?y))`
-
-`      (What does this dream suggest to you?) (Do you dream often?)`
-
-`      (What persons appear in your dreams?)`
-
-`      (Don't you believe that dream has to do with your problem?))`
-
-`    (((?* ?x) my mother (?* ?y))`
-
-`      (Who else in your family ?y) (Tell me more about your family))`
-
-`    (((?* ?x) my father (?* ?y))`
-
-`      (Your father) (Does he influence you strongly?)`
-
-`      (What else comes to mind when you think of your father?))`
-
-`    (((?* ?x) I want (?* ?y))`
-
-`      (What would it mean if you got ?y)`
-
-`      (Why do you want ?y) (Suppose you got ?y soon))`
-
-`    (((?* ?x) I am glad (?* ?y))`
-
-`      (How have I helped you to be ?y) (What makes you happy just now)`
-
-`      (Can you explain why you are suddenly ?y))`
-
-`    (((?* ?x) I am sad (?* ?y))`
-
-`      (I am sorry to hear you are depressed)`
-
-`      (I'm sure it's not pleasant to be sad))`
-
-`    (((?* ?x) are like (?* ?y))`
-
-`      (What resemblance do you see between ?x and ?y))`
-
-`    (((?* ?x) is like (?* ?y))`
-
-`      (In what way is it that ?x is like ?y)`
-
-`      (What resemblance do you see?)`
-
-`      (Could there really be some connection?) (How?))`
-
-`    (((?* ?x) alike (?* ?y))`
-
-`      (In what way?) (What similarities are there?))`
-
-`    (((?* ?x) same (?* ?y))`
-
-`      (What other connections do you see?))`
-
-`    (((?* ?x) I was (?* ?y))`
-
-`      (Were you really?) (Perhaps I already knew you were ?y)`
-
-`      (Why do you tell me you were ?y now?))`
-
-`    (((?* ?x) was I (?* ?y))`
-
-`      (What if you were ?y ?) (Do you think you were ?y)`
-
-`      (What would it mean if you were ?y))`
-
-`    (((?* ?x) I am (?* ?y))`
-
-`      (In what way are you ?y) (Do you want to be ?y ?))`
-
-`    (((?* ?x) am I (?* ?y))`
-
-`      (Do you believe you are ?y) (Would you want to be ?y)`
-
-`      (You wish I would tell you you are ?y)`
-
-`      (What would it mean if you were ?y))`
-
-`    (((?* ?x) am (?* ?y))`
-
-`      (Why do you say "AM?") (I don't understand that))`
-
-`    (((?* ?x) are you (?* ?y))`
-
-`      (Why are you interested in whether I am ?y or not?)`
-
-`      (Would you prefer if I weren't ?y)`
-
-`      (Perhaps I am ?y in your fantasies))`
-
-`    (((?* ?x) you are (?* ?y))`
-
-`      (What makes you think I am ?y ?))`
-
-`    (((?* ?x) because (?* ?y))`
-
-`      (Is that the real reason?) (What other reasons might there be?)`
-
-`      (Does that reason seem to explain anything else?))`
-
-`    (((?* ?x) were you (?* ?y))`
-
-`      (Perhaps I was ?y) (What do you think?) (What if I had been ?y))`
-
-`    (((?* ?x) I can't (?* ?y))`
-
-`      (Maybe you could ?y now) (What if you could ?y ?))`
-
-`    (((?* ?x) I feel (?* ?y))`
-
-`      (Do you often feel ?y ?))`
-
-`    (((?* ?x) I felt (?* ?y))`
-
-`      (What other feelings do you have?))`
-
-`    (((?* ?x) I (?* ?y) you (?* ?z)`
-
-`      (Perhaps in your fantasy we ?y each other))`
-
-`    (((?* ?x) why don't you (?* ?y))`
-
-`      (Should you ?y yourself?)`
-
-`      (Do you believe I don't ?y) (Perhaps I will ?y in good time))`
-
-`    (((?* ?x) yes (?* ?y))`
-
-`      (You seem quite positive) (You are sure) (I understand))`
-
-`    (((?* ?x) no (?* ?y))`
-
-`      (Why not?) (You are being a bit negative)`
-
-`      (Are you saying "NO" just to be negative?))`
-
-`    (((?* ?x) someone (?* ?y))`
-
-`      (Can you be more specific?))`
-
-`    (((?* ?x) everyone (?* ?y))`
-
-`      (surely not everyone) (Can you think of anyone in particular?)`
-
-`      (Who for example?) (You are thinking of a special person))`
-
-`    (((?* ?x) always (?* ?y))`
-
-`      (Can you think of a specific example) (When?)`
-
-`      (What incident are you thinking of?)`
-
-`      (Really-- always))`
-
-`    (((?* ?x) what (?* ?y))`
-
-`      (Why do you ask?) (Does that question interest you?)`
-
-`      (What is it you really want to know?) (What do you think?)`
-
-`      (What cornes to your mind when you ask that?))`
-
-`    (((?* ?x) perhaps (?* ?y))`
-
-`      (You do not seem quite certain))`
-
-`    (((?* ?x) are (?* ?y))`
-
-`      (Did you think they might not be ?y)`
-
-`      (Possibly they are ?y))`
-
-`    (((?* ?x))`
-
-`      (Very interesting) (I am not sure I understand you fully)`
-
-`      (What does that suggest to you?) (Please continue) (Go on)`
-
-`      (Do you feel strongly about discussing such things?))))`
+```lisp
+(defparameter *eliza-rules*
+  '((((?* ?x) hello (?* ?y))
+     (How do you do. Please state your problem.))
+    (((?* ?x) computer (?* ?y))
+     (Do computers worry you?) (What do you think about machines?)
+     (Why do you mention computers?)
+     (What do you think machines have to do with your problem?))
+    (((?* ?x) name (?* ?y))
+     (I am not interested in names))
+    (((?* ?x) sorry (?* ?y))
+     (Please don't apologize) (Apologies are not necessary)
+     (What feelings do you have when you apologize))
+    (((?* ?x) I remember (?* ?y))
+     (Do you often think of ?y)
+     (Does thinking of ?y bring anything else to mind?)
+     (What else do you remember) (Why do you recall ?y right now?)
+     (What in the present situation reminds you of ?y)
+     (What i s the connection between me and ?y))
+    (((?* ?x) do you remember (?* ?y))
+     (Did you think I would forget ?y ?)
+     (Why do you think I should recall ?y now)
+     (What about ?y) (You mentioned ?y))
+    (((?* ?x) if (?* ?y))
+     (Do you really think its likely that ?y) (Do you wish that ?y)
+     (What do you think about ?y) (Really-- if ?y))
+    (((?* ?x) I dreamt (?* ?y))
+     (Really-- ?y) (Have you ever fantasized ?y while you were awake?)
+     (Have you dreamt ?y before?))
+    (((?* ?x) dream about (?* ?y))
+     (How do you feel about ?y in reality?))
+    (((?* ?x) dream (?* ?y))
+     (What does this dream suggest to you?) (Do you dream often?)
+     (What persons appear in your dreams?)
+     (Don't you believe that dream has to do with your problem?))
+    (((?* ?x) my mother (?* ?y))
+     (Who else in your family ?y) (Tell me more about your family))
+    (((?* ?x) my father (?* ?y))
+     (Your father) (Does he influence you strongly?)
+     (What else comes to mind when you think of your father?))
+    (((?* ?x) I want (?* ?y))
+     (What would it mean if you got ?y)
+     (Why do you want ?y) (Suppose you got ?y soon))
+    (((?* ?x) I am glad (?* ?y))
+     (How have I helped you to be ?y) (What makes you happy just now)
+     (Can you explain why you are suddenly ?y))
+    (((?* ?x) I am sad (?* ?y))
+     (I am sorry to hear you are depressed)
+     (I 'm sure i t ' s not pleasant to be sad))
+    (((?* ?x) are like (?* ?y))
+     (What resemblance do you see between ?x and ?y))
+    (((?* ?x) i s like (?* ?y))
+     (In what way is it that ?x is like ?y)
+     (What resemblance do you see?)
+     (Could there really be some connection?) (How?))
+    (((?* ?x) alike (?* ?y))
+     (In what way?) (What s i m i l a r i t i e s are there?))
+    (((?* ?x) same (?* ?y))
+     (What other connections do you see?))
+    (((?* ?x) I was (?* ?y))
+     (Were you really ?) (Perhaps I already knew you were ?y)
+     (Why do you tell me you were ?y now?))
+    (((?* ?x) was I (?* ?y))
+     (What if you were ?y ?) (Do you think you were ?y)
+     (What would it mean if you were ?y))
+    (((?* ?x) I am (?* ?y))
+     (In what way are you ?y) (Do you want to be ?y ?))
+    (((?* ?x) am I (?* ?y))
+     (Do you believe you are ?y) (Would you want to be ?y)
+     (You wish I would tell you you are ?y)
+     (What would it mean if you were ?y))
+    (((?* ?x) am (?* ?y))
+     (Why do you say "AM?") (I don't understand that))
+    (((?* ?x) are you (?* ?y))
+     (Why are you interested in whether I am ?y or not?)
+     (Would you prefer if I weren't ?y)
+     (Perhaps I am ?y in your fantasies))
+    (((?* ?x) you are (?* ?y))
+     (What makes you think I am ?y ?))
+    (((?* ?x) because (?* ?y))
+     (Is that the real reason?) (What other reasons might there be?)
+     (Does that reason seem to explain anything else?))
+    (((?* ?x) were you (?* ?y))
+     (Perhaps I was ?y) (What do you think?) (What if I had been ?y))
+    (((?* ?x) I can't (?* ?y))
+     (Maybe you could ?y now) (What if you could ?y ?))
+    (((?* ?x) I feel (?* ?y))
+     (Do you often feel ?y ?))
+    (((?* ?x) I felt (?* ?y))
+     (What other feelings do you have?))
+    (((?* ?x) I (?* ?y) you (?* ?z))
+     (Perhaps in your fantasy we ?y each other))
+    (((?* ?x) why don't you (?* ?y))
+     (Should you ?y yourself?)
+     (Do you believe I don't ?y) (Perhaps I will ?y in good time))
+    (((?* ?x) yes (?* ?y))
+     (You seem quite positive) (You are sure) (I understand))
+    (((?* ?x) no (?* ?y))
+     (Why not?) (You are being a bit negative)
+     (Are you saying "NO" just to be negative?))
+    (((?* ?x) someone (?* ?y))
+     (Can you be more specific?))
+    (((?* ?x) everyone (?* ?y))
+     (surely not everyone) (Can you think of anyone in particular?)
+     (Who for example?) (You are thinking of a special person))
+    (((?* ?x) always (?* ?y))
+     (Can you think of a specific example) (When?)
+     (What incident are you thinking of?) (Really-- always))
+    (((?* ?x) what (?* ?y))
+     (Why do you ask?) (Does that question interest you?)
+     (What is it you really want to know?) (What do you think?)
+     (What comes to your mind when you ask that?))
+    (((?* ?x) perhaps (?* ?y))
+     (You do not seem quite certain))
+    (((?* ?x) are (?* ?y))
+     (Did you think they might not be ?y)
+     (Possibly they are ?y))
+    (((?* ?x))
+     (Very interesting) (I am not sure I understand you fully)
+     (What does that suggest to you?) (Please continue) (Go on)
+     (Do you feel strongly about discussing such things?))))
+```
 
 ----------------------
 
