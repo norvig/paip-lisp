@@ -1,7 +1,5 @@
 # Chapter 5
-## ELIZA
-!!!(span) {:.smallcaps}
-: Dialog with a Machine
+## ELIZA: Dialog with a Machine
 
 > *It is said that to explain is to explain away.*
 
@@ -10,18 +8,20 @@
 > MIT computer scientist
 
 This chapter and the rest of part I will examine three more well-known AI programs of the 1960s.
-ELIZA !!!(span) {:.smallcaps} held a conversation with the user in which it simulated a psychotherapist.
-STUDENT !!!(span) {:.smallcaps} solved word problems of the kind found in high school algebra books, and MACSYMA !!!(span) {:.smallcaps} solved a variety of symbolic mathematical problems, including differential and integral calculus.
+ELIZA held a conversation with the user in which it simulated a psychotherapist.
+STUDENT solved word problems of the kind found in high school algebra books, and MACSYMA solved a variety of symbolic mathematical problems, including differential and integral calculus.
 We will develop versions of the first two programs that duplicate most of the essential features, but for the third we will implement only a tiny fraction of the original program's capabilities.
 
 All three programs make heavy use of a technique called pattern matching.
 Part I serves to show the versatility-and also the limitations-of this technique.
 
-Of the three programs, the first two process input in plain English, and the last two solve non-trivial problems in mathematics, so there is some basis for describing them as being "intelligent." On the other hand, we shall see that this intelligence is largely an illusion, and that ELIZA !!!(span) {:.smallcaps} in particular was actually designed to demonstrate this illusion, not to be a "serious" AI program.
+Of the three programs, the first two process input in plain English, and the last two solve non-trivial problems in mathematics, so there is some basis for describing them as being "intelligent."
+On the other hand, we shall see that this intelligence is largely an illusion, and that ELIZA in particular was actually designed to demonstrate this illusion, not to be a "serious" AI program.
 
-ELIZA !!!(span) {:.smallcaps} was one of the first programs to feature English output as well as input.
+ELIZA was one of the first programs to feature English output as well as input.
 The program was named after the heroine of *Pygmalion,* who was taught to speak proper English by a dedicated teacher.
-ELIZA'S !!!(span) {:.smallcaps} principal developer, MIT professor Joseph Weizenbaum, published a paper on ELIZA !!!(span) {:.smallcaps} in the January 1966 issue of the *Communications of the Association for Computing Machinery.* The introduction to that paper is reproduced in its entirety here:
+ELIZA'S principal developer, MIT professor Joseph Weizenbaum, published a paper on ELIZA in the January 1966 issue of the *Communications of the Association for Computing Machinery.*
+The introduction to that paper is reproduced in its entirety here:
 
 > *It is said that to explain is to explain away.
 This maxim is nowhere so well fulfilled as in the area of computer programming, especially in what is called heuristic programming and artificial intelligence.
@@ -33,52 +33,40 @@ The observer says to himself, "I could have written that." With that thought he 
 
 Let me point out in passing that the main object of this book is to cause the reader to say to him or herself, "I could have written that." It is hoped that in some cases this will be because the reader has gained something, and not solely because the programs in question have lost their ability to dazzle.
 
-Let's start our investigation of ELIZA !!!(span) {:.smallcaps} by looking at a sample dialog from the Weizenbaum article.
-ELIZA !!!(span) {:.smallcaps} was designed to be instructed by a variety of scripts, or patterns of interaction.
+Let's start our investigation of ELIZA by looking at a sample dialog from the Weizenbaum article.
+ELIZA was designed to be instructed by a variety of scripts, or patterns of interaction.
 In fact it had several scripts, including ones in German and Welsh.
-But the only script that was used to any extent was in English, and it made ELIZA !!!(span) {:.smallcaps} emulate a Rogerian psychoanalyst.
+But the only script that was used to any extent was in English, and it made ELIZA emulate a Rogerian psychoanalyst.
 Rogerians are "nondirective"-they try to let the patient reveal himself.
-This is an easy script for ELIZA !!!(span) {:.smallcaps} to follow, because it involves being passive and reacting, rather than volunteering new information.
-In the listing that follows, the user's input is in mixed case, and ELIZA'S !!!(span) {:.smallcaps} response is in capitals:
+This is an easy script for ELIZA to follow, because it involves being passive and reacting, rather than volunteering new information.
+In the listing that follows, the user's input is in mixed case, and ELIZA'S response is in capitals:
 
-`Men are all alike.`
+```text
+Men are all alike.
+IN WHAT WAY
+They're always bugging us about something or another.
+CAN YOU BE MORE SPECIFIC
+Well, my boyfriend made me come here.
+YOUR BOYFRIEND MADE YOU COME HERE
+He says I'm depressed much of the time.
+I AM SORRY TO HEAR YOU ARE DEPRESSED
+It's true. I am unhappy.
+DO YOU THINK COMING HERE WILL HELP YOU NOT TO BE UNHAPPY
+I need some help, that much seems certain.
+WHAT WOULD IT MEAN TO YOU IF YOU GOT SOME HELP
+Perhaps I could learn to get along with my mother.
+TELL ME MORE ABOUT YOUR FAMILY
+```
 
-`IN WHAT WAY`
-
-`They're always bugging us about something or another.`
-
-`CAN YOU BE MORE SPECIFIC`
-
-`Well, my boyfriend made me come here.`
-
-`YOUR BOYFRIEND MADE YOU COME HERE`
-
-`He says I'm depressed much of the time.`
-
-`I AM SORRY TO HEAR YOU ARE DEPRESSED`
-
-    `It's true.
-I am unhappy.`
-
-    `DO YOU THINK COMING HERE WILL HELP YOU NOT TO BE UNHAPPY`
-
-    `I need some help, that much seems certain.`
-
-    `WHAT WOULD IT MEAN TO YOU IF YOU GOT SOME HELP`
-
-    `Perhaps I could learn to get along with my mother.`
-
-    `TELL ME MORE ABOUT YOUR FAMILY`
-
-This seems quite impressive; the program is responding reasonably to a variety of inputs and appears to be exhibiting true "understanding." But, as Weizenbaum explains, this appearance is an illusion, and the program has finessed the difficult task of understanding by carefully recognizing, transforming, and echoing pieces of the input.
+This seems quite impressive; the program is responding reasonably to a variety of inputs and appears to be exhibiting true "understanding."
+But, as Weizenbaum explains, this appearance is an illusion, and the program has finessed the difficult task of understanding by carefully recognizing, transforming, and echoing pieces of the input.
 The procedure is to look for specific patterns, based on a key word or words in the input.
 For example, whenever the program sees the words "alike" or "same," it prints a message asking about similarity, in this case, "`IN WHAT WAY.`" Other patterns are more complicated.
-In the next to last exchange, ELIZA !!!(span) {:.smallcaps} first throws away everything after the comma, and then uses a pattern that looks for input of the form "I need X" and transforms it to the output "What would it mean to you if you got X," where X is the phrase "some help" in this case.
+In the next to last exchange, ELIZA first throws away everything after the comma, and then uses a pattern that looks for input of the form "I need X" and transforms it to the output "What would it mean to you if you got X," where X is the phrase "some help" in this case.
 The great advantage of this approach is that the response will make sense for a variety of inputs: "I need a vacation" will elicit "What would it mean to you if you got a vacation." This will work automatically, without having to tell the program the difference between "some help" and "a vacation." The disadvantage is that the program will sometimes make silly responses: "I need this like a hole in the head" will be answered with "What would it mean to you if you got this like a hole in the head." In fact, the program only makes any sense at all if it is receiving input from someone who makes sense-and someone who interprets its answers charitably.
-When given "I need gibble plix zzq," ELIZA !!!(span) {:.smallcaps} would reply " What would it mean to you if you got gibble plix zzq," without any inkling that something is wrong.
-Another example of the original ELIZA !!!(span) {:.smallcaps} program has it communicating with another program, PARRY, !!!(span) {:.smallcaps} which was written by Dr.
-Kenneth Colby to mimic paranoid behavior.
-Part of the conversation follows, with ELIZA !!!(span) {:.smallcaps} again in capitals and PARRY !!!(span) {:.smallcaps} in mixed case:
+When given "I need gibble plix zzq," ELIZA would reply "What would it mean to you if you got gibble plix zzq," without any inkling that something is wrong.
+Another example of the original ELIZA program has it communicating with another program, PARRY, which was written by Dr. Kenneth Colby to mimic paranoid behavior.
+Part of the conversation follows, with ELIZA again in capitals and PARRY in mixed case:
 
 `I don't understand your motives.`
 
@@ -104,18 +92,13 @@ Part of the conversation follows, with ELIZA !!!(span) {:.smallcaps} again in ca
 
 `DO YOU WISH THAT YOU DID GET I?`
 
-This suggests that neither ELIZA !!!(span) {:.smallcaps} nor PARRY !!!(span) {:.smallcaps} had a deep understanding of the dialog.
+This suggests that neither ELIZA nor PARRY had a deep understanding of the dialog.
 When there is a human to take on most of the burden of carrying forth the conversation, these programs can be convincing, but when the human is taken out of the conversation, the weaknesses of the programs are revealed.
 
 ## 5.1 Describing and Specifying ELIZA
-!!!(span) {:.smallcaps}
+Now that we have an idea of what ELIZA is like, we can begin the description and specification of the program, and eventually move to the implementation and debugging.
 
-{:#s0010}
-{:.h1hd}
-
-Now that we have an idea of what ELIZA !!!(span) {:.smallcaps} is like, we can begin the description and specification of the program, and eventually move to the implementation and debugging.
-
-The ELIZA !!!(span) {:.smallcaps} algorithm can be described simply as: (1) read an input, (2) find a pattern that matches the input, (3) transform the input into a response, and (4) print the response.
+The ELIZA algorithm can be described simply as: (1) read an input, (2) find a pattern that matches the input, (3) transform the input into a response, and (4) print the response.
 These four steps are repeated for each input.
 
 The specification and implementation of steps (1) and (4) are trivial: for (1), use the built-in `read` function to read a list of words, and for (4) use `print` to print the list of words in the response.
@@ -125,9 +108,6 @@ The user will have to type a real list-using parentheses-and the user can't use 
 So our input won't be as unconstrained as in the sample dialog, but that's a small price to pay for the convenience of having half of the problem neatly solved.
 
 ## 5.2 Pattern Matching
-{:#s0015}
-{:.h1hd}
-
 The hard part comes with steps (2) and (3)-this notion of pattern matching and transformation.
 There are four things to be concerned with: a general pattern and response, and a specific input and transformation of that input.
 Since we have agreed to represent the input as a list, it makes sense for the other components to be lists too.
@@ -178,7 +158,7 @@ Any variable can match anything."`
 
 `        (pat-match (rest pattern) (rest input))))))`
 
-**Exercise  5.1 [s]** Would it be a good idea to replace the complex and form in `pat-match` with the simpler `(every #'pat-match pattern input)?`
+**Exercise 5.1 [s]** Would it be a good idea to replace the complex and form in `pat-match` with the simpler `(every #'pat-match pattern input)?`
 
 Before we can go on, we need to decide on an implementation for pattern-matching variables.
 We could, for instance, say that only a certain set of symbols, such as {X,Y,Z}, are variables.
@@ -407,13 +387,10 @@ Yet another implementation is given in [section 10.4](B9780080571157500108.xhtml
 It is more efficient but more cumbersome to use.
 
 ## 5.3 Segment Pattern Matching
-{:#s0020}
-{:.h1hd}
-
 In the pattern `(?P need . ?X)`, the variable `?X` matches the rest of the input list, regardless of its length.
 This is in contrast to `?P`, which can only match a single element, namely, the first element of the input.
 For many applications of pattern matching, this is fine; we only want to match corresponding elements.
-However, ELIZA !!!(span) {:.smallcaps} is somewhat different in that we need to account for variables in any position that match a sequence of items in the input.
+However, ELIZA is somewhat different in that we need to account for variables in any position that match a sequence of items in the input.
 We will call such variables *segment variables.* We will need a notation to differentiate segment variables from normal variables.
 The possibilities fail into two classes: either we use atoms to represent segment variables and distinguish them by some spelling convention (as we did to distinguish variables from constants) or we use a nonatomic construct.
 We will choose the latter, using a list of the form (`?*`*variable*) to denote segment variables.
@@ -590,12 +567,7 @@ Now we see that the match goes through:
 Note that this version of `segment-match` tries the shortest possible match first.
 It would also be possible to try the longest match first.
 
-## 5.4 The ELIZA
-!!!(span) {:.smallcaps}
- Program: A Rule-Based Translator
-{:#s0025}
-{:.h1hd}
-
+## 5.4 The ELIZA Program: A Rule-Based Translator
 Now that we have a working pattern matcher, we need some patterns to match.
 What's more, we want the patterns to be associated with responses.
 We can do this by inventing a data structure called a `rule`, which consists of a pattern and one or more associated responses.
@@ -615,18 +587,18 @@ Here's an example of a rule:
 
 `  (Suppose you got ?y soon))`
 
-When applied to the input `(I want to test this program)`, this rule (when interpreted by the ELIZA !!!(span) {:.smallcaps} program) would pick a response at random, substitute in the value of `?y`, and respond with, say, `(why do you want to test this program)`.
+When applied to the input `(I want to test this program)`, this rule (when interpreted by the ELIZA program) would pick a response at random, substitute in the value of `?y`, and respond with, say, `(why do you want to test this program)`.
 
 Now that we know what an individual rule will do, we need to decide how to handle a set of rules.
-If ELIZA !!!(span) {:.smallcaps} is to be of any interest, it will have to have a variety of responses.
+If ELIZA is to be of any interest, it will have to have a variety of responses.
 So several rules may all be applicable to the same input.
 One possibility would be to choose a rule at random from among the rules having patterns that match the input.
 
 Another possibility is just to accept the first rule that matches.
 This implies that the rules form an ordered list, rather than an unordered set.
-The clever ELIZA !!!(span) {:.smallcaps} rule writer can take advantage of this ordering and arrange for the most specific rules to come first, while more vague rules are near the end of the list.
+The clever ELIZA rule writer can take advantage of this ordering and arrange for the most specific rules to come first, while more vague rules are near the end of the list.
 
-The original ELIZA !!!(span) {:.smallcaps} had a system where each rule had a priority number associated with it.
+The original ELIZA had a system where each rule had a priority number associated with it.
 The matching rule with the highest priority was chosen.
 Note that putting the rules in order achieves the same effect as having a priority number on each rule: the first rule implicitly has the highest priority, the second rule is next highest, and so on.
 
@@ -672,7 +644,7 @@ Please state your problem.))`
 
 `      (What other feelings do you have?))))`
 
-Finally we are ready to define ELIZA !!!(span) {:.smallcaps} proper.
+Finally we are ready to define ELIZA proper.
 As we said earlier, the main program should be a loop that reads input, transforms it, and prints the result.
 Transformation is done primarily by finding some rule such that its pattern matches the input, and then substituting the variables into the rule's response.
 The program is summarized in [figure  5.1](#f0010).
@@ -680,9 +652,7 @@ The program is summarized in [figure  5.1](#f0010).
 ![f05-01-9780080571157](images/B9780080571157500054/f05-01-9780080571157.jpg)     
 Figure  5.1
 !!!(span) {:.fignum}
-Glossary for the ELIZA
-!!!(span) {:.smallcaps}
-Program
+Glossary for the ELIZA Program
 There are a few minor complications.
 We print a prompt to tell the user to input something.
 We use the function `flatten` to insure that the output won't have imbedded lists after variable substitution.
@@ -755,11 +725,11 @@ The program makes use of the previously defined `random-elt`, and `flatten`, whi
 
 `  (elt choices (random (length choices))))`
 
-The actual ELIZA !!!(span) {:.smallcaps} program had a few complications that don't show up in this version.
+The actual ELIZA program had a few complications that don't show up in this version.
 First, there was an alias method for associating several words with the same pattern; both "mother" and "father" could be associated with the "family" pattern.
 There was also a synonym mechanism that would treat "don't" and "do not" or "everybody" and "everyone" the same.
 In the case of input with several comma-separated phrases, each phrase was processed separately, and the response with the highest priority was selected.
-In addition, the original ELIZA !!!(span) {:.smallcaps} had a "memory" mechanism.
+In addition, the original ELIZA had a "memory" mechanism.
 When no pattern matched the input, it said something like "Tell me more about X," where X is some input given earlier.
 Finally, our version has fewer rules.
 Despite the shortcomings of our version, it can occasionally hold up its end of a conversation, as shown below:
@@ -804,57 +774,53 @@ PLEASE STATE YOUR PROBLEM.)`
 `>`
 
 In the end, it is the technique that is important-not the program.
-ELIZA !!!(span) {:.smallcaps} has been "explained away" and should rightfully be moved to the curio shelf.
+ELIZA has been "explained away" and should rightfully be moved to the curio shelf.
 Pattern matching in general remains important technique, and we will see it again in subsequent chapters.
 The notion of a rule-based translator is also important.
 The problem of understanding English (and other languages) remains an important part of AI.
 Clearly, the problem of understanding English is not solved by ELIZA.
-!!!(span) {:.smallcaps} In part V, we will address the problem again, using more sophisticated techniques.
+In part V, we will address the problem again, using more sophisticated techniques.
 
 ## 5.5 History and References
-{:#s0030}
-{:.h1hd}
-
-As mentioned above, the original article describing ELIZA !!!(span) {:.smallcaps} is Weizenbaum 1966.
+As mentioned above, the original article describing ELIZA is Weizenbaum 1966.
 Another dialog system using similar pattern-matching techniques is [Kenneth Colby's (1975)](B9780080571157500285.xhtml#bb0235)PARRY.
-!!!(span) {:.smallcaps} This program simulated the conversation of a paranoid person well enough to fool several professional psychologists.
-Although the pattern matching techniques were simple, the model of belief maintained by the system was much more sophisticated than ELIZA !!!(span) {:.smallcaps} . Colby has suggested that dialog programs like ELIZA, !!!(span) {:.smallcaps} augmented with some sort of belief model like PARRY !!!(span) {:.smallcaps} , could be useful tools in treating mentally disturbed people.
+This program simulated the conversation of a paranoid person well enough to fool several professional psychologists.
+Although the pattern matching techniques were simple, the model of belief maintained by the system was much more sophisticated than ELIZA.
+Colby has suggested that dialog programs like ELIZA, augmented with some sort of belief model like PARRY, could be useful tools in treating mentally disturbed people.
 According to Colby, it would be inexpensive and effective to have patients converse with a specially designed program, one that could handle simple cases and alert doctors to patients that needed more help.
-Weizenbaum's book *Computer Power and Human Reason* (1976) discusses ELIZA !!!(span) {:.smallcaps} and PARRY !!!(span) {:.smallcaps} and takes a very critical view toward Colby's suggestion.
+Weizenbaum's book *Computer Power and Human Reason* (1976) discusses ELIZA and PARRY and takes a very critical view toward Colby's suggestion.
 Other interesting early work on dialog systems that model belief is reported by[Allan Collins (1978)](B9780080571157500285.xhtml#bb0240) and [Jamie Carbonell (1981)](B9780080571157500285.xhtml#bb0160).
 
 ## 5.6 Exercises
-{:#s0035}
-{:.h1hd}
-
-**Exercise  5.2 [m]** Experiment with this version of ELIZA !!!(span) {:.smallcaps} . Show some exchanges where it performs well, and some where it fails.
+**Exercise 5.2 [m]** Experiment with this version of ELIZA.
+Show some exchanges where it performs well, and some where it fails.
 Try to characterize the difference.
 Which failures could be fixed by changing the rule set, which by changing the `pat-match` function (and the pattern language it defines), and which require a change to the `eliza` program itself?
 
-**Exercise  5.3 [h]** Define a new set of rules that make ELIZA !!!(span) {:.smallcaps} give stereotypical responses to some situation other than the doctor-patient relationship.
+**Exercise 5.3 [h]** Define a new set of rules that make ELIZA give stereotypical responses to some situation other than the doctor-patient relationship.
 Or, write a set of rules in a language other than English.
 Test and debug your new rule set.
 
-**Exercise  5.4 [s]** We mentioned that our version of ELIZA !!!(span) {:.smallcaps} cannot handle commas or double quote marks in the input.
+**Exercise 5.4 [s]** We mentioned that our version of ELIZA cannot handle commas or double quote marks in the input.
 However, it seems to handle the apostrophe in both input and patterns.
 Explain.
 
-**Exercise  5.5 [h]** Alter the input mechanism to handle commas and other punctuation characters.
+**Exercise 5.5 [h]** Alter the input mechanism to handle commas and other punctuation characters.
 Also arrange so that the user doesn't have to type parentheses around the whole input expression.
 (Hint: this can only be done using some Lisp functions we have not seen yet.
 Lookat `read-lineand read-from-string`.)
 
-**Exercise  5.6 [m]** Modify ELIZA !!!(span) {:.smallcaps} to have an explicit exit.
+**Exercise 5.6 [m]** Modify ELIZA to have an explicit exit.
 Also arrange so that the output is not printed in parentheses either.
 
 **Exercise 5.7 [m]** Add the "memory mechanism" discussed previously to ELIZA.
-!!!(span) {:.smallcaps} Also add some way of definining synonyms like "everyone" and "everybody."
+Also add some way of defining synonyms like "everyone" and "everybody."
 
 **Exercise 5.8 [h]** It turns out that none of the rules in the given script uses a variable more than once-there is no rule of the form `(?x... ?x)`.
 Write a pattern matcher that only adds bindings, never checks variables against previous bindings.
 Use the `time` special form to compare your function against the current version.
 
-**Exercise  5.9 [h]** Winston and Horn's book *Lisp* presents a good pattern-matching program.
+**Exercise 5.9 [h]** Winston and Horn's book *Lisp* presents a good pattern-matching program.
 Compare their implementation with this one.
 One difference is that they handle the case where the first element of the pattern is a segment variable with the following code (translated into our notation):
 
@@ -883,33 +849,30 @@ Is it more or less efficient?
 
 `        (simple-equal (rest x) (rest y)))))`
 
-**Exercise  5.11 [m]** Weigh the advantages of changing `no-bindings` to `nil`, and `fail` to something else.
+**Exercise 5.11 [m]** Weigh the advantages of changing `no-bindings` to `nil`, and `fail` to something else.
 
-**Exercise  5.12 [m]** Weigh the advantagesof making `pat-match` return multiple values: the first would be true for a match and false for failure, and the second would be the binding list.
+**Exercise 5.12 [m]** Weigh the advantages of making `pat-match` return multiple values: the first would be true for a match and false for failure, and the second would be the binding list.
 
-**Exercise  5.13 [m]** Suppose that there is a call to `segment-match` where the variable already has a binding.
+**Exercise 5.13 [m]** Suppose that there is a call to `segment-match` where the variable already has a binding.
 The current definition will keep making recursive calls to `segment-match`, one for each possible matching position.
 But this is silly-if the variable is already bound, there is only one sequence that it can possibly match against.
 Change the definition so that it looks only for this one sequence.
 
-**Exercise  5.14 [m]** Define a version of `mappend` that, like `mapcar`, accepts any number of argument lists.
+**Exercise 5.14 [m]** Define a version of `mappend` that, like `mapcar`, accepts any number of argument lists.
 
-**Exercise  5.15 [m]** Give an informal proof that `segment-match` always terminates.
+**Exercise 5.15 [m]** Give an informal proof that `segment-match` always terminates.
 
-**Exercise  5.16 [s]** Trick question: There is an object in Lisp which, when passed to `variable-p`, results in an error.
+**Exercise 5.16 [s]** Trick question: There is an object in Lisp which, when passed to `variable-p`, results in an error.
 What is that object?
 
-**Exercise  5.17 [m]** The current version of ELIZA !!!(span) {:.smallcaps} takes an input, transforms it according to the first applicable rule, and outputs the result.
+**Exercise 5.17 [m]** The current version of ELIZA takes an input, transforms it according to the first applicable rule, and outputs the result.
 One can also imagine a system where the input might be transformed several times before the final output is printed.
 Would such a system be more powerful?
 If so, in what way?
 
-**Exercise  5.18 [h]** Read Weizenbaum's original article on ELIZA !!!(span) {:.smallcaps} and transpose his list of rules into the notation used in this chapter.
+**Exercise 5.18 [h]** Read Weizenbaum's original article on ELIZA and transpose his list of rules into the notation used in this chapter.
 
 ## 5.7 Answers
-{:#s0040}
-{:.h1hd}
-
 **Answer 5.1** No.
 If either the pattern or the input were shorter, but matched every existing element, the every expression would incorrectly return true.
 
