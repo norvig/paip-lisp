@@ -117,7 +117,7 @@ This presupposes that there is some way of deciding that `X` is a variable and t
 We must then arrange to substitute `vacation` for `X` within the response, in order to get the final transformation.
 
 Ignoring for a moment the problem of transforming the pattern into the response, we can see that this notion of pattern matching is just a generalization of the Lisp function `equal`.
-Below we show the function `simple-equal`, which is like the built-in function `equal`,[1](#fn0010) and the function `pat-match`, which is extended to handle pattern-matching variables:
+Below we show the function `simple-equal`, which is like the built-in function `equal`,<sup>[1](#chapter5-fn1)</sup> and the function `pat-match`, which is extended to handle pattern-matching variables:
 
 ```lisp
 (defun simple-equal (x y)
@@ -137,10 +137,10 @@ Below we show the function `simple-equal`, which is like the built-in function `
        (pat-match (rest pattern) (rest input))))))
 ```
 
-**Exercise 5.1 [s]** Would it be a good idea to replace the complex and form in `pat-match` with the simpler `(every #'pat-match pattern input)?`
+&#9635; **Exercise 5.1 [s]** Would it be a good idea to replace the complex and form in `pat-match` with the simpler `(every #'pat-match pattern input)?`
 
 Before we can go on, we need to decide on an implementation for pattern-matching variables.
-We could, for instance, say that only a certain set of symbols, such as {X,Y,Z}, are variables.
+We could, for instance, say that only a certain set of symbols, such as {X, Y, Z}, are variables.
 Alternately, we could define a structure of type `variable`, but then we'd have to type something verbose like `(make-variable :name' X )` every time we wanted one.
 Another choice would be to use symbols, but to distinguish variables from constants by the name of the symbol.
 For example, in Prolog, variables start with capital letters and constants with lowercase.
@@ -151,11 +151,11 @@ So far we have dealt with symbols as atoms-objects with no internal structure.
 But things are always more complicated than they first appear and, as in Lisp as in physics, it turns out that even atoms have components.
 In particular, symbols have names, which are strings and are accessible through the `symbol-name` function.
 Strings in turn have elements that are characters, accessible through the function `char`.
-The character '?' is denoted by the self-evaluating escape sequence #\?.
+The character '?' is denoted by the self-evaluating escape sequence `#\?`.
 So the predicate `variable-p` can be defined as follows, and we now have a complete pattern matcher:
 
 ```lisp
-(defun variab1e-p (x)
+(defun variable-p (x)
   "Is X a variable (a symbol beginning with '?')?"
   (and (symbolp x) (equal (char (symbol-name x) 0) #\?)))
 
@@ -170,14 +170,15 @@ In each case we get the right answer, but we don't get any indication of what `?
 We need to modify `pat-match` to return some kind of table of variables and corresponding values.
 In making this choice, the experienced Common Lisp programmer can save some time by being opportunistic: recognizing when there is an existing function that will do a large part of the task at hand.
 What we want is to substitute values for variables throughout the response.
-The alert programmer could refer to the index of this book or the Common Lisp reference manual and find the functions `substitute, subst`, and `sublis`.
+The alert programmer could refer to the index of this book or the Common Lisp reference manual and find the functions `substitute`, `subst`, and `sublis`.
 All of these substitute some new expression for an old one within an expression.
 It turns out that `sublis` is most appropriate because it is the only one that allows us to make several substitutions all at once.
 `sublis` takes two arguments, the first a list of old-new pairs, and the second an expression in which to make the substitutions.
 For each one of the pairs, the `car` is replaced by the `cdr`.
 In other words, we would form each pair with something like `(cons old new)`.
 (Such a list of pairs is known as an *association list*, or *a-list,* because it associates keys with values.
-See [section 3.6.](B9780080571157500030.xhtml#s0035)) In terms of the example above, we would use:
+See section 3.6.)
+In terms of the example above, we would use:
 
 ```lisp
 > (sublis '((?X . vacation))
@@ -204,18 +205,19 @@ However, there are several problems.
 First, the test `(eql pattern input)` may return `T`, which is not a list, so `append` will complain.
 Second, the same test might return nil, which should indicate failure, but it will just be treated as a list, and will be appended to the rest of the answer.
 Third, we haven't distinguished between the case where the match fails-and returns nil-versus the case where everything matches, but there are no variables, so it returns the null a-list.
-(This is the semipredicate problem discussed on [page 127](B9780080571157500042.xhtml#p127).) Fourth, we want the bindings of variables to agree-if `?X` is used twice in the pattern, we don't want it to match two different values in the input.
+(This is the semipredicate problem discussed on page 127.)
+Fourth, we want the bindings of variables to agree-if `?X` is used twice in the pattern, we don't want it to match two different values in the input.
 Finally, it is inefficient for `pat-match` to check both the `first` and `rest` of lists, even when the corresponding `first` parts fail to match.
 (Isn't it amazing that there could be five bugs in a seven-line function?)
 
 We can resolve these problems by agreeing on two major conventions.
-First, it is very convenient to make `pat-match` a true predicate, so we will agree that it returns `ni1` only to indicate failure.
+First, it is very convenient to make `pat-match` a true predicate, so we will agree that it returns `nil` only to indicate failure.
 That means that we will need a non-nil value to represent the empty binding list.
 Second, if we are going to be consistent about the values of variables, then the `first` will have to know what the `rest` is doing.
 We can accomplish this by passing the binding list as a third argument to `pat-match`.
 We make it an optional argument, because we want to be able to say simply `(pat-match *a b*)`.
 
-To abstract away from these implementation decisions, we define the constants `fai1` and `no-bindings` to represent the two problematic return values.
+To abstract away from these implementation decisions, we define the constants `fail` and `no-bindings` to represent the two problematic return values.
 The special form `defconstant` is used to indicate that these values will not change.
 (It is customary to give special variables names beginning and ending with asterisks, but this convention usually is not followed for constants.
 The reasoning is that asterisks shout out, "Careful!
@@ -228,7 +230,7 @@ I may be changed by something outside of this lexical scope." Constants, of cour
   "Indicates pat-match success, with no variables.")
 ```
 
-Next, we abstract away from assoc by introducing the following four functions:
+Next, we abstract away from `assoc` by introducing the following four functions:
 
 ```lisp
 (defun get-binding (var bindings)
@@ -250,10 +252,10 @@ Next, we abstract away from assoc by introducing the following four functions:
 
 Now that variables and bindings are defined, `pat-match` is easy.
 It consists of five cases.
-First, if the binding list is `fai1`, then the match fails (because some previous match must have failed).
-If the pattern is a single variable, then the match returns whatever `match-variable` returns; either the existing binding list, an extended one, or `fai1`.
+First, if the binding list is `fail`, then the match fails (because some previous match must have failed).
+If the pattern is a single variable, then the match returns whatever `match-variable` returns; either the existing binding list, an extended one, or `fail`.
 Next, if both pattern and input are lists, we first call `pat-match` recursively on the first element of each list.
-This returns a binding list (or `fai1`), which we use to match the rest of the lists.
+This returns a binding list (or `fail`), which we use to match the rest of the lists.
 This is the only case that invokes a nontrivial function, so it is a good idea to informally prove that the function will terminate: each of the two recursive calls reduces the size of both pattern and input, and `pat-match` checks the case of atomic patterns and inputs, so the function as a whole must eventually return an answer (unless both pattern and input are of infinite size).
 If none of these four cases succeeds, then the match fails.
 
@@ -323,8 +325,8 @@ Notice the distinction between `NIL` and `((T . T))`.
 The latter means that the match succeeded, but there were no bindings to return.
 Also, remember that `(?X 2 + 2)` means the same as `(?X . (2 + 2))`.
 
-A more powerful implementation of `pat-match` is given in [chapter 6](B9780080571157500066.xhtml).
-Yet another implementation is given in [section 10.4](B9780080571157500108.xhtml#s0025).
+A more powerful implementation of `pat-match` is given in chapter 6.
+Yet another implementation is given in section 10.4.
 It is more efficient but more cumbersome to use.
 
 ## 5.3 Segment Pattern Matching
@@ -333,7 +335,7 @@ This is in contrast to `?P`, which can only match a single element, namely, the 
 For many applications of pattern matching, this is fine; we only want to match corresponding elements.
 However, ELIZA is somewhat different in that we need to account for variables in any position that match a sequence of items in the input.
 We will call such variables *segment variables.* We will need a notation to differentiate segment variables from normal variables.
-The possibilities fail into two classes: either we use atoms to represent segment variables and distinguish them by some spelling convention (as we did to distinguish variables from constants) or we use a nonatomic construct.
+The possibilities fall into two classes: either we use atoms to represent segment variables and distinguish them by some spelling convention (as we did to distinguish variables from constants) or we use a nonatomic construct.
 We will choose the latter, using a list of the form (`?*`*variable*) to denote segment variables.
 The symbol `?*` is chosen because it combines the notion of variable with the Kleenestar notation.
 So, the behavior we want from `pat-match` is now:
@@ -431,7 +433,7 @@ Consider the following example:
 > (pat-match '((?* ?x) a b (?* ?x)) '(1 2 a b a b 1 2 a b)) ⇒ NIL
 ```
 
-This fails because `?x` is matched against the subsequence `(1 2)`, and then the remaining pattern succesfully matches the remaining input, but the final call to `match-variable` fails, because `?x` has two different values.
+This fails because `?x` is matched against the subsequence `(1 2)`, and then the remaining pattern successfully matches the remaining input, but the final call to `match-variable` fails, because `?x` has two different values.
 The fix is to call `match-variable` before testing whether the `b2` fails, so that we will be sure to try `segment-match` again with a longer match no matter what the cause of the failure.
 
 ```lisp
@@ -530,15 +532,33 @@ The answer to exercise 5.19 contains a longer list of rules.
 Finally we are ready to define ELIZA proper.
 As we said earlier, the main program should be a loop that reads input, transforms it, and prints the result.
 Transformation is done primarily by finding some rule such that its pattern matches the input, and then substituting the variables into the rule's response.
-The program is summarized in [figure  5.1](#f0010).
+The program is summarized in figure 5.1.
 
-![f05-01-9780080571157](images/B9780080571157500054/f05-01-9780080571157.jpg)     
-Figure  5.1
-!!!(span) {:.fignum}
-Glossary for the ELIZA Program
+Figure 5.1: Glossary for the ELIZA Program
+
+| Symbol             | Use                                                   |
+| ------             | ---                                                   |
+|                    | **Top-Level Function**                                |
+| `eliza`            | Respond to user input using pattern matching rules.   |
+|                    | **Special Variables**                                 |
+| `*eliza-rules*`    | A list of transformation rules.                       |
+|                    | **Data Types**                                        |
+| `rule`             | An association of a pattern with a list of responses. |
+|                    | **Functions**                                         |
+| `eliza`            | Respond to user input using pattern matching rules.   |
+| `use-eliza-rules`  | Find some rule with which to transform the input.     |
+| `switch-viewpoint` | Change I to you and vice versa, and so on.            |
+| `flatten`          | Append together elements of a list.                   |
+|                    | **Selected Common Lisp Functions**                    |
+| `sublis`           | Substitute elements into a tree.                      |
+|                    | **Previously Defined Functions**                      |
+| `random-elt`       | Pick a random element from a list. (p. 36)            |
+| `pat-match`        | Match a pattern against an input, (p. 160)            |
+| `mappend`          | Append together the results of a mapcar.              |
+
 There are a few minor complications.
 We print a prompt to tell the user to input something.
-We use the function `flatten` to insure that the output won't have imbedded lists after variable substitution.
+We use the function `flatten` to insure that the output won't have embedded lists after variable substitution.
 An important trick is to alter the input by swapping "you" for "me" and so on, since these terms are relative to the speaker.
 Here is the complete program:
 
@@ -564,7 +584,7 @@ Here is the complete program:
           words))
 ```
 
-Note the use of `write` with the : `pretty` keyword true.
+Note the use of `write` with the `:pretty` keyword true.
 This will give better formatted output in some cases.
 The program makes use of the previously defined `random-elt`, and `flatten`, which is defined here using `mappend` and `mklist`, a function that is defined in the InterLisp dialect but not in Common Lisp.
 
@@ -628,44 +648,44 @@ In part V, we will address the problem again, using more sophisticated technique
 
 ## 5.5 History and References
 As mentioned above, the original article describing ELIZA is Weizenbaum 1966.
-Another dialog system using similar pattern-matching techniques is [Kenneth Colby's (1975)](B9780080571157500285.xhtml#bb0235)PARRY.
+Another dialog system using similar pattern-matching techniques is Kenneth Colby's (1975) PARRY.
 This program simulated the conversation of a paranoid person well enough to fool several professional psychologists.
 Although the pattern matching techniques were simple, the model of belief maintained by the system was much more sophisticated than ELIZA.
 Colby has suggested that dialog programs like ELIZA, augmented with some sort of belief model like PARRY, could be useful tools in treating mentally disturbed people.
 According to Colby, it would be inexpensive and effective to have patients converse with a specially designed program, one that could handle simple cases and alert doctors to patients that needed more help.
 Weizenbaum's book *Computer Power and Human Reason* (1976) discusses ELIZA and PARRY and takes a very critical view toward Colby's suggestion.
-Other interesting early work on dialog systems that model belief is reported by[Allan Collins (1978)](B9780080571157500285.xhtml#bb0240) and [Jamie Carbonell (1981)](B9780080571157500285.xhtml#bb0160).
+Other interesting early work on dialog systems that model belief is reported by Allan Collins (1978) and Jamie Carbonell (1981).
 
 ## 5.6 Exercises
-**Exercise 5.2 [m]** Experiment with this version of ELIZA.
+&#9635; **Exercise 5.2 [m]** Experiment with this version of ELIZA.
 Show some exchanges where it performs well, and some where it fails.
 Try to characterize the difference.
 Which failures could be fixed by changing the rule set, which by changing the `pat-match` function (and the pattern language it defines), and which require a change to the `eliza` program itself?
 
-**Exercise 5.3 [h]** Define a new set of rules that make ELIZA give stereotypical responses to some situation other than the doctor-patient relationship.
+&#9635; **Exercise 5.3 [h]** Define a new set of rules that make ELIZA give stereotypical responses to some situation other than the doctor-patient relationship.
 Or, write a set of rules in a language other than English.
 Test and debug your new rule set.
 
-**Exercise 5.4 [s]** We mentioned that our version of ELIZA cannot handle commas or double quote marks in the input.
+&#9635; **Exercise 5.4 [s]** We mentioned that our version of ELIZA cannot handle commas or double quote marks in the input.
 However, it seems to handle the apostrophe in both input and patterns.
 Explain.
 
-**Exercise 5.5 [h]** Alter the input mechanism to handle commas and other punctuation characters.
+&#9635; **Exercise 5.5 [h]** Alter the input mechanism to handle commas and other punctuation characters.
 Also arrange so that the user doesn't have to type parentheses around the whole input expression.
 (Hint: this can only be done using some Lisp functions we have not seen yet.
-Lookat `read-lineand read-from-string`.)
+Look at `read-line` and `read-from-string`.)
 
-**Exercise 5.6 [m]** Modify ELIZA to have an explicit exit.
+&#9635; **Exercise 5.6 [m]** Modify ELIZA to have an explicit exit.
 Also arrange so that the output is not printed in parentheses either.
 
-**Exercise 5.7 [m]** Add the "memory mechanism" discussed previously to ELIZA.
+&#9635; **Exercise 5.7 [m]** Add the "memory mechanism" discussed previously to ELIZA.
 Also add some way of defining synonyms like "everyone" and "everybody."
 
-**Exercise 5.8 [h]** It turns out that none of the rules in the given script uses a variable more than once-there is no rule of the form `(?x... ?x)`.
+&#9635; **Exercise 5.8 [h]** It turns out that none of the rules in the given script uses a variable more than once-there is no rule of the form `(?x... ?x)`.
 Write a pattern matcher that only adds bindings, never checks variables against previous bindings.
 Use the `time` special form to compare your function against the current version.
 
-**Exercise 5.9 [h]** Winston and Horn's book *Lisp* presents a good pattern-matching program.
+&#9635; **Exercise 5.9 [h]** Winston and Horn's book *Lisp* presents a good pattern-matching program.
 Compare their implementation with this one.
 One difference is that they handle the case where the first element of the pattern is a segment variable with the following code (translated into our notation):
 
@@ -676,10 +696,11 @@ One difference is that they handle the case where the first element of the patte
 
 This says that a segment variable matches either by matching the first element of the input, or by matching more than the first element.
 It is much simpler than our approach using `position`, partly because they don't update the binding list.
-Can you change their code to handle bindings, and incorporate it into our version of `pat-match?` Is it still simpler?
+Can you change their code to handle bindings, and incorporate it into our version of `pat-match`?
+Is it still simpler?
 Is it more or less efficient?
 
-**Exercise 5.10** What is wrong with the following definition of `simple-equal?`
+&#9635; **Exercise 5.10** What is wrong with the following definition of `simple-equal`?
 
 ```lisp
 (defun simple-equal (x y)
@@ -691,31 +712,32 @@ Is it more or less efficient?
      (simple-equal (rest x) (rest y)))))
 ```
 
-**Exercise 5.11 [m]** Weigh the advantages of changing `no-bindings` to `nil`, and `fail` to something else.
+&#9635; **Exercise 5.11 [m]** Weigh the advantages of changing `no-bindings` to `nil`, and `fail` to something else.
 
-**Exercise 5.12 [m]** Weigh the advantages of making `pat-match` return multiple values: the first would be true for a match and false for failure, and the second would be the binding list.
+&#9635; **Exercise 5.12 [m]** Weigh the advantages of making `pat-match` return multiple values: the first would be true for a match and false for failure, and the second would be the binding list.
 
-**Exercise 5.13 [m]** Suppose that there is a call to `segment-match` where the variable already has a binding.
+&#9635; **Exercise 5.13 [m]** Suppose that there is a call to `segment-match` where the variable already has a binding.
 The current definition will keep making recursive calls to `segment-match`, one for each possible matching position.
 But this is silly-if the variable is already bound, there is only one sequence that it can possibly match against.
 Change the definition so that it looks only for this one sequence.
 
-**Exercise 5.14 [m]** Define a version of `mappend` that, like `mapcar`, accepts any number of argument lists.
+&#9635; **Exercise 5.14 [m]** Define a version of `mappend` that, like `mapcar`, accepts any number of argument lists.
 
-**Exercise 5.15 [m]** Give an informal proof that `segment-match` always terminates.
+&#9635; **Exercise 5.15 [m]** Give an informal proof that `segment-match` always terminates.
 
-**Exercise 5.16 [s]** Trick question: There is an object in Lisp which, when passed to `variable-p`, results in an error.
+&#9635; **Exercise 5.16 [s]** Trick question: There is an object in Lisp which, when passed to `variable-p`, results in an error.
 What is that object?
 
-**Exercise 5.17 [m]** The current version of ELIZA takes an input, transforms it according to the first applicable rule, and outputs the result.
+&#9635; **Exercise 5.17 [m]** The current version of ELIZA takes an input, transforms it according to the first applicable rule, and outputs the result.
 One can also imagine a system where the input might be transformed several times before the final output is printed.
 Would such a system be more powerful?
 If so, in what way?
 
-**Exercise 5.18 [h]** Read Weizenbaum's original article on ELIZA and transpose his list of rules into the notation used in this chapter.
+&#9635; **Exercise 5.18 [h]** Read Weizenbaum's original article on ELIZA and transpose his list of rules into the notation used in this chapter.
 
 ## 5.7 Answers
-**Answer 5.1** No.
+### Answer 5.1
+No.
 If either the pattern or the input were shorter, but matched every existing element, the every expression would incorrectly return true.
 
 ```lisp
@@ -728,11 +750,14 @@ Furthermore, if either the pattern or the input were a dotted list, then the res
 (every #'pat-match '(a b . c) '(a b . d)) ⇒ T, NIL, or error.
 ```
 
-**Answer 5.4** The expression `don't` may look like a single word, but to the Lisp reader it is composed of the two elements `don` and `'t`, or `(quote t )`.
+### Answer 5.4
+The expression `don't` may look like a single word, but to the Lisp reader it is composed of the two elements `don` and `'t`, or `(quote t )`.
 If these elements are used consistently, they will match correctly, but they won't print quite right-there will be a space before the quote mark.
-In fact the `:pretty t` argument to `write` is specified primarily to make `(quote t)` print as `'t` (See [page 559](B9780080571157500169.xhtml#p559) of Steele's *Common Lisp the Language*, 2d edition.)
+In fact the `:pretty t` argument to `write` is specified primarily to make `(quote t)` print as `'t`
+(See page 559 of Steele's *Common Lisp the Language*, 2d edition).
 
-**Answer 5.5** One way to do this is to read a whole line of text with `read-line` rather than `read`.
+### Answer 5.5
+One way to do this is to read a whole line of text with `read-line` rather than `read`.
 Then, substitute spaces for any punctuation character in that string.
 Finally, wrap the string in parentheses, and read it back in as a list:
 
@@ -747,16 +772,16 @@ Finally, wrap the string in parentheses, and read it back in as a list:
 (defun punctuation-p (char) (find char ".,;:'!?#-()\\\""))
 ```
 
-This could also be done by altering the readtable, as in [section 23.5](B9780080571157500236.xhtml#s0030), [page 821](B9780080571157500236.xhtml#p821).
+This could also be done by altering the readtable, as in section 23.5, page 821.
 
-**Answer 5.6**
+### Answer 5.6
 
 ```lisp
 (defun eliza ()
   "Respond to user input using pattern matching rules."
   (loop
    (print *eliza>)
-   (l e t * ((input (read-line-no-punct))
+   (let * ((input (read-line-no-punct))
        (response (flatten (use-eliza-rules input))))
       (print-with-spaces response)
       (if (equal response '(good bye)) (RETURN)))))
@@ -772,9 +797,10 @@ This could also be done by altering the readtable, as in [section 23.5](B9780080
   (format t "~{~a ~}" list))
 ```
 
-**Answer 5.10** Hint: consider `(simple-equal '() '(nil . nil))`.
+### Answer 5.10
+Hint: consider `(simple-equal '() '(nil . nil))`.
 
-**Answer 5.14**
+### Answer 5.14
 
 ```lisp
 (defun mappend (fn &rest list)
@@ -782,16 +808,19 @@ This could also be done by altering the readtable, as in [section 23.5](B9780080
   (apply #'append (apply #'mapcar fn lists)))
 ```
 
-**Answer 5.16** It must be a symbol, because for nonsymbols, `variable-p` justreturns nil.
+### Answer 5.16
+It must be a symbol, because for nonsymbols, `variable-p` just returns nil.
 Getting the `symbol-name` of a symbol is just accessing a slot, so that can't cause an error.
-The only thing left is `elt;` if the symbol name is the empty string, then accessing element zero of the empty string is an error.
+The only thing left is `elt`; if the symbol name is the empty string, then accessing element zero of the empty string is an error.
 Indeed, there is a symbol whose name is the empty string: the symbol.
 
-**Answer 5.17** Among other things, a recursive transformation system could be used to handle abbreviations.
+### Answer 5.17
+Among other things, a recursive transformation system could be used to handle abbreviations.
 That is, a form like "don't" could be transformed into "do not" and then processed again.
 That way, the other rules need only work on inputs matching "do not."
 
-**Answer 5.19** The following includes most of Weizenbaum's rules:
+### Answer 5.19
+The following includes most of Weizenbaum's rules:
 
 ```lisp
 (defparameter *eliza-rules*
@@ -918,6 +947,4 @@ That way, the other rules need only work on inputs matching "do not."
 
 ----------------------
 
-[1](#xfn0010) The difference is that `simple-equal` does not handle strings.
-!!!(p) {:.ftnote1}
-
+<a name="chapter5-fn1">1</a>: The difference is that `simple-equal` does not handle strings.
