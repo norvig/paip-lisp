@@ -681,6 +681,7 @@ Also arrange so that the output is not printed in parentheses either.
 &#9635; **Exercise 5.7 [m]** Add the "memory mechanism" discussed previously to ELIZA.
 Also add some way of defining synonyms like "everyone" and "everybody."
 
+
 &#9635; **Exercise 5.8 [h]** It turns out that none of the rules in the given script uses a variable more than once-there is no rule of the form `(?x... ?x)`.
 Write a pattern matcher that only adds bindings, never checks variables against previous bindings.
 Use the `time` special form to compare your function against the current version.
@@ -717,6 +718,7 @@ Is it more or less efficient?
 &#9635; **Exercise 5.12 [m]** Weigh the advantages of making `pat-match` return multiple values: the first would be true for a match and false for failure, and the second would be the binding list.
 
 &#9635; **Exercise 5.13 [m]** Suppose that there is a call to `segment-match` where the variable already has a binding.
+
 The current definition will keep making recursive calls to `segment-match`, one for each possible matching position.
 But this is silly-if the variable is already bound, there is only one sequence that it can possibly match against.
 Change the definition so that it looks only for this one sequence.

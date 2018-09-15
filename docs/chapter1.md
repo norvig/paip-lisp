@@ -239,7 +239,7 @@ This is in contrast to statements in most languages, which have an effect but do
 In evaluating an to expression *(ed note: ???)* like `(setf x (+  1 2)`), we set the variable named by the symbol `x` to the value of `(+  1 2)`, which is `3`.
 If `setf` were a normal function, we would evaluate both the symbol `x` and the expression `(+  1 2)` and do something with these two values, which is not what we want at all.
 `setf` is called a special form because it does something special: if it did not exist, it would be impossible to write a function that assigns a value to a variable.
-The philosophy of Lisp is to provide a small number of special forms to do the things that could not otherwise be done, and then to expect the user to write everthing else as functions.
+The philosophy of Lisp is to provide a small number of special forms to do the things that could not otherwise be done, and then to expect the user to write everything else as functions.
 
 The term *special form* is used confusingly to refer both to symbols like `setf` and expressions that start with them, like `(setf x 3)`.
 In the book *Common LISPcraft,* Wilensky resolves the ambiguity by calling `setf` a *special function,* and reserving the term *special form* for (`setf x 3`).

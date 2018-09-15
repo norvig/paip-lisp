@@ -428,7 +428,7 @@ This use is unusual in that the loop iteration variable, `element`, is not used 
 ```
 
 It is also possible to use the optional result of `dolist`, as shown below.
-While many programmers use this style, I find that it is too easy to lose track of the result, and so I prefer to place the result last explictly.
+While many programmers use this style, I find that it is too easy to lose track of the result, and so I prefer to place the result last explicitly.
 
 ```lisp
 (defun length1.1 (list)         ; alternate version:
@@ -2185,7 +2185,7 @@ In addition, the comparison can be made against some part of the object rather t
 The sequence functions include `remove`, `remove-if`, `position,` and `find`.
 The most common type of sequence is the list, but strings and vectors can also be used as sequences.
 A sequence function performs some action repeatedly for some elements of a sequence.
-The default is to go through the sequence from beginning to end, but the reverse order can be specified with `:from-end t,` and a subsequence can be specifed by supplying a number for the `:start` or `:end` keyword.
+The default is to go through the sequence from beginning to end, but the reverse order can be specified with `:from-end t` and a subsequence can be specifed by supplying a number for the `:start` or `:end` keyword.
 The first element of a sequence is numbered 0, not 1, so be careful.
 
 As an example of keyword parameters, suppose we wanted to write sequence functions that are similar to `find` and `find-if`, except that they return a list of all matching elements rather than just the first matching element.

@@ -1004,7 +1004,7 @@ Here is a version of `prove` that calls primitives when appropriate:
 
 `                                other-goals))))`
 
-Here is the version of `top-level-prove` thatadds the primitive goal `show-prolog-vars` to the end of the list of goals.
+Here is the version of `top-level-prove` that adds the primitive goal `show-prolog-vars` to the end of the list of goals.
 Note that this version need not call `show-prolog-solutions` itself, since the printing will be handled by the primitive for `show-prolog-vars`.
 
 `(defun top-level-prove (goals)`
@@ -1741,8 +1741,8 @@ Clocksin and Mellish's *Programming in Prolog* (1987) was the first and remains 
 Sterling and Shapiro's *The Art of Prolog* (1986) has more substantial examples but is not as complete as a reference.
 An excellent overview from a slightly more mathematical perspective is Pereira and Shieber's *Prolog and Natural-Language Analysis* (1987).
 The book is worthwhile for its coverage of Prolog alone, and it also provides a good introduction to the use of logic programming for language under-standing (see part V for more on this subject).
-O'Keefe's *The Craft of Prolog* (1990) shows a number of advanced techinques.
-O'Keefe is certainly one of the most influ-ential voices in the Prolog community.
+O'Keefe's *The Craft of Prolog* (1990) shows a number of advanced techniques.
+O'Keefe is certainly one of the most influential voices in the Prolog community.
 He has definite views on what makes for good and bad coding style and is not shy about sharing his opinions.
 The reader is warned that this book evolved from a set of notes on the Clocksin and Mellish book, and the lack of organization shows in places.
 However, it contains advanced material that can be found nowhere else.

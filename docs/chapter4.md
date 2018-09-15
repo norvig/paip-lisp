@@ -29,7 +29,7 @@ On one level, this chapter is about GPS.
 But on another level, it is about the process of developing an AI computer program.
 We distinguish five stages in the development of a program.
 First is the problem description, which is a rough idea-usually written in English prose-of what we want to do.
-Second is the program speification, where we redescribe the problem in terms that are closer to a computable procedure.
+Second is the program specification, where we redescribe the problem in terms that are closer to a computable procedure.
 The third stage is the implementation of the program in a programming language such as Common Lisp, the fourth is testing, and the fifth is debugging and analysis.
 The boundaries between these stages are fluid, and the stages need not be completed in the order stated.
 Problems at any stage can lead to a change in the previous stage, or even to complete redesign or abandonment of the project.
@@ -407,7 +407,7 @@ In the sections that follow, we examine the question of just how general this Ge
 The next four sections point out limitations of our version of GPS, and we will show how to correct these limitations in a second version of the program.
 
 One might ask if "limitations" is just a euphemism for "bugs." Are we "enhancing" the program, or are we "correcting" it?
-There are no clear answers on this point, because we never insisted on an unambiguous problem description or spcification.
+There are no clear answers on this point, because we never insisted on an unambiguous problem description or specification.
 AI programming is largely exploratory programming; the aim is often to discover more about the problem area rather than to meet a clearly defined specification.
 This is in contrast to a more traditional notion of programming, where the problem is completely specified before the first line of code is written.
 
@@ -607,7 +607,7 @@ It would be nice to have a general debugging output tool where the programmer co
 
 The function `dbg` provides this capability.
 `dbg` prints output in the same way as `format`, but it will only print when debugging output is desired.
-Each call to `dbg` is accompanied by an identifer that is used to specify a class of debugging messages.
+Each call to `dbg` is accompanied by an identifier that is used to specify a class of debugging messages.
 The functions `debug` and `undebug` are used to add or remove message classes to the list of classes that should be printed.
 In this chapter, all the debugging output will use the identifier :`gps`.
 Other programs will use other identifiers, and a complex program will use many identifiers.

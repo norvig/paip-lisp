@@ -143,7 +143,7 @@ Three utility functions are included here:
 `(defun args (x) "The arguments of a relation" (rest x))`
 
 The next step is to compile the clauses for a given predicate with a fixed arity into a Lisp function.
-For now, that will be done by compiling each clause indepently and wrapping them in a `lambda` with the right parameter list.
+For now, that will be done by compiling each clause independently and wrapping them in a `lambda` with the right parameter list.
 
 `(defun compile-predicate (symbol arity clauses)`
 

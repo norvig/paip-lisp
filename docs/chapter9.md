@@ -17,7 +17,7 @@ Unfortunately, when a prototype is to be turned into a production-quality progra
 Most "real" AI programs deal with large amounts of data, and with large search spaces.
 Thus, efficiency considerations become very important.
 
-However, this does not mean that writing an efficient program is fundamentaly different from writing a working program.
+However, this does not mean that writing an efficient program is fundamentally different from writing a working program.
 Ideally, developing an efficient program should be a three-step process.
 First, develop a working program, using proper abstractions so that the program will be easy to change if necessary.
 Second, *instrument* the program to determine where it is spending most of the time.
