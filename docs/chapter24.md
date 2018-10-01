@@ -1118,9 +1118,9 @@ Here's roughly what we want:
 
     `'(* ,x ,x)`
 
-    `'(let ((g00l ,x))`
+    `'(let ((g001 ,x))`
 
-        `, (let ((x 'g00l))`
+        `, (let ((x 'g001))`
 
             `'(* x ,x))))`
 
@@ -1133,9 +1133,9 @@ I recommend replacing the inner backquote with its equivalent using `list` and `
 
     `'(* ,x ,x)`
 
-    `(list 'let (list (list 'g00l x))`
+    `(list 'let (list (list 'g001 x))`
 
-        `(let ((x 'g00l))`
+        `(let ((x 'g001))`
 
             `'(* ,x ,x))))`
 

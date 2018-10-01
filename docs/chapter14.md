@@ -2302,7 +2302,7 @@ Key papers in equality reasoning include Galler and Fisher 1974, [Kornfeld 1983]
 [H&ouml;lldobler's book (1987)](B9780080571157500285.xhtml#bb0550) includes an overview of the area.
 Papers on extending unification in ways other than equality include [A&iuml;t-Kaci et al.
 1987](B9780080571157500285.xhtml#bb0025) and [Staples and Robinson 1988](B9780080571157500285.xhtml#bb1125).
-Finally, papers on extending Prolog to cover disjunction and negation (i.e., non-Horn clauses) include [Loveland 1987](B9780080571157500285.xhtml#bb0755), [Plaisted 1988](B9780080571157500285.xhtml#bb0960), and [Stickel l988](B9780080571157500285.xhtml#bb1200).
+Finally, papers on extending Prolog to cover disjunction and negation (i.e., non-Horn clauses) include [Loveland 1987](B9780080571157500285.xhtml#bb0755), [Plaisted 1988](B9780080571157500285.xhtml#bb0960), and [Stickel 1988](B9780080571157500285.xhtml#bb1200).
 
 ## 14.12 Exercises
 {:#s0090}
