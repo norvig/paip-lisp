@@ -208,7 +208,7 @@ A reasonable list of simplification rules is shown below.
 This list covers the four arithmetic operators, addition, subtraction, multiplication, and division, as well as exponentiation (raising to a power), denoted by the symbol "^"
 
 Again, it is important to note that the rules are ordered, and that later rules will be applied only when earlier rules do not match.
-So, for example, 0 / 0 simplifies to `undefined,` and not to 1 or 0, because the rule for 0 / 0 cornes before the other rules.
+So, for example, 0 / 0 simplifies to `undefined,` and not to 1 or 0, because the rule for 0 / 0 comes before the other rules.
 See [exercise 8.8](#st0045) for a more complete treatment of this.
 
 `(defparameter *simplification-rules* (mapcar #'infix->prefix '(`
@@ -735,9 +735,9 @@ In [chapter 15](B9780080571157500157.xhtml), we develop a new version of the pro
 {:.h1hd}
 
 So far, the algebraic manipulations have been straightforward.
-There is a direct algorithm for Computing the derivative of every expression.
+There is a direct algorithm for computing the derivative of every expression.
 When we consider integrals, or antiderivatives,[2](#fn0015) the picture is much more complicated.
-As you may recall from freshman calculus, there is a fine art to Computing integrals.
+As you may recall from freshman calculus, there is a fine art to computing integrals.
 In this section, we try to see how far we can get by encoding just a few of the many tricks available to the calculus student.
 
 The first step is to recognize that entries in the simplification table will not be enough.

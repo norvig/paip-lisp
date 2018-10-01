@@ -1585,7 +1585,7 @@ The easier case is when the sequence is a vector:
 
 `result)))))`
 
-When the sequence is a list, we go to some trouble to avoid Computing the length, since that is an *O(n)* operation on lists.
+When the sequence is a list, we go to some trouble to avoid computing the length, since that is an *O(n)* operation on lists.
 The hardest decision is what to do when the list is to be traversed from the end.
 There are four choices:
 

@@ -476,7 +476,7 @@ Note that commands are always nonfinite.
 Another form of command starts with "let," as in "Let me see what I can do" and "Let us all pray." The second word is better considered as the object of "let" rather than the subject of the sentence, since the subject would have to be "I" or "we." This kind of command can be handled with a lexical entry for "let" rather than with an additional rule.
 
 We now consider questions.
-Questions that can be answered by yes or no have the subject and auxiliary verb inverted: "Did you see him?" or "Should I have been doing this?" The latter example shows that it is only the first auxiliary verb that cornes before the subject.
+Questions that can be answered by yes or no have the subject and auxiliary verb inverted: "Did you see him?" or "Should I have been doing this?" The latter example shows that it is only the first auxiliary verb that comes before the subject.
 The category `aux-inv-S` is used to handle this case:
 
 `(rule (S ?s (yes-no ?s ?sem)) ==>`

@@ -1079,7 +1079,7 @@ You should feel free to introduce a lexical variable (with `a let, lambda` or `d
 1.  To avoid typing in the same expression twice.
 !!!(p) {:.numlist}
 
-2.  To avoid Computing the same expression twice.
+2.  To avoid computing the same expression twice.
 !!!(p) {:.numlist}
 
 3.  When the name would be useful documentation.

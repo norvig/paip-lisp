@@ -93,7 +93,7 @@ Of course, other languages have functions, but Lisp is rare in allowing the crea
 Lisp's flexibility allows it to adapt as programming styles change, but more importantly, Lisp can adapt to your particular programming problem.
 In other languages you fit your problem to the language; with Lisp you extend the language to fit your problem.
 
-Because of its flexibility, Lisp has been succesful as a high-level language for rapid prototyping in areas such as AI, graphics, and user interfaces.
+Because of its flexibility, Lisp has been successful as a high-level language for rapid prototyping in areas such as AI, graphics, and user interfaces.
 Lisp has also been the dominant language for exploratory programming, where the problems are so complex that no clear solution is available at the start of the project.
 Much of AI falls under this heading.
 

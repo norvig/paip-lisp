@@ -1692,8 +1692,8 @@ Now, consider the problem of getting the child to school without using any money
 
 `NIL`
 
-The first five lines of output succesfully solve the `son-at-school` goal with the `TAXI-SON-TO-SCHOOL` action.
-The next line shows an unsuccesful attempt to solve the `have-money` goal.
+The first five lines of output successfully solve the `son-at-school` goal with the `TAXI-SON-TO-SCHOOL` action.
+The next line shows an unsuccessful attempt to solve the `have-money` goal.
 The next step is to try the other ordering.
 This time, the `have-money` goal is tried first, and succeeds.
 Then, the `son-at-school` goal is achieved again by the `TAXI-SON-TO-SCHOOL` action.
@@ -1803,7 +1803,7 @@ Many problems are NP-hard when we insist on the optimal solution but are much ea
 
 The input to GPS is essentially a program, and the execution of GPS is the execution of that program.
 If GPS's input language is general enough to express any program, then there will be problems that can't be solved, either because they take too long to execute or because they have no solution.
-Modem problem-solving programs recognize this fundamental limitation, and either limit the class of problems they try to solve or consider ways of finding approximate or partial solutions.
+Modern problem-solving programs recognize this fundamental limitation, and either limit the class of problems they try to solve or consider ways of finding approximate or partial solutions.
 Some problem solvers also monitor their own execution time and know enough to give up when a problem is too hard.
 
 The following quote from Drew McDermott's article "Artificial Intelligence Meets Natural Stupidity" sums up the current feeling about GPS.

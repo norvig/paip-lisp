@@ -463,7 +463,7 @@ It depends on your interpretation of infinite circular trees.
 If you accept them as valid objects, then the answer is consistent.
 If you don't, then leaving out the occurs check makes Prolog *unsound:* it can come up with incorrect answers.
 
-The same problem cornes up if we ask if there are any sets that include themselves as members.
+The same problem comes up if we ask if there are any sets that include themselves as members.
 The query `(member ?set ?set)` will succeed, but we will not be able to print the value of `?set`.
 
 ## 14.7 Problems with Efficiency: Indexing
@@ -570,7 +570,7 @@ But key 5 is `(p b (f c))`, which does not match the query `(pa (f?x))`.
 We could eliminate this problem by intersecting all the lists instead of just taking the shortest list.
 It is perhaps feasible to do the intersection using bit vectors, but probably too slow and wasteful of space to do it using lists.
 Even if we did intersect keys, we would still overretrieve, for two reasons.
-First, we don't use ni1 as an index, so we are ignoring the difference between `(f ?x)` and `(f . ?x)`.
+First, we don't use nil as an index, so we are ignoring the difference between `(f ?x)` and `(f . ?x)`.
 Second, we are using wild-card semantics, so the query `(p ?x ?x)` would retrieve all six keys, when it should only retrieve three.
 Because of these problems, we make a design choice: we will first build a data base retrieval function that retrieves potential matches, and later worry about the unification process that will eliminate mismatches.
 
@@ -1308,7 +1308,7 @@ For example, to find out what people were born on July Ist, we could use the que
 `retrieve-conjunction` could solve this problem by first calling `retrieve-fact` on `(val birthday ?p july-1)`.
 Once that is done, there is only one conjunct remaining, but in general there could be several, so we need to call `retrieve-conjunction` recursively with two arguments: the remainingconjuncts, and the resultthat `retrieve-fact` gave for the first solution.
 Since `retrieve-fact` returns a list of binding lists, it will be easiest if `retrieve-conjunction` accepts such a list as its second argument.
-Furthermore, when it cornes time to call `retrieve-fact` on the second conjunct, we will want to respect the bindings set up by the first conjunct.
+Furthermore, when it comes time to call `retrieve-fact` on the second conjunct, we will want to respect the bindings set up by the first conjunct.
 So `retrieve-fact` must accept a binding list as its second argument.
 Thus we have:
 
@@ -1451,7 +1451,7 @@ Another direction to take is to provide better error checking.
 The current system does not complain if a fact or query is ill-formed.
 It also relies on the user to input all facts, even those that could be derived automatically from the semantics of existing facts.
 For example, the semantics of `sub` imply that if `(sub bear animal)` and `(sub polar-bear bear)` are true, then `(sub polar-bear animal)` must also be true.
-This kind of implication can be handled in two way s.
+This kind of implication can be handled in two ways.
 The typical Prolog approach would be to write rules that derive the additional `sub` facts by backward-chaining.
 Then every query would have to check if there were rules to run.
 The alternative is to use a *forward-chaining* approach, which caches each new `sub` fact by adding it to the data base.
@@ -1775,7 +1775,7 @@ To support the frame notation, we define the macros `a` and `each` to make asser
 `          :query)))`
 
 All three of these macros call on `translate-exp` to translate from the frame syntax to the primitive syntax.
-Note that an `a` or `each` expression is Computing a conjunction of primitive relations, but it is also Computing a *term* when it is used as the nested value of a slot.
+Note that an `a` or `each` expression is computing a conjunction of primitive relations, but it is also computing a *term* when it is used as the nested value of a slot.
 It would be possible to do this by returning multiple values, but it is easier to build `transiate-exp` as a set of local functions that construct facts and push them on the local variable `conjuncts`.
 At the end, the list of `conjuncts` is returned as the value of the translation.
 The local functions `transiate-a` and `transiate-each` return the atom that represents the term they are translating.

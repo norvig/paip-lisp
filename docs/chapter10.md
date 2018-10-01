@@ -242,7 +242,7 @@ On a Lisp Machine, both `f` and `g` compile into the same code:
 The Lisp Machine has a microcoded  +  instruction that simultaneously does a fixnum add and checks for non-fixnum arguments, branching to a subroutine if either argument is not a fixnum.
 The hardware does the work that the compiler has to do on a conventional processor.
 This makes the Lisp Machine compiler simpler, so compiling a function is faster.
-However, on modem pipelined computers with instruction caches, there is little or no advantage to microcoding.
+However, on modern pipelined computers with instruction caches, there is little or no advantage to microcoding.
 The current trend is away from microcode toward reduced instruction set computers (RISC).
 
 On most computers, the following declarations are most likely to be helpful:
@@ -1092,7 +1092,7 @@ Conversely, if you fail to deallocate unneeded instances, then you are wasting v
 The beauty of using Lisp's built-in memory management is that it is guaranteed never to leak and never to deallocate structures that are in use.
 This eliminates two potential bug sources.
 The penalty you pay for this guarantee is some inefficiency of the general-purpose memory management as compared to a custom user-supplied management scheme.
-But beware: modem garbage-collection techniques are highly optimized.
+But beware: modern garbage-collection techniques are highly optimized.
 In particular, the so-called *generation scavenging* or *ephemeral* garbage collectors look more often at recently allocated storage, on the grounds that recently made objects are more likely to become garbage.
 If you hold on to garbage in your own data structures, you may end up with worse performance.
 

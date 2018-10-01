@@ -36,7 +36,7 @@ This chapter covers the object-oriented approach.
 {:#s0010}
 {:.h1hd}
 
-Object-oriented programming turns the world of Computing on its side: instead of viewing a program primarily as a set of actions which manipulate objects, it is viewed as a set of objects that are manipulated by actions.
+Object-oriented programming turns the world of computing on its side: instead of viewing a program primarily as a set of actions which manipulate objects, it is viewed as a set of objects that are manipulated by actions.
 The state of each object and the actions that manipulate that state are defined once and for all when the object is created.
 This can lead to modular, robust systems that are easy to use and extend.
 It also can make systems correspond more closely to the "real world," which we humans perceive more easily as being made up of objects rather than actions.
@@ -180,7 +180,7 @@ We have a guarantee that no other code can manipulate the information in the acc
 
 The function `get-method` finds the method that implements a message for a given object.
 The function send gets the method and applies it to a list of arguments.
-The name send cornes from the Flavors object-oriented system, which is discussed in the history section ([page 456](#p456)).
+The name send comes from the Flavors object-oriented system, which is discussed in the history section ([page 456](#p456)).
 
 `(defun get-method (object message)`
 
@@ -1178,7 +1178,7 @@ Instead of defining methods using `lambda` as the primitive, Oaklisp has `add-me
 Of course, object-oriented systems are thriving outside the Lisp world.
 With the success of UNIX-based workstations, C has become one of the most widely available programming languages.
 C is a fairly low-level language, so there have been several attempts to use it as a kind of portable assembly language.
-The most succesful of these attempts is C++, a language developed by Bjarne Stroustrup of AT&T Bell Labs ([Stroustrup 1986](B9780080571157500285.xhtml#bb1210)).
+The most successful of these attempts is C++, a language developed by Bjarne Stroustrup of AT&T Bell Labs ([Stroustrup 1986](B9780080571157500285.xhtml#bb1210)).
 C++ provides a number of extensions, including the ability to define classes.
 However, as an add-on to an existing language, it does not provide as many features as the other languages discussed here.
 Crucially, it does not provide garbage collection, nor does it support fully generic functions.
@@ -1186,7 +1186,7 @@ Crucially, it does not provide garbage collection, nor does it support fully gen
 Eiffel ([Meyer 1988](B9780080571157500285.xhtml#bb0830)) is an attempt to define an object-oriented system from the ground up rather than tacking it on to an existing language.
 Eiffel supports multiple inheritance and garbage collection and a limited amount of dynamic dispatching.
 
-So-called modem languages like Ada and Modula support information-hiding through generic functions and classes, but they do not provide inheritance, and thus can not be classified as true object-oriented languages.
+So-called modern languages like Ada and Modula support information-hiding through generic functions and classes, but they do not provide inheritance, and thus can not be classified as true object-oriented languages.
 
 Despite these other languages, the Lisp-based object-oriented systems are the only ones since Smalltalk to introduce important new concepts: multiple inheritance and method combination from Flavors, and multimethods from CommonLoops.
 

@@ -1283,7 +1283,7 @@ The auxiliary functions `get-examples` and `clear-exampl` es are provided to man
 
       `"Add these example strings to this category,`
 
-      `and when it cornes time to run them, use the args."`
+      `and when it comes time to run them, use the args."`
 
       `(dolist (example examples)`
 

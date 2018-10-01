@@ -1264,7 +1264,7 @@ Write a version of `compile-unify` that returns three values: the code, a noncir
 Instead, we could pass in a list of equivalence classes-that is, a list of lists, where each sublist contains one or more elements that have been unified.
 In this approach, the initial equivalence class list would be `((?arg1) (?arg2))`.
 After unifying `?arg1` with `?x`, `?arg2` with `?y`, and `?x` with 4, the list would be ( `(4 ?arg1 ?x) (?arg2 ?y))`.
-This assumes the convention that the canonical member of an equivalence class (the one that will be substituted for all others) cornes first.
+This assumes the convention that the canonical member of an equivalence class (the one that will be substituted for all others) comes first.
 Implement this approach.
 What advantages and disadvantages does it have?
 
@@ -2179,7 +2179,7 @@ Note that the if-then-else uses a cut to commit to the `then` part if the test i
 
 The cut can be used to implement the nonlogical `not`.
 The following two clauses are often given before as the definition of `not`.
-Our compiler succesfully turns these two clauses into exactly the same code as was given before for the primitive `not/1`:
+Our compiler successfully turns these two clauses into exactly the same code as was given before for the primitive `not/1`:
 
 `(<- (not ?p) (call ?p) ! (fail))`
 

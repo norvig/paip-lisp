@@ -146,7 +146,7 @@ An interpreter that handles the Scheme primitives is easy to write.
 In the interpreter `interp`, the main conditional has eight cases, corresponding to the five special forms, symbols, other atoms, and procedure applications (otherwise known as function calls).
 For the moment we will stick with `t` and `nil` instead of `#t` and `#f`.
 After developing a simple interpreter, we will add support for macros, then develop a tail-recursive interpreter, and finally a continuation-passing interpreter.
-(These terms will be defined when the time cornes.).
+(These terms will be defined when the time comes.).
 The glossary for `interp` is in [figure  22.1](#f0010).
 
 ![f22-01-9780080571157](images/B9780080571157500224/f22-01-9780080571157.jpg)     
@@ -1365,7 +1365,7 @@ McCarthy's students were working on a Lisp compiler, had written certain routine
 Sometime around the end of 1958, McCarthy wrote a theoretical paper showing that Lisp was powerful enough to write the universal function, `eval`.
 A programmer on the project, Steve Russell, saw the paper, and, according to McCarthy:
 
-> Steve Russell said, look, why don't I program this `eval` and-you remember the interpreter-and I said to him, ho, ho, you're confusing theory with practice, this `eval` is intended for reading not for Computing.
+> Steve Russell said, look, why don't I program this `eval` and-you remember the interpreter-and I said to him, ho, ho, you're confusing theory with practice, this `eval` is intended for reading not for computing.
 But he went ahead and did it.
 That is, he compiled the `eval` in my paper into 704 machine code fixing bugs and then advertised this as a Lisp interpreter, which it certainly was.[3](#fn0020)
 
@@ -1376,7 +1376,7 @@ The compiler was written in Lisp; it was probably the first compiler written in 
 
 Allen's *Anatomy of lisp* (1978) was one of the first overviews of Lisp implementation techniques, and it remains one of the best.
 However, it concentrates on the dynamic-scoping Lisp dialects that were in use at the time.
-The more modem view of a lexically scoped Lisp was documented in an influential pair of papers by Guy Steele ([1976a](B9780080571157500285.xhtml#bb1130),[b](B9780080571157500285.xhtml#bb1135)).
+The more modern view of a lexically scoped Lisp was documented in an influential pair of papers by Guy Steele ([1976a](B9780080571157500285.xhtml#bb1130),[b](B9780080571157500285.xhtml#bb1135)).
 His papers "Lambda: the ultimate goto" and "Compiler optimization based on viewing lambda as rename plus goto" describe properly tail-recursive interpreters and compilers.
 
 The Scheme dialect was invented by Gerald Sussman and Guy Steele around 1975 (see their MIT AI Memo 349).
