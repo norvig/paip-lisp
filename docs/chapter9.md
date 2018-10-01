@@ -171,7 +171,7 @@ The function `memo` below is a higher-order function that takes a function as in
 The expression (`memo #'fib`) will produce a function that remembers its results between calls, so that, for example, if we apply it to 3 twice, the first call will do the computation of (`fib 3`), but the second will just look up the result in a hash table.
 With `fib` traced, it would look like this:
 
-`> (setf memo-fib (memo #'fib)) => #  <  CL0SURE -  67300731  >`
+`> (setf memo-fib (memo #'fib)) => #  <  CLOSURE -  67300731  >`
 
 `> (funcall memo-fib 3) =>`
 
@@ -285,7 +285,7 @@ Below we call (`memoize 'fib`) and repeat the calculation.
 This time, each computation is done only once.
 Furthermore, when the computation of (`fib 5`) is repeated, the answer is returned immediately with no intermediate computation, and a further call to (`fib 6`) can make use of the value of (`fib 5`).
 
-`> (memoize 'fib) => #  <  CL0SURE 76626607  >`
+`> (memoize 'fib) => #  <  CLOSURE 76626607  >`
 
 `> (fib 5) =>`
 
@@ -372,7 +372,7 @@ Both of these approaches rely on the fact that `defun` returns the name of the f
 | 32 | 3524578 | 32.4 | .001 | 31 |
 | 33 | 5702887 | 52.5 | .001 | 32 |
 | 34 | 9227465 | 81.5 | .001 | 33 |
-| 50 | 2.0el0 | - | .014 | 34 |
+| 50 | 2.0e10 | - | .014 | 34 |
 | 100 | 5.7e20 | - | .031 | 50 |
 | 200 | 4.5e41 | - | .096 | 100 |
 | 500 | 2.2e104 | - | .270 | 200 |
@@ -849,7 +849,7 @@ The pipe `c` represents the numbers from 0 to infinity.
 When it is created, only the zeroth element, 0, is evaluated.
 The computation of the other elements is delayed.
 
-`> (setf c (integers 0)) => (0 . #S(DELAY :FUNCTI0N #  <  CL0SURE -  77435477  >))`
+`> (setf c (integers 0)) => (0 . #S(DELAY :FUNCTION #  <  CLOSURE -  77435477  >))`
 
 `>  (pipe-elt c 0) =>    0`
 
@@ -919,7 +919,7 @@ Everything else remains the same.
 If we recompile `integers` (because it uses the `macro make-pipe`), we see the following behavior.
 First, creation of the infinite pipe `c` is similar:
 
-`> (setf c (integers 0)) => (0 . #  <  CL0SURE 77350123  >)`
+`> (setf c (integers 0)) => (0 . #  <  CLOSURE 77350123  >)`
 
 `> (pipe-elt c 0) => 0`
 
@@ -927,12 +927,12 @@ Accessing an element of the pipe forces evaluation of all the intervening elemen
 
 `> (pipe-elt c 5) => 5`
 
-`> c => (0 1 2 3 4 5 . #  <  CL0SURE 77351636  >)`
+`> c => (0 1 2 3 4 5 . #  <  CLOSURE 77351636  >)`
 
 Pipes can also be used for finite lists.
 Here we see a pipe of length 11:
 
-`> (setf i (integers 0 10)) => (0 . #  <  CL0SURE 77375357  >)`
+`> (setf i (integers 0 10)) => (0 . #  <  CLOSURE 77375357  >)`
 
 `> (pipe-elt i 10) => 10`
 
@@ -993,11 +993,11 @@ And here's an application of pipes: generating prime numbers using the sieve of 
 
 `(defvar *primes* (sieve (integers 2)))`
 
-`> *primes* => (2 . #  <  CL0SURE 3075345  >)`
+`> *primes* => (2 . #  <  CLOSURE 3075345  >)`
 
 `> (enumerate *primes* :count 10) =>`
 
-`(2 3 5 7 11 13 17 19 23 29 31 . #  <  CL0SURE 5224472  >)`
+`(2 3 5 7 11 13 17 19 23 29 31 . #  <  CLOSURE 5224472  >)`
 
 Finally, let's return to the problem of generating all strings in a grammar.
 First we're going to need some more utility functions:
@@ -1092,7 +1092,7 @@ With these definitions, here's the pipe of all sentences from `*grammar2*` (from
 
 `> (setf ss (generate-all 'sentence)) =>`
 
-`((THE . #  <  CL0SURE 27265720  >) . #  <  CL0SURE 27266035>)`
+`((THE . #  <  CLOSURE 27265720  >) . #  <  CLOSURE 27266035>)`
 
 `> (enumerate ss :count 5) =>`
 

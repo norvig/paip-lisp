@@ -1128,7 +1128,7 @@ Using these operators, we could pose the problem of becoming not-hungry, given t
 
 `((START)`
 
-`  (EXECUTING PUSH-CHAIR-FROM-D00R-T0-MIDDLE-R00M)`
+`  (EXECUTING PUSH-CHAIR-FROM-DOOR-TO-MIDDLE-ROOM)`
 
 `  (EXECUTING CLIMB-ON-CHAIR)`
 
@@ -1196,17 +1196,17 @@ Note that there is nothing that says the places in the maze are arranged in a fi
 
 `((START)`
 
-`  (EXECUTING-(M0VE-FROM-1 TO 2))`
+`  (EXECUTING-(MOVE-FROM-1 TO 2))`
 
-`  (EXECUTING-(M0VE-FROM-2 TO 3))`
+`  (EXECUTING-(MOVE-FROM-2 TO 3))`
 
-`  (EXECUTING-(M0VE-FROM-3 TO 4))`
+`  (EXECUTING-(MOVE-FROM-3 TO 4))`
 
-`  (EXECUTING-(M0VE-FROM-4 TO 9))`
+`  (EXECUTING-(MOVE-FROM-4 TO 9))`
 
-`  (EXECUTING-(M0VE-FROM-9 TO 8))`
+`  (EXECUTING-(MOVE-FROM-9 TO 8))`
 
-`  (EXECUTING-(M0VE-FROM-8 TO 7))`
+`  (EXECUTING-(MOVE-FROM-8 TO 7))`
 
 `  (EXECUTING-(MOVE-FROM-7 TO 12))`
 
@@ -1668,13 +1668,13 @@ Now, consider the problem of getting the child to school without using any money
 
 `Goal: SON-AT-SCHOOL`
 
-`Consider: TAXI-S0N-T0-SCH00L`
+`Consider: TAXI-SON-TO-SCHOOL`
 
 `  Goal: SON-AT-HOME`
 
 `  Goal: HAVE-MONEY`
 
-`Action: TAXI-S0N-T0-SCH00L`
+`Action: TAXI-SON-TO-SCHOOL`
 
 `Goal: HAVE-MONEY`
 
@@ -1682,7 +1682,7 @@ Now, consider the problem of getting the child to school without using any money
 
 `Goal: SON-AT-SCHOOL`
 
-`Consider: TAXI-S0N-T0-SCH00L`
+`Consider: TAXI-SON-TO-SCHOOL`
 
 `  Goal: SON-AT-HOME`
 

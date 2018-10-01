@@ -1279,7 +1279,7 @@ The result seems to be the best possible path:
 
 `;; Search: ((KANSAS-CITY 94.35 39.06))`
 
-`;; Search: ((INDIANAP0LIS 86.1 39.46))`
+`;; Search: ((INDIANAPOLIS 86.1 39.46))`
 
 `;; Search: ((PITTSBURGH 79.57 40.27))`
 

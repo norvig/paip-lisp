@@ -201,7 +201,7 @@ Here is an example of the use of `new-account` and `send`:
 `> (setf acct (new-account "J.
 Random Customer" 1000.00))`=>
 
-`#<CL0SURE 23652465>`
+`#<CLOSURE 23652465>`
 
 `> (send acct 'withdraw 500.00) => 500.0`
 
@@ -323,7 +323,7 @@ We make `interest-rate` a class variable, one that is shared by all accounts:
 Here we use the generic functions defined by this macro:
 
 `> (setf acct2 (account "A.
-User" 2000.00)) => #<CL0SURE 24003064>`
+User" 2000.00)) => #<CLOSURE 24003064>`
 
 `> (deposit acct2 42.00) => 2042.0`
 
@@ -366,7 +366,7 @@ But for now, this simple approach works:
 
 Now we see how the class `password-account` can be used to provide protection for an existing account:
 
-`(setf acct3 (password-account "secret" acct2)) => #<CL0SURE 33427277>`
+`(setf acct3 (password-account "secret" acct2)) => #<CLOSURE 33427277>`
 
 `> (balance acct3 "secret") => 2164.52`
 
@@ -402,13 +402,13 @@ In the following example, we set up an account with both a password and a limit:
                 `(account "A.
 Thrifty Spender" 500.00))))`=>
 
-`#<CL0SURE 34136775>`
+`#<CLOSURE 34136775>`
 
-`> (withdraw acct4 "pass" 200.00) => 0VER-LIMIT`
+`> (withdraw acct4 "pass" 200.00) => OVER-LIMIT`
 
 `> (withdraw acct4 "pass" 20.00) => 480.0`
 
-`> (withdraw acct4 "guess" 20.00) => WR0NG-PASSWORD`
+`> (withdraw acct4 "guess" 20.00) => WRONG-PASSWORD`
 
 Note that functions like `withdraw` are still simple generic functions that just find the right method and apply it to the arguments.
 The trick is that each class defines a different way to handle the withdraw message.
@@ -563,7 +563,7 @@ Here we see the creation of an object, and the application of the automatically 
 
 `> (setf al (make-instance 'account :balance 5000.00`
 
-                          `:name "Fred")) => #<ACC0UNT 26726272>`
+                          `:name "Fred")) => #<ACCOUNT 26726272>`
 
 `> (name al) => "Fred"`
 
@@ -619,7 +619,7 @@ Thrifty Spender"`
 `> (name a2) => "A.
 Thrifty Spender"`
 
-`> (withdraw a2 200.00) => 0VER-LIMIT`
+`> (withdraw a2 200.00) => OVER-LIMIT`
 
 `> (withdraw a2 20.00) => 480.0`
 

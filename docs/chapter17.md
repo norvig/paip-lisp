@@ -1325,7 +1325,7 @@ Now let's try the arch again:
 
 `Warning: Inconsistent vertex: 4-L`
 
-`>>ERR0R: Inconsistent diagram.
+`>>ERROR: Inconsistent diagram.
 6 total errors.`
 
 The `defdiagram` was transcribed from a hand-labeled diagram, and it appears that the transcription has fallen prey to one of the oldest problems in mathematical notation: confusing a "u" with a "v." The other problem was in seeing the line U-L as a single line, when in fact it is broken up into two segments, U-4 and 4-L.

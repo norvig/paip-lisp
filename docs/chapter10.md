@@ -397,7 +397,7 @@ Unfortunately, keyword arguments don't fare as well:
 | `  25 PUSH` | `LOCAL|2` | `; B` |
 | `  26 PUSH` | `LOCAL|3` | `; C` |
 | `  27 PUSH` | `|4` | |
-| `  28 EQ` | `FEF|3` | `; SYS::KEYW0RD-GARBAGE` |
+| `  28 EQ` | `FEF|3` | `; SYS::KEYWORD-GARBAGE` |
 | `  29 BR-NULL` | `33` | |
 | `  30 PUSH` | `LOCAL|1` | `; A` |
 | `  31 PUSH CALL-1` | `FEF|5` | `; #'SQRT` |

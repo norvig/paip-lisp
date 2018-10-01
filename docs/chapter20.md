@@ -155,7 +155,7 @@ Here are all possible sentences in this trivial grammar:
 
 `?WORDS = (HE SLEEPS);`
 
-`?W0RDS = (THEY SLEEP);`
+`?WORDS = (THEY SLEEP);`
 
 `?WORDS = (THE BOY SLEEPS);`
 
