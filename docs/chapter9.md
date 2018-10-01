@@ -897,7 +897,7 @@ But using `functionp` means that we cannot have a pipe that includes the symbol 
 If we consistently use compiled functions, then we could eliminate the problem by testing with the built-in predicate `compiled-function-p`.
 The following definitions do not make this assumption:
 
-`(defmacro make-pipe (head tai1)`
+`(defmacro make-pipe (head tail)`
 
   `"Create a pipe by evaluating head and delaying tail."`
 
@@ -1910,7 +1910,7 @@ Assumes bindings in *bindings*."`
 
 `                ((atom pattern)`
 
-`                  ;; Match a 1iteral atom`
+`                  ;; Match a literal atom`
 
 `                  '(if (eql ,var '.pattern)`
 
@@ -2728,7 +2728,7 @@ In general, things that you expect to be done multiple times should be moved out
 !!!(p) {:.ftnote1}
 
 [2](#xfn0015) In KCL, the symbol `lambda-closure` is used, and in Allegro, it is `excl:.
-1exical-closure`
+lexical-closure`
 !!!(p) {:.ftnote1}
 
 [3](#xfn0020) The terms *metering* and *monitoring* are sometimes used instead of profiling.

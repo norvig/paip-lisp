@@ -2345,7 +2345,7 @@ After expansion of the quasiquote, the definition of `extrema` will be:
 The problem is that `list` is an argument to the function `extrema`, and the argument shadows the global definition of `list` as a function.
 Thus, the function will fail.
 One way around this dilemma is to have the macro-expansion use the global value of `list` rather than the symbol `list` itself.
-In other words, replace the `'list` in `quasi-q` with (`get-globa1-var 'list`).
+In other words, replace the `'list` in `quasi-q` with (`get-global-var 'list`).
 Then the expansion can be used even in an environment where `list` is locally bound.
 One has to be careful, though: if this tack is taken, then `comp-funcall` should be changed to recognize function constants, and to do the right thing with respect to primitives.
 

@@ -390,7 +390,7 @@ Each of the three examples consists of the prompt, ">", which is printed by the 
 In all three examples the goal is to have the son at school.
 The only operator that has `son-at-school` in its add-list is `drive-son-to-school`, so GPS selects that operator initially.
 Before it can execute the operator, GPS has to solve for the preconditions.
-In the first example, the program ends up working backward through the operators `shop-installs-battery, give-shop-money, tel1-shop-problem`, and `telephone-shop` to `look-up-number`, which has no outstanding preconditions.
+In the first example, the program ends up working backward through the operators `shop-installs-battery, give-shop-money, tell-shop-problem`, and `telephone-shop` to `look-up-number`, which has no outstanding preconditions.
 Thus, the `look-up-number` action can be executed, and the program moves on to the other actions.
 As Aristotle said, "What is the last in the order of analysis seems to be first in the order of becoming."
 

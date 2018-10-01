@@ -1377,7 +1377,7 @@ Since this is a problem in solid geometry, not AI, the code is presented without
 
 `  (let ((d (distance (xyz-coords city1) (xyz-coords city2))))`
 
-`    ;; d is the straight-1ine chord between the two cities,`
+`    ;; d is the straight-line chord between the two cities,`
 
 `    ;; The length of the subtending arc is given by:`
 

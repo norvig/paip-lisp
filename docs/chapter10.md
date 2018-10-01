@@ -258,7 +258,7 @@ The code to add bignums is too complex to put inline, so the compiler will branc
 Many Lisp systems provide separate functions for the list- and array- versions of commonly used sequence functions.
 For example, `(delete  x  (the list 1 ))` compiles into `(sys: delete-list-eql x 1)` on a TI Explorer Lisp Machine.
 Another function, `sys:delete-vector`, is used for arrays, and the generic function `delete` is used only when the compiler can't tell what type the sequence is.
-So if you know that the argument to a generic function is either a `1ist` or an `array`, then declare it as such.
+So if you know that the argument to a generic function is either a `list` or an `array`, then declare it as such.
 
 *   `simple-vector and simple-array`.
 Simple vectors and arrays are those that do not share structure with other arrays, do not have fill pointers, and are not adjustable.
@@ -268,7 +268,7 @@ Declare your arrays to be simple (if they in fact are).
 
 *   `(array *type*)`.
 It is often important to specialize the type of array elements.
-For example, an `(array short-f1oat)` may take only half the storage of a general array, and such a declaration will usually allow computations to be done using the CPU's native floating-point instructions, rather than converting into and out of Common Lisp's representation of floating points.
+For example, an `(array short-float)` may take only half the storage of a general array, and such a declaration will usually allow computations to be done using the CPU's native floating-point instructions, rather than converting into and out of Common Lisp's representation of floating points.
 This is very important because the conversion normally requires allocating storage, but the direct computation does not.
 The specifiers `(simple-array *type*)` and `(vector *type*)` should be used instead of `(array *type*)` when appropriate.
 A very common mistake is to declare `(simple-vector *type*)`.
@@ -553,7 +553,7 @@ Proclaim the interface function inline."`
 
 `                arg-list`
 
-`                1ambda-list-keywords))))`
+`                lambda-list-keywords))))`
 
 `      '(progn`
 
@@ -737,10 +737,10 @@ This is a counter variable, but one that is conceptually stored inside the vecto
 Vectors with fill pointers act like a cross between a vector and a stack.
 You can push new elements onto the stack with the functions `vector - push` or `vector - push - extend`.
 The latter will automatically allocate a larger vector and copy over elements if necessary.
-You can remove elements with `vector - pop`, or you can explicitly look at the fill pointer with `fi1l - pointer`, or change it with a `setf`.
+You can remove elements with `vector - pop`, or you can explicitly look at the fill pointer with `fill - pointer`, or change it with a `setf`.
 Here are some examples (with `*print-array*` set to t so we can see the results):
 
-`> (setf a (make-array 5 :fi11-pointer 0))`=> `#()`
+`> (setf a (make-array 5 :fill-pointer 0))`=> `#()`
 
 `> (vector-push 1 a)`=> `0`
 
@@ -1144,7 +1144,7 @@ We might use the buffer resource as follows:
 
 This expands into the following code:
 
-`(let ((buffer-resource (make-array 100 :fil1-pointer 0)))`
+`(let ((buffer-resource (make-array 100 :fill-pointer 0)))`
 
 `  (defun allocate-buffer ()`
 
@@ -1607,7 +1607,7 @@ Tries work best when neither the indexing key nor the retrieval key contains var
 They work reasonably well when the variables are near the end of the sequence.
 Consider looking up the pattern `"yello?
 "` in the dictionary, where the " ? " character indicates a match of any letter.
-Following the branches for `"yel1o"` leads quickly to the only possible match, `"yel1ow"`.
+Following the branches for `"yello"` leads quickly to the only possible match, `"yellow"`.
 In contrast, fetching with the pattern `"??llow"` is much less efficient.
 The table lookup function would have to search all 26 top-level branches, and for each of those consider all possible second letters, and for each of those consider the path `"llow"`.
 Quite a bit of searching is required before arriving at the complete set of matches: bellow, billow, fallow, fellow, follow, hallow, hollow, mallow, mellow, pillow, sallow, tallow, wallow, willow, and yellow.

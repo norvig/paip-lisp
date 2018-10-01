@@ -1403,9 +1403,9 @@ file name (string)`
 To support this, we need to be able to compare the write dates on files.
 This is not hard to do, since Common Lisp provides the function `file-write-date`.
 
-`(defun newer-file-p (fi 1el file2)`
+`(defun newer-file-p (file1 file2)`
 
-`  "Is fi 1el newer than (written later than) file2?"`
+`  "Is file1 newer than (written later than) file2?"`
 
 `  (>-num (if (probe-file filel) (file-write-date filel))`
 

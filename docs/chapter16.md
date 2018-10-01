@@ -347,7 +347,7 @@ Finally, `help` prints the following summary:
 
               `with different certainty factors.")`
 
-Here is `ask-va1s`.
+Here is `ask-vals`.
 Note that the `why` and `rule` options assume that the current rule has been stored in the data base.
 The functions `print-why`, `parm-type`, and `check-reply` will be defined shortly.
 
@@ -387,7 +387,7 @@ Keep asking until the`
 
                 `(RETURN t)`
 
-                `(format t "~&I1legal reply.
+                `(format t "~&Illegal reply.
 ~`
 
                       `Type ? to see legal ones."))))))))`

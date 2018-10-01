@@ -1043,7 +1043,7 @@ But it will not alter the binding list, so it still returns one value:
 
 `        ((proper-listp arg)`
 
-`          '(1ist .,(mapcar #'(lambda (a) (compile-arg a bindings))`
+`          '(list .,(mapcar #'(lambda (a) (compile-arg a bindings))`
 
 `                    arg)))`
 
@@ -1118,7 +1118,7 @@ This is because the goal, whatever it is, may bind its arguments.
 
 One of the functions that needs to be changed to accept a binding list is the compiler macro for =:
 
-`(def-prolog-compi1er-macro = (goal body cont bindings)`
+`(def-prolog-compiler-macro = (goal body cont bindings)`
 
 `  "Compile a goal which is a call to =."`
 
@@ -1339,7 +1339,7 @@ Finally, the newly compiled top-level query function is called.
 
 `  ;; First compile anything else that needs it`
 
-`  (prolog-compi1e-symbols)`
+`  (prolog-compile-symbols)`
 
 `  ;; Reset the trail and the new variable counter`
 
@@ -2389,7 +2389,7 @@ Implement freeze.
 
 `  '(,(read-time-case`
 
-`    #+TI 'compi1er:compi1er-warnings-context-bind`
+`    #+TI 'compiler:compiler-warnings-context-bind`
 
 `    #+Lucid 'with-deferred-warnings`
 

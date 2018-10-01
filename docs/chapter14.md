@@ -986,7 +986,7 @@ Actually, it is better to use `mapc-retrieve` when possible, since it doesn't co
 The macro `query-bind` is provided as a nice interface to `mapc-retrieve`.
 The macro takes as arguments a list of variables to bind, a query, and one or more forms to apply to each retrieved answer.
 Within this list of forms, the variables will be bound to the values that satisfy the query.
-The syntax was chosen to be the same as `multiple-va1ue-bind`.
+The syntax was chosen to be the same as `multiple-value-bind`.
 Here we see a typical use of `query-bind`, its resuit, and its macro-expansion:
 
 `> (query-bind (?x ?fn) '(p ?x (?fn c))`
@@ -1323,7 +1323,7 @@ Return a list of bindings."`
 
 `    (retrieve query bindings)))`
 
-`(defun retrieve-conjunction (conjuncts bindings-1ists)`
+`(defun retrieve-conjunction (conjuncts bindings-lists)`
 
 `  "Return a list of binding lists satisfying the conjuncts."`
 
@@ -1345,7 +1345,7 @@ Return a list of bindings."`
 
 `            bindings)))))`
 
-`    bindings-1ists))`
+`    bindings-lists))`
 
 Notice that `retrieve` and therefore `mapc-retrieve` now also must accept a binding list.
 The changes to them are shown in the following.

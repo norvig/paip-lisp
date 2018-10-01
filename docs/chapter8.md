@@ -70,7 +70,7 @@ The fourth requires a lexical analyzer to break Lisp symbols into pieces.
 Suppose we only wanted to handle the fully parenthesized case.
 To write `infix->prefix`, one might first look at `prefix->infix` (on [page 228](B9780080571157500078.xhtml#p228)) trying to adapt it to our new purposes.
 In doing so, the careful reader might discover a surprise: `infix->prefix` and `prefix->infix` are in fact the exact same function!
-Both leave atoms unchanged, and both transform three-element lists by swapping the `exp-op` and `exp- 1hs`.
+Both leave atoms unchanged, and both transform three-element lists by swapping the `exp-op` and `exp-lhs`.
 Both apply themselves recursively to the (possibly rearranged) input list.
 Once we discover this fact, it would be tempting to avoid writing `infix->prefix`, and just call `prefix->infix` instead.
 Avoid this temptation at all costs.
@@ -1028,7 +1028,7 @@ If none of them work, we return an expression indicating that the integral is un
 
 `  and elements that don't."`
 
-`  (let ((yes-1ist nil)`
+`  (let ((yes-list nil)`
 
 `    (no-list nil))`
 
