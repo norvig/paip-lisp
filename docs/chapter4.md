@@ -390,7 +390,7 @@ Each of the three examples consists of the prompt, ">", which is printed by the 
 In all three examples the goal is to have the son at school.
 The only operator that has `son-at-school` in its add-list is `drive-son-to-school`, so GPS selects that operator initially.
 Before it can execute the operator, GPS has to solve for the preconditions.
-In the first example, the program ends up working backward through the operators `shop-installs-battery, give-shop-money, tel1-shop-problem`, and `telephone-shop` to `look-up-number`, which has no outstanding preconditions.
+In the first example, the program ends up working backward through the operators `shop-installs-battery, give-shop-money, tell-shop-problem`, and `telephone-shop` to `look-up-number`, which has no outstanding preconditions.
 Thus, the `look-up-number` action can be executed, and the program moves on to the other actions.
 As Aristotle said, "What is the last in the order of analysis seems to be first in the order of becoming."
 
@@ -1128,7 +1128,7 @@ Using these operators, we could pose the problem of becoming not-hungry, given t
 
 `((START)`
 
-`  (EXECUTING PUSH-CHAIR-FROM-D00R-T0-MIDDLE-R00M)`
+`  (EXECUTING PUSH-CHAIR-FROM-DOOR-TO-MIDDLE-ROOM)`
 
 `  (EXECUTING CLIMB-ON-CHAIR)`
 
@@ -1196,17 +1196,17 @@ Note that there is nothing that says the places in the maze are arranged in a fi
 
 `((START)`
 
-`  (EXECUTING-(M0VE-FROM-1 TO 2))`
+`  (EXECUTING-(MOVE-FROM-1 TO 2))`
 
-`  (EXECUTING-(M0VE-FROM-2 TO 3))`
+`  (EXECUTING-(MOVE-FROM-2 TO 3))`
 
-`  (EXECUTING-(M0VE-FROM-3 TO 4))`
+`  (EXECUTING-(MOVE-FROM-3 TO 4))`
 
-`  (EXECUTING-(M0VE-FROM-4 TO 9))`
+`  (EXECUTING-(MOVE-FROM-4 TO 9))`
 
-`  (EXECUTING-(M0VE-FROM-9 TO 8))`
+`  (EXECUTING-(MOVE-FROM-9 TO 8))`
 
-`  (EXECUTING-(M0VE-FROM-8 TO 7))`
+`  (EXECUTING-(MOVE-FROM-8 TO 7))`
 
 `  (EXECUTING-(MOVE-FROM-7 TO 12))`
 
@@ -1668,13 +1668,13 @@ Now, consider the problem of getting the child to school without using any money
 
 `Goal: SON-AT-SCHOOL`
 
-`Consider: TAXI-S0N-T0-SCH00L`
+`Consider: TAXI-SON-TO-SCHOOL`
 
 `  Goal: SON-AT-HOME`
 
 `  Goal: HAVE-MONEY`
 
-`Action: TAXI-S0N-T0-SCH00L`
+`Action: TAXI-SON-TO-SCHOOL`
 
 `Goal: HAVE-MONEY`
 
@@ -1682,7 +1682,7 @@ Now, consider the problem of getting the child to school without using any money
 
 `Goal: SON-AT-SCHOOL`
 
-`Consider: TAXI-S0N-T0-SCH00L`
+`Consider: TAXI-SON-TO-SCHOOL`
 
 `  Goal: SON-AT-HOME`
 
@@ -1692,8 +1692,8 @@ Now, consider the problem of getting the child to school without using any money
 
 `NIL`
 
-The first five lines of output succesfully solve the `son-at-school` goal with the `TAXI-SON-TO-SCHOOL` action.
-The next line shows an unsuccesful attempt to solve the `have-money` goal.
+The first five lines of output successfully solve the `son-at-school` goal with the `TAXI-SON-TO-SCHOOL` action.
+The next line shows an unsuccessful attempt to solve the `have-money` goal.
 The next step is to try the other ordering.
 This time, the `have-money` goal is tried first, and succeeds.
 Then, the `son-at-school` goal is achieved again by the `TAXI-SON-TO-SCHOOL` action.
@@ -1803,7 +1803,7 @@ Many problems are NP-hard when we insist on the optimal solution but are much ea
 
 The input to GPS is essentially a program, and the execution of GPS is the execution of that program.
 If GPS's input language is general enough to express any program, then there will be problems that can't be solved, either because they take too long to execute or because they have no solution.
-Modem problem-solving programs recognize this fundamental limitation, and either limit the class of problems they try to solve or consider ways of finding approximate or partial solutions.
+Modern problem-solving programs recognize this fundamental limitation, and either limit the class of problems they try to solve or consider ways of finding approximate or partial solutions.
 Some problem solvers also monitor their own execution time and know enough to give up when a problem is too hard.
 
 The following quote from Drew McDermott's article "Artificial Intelligence Meets Natural Stupidity" sums up the current feeling about GPS.

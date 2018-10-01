@@ -1726,7 +1726,7 @@ The assertion tests that the temperature of the bear's porridge is neither too h
 ```
 
 In the interaction below, the assertion failed, and the programmer's error message was printed, along with two possibilities for continuing.
-The user selected one, typed in a call to `make-porridge` for the new value, and the function succesfully continued.
+The user selected one, typed in a call to `make-porridge` for the new value, and the function successfully continued.
 
 ```lisp
 > (eat-porridge momma-bear)

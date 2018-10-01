@@ -36,7 +36,7 @@ This chapter covers the object-oriented approach.
 {:#s0010}
 {:.h1hd}
 
-Object-oriented programming turns the world of Computing on its side: instead of viewing a program primarily as a set of actions which manipulate objects, it is viewed as a set of objects that are manipulated by actions.
+Object-oriented programming turns the world of computing on its side: instead of viewing a program primarily as a set of actions which manipulate objects, it is viewed as a set of objects that are manipulated by actions.
 The state of each object and the actions that manipulate that state are defined once and for all when the object is created.
 This can lead to modular, robust systems that are easy to use and extend.
 It also can make systems correspond more closely to the "real world," which we humans perceive more easily as being made up of objects rather than actions.
@@ -180,7 +180,7 @@ We have a guarantee that no other code can manipulate the information in the acc
 
 The function `get-method` finds the method that implements a message for a given object.
 The function send gets the method and applies it to a list of arguments.
-The name send cornes from the Flavors object-oriented system, which is discussed in the history section ([page 456](#p456)).
+The name send comes from the Flavors object-oriented system, which is discussed in the history section ([page 456](#p456)).
 
 `(defun get-method (object message)`
 
@@ -201,7 +201,7 @@ Here is an example of the use of `new-account` and `send`:
 `> (setf acct (new-account "J.
 Random Customer" 1000.00))`=>
 
-`#<CL0SURE 23652465>`
+`#<CLOSURE 23652465>`
 
 `> (send acct 'withdraw 500.00) => 500.0`
 
@@ -217,7 +217,7 @@ Random Customer"`
 {:.h1hd}
 
 The send syntax is awkward, as it is different from the normal Lisp function-calling syntax, and it doesn't fit in with the other Lisp tools.
-For example, we might like to say (`mapcar 'ba1ance accounts`), but with messages we would have to write that as:
+For example, we might like to say (`mapcar 'balance accounts`), but with messages we would have to write that as:
 
 `(mapcar #'(lambda (acct) (send acct 'balance)) accounts)`
 
@@ -323,7 +323,7 @@ We make `interest-rate` a class variable, one that is shared by all accounts:
 Here we use the generic functions defined by this macro:
 
 `> (setf acct2 (account "A.
-User" 2000.00)) => #<CL0SURE 24003064>`
+User" 2000.00)) => #<CLOSURE 24003064>`
 
 `> (deposit acct2 42.00) => 2042.0`
 
@@ -366,7 +366,7 @@ But for now, this simple approach works:
 
 Now we see how the class `password-account` can be used to provide protection for an existing account:
 
-`(setf acct3 (password-account "secret" acct2)) => #<CL0SURE 33427277>`
+`(setf acct3 (password-account "secret" acct2)) => #<CLOSURE 33427277>`
 
 `> (balance acct3 "secret") => 2164.52`
 
@@ -402,13 +402,13 @@ In the following example, we set up an account with both a password and a limit:
                 `(account "A.
 Thrifty Spender" 500.00))))`=>
 
-`#<CL0SURE 34136775>`
+`#<CLOSURE 34136775>`
 
-`> (withdraw acct4 "pass" 200.00) => 0VER-LIMIT`
+`> (withdraw acct4 "pass" 200.00) => OVER-LIMIT`
 
 `> (withdraw acct4 "pass" 20.00) => 480.0`
 
-`> (withdraw acct4 "guess" 20.00) => WR0NG-PASSWORD`
+`> (withdraw acct4 "guess" 20.00) => WRONG-PASSWORD`
 
 Note that functions like `withdraw` are still simple generic functions that just find the right method and apply it to the arguments.
 The trick is that each class defines a different way to handle the withdraw message.
@@ -483,8 +483,8 @@ Two things are needed to provide an inheritance facility for classes.
 First, we should modify `define-class` so that it takes the name of the class to inherit from as the second argument.
 This will signal that the new class will inherit all the instance variables, class variables, and methods from the parent class.
 The new class can, of course, define new variables and methods, or it can shadow the parent's variables and methods.
-In the form below, we define `limited-account` to be a subclass of `account` that adds a new instance variable, `1imit`, and redefines the `withdraw` method so that it checks for amounts that are over the limit.
-If the amount is acceptable, then it uses the function `cal1-next-method` (not yet defined) to get at the `withdraw` method for the parent class, `account`.
+In the form below, we define `limited-account` to be a subclass of `account` that adds a new instance variable, `limit`, and redefines the `withdraw` method so that it checks for amounts that are over the limit.
+If the amount is acceptable, then it uses the function `call-next-method` (not yet defined) to get at the `withdraw` method for the parent class, `account`.
 
 `(define-class limited-account account (limit) ()`
 
@@ -563,7 +563,7 @@ Here we see the creation of an object, and the application of the automatically 
 
 `> (setf al (make-instance 'account :balance 5000.00`
 
-                          `:name "Fred")) => #<ACC0UNT 26726272>`
+                          `:name "Fred")) => #<ACCOUNT 26726272>`
 
 `> (name al) => "Fred"`
 
@@ -600,11 +600,11 @@ With CLOS it is easy to define a `limited-account` as a subclass of `account`, a
 
   `(if (> amt (limit acct))`
 
-          `'over-1imit`
+          `'over-limit`
 
           `(call-next-method)))`
 
-Note the use of `cal1-next-method` to invoke the `withdraw` method for the `account` class.
+Note the use of `call-next-method` to invoke the `withdraw` method for the `account` class.
 Also note that all the other methods for accounts automatically work on instances of the class limited-account, because it is defined to inherit from `account.` In the following example, we show that the `name` method is inherited, that the `withdraw` method for `limited-account` is invoked first, and that the `withdraw` method for `account` is invoked by the `call-next-method` function:
 
 `> (setf a2 (make-instance 'limited-account`
@@ -612,21 +612,21 @@ Also note that all the other methods for accounts automatically work on instance
                         `:name "A.
 Thrifty Spender"`
 
-                        `:balance 500.00 :1imit 100.00))`=>
+                        `:balance 500.00 :limit 100.00))`=>
 
 `#<LIMITED-ACCOUNT 24155343>`
 
 `> (name a2) => "A.
 Thrifty Spender"`
 
-`> (withdraw a2 200.00) => 0VER-LIMIT`
+`> (withdraw a2 200.00) => OVER-LIMIT`
 
 `> (withdraw a2 20.00) => 480.0`
 
 In general, there may be several methods appropriate to a given message.
 In that case, all the appropriate methods are gathered together and sorted, most specific first.
 The most specific method is then called.
-That is why the method for `limited-account` is called first rather than the method for `account.` The function `cal1-next-method` can be used within the body of a method to call the next most specific method.
+That is why the method for `limited-account` is called first rather than the method for `account.` The function `call-next-method` can be used within the body of a method to call the next most specific method.
 
 The complete story is actually even more complicated than this.
 As one example of the complication, consider the class `audited-account`, which prints and keeps a trail of all deposits and withdrawals.
@@ -653,7 +653,7 @@ In general, there might be several of each kind of method.
 In that case, all the :`before` methods are called in order, most specific first.
 Then the most specific primary method is called.
 It may choose to invoke `cal1-next-method` to get at the other methods.
-(It is an error for a :`before` or :`after` method to use `cal1-next-method.)` Finally, all the :`after` methods are called, least specific first.
+(It is an error for a :`before` or :`after` method to use `call-next-method.)` Finally, all the :`after` methods are called, least specific first.
 
 The values from the `:before` and `:after` methods are ignored, and the value from the primary method is returned.
 Here is an example:
@@ -1142,7 +1142,7 @@ For example, Steve's did not have chocolate-chip ice cream on the menu, but you 
 
 This kind of "flavor hacking" appealed to the MIT Lisp Machine group, who adopted the metaphor for their object-oriented programming system.
 All flavors inherited from the top-mostflavor in the hierarchy: vanilla.
-In the window system, for example, the flavor `basic-window` was defined to support the minimal functionality of all windows, and then new flavors of window were defined by combining mix-in flavors such as `scrol1-bar-mixin`, `label-mixin`, and `border-mixin`.
+In the window system, for example, the flavor `basic-window` was defined to support the minimal functionality of all windows, and then new flavors of window were defined by combining mix-in flavors such as `scroll-bar-mixin`, `label-mixin`, and `border-mixin`.
 These mix-in flavors were used only to define other flavors.
 Just as you couldn't go into Steve's and order "crushed Heath bars, hold the ice cream," there was a mechanism to prohibit instantiation of mix-ins.
 
@@ -1178,7 +1178,7 @@ Instead of defining methods using `lambda` as the primitive, Oaklisp has `add-me
 Of course, object-oriented systems are thriving outside the Lisp world.
 With the success of UNIX-based workstations, C has become one of the most widely available programming languages.
 C is a fairly low-level language, so there have been several attempts to use it as a kind of portable assembly language.
-The most succesful of these attempts is C++, a language developed by Bjarne Stroustrup of AT&T Bell Labs ([Stroustrup 1986](B9780080571157500285.xhtml#bb1210)).
+The most successful of these attempts is C++, a language developed by Bjarne Stroustrup of AT&T Bell Labs ([Stroustrup 1986](B9780080571157500285.xhtml#bb1210)).
 C++ provides a number of extensions, including the ability to define classes.
 However, as an add-on to an existing language, it does not provide as many features as the other languages discussed here.
 Crucially, it does not provide garbage collection, nor does it support fully generic functions.
@@ -1186,7 +1186,7 @@ Crucially, it does not provide garbage collection, nor does it support fully gen
 Eiffel ([Meyer 1988](B9780080571157500285.xhtml#bb0830)) is an attempt to define an object-oriented system from the ground up rather than tacking it on to an existing language.
 Eiffel supports multiple inheritance and garbage collection and a limited amount of dynamic dispatching.
 
-So-called modem languages like Ada and Modula support information-hiding through generic functions and classes, but they do not provide inheritance, and thus can not be classified as true object-oriented languages.
+So-called modern languages like Ada and Modula support information-hiding through generic functions and classes, but they do not provide inheritance, and thus can not be classified as true object-oriented languages.
 
 Despite these other languages, the Lisp-based object-oriented systems are the only ones since Smalltalk to introduce important new concepts: multiple inheritance and method combination from Flavors, and multimethods from CommonLoops.
 

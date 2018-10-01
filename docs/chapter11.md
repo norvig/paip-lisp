@@ -1205,11 +1205,11 @@ This means that the calling function(s) must be changed to expect a list of repl
 Again, the calling function(s) must be changed to expect a pipe.
 
 *   Guess and save.
-Choose one possibility and return it, but record enough information to allow Computing the other possibilities later.
+Choose one possibility and return it, but record enough information to allow computing the other possibilities later.
 This requires saving the current state of the computation as well as some information on the remaining possibilities.
 
 The last alternative is the most desirable.
-It is efficient, because it doesn't require Computing answers that are never used.
+It is efficient, because it doesn't require computing answers that are never used.
 It is unobtrusive, because it doesn't require changing the calling function (and the calling function's calling function) to expect a list or pipe of answers.
 Unfortunately, it does have one major difficulty: there has to be a way of packaging up the current state of the computation and saving it away so that it can be returned to when the first choice does not work.
 For our Prolog interpreter, the current state is succinctly represented as a list of goals.
@@ -1667,7 +1667,7 @@ Finally, we can prove a goal using our interpreter:
 {:#s0060}
 {:.h1hd}
 
-Many of the features that make Prolog a succesful language for AI (and for program development in general) are the same as Lisp's features.
+Many of the features that make Prolog a successful language for AI (and for program development in general) are the same as Lisp's features.
 Let's reconsider the list of features that make Lisp different from conventional languages (see page 25) and see what Prolog has to offer:
 
 *   *Built-in Support for Lists (and other data types).* New data types can be created easily using lists or structures (structures are preferred).
@@ -1700,7 +1700,7 @@ The details of Prolog compilation are implementation-dependent.
 
 To put things in perspective, consider that Lisp is at once one of the highest-level languages available and a universal assembly language.
 It is a high-level language because it can easily capture data, functional, and control abstractions.
-It is a good assembly language because it is possible to write Lisp in a style that directly reflects the operations available on modem computers.
+It is a good assembly language because it is possible to write Lisp in a style that directly reflects the operations available on modern computers.
 
 Prolog is generally not as efficient as an assembly language, but it can be more concise as a specification language, at least for some problems.
 The user writes specifications: lists of axioms that describe the relationships that can hold in the problem domain.
@@ -1723,7 +1723,7 @@ This objection is countered by Prolog programmers who use the facilities provide
 
 Cordell [Green (1968)](B9780080571157500285.xhtml#bb0490) was the first to articulate the view that mathematical results on theorem proving could be used to make deductions and thereby answer queries.
 However, the major technique in use at the time, resolution theorem proving (see [Robinson 1965](B9780080571157500285.xhtml#bb0995)), did not adequately constrain search, and thus was not practical.
-The idea of goal-directed Computing was developed in Carl Hewitt's work (1971) on the planner !!!(span) {:.smallcaps} language for robot problem solving.
+The idea of goal-directed computing was developed in Carl Hewitt's work (1971) on the planner !!!(span) {:.smallcaps} language for robot problem solving.
 He suggested that the user provide explicit hints on how to control deduction.
 
 At about the same time and independently, Alain Colmerauer was developing a system to perform natural language analysis.

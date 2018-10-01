@@ -732,7 +732,7 @@ Alternately, we can take the expression computed by `(poly^n r 15)`, convert it 
 simplify` takes 27.8 seconds on this, so the rule-based version is much slower.
 [Section 9.6](B9780080571157500091.xhtml#s0035) describes ways to speed up the rule-based program, and a comparison of timing data appears on [page 525](#p525).
 
-There are always surprises when it cornes down to measuring timing data.
+There are always surprises when it comes down to measuring timing data.
 For example, the alert reader may have noticed that the version of `poly^n` defined above requires *n* multiplications.
 Usually, exponentiation is done by squaring a value when the exponent is even.
 Such an algorithm takes only log *n* multiplications instead of *n.* We can add a line to the definition of `poly^n` to get an *O*(log *n*) algorithm:

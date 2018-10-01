@@ -73,7 +73,7 @@ Most Lisp implementations optimize access to lists and fixnums but pay the price
 
 *   Lisp automatically manages storage, and so it must periodically stop and collect the unused storage, or *garbage*.
 In early systems, this was done by periodically sweeping through all of memory, resulting in an appreciable pause.
-Modem systems tend to use incremental garbage-collection techniques, so pauses are shorter and usually unnoticed by the user (although the pauses may still be too long for real-time applications such as controlling a laboratory instrument).
+Modern systems tend to use incremental garbage-collection techniques, so pauses are shorter and usually unnoticed by the user (although the pauses may still be too long for real-time applications such as controlling a laboratory instrument).
 The problem with automatic garbage collection these days is not that it is slow-in fact, the automatic systems do about as well as handcrafted storage allocation.
 The problem is that they make it convenient for the programmer to generate a lot of garbage in the first place.
 Programmers in conventional languages, who have to clean up their own garbage, tend to be more careful and use static rather than dynamic storage more often.
@@ -82,7 +82,7 @@ If garbage becomes a problem, the Lisp programmer can just adopt these static te
 *   Lisp systems are big and leave little room for other programs.
 Most Lisp systems are designed to be complete environments, within which the programmer does all program development and execution.
 For this kind of operation, it makes sense to have a large language like Common Lisp with a huge set of tools.
-However, it is becoming more common to use Lisp as just one component in a Computing environment that may include UNIX, X Windows, emacs, and other interacting programs.
+However, it is becoming more common to use Lisp as just one component in a computing environment that may include UNIX, X Windows, emacs, and other interacting programs.
 In this kind of heterogeneous environment, it would be useful to be able to define and run small Lisp processes that do not include megabytes of unused tools.
 Some recent compilers support this option, but it is not widely available yet.
 
@@ -143,7 +143,7 @@ The most straightforward function to compute the nth number in this sequence is 
       `(+ (fib (- n 1)) (fib (- n 2)))))`
 
 The problem with this function is that it computes the same thing over and over again.
-To compute (`fib 5`) means Computing (`fib 4`) and (`fib 3`), but (`fib 4`) also requires (`fib 3`), they both require (`fib 2`), and so on.
+To compute (`fib 5`) means computing (`fib 4`) and (`fib 3`), but (`fib 4`) also requires (`fib 3`), they both require (`fib 2`), and so on.
 There are ways to rewrite the function to do less computation, but wouldn't it be nice to write the function as is, and have it automatically avoid redundant computation?
 Amazingly, there is a way to do just that.
 The idea is to use the function `fib` to build a new function that remembers previously computed results and uses them, rather than recompute them.
@@ -171,7 +171,7 @@ The function `memo` below is a higher-order function that takes a function as in
 The expression (`memo #'fib`) will produce a function that remembers its results between calls, so that, for example, if we apply it to 3 twice, the first call will do the computation of (`fib 3`), but the second will just look up the result in a hash table.
 With `fib` traced, it would look like this:
 
-`> (setf memo-fib (memo #'fib)) => #  <  CL0SURE -  67300731  >`
+`> (setf memo-fib (memo #'fib)) => #  <  CLOSURE -  67300731  >`
 
 `> (funcall memo-fib 3) =>`
 
@@ -285,7 +285,7 @@ Below we call (`memoize 'fib`) and repeat the calculation.
 This time, each computation is done only once.
 Furthermore, when the computation of (`fib 5`) is repeated, the answer is returned immediately with no intermediate computation, and a further call to (`fib 6`) can make use of the value of (`fib 5`).
 
-`> (memoize 'fib) => #  <  CL0SURE 76626607  >`
+`> (memoize 'fib) => #  <  CLOSURE 76626607  >`
 
 `> (fib 5) =>`
 
@@ -372,10 +372,10 @@ Both of these approaches rely on the fact that `defun` returns the name of the f
 | 32 | 3524578 | 32.4 | .001 | 31 |
 | 33 | 5702887 | 52.5 | .001 | 32 |
 | 34 | 9227465 | 81.5 | .001 | 33 |
-| 50 | 2.0el0 | - | .014 | 34 |
+| 50 | 2.0e10 | - | .014 | 34 |
 | 100 | 5.7e20 | - | .031 | 50 |
 | 200 | 4.5e41 | - | .096 | 100 |
-| 500 | 2.2el04 | - | .270 | 200 |
+| 500 | 2.2e104 | - | .270 | 200 |
 | 1000 | 7.0e208 | - | .596 | 500 |
 | 1000 | 7.0e208 | - | .001 | 1000 |
 | 1000 | 7.0e208 | - | .876 | 0 |
@@ -397,7 +397,7 @@ For the `fib` problem, an asymptotic analysis considers how long it takes to com
 The notation *O*(*f*(*n*)) is used to describe the complexity.
 For example, the memoized version `fib` is an *O*(*n*) algorithm because the computation time is bounded by some constant times *n*, for any value of *n*.
 The unmemoized version, it turns out, is *O*(1.
-7*n*), meaning Computing `fib` of n  +  1 can take up to 1.7 times as long as `fib` of *n*.
+7*n*), meaning computing `fib` of n  +  1 can take up to 1.7 times as long as `fib` of *n*.
 In simpler terms, the memoized version has *linear* complexity, while the unmemoized version has *exponential* complexity.
 [Exercise 9.4](B9780080571157500091.xhtml#p4655) ([Page 308](B9780080571157500091.xhtml#p308)) describes where the 1.7 comes from, and gives a tighter bound on the complexity.
 
@@ -756,7 +756,7 @@ If `force` is passed an argument that is not a delay, it just returns the argume
 
 `(defun force (x)`
 
-  `"Find the value of x, by Computing if it is a delay."`
+  `"Find the value of x, by computing if it is a delay."`
 
   `(if (not (delay-p x))`
 
@@ -849,7 +849,7 @@ The pipe `c` represents the numbers from 0 to infinity.
 When it is created, only the zeroth element, 0, is evaluated.
 The computation of the other elements is delayed.
 
-`> (setf c (integers 0)) => (0 . #S(DELAY :FUNCTI0N #  <  CL0SURE -  77435477  >))`
+`> (setf c (integers 0)) => (0 . #S(DELAY :FUNCTION #  <  CLOSURE -  77435477  >))`
 
 `>  (pipe-elt c 0) =>    0`
 
@@ -897,7 +897,7 @@ But using `functionp` means that we cannot have a pipe that includes the symbol 
 If we consistently use compiled functions, then we could eliminate the problem by testing with the built-in predicate `compiled-function-p`.
 The following definitions do not make this assumption:
 
-`(defmacro make-pipe (head tai1)`
+`(defmacro make-pipe (head tail)`
 
   `"Create a pipe by evaluating head and delaying tail."`
 
@@ -919,7 +919,7 @@ Everything else remains the same.
 If we recompile `integers` (because it uses the `macro make-pipe`), we see the following behavior.
 First, creation of the infinite pipe `c` is similar:
 
-`> (setf c (integers 0)) => (0 . #  <  CL0SURE 77350123  >)`
+`> (setf c (integers 0)) => (0 . #  <  CLOSURE 77350123  >)`
 
 `> (pipe-elt c 0) => 0`
 
@@ -927,12 +927,12 @@ Accessing an element of the pipe forces evaluation of all the intervening elemen
 
 `> (pipe-elt c 5) => 5`
 
-`> c => (0 1 2 3 4 5 . #  <  CL0SURE 77351636  >)`
+`> c => (0 1 2 3 4 5 . #  <  CLOSURE 77351636  >)`
 
 Pipes can also be used for finite lists.
 Here we see a pipe of length 11:
 
-`> (setf i (integers 0 10)) => (0 . #  <  CL0SURE 77375357  >)`
+`> (setf i (integers 0 10)) => (0 . #  <  CLOSURE 77375357  >)`
 
 `> (pipe-elt i 10) => 10`
 
@@ -993,11 +993,11 @@ And here's an application of pipes: generating prime numbers using the sieve of 
 
 `(defvar *primes* (sieve (integers 2)))`
 
-`> *primes* => (2 . #  <  CL0SURE 3075345  >)`
+`> *primes* => (2 . #  <  CLOSURE 3075345  >)`
 
 `> (enumerate *primes* :count 10) =>`
 
-`(2 3 5 7 11 13 17 19 23 29 31 . #  <  CL0SURE 5224472  >)`
+`(2 3 5 7 11 13 17 19 23 29 31 . #  <  CLOSURE 5224472  >)`
 
 Finally, let's return to the problem of generating all strings in a grammar.
 First we're going to need some more utility functions:
@@ -1092,7 +1092,7 @@ With these definitions, here's the pipe of all sentences from `*grammar2*` (from
 
 `> (setf ss (generate-all 'sentence)) =>`
 
-`((THE . #  <  CL0SURE 27265720  >) . #  <  CL0SURE 27266035>)`
+`((THE . #  <  CLOSURE 27265720  >) . #  <  CLOSURE 27266035>)`
 
 `> (enumerate ss :count 5) =>`
 
@@ -1853,7 +1853,7 @@ Organizing the compiler is a little tricky, because we have to do three things a
 This code needs to know about the bindings, so it can't be done *before* the first part of the test, but it also needs to know where it should be placed in the overall code, so it would be messy to do it *after* the first part of the test.
 The answer is to pass in a function that will tell us what code to generate later.
 This way, it gets done at the right time, and ends up in the right place as well.
-Such a function is often called a *continuation*, because it tells us where to continue Computing.
+Such a function is often called a *continuation*, because it tells us where to continue computing.
 In our compiler, the variable `consequent` is a continuation function.
 
 The compiler is called `compile-rule`.
@@ -1910,7 +1910,7 @@ Assumes bindings in *bindings*."`
 
 `                ((atom pattern)`
 
-`                  ;; Match a 1iteral atom`
+`                  ;; Match a literal atom`
 
 `                  '(if (eql ,var '.pattern)`
 
@@ -2728,7 +2728,7 @@ In general, things that you expect to be done multiple times should be moved out
 !!!(p) {:.ftnote1}
 
 [2](#xfn0015) In KCL, the symbol `lambda-closure` is used, and in Allegro, it is `excl:.
-1exical-closure`
+lexical-closure`
 !!!(p) {:.ftnote1}
 
 [3](#xfn0020) The terms *metering* and *monitoring* are sometimes used instead of profiling.

@@ -155,7 +155,7 @@ Here are all possible sentences in this trivial grammar:
 
 `?WORDS = (HE SLEEPS);`
 
-`?W0RDS = (THEY SLEEP);`
+`?WORDS = (THEY SLEEP);`
 
 `?WORDS = (THE BOY SLEEPS);`
 
@@ -1283,7 +1283,7 @@ The auxiliary functions `get-examples` and `clear-exampl` es are provided to man
 
       `"Add these example strings to this category,`
 
-      `and when it cornes time to run them, use the args."`
+      `and when it comes time to run them, use the args."`
 
       `(dolist (example examples)`
 
@@ -1303,7 +1303,7 @@ The auxiliary functions `get-examples` and `clear-exampl` es are provided to man
 
               `(setf (gethash category *examples*)`
 
-                        `(nconc (get-examples category) (1ist ex))))))))`
+                        `(nconc (get-examples category) (list ex))))))))`
 
 `(defun run-examples (&optional category)`
 
@@ -1311,7 +1311,7 @@ The auxiliary functions `get-examples` and `clear-exampl` es are provided to man
 
       `With no category, run ALL the examples."`
 
-      `(prolog-compi1e-symbols)`
+      `(prolog-compile-symbols)`
 
       `(if (null category)`
 
@@ -1570,7 +1570,7 @@ is true; otherwise revert {[]} to normal."`
 
           `#\[ #'(lambda (s ignore)`
 
-                  `(cons :word (read-delimited-1ist #\] s t)))`
+                  `(cons :word (read-delimited-list #\] s t)))`
 
           `nil readtable)`
 
@@ -1578,7 +1578,7 @@ is true; otherwise revert {[]} to normal."`
 
           `#\{ #'(lambda (s ignore)`
 
-                  `(cons :test (read-delimited-1ist #\} s t)))`
+                  `(cons :test (read-delimited-list #\} s t)))`
 
           `nil readtable))))`
 

@@ -534,7 +534,7 @@ After a few such successful interactions, you might say that the machine "unders
 The important point is that the utility of this machine would not be enhanced much if it happened to display a parse tree of the input.
 On the other hand, you would be justifiably annoyed if it responded to "play 1 to 5 without 3" by playing 3 or skipping 4.
 
-Now let's stretch the imagination one more time by assuming that this CD player cornes equipped with a full Common Lisp compiler, and that we are now in charge of writing the parser for its input language.
+Now let's stretch the imagination one more time by assuming that this CD player comes equipped with a full Common Lisp compiler, and that we are now in charge of writing the parser for its input language.
 Let's first consider the relevant data structures.
 We need to add a component for the semantics to both the rule and tree structures.
 Once we've done that, it is clear that trees are nothing more than instances of rules, so their definitions should reflect that.

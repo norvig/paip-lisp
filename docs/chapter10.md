@@ -242,7 +242,7 @@ On a Lisp Machine, both `f` and `g` compile into the same code:
 The Lisp Machine has a microcoded  +  instruction that simultaneously does a fixnum add and checks for non-fixnum arguments, branching to a subroutine if either argument is not a fixnum.
 The hardware does the work that the compiler has to do on a conventional processor.
 This makes the Lisp Machine compiler simpler, so compiling a function is faster.
-However, on modem pipelined computers with instruction caches, there is little or no advantage to microcoding.
+However, on modern pipelined computers with instruction caches, there is little or no advantage to microcoding.
 The current trend is away from microcode toward reduced instruction set computers (RISC).
 
 On most computers, the following declarations are most likely to be helpful:
@@ -258,7 +258,7 @@ The code to add bignums is too complex to put inline, so the compiler will branc
 Many Lisp systems provide separate functions for the list- and array- versions of commonly used sequence functions.
 For example, `(delete  x  (the list 1 ))` compiles into `(sys: delete-list-eql x 1)` on a TI Explorer Lisp Machine.
 Another function, `sys:delete-vector`, is used for arrays, and the generic function `delete` is used only when the compiler can't tell what type the sequence is.
-So if you know that the argument to a generic function is either a `1ist` or an `array`, then declare it as such.
+So if you know that the argument to a generic function is either a `list` or an `array`, then declare it as such.
 
 *   `simple-vector and simple-array`.
 Simple vectors and arrays are those that do not share structure with other arrays, do not have fill pointers, and are not adjustable.
@@ -268,7 +268,7 @@ Declare your arrays to be simple (if they in fact are).
 
 *   `(array *type*)`.
 It is often important to specialize the type of array elements.
-For example, an `(array short-f1oat)` may take only half the storage of a general array, and such a declaration will usually allow computations to be done using the CPU's native floating-point instructions, rather than converting into and out of Common Lisp's representation of floating points.
+For example, an `(array short-float)` may take only half the storage of a general array, and such a declaration will usually allow computations to be done using the CPU's native floating-point instructions, rather than converting into and out of Common Lisp's representation of floating points.
 This is very important because the conversion normally requires allocating storage, but the direct computation does not.
 The specifiers `(simple-array *type*)` and `(vector *type*)` should be used instead of `(array *type*)` when appropriate.
 A very common mistake is to declare `(simple-vector *type*)`.
@@ -397,7 +397,7 @@ Unfortunately, keyword arguments don't fare as well:
 | `  25 PUSH` | `LOCAL|2` | `; B` |
 | `  26 PUSH` | `LOCAL|3` | `; C` |
 | `  27 PUSH` | `|4` | |
-| `  28 EQ` | `FEF|3` | `; SYS::KEYW0RD-GARBAGE` |
+| `  28 EQ` | `FEF|3` | `; SYS::KEYWORD-GARBAGE` |
 | `  29 BR-NULL` | `33` | |
 | `  30 PUSH` | `LOCAL|1` | `; A` |
 | `  31 PUSH CALL-1` | `FEF|5` | `; #'SQRT` |
@@ -553,7 +553,7 @@ Proclaim the interface function inline."`
 
 `                arg-list`
 
-`                1ambda-list-keywords))))`
+`                lambda-list-keywords))))`
 
 `      '(progn`
 
@@ -737,10 +737,10 @@ This is a counter variable, but one that is conceptually stored inside the vecto
 Vectors with fill pointers act like a cross between a vector and a stack.
 You can push new elements onto the stack with the functions `vector - push` or `vector - push - extend`.
 The latter will automatically allocate a larger vector and copy over elements if necessary.
-You can remove elements with `vector - pop`, or you can explicitly look at the fill pointer with `fi1l - pointer`, or change it with a `setf`.
+You can remove elements with `vector - pop`, or you can explicitly look at the fill pointer with `fill - pointer`, or change it with a `setf`.
 Here are some examples (with `*print-array*` set to t so we can see the results):
 
-`> (setf a (make-array 5 :fi11-pointer 0))`=> `#()`
+`> (setf a (make-array 5 :fill-pointer 0))`=> `#()`
 
 `> (vector-push 1 a)`=> `0`
 
@@ -1092,7 +1092,7 @@ Conversely, if you fail to deallocate unneeded instances, then you are wasting v
 The beauty of using Lisp's built-in memory management is that it is guaranteed never to leak and never to deallocate structures that are in use.
 This eliminates two potential bug sources.
 The penalty you pay for this guarantee is some inefficiency of the general-purpose memory management as compared to a custom user-supplied management scheme.
-But beware: modem garbage-collection techniques are highly optimized.
+But beware: modern garbage-collection techniques are highly optimized.
 In particular, the so-called *generation scavenging* or *ephemeral* garbage collectors look more often at recently allocated storage, on the grounds that recently made objects are more likely to become garbage.
 If you hold on to garbage in your own data structures, you may end up with worse performance.
 
@@ -1144,7 +1144,7 @@ We might use the buffer resource as follows:
 
 This expands into the following code:
 
-`(let ((buffer-resource (make-array 100 :fil1-pointer 0)))`
+`(let ((buffer-resource (make-array 100 :fill-pointer 0)))`
 
 `  (defun allocate-buffer ()`
 
@@ -1607,7 +1607,7 @@ Tries work best when neither the indexing key nor the retrieval key contains var
 They work reasonably well when the variables are near the end of the sequence.
 Consider looking up the pattern `"yello?
 "` in the dictionary, where the " ? " character indicates a match of any letter.
-Following the branches for `"yel1o"` leads quickly to the only possible match, `"yel1ow"`.
+Following the branches for `"yello"` leads quickly to the only possible match, `"yellow"`.
 In contrast, fetching with the pattern `"??llow"` is much less efficient.
 The table lookup function would have to search all 26 top-level branches, and for each of those consider all possible second letters, and for each of those consider the path `"llow"`.
 Quite a bit of searching is required before arriving at the complete set of matches: bellow, billow, fallow, fellow, follow, hallow, hollow, mallow, mellow, pillow, sallow, tallow, wallow, willow, and yellow.

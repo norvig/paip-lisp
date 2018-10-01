@@ -1118,9 +1118,9 @@ Here's roughly what we want:
 
     `'(* ,x ,x)`
 
-    `'(let ((g00l ,x))`
+    `'(let ((g001 ,x))`
 
-        `, (let ((x 'g00l))`
+        `, (let ((x 'g001))`
 
             `'(* x ,x))))`
 
@@ -1133,9 +1133,9 @@ I recommend replacing the inner backquote with its equivalent using `list` and `
 
     `'(* ,x ,x)`
 
-    `(list 'let (list (list 'g00l x))`
+    `(list 'let (list (list 'g001 x))`
 
-        `(let ((x 'g00l))`
+        `(let ((x 'g001))`
 
             `'(* ,x ,x))))`
 
@@ -1585,7 +1585,7 @@ The easier case is when the sequence is a vector:
 
 `result)))))`
 
-When the sequence is a list, we go to some trouble to avoid Computing the length, since that is an *O(n)* operation on lists.
+When the sequence is a list, we go to some trouble to avoid computing the length, since that is an *O(n)* operation on lists.
 The hardest decision is what to do when the list is to be traversed from the end.
 There are four choices:
 

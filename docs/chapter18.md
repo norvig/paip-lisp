@@ -17,7 +17,7 @@ Today there is less emphasis on game playing in AI.
 It has been realized that techniques that work well in the limited domain of a board game do not necessarily lead to intelligent behavior in other domains.
 Also, as it turns out, the techniques that allow computers to play well are not the same as the techniques that good human players use.
 Humans are capable of recognizing abstract patterns learned from previous games, and formulating plans of attack and defense.
-While some computer programs try to emulate this approach, the more succesful programs work by rapidly searching thousands of possible sequences of moves, making fairly superficial evaluations of the worth of each sequence.
+While some computer programs try to emulate this approach, the more successful programs work by rapidly searching thousands of possible sequences of moves, making fairly superficial evaluations of the worth of each sequence.
 
 While much previous work on game playing has concentrated on chess and checkers, this chapter demonstrates a program to play the game of Othello.[1](#fn0015) Othello is a variation on the nineteenth-century game Reversi.
 It is an easy game to program because the rules are simpler than chess.
@@ -1992,7 +1992,7 @@ As we develop evaluation functions that vary from the weighted-squares approach,
 {:.h1hd}
 
 The progressive city of Berkeley, California, has a strong recycling program to reclaim glass, paper, and aluminum that would otherwise be discarded as garbage.
-In 1989, Berkeley instituted a novel program of *precycling:* consumers are encouraged to avoid buying products that corne in environmentally wasteful packages.
+In 1989, Berkeley instituted a novel program of *precycling:* consumers are encouraged to avoid buying products that come in environmentally wasteful packages.
 
 Your Lisp system also has a recycling program: the Lisp garbage collector automatically recycles any unused storage.
 However, there is a cost to this program, and you the consumer can get better performance by precycling your data.
@@ -2038,7 +2038,7 @@ Therefore, when I consider other possible moves, I want to immediately consider 
 
 The function `alpha-beta3` adds the parameter `killer`, which is the best move found so far at the current level.
 After we determine the `legal-moves`, we use `put-first` to put the killer move first, if it is in fact a legal move.
-When it cornes time to search the next level, we keep track of the best move in `killer2`.
+When it comes time to search the next level, we keep track of the best move in `killer2`.
 This requires keeping track of the value of the best move in `killer2-val`.
 Everything else is unchanged, except that we get a new board by recycling the `*ply-boards*` vector rather than by allocating fresh ones.
 
@@ -2857,15 +2857,15 @@ An algorithm that includes computation as a possible move is called a metareason
 [Russell and Wefald (1989)](B9780080571157500285.xhtml#bb1025) present an approach based on this view.
 In addition to an evaluation function, they assume a variance function, which gives an estimate of how much a given position's true value is likely to vary from its static value.
 At each step, their algorithm compares the value and variance of the best move computed so far and the second best move.
-If the best move is clearly better than the second best (taking variance into account), then there is no point Computing any more.
-Also, if the top two moves have similar values but both have very low variance, then Computing will not help much; we can just choose one of the two at random.
+If the best move is clearly better than the second best (taking variance into account), then there is no point computing any more.
+Also, if the top two moves have similar values but both have very low variance, then computing will not help much; we can just choose one of the two at random.
 
 For example, if the board is in a symmetric position, then there may be two symmetric moves that will have identical value.
 By searching each move's subtree more carefully, we soon arrive at a low variance for both moves, and then we can choose either one, without searching further.
 Of course, we could also add special-case code to check for symmetry, but the metareasoning approach will work for nonsymmetric cases as well as symmetric ones.
 If there is a situation where two moves both lead to a clear win, it won't waste time choosing between them.
 
-The only situation where it makes sense to continue Computing is when there are two moves with high variance, so that it is uncertain if the true value of one exceeds the other.
+The only situation where it makes sense to continue computing is when there are two moves with high variance, so that it is uncertain if the true value of one exceeds the other.
 The metareasoning algorithm is predicated on devoting time to just this case.
 
 ### Learning

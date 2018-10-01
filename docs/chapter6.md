@@ -826,8 +826,8 @@ It takes four arguments: (1) a list of valid starting states, (2) a predicate to
 The first argument is a list rather than a single state so that `tree-search` can recursively call itself after it has explored several paths through the state space.
 Think of the first argument not as a starting state but as a list of possible states from which the goal may be reached.
 This lists represents the fringe of the tree that has been explored so far.
-`tree-search` has three cases: If there are no more states to consider, then give up and return `fai1`.
-If the first possible state is a goal state, then return the succesful state.
+`tree-search` has three cases: If there are no more states to consider, then give up and return `fail`.
+If the first possible state is a goal state, then return the successful state.
 Otherwise, generate the successors of the first state and combine them with the other states.
 Order this combined list according to the particular search strategy and continue searching.
 Note that `tree-search` itself does not specify any particular searching strategy.
@@ -1279,7 +1279,7 @@ The result seems to be the best possible path:
 
 `;; Search: ((KANSAS-CITY 94.35 39.06))`
 
-`;; Search: ((INDIANAP0LIS 86.1 39.46))`
+`;; Search: ((INDIANAPOLIS 86.1 39.46))`
 
 `;; Search: ((PITTSBURGH 79.57 40.27))`
 
@@ -1377,7 +1377,7 @@ Since this is a problem in solid geometry, not AI, the code is presented without
 
 `  (let ((d (distance (xyz-coords city1) (xyz-coords city2))))`
 
-`    ;; d is the straight-1ine chord between the two cities,`
+`    ;; d is the straight-line chord between the two cities,`
 
 `    ;; The length of the subtending arc is given by:`
 
