@@ -1812,7 +1812,7 @@ Keep it in mind the next time you have to name a program.
 > *Remember GPS?
 By now, "GPS" is a colorless term denotinga particularly stupid program to solve puzzles.
 But it originally meant "General Problem Solver " which caused everybody a lot of needless excitement and distraction.
-It should have been called*lfgns !!!(span) {:.smallcaps} *-"Local Feature-Guided Network Searcher."*
+It should have been called *lfgns !!!(span) {:.smallcaps} *-"Local Feature-Guided Network Searcher."*
 
 Nonetheless, GPS has been a useful vehicle for exploring programming in general, and AI programming in particular.
 More importantly, it has been a useful vehicle for exploring "the nature of deliberation." Surely we'll admit that Aristotle was a smarter person than you or me, yet with the aid of the computational model of mind as a guiding metaphor, and the further aid of a working computer program to help explore the metaphor, we have been led to a more thorough appreciation of means-ends analysis-at least within the computational model.
@@ -1882,7 +1882,7 @@ Your program will be more efficient if, like Chapman's Tweak !!!(span) {:.smallc
 {:.h1hd}
 
 **Answer 4.1** In this version, the format string `""&"V@T"?`" breaks down as follows: means go to a fresh line; `""V@T"` means insert spaces `(@T)` but use the next argument `(V)` to get the number of spaces.
-The`""?"` is the indirection operator: use the next argument as a format string, and the argument following that as the list of arguments for the format string.
+The `""?"` is the indirection operator: use the next argument as a format string, and the argument following that as the list of arguments for the format string.
 
 `(defun dbg-indent (id indent format-string &rest args)`
 
