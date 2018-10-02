@@ -1241,7 +1241,7 @@ Up to now, all these conditions were atoms, so this approach worked.
 The maze domain introduced conditions of the form (`AT`*n*), so for the first time there was a problem.
 The moral is that when a programmer uses puns-saying what's convenient instead of what's really happening-there's bound to be trouble.
 What we really want to do is not to remove atoms but to find all elements that denote actions.
-The code below say s what we mean:
+The code below says what we mean:
 
 `(defun GPS (state goals &optional (*ops* *ops*))`
 
