@@ -968,7 +968,7 @@ If the user says yes, then the goal *fails,* and backtracking starts.
 If the user says no, the goal succeeds, and since it is the final goal, the computation ends.
 This requires a brand new type of goal: one that is not matched against the data base, but rather causes some procedure to take action.
 In Prolog, such procedures are called *primitives,* because they are built-in to the language, and new ones may not be defined by the user.
-The user may, of course, define nonprimitive procedures that call upon the primitives.
+The user may, of course, define non-primitive procedures that call upon the primitives.
 
 In our implementation, primitives will be represented as Lisp functions.
 A predicate can be represented either as a list of clauses (as it has been so far) or as a single primitive.
