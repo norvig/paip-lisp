@@ -252,7 +252,7 @@ expanded into the following definitions:
 Next in the GPS program are four function definitions.
 The main function GPS`,` is passed three arguments.
 The first is the current state of the world, the second the goal state, and the third a list of allowable operators.
-The body of the function say s simply that if we can achieve every one of the goals we have been given, then the problem is solved.
+The body of the function says simply that if we can achieve every one of the goals we have been given, then the problem is solved.
 The unstated alternative is that otherwise, the problem is not solved.
 
 The function a chieve is given as an argument a single goal.
