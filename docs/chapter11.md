@@ -765,7 +765,7 @@ The next three stem from the clause that Sandy likes everyone who likes cats.
 First, Robin is an answer because of the fact that Robin likes cats.
 To see that Robin is the answer, we have to unravel the bindings: `?who` is bound to `?x2856`, which is in turn bound to Robin.
 
-Now we're in for some surprises: Sandy is listed, because of the following reasoning: (1) Sandy likes anyone/thing who likes cats, (2) cats like cats because everyone likes themself, (3) therefore Sandy likes cats, and (4) therefore Sandy likes Sandy.
+Now we're in for some surprises: Sandy is listed, because of the following reasoning: (1) Sandy likes anyone/thing who likes cats, (2) cats like cats because everyone likes  themselves, (3) therefore Sandy likes cats, and (4) therefore Sandy likes Sandy.
 Cats is an answer because of step (2), and finally, Sandy is an answer again, because of the clause about liking oneself.
 Notice that the result of the query is a list of solutions, where each solution corresponds to a different way of proving the query true.
 Sandy appears twice because there are two different ways of showing that Sandy likes Sandy.
