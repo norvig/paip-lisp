@@ -1562,7 +1562,7 @@ To make `vars` easier to read, we can install a :`print-function`:
 
 `        (write var :stream stream)))`
 
-Thisis the first example of a carefully crafted : `print-function`.
+This is the first example of a carefully crafted : `print-function`.
 There are three things to notice about it.
 First, it explicitly writes to the stream passed as the argument.
 It does not write to a default stream.
