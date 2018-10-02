@@ -1917,7 +1917,7 @@ We would like to say that "P is the parent of C if and only if C is the child of
 
 **Answer 11.10** Because we haven't considered step-relations in the prior definitions, we have to extend the notion of parent to include step-parents.
 The definitions have to be written very carefully to avoid infinite loops.
-The strategy is to structure the defined terms into a strict hierarchy: the four primitives are at the bottom, then pa rent is defined in terms of the primitives, then the other terms are defined in terms of parent and the primitives.
+The strategy is to structure the defined terms into a strict hierarchy: the four primitives are at the bottom, then parent is defined in terms of the primitives, then the other terms are defined in terms of parent and the primitives.
 
 We also provide a definition for son-in-law:
 
