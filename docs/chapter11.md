@@ -51,7 +51,7 @@ The relations are `population` and `capital,` and the objects that participate i
 
 `(capital Sacramento CA)`
 
-We are using Lisp syntax, because we want a Prolog interpreter that can be imbedded in Lisp.
+We are using Lisp syntax, because we want a Prolog interpreter that can be embedded in Lisp.
 The actual Prolog notation would be `population` (`sf, 750000`).
 Here are some facts pertaining to the `likes` relation:
 
