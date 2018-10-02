@@ -1491,7 +1491,7 @@ Such variables will be called `vars` to distinguish them from the implementation
 
 `(defun bound-p (var) (not (eq (var-binding var) unbound)))`
 
-The macro deref gets at the binding of a variable, returning its argument when it is an unbound variable or a nonvariable expression.
+The macro deref gets at the binding of a variable, returning its argument when it is an unbound variable or a non-variable expression.
 It includes a loop because a variable can be bound to another variable, which in turn is bound to the ultimate value.
 
 Normally, it would be considered bad practice to implement deref as a macro, since it could be implemented as an inline function, provided the caller was willing to write `(setf x (deref x))` instead of `(deref x)`.
