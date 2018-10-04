@@ -51,7 +51,7 @@ The relations are `population` and `capital,` and the objects that participate i
 
 `(capital Sacramento CA)`
 
-We are using Lisp syntax, because we want a Prolog interpreter that can be imbedded in Lisp.
+We are using Lisp syntax, because we want a Prolog interpreter that can be embedded in Lisp.
 The actual Prolog notation would be `population` (`sf, 750000`).
 Here are some facts pertaining to the `likes` relation:
 
@@ -765,7 +765,7 @@ The next three stem from the clause that Sandy likes everyone who likes cats.
 First, Robin is an answer because of the fact that Robin likes cats.
 To see that Robin is the answer, we have to unravel the bindings: `?who` is bound to `?x2856`, which is in turn bound to Robin.
 
-Now we're in for some surprises: Sandy is listed, because of the following reasoning: (1) Sandy likes anyone/thing who likes cats, (2) cats like cats because everyone likes themself, (3) therefore Sandy likes cats, and (4) therefore Sandy likes Sandy.
+Now we're in for some surprises: Sandy is listed, because of the following reasoning: (1) Sandy likes anyone/thing who likes cats, (2) cats like cats because everyone likes  themselves, (3) therefore Sandy likes cats, and (4) therefore Sandy likes Sandy.
 Cats is an answer because of step (2), and finally, Sandy is an answer again, because of the clause about liking oneself.
 Notice that the result of the query is a list of solutions, where each solution corresponds to a different way of proving the query true.
 Sandy appears twice because there are two different ways of showing that Sandy likes Sandy.
@@ -968,7 +968,7 @@ If the user says yes, then the goal *fails,* and backtracking starts.
 If the user says no, the goal succeeds, and since it is the final goal, the computation ends.
 This requires a brand new type of goal: one that is not matched against the data base, but rather causes some procedure to take action.
 In Prolog, such procedures are called *primitives,* because they are built-in to the language, and new ones may not be defined by the user.
-The user may, of course, define nonprimitive procedures that call upon the primitives.
+The user may, of course, define non-primitive procedures that call upon the primitives.
 
 In our implementation, primitives will be represented as Lisp functions.
 A predicate can be represented either as a list of clauses (as it has been so far) or as a single primitive.
@@ -1491,7 +1491,7 @@ Such variables will be called `vars` to distinguish them from the implementation
 
 `(defun bound-p (var) (not (eq (var-binding var) unbound)))`
 
-The macro deref gets at the binding of a variable, returning its argument when it is an unbound variable or a nonvariable expression.
+The macro deref gets at the binding of a variable, returning its argument when it is an unbound variable or a non-variable expression.
 It includes a loop because a variable can be bound to another variable, which in turn is bound to the ultimate value.
 
 Normally, it would be considered bad practice to implement deref as a macro, since it could be implemented as an inline function, provided the caller was willing to write `(setf x (deref x))` instead of `(deref x)`.
@@ -1562,7 +1562,7 @@ To make `vars` easier to read, we can install a :`print-function`:
 
 `        (write var :stream stream)))`
 
-Thisis the first example of a carefully crafted : `print-function`.
+This is the first example of a carefully crafted : `print-function`.
 There are three things to notice about it.
 First, it explicitly writes to the stream passed as the argument.
 It does not write to a default stream.
@@ -1917,7 +1917,7 @@ We would like to say that "P is the parent of C if and only if C is the child of
 
 **Answer 11.10** Because we haven't considered step-relations in the prior definitions, we have to extend the notion of parent to include step-parents.
 The definitions have to be written very carefully to avoid infinite loops.
-The strategy is to structure the defined terms into a strict hierarchy: the four primitives are at the bottom, then pa rent is defined in terms of the primitives, then the other terms are defined in terms of parent and the primitives.
+The strategy is to structure the defined terms into a strict hierarchy: the four primitives are at the bottom, then parent is defined in terms of the primitives, then the other terms are defined in terms of parent and the primitives.
 
 We also provide a definition for son-in-law:
 

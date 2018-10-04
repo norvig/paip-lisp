@@ -252,7 +252,7 @@ expanded into the following definitions:
 Next in the GPS program are four function definitions.
 The main function GPS`,` is passed three arguments.
 The first is the current state of the world, the second the goal state, and the third a list of allowable operators.
-The body of the function say s simply that if we can achieve every one of the goals we have been given, then the problem is solved.
+The body of the function says simply that if we can achieve every one of the goals we have been given, then the problem is solved.
 The unstated alternative is that otherwise, the problem is not solved.
 
 The function a chieve is given as an argument a single goal.
@@ -1241,7 +1241,7 @@ Up to now, all these conditions were atoms, so this approach worked.
 The maze domain introduced conditions of the form (`AT`*n*), so for the first time there was a problem.
 The moral is that when a programmer uses puns-saying what's convenient instead of what's really happening-there's bound to be trouble.
 What we really want to do is not to remove atoms but to find all elements that denote actions.
-The code below say s what we mean:
+The code below says what we mean:
 
 `(defun GPS (state goals &optional (*ops* *ops*))`
 
@@ -1812,7 +1812,7 @@ Keep it in mind the next time you have to name a program.
 > *Remember GPS?
 By now, "GPS" is a colorless term denotinga particularly stupid program to solve puzzles.
 But it originally meant "General Problem Solver " which caused everybody a lot of needless excitement and distraction.
-It should have been called*lfgns !!!(span) {:.smallcaps} *-"Local Feature-Guided Network Searcher."*
+It should have been called *lfgns !!!(span) {:.smallcaps} *-"Local Feature-Guided Network Searcher."*
 
 Nonetheless, GPS has been a useful vehicle for exploring programming in general, and AI programming in particular.
 More importantly, it has been a useful vehicle for exploring "the nature of deliberation." Surely we'll admit that Aristotle was a smarter person than you or me, yet with the aid of the computational model of mind as a guiding metaphor, and the further aid of a working computer program to help explore the metaphor, we have been led to a more thorough appreciation of means-ends analysis-at least within the computational model.
@@ -1882,7 +1882,7 @@ Your program will be more efficient if, like Chapman's Tweak !!!(span) {:.smallc
 {:.h1hd}
 
 **Answer 4.1** In this version, the format string `""&"V@T"?`" breaks down as follows: means go to a fresh line; `""V@T"` means insert spaces `(@T)` but use the next argument `(V)` to get the number of spaces.
-The`""?"` is the indirection operator: use the next argument as a format string, and the argument following that as the list of arguments for the format string.
+The `""?"` is the indirection operator: use the next argument as a format string, and the argument following that as the list of arguments for the format string.
 
 `(defun dbg-indent (id indent format-string &rest args)`
 
