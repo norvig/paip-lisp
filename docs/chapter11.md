@@ -47,34 +47,33 @@ In Prolog the assertions are called *clauses,* and they can be divided into two 
 Here are representations of two facts about the population of San Francisco and the capital of California.
 The relations are `population` and `capital,` and the objects that participate in these relations are `SF, 750000`, `Sacramento,` and `CA`:
 
-`(population SF 750000)`
-
-`(capital Sacramento CA)`
+```lisp
+(population SF 750000)
+(capital Sacramento CA)
+```
 
 We are using Lisp syntax, because we want a Prolog interpreter that can be embedded in Lisp.
 The actual Prolog notation would be `population` (`sf, 750000`).
 Here are some facts pertaining to the `likes` relation:
 
-`(likes Kim Robin)`
-
-`(likes Sandy Lee)`
-
-`(likes Sandy Kim)`
-
-`(likes Robin cats)`
+```lisp
+(likes Kim Robin)
+(likes Sandy Lee)
+(likes Sandy Kim)
+(likes Robin cats)
+```
 
 These facts could be interpreted as meaning that Kim likes Robin, Sandy likes both Lee and Kim, and Robin likes cats.
 We need some way of telling Lisp that these are to be interpreted as Prolog facts, not a Lisp function call.
 We will use the macro <- to mark facts.
 Think of this as an assignment arrow which adds a fact to the data base:
 
-`(<- (likes Kim Robin))`
-
-`(<- (likes Sandy Lee))`
-
-`(<- (likes Sandy Kim))`
-
-`(<- (likes Robin cats))`
+```lisp
+(<- (likes Kim Robin))
+(<- (likes Sandy Lee))
+(<- (likes Sandy Kim))
+(<- (likes Robin cats))
+```
 
 One of the major differences between Prolog and Lisp hinges on the difference between relations and functions.
 In Lisp, we would define a function `likes`, so that (`likes 'Sandy`) would return the list (`Lee Kim`).
@@ -86,7 +85,9 @@ For example, the query (`likes Sandy ?who`) succeeds with `?who` bound to `Lee o
 The second type of clause in a Prolog data base is the *rule.* Rules state contingent facts.
 For example, we can represent the rule that Sandy likes anyone who likes cats as follows:
 
-`(<- (likes Sandy ?x) (likes ?x cats))`
+```lisp
+(<- (likes Sandy ?x) (likes ?x cats))
+```
 
 This can be read in two ways.
 Viewed as a logical assertion, it is read, "For any x, Sandy likes x if x likes cats." This is a *declarative* interpretation.
@@ -107,7 +108,9 @@ In general, then, the form of a clause is:
 A clause asserts that the head is true only if all the goals in the body are true.
 For example, the following clause says that Kim likes anyone who likes both Lee and Kim:
 
-`(<- (likes Kim ?x) (likes ?x Lee) (likes ?x Kim))`
+```lisp
+(<- (likes Kim ?x) (likes ?x Lee) (likes ?x Kim))
+```
 
 This can be read as:
 
@@ -148,7 +151,9 @@ We will also define the function `unifier`, which shows the structure that resul
 
 `> (unify '(?a + ?a = 0) '(?x + ?y = ?y))`=>
 
-`((?Y . 0) (?X . ?Y) (?A . ?X))`
+```lisp
+((?Y . 0) (?X . ?Y) (?A . ?X))
+```
 
 `> (unifier '(?a + ?a = 0) '(?x + ?y = ?y))`=> `(0 + 0 = 0)`
 
@@ -161,99 +166,64 @@ The following example makes it clear that unification treats the symbol + only a
 
 Before developing the code for `unify`, we repeat here the code taken from the pattern-matching utility ([chapter 6](B9780080571157500066.xhtml)):
 
-`(defconstant fail nil "Indicates pat-match failure")`
-
-`(defconstant no-bindings '((t . t))`
-
-`  "Indicates pat-match success, with no variables.")`
-
-`(defun variable-p (x)`
-
-`  "Is x a variable (a symbol beginning with '?')?"`
-
-`  (and (symbolp x) (equal (char (symbol-name x) 0) #\?)))`
-
-`(defun get-binding (var bindings)`
-
-`  "Find a (variable . value) pair in a binding list."`
-
-`  (assoc var bindings))`
-
-`(defun binding-val (binding)`
-
-`  "Get the value part of a single binding."`
-
-`  (cdr binding))`
-
-`(defun lookup (var bindings)`
-
-`  "Get the value part (for var) from a binding list."`
-
-`  (binding-val (get-binding var bindings)))`
-
-`(defun extend-bindings (var val bindings)`
-
-`  "Add a (var . value) pair to a binding list."`
-
-`  (cons (cons var val)`
-
-`              ;; Once we add a "real" binding,`
-
-`              ;; we can get rid of the dummy no-bindings`
-
-`              (if (and (eq bindings no-bindings))`
-
-`                      nil`
-
-`                      bindings)))`
-
-`(defun match-variable (var input bindings)`
+```lisp
+(defconstant fail nil "Indicates pat-match failure")
+(defconstant no-bindings '((t . t))
+  "Indicates pat-match success, with no variables.")
+(defun variable-p (x)
+  "Is x a variable (a symbol beginning with '?')?"
+  (and (symbolp x) (equal (char (symbol-name x) 0) #\?)))
+(defun get-binding (var bindings)
+  "Find a (variable . value) pair in a binding list."
+  (assoc var bindings))
+(defun binding-val (binding)
+  "Get the value part of a single binding."
+  (cdr binding))
+(defun lookup (var bindings)
+  "Get the value part (for var) from a binding list."
+  (binding-val (get-binding var bindings)))
+(defun extend-bindings (var val bindings)
+  "Add a (var . value) pair to a binding list."
+  (cons (cons var val)
+              ;; Once we add a "real" binding,
+              ;; we can get rid of the dummy no-bindings
+              (if (and (eq bindings no-bindings))
+                      nil
+                      bindings)))
+(defun match-variable (var input bindings)
+```
 
 `  "Does VAR match input?
 Uses (or updates) and returns bindings."`
 
-`  (let ((binding (get-binding var bindings)))`
-
-`  (cond ((not binding) (extend-bindings var input bindings))`
-
-`              ((equal input (binding-val binding)) bindings)`
-
-`              (t fail))))`
+```lisp
+  (let ((binding (get-binding var bindings)))
+  (cond ((not binding) (extend-bindings var input bindings))
+              ((equal input (binding-val binding)) bindings)
+              (t fail))))
+```
 
 The `unify` function follows; it is identical to `pat-match` (as defined on page 180) except for the addition of the line marked `***`.
 The function `unify-variable` also follows `match-variable` closely:
 
-`(defun unify (x y &optional (bindings no-bindings))`
-
-`  "See if x and y match with given bindings."`
-
-`  (cond ((eq bindings fail) fail)`
-
-`              ((variable-p x) (unify-variable x y bindings))`
-
-`              ((variable-p y) (unify-variable y x bindings)) ;***`
-
-`              ((eql x y) bindings)`
-
-`              ((and (consp x) (consp y))`
-
-`                (unify (rest x) (rest y)`
-
-`                              (unify (first x) (first y) bindings)))`
-
-`              (t fail)))`
-
-`(defun unify-variable (var x bindings)`
-
-`  "Unify var with x, using (and maybe extending) bindings."`
-
-`  ;; Warning - buggy version`
-
-`  (if (get-binding var bindings)`
-
-`    (unify (lookup var bindings) x bindings)`
-
-`    (extend-bindings var x bindings)))`
+```lisp
+(defun unify (x y &optional (bindings no-bindings))
+  "See if x and y match with given bindings."
+  (cond ((eq bindings fail) fail)
+              ((variable-p x) (unify-variable x y bindings))
+              ((variable-p y) (unify-variable y x bindings)) ;***
+              ((eql x y) bindings)
+              ((and (consp x) (consp y))
+                (unify (rest x) (rest y)
+                              (unify (first x) (first y) bindings)))
+              (t fail)))
+(defun unify-variable (var x bindings)
+  "Unify var with x, using (and maybe extending) bindings."
+  ;; Warning - buggy version
+  (if (get-binding var bindings)
+    (unify (lookup var bindings) x bindings)
+    (extend-bindings var x bindings)))
+```
 
 Unfortunately, this definition is not quite right.
 It handles simple examples:
@@ -266,11 +236,11 @@ It handles simple examples:
 
 but there are several pathological cases that it can't contend with:
 
-`> (unify '(?x ?x ?x) '(?y ?y ?y))`
-
-`>>Trap #043622 (PDL-OVERFLOW REGULAR)`
-
-`The regular push-down list has overflowed.`
+```lisp
+> (unify '(?x ?x ?x) '(?y ?y ?y))
+>>Trap #043622 (PDL-OVERFLOW REGULAR)
+The regular push-down list has overflowed.
+```
 
 `While in the function GET-BINDING`<= `UNIFY-VARIABLE`<= `UNIFY`
 
@@ -278,25 +248,18 @@ The problem here is that once `?y` gets bound to itself, the call to `unify` ins
 But matching `?y` against itself must always succeed, so we can move the equality test in `unify` before the variable test.
 This assumes that equal variables are `eql`, a valid assumption for variables implemented as symbols (but be careful if you ever decide to implement variables some other way).
 
-`(defun unify (x y &optional (bindings no-bindings))`
-
-`  "See if x and y match with given bindings."`
-
-`  (cond ((eq bindings fail) fail)`
-
-`    ((eql x y) bindings) ;*** moved this line`
-
-`    ((variable-p x) (unify-variable x y bindings))`
-
-`    ((variable-p y) (unify-variable y x bindings))`
-
-`    ((and (consp x) (consp y))`
-
-`    (unify (rest x) (rest y)`
-
-`            (unify (first x) (first y) bindings)))`
-
-`      (t fail)))`
+```lisp
+(defun unify (x y &optional (bindings no-bindings))
+  "See if x and y match with given bindings."
+  (cond ((eq bindings fail) fail)
+    ((eql x y) bindings) ;*** moved this line
+    ((variable-p x) (unify-variable x y bindings))
+    ((variable-p y) (unify-variable y x bindings))
+    ((and (consp x) (consp y))
+    (unify (rest x) (rest y)
+            (unify (first x) (first y) bindings)))
+      (t fail)))
+```
 
 Here are some test cases:
 
@@ -306,11 +269,11 @@ Here are some test cases:
 
 `> (unify '(?x ?y) '(?y ?x))`=> `((?Y . ?X) (?X . ?Y))`
 
-`> (unify '(?x ?y a) '(?y ?x ?x))`
-
-`>>Trap #043622 (PDL-OVERFLOW REGULAR)`
-
-`The regular push-down list has overflowed.`
+```lisp
+> (unify '(?x ?y a) '(?y ?x ?x))
+>>Trap #043622 (PDL-OVERFLOW REGULAR)
+The regular push-down list has overflowed.
+```
 
 `While in the function GET-BINDING`<= `UNIFY-VARIABLE`<= `UNIFY`
 
@@ -320,19 +283,15 @@ To avoid the problem, the policy should be never to deal with bound variables, b
 The function `unify-variable` fails to implement this policy.
 It does have a check that gets the binding for var when it is a bound variable, but it should also have a check that gets the value of `x`, when `x` is a bound variable:
 
-`(defun unify-variable (var x bindings)`
-
-`  "Unify var with x, using (and maybe extending) bindings."`
-
-`  (cond ((get-binding var bindings)`
-
-`      (unify (lookup var bindings) x bindings))`
-
-`    ((and (variable-p x) (get-binding x bindings)) ;***`
-
-`      (unify var (lookup x bindings) bindings)) ;***`
-
-`    (t (extend-bindings var x bindings))))`
+```lisp
+(defun unify-variable (var x bindings)
+  "Unify var with x, using (and maybe extending) bindings."
+  (cond ((get-binding var bindings)
+      (unify (lookup var bindings) x bindings))
+    ((and (variable-p x) (get-binding x bindings)) ;***
+      (unify var (lookup x bindings) bindings)) ;***
+    (t (extend-bindings var x bindings))))
+```
 
 Here are some more test cases:
 
@@ -356,59 +315,35 @@ This is known in unification circles as the *occurs check.* In practice the prob
 This means that these systems can potentially produce unsound answers.
 In the final version of `unify` following, a variable is provided to allow the user to turn occurs checking on or off.
 
-`(defparameter *occurs-check* t "Should we do the occurs check?")`
-
-`(defun unify (x y &optional (bindings no-bindings))`
-
-`  "See if x and y match with given bindings."`
-
-`  (cond ((eq bindings fail) fail)`
-
-`              ((eql x y) bindings)`
-
-`              ((variable-p x) (unify-variable x y bindings))`
-
-`              ((variable-p y) (unify-variable y x bindings))`
-
-`              ((and (consp x) (consp y))`
-
-`                (unify (rest x) (rest y)`
-
-`                              (unify (first x) (first y) bindings)))`
-
-`              (t fail)))`
-
-`(defun unify-variable (var x bindings)`
-
-`  "Unify var with x, using (and maybe extending) bindings."`
-
-`  (cond ((get-binding var bindings)`
-
-`          (unify (lookup var bindings) x bindings))`
-
-`          ((and (variable-p x) (get-binding x bindings))`
-
-`          (unify var (lookup x bindings) bindings))`
-
-`          ((and *occurs-check* (occurs-check var x bindings)) fail)`
-
-`          (t (extend-bindings var x bindings))))`
-
-`(defun occurs-check (var x bindings)`
-
-`  "Does var occur anywhere inside x?"`
-
-`  (cond ((eq var x) t)`
-
-`          ((and (variable-p x) (get-binding x bindings))`
-
-`          (occurs-check var (lookup x bindings) bindings))`
-
-`          ((consp x) (or (occurs-check var (first x) bindings)`
-
-`                  (occurs-check var (rest x) bindings)))`
-
-`          (t nil)))`
+```lisp
+(defparameter *occurs-check* t "Should we do the occurs check?")
+(defun unify (x y &optional (bindings no-bindings))
+  "See if x and y match with given bindings."
+  (cond ((eq bindings fail) fail)
+              ((eql x y) bindings)
+              ((variable-p x) (unify-variable x y bindings))
+              ((variable-p y) (unify-variable y x bindings))
+              ((and (consp x) (consp y))
+                (unify (rest x) (rest y)
+                              (unify (first x) (first y) bindings)))
+              (t fail)))
+(defun unify-variable (var x bindings)
+  "Unify var with x, using (and maybe extending) bindings."
+  (cond ((get-binding var bindings)
+          (unify (lookup var bindings) x bindings))
+          ((and (variable-p x) (get-binding x bindings))
+          (unify var (lookup x bindings) bindings))
+          ((and *occurs-check* (occurs-check var x bindings)) fail)
+          (t (extend-bindings var x bindings))))
+(defun occurs-check (var x bindings)
+  "Does var occur anywhere inside x?"
+  (cond ((eq var x) t)
+          ((and (variable-p x) (get-binding x bindings))
+          (occurs-check var (lookup x bindings) bindings))
+          ((consp x) (or (occurs-check var (first x) bindings)
+                  (occurs-check var (rest x) bindings)))
+          (t nil)))
+```
 
 Now we consider how `unify` will be used.
 In particular, one thing we want is a function for substituting a binding list into an expression.
@@ -416,27 +351,19 @@ We originally chose association lists as the implementation of bindings because 
 Ironically, `sublis` won't work any more, because variables can be bound to other variables, which are in turn bound to expressions.
 The `function subst-bindings` acts like `sublis`, except that it substitutes recursive bindings.
 
-`(defun subst-bindings (bindings x)`
-
-`  "Substitute the value of variables in bindings into x,`
-
-`  taking recursively bound variables into account."`
-
-`  (cond ((eq bindings fail) fail)`
-
-`          ((eq bindings no-bindings) x)`
-
-`          ((and (variable-p x) (get-binding x bindings))`
-
-`          (subst-bindings bindings (lookup x bindings)))`
-
-`          ((atom x) x)`
-
-`          (t (reuse-cons (subst-bindings bindings (car x))`
-
-`                        (subst-bindings bindings (cdr x))`
-
-`                        x))))`
+```lisp
+(defun subst-bindings (bindings x)
+  "Substitute the value of variables in bindings into x,
+  taking recursively bound variables into account."
+  (cond ((eq bindings fail) fail)
+          ((eq bindings no-bindings) x)
+          ((and (variable-p x) (get-binding x bindings))
+          (subst-bindings bindings (lookup x bindings)))
+          ((atom x) x)
+          (t (reuse-cons (subst-bindings bindings (car x))
+                        (subst-bindings bindings (cdr x))
+                        x))))
+```
 
 Now let's try `unify` on some examples:
 
@@ -453,21 +380,25 @@ Now let's try `unify` on some examples:
 Finally, the function `unifier` calls `unify` and substitutes the resulting binding list into one of the arguments.
 The choice of `x` is arbitrary; an equal result would come from substituting the binding list into `y`.
 
-`(defun unifier (x y)`
-
-`  "Return something that unifies with both x and y (or fail)."`
-
-`  (subst-bindings (unify x y) x))`
+```lisp
+(defun unifier (x y)
+  "Return something that unifies with both x and y (or fail)."
+  (subst-bindings (unify x y) x))
+```
 
 Here are some examples of `unifier`:
 
 `> (unifier '(?x ?y a) '(?y ?x ?x))`=> `(A A A)`
 
-`> (unifier '((?a * ?x ^ 2) + (?b * ?x) + ?c)`
+```lisp
+> (unifier '((?a * ?x ^ 2) + (?b * ?x) + ?c)
+```
 
 `                '(?z + (4 * 5) + 3))`=>
 
-`((?A * 5 ^ 2) + (4 * 5) + 3)`
+```lisp
+((?A * 5 ^ 2) + (4 * 5) + 3)
+```
 
 When *`occurs-check`* is false, we get the following answers:
 
@@ -475,7 +406,9 @@ When *`occurs-check`* is false, we get the following answers:
 
 `> (unify '(?x ?y) '((f ?y) (f ?x)))`=> `((?Y F ?X) (?X F ?Y))`
 
-`> (unify '(?x ?y ?z) '((?y ?z) (?x ?z) (?x ?y))) => ((?Z ?X ?Y) (?Y ?X ?Z) (?X ?Y  ?Z))`
+```lisp
+> (unify '(?x ?y ?z) '((?y ?z) (?x ?z) (?x ?y))) => ((?Z ?X ?Y) (?Y ?X ?Z) (?X ?Y  ?Z))
+```
 
 ### Programming with Prolog
 {:#s0020}
@@ -485,69 +418,63 @@ The amazing thing about Prolog clauses is that they can be used to express relat
 More precisely, an item is a member of a list if it is either the first element of the list or a member of the rest of the list.
 This definition can be translated into Prolog almost Verbatim:
 
-`(<- (member ?item (?item . ?rest)))`
-
-`(<- (member ?item (?x . ?rest)) (member ?item ?rest))`
+```lisp
+(<- (member ?item (?item . ?rest)))
+(<- (member ?item (?x . ?rest)) (member ?item ?rest))
+```
 
 Of course, we can write a similar definition in Lisp.
 The most visible difference is that Prolog allows us to put patterns in the head of a clause, so we don't need recognizers like `consp` or accessors like `first` and `rest`.
 Otherwise, the Lisp definition is similar:[2](#fn0020)
 
-`(defun lisp-member (item list)`
-
-`  (and (consp list)`
-
-`  (or (eql item (first list))`
-
-`    (lisp-member item (rest list)))))`
+```lisp
+(defun lisp-member (item list)
+  (and (consp list)
+  (or (eql item (first list))
+    (lisp-member item (rest list)))))
+```
 
 If we wrote the Prolog code without taking advantage of the pattern feature, it would look more like the Lisp version:
 
-`(<- (member ?item ?list)`
-
-`  (= ?list (?item . ?rest)))`
-
-`(<- (member ?item ?list)`
-
-`  (= ?list (?x . ?rest))`
-
-`  (member ?item ?rest))`
+```lisp
+(<- (member ?item ?list)
+  (= ?list (?item . ?rest)))
+(<- (member ?item ?list)
+  (= ?list (?x . ?rest))
+  (member ?item ?rest))
+```
 
 If we define or in Prolog, we would write a version that is clearly just a syntactic variant of the Lisp version.
 
-`(<- (member ?item ?list)`
-
-`  (= ?list (?first . ?rest))`
-
-`  (or (= ?item ?first)`
-
-`  (member ?item ?rest)))`
+```lisp
+(<- (member ?item ?list)
+  (= ?list (?first . ?rest))
+  (or (= ?item ?first)
+  (member ?item ?rest)))
+```
 
 Let's see how the Prolog version of `member` works.
 Imagine that we have a Prolog interpreter that can be given a query using the macro ?-, and that the definition of `member` has been entered.
 Then we would see:
 
-`> (?- (member 2 (1 2 3)))`
-
-`Yes;`
-
-`> (?- (member 2 (1 2 3 2 1)))`
-
-`Yes;`
-
-`Yes;`
+```lisp
+> (?- (member 2 (1 2 3)))
+Yes;
+> (?- (member 2 (1 2 3 2 1)))
+Yes;
+Yes;
+```
 
 The answer to the first query is "yes" because 2 is a member of the rest of the list.
 In the second query the answer is "yes" twice, because 2 appears in the list twice.
 This is a little surprising to Lisp programmers, but there still seems to be a fairly close correspondence between Prolog's and Lisp's `member.` However, there are things that the Prolog `member` can do that Lisp cannot:
 
-`> (?- (member ?x (1 2 3)))`
-
-`?X = 1;`
-
-`?X = 2;`
-
-`?X = 3;`
+```lisp
+> (?- (member ?x (1 2 3)))
+?X = 1;
+?X = 2;
+?X = 3;
+```
 
 Here `member` is used not as a predicate but as a generator of elements in a list.
 While Lisp functions always map from a specified input (or inputs) to a specified output, Prolog relations can be used in several ways.
@@ -566,11 +493,11 @@ For facts, the body will be empty.
 Figure  11.1
 !!!(span) {:.fignum}
 Glossary for the Prolog Interpreter
-`;; Clauses are represented as (head . body) cons cells`
-
-`(defun clause-head (clause) (first clause))`
-
-`(defun clause-body (clause) (rest clause))`
+```lisp
+;; Clauses are represented as (head . body) cons cells
+(defun clause-head (clause) (first clause))
+(defun clause-body (clause) (rest clause))
+```
 
 The next question is how to index the clauses.
 Recall the procedural interpretation of a clause: when we want to prove the head, we can do it by proving the body.
@@ -578,58 +505,44 @@ This suggests that clauses should be indexed in terms of their heads.
 Each clause will be stored on the property list of the predicate of the head of the clause.
 Since the data base is now distributed across the property list of various symbols, we represent the entire data base as a list of symbols stored as the value of `*db-predicates*`.
 
-`;; Clauses are stored on the predicate's plist`
-
-`(defun get-clauses (pred) (get pred 'clauses))`
-
-`(defun predicate (relation) (first relation))`
-
-`(defvar *db-predicates* nil`
-
-`  "A list of all predicates stored in the database.")`
+```lisp
+;; Clauses are stored on the predicate's plist
+(defun get-clauses (pred) (get pred 'clauses))
+(defun predicate (relation) (first relation))
+(defvar *db-predicates* nil
+  "A list of all predicates stored in the database.")
+```
 
 Now we need a way of adding a new clause.
 The work is split up into the macro <-, which provides the user interface, and a function, add-clause, that does the work.
 It is worth defining a macro to add clauses because in effect we are defining a new language: Prolog-In-Lisp.
 This language has only two syntactic constructs: the <- macro to add clauses, and the ?- macro to make queries.
 
-`(defmacro <- (&rest clause)`
-
-`  "Add a clause to the data base."`
-
-`  '(add-clause '.clause))`
-
-`(defun add-clause (clause)`
-
-`  "Add a clause to the data base, indexed by head's predicate."`
-
-`  ;; The predicate must be a non-variable symbol.`
-
-`  (let ((pred (predicate (clause-head clause))))`
-
-`    (assert (and (symbolp pred) (not (variable-p pred))))`
-
-`    (pushnew pred *db-predicates*)`
-
-`    (setf (get pred 'clauses)`
-
-`      (nconc (get-clauses pred) (list clause)))`
-
-`    pred))`
+```lisp
+(defmacro <- (&rest clause)
+  "Add a clause to the data base."
+  '(add-clause '.clause))
+(defun add-clause (clause)
+  "Add a clause to the data base, indexed by head's predicate."
+  ;; The predicate must be a non-variable symbol.
+  (let ((pred (predicate (clause-head clause))))
+    (assert (and (symbolp pred) (not (variable-p pred))))
+    (pushnew pred *db-predicates*)
+    (setf (get pred 'clauses)
+      (nconc (get-clauses pred) (list clause)))
+    pred))
+```
 
 Now all we need is a way to remove clauses, and the data base will be complete.
 
-`(defun clear-db ()`
-
-`  "Remove all clauses (for all predicates) from the data base."`
-
-`  (mapc #'clear-predicate *db-predicates*))`
-
-`(defun clear-predicate (predicate)`
-
-`  "Remove the clauses for a single predicate."`
-
-`  (setf (get predicate 'clauses) nil))`
+```lisp
+(defun clear-db ()
+  "Remove all clauses (for all predicates) from the data base."
+  (mapc #'clear-predicate *db-predicates*))
+(defun clear-predicate (predicate)
+  "Remove the clauses for a single predicate."
+  (setf (get predicate 'clauses) nil))
+```
 
 A data base is useless without a way of getting data out, as well as putting it in.
 The function prove will be used to prove that a given goal either matches a fact that is in the data base directly or can be derived from the rules.
@@ -640,33 +553,22 @@ For facts, there will be no goals in the body, so success will be immediate.
 For rules, the goals in the body need to be proved one at a time, making sure that bindings from the previous step are maintained.
 The implementation is straightforward:
 
-`(defun prove (goal bindings)`
-
-`  "Return a list of possible solutions to goal."`
-
-`  (mapcan #'(lambda (clause)`
-
-`    (let ((new-clause (rename-variables clause)))`
-
-`      (prove-all (clause-body new-clause)`
-
-`          (unify goal (clause-head new-clause) bindings))))`
-
-`  (get-clauses (predicate goal))))`
-
-`(defun prove-all (goals bindings)`
-
-`  "Return a list of solutions to the conjunction of goals.'"`
-
-`  (cond ((eq bindings fail) fail)`
-
-`    ((null goals) (list bindings))`
-
-`    (t (mapcan #'(lambda (goall-solution)`
-
-`          (prove-all (rest goals) goall-solution))`
-
-`      (prove (first goals) bindings)))))`
+```lisp
+(defun prove (goal bindings)
+  "Return a list of possible solutions to goal."
+  (mapcan #'(lambda (clause)
+    (let ((new-clause (rename-variables clause)))
+      (prove-all (clause-body new-clause)
+          (unify goal (clause-head new-clause) bindings))))
+  (get-clauses (predicate goal))))
+(defun prove-all (goals bindings)
+  "Return a list of solutions to the conjunction of goals.'"
+  (cond ((eq bindings fail) fail)
+    ((null goals) (list bindings))
+    (t (mapcan #'(lambda (goall-solution)
+          (prove-all (rest goals) goall-solution))
+      (prove (first goals) bindings)))))
+```
 
 The tricky part is that we need some way of distinguishing a variable `?x` in one clause from another variable `?x` in another clause.
 Otherwise, a variable used in two different clauses in the course of a proof would have to take on the same value in each clause, which would be a mistake.
@@ -674,90 +576,69 @@ Just as arguments to a function can have different values in different recursive
 The easiest way to keep variables distinct is just to rename all variables in each clause before it is used.
 The function `rename-variables` does this:[3](#fn0025)
 
-`(defun rename-variables (x)`
-
-`  "Replace all variables in x with new ones."`
-
-`  (sublis (mapcar #'(lambda (var) (cons var (gensym (string var))))`
-
-`    (variables-in x))`
-
-`  x))`
+```lisp
+(defun rename-variables (x)
+  "Replace all variables in x with new ones."
+  (sublis (mapcar #'(lambda (var) (cons var (gensym (string var))))
+    (variables-in x))
+  x))
+```
 
 `Rename - variables` makes use of `gensym,` a function that generates a new symbol each time it is called.
 The symbol is not interned in any package, which means that there is no danger of a programmer typing a symbol of the same name.
 The predicate `variables-in` and its auxiliary function are defined here:
 
-`(defun variables-in (exp)`
-
-`  "Return a list of all the variables in EXP."`
-
-`  (unique-find-anywhere-if #'variable-p exp))`
-
-`(defun unique-find-anywhere-if (predicate tree`
-
-`                                                                &optional found-so-far)`
-
-`  "Return a list of leaves of tree satisfying predicate`
-
-`  with duplicates removed."`
-
-`  (if (atom tree)`
-
-`      (if (funcall predicate tree)`
-
-`              (adjoin tree found-so-far)`
-
-`              found-so-far)`
-
-`      (unique-find-anywhere-if`
-
-`          predicate`
-
-`          (first tree)`
-
-`          (unique-find-anywhere-if predicate (rest tree)`
-
-`                                                            found-so-far))))`
+```lisp
+(defun variables-in (exp)
+  "Return a list of all the variables in EXP."
+  (unique-find-anywhere-if #'variable-p exp))
+(defun unique-find-anywhere-if (predicate tree
+                                                                &optional found-so-far)
+  "Return a list of leaves of tree satisfying predicate
+  with duplicates removed."
+  (if (atom tree)
+      (if (funcall predicate tree)
+              (adjoin tree found-so-far)
+              found-so-far)
+      (unique-find-anywhere-if
+          predicate
+          (first tree)
+          (unique-find-anywhere-if predicate (rest tree)
+                                                            found-so-far))))
+```
 
 Finally, we need a nice interface to the proving functions.
 We will use `?-` as a macro to introduce a query.
 The query might as well allow a conjunction of goals, so `?-` will call `prove-all`.
 Together, `<-` and `?-` define the complete syntax of our Prolog-In-Lisp language.
 
-`(defmacro ?- (&rest goals) '(prove-all ',goals no-bindings))`
+```lisp
+(defmacro ?- (&rest goals) '(prove-all ',goals no-bindings))
+```
 
 Now we can enter all the clauses given in the prior example:
 
-`(<- (likes Kim Robin))`
-
-`(<- (likes Sandy Lee))`
-
-`(<- (likes Sandy Kim))`
-
-`(<- (likes Robin cats))`
-
-`(<- (likes Sandy ?x) (likes ?x cats))`
-
-`(<- (likes Kim ?x) (likes ?x Lee) (likes ?x Kim))`
-
-`(<- (likes ?x ?x))`
+```lisp
+(<- (likes Kim Robin))
+(<- (likes Sandy Lee))
+(<- (likes Sandy Kim))
+(<- (likes Robin cats))
+(<- (likes Sandy ?x) (likes ?x cats))
+(<- (likes Kim ?x) (likes ?x Lee) (likes ?x Kim))
+(<- (likes ?x ?x))
+```
 
 To ask whom Sandy likes, we would use:
 
-`> (?- (likes Sandy ?who))`
-
-`(((?WHO . LEE))`
-
-`  ((?WHO . KIM))`
-
-`  ((?X2856 . ROBIN) (?WHO .?X2856))`
-
-`  ((?X2860 . CATS) (?X2857 CATS) (?X2856 . SANDAY) (?WHO ?X2856)`
-
-`  ((?X2865 . CATS) (?X2856 ?X2865)((?WHO . ?X2856))`
-
-`  (?WHO . SANDY) (?X2867 . SANDAY)))`
+```lisp
+> (?- (likes Sandy ?who))
+(((?WHO . LEE))
+  ((?WHO . KIM))
+  ((?X2856 . ROBIN) (?WHO .?X2856))
+  ((?X2860 . CATS) (?X2857 CATS) (?X2856 . SANDAY) (?WHO ?X2856)
+  ((?X2865 . CATS) (?X2856 ?X2865)((?WHO . ?X2856))
+  (?WHO . SANDY) (?X2867 . SANDAY)))
+```
 
 Perhaps surprisingly, there are six answers.
 The first two answers are Lee and Kim, because of the facts.
@@ -779,77 +660,48 @@ The output from `prove-all` is not very pretty.
 We can fix that by defining a new function, `top-level-prove,` which calls `prove-all` as before, but then passes the list of solutions to `show-prolog-solutions,` which prints them in a more readable format.
 Note that `show-prolog-solutions` returns no values: `(values).` This means the read-eval-print loop will not print anything when `(values)` is the result of a top-level call.
 
-`(defmacro ?- (&rest goals)`
-
-`  '(top-level-prove ',goals))`
-
-`(defun top-level-prove (goals)`
-
-`  "Prove the goals, and print variables readably."`
-
-`  (show-prolog-solutions`
-
-`      (variables-in goals)`
-
-`      (prove-all goals no-bindings)))`
-
-`(defun show-prolog-solutions (vars solutions)`
-
-`    "Print the variables in each of the solutions."`
-
-`    (if (null solutions)`
-
-`        (format t "~&No.")`
-
-`        (mapc #'(lambda (solution) (show-prolog-vars vars solution))`
-
-`                    solutions))`
-
-`    (values))`
-
-`(defun show-prolog-vars (vars bindings)`
-
-`    "Print each variable with its binding."`
-
-`    (if (null vars)`
-
-`        (format t "~&Yes")`
-
-`        (dolist (var vars)`
-
-`            (format t "~&~a = ~  a" var`
-
-`                            (subst-bindings bindings var))))`
-
-`    (princ ";"))`
+```lisp
+(defmacro ?- (&rest goals)
+  '(top-level-prove ',goals))
+(defun top-level-prove (goals)
+  "Prove the goals, and print variables readably."
+  (show-prolog-solutions
+      (variables-in goals)
+      (prove-all goals no-bindings)))
+(defun show-prolog-solutions (vars solutions)
+    "Print the variables in each of the solutions."
+    (if (null solutions)
+        (format t "~&No.")
+        (mapc #'(lambda (solution) (show-prolog-vars vars solution))
+                    solutions))
+    (values))
+(defun show-prolog-vars (vars bindings)
+    "Print each variable with its binding."
+    (if (null vars)
+        (format t "~&Yes")
+        (dolist (var vars)
+            (format t "~&~a = ~  a" var
+                            (subst-bindings bindings var))))
+    (princ ";"))
+```
 
 Now let's try some queries:
 
-`> (?- (likes Sandy ?who))`
-
-`?WHO = LEE;`
-
-`?WHO = KIM;`
-
-`?WHO = ROBIN;`
-
-`?WHO = SANDY;`
-
-`?WHO = CATS;`
-
-`?WHO = SANDY;`
-
-`> (?- (likes ?who Sandy))`
-
-`?WHO = SANDY;`
-
-`?WHO = KIM;`
-
-`?WHO = SANDY;`
-
-`> (?- (likes Robin Lee))`
-
-`No.`
+```lisp
+> (?- (likes Sandy ?who))
+?WHO = LEE;
+?WHO = KIM;
+?WHO = ROBIN;
+?WHO = SANDY;
+?WHO = CATS;
+?WHO = SANDY;
+> (?- (likes ?who Sandy))
+?WHO = SANDY;
+?WHO = KIM;
+?WHO = SANDY;
+> (?- (likes Robin Lee))
+No.
+```
 
 The first query asks again whom Sandy likes, and the second asks who likes Sandy.
 The third asks for confirmation of a fact.
@@ -857,37 +709,28 @@ The answer is "no," because there are no clauses or facts that say Robin likes L
 Here's another example, a list of pairs of people who are in a mutual liking relation.
 The last answer has an uninstantiated variable, indicating that everyone likes themselves.
 
-`> (?- (likes ?x ?y) (likes ?y ?x))`
-
-`?Y = KIM`
-
-`?X = SANDY;`
-
-`?Y = SANDY`
-
-`?X = SANDY;`
-
-`?Y = SANDY`
-
-`?X = SANDY;`
-
-`?Y = SANDY`
-
-`?X = KIM;`
-
-`?Y = SANDY`
-
-`?X = SANDY;`
-
-`?Y = ?X3251`
-
-`?X = ?X3251;`
+```lisp
+> (?- (likes ?x ?y) (likes ?y ?x))
+?Y = KIM
+?X = SANDY;
+?Y = SANDY
+?X = SANDY;
+?Y = SANDY
+?X = SANDY;
+?Y = SANDY
+?X = KIM;
+?Y = SANDY
+?X = SANDY;
+?Y = ?X3251
+?X = ?X3251;
+```
 
 It makes sense in Prolog to ask open-ended queries like "what lists is 2 a member of ?" or even "what items are elements of what lists?"
 
-`(?- (member 2 ?list))`
-
-`(?- (member ?item ?list))`
+```lisp
+(?- (member 2 ?list))
+(?- (member ?item ?list))
+```
 
 These queries are valid Prolog and will return solutions, but there will be an infinite number of them.
 Since our interpreter collects all the solutions into a single list before showing any of them, we will never get to see the solutions.
@@ -900,9 +743,10 @@ Make changes so that either form is acceptable.
 **Exercise  11.2 [m]** Some people find the < - notation difficult to read.
 Define macros `rule` and `fact` so that we can write:
 
-`(fact (likes Robin cats))`
-
-`(rule (likes Sandy ?x) if (likes ?x cats))`
+```lisp
+(fact (likes Robin cats))
+(rule (likes Sandy ?x) if (likes ?x cats))
+```
 
 ## 11.3 Idea 3: Automatic Backtracking
 {:#s0025}
@@ -935,31 +779,21 @@ The result is that if `prove` ever succeeds, it means the entire top-level goal 
 If it fails, it just means the program is backtracking and trying another sequence of choices.
 Note that `prove` relies on the fact that `fail` is `nil`, because of the way it uses some.
 
-`(defun prove-all (goals bindings)`
-
-`  "Find a solution to the conjunction of goals."`
-
-`  (cond ((eq bindings fail) fail)`
-
-`              ((null goals) bindings)`
-
-`              (t (prove (first goals) bindings (rest goals)))))`
-
-`(defun prove (goal bindings other-goals)`
-
-`  "Return a list of possible solutions to goal."`
-
-`  (some #'(lambda (clause)`
-
-`                      (let ((new-clause (rename-variables clause)))`
-
-`                          (prove-all`
-
-`                              (append (clause-body new-clause) other-goals)`
-
-`                      (unify goal (clause-head new-clause) bindings))))`
-
-`  (get-clauses (predicate goal))))`
+```lisp
+(defun prove-all (goals bindings)
+  "Find a solution to the conjunction of goals."
+  (cond ((eq bindings fail) fail)
+              ((null goals) bindings)
+              (t (prove (first goals) bindings (rest goals)))))
+(defun prove (goal bindings other-goals)
+  "Return a list of possible solutions to goal."
+  (some #'(lambda (clause)
+                      (let ((new-clause (rename-variables clause)))
+                          (prove-all
+                              (append (clause-body new-clause) other-goals)
+                      (unify goal (clause-head new-clause) bindings))))
+  (get-clauses (predicate goal))))
+```
 
 If `prove` does succeed, it means a solution has been found.
 If we want more solutions, we need some way of making the process fail, so that it will backtrack and try again.
@@ -974,116 +808,91 @@ In our implementation, primitives will be represented as Lisp functions.
 A predicate can be represented either as a list of clauses (as it has been so far) or as a single primitive.
 Here is a version of `prove` that calls primitives when appropriate:
 
-`(defun prove (goal bindings other-goals)`
-
-`  "Return a list of possible solutions to goal."`
-
-`  (let ((clauses (get-clauses (predicate goal))))`
-
-`      (if (listp clauses)`
-
-`              (some`
-
-`                  #'(lambda (clause)`
-
-`                          (let ((new-clause (rename-variables clause)))`
-
-`                              (prove-all`
-
-`                                (append (clause-body new-clause) other-goals)`
-
-`                                (unify goal (clause-head new-clause) bindings))))`
-
-`                  clauses)`
-
-`              ;; The predicate's "clauses" can be an atom:`
-
-`              ;; a primitive function to call`
-
-`              (funcall clauses (rest goal) bindings`
-
-`                                other-goals))))`
+```lisp
+(defun prove (goal bindings other-goals)
+  "Return a list of possible solutions to goal."
+  (let ((clauses (get-clauses (predicate goal))))
+      (if (listp clauses)
+              (some
+                  #'(lambda (clause)
+                          (let ((new-clause (rename-variables clause)))
+                              (prove-all
+                                (append (clause-body new-clause) other-goals)
+                                (unify goal (clause-head new-clause) bindings))))
+                  clauses)
+              ;; The predicate's "clauses" can be an atom:
+              ;; a primitive function to call
+              (funcall clauses (rest goal) bindings
+                                other-goals))))
+```
 
 Here is the version of `top-level-prove` that adds the primitive goal `show-prolog-vars` to the end of the list of goals.
 Note that this version need not call `show-prolog-solutions` itself, since the printing will be handled by the primitive for `show-prolog-vars`.
 
-`(defun top-level-prove (goals)`
-
-`  (prove-all '(,@goals (show-prolog-vars ,@(variables-in goals)))`
-
-`                        no-bindings)`
-
-`  (format t "~&No.")`
-
-`  (values))`
+```lisp
+(defun top-level-prove (goals)
+  (prove-all '(,@goals (show-prolog-vars ,@(variables-in goals)))
+                        no-bindings)
+  (format t "~&No.")
+  (values))
+```
 
 Here we define the primitive `show-prolog-vars`.
 All primitives must be functions of three arguments: a list of arguments to the primitive relation (here a list of variables to show), a binding list for these arguments, and a list of pending goals.
 A primitive should either return `fail` or call `prove-all` to continue.
 
-`(defun show-prolog-vars (vars bindings other-goals)`
-
-`  "Print each variable with its binding.`
-
-`  Then ask the user if more solutions are desired."`
-
-`  (if (null vars)`
-
-`          (format t "~&Yes")`
-
-`          (dolist (var vars)`
-
-`              (format t "~&~a = ~a" var`
-
-`                              (subst-bindings bindings var))))`
-
-`  (if (continue-p)`
-
-`          fail`
-
-`          (prove-all other-goals bindings)))`
+```lisp
+(defun show-prolog-vars (vars bindings other-goals)
+  "Print each variable with its binding.
+  Then ask the user if more solutions are desired."
+  (if (null vars)
+          (format t "~&Yes")
+          (dolist (var vars)
+              (format t "~&~a = ~a" var
+                              (subst-bindings bindings var))))
+  (if (continue-p)
+          fail
+          (prove-all other-goals bindings)))
+```
 
 Since primitives are represented as entries on the `clauses` property of predicate symbols, we have to register `show- prolog - vars` as a primitive like this:
 
-`(setf (get 'show-prolog-vars 'clauses) 'show-prolog-vars)`
+```lisp
+(setf (get 'show-prolog-vars 'clauses) 'show-prolog-vars)
+```
 
 Finally, the Lisp predicate `continue-p` asks the user if he or she wants to see more solutions:
 
-`(defun continue-p ()`
-
-`  "Ask user if we should continue looking for solutions."`
-
-`  (case (read-char)`
-
-`    (#\; t)`
+```lisp
+(defun continue-p ()
+  "Ask user if we should continue looking for solutions."
+  (case (read-char)
+    (#\; t)
+```
 
 `    (#\.
 nil)`
 
-`    (#\newline (continue-p))`
-
-`    (otherwise`
-
-`      (format t " Type ; to see more or . to stop")`
-
-`      (continue-p))))`
+```lisp
+    (#\newline (continue-p))
+    (otherwise
+      (format t " Type ; to see more or . to stop")
+      (continue-p))))
+```
 
 This version works just as well as the previous version on finite problems.
 The only difference is that the user, not the system, types the semicolons.
 The advantage is that we can now use the system on infinite problems as well.
 First, we'll ask what lists 2 is a member of :
 
-`> (?- (member 2 ?list))`
-
-`?LIST = (2 . ?REST3302);`
-
-`?LIST = (?X3303 2 . ?REST3307);`
-
-`?LIST = (?X3303 ?X3308 2 . ?REST3312);`
-
-`?LIST = (?X3303 ?X3308 ?X3313 2 . ?REST3317).`
-
-`No.`
+```lisp
+> (?- (member 2 ?list))
+?LIST = (2 . ?REST3302);
+?LIST = (?X3303 2 . ?REST3307);
+?LIST = (?X3303 ?X3308 2 . ?REST3312);
+?LIST = (?X3303 ?X3308 ?X3313 2 . ?REST3317).
+No.
+```
 
 The answers mean that 2 is a member of any list that starts with 2, or whose second element is 2, or whose third element is 2, and so on.
 The infinite computation was halted when the user typed a period rather than a semicolon.
@@ -1092,79 +901,58 @@ The "no" now means that there are no more answers to be printed; it will appear 
 We can ask even more abstract queries.
 The answer to the next query says that an item is an element of a list when it is the the first element, or the second, or the third, or the fourth, and so on.
 
-`> (?- (member ?item ?list))`
-
-`?ITEM = ?ITEM3318`
-
-`?LIST = (?ITEM3318 . ?REST3319);`
-
-`?ITEM = ?ITEM3323`
-
-`?LIST = (?X3320 ?ITEM3323 . ?REST3324);`
-
-`?ITEM = ?ITEM3328`
-
-`?LIST = (?X3320 ?X3325 ?ITEM3328 . ?REST3329);`
-
-`?ITEM = ?ITEM3333`
-
-`?LIST = (?X3320 ?X3325 ?X3330 ?ITEM3333 . ?REST3334).`
-
-`No.`
+```lisp
+> (?- (member ?item ?list))
+?ITEM = ?ITEM3318
+?LIST = (?ITEM3318 . ?REST3319);
+?ITEM = ?ITEM3323
+?LIST = (?X3320 ?ITEM3323 . ?REST3324);
+?ITEM = ?ITEM3328
+?LIST = (?X3320 ?X3325 ?ITEM3328 . ?REST3329);
+?ITEM = ?ITEM3333
+?LIST = (?X3320 ?X3325 ?X3330 ?ITEM3333 . ?REST3334).
+No.
+```
 
 Now let's add the definition of the relation length:
 
-`(<- (length () 0))`
-
-`(<- (length (?x . ?y) (1  + ?n)) (length ?y ?n))`
+```lisp
+(<- (length () 0))
+(<- (length (?x . ?y) (1  + ?n)) (length ?y ?n))
+```
 
 Here are some queries showing that length can be used to find the second argument, the first, or both:
 
-`> (?- (length (a b c d) ?n))`
-
-`?N = (1  + (1  + (1  + (1  + 0))));`
-
-`No.`
-
-`> (?- (length ?list (1  + (1  + 0))))`
-
-`?LIST = (?X3869 ?X3872);`
-
-`No.`
-
-`> (?- (length ?list ?n))`
-
-`?LIST = NIL`
-
-`?N = 0;`
-
-`?LIST = (?X3918)`
-
-`?N = (1  + 0);`
-
-`?LIST = (?X3918 ?X3921)`
-
-`?N = (1  + (1  + 0)).`
-
-`No.`
+```lisp
+> (?- (length (a b c d) ?n))
+?N = (1  + (1  + (1  + (1  + 0))));
+No.
+> (?- (length ?list (1  + (1  + 0))))
+?LIST = (?X3869 ?X3872);
+No.
+> (?- (length ?list ?n))
+?LIST = NIL
+?N = 0;
+?LIST = (?X3918)
+?N = (1  + 0);
+?LIST = (?X3918 ?X3921)
+?N = (1  + (1  + 0)).
+No.
+```
 
 The next two queries show the two lists of length two with a as a member.
 Both queries give the correct answer, a two-element list that either starts or ends with a.
 However, the behavior after generating these two solutions is quite different.
 
-`> (?- (length ?l (1  + (1  + 0))) (member a ?l))`
-
-`?L = (A ?X4057);`
-
-`?L = (?Y4061 A);`
-
-`No.`
-
-`> (?- (member a ?l) (length ?l (1  + (1  + 0))))`
-
-`?L = (A ?X4081);`
-
-`?L = (?Y4085 A);[Abort]`
+```lisp
+> (?- (length ?l (1  + (1  + 0))) (member a ?l))
+?L = (A ?X4057);
+?L = (?Y4061 A);
+No.
+> (?- (member a ?l) (length ?l (1  + (1  + 0))))
+?L = (A ?X4081);
+?L = (?Y4085 A);[Abort]
+```
 
 In the first query, length only generates one possible solution, the list with two unbound elements.
 `member` takes this solution and instantiates either the first or the second element to a.
@@ -1226,7 +1014,9 @@ Before moving on, it is useful to introduce the notion of an *anonymous variable
 In real Prolog, the underscore is used for anonymous variables, but we will use a single question mark.
 The definition of `member` that follows uses anonymous variables for positions within terms that are not needed within a clause:
 
-`(<- (member ?item (?item . ?)))`
+```lisp
+(<- (member ?item (?item . ?)))
+```
 
 `(<- (member ?item (?
 . ?rest)) (member ?item ?rest))`
@@ -1236,31 +1026,21 @@ One way to do that is to replace each anonymous variable with a unique variable.
 The function `replace-?-vars` uses `gensym` to do just that.
 It is installed in the top-level macros `<-` and `?-` so that all clauses and queries get the proper treatment.
 
-`(defmacro <- (&rest clause)`
-
-`  "Add a clause to the data base."`
-
-`  '(add-clause ',(replace-?-vars clause)))`
-
-`(defmacro ?- (&rest goals)`
-
-`  "Make a query and print answers."`
-
-`  '(top-level-prove '.(replace-?-vars goals)))`
-
-`(defun replace-?-vars (exp)`
-
-`  "Replace any ? within exp with a var of the form ?123."`
-
-`  (cond ((eq exp '?) (gensym "?"))`
-
-`              ((atom exp) exp)`
-
-`              (t (reuse-cons (replace-?-vars (first exp))`
-
-`                                            (replace-?-vars (rest exp))`
-
-`                                            exp))))`
+```lisp
+(defmacro <- (&rest clause)
+  "Add a clause to the data base."
+  '(add-clause ',(replace-?-vars clause)))
+(defmacro ?- (&rest goals)
+  "Make a query and print answers."
+  '(top-level-prove '.(replace-?-vars goals)))
+(defun replace-?-vars (exp)
+  "Replace any ? within exp with a var of the form ?123."
+  (cond ((eq exp '?) (gensym "?"))
+              ((atom exp) exp)
+              (t (reuse-cons (replace-?-vars (first exp))
+                                            (replace-?-vars (rest exp))
+                                            exp))))
+```
 
 A named variable that is used only once in a clause can also be considered an anonymous variable.
 This is addressed in a different way in [section 12.3](B9780080571157500121.xhtml#s0020).
@@ -1333,7 +1113,9 @@ They are closely related to `member,` which is repeated here.
 
 (<- `(iright ?left ?right (?x . ?rest))`
 
-`      (iright ?left ?right ?rest))`
+```lisp
+      (iright ?left ?right ?rest))
+```
 
 (<- `(= ?x ?x))`
 
@@ -1348,75 +1130,47 @@ The variable `?w` is the water drinker, and `?z` is the zebra owner.
 Each of the 15 constraints in the puzzle is listed in the `body` of `zebra,` although constraints 9 and 10 have been combined into the first one.
 Consider constraint 2, "The Englishman lives in the `red` house." This is interpreted as "there is a house whose nationality is Englishman and whose color is `red,` and which is a member of the list of houses": in other words, `(member (house englishman ? ? ? red) ?h).` The other constraints are similarly straightforward.
 
-`(<- (zebra ?h ?w ?z)`
-
-`  ;; Each house is of the form:`
-
-`  ;; (house nationality pet cigarette drink house-color)`
-
-`  (= ?h ((house norwegian ? ? ? ?)                                    ;1,10`
-
-`                ?`
-
-`                (house ? ? ? milk ?) ? ?))                                  ; 9`
-
-`  (member (house englishman ? ? ? red) ?h)                    ; 2`
-
-`  (member (house spaniard dog ? ? ?) ?h)                        ; 3`
-
-`  (member (house ? ? ? coffee green) ?h)                        ; 4`
-
-`  (member (house ukrainian ? ? tea ?) ?h)                      ; 5`
-
-`  (iright (house ? ? ? ? ivory)                                          ; 6`
-
-`                  (house 1111 green) ?h)`
-
-`  (member (house ? snails winston ? ?) ?h)                    ; 7`
-
-`  (member (house ? ? kools ? yellow) ?h)                        ; 8`
-
-`  (nextto (house ? ? chesterfield ? ?)                            ;11`
-
-`                  (house ? fox ? ? ?) ?h)`
-
-`  (nextto (house ? ? kools ? ?)                                          ;12`
-
-`                  (house ? horse ? ? ?) ?h)`
-
-`  (member (house ? ? luckystrike orange-juice ?) ?h);13`
-
-`  (member (house japanese ? parliaments ? ?) ?h)        ;14`
-
-`  (nextto (house norwegian ? ? ? ?)                                  ;15`
-
-`                  (house ? ? ? ? blue) ?h)`
-
-`  ;; Now for the questions:`
-
-`  (member (house ?w ? ? water ?) ?h)                                ;Q1`
-
-`  (member (house ?z zebra ? ? ?) ?h))                              ;Q2`
+```lisp
+(<- (zebra ?h ?w ?z)
+  ;; Each house is of the form:
+  ;; (house nationality pet cigarette drink house-color)
+  (= ?h ((house norwegian ? ? ? ?)                                    ;1,10
+                ?
+                (house ? ? ? milk ?) ? ?))                                  ; 9
+  (member (house englishman ? ? ? red) ?h)                    ; 2
+  (member (house spaniard dog ? ? ?) ?h)                        ; 3
+  (member (house ? ? ? coffee green) ?h)                        ; 4
+  (member (house ukrainian ? ? tea ?) ?h)                      ; 5
+  (iright (house ? ? ? ? ivory)                                          ; 6
+                  (house 1111 green) ?h)
+  (member (house ? snails winston ? ?) ?h)                    ; 7
+  (member (house ? ? kools ? yellow) ?h)                        ; 8
+  (nextto (house ? ? chesterfield ? ?)                            ;11
+                  (house ? fox ? ? ?) ?h)
+  (nextto (house ? ? kools ? ?)                                          ;12
+                  (house ? horse ? ? ?) ?h)
+  (member (house ? ? luckystrike orange-juice ?) ?h);13
+  (member (house japanese ? parliaments ? ?) ?h)        ;14
+  (nextto (house norwegian ? ? ? ?)                                  ;15
+                  (house ? ? ? ? blue) ?h)
+  ;; Now for the questions:
+  (member (house ?w ? ? water ?) ?h)                                ;Q1
+  (member (house ?z zebra ? ? ?) ?h))                              ;Q2
+```
 
 Here's the query and solution to the puzzle:
 
-`> (?- (zebra ?houses ?water-drinker ?zebra-owner))`
-
-`?HOUSES = ((HOUSE NORWEGIAN FOX KOOLS WATER YELLOW)`
-
-`                      (HOUSE UKRAINIAN HORSE CHESTERFIELD TEA BLUE)`
-
-`                      (HOUSE ENGLISHMAN SNAILS WINSTON MILK RED)`
-
-`                      (HOUSE SPANIARD DOG LUCKYSTRIKE ORANGE-JUICE IVORY)`
-
-`                      (HOUSE JAPANESE ZEBRA PARLIAMENTS COFFEE GREEN))`
-
-`?WATER-DRINKER = NORWEGIAN`
-
-`?ZEBRA-OWNER = JAPANESE.`
-
-`No.`
+```lisp
+> (?- (zebra ?houses ?water-drinker ?zebra-owner))
+?HOUSES = ((HOUSE NORWEGIAN FOX KOOLS WATER YELLOW)
+                      (HOUSE UKRAINIAN HORSE CHESTERFIELD TEA BLUE)
+                      (HOUSE ENGLISHMAN SNAILS WINSTON MILK RED)
+                      (HOUSE SPANIARD DOG LUCKYSTRIKE ORANGE-JUICE IVORY)
+                      (HOUSE JAPANESE ZEBRA PARLIAMENTS COFFEE GREEN))
+?WATER-DRINKER = NORWEGIAN
+?ZEBRA-OWNER = JAPANESE.
+No.
+```
 
 This took 278 seconds, and profiling (see page 288) reveals that the function prove was called 12,825 times.
 A call to prove has been termed a *logical inference, so* our system is performing 12825/278 = 46 logical inferences per second, or LIPS.
@@ -1454,11 +1208,11 @@ That way, we save time if we end up backtracking before the computation is made,
 It is possible to extend unification so that it is doing more work, and backtracking is doing less work.
 Consider the following computation:
 
-`(?- (length ?l 4)`
-
-`        (member d ?l) (member a ?l) (member c ?l) (member b ?l)`
-
-`        (= ?l (a b c d)))`
+```lisp
+(?- (length ?l 4)
+        (member d ?l) (member a ?l) (member c ?l) (member b ?l)
+        (= ?l (a b c d)))
+```
 
 The first two lines generate permutations of the list (`d a c b`), and the third line tests for a permutation equal to (`a b c d`).
 Most of the work is done by backtracking.
@@ -1467,7 +1221,9 @@ Predicates like `length` and `member` would be primitives that would have to kno
 Then the first two lines of the above program would `set ?l` to something like `#s (list :length 4 :members (d a c d))`.
 The third line would be a call to the extended unification procedure, which would further specify `?l` to be something like:
 
-`#s(list :length 4 imembers (d a c d) :order (abc d))`
+```lisp
+#s(list :length 4 imembers (d a c d) :order (abc d))
+```
 
 By making the unification procedure more complex, we eliminate the need for backtracking entirely.
 
@@ -1485,11 +1241,11 @@ Instead, each variable is represented as a structure that includes a field for i
 When the variable is unified with another expression, the variable's binding field is modified to point to the expression.
 Such variables will be called `vars` to distinguish them from the implementation of variables as symbols starting with a question mark, `vars` are defined with the following code:
 
-`(defconstant unbound "Unbound")`
-
-`(defstruct var name (binding unbound))`
-
-`(defun bound-p (var) (not (eq (var-binding var) unbound)))`
+```lisp
+(defconstant unbound "Unbound")
+(defstruct var name (binding unbound))
+(defun bound-p (var) (not (eq (var-binding var) unbound)))
+```
 
 The macro deref gets at the binding of a variable, returning its argument when it is an unbound variable or a non-variable expression.
 It includes a loop because a variable can be bound to another variable, which in turn is bound to the ultimate value.
@@ -1498,15 +1254,13 @@ Normally, it would be considered bad practice to implement deref as a macro, sin
 However, deref will appear in code generated by some versions of the Prolog compiler that will be presented in the next section.
 Therefore, to make the generated code look neater, I have allowed myself the luxury of the `deref` macro.
 
-`(defmacro deref (exp)`
-
-`  "Follow pointers for bound variables."`
-
-`  '(progn (loop while (and (var-p ,exp) (bound-p ,exp))`
-
-`                        do (setf ,exp (var-binding ,exp)))`
-
-`                  ,exp))`
+```lisp
+(defmacro deref (exp)
+  "Follow pointers for bound variables."
+  '(progn (loop while (and (var-p ,exp) (bound-p ,exp))
+                        do (setf ,exp (var-binding ,exp)))
+                  ,exp))
+```
 
 The function `unify!` below is the destructive version of `unify`.
 It is a predicate that returns true for success and false for failure, and has the side effect of altering variable bindings.
@@ -1514,9 +1268,10 @@ It is a predicate that returns true for success and false for failure, and has t
 `(defun unify!
 (x y)`
 
-`  "Destructively unify two expressions"`
-
-`  (cond ((eql (deref x) (deref y)) t)`
+```lisp
+  "Destructively unify two expressions"
+  (cond ((eql (deref x) (deref y)) t)
+```
 
 `              ((var-p x) (set-binding!
 x y))`
@@ -1524,7 +1279,9 @@ x y))`
 `              ((var-p y) (set-binding!
 y x))`
 
-`              ((and (consp x) (consp y))`
+```lisp
+              ((and (consp x) (consp y))
+```
 
 `              (and (unify!
 (first x) (first y))`
@@ -1532,7 +1289,9 @@ y x))`
 `                        (unify!
 (rest x) (rest y))))`
 
-`              (t nil)))`
+```lisp
+              (t nil)))
+```
 
 `(defun set-binding!
 (var value)`
@@ -1540,27 +1299,23 @@ y x))`
 `  "Set var's binding to value.
 Always succeeds (returns t)."`
 
-`  (setf (var-binding var) value)`
-
-`  t)`
+```lisp
+  (setf (var-binding var) value)
+  t)
+```
 
 To make `vars` easier to read, we can install a :`print-function`:
 
-`(defstruct (var (:print-function print-var))`
-
-`      name (binding unbound))`
-
-`  (defun print-var (var stream depth)`
-
-`      (if (or (and (numberp *print-level*)`
-
-`                        (>= depth *print-level*))`
-
-`              (var-p (deref var)))`
-
-`        (format stream "?~a" (var-name var))`
-
-`        (write var :stream stream)))`
+```lisp
+(defstruct (var (:print-function print-var))
+      name (binding unbound))
+  (defun print-var (var stream depth)
+      (if (or (and (numberp *print-level*)
+                        (>= depth *print-level*))
+              (var-p (deref var)))
+        (format stream "?~a" (var-name var))
+        (write var :stream stream)))
+```
 
 This is the first example of a carefully crafted : `print-function`.
 There are three things to notice about it.
@@ -1573,32 +1328,35 @@ Other printing functions such as `prinl` or `print` do not pay attention to thes
 
 Now, for backtracking purposes, we want to make `set-binding!` keep track of the bindings that were made, so they can be undone later:
 
-`(defvar *trall* (make-array 200 :fill-pointer 0 :adjustable t))`
+```lisp
+(defvar *trall* (make-array 200 :fill-pointer 0 :adjustable t))
+```
 
 `(defun set-binding!
 (var value)`
 
-`  "Set var's binding to value, after saving the variable`
+```lisp
+  "Set var's binding to value, after saving the variable
+```
 
 `  in the trail.
 Always returns t."`
 
-`  (unless (eq var value)`
-
-`      (vector-push-extend var *trail*)`
-
-`      (setf (var-binding var) value))`
-
-`  t)`
+```lisp
+  (unless (eq var value)
+      (vector-push-extend var *trail*)
+      (setf (var-binding var) value))
+  t)
+```
 
 `(defun undo-bindings!
 (old-trail)`
 
-`  "Undo all bindings back to a given point in the trail."`
-
-`  (loop until (= (fill-pointer *trail*) old-trail)`
-
-`      do (setf (var-binding (vector-pop *trail*)) unbound)))`
+```lisp
+  "Undo all bindings back to a given point in the trail."
+  (loop until (= (fill-pointer *trail*) old-trail)
+      do (setf (var-binding (vector-pop *trail*)) unbound)))
+```
 
 Now we need a way of making new variables, where each one is distinct.
 That could be done by `gensym-ing` a new name for each variable, but a quicker solution is just to increment a counter.
@@ -1608,15 +1366,13 @@ However, I thought that the operation of providing new anonymous variable was di
 Besides, `make-var` may be less efficient, because it has to process the keyword arguments.
 The function ? has no arguments; it just assigns the default values specified in the slots of the `var` structure.
 
-`(defvar *var-counter* 0)`
-
-`(defstruct (var (:constructor ? ())`
-
-`                      (:print-function print-var))`
-
-`  (name (incf *var-counter*))`
-
-`  (binding unbound))`
+```lisp
+(defvar *var-counter* 0)
+(defstruct (var (:constructor ? ())
+                      (:print-function print-var))
+  (name (incf *var-counter*))
+  (binding unbound))
+```
 
 A reasonable next step would be to use destructive unification to make a more efficient interpreter.
 This is left as an exercise, however, and instead we put the interpreter aside, and in the next chapter develop a compiler.
@@ -1632,36 +1388,33 @@ The relation clause is used to store clauses that make up the rules and facts th
 The relation `prove` is used to prove a goal.
 It calls `prove`-`all`, which attempts to prove a list of goals, `prove`-`all` succeeds in two ways: (1) if the list is empty, or (2) if there is some clause whose head matches the first goal, and if we can prove the body of that clause, followed by the remaining goals:
 
-`(<- (prove ?goal) (prove-all (?goal)))`
-
-`(<- (prove-all nil))`
-
-`(<- (prove-all (?goal . !!!(char) îgoals))`
-
-`        (clause (<- ?goal . ?body))`
-
-`        (concat ?body ?goals ?new-goals)`
-
-`        (prove-all ?new-goals))`
+```lisp
+(<- (prove ?goal) (prove-all (?goal)))
+(<- (prove-all nil))
+(<- (prove-all (?goal . !!!(char) îgoals))
+        (clause (<- ?goal . ?body))
+        (concat ?body ?goals ?new-goals)
+        (prove-all ?new-goals))
+```
 
 Now we add two clauses to the data base to define the member relation:
 
-`(<- (clause (<- (mem ?x (?x . ?y)))))`
+```lisp
+(<- (clause (<- (mem ?x (?x . ?y)))))
+```
 
 `(<- (clause (<- (mem ?x (?
 . ?z)) (mem ?x ?z))))`
 
 Finally, we can prove a goal using our interpreter:
 
-`(?- (prove (mem ?x (1 2 3))))`
-
-`?X = 1;`
-
-`?X = 2;`
-
-`?X = 3;`
-
-`No.`
+```lisp
+(?- (prove (mem ?x (1 2 3))))
+?X = 1;
+?X = 2;
+?X = 3;
+No.
+```
 
 ## 11.8 Prolog Compared to Lisp
 {:#s0060}
@@ -1779,9 +1532,10 @@ They all have problems unifying (`?x ?y a`) with (`?y ?x ?x`).
 Some of these texts assume that `unify`will be called in a context where no variables are shared between the two arguments.
 However, they are still suspect to the bug, as the following example points out:
 
-`> (unify '(f (?x ?y a) (?y ?x ?x)) '(f ?z ?z))`
-
-`((?Y . A) (?X . ?Y) (?Z ?X ?Y A))`
+```lisp
+> (unify '(f (?x ?y a) (?y ?x ?x)) '(f ?z ?z))
+((?Y . A) (?X . ?Y) (?Z ?X ?Y A))
+```
 
 Despite this subtle bug, I highly recommend each of the books to the reader.
 It is interesting to compare different implementations of the same algorithm.
@@ -1808,27 +1562,19 @@ Implement this representation for variables and compare it to the structure repr
 **Exercise  11.7 [m]** Consider the following alternative implementation for anonymous variables: Leave the macros <- and ?- alone, so that anonymous variables are allowed in assertions and queries.
 Instead, change `unify` so that it lets anything match against an anonymous variable:
 
-`(defun unify (x y &optional (bindings no-bindings))`
-
-`  "See if x and y match with given bindings."`
-
-`  (cond ((eq bindings fail) fail)`
-
-`              ((eql x y) bindings)`
-
-`              ((or (eq x '?) (eq y '?)) bindings)      ;***`
-
-`              ((variable-p x) (unify-variable x y bindings))`
-
-`              ((variable-p y) (unify-variable y x bindings))`
-
-`              ((and (consp x) (consp y))`
-
-`                (unify (rest x) (rest y)`
-
-`                          (unify (first x) (first y) bindings)))`
-
-`              (t fail)))`
+```lisp
+(defun unify (x y &optional (bindings no-bindings))
+  "See if x and y match with given bindings."
+  (cond ((eq bindings fail) fail)
+              ((eql x y) bindings)
+              ((or (eq x '?) (eq y '?)) bindings)      ;***
+              ((variable-p x) (unify-variable x y bindings))
+              ((variable-p y) (unify-variable y x bindings))
+              ((and (consp x) (consp y))
+                (unify (rest x) (rest y)
+                          (unify (first x) (first y) bindings)))
+              (t fail)))
+```
 
 Is this alternative correct?
 If so, give an informal proof.
@@ -1842,11 +1588,11 @@ You will need to decide which relations are primitive (stored in the Prolog data
 
 For example, here's a definition of grandfather that says that G is the grandfather of C if G is the father of some P, who is the parent of C:
 
-`(<- (grandfather ?g ?c)`
-
-`        (father ?g ?p)`
-
-`        (parent ?p ?c))`
+```lisp
+(<- (grandfather ?g ?c)
+        (father ?g ?p)
+        (parent ?p ?c))
+```
 
 **Exercise 11.10 [m]** The following problem is presented in [Wirth 1976](B9780080571157500285.xhtml#bb1415):
 
@@ -1862,7 +1608,9 @@ Represent this situation using the predicates defined in the previous exercise, 
 
 `> (?- (length (a b` c `d) ?n))`
 
-`?N = (1  + (1  + (1  + (1  + 0))));`
+```lisp
+?N = (1  + (1  + (1  + (1  + 0))));
+```
 
 It is possible to produce 4 instead of `(1+ (1+ (1+ (1+ 0))))` by extending the notion of unification.
 [A&iuml;t-Kaci et al.
@@ -1880,37 +1628,24 @@ Implement this alternative.
 The former takes the child first; the latter takes the husband first.
 Given these primitives, we can make the following definitions:
 
-`(<- (father ?f ?e)    (male ?f) (parent ?f ?c))`
-
-`(<- (mother ?m ?c)    (female ?m) (parent ?m c))`
-
-`(<- (son ?s ?p)      (male ?s) (parent ?p ?s))`
-
-`(<- (daughter ?s ?p)    (male ?s) (parent ?p ?s))`
-
-`(<- (grandfather ?g ?c) (father ?g ?p) (parent ?p ?c))`
-
-`(<- (grandmother ?g ?c) (mother ?g ?p) (parent ?p ?c))`
-
-`(<- (grandson ?gs ?gp) (son ?gs ?p) (parent ?gp ?p))`
-
-`(<- (granddaughter ?gd ?gp) (daughter ?gd ?p) (parent ?gp ?p))`
-
-`(<- (parent ?p ?c)    (child ?c ?p))`
-
-`(<- (wife ?w ?h)      (married ?h ?w))`
-
-`(<- (husband ?h ?w)    (married ?h ?w))`
-
-`(<- (sibling ?x ?y)    (parent ?p ?x) (parent ?p ?y))`
-
-`(<- (brother ?b ?x)      (male ?b) (sibling ?b ?x))`
-
-`(<- (sister ?s ?x)        (female ?s) (sibling ?s ?x))`
-
-`(<- (uncle ?u ?n)        (brother ?u ?p) (parent ?p ?n))`
-
-`(<- (aunt ?a ?n)        (sister ?a ?p) (parent ?p ?n  ))`
+```lisp
+(<- (father ?f ?e)    (male ?f) (parent ?f ?c))
+(<- (mother ?m ?c)    (female ?m) (parent ?m c))
+(<- (son ?s ?p)      (male ?s) (parent ?p ?s))
+(<- (daughter ?s ?p)    (male ?s) (parent ?p ?s))
+(<- (grandfather ?g ?c) (father ?g ?p) (parent ?p ?c))
+(<- (grandmother ?g ?c) (mother ?g ?p) (parent ?p ?c))
+(<- (grandson ?gs ?gp) (son ?gs ?p) (parent ?gp ?p))
+(<- (granddaughter ?gd ?gp) (daughter ?gd ?p) (parent ?gp ?p))
+(<- (parent ?p ?c)    (child ?c ?p))
+(<- (wife ?w ?h)      (married ?h ?w))
+(<- (husband ?h ?w)    (married ?h ?w))
+(<- (sibling ?x ?y)    (parent ?p ?x) (parent ?p ?y))
+(<- (brother ?b ?x)      (male ?b) (sibling ?b ?x))
+(<- (sister ?s ?x)        (female ?s) (sibling ?s ?x))
+(<- (uncle ?u ?n)        (brother ?u ?p) (parent ?p ?n))
+(<- (aunt ?a ?n)        (sister ?a ?p) (parent ?p ?n  ))
+```
 
 Note that there is no way in Prolog to express a *true* definition.
 We would like to say that "P is the parent of C if and only if C is the child of P," but Prolog makes us express the biconditional in one direction only.
@@ -1921,40 +1656,34 @@ The strategy is to structure the defined terms into a strict hierarchy: the four
 
 We also provide a definition for son-in-law:
 
-`(<- (parent ?p ?c) (married ?p ?w) (child ?c ?w))`
-
-`(<- (parent ?p ?c) (married ?h ?p) (child ?c ?w))`
-
-`(<- (son-in-law ?s ?p) (parent ?p ?w) (married ?s ?w))`
+```lisp
+(<- (parent ?p ?c) (married ?p ?w) (child ?c ?w))
+(<- (parent ?p ?c) (married ?h ?p) (child ?c ?w))
+(<- (son-in-law ?s ?p) (parent ?p ?w) (married ?s ?w))
+```
 
 Now we add the information from the story.
 Note that we only use the four primitives male, female, married, and child:
 
-`(<- (male I)) (<- (male F)) (<- (male S1)) (<- (male S2))`
-
-`(<- (female W)) (<- (female D))`
-
-`(<- (married I W))`
-
-`(<- (married F D))`
-
-`(<- (child D W))`
-
-`(<- (child I F))`
-
-`(<- (child S1 I))`
-
-`(<- (child S2 F))`
+```lisp
+(<- (male I)) (<- (male F)) (<- (male S1)) (<- (male S2))
+(<- (female W)) (<- (female D))
+(<- (married I W))
+(<- (married F D))
+(<- (child D W))
+(<- (child I F))
+(<- (child S1 I))
+(<- (child S2 F))
+```
 
 Now we are ready to make the queries:
 
-`> (?- (son-in-law F I)) Yes.`
-
-`> (?- (mother D I)) Yes.`
-
-`> (?- (uncle S1 I)) Yes.`
-
-`> (?- (grandfather I I)) Yes.`
+```lisp
+> (?- (son-in-law F I)) Yes.
+> (?- (mother D I)) Yes.
+> (?- (uncle S1 I)) Yes.
+> (?- (grandfather I I)) Yes.
+```
 
 ----------------------
 

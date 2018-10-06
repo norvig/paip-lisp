@@ -2120,18 +2120,21 @@ Consider these annotated examples:
 `> &optional =>`        *; lambda-list keywords are normal symbols  
 Error: the symbol &optional has no value*
 
-`> '&optional => &OPTIONAL`
-
+```lisp
+> '&optional => &OPTIONAL
+```
 `> (defun f (&xyz) (+ &xyz &xyz)) F` *;& has no significance*
 
-`> (f 3) => 6`
-
-`> (defun f (:xyz) (+ :xyz :xyz)) =>`
+```lisp
+> (f 3) => 6
+> (defun f (:xyz) (+ :xyz :xyz)) =>
+```
 *Error: the keyword :xyz appears in a variable list.  
 Keywords are constants, and so cannot be used as names of variables.*
 
-`> (defun g (&key x y) (list x y)) => G`
-
+```lisp
+> (defun g (&key x y) (list x y)) => G
+```
 ```
 > (let ((key s '(:x :y :z)))
    (g (second keys) 1 (first keys) 2)) => (2 1)

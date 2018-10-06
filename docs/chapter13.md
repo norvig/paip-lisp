@@ -99,11 +99,15 @@ The difference can best be seen with an example.
 Here is a simple program to create bank accounts and keep track of withdrawals, deposits, and accumulation of interest.
 First, the program is written in traditional procedural style:
 
-`(defstruct account`
+```lisp
+(defstruct account
+```
 
   `(name "") (balance 0.00) (interest-rate .06))`
 
-`(defun account-withdraw (account amt)`
+```lisp
+(defun account-withdraw (account amt)
+```
 
   `"Make a withdrawal from this account."`
 
@@ -113,13 +117,17 @@ First, the program is written in traditional procedural style:
 
         `'insufficient-funds))`
 
-`(defun account-deposit (account amt)`
+```lisp
+(defun account-deposit (account amt)
+```
 
   `"Make a deposit to this account."`
 
   `(incf (account-balance account) amt))`
 
-`(defun account-interest (account)`
+```lisp
+(defun account-interest (account)
+```
 
   `"Accumulate interest in this account."`
 
@@ -140,7 +148,9 @@ The problem is that once we have created an account, we have no control over wha
 The object-oriented style is designed to provide that control.
 Here is the same program written in object-oriented style (using plain Lisp):
 
-`(defun new-account (name &optional (balance 0.00)`
+```lisp
+(defun new-account (name &optional (balance 0.00)
+```
 
                           `(interest-rate .06))`
 
@@ -182,13 +192,17 @@ The function `get-method` finds the method that implements a message for a given
 The function send gets the method and applies it to a list of arguments.
 The name send comes from the Flavors object-oriented system, which is discussed in the history section ([page 456](#p456)).
 
-`(defun get-method (object message)`
+```lisp
+(defun get-method (object message)
+```
 
   `"Return the method that implements message for this object."`
 
   `(funcall object message))`
 
-`(defun send (object message &rest args)`
+```lisp
+(defun send (object message &rest args)
+```
 
   `"Get the function to implement the message,`
 
@@ -201,16 +215,18 @@ Here is an example of the use of `new-account` and `send`:
 `> (setf acct (new-account "J.
 Random Customer" 1000.00))`=>
 
-`#<CLOSURE 23652465>`
-
-`> (send acct 'withdraw 500.00) => 500.0`
-
-`> (send acct 'deposit 123.45) => 623.45`
+```lisp
+#<CLOSURE 23652465>
+> (send acct 'withdraw 500.00) => 500.0
+> (send acct 'deposit 123.45) => 623.45
+```
 
 `> (send acct 'name) => "J.
 Random Customer"`
 
-`> (send acct 'balance) => 623.45`
+```lisp
+> (send acct 'balance) => 623.45
+```
 
 ## 13.3 Generic Functions
 {:#s0020}
@@ -219,12 +235,16 @@ Random Customer"`
 The send syntax is awkward, as it is different from the normal Lisp function-calling syntax, and it doesn't fit in with the other Lisp tools.
 For example, we might like to say (`mapcar 'balance accounts`), but with messages we would have to write that as:
 
-`(mapcar #'(lambda (acct) (send acct 'balance)) accounts)`
+```lisp
+(mapcar #'(lambda (acct) (send acct 'balance)) accounts)
+```
 
 We can fix this problem by defining *generic* functions that find the right method to execute a message.
 For example, we could define:
 
-`(defun withdraw (object &rest args)`
+```lisp
+(defun withdraw (object &rest args)
+```
 
   `"Define withdraw as a generic function on objects."`
 
@@ -251,7 +271,9 @@ It also defines a generic function for each message.
 Finally, it allows the programmer to make a distinction between variables that are associated with each object and those that are associated with a class and are shared by all member s of the class.
 For example, you might want to have all instances of the class `account` share the same interest rate, but you wouldn't want them to share the same balance.
 
-`(defmacro define-class (class inst-vars class-vars &body methods)`
+```lisp
+(defmacro define-class (class inst-vars class-vars &body methods)
+```
 
   `"Define a class for object-oriented programming."`
 
@@ -269,13 +291,17 @@ For example, you might want to have all instances of the class `account` share t
 
   `                  ,@(mapcar #'make-clause methods))))))`
 
-`(defun make-clause (clause)`
+```lisp
+(defun make-clause (clause)
+```
 
   `"Translate a message from define-class into a case clause."`
 
   `'(,(first clause) #'(lambda ,(second clause) .,(rest2 clause))))`
 
-`(defun ensure-generic-fn (message)`
+```lisp
+(defun ensure-generic-fn (message)
+```
 
   `"Define an object-oriented dispatch function for a message,`
 
@@ -291,7 +317,9 @@ For example, you might want to have all instances of the class `account` share t
 
         `(setf (get message 'generic-fn) fn))))`
 
-`(defun generic-fn-p (fn-name)`
+```lisp
+(defun generic-fn-p (fn-name)
+```
 
   `"Is this a generic function?"`
 
@@ -302,7 +330,9 @@ For example, you might want to have all instances of the class `account` share t
 Now we define the class account with this macro.
 We make `interest-rate` a class variable, one that is shared by all accounts:
 
-`(define-class account (name &optional (balance 0.00))`
+```lisp
+(define-class account (name &optional (balance 0.00))
+```
 
                 `((interest-rate .06))`
 
@@ -325,13 +355,12 @@ Here we use the generic functions defined by this macro:
 `> (setf acct2 (account "A.
 User" 2000.00)) => #<CLOSURE 24003064>`
 
-`> (deposit acct2 42.00) => 2042.0`
-
-`> (interest acct2) => 2164.52`
-
-`> (balance acct2) => 2164.52`
-
-`> (balance acct) => 623.45`
+```lisp
+> (deposit acct2 42.00) => 2042.0
+> (interest acct2) => 2164.52
+> (balance acct2) => 2164.52
+> (balance acct) => 623.45
+```
 
 In this last line, the generic function `balance` is applied to `acct,` an object that was created before we even defined the account class and the function `balance.` But `balance` still works properly on this object, because it obeys the message-passing protocol.
 
@@ -346,7 +375,9 @@ The first clause allows for changing the password (if you have the original pass
 The definition of `password-account` takes advantage of the internal details of `define-class` in two ways: it makes use of the fact that `otherwise` can be used as a catch-all clause in a `case` form, and it makes use of the fact that the dispatch variable is called `message.` Usually, it is not a good idea to rely on details about the implementation of a macro, and soon we will see cleaner ways of defining classes.
 But for now, this simple approach works:
 
-`(define-class password-account (password acct) ()`
+```lisp
+(define-class password-account (password acct) ()
+```
 
   `(change-password (pass new-pass)`
 
@@ -366,19 +397,20 @@ But for now, this simple approach works:
 
 Now we see how the class `password-account` can be used to provide protection for an existing account:
 
-`(setf acct3 (password-account "secret" acct2)) => #<CLOSURE 33427277>`
-
-`> (balance acct3 "secret") => 2164.52`
-
-`> (withdraw acct3 "guess" 2000.00) => WRONG-PASSWORD`
-
-`> (withdraw acct3 "secret" 2000.00) => 164.52`
+```lisp
+(setf acct3 (password-account "secret" acct2)) => #<CLOSURE 33427277>
+> (balance acct3 "secret") => 2164.52
+> (withdraw acct3 "guess" 2000.00) => WRONG-PASSWORD
+> (withdraw acct3 "secret" 2000.00) => 164.52
+```
 
 Now let's try one more example.
 Suppose we want to have a new class of account where only a limited amount of money can be withdrawn at any time.
 We could define the class `limited-account`:
 
-`(define-class limited-account (limit acct) ()`
+```lisp
+(define-class limited-account (limit acct) ()
+```
 
   `(withdraw (amt)`
 
@@ -395,20 +427,21 @@ We could define the class `limited-account`:
 This definition redefines the `withdraw` message to check if the limit is exceeded before passing on the message, and it uses the `otherwise` clause simply to pass on all other messages unchanged.
 In the following example, we set up an account with both a password and a limit:
 
-`> (setf acct4 (password-account "pass"`
+```lisp
+> (setf acct4 (password-account "pass"
+```
 
               `(limited-account 100.00`
 
                 `(account "A.
 Thrifty Spender" 500.00))))`=>
 
-`#<CLOSURE 34136775>`
-
-`> (withdraw acct4 "pass" 200.00) => OVER-LIMIT`
-
-`> (withdraw acct4 "pass" 20.00) => 480.0`
-
-`> (withdraw acct4 "guess" 20.00) => WRONG-PASSWORD`
+```lisp
+#<CLOSURE 34136775>
+> (withdraw acct4 "pass" 200.00) => OVER-LIMIT
+> (withdraw acct4 "pass" 20.00) => 480.0
+> (withdraw acct4 "guess" 20.00) => WRONG-PASSWORD
+```
 
 Note that functions like `withdraw` are still simple generic functions that just find the right method and apply it to the arguments.
 The trick is that each class defines a different way to handle the withdraw message.
@@ -421,7 +454,9 @@ Passing control to the method of a component is called *delegation*.
 The advantage of the object-oriented style is that we can introduce a new class by writing one definition that is localized and does not require changing any existing code.
 If we had written this in traditional procedural style, we would end up with functions like the following:
 
-`(defun withdraw (acct amt &optional pass)`
+```lisp
+(defun withdraw (acct amt &optional pass)
+```
 
   `(cond ((and (typep acct 'password-account)`
 
@@ -477,7 +512,9 @@ But it would be cleaner to make this relationship explicit.
 The `defstruct` mechanism does allow for just this kind of explicit inheritance.
 If we had defined `account` as a structure, then we could define `limited-account` with:
 
-`(defstruct (limited-account (:include account)) limit)`
+```lisp
+(defstruct (limited-account (:include account)) limit)
+```
 
 Two things are needed to provide an inheritance facility for classes.
 First, we should modify `define-class` so that it takes the name of the class to inherit from as the second argument.
@@ -486,7 +523,9 @@ The new class can, of course, define new variables and methods, or it can shadow
 In the form below, we define `limited-account` to be a subclass of `account` that adds a new instance variable, `limit`, and redefines the `withdraw` method so that it checks for amounts that are over the limit.
 If the amount is acceptable, then it uses the function `call-next-method` (not yet defined) to get at the `withdraw` method for the parent class, `account`.
 
-`(define-class limited-account account (limit) ()`
+```lisp
+(define-class limited-account account (limit) ()
+```
 
   `(withdraw (amt)`
 
@@ -499,7 +538,9 @@ If the amount is acceptable, then it uses the function `call-next-method` (not y
 If inheritance is a good thing, then multiple inheritance is an even better thing.
 For example, assuming we have defined the classes `limited-account` and `password-account`, it is very convenient to define the following class, which inherits from both of them:
 
-`(define-class limited-account-with-password`
+```lisp
+(define-class limited-account-with-password
+```
 
                       `(password-account limited-account))`
 
@@ -539,7 +580,9 @@ The general form of the macro `defclass` is:
 The class-options are rarely used.
 `defclass` can be used to define the class `account`:
 
-`(defclass account ()`
+```lisp
+(defclass account ()
+```
 
   `((name :initarg :name ireader name)`
 
@@ -561,15 +604,17 @@ The `interest-rate` slot has an `:initform` option to give it a default value an
 
 Here we see the creation of an object, and the application of the automatically defined methods to it.
 
-`> (setf al (make-instance 'account :balance 5000.00`
+```lisp
+> (setf al (make-instance 'account :balance 5000.00
+```
 
                           `:name "Fred")) => #<ACCOUNT 26726272>`
 
-`> (name al) => "Fred"`
-
-`> (balance al) => 5000.0`
-
-`> (interest-rate al) => 0.06`
+```lisp
+> (name al) => "Fred"
+> (balance al) => 5000.0
+> (interest-rate al) => 0.06
+```
 
 CLOS differs from most object-oriented systems in that methods are defined separately from classes.
 To define a method (besides the ones defined automatically by `:reader`, `:writer`, or `:accessor` options) we use the `defmethod` macro.
@@ -582,7 +627,9 @@ Here is the method for withdrawing from an account.
 Note that CLOS does not have a notion of instance variable, only instance slot.
 So we have to use the method (`balance acct`) rather than the instance variable `balance`:
 
-`(defmethod withdraw ((acct account) amt)`
+```lisp
+(defmethod withdraw ((acct account) amt)
+```
 
   `(if (< amt (balance acct))`
 
@@ -592,11 +639,15 @@ So we have to use the method (`balance acct`) rather than the instance variable 
 
 With CLOS it is easy to define a `limited-account` as a subclass of `account`, and to define the `withdraw` method for `limited-accounts`:
 
-`(defclass limited-account (account)`
+```lisp
+(defclass limited-account (account)
+```
 
   `((limit :initarg :limit :reader limit)))`
 
-`(defmethod withdraw ((acct limited-account) amt)`
+```lisp
+(defmethod withdraw ((acct limited-account) amt)
+```
 
   `(if (> amt (limit acct))`
 
@@ -607,21 +658,26 @@ With CLOS it is easy to define a `limited-account` as a subclass of `account`, a
 Note the use of `call-next-method` to invoke the `withdraw` method for the `account` class.
 Also note that all the other methods for accounts automatically work on instances of the class limited-account, because it is defined to inherit from `account.` In the following example, we show that the `name` method is inherited, that the `withdraw` method for `limited-account` is invoked first, and that the `withdraw` method for `account` is invoked by the `call-next-method` function:
 
-`> (setf a2 (make-instance 'limited-account`
+```lisp
+> (setf a2 (make-instance 'limited-account
+```
 
                         `:name "A.
 Thrifty Spender"`
 
                         `:balance 500.00 :limit 100.00))`=>
 
-`#<LIMITED-ACCOUNT 24155343>`
+```lisp
+#<LIMITED-ACCOUNT 24155343>
+```
 
 `> (name a2) => "A.
 Thrifty Spender"`
 
-`> (withdraw a2 200.00) => OVER-LIMIT`
-
-`> (withdraw a2 20.00) => 480.0`
+```lisp
+> (withdraw a2 200.00) => OVER-LIMIT
+> (withdraw a2 20.00) => 480.0
+```
 
 In general, there may be several methods appropriate to a given message.
 In that case, all the appropriate methods are gathered together and sorted, most specific first.
@@ -632,17 +688,23 @@ The complete story is actually even more complicated than this.
 As one example of the complication, consider the class `audited-account`, which prints and keeps a trail of all deposits and withdrawals.
 It could be defined as follows using a new feature of CLOS, `:before` and `:after` methods:
 
-`(defclass audited-account (account)`
+```lisp
+(defclass audited-account (account)
+```
 
   `((audit-trail :initform nil :accessor audit-trail)))`
 
-`(defmethod withdraw :before ((acct audited-account) amt)`
+```lisp
+(defmethod withdraw :before ((acct audited-account) amt)
+```
 
   `(push (print '(withdrawing ,amt))`
 
     `(audit-trail acct)))`
 
-`(defmethod withdraw :after ((acct audited-account) amt)`
+```lisp
+(defmethod withdraw :after ((acct audited-account) amt)
+```
 
   `(push (print '(withdrawal (,amt) done))`
 
@@ -658,25 +720,18 @@ It may choose to invoke `cal1-next-method` to get at the other methods.
 The values from the `:before` and `:after` methods are ignored, and the value from the primary method is returned.
 Here is an example:
 
-`> (setf a3 (make-instance 'audited-account :balance 1000.00))`
-
-`#<AUDITED-ACCOUNT 33555607>`
-
-`> (withdraw a3 100.00)`
-
-`(WITHDRAWING 100.0)`
-
-`(WITHDRAWAL (100.0) DONE)`
-
-`900.0`
-
-`> (audit-trail a3)`
-
-`((WITHDRAWAL (100.0) DONE) (WITHDRAWING 100.0))`
-
-`> (setf (audit-trail a3) nil)`
-
-`NIL`
+```lisp
+> (setf a3 (make-instance 'audited-account :balance 1000.00))
+#<AUDITED-ACCOUNT 33555607>
+> (withdraw a3 100.00)
+(WITHDRAWING 100.0)
+(WITHDRAWAL (100.0) DONE)
+900.0
+> (audit-trail a3)
+((WITHDRAWAL (100.0) DONE) (WITHDRAWING 100.0))
+> (setf (audit-trail a3) nil)
+NIL
+```
 
 The last interaction shows the biggest flaw in CLOS: it fails to encapsulate information.
 In order to make the `audit-trail` accessible to the `withdraw` methods, we had to give it accessor methods.
@@ -702,14 +757,18 @@ Each combination of these features results in a new class of problem.
 This makes it easy for the user to add a new class to represent a new domain, or a new search strategy.
 The basic class, `problem`, contains a single-instance variable to hold the unexplored states of the problem.
 
-`(defclass problem ()`
+```lisp
+(defclass problem ()
+```
 
   `((states :initarg :states :accessor problem-states)))`
 
 The function searcher is similar to the function `tree-search` of [section 6.4](B9780080571157500066.xhtml#s0025).
 The main difference is that searcher uses generic functions instead of passing around functional arguments.
 
-`(defmethod searcher ((prob problem))`
+```lisp
+(defmethod searcher ((prob problem))
+```
 
   `"Find a state that solves the search problem."`
 
@@ -734,19 +793,25 @@ The main difference is that searcher uses generic functions instead of passing a
 searcher does not assume that the problem states are organized in a list; rather, it uses the generic function `no-states-p` to test if there are any states, `pop-state` to remove and return the first state, and `current-state` to access the first state.
 For the basic `problem` class, we will in fact implement the states as a list, but another class of problem is free to use another representation.
 
-`(defmethod current-state ((prob problem))`
+```lisp
+(defmethod current-state ((prob problem))
+```
 
   `"The current state is the first of the possible states."`
 
   `(first (problem-states prob)))`
 
-`(defmethod pop-state ((prob problem))`
+```lisp
+(defmethod pop-state ((prob problem))
+```
 
   `"Remove and return the current state."`
 
   `(pop (problem-states prob)))`
 
-`(defmethod no-states-p ((prob problem))`
+```lisp
+(defmethod no-states-p ((prob problem))
+```
 
   `"Are there any more unexplored states?"`
 
@@ -756,7 +821,9 @@ In `tree-search`, we included a statement to print debugging information.
 We can do that here, too, but we can hide it in a separate method so as not to clutter up the main definition of `searcher`.
 It is a `:before` method because we want to see the output before carrying out the operation.
 
-`(defmethod searcher :before ((prob problem))`
+```lisp
+(defmethod searcher :before ((prob problem))
+```
 
   `(dbg 'search ";; Search: ~a" (problem-states prob)))`
 
@@ -765,32 +832,44 @@ We will address `goal-p` first, by recognizing that for many problems we will be
 We define the class `eql-problem` to refer to such problems, and specify `goal-p` for that class.
 Note that we make it possible to specify the goal when a problem is created, but not to change the goal:
 
-`(defclass eql-problem (problem)`
+```lisp
+(defclass eql-problem (problem)
+```
 
   `((goal rinitarg :goal :reader problem-goal)))`
 
-`(defmethod goal-p ((prob eql-problem))`
+```lisp
+(defmethod goal-p ((prob eql-problem))
+```
 
   `(eql (current-state prob) (problem-goal prob)))`
 
 Now we are ready to specify two search strategies: depth-first search and breadth-first search.
 We define problem classes for each strategy and specify the `problem-combiner` function:
 
-`(defclass dfs-problem (problem) ()`
+```lisp
+(defclass dfs-problem (problem) ()
+```
 
   `(:documentation "Depth-first search problem."))`
 
-`(defclass bfs-problem (problem) ()`
+```lisp
+(defclass bfs-problem (problem) ()
+```
 
   `(:documentation "Breadth-first search problem."))`
 
-`(defmethod problem-combiner ((prob dfs-problem) new old)`
+```lisp
+(defmethod problem-combiner ((prob dfs-problem) new old)
+```
 
   `"Depth-first search looks at new states first."`
 
   `(append new old))`
 
-`(defmethod problem-combiner ((prob bfs-problem) new old)`
+```lisp
+(defmethod problem-combiner ((prob bfs-problem) new old)
+```
 
   `"Depth-first search looks at old states first."`
 
@@ -807,9 +886,10 @@ The last step is to define a class that represents a particular domain, and defi
 As the first example, consider the simple binary tree search from [section 6.4](B9780080571157500066.xhtml#s0025).
 Naturally, this gets represented as a class:
 
-`(defclass binary-tree-problem (problem) ())`
-
-`(defmethod problem-successors ((prob binary-tree-problem) state)`
+```lisp
+(defclass binary-tree-problem (problem) ())
+(defmethod problem-successors ((prob binary-tree-problem) state)
+```
 
   `(let ((n (* 2 state)))`
 
@@ -818,43 +898,35 @@ Naturally, this gets represented as a class:
 Now suppose we want to solve a binary-tree problem with breadth-first search, searching for a particular goal.
 Simply create a class that mixes in `binary-tree-problem, eql-problem` and `bfs-problem,` create an instance of that class, and call `searcher` on that instance:
 
-`(defclass binary-tree-eql-bfs-problem`
+```lisp
+(defclass binary-tree-eql-bfs-problem
+```
 
             `(binary-tree-problem eql-problem bfs-problem) ())`
 
-`> (setf pl (make-instance 'binary-tree-eql-bfs-problem`
+```lisp
+> (setf pl (make-instance 'binary-tree-eql-bfs-problem
+```
 
                           `:states '(1) :goal 12))`
 
-`#<BINARY-TREE-EQL-BFS-PROBLEM 26725536>`
-
-`> (searcher pl)`
-
-`;; Search: (1)`
-
-`;; Search: (2 3)`
-
-`;; Search: (3 4 5)`
-
-`;; Search: (4 5 6 7)`
-
-`;; Search: (5 6 7 8 9)`
-
-`;; Search: (6 7 8 9 10 11)`
-
-`;; Search: (7 8 9 10 11 12 13)`
-
-`;; Search: (8 9 10 11 12 13 14 15)`
-
-`;; Search: (9 10 11 12 13 14 15 16 17)`
-
-`;; Search: (10 11 12 13 14 15 16 17 18 19)`
-
-`;; Search: (11 12 13 14 15 16 17 18 19 20 21)`
-
-`;; Search: (12 13 14 15 16 17 18 19 20 21 22 23)`
-
-`12`
+```lisp
+#<BINARY-TREE-EQL-BFS-PROBLEM 26725536>
+> (searcher pl)
+;; Search: (1)
+;; Search: (2 3)
+;; Search: (3 4 5)
+;; Search: (4 5 6 7)
+;; Search: (5 6 7 8 9)
+;; Search: (6 7 8 9 10 11)
+;; Search: (7 8 9 10 11 12 13)
+;; Search: (8 9 10 11 12 13 14 15)
+;; Search: (9 10 11 12 13 14 15 16 17)
+;; Search: (10 11 12 13 14 15 16 17 18 19)
+;; Search: (11 12 13 14 15 16 17 18 19 20 21)
+;; Search: (12 13 14 15 16 17 18 19 20 21 22 23)
+12
+```
 
 ### Best-First Search
 {:#s0050}
@@ -863,11 +935,15 @@ Simply create a class that mixes in `binary-tree-problem, eql-problem` and `bfs-
 It should be clear how to proceed to define best-first search: define a class to represent best-first search problems, and then define the necessary methods for that class.
 Since the search strategy only affects the order in which states are explored, the only method necessary will be for `problem-combiner`.
 
-`(defclass best-problem (problem) ()`
+```lisp
+(defclass best-problem (problem) ()
+```
 
   `(:documentation "A Best-first search problem."))`
 
-`(defmethod problem-combiner ((prob best-problem) new old)`
+```lisp
+(defmethod problem-combiner ((prob best-problem) new old)
+```
 
   `"Best-first search sorts new and old according to cost-fn."`
 
@@ -878,7 +954,9 @@ Since the search strategy only affects the order in which states are explored, t
 This introduces the new function `cost-fn`; naturally it will be a generic function.
 The following is a `cost-fn` that is reasonable for any `eql-problem` dealing with numbers, but it is expected that most domains will specialize this function.
 
-`(defmethod cost-fn ((prob eql-problem) state)`
+```lisp
+(defmethod cost-fn ((prob eql-problem) state)
+```
 
   `(abs (- state (problem-goal prob))))`
 
@@ -888,13 +966,17 @@ If this nil, then full best-first search is done.
 Beam search is implemented by an `:around` method on `problem-combiner`.
 It calls the next method to get the list of states produced by best-first search, and then extracts the first *b* elements.
 
-`(defclass beam-problem (problem)`
+```lisp
+(defclass beam-problem (problem)
+```
 
   `((beam-width :initarg :beam-width :initform nil`
 
                   `:reader problem-beam-width)))`
 
-`(defmethod problem-combiner :around ((prob beam-problem) new old)`
+```lisp
+(defmethod problem-combiner :around ((prob beam-problem) new old)
+```
 
   `(let ((combined (call-next-method)))`
 
@@ -905,35 +987,32 @@ It calls the next method to get the list of states produced by best-first search
 Now we apply beam search to the binary-tree problem.
 As usual, we have to make up another class to represent this type of problem:
 
-`(defclass binary-tree-eql-best-beam-problem`
+```lisp
+(defclass binary-tree-eql-best-beam-problem
+```
 
   `(binary-tree-problem eql-problem best-problem beam-problem)`
 
   `())`
 
-`> (setf p3 (make-instance 'binary-tree-eql-best-beam-problem`
+```lisp
+> (setf p3 (make-instance 'binary-tree-eql-best-beam-problem
+```
 
                           `:states '(1) :goal 12 :beam-width 3))`
 
-`#<BINARY-TREE-EQL-BEST-BEAM-PROBLEM 27523251>`
-
-`> (searcher p3)`
-
-`;; Search: (1)`
-
-`;; Search: (3 2)`
-
-`;; Search: (7 6 2)`
-
-`;; Search: (14 15 6)`
-
-`;; Search: (15 6 28)`
-
-`;; Search: (6 28 30)`
-
-`;; Search: (12 13 28)`
-
-`12`
+```lisp
+#<BINARY-TREE-EQL-BEST-BEAM-PROBLEM 27523251>
+> (searcher p3)
+;; Search: (1)
+;; Search: (3 2)
+;; Search: (7 6 2)
+;; Search: (14 15 6)
+;; Search: (15 6 28)
+;; Search: (6 28 30)
+;; Search: (12 13 28)
+12
+```
 
 So far the case for CLOS has not been compelling.
 The code in this section duplicates the functionality of code in [section 6.4](B9780080571157500066.xhtml#s0025), but the CLOS code tends to be more verbose, and it is somewhat disturbing that we had to make up so many long class names.
@@ -946,47 +1025,47 @@ Compare this with the definition of `trip` on page 198 to see if you prefer CLOS
 The main difference is that here we say that the cost function is `air-distance` and the successors are the `neighbors` by defining methods; in `trip` we did it by passing parameters.
 The latter is a little more succint, but the former may be more clear, especially as the number of parameters grows.
 
-`(defclass trip-problem (binary-tree-eql-best-beam-problem)`
+```lisp
+(defclass trip-problem (binary-tree-eql-best-beam-problem)
+```
 
   `((beam-width :initform 1)))`
 
-`(defmethod cost-fn ((prob trip-problem) city)`
+```lisp
+(defmethod cost-fn ((prob trip-problem) city)
+```
 
   `(air-distance (problem-goal prob) city))`
 
-`(defmethod problem-successors ((prob trip-problem) city)`
+```lisp
+(defmethod problem-successors ((prob trip-problem) city)
+```
 
   `(neighbors city))`
 
 With the definitions in place, it is easy to use the searching tool:
 
-`> (setf p4 (make-instance 'trip-problem`
+```lisp
+> (setf p4 (make-instance 'trip-problem
+```
 
                         `:states (list (city 'new-york))`
 
                         `:goal (city 'san-francisco)))`
 
-`#<TRIP-PROBLEM 31572426>`
-
-`> (searcher p4)`
-
-`;; Search: ((NEW-YORK 73.58 40.47))`
-
-`;; Search: ((PITTSBURG 79.57 40.27))`
-
-`;; Search: ((CHICAGO 87.37 41.5))`
-
-`;; Search: ((KANSAS-CITY 94.35 39.06))`
-
-`;; Search: ((DENVER 105.0 39.45))`
-
-`;; Search: ((FLAGSTAFF 111.41 35.13))`
-
-`;; Search: ((RENO 119.49 39.3))`
-
-`;; Search: ((SAN-FRANCISCO 122.26 37.47))`
-
-`(SAN-FRANCISCO 122.26 37.47)`
+```lisp
+#<TRIP-PROBLEM 31572426>
+> (searcher p4)
+;; Search: ((NEW-YORK 73.58 40.47))
+;; Search: ((PITTSBURG 79.57 40.27))
+;; Search: ((CHICAGO 87.37 41.5))
+;; Search: ((KANSAS-CITY 94.35 39.06))
+;; Search: ((DENVER 105.0 39.45))
+;; Search: ((FLAGSTAFF 111.41 35.13))
+;; Search: ((RENO 119.49 39.3))
+;; Search: ((SAN-FRANCISCO 122.26 37.47))
+(SAN-FRANCISCO 122.26 37.47)
+```
 
 ## 13.9 Is CLOS Object-Oriented?
 {:#s0060}
@@ -1013,15 +1092,17 @@ Consider the following definition of `conc,` which is like `append` except that 
 Rather than writing `conc` using conditional statements, we can use the multimethod dispatch capabilities of CLOS to define the four cases: (1) the first argument is nil, (2) the second argument is nil, (3) both arguments are lists, and (4) both arguments are vectors.
 Notice that if one of the arguments is nil there will be two applicable methods, but the method for `null` will be used because the class `null` is more specific than the class `list.`
 
-`(defmethod conc ((x null) y) y)`
-
-`(defmethod conc (x (y null)) x)`
-
-`(defmethod conc ((x list) (y list))`
+```lisp
+(defmethod conc ((x null) y) y)
+(defmethod conc (x (y null)) x)
+(defmethod conc ((x list) (y list))
+```
 
   `(cons (first x) (conc (rest x) y)))`
 
-`(defmethod conc ((x vector) (y vector))`
+```lisp
+(defmethod conc ((x vector) (y vector))
+```
 
   `(let ((vect (make-array (+ (length x) (length y)))))`
 
@@ -1031,11 +1112,11 @@ Notice that if one of the arguments is nil there will be two applicable methods,
 
 Here we see that this definition works:
 
-`> (conc nil '(a b c)) => (A B C)`
-
-`> (conc '(a b c) nil) => (A B C)`
-
-`> (conc '(a b c) '(d e f)) => (A B C D E F)`
+```lisp
+> (conc nil '(a b c)) => (A B C)
+> (conc '(a b c) nil) => (A B C)
+> (conc '(a b c) '(d e f)) => (A B C D E F)
+```
 
 `> (conc '#(a b c) '#(d e f))`=> `#(A B C D E F)`
 

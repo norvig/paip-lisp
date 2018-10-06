@@ -32,18 +32,19 @@ This is particularly hard to spot when the error spans multiple lines.
 A string begins and ends with double-quotes: `"string"`; an atom containing unusual characters can be delimited by vertical bars: `| AN ATOM |` ; and a comment can be of the form `# | a comment | #`.
 Here are four incomplete expressions:
 
-`(+ (* 3 (sqrt 5) 1)`
+```lisp
+(+ (* 3 (sqrt 5) 1)
+```
 
 `(format t "~&X=~a, Y=~a.
 x y)`
 
-`(get '|strange-atom 'prop)`
-
-`(if (= x 0) #1 test if x is zero`
-
-`        y`
-
-`        x)`
+```lisp
+(get '|strange-atom 'prop)
+(if (= x 0) #1 test if x is zero
+        y
+        x)
+```
 
 **Remedy:** Add a ), ", `|`, and `| #`, respectively.
 Or hit the interrupt key and type the input again.
@@ -56,15 +57,13 @@ In fact, it is a good idea to call a function that is at a higher level than `re
 Several systems define the function `prompt-and-read`.
 Here is one version:
 
-`(defun prompt-and-read (ctl-string &rest args)`
-
-`  "Print a prompt and read a reply."`
-
-`  (apply #'format t ctl-string args)`
-
-`  (finish-output)`
-
-`  (read))`
+```lisp
+(defun prompt-and-read (ctl-string &rest args)
+  "Print a prompt and read a reply."
+  (apply #'format t ctl-string args)
+  (finish-output)
+  (read))
+```
 
 **Diagnosis:** The program may be caught in an infinite loop, either in an explicit `loop` or in a recursive function.
 
@@ -92,13 +91,12 @@ Check the base case and loop variant on active functions and loops.
 **Diagnosis:** Updating a locally bound variable will not affect a like-named variable outside that binding.
 For example, consider:
 
-`(defun check-ops (*ops*)`
-
-`  (if (null *ops*)`
-
-`          (setf *ops* *default-ops*))`
-
-`  (mapcar #'check-op *ops*))`
+```lisp
+(defun check-ops (*ops*)
+  (if (null *ops*)
+          (setf *ops* *default-ops*))
+  (mapcar #'check-op *ops*))
+```
 
 If `check - ops` is called with a null argument, the `*ops*` that is a parameter of `check - ops` will be updated, but the global `*ops*` will not be, even if it is declared special.
 
@@ -109,19 +107,19 @@ Stick to the naming convention for special variables: they should begin and end 
 Don't forget to introduce a binding for all local variables.
 The following excerpt from a recent textbook is an example of this error:
 
-`(defun test ()`
-
-`  (setq x 'test-data)      :*Warning!*`
-
-`  (solve-problem x))        :*Don't do this.*`
+```lisp
+(defun test ()
+  (setq x 'test-data)      :*Warning!*
+  (solve-problem x))        :*Don't do this.*
+```
 
 This function should have been written:
 
-`(defun test ()`
-
-`  (let ((x 'test-data))      :*Do this instead.*`
-
-`      (solve-problem x)))`
+```lisp
+(defun test ()
+  (let ((x 'test-data))      :*Do this instead.*
+      (solve-problem x)))
+```
 
 ## 25.3 Change to Function Has No Effect
 {:#s0020}
@@ -139,17 +137,14 @@ Don't use inline functions until everything is debugged.
 **Diagnosis:** If you change a normal (non-inline) function, that change *will* be seen by code that refers to the function by *name*, but not by code that refers to the old value of the function itself.
 Consider:
 
-`(defparameter *scorer* #'score-fn)`
-
-`(defparameter *printer* 'print-fn)`
-
-`(defun show (values)`
-
-`  (funcall *printer*`
-
-`      (funcall *scorer* values)`
-
-`      (reduce #'better values)))`
+```lisp
+(defparameter *scorer* #'score-fn)
+(defparameter *printer* 'print-fn)
+(defun show (values)
+  (funcall *printer*
+      (funcall *scorer* values)
+      (reduce #'better values)))
+```
 
 Now suppose that the definitions of `score - fn, print - fn`, and `better` are all changed.
 Does any of the prior code have to be recompiled?
@@ -165,9 +160,10 @@ Symbols will be coerced to the global function they name when passed to `funcall
 In the following example, the symbol `local - fn` will not refer to the locally bound function.
 One needs to use `#'local - fn` to refer to it.
 
-`(flet ((local-fn (x) ...))`
-
-`  (mapcar 'local-fn list))`
+```lisp
+(flet ((local-fn (x) ...))
+  (mapcar 'local-fn list))
+```
 
 **Diagnosis:** If you changed the name of a function, did you change the name every-where?
 For example, if you decide to change the name of `print-fn` to `print-function` but forget to change the value of *`printer`*, then the old function will be called.
@@ -176,88 +172,74 @@ For example, if you decide to change the name of `print-fn` to `print-function` 
 To be even safer, redefine obsolete functions to call `error`.
 The following function is handy for this purpose:
 
-`(defun make-obsolete (fn-name)`
-
-`  "Print an error if an obsolete function is called."`
-
-`  (setf (symbol-function fn-name)`
-
-`        #'(lambda (&rest args)`
-
-`              (declare (ignore args))`
-
-`              (error "Obsolete function."))))`
+```lisp
+(defun make-obsolete (fn-name)
+  "Print an error if an obsolete function is called."
+  (setf (symbol-function fn-name)
+        #'(lambda (&rest args)
+              (declare (ignore args))
+              (error "Obsolete function."))))
+```
 
 **Diagnosis:** Are you using `labels` and `flet` properly?
 Consider again the function `replace-?-vars`, which was defined in [section 11.3](B978008057115750011X.xhtml#s0025) to replace an anonymous logic variable with a unique new variable.
 
-`(defun replace-?-vars (exp)`
-
-`  "Replace any ? within exp with a var of the form ?123."`
-
-`  (cond ((eq exp '?) (gensym "?"))`
-
-`      ((atom exp) exp)`
-
-`      (t (cons (replace-?-vars (first exp))`
-
-`          (replace-?-vars (rest exp))))))`
+```lisp
+(defun replace-?-vars (exp)
+  "Replace any ? within exp with a var of the form ?123."
+  (cond ((eq exp '?) (gensym "?"))
+      ((atom exp) exp)
+      (t (cons (replace-?-vars (first exp))
+          (replace-?-vars (rest exp))))))
+```
 
 It might occur to the reader that gensyming a different variable each time is wasteful.
 The variables must be unique in each clause, but they can be shared across clauses.
 So we could generate variables in the sequence `?1, ?2, ...`, intern them, and thus reuse these variables in the next clause (provided we warn the user never to use such variable names).
 One way to do that is to introduce a local variable to hold the variable number, and then a local function to do the computation:
 
-`(defun replace-?-vars (exp)`
-
-`  "Replace any ? within exp with a var of the form ?123."`
-
-`  ;;*** Buggy Version ***`
-
-`  (let ((n 0))`
-
-`      (flet`
-
-`        ((replace-?-vars (exp)`
+```lisp
+(defun replace-?-vars (exp)
+  "Replace any ? within exp with a var of the form ?123."
+  ;;*** Buggy Version ***
+  (let ((n 0))
+      (flet
+        ((replace-?-vars (exp)
+```
 
 `          (cond ((eq exp '?) (symbol '?
 (incf n)))`
 
-`          ((atom exp) exp)`
-
-`          (t (cons (replace-?-vars (first exp))`
-
-`                  (replace-?-vars (rest exp)))))))`
-
-`      (replace-?-vars exp))))`
+```lisp
+          ((atom exp) exp)
+          (t (cons (replace-?-vars (first exp))
+                  (replace-?-vars (rest exp)))))))
+      (replace-?-vars exp))))
+```
 
 This version doesn't work.
 The problem is that `flet`, like `let`, defines a new function within the body of the `flet` but not within the new function's definition.
 So two lessons are learned here: use `labels` instead of `flet` to define recursive functions, and don't shadow a function definition with a local definition of the same name (this second lesson holds for variables as well).
 Let's fix the problem by changing `labels` to `flet` and naming the local function `recurse`:
 
-`(defun replace-?-vars (exp)`
-
-`  "Replace any ? within exp with a var of the form ?123."`
-
-`  ;;*** Buggy Version ***`
-
-`  (let ((n 0))`
-
-`      (labels`
-
-`        ((recurse (exp)`
+```lisp
+(defun replace-?-vars (exp)
+  "Replace any ? within exp with a var of the form ?123."
+  ;;*** Buggy Version ***
+  (let ((n 0))
+      (labels
+        ((recurse (exp)
+```
 
 `          (cond ((eq exp '?) (symbol '?
 (incf n)))`
 
-`          ((atom exp) exp)`
-
-`          (t (cons (replace-?-vars (first exp))`
-
-`            (replace-?-vars (rest exp)))))))`
-
-`        (recurse exp))))`
+```lisp
+          ((atom exp) exp)
+          (t (cons (replace-?-vars (first exp))
+            (replace-?-vars (rest exp)))))))
+        (recurse exp))))
+```
 
 Annoyingly, this version still doesn't work!
 This time, the problem is carelessness; we changed the `replace- ? - vars to recurse` in two places, but not in the two calls in the body of `recurse`.
@@ -271,21 +253,16 @@ This is especially true if they have similar names.
 **Diagnosis:** You may be erroneously creating a lambda expression by consing up code.
 Here's an example from a recent textbook:
 
-`(defun make-specialization (c)`
-
-`  (let (pred newc)`
-
-`    ...`
-
-`  (setf (get newc 'predicate)`
-
-`    '(lambda (obj)    :Warning`
-
-`      (and ,(cons pred '(obj))    :Don't do this.`
-
-`      (apply '.(get c 'predicate) (list obj)))))`
-
-`    ...))`
+```lisp
+(defun make-specialization (c)
+  (let (pred newc)
+    ...
+  (setf (get newc 'predicate)
+    '(lambda (obj)    :Warning
+      (and ,(cons pred '(obj))    :Don't do this.
+      (apply '.(get c 'predicate) (list obj)))))
+    ...))
+```
 
 Strictly speaking, this is legal according to *Common Lisp the Language*, although in ANSI Common Lisp it will *not* be legal to use a list beginning with `lambda` as a function.
 But in either version, it is a bad idea to do so.
@@ -297,16 +274,18 @@ Here is a replacement for the code beginning with '(`lambda ....` Note that it i
 Also note that it gets the `predicate` each time it is called; thus, it is safe to use even when predicates are being changed dynamically.
 The previous version would not work when a predicate is changed.
 
-`#'(lambda (obj)            ; *Do this instead.*`
-
-`      (and (funcall pred obj)`
-
-`          (funcall (get c 'predicate) obj)))`
+```lisp
+#'(lambda (obj)            ; *Do this instead.*
+      (and (funcall pred obj)
+          (funcall (get c 'predicate) obj)))
+```
 
 It is important to remember that `function` (and thus # ') is a special form, and thus only returns the right value when it is evaluated.
 A common error is to use # ' notation in positions that are not evaluated:
 
-`(defvar *obscure-fns* '(#'cis #'cosh #'ash #'bit-orc2)) ; *wrong*`
+```lisp
+(defvar *obscure-fns* '(#'cis #'cosh #'ash #'bit-orc2)) ; *wrong*
+```
 
 This does not create a list of four functions.
 Rather, it creates a list of four sublists; the first sublist is (`function cis`).
@@ -314,9 +293,10 @@ It is an error to funcall or apply such an object.
 The two correct ways to create a list of functions are shown below.
 The first assures that each function special form is evaluated, and the second uses function names instead of functions, thus relying on `funcall` or `apply` to coerce the names to the actual functions.
 
-`(defvar *obscure-fns* (list #'cis #'cosh #'ash #'bit-orc2))`
-
-`(defvar *obscure-fns* '(cis cosh ash bit-orc2))`
+```lisp
+(defvar *obscure-fns* (list #'cis #'cosh #'ash #'bit-orc2))
+(defvar *obscure-fns* '(cis cosh ash bit-orc2))
+```
 
 Another common `error` is to expect # ' `if` or # ' `or` to return a function.
 This is an error because special forms are just syntactic markers.
@@ -325,11 +305,11 @@ There is no function named `if` or `or`; they should be thought of as directives
 By the way, the function `make` - `specialization` above is bad not only for its lack of `function` but also for its use of backquote.
 The following is a better use of backquote:
 
-`'(lambda (obj)`
-
-`    (and (,pred obj)`
-
-`        (,(get c 'predicate) obj)))`
+```lisp
+'(lambda (obj)
+    (and (,pred obj)
+        (,(get c 'predicate) obj)))
+```
 
 ## 25.4 Values Change "by Themselves"
 {:#s0025}
@@ -359,19 +339,15 @@ Suddenly, all the other ones magically changed!
 **Diagnosis:** Different structures may share identical subfields.
 For example, suppose you had:
 
-`(defstruct block`
-
-`  (possible-colors '(red green blue))`
-
-`  ...)`
-
-`  (setf bl (make-block))`
-
-`  (setf b2 (make-block))`
-
-`  ...`
-
-`  (delete 'green (block-possible-colors bl))`
+```lisp
+(defstruct block
+  (possible-colors '(red green blue))
+  ...)
+  (setf bl (make-block))
+  (setf b2 (make-block))
+  ...
+  (delete 'green (block-possible-colors bl))
+```
 
 Both `b1` and `b2` share the initial list of possible colors.
 The `delete` function modifies this shared list, so `green` is deleted from `b2`'s possible colors list just as surely as it is deleted from `b1`'s.
@@ -379,11 +355,11 @@ The `delete` function modifies this shared list, so `green` is deleted from `b2`
 **Remedy:** Don't share pieces of data that you want to alter individually.
 In this case, either use `remove` instead of `delete`, or allocate a different copy of the list to each instance:
 
-`(defstruct block`
-
-`  (possible-colors (list 'red 'green 'blue))`
-
-`  ...)`
+```lisp
+(defstruct block
+  (possible-colors (list 'red 'green 'blue))
+  ...)
+```
 
 Remember that the initial value field of a defstruct is an expression that is evaluated anew each time `make-block` is called.
 It is incorrect to think that the initial form is evaluated once when the `defstruct` is defined.
@@ -412,13 +388,12 @@ If `item` is, say, a list that is `equal` but not `eql` to one of the elements o
 **Diagnosis:** In certain contexts where a value must be tested by Lisp, multiple values are discarded.
 For example, consider:
 
-`(or (mv-1 x) (mv-2 x))`
-
-`(and (mv-1 x) (mv-2 x))`
-
-`(cond ((mv-1 x))`
-
-`  (t (mv-2 x)))`
+```lisp
+(or (mv-1 x) (mv-2 x))
+(and (mv-1 x) (mv-2 x))
+(cond ((mv-1 x))
+  (t (mv-2 x)))
+```
 
 In each case, if `mv-2` returns multiple values, they will all be passed on.
 But if `mv-1` returns multiple values, only the first value will be passed on.
@@ -428,19 +403,19 @@ So, while the final clause (`t (mv-2 x)`) passes on multiple values, the final c
 **Diagnosis:** Multiple values can be inadvertently lost in debugging as well.
 Suppose I had:
 
-`(multiple-value-bind (a b c)`
-
-`  (mv-1 x)`
-
-`    ...)`
+```lisp
+(multiple-value-bind (a b c)
+  (mv-1 x)
+    ...)
+```
 
 Now, if I become curious as to what `mv -1` returns, I might change this code to:
 
-`(multiple-value-bind (a b c)`
-
-`  (print (mv-1 x)) ;*** debugging output`
-
-`  ...)`
+```lisp
+(multiple-value-bind (a b c)
+  (print (mv-1 x)) ;*** debugging output
+  ...)
+```
 
 Unfortunately, `print` will see only the first value returned by `mv-1`, and will return only that one value to be bound to the variable a.
 The other values will be discarded, and `b` and `c` will be bound to `nil`.
@@ -454,17 +429,14 @@ But you find that it takes 15 seconds just to initialize such an array to zeros!
 Imagine how inefficient it is to actually do any computation!
 Here is your function that zeroes an array:
 
-`(defun zero-array (arr)`
-
-`  "Set the 1024x1024 array to all zeros."`
-
-`  (declare (type (array float) arr))`
-
-`  (dotimes (i 1024)`
-
-`    (dotimes (j 1024)`
-
-`      (setf (aref arr i j) 0.0))))`
+```lisp
+(defun zero-array (arr)
+  "Set the 1024x1024 array to all zeros."
+  (declare (type (array float) arr))
+  (dotimes (i 1024)
+    (dotimes (j 1024)
+      (setf (aref arr i j) 0.0))))
+```
 
 **Diagnosis:** The main problem here is an ineffective declaration.
 The type (`array float`) does not help the compiler, because the array could be displaced to an array of another type, and because `float` encompasses both single- and double-precision floating-point numbers.
@@ -475,19 +447,15 @@ The function is slow mainly because it generates so much garbage.
 It also declares the size of the array and turns safety checks off.
 It runs in under a second on a SPARCstation, which is slower than optimized C, but faster than unoptimized C.
 
-`(defun zero-array (arr)`
-
-`  "Set the array to all zeros."`
-
-`  (declare (type (simple-array single-float (1024 1024)) arr)`
-
-`          (optimize (speed 3) (safety 0)))`
-
-`  (dotimes (i 1024)`
-
-`    (dotimes (j 1024)`
-
-`      (setf (aref arr i j) 0.0))))`
+```lisp
+(defun zero-array (arr)
+  "Set the array to all zeros."
+  (declare (type (simple-array single-float (1024 1024)) arr)
+          (optimize (speed 3) (safety 0)))
+  (dotimes (i 1024)
+    (dotimes (j 1024)
+      (setf (aref arr i j) 0.0))))
+```
 
 Another common error is to use something like (`simple-vector fixnum`) asatype specifier.
 It is a quirk of Common Lisp that the `simple-vector` type specifier only accepts a size, not a type, while the `array, vector` and `simple-array` specifiers all accept an optional type followed by an optional size or list of sizes.
@@ -510,7 +478,9 @@ But it is also true that most of the time, Common Lisp is merely doing something
 For example, a common "bug report" is to complain about read - `from- string`.
 A user might write:
 
-`(read-from-string "a b c" :start 2)`
+```lisp
+(read-from-string "a b c" :start 2)
+```
 
 expecting the expression to start reading at position `2` and thus return `b`.
 In fact, this expression returns a.
@@ -546,31 +516,30 @@ For example, suppose I thought there was a function to push a new element onto t
 Looking under `array, push-array`, and `array - push` in the index yields nothing.
 But I can turn to Lisp itself and ask:
 
-`> (apropos "push")`
-
-`PUSH                              Macro          (VALUE PLACE), plist`
-
-`PUSHNEW                        Macro          (VALUE PLACE &KEY ...), plist`
-
-`VECTOR-PUSH                function    (NEW-ELEMENT VECTOR), plist`
-
-`VECTOR-PUSH-EXTEND  function    (DATA VECTOR &OPTIONAL ...), plist`
+```lisp
+> (apropos "push")
+PUSH                              Macro          (VALUE PLACE), plist
+PUSHNEW                        Macro          (VALUE PLACE &KEY ...), plist
+VECTOR-PUSH                function    (NEW-ELEMENT VECTOR), plist
+VECTOR-PUSH-EXTEND  function    (DATA VECTOR &OPTIONAL ...), plist
+```
 
 This should be enough to remind me that `vector-push` is the answer.
 If not, I can get more information from the manual or from the online functions `documentation` or `describe`:
 
-`> (documentation 'vector-push 'function)`
-
-`"Add NEW-ELEMENT as an element at the end of VECTOR.`
-
-`The fill pointer (leader element 0) is the index of the next`
+```lisp
+> (documentation 'vector-push 'function)
+"Add NEW-ELEMENT as an element at the end of VECTOR.
+The fill pointer (leader element 0) is the index of the next
+```
 
 `element to be added.
 If the array is full, VECTOR-PUSH returns`
 
-`NIL and the array is unaffected; use VECTOR-PUSH-EXTEND instead`
-
-`if you want the array to grow automatically."`
+```lisp
+NIL and the array is unaffected; use VECTOR-PUSH-EXTEND instead
+if you want the array to grow automatically."
+```
 
 Another possibility is to browse through existing code that performs a similar purpose.
 That way, you may find the exact function you want, and you may get additional ideas on how to do things differently.
@@ -595,19 +564,20 @@ For many programmers, the special form cond is responsible for more syntax error
 Because most cond-clause start with two left parentheses, beginners often come to the conclusion that every clause must.
 This leads to errors like the following:
 
-`(let ((entry (assoc item list)))`
-
-`  (cond ((entry (process entry)))`
-
-`          ...))`
+```lisp
+(let ((entry (assoc item list)))
+  (cond ((entry (process entry)))
+          ...))
+```
 
 Here entry is a variable, but the urge to put in an extra parenthesis means that the cond-clause attempts to call entry as a function rather than testing its value as a variable.
 
 The opposite problem, leaving out a parenthesis, is also a source of error:
 
-`(cond (lookup item list)`
-
-`  (t nil))`
+```lisp
+(cond (lookup item list)
+  (t nil))
+```
 
 In this case, `lookup` is accessed as a variable, when the intent was to call it as a function.
 In Common Lisp this will usually lead to an unbound variable error, but in Scheme this bug can be very difficult to pin down: the value of `lookup` is the function itself, and since this is not null, the test will succeed, and the expression will return `list` without complaining.
@@ -623,28 +593,25 @@ In a `case` special form, each clause consists of a key or list of keys, followe
 The thing to watch out for is when the key is `t`, `otherwise`, or `nil`.
 For example:
 
-`(case letter`
-
-`  (s ...)`
-
-`  (t ...)`
-
-`  (u ...))`
+```lisp
+(case letter
+  (s ...)
+  (t ...)
+  (u ...))
+```
 
 Here the t is taken as the default clause; it will always succeed, and all subsequent clauses will be ignored.
 Similarly, using a () `ornil` as a key will not have the desired effect: it will be interpreted as an empty key list.
 If you want to be completely safe, you can use a list of keys for every clause.[2](#fn0015) This is a particularly good idea when you write a macro that expands into a `case`.
 The following code correctly tests for `t` and `nil` keys:
 
-`(case letter`
-
-`  ((s) ...)`
-
-`  ((t) ...)`
-
-`  ((u) ...)`
-
-`  ((nil) ...))`
+```lisp
+(case letter
+  ((s) ...)
+  ((t) ...)
+  ((u) ...)
+  ((nil) ...))
+```
 
 ## 25.13 Syntax of LET and LET*
 {:#s0070}
@@ -676,19 +643,20 @@ Therefore, it can be a mistake to define too many macros, since they can make it
 A common mistake is to define macros that *do not* violate the usual evaluation rules.
 One recent book on AI programming suggests the following:
 
-`(defmacro binding-of (binding)    ; *Warning!*`
-
-`    '(cadr .binding))                          ; *Don't do this.*`
+```lisp
+(defmacro binding-of (binding)    ; *Warning!*
+    '(cadr .binding))                          ; *Don't do this.*
+```
 
 The only possible reason for this macro is an unfounded desire for efficiency.
 Always use an `inline` function instead of a macro for such cases.
 That way you get the efficiency gain, you have not introduced a spurious macro, and you gain the ability to `apply` or `map` the function # ' `binding - of`, something you could not do with a macro:
 
-`(proclaim '(inline binding-of))`
-
-`(defun binding-of (binding)    ; *Do this instead.*`
-
-`  (second binding))`
+```lisp
+(proclaim '(inline binding-of))
+(defun binding-of (binding)    ; *Do this instead.*
+  (second binding))
+```
 
 *   Write down the syntax of the macro.
 
@@ -700,14 +668,17 @@ If your macro binds some variables or variablelike objects, use the conventions 
 If you are iterating over some kind of sequence, follow `dotimes` and `dolist`.
 For example, here is the syntax of a macro to iterate over the leaves of a tree of conses:
 
-`(defmacro dotree ((var tree &optional result) &body body)`
-
-`  "Perform body with var bound to every leaf of tree,`
+```lisp
+(defmacro dotree ((var tree &optional result) &body body)
+  "Perform body with var bound to every leaf of tree,
+```
 
 `  then return result.
 Return and Go can be used in body."`
 
-`  ...)`
+```lisp
+  ...)
+```
 
 *   Figure out what the macro should expand into.
 
@@ -718,54 +689,46 @@ First, make sure you don't shadow local variables.
 Consider the following definition for `pop - end`, a function to pop off and return the last element of a list, while updating the list to no longer contain the last element.
 The definition uses `last1`, which was defined on page 305 to return the last element of a list, and the built-in function `nbutlast` returns all but the last element of a list, destructively altering the list.
 
-`(defmacro pop-end (place)    ; *Warning!Buggy!*`
-
-`  "Pop and return last element of the list in PLACE."`
-
-`  '(let ((result (lastl .place)))`
-
-`      (setf .place (nbutlast .place))`
-
-`      result))`
+```lisp
+(defmacro pop-end (place)    ; *Warning!Buggy!*
+  "Pop and return last element of the list in PLACE."
+  '(let ((result (lastl .place)))
+      (setf .place (nbutlast .place))
+      result))
+```
 
 This will do the wrong thing for (`pop-end result`), or for other expressions that mention the variable `result`.
 The solution is to use a brand new local variable that could not possibly be used elsewhere:
 
-`(defmacro pop-end (place)    ; *Less buggy*`
-
-`  "Pop and return last element of the list in PLACE."`
-
-`  (let ((result (gensym)))`
-
-`  '(let ((,result (lastl ,place)))`
-
-`    (setf ,place (nbutlast ,place))`
-
-`      ,result)))`
+```lisp
+(defmacro pop-end (place)    ; *Less buggy*
+  "Pop and return last element of the list in PLACE."
+  (let ((result (gensym)))
+  '(let ((,result (lastl ,place)))
+    (setf ,place (nbutlast ,place))
+      ,result)))
+```
 
 There is still the problem of shadowing local *functions.* For example, a user who writes:
 
-`(flet ((lastl (x) (sqrt x)))`
-
-`  (pop-end list)`
-
-`  ...)`
+```lisp
+(flet ((lastl (x) (sqrt x)))
+  (pop-end list)
+  ...)
+```
 
 will be in for a surprise, pop-end will expand into code that calls `lastl`, but since `lastl` has been locally defined to be something else, the code won't work.
 Thus, the expansion of the macro violates referential transparency.
 To be perfectly safe, we could try:
 
-`(defmacro pop-end (place)    ; *Less buggy*`
-
-`  "Pop and return last element of the list in PLACE."`
-
-`  (let ((result (gensym)))`
-
-`    '(let ((.result (funcall .#'lastl .place)))`
-
-`      (setf .place (funcall .#'nbutlast .place))`
-
-`        ,result)))`
+```lisp
+(defmacro pop-end (place)    ; *Less buggy*
+  "Pop and return last element of the list in PLACE."
+  (let ((result (gensym)))
+    '(let ((.result (funcall .#'lastl .place)))
+      (setf .place (funcall .#'nbutlast .place))
+        ,result)))
+```
 
 This approach is sometimes used by Scheme programmers, but Common Lisp programmers usually do not bother, since it is rarer to define local functions in Common Lisp.
 Indeed, in *Common Lisp the Language*, 2d edition, it was explicitly stated (page 260) that a user function cannot redefine or even bind any built-in function, variable, or macro.
@@ -775,72 +738,61 @@ Common Lisp programmers expect that arguments will be evaluated in left-to-right
 Our definition of `pop-end` violates the second of these expectations.
 Consider:
 
-`(pop-end (aref lists (incf i))) =`
-
-`(LET ((#:G3096 (LAST1 (AREF LISTS (INCF I)))))`
-
-`  (SETF (AREF LISTS (INCF I)) (NBUTLAST (AREF LISTS (INCF I))))`
-
-`  #:G3096)`
+```lisp
+(pop-end (aref lists (incf i))) =
+(LET ((#:G3096 (LAST1 (AREF LISTS (INCF I)))))
+  (SETF (AREF LISTS (INCF I)) (NBUTLAST (AREF LISTS (INCF I))))
+  #:G3096)
+```
 
 This increments `i` three times, when it should increment it only once.
 We could fix this by introducing more local variables into the expansion:
 
-`(let* ((templ (incf i))`
-
-`      (temp2 (AREF LISTS temp1))`
-
-`      (temp3 (LAST1 temp2)))`
-
-`  (setf (aref lists templ) (nbutlast temp2))`
-
-`  temp3)`
+```lisp
+(let* ((templ (incf i))
+      (temp2 (AREF LISTS temp1))
+      (temp3 (LAST1 temp2)))
+  (setf (aref lists templ) (nbutlast temp2))
+  temp3)
+```
 
 This kind of left-to-right argument processing via local variables is done automatically by the Common Lisp setf mechanism.
 Fortunately, the mechanism is easy to use.
 We can redefine `pop-end` to call `pop` directly:
 
-`(defmacro pop-end (place)`
-
-`  "Pop and return last element of the list in PLACE."`
-
-`  '(pop (last ,place)))`
+```lisp
+(defmacro pop-end (place)
+  "Pop and return last element of the list in PLACE."
+  '(pop (last ,place)))
+```
 
 Now all we need to do is define the `setf` method for `last`.
 Here is a simple definition.
 It makes use of the function `last2`, which returns the last two elements of a list.
 In ANSI Common Lisp we could use (`last list 2`), but with a pre-ANSI compiler we need to define `last2`:
 
-`(defsetf last (place) (value)`
-
-`  '(setf (cdr (last2 .place)) .value))`
-
-`(defun last2 (list)`
-
-`  "Return the last two elements of a list."`
-
-`  (if (null (rest2 list))`
-
-`      list`
-
-`      (last2 (rest list))))`
+```lisp
+(defsetf last (place) (value)
+  '(setf (cdr (last2 .place)) .value))
+(defun last2 (list)
+  "Return the last two elements of a list."
+  (if (null (rest2 list))
+      list
+      (last2 (rest list))))
+```
 
 Here are some macro-expansions of calls to `pop-end` and to the `setf` method for `last`.
 Different compilers will produce different code, but they will always respect the left-to-right, one-evaluation-only semantics:
 
-`> (pop-end (aref (foo lists) (incf i))) =`
-
-`(LET ((G0128 (AREF (FOO LISTS) (SETQ I (+ I 1)))))`
-
-`  (PROG1`
-
-`  (CAR (LAST G0128))`
-
-`  (SYS:SETCDR (LAST2 G0128) (CDR (LAST G0128)))))`
-
-`> (setf (last (append x y)) 'end) =`
-
-`(SYS:SETCDR (LAST2 (APPEND X Y)) 'END)`
+```lisp
+> (pop-end (aref (foo lists) (incf i))) =
+(LET ((G0128 (AREF (FOO LISTS) (SETQ I (+ I 1)))))
+  (PROG1
+  (CAR (LAST G0128))
+  (SYS:SETCDR (LAST2 G0128) (CDR (LAST G0128)))))
+> (setf (last (append x y)) 'end) =
+(SYS:SETCDR (LAST2 (APPEND X Y)) 'END)
+```
 
 Unfortunately, there is an error in the `setf` method for `last`.
 It assumes that the list will have at least two elements.
@@ -859,43 +811,27 @@ We also make up a new variable, `result`, to hold the `value`.
 The code to store the value either modifies the cdr of `last2-var`, if the list is long enough, or it stores directly into `place`.
 The code to access the value just retrieves `last - var`.
 
-`(define-setf-method last (place)`
-
-`  (multiple-value-bind (temps vais stores store-form access-form)`
-
-`        (get-setf-method place)`
-
-`    (let ((result (gensym))`
-
-`          (last2-var (gensym))`
-
-`          (last2-p (gensym))`
-
-`          (last-var (gensym)))`
-
-`        ;; Return 5 vais: temps vais stores store-form access-form`
-
-`        (values`
-
-`          '(.@temps .last2-var .last2-p .last-var)`
-
-`          '(.@vais (last2 .access-form)`
-
-`            (= (length .last2-var) 2)`
-
-`            (if .last2-p (rest .last2-var) .access-form))`
-
-`          (list result)`
-
-`          '(if .last2-p`
-
-`            (setf (cdr .last2-var) .result)`
-
-`            (let ((.(first stores) .result))`
-
-`              .store-form))`
-
-`          last-var))))`
+```lisp
+(define-setf-method last (place)
+  (multiple-value-bind (temps vais stores store-form access-form)
+        (get-setf-method place)
+    (let ((result (gensym))
+          (last2-var (gensym))
+          (last2-p (gensym))
+          (last-var (gensym)))
+        ;; Return 5 vais: temps vais stores store-form access-form
+        (values
+          '(.@temps .last2-var .last2-p .last-var)
+          '(.@vais (last2 .access-form)
+            (= (length .last2-var) 2)
+            (if .last2-p (rest .last2-var) .access-form))
+          (list result)
+          '(if .last2-p
+            (setf (cdr .last2-var) .result)
+            (let ((.(first stores) .result))
+              .store-form))
+          last-var))))
+```
 
 It should be mentioned that `setf` methods are very useful and powerful things.
 It is often better to provide a `setf` method for an arbitrary function, `f`, than to define a special setting function, say, `set-f`.
@@ -905,63 +841,55 @@ Most `setf` methods are for functions that just access data, but it is permissib
 As a rather fanciful example, here is a `setf` method for the square-root function.
 It makes (`setf (sqrt x) 5`) be almost equivalent to (`setf x (* 5 5)`) ; the difference is that the first returns 5 while the second returns 25.
 
-`(define-setf-method sqrt (num)`
-
-`  (multiple-value-bind (temps vals stores store-form access-form)`
-
-`        (get-setf-method num)`
-
-`    (let ((store (gensym)))`
-
-`        (values temps`
-
-`                    vals`
-
-`                    (list store)`
-
-`                    '(let ((,(first stores) (* .store .store)))`
-
-`                        ,store-form`
-
-`                        ,store)`
-
-`                    '(sqrt .access-form)))))`
+```lisp
+(define-setf-method sqrt (num)
+  (multiple-value-bind (temps vals stores store-form access-form)
+        (get-setf-method num)
+    (let ((store (gensym)))
+        (values temps
+                    vals
+                    (list store)
+                    '(let ((,(first stores) (* .store .store)))
+                        ,store-form
+                        ,store)
+                    '(sqrt .access-form)))))
+```
 
 Turning from `setf` methods back to macros, another hard part about writing portable macros is anticipating what compilers might warn about.
 Let's go back to the `dotree` macro.
 Its definition might look in part like this:
 
-`(defmacro dotree ((var tree &optional result) &body body)`
-
-`  "Perform body with var bound to every leaf of tree.`
+```lisp
+(defmacro dotree ((var tree &optional result) &body body)
+  "Perform body with var bound to every leaf of tree.
+```
 
 `  then return result.
 Return and Go can be used in body."`
 
-`  '(let ((.var))`
-
-`      ...`
-
-`      ,@body))`
+```lisp
+  '(let ((.var))
+      ...
+      ,@body))
+```
 
 Now suppose a user decides to count the leaves of a tree with:
 
-`(let ((count 0))`
-
-`    (dotree (leaf tree count)`
-
-`        (incf count)))`
+```lisp
+(let ((count 0))
+    (dotree (leaf tree count)
+        (incf count)))
+```
 
 The problem is that the variable `leaf` is not used in the body of the macro, and a compiler may well issue a warning to that effect.
 To make matters worse, a conscientious user might write:
 
-`(let ((count 0))`
-
-`  (dotree (leaf tree count)`
-
-`    (declare (ignore leaf))`
-
-`      (incf count)))`
+```lisp
+(let ((count 0))
+  (dotree (leaf tree count)
+    (declare (ignore leaf))
+      (incf count)))
+```
 
 The designer of a new macro must decide if declarations are allowed and must make sure that compiler warnings will not be generated unless they are warranted.
 
@@ -971,23 +899,22 @@ Consider the following macro, which assumes that `translate - rule-body` is defi
 `(defmacro defrule (name &body body)    ; Warning!
 buggy!`
 
-`  "Define a new rule with the given name."`
-
-`  (setf (get name 'rule)`
-
-`        '#'(lambda O ,(translate-rule-body body))))`
+```lisp
+  "Define a new rule with the given name."
+  (setf (get name 'rule)
+        '#'(lambda O ,(translate-rule-body body))))
+```
 
 The idea is to store a function under the `rule` property of the rule's name.
 But this definition is incorrect because the function is stored as a side effect of expanding the macro, rather than as an effect of executing the expanded macro code.
 The correct definition is:
 
-`(defmacro defrule (name &body body)`
-
-`  "Define a new rule with the given name."`
-
-`  '(setf (get '.name 'rule)`
-
-`  #'(lambda () .(translate-rule-body body))))`
+```lisp
+(defmacro defrule (name &body body)
+  "Define a new rule with the given name."
+  '(setf (get '.name 'rule)
+  #'(lambda () .(translate-rule-body body))))
+```
 
 Beginners sometimes fail to see the difference between these two approaches, because they both have the same result when interpreting a file that makes use of `defrule`.
 But when the file is compiled and later loaded into a different Lisp image, the difference becomes clear: the first definition erroneously stores the function in the compiler's image, while the second produces code that correctly stores the function when the code is loaded.
@@ -999,7 +926,9 @@ If by this the beginner wants a macro that just *does* two things, the answer is
 There will be no efficiency problem, even if the progn forms are nested.
 That is, if macro-expansion results in code like:
 
-`(progn (progn (progn *a b*) c) (progn *d e))*`
+```lisp
+(progn (progn (progn *a b*) c) (progn *d e))*
+```
 
 the compiler will treat it the same as `(progn *abc de).*`
 
@@ -1010,11 +939,11 @@ For example, the function `floor` returns two values (the quotient and remainder
 But we need a special form to capture these values.
 For example, compare:
 
-`> (list (floor 11 5) (intern 'x))=M2 X)`
-
-`> (multiple-value-call #'list`
-
-`  (floor 11 5) (intern 'x))=>(2 1 X :INTERNAL)`
+```lisp
+> (list (floor 11 5) (intern 'x))=M2 X)
+> (multiple-value-call #'list
+  (floor 11 5) (intern 'x))=>(2 1 X :INTERNAL)
+```
 
 ## 25.15 A Style Guide to Lisp
 {:#s0080}
@@ -1169,13 +1098,12 @@ Many users want to have *required* keyword parameters.
 It turns out that all keyword parameters are optional, but the following trick is equivalent to a required keyword parameter.
 First we define the function `required` to signal an error, and then we use a call to `required` as the default value for any keyword that we want to make required:
 
-`(defun required ()`
-
-`  (error "A required keyword argument was not supplied."))`
-
-`(defun fn (x &key (y (required)))`
-
-`  ...)`
+```lisp
+(defun required ()
+  (error "A required keyword argument was not supplied."))
+(defun fn (x &key (y (required)))
+  ...)
+```
 
 ## 25.16 Dealing with Files, Packages, and Systems
 {:#s0110}
@@ -1226,53 +1154,36 @@ For more on packages, see section 24.1.
 8.  The final form prints instructions on how to load and run the system.
 !!!(p) {:.numlist}
 
-`;;; -*- Mode: Lisp; Syntax: Common-Lisp; Package: User -*-`
-
-`;;; (Brief description of system here.)`
-
-`;;;; Define the Project-X system.`
-
-`(in-package "USER")`
-
-`(load "/usr/norvig/defsys.lisp") ; load define-system`
-
-`(define-system ;; Define the system Project-X`
-
-`  :name :project-x`
-
-`  :source-dir "/usr/norvig/project-x/*.lisp"`
-
-`  :object-dir "/usr/norvig/project-x/*.bin"`
-
-`  :modules '((:macros "header" "macros")`
-
-`    (:main "parser" "transformer" "optimizer"`
-
-`        "commands" "database" "output")`
-
-`    (:windows "xwindows" "clx" "client")))`
-
-`(defpackage :project-x ;; Define the package Project-X`
-
-`  (:export "DEFINE-X" "DO-X" "RUN-X")`
-
-`  (:nicknames "PX")`
-
-`  (:use common-lisp))`
-
-`(format *debug-io* To load the Project-X system, type`
-
-`  (make-system marne :project-x)`
-
-`To run the system, type`
-
-`  (project-x:run-x)")`
+```lisp
+;;; -*- Mode: Lisp; Syntax: Common-Lisp; Package: User -*-
+;;; (Brief description of system here.)
+;;;; Define the Project-X system.
+(in-package "USER")
+(load "/usr/norvig/defsys.lisp") ; load define-system
+(define-system ;; Define the system Project-X
+  :name :project-x
+  :source-dir "/usr/norvig/project-x/*.lisp"
+  :object-dir "/usr/norvig/project-x/*.bin"
+  :modules '((:macros "header" "macros")
+    (:main "parser" "transformer" "optimizer"
+        "commands" "database" "output")
+    (:windows "xwindows" "clx" "client")))
+(defpackage :project-x ;; Define the package Project-X
+  (:export "DEFINE-X" "DO-X" "RUN-X")
+  (:nicknames "PX")
+  (:use common-lisp))
+(format *debug-io* To load the Project-X system, type
+  (make-system marne :project-x)
+To run the system, type
+  (project-x:run-x)")
+```
 
 Each of the files that make up the system will start like this:
 
-`;;; -*- Mode: Lisp; Syntax: Common-Lisp; Package: Project-X -*-`
-
-`(in-package "PROJECT-X")`
+```lisp
+;;; -*- Mode: Lisp; Syntax: Common-Lisp; Package: Project-X -*-
+(in-package "PROJECT-X")
+```
 
 Now we need to provide the system-definition functions, `define-system` and `make-system`.
 The idea is that `define-system` is used to define the files that make up a system, the modules that the system is comprised of, and the files that make up each module.
@@ -1286,44 +1197,32 @@ For larger systems spread across multiple directories, `define - system` will no
 
 Here is the first part of the file `defsys.lisp`, showing the definition of `define-system` and the structure sys.
 
-`;;; -*- Mode: Lisp; Syntax: Common-Lisp; Package: User -*-`
-
-`; ; ; ; A Facility for Defining Systems and their Components`
-
-`(in-package "USER")`
-
-`(defvar *systems* nil "List of all systems defined.")`
-
-`(defstruct sys`
-
-`  "A system containing a number of source and object files."`
-
-`  name source-dir object-dir modules)`
-
-`(defun define-system (&key name source-dir object-dir modules)`
-
-`  "Define a new system."`
+```lisp
+;;; -*- Mode: Lisp; Syntax: Common-Lisp; Package: User -*-
+; ; ; ; A Facility for Defining Systems and their Components
+(in-package "USER")
+(defvar *systems* nil "List of all systems defined.")
+(defstruct sys
+  "A system containing a number of source and object files."
+  name source-dir object-dir modules)
+(defun define-system (&key name source-dir object-dir modules)
+  "Define a new system."
+```
 
 `  ;; Delete any old system of this name.
 and add the new one.`
 
-`  (setf *systems* (delete name *systems* :test #'string-equal`
-
-`      :key #'sys-name))`
-
-`  (push (make-sys`
-
-`      :name (string name)`
-
-`      :source-dir (pathname source-dir)`
-
-`      :object-dir (pathname object-dir)`
-
-`      :modules '((:all ..(mapcar #'first modules)) ..modules))`
-
-`    *systems*)`
-
-`name)`
+```lisp
+  (setf *systems* (delete name *systems* :test #'string-equal
+      :key #'sys-name))
+  (push (make-sys
+      :name (string name)
+      :source-dir (pathname source-dir)
+      :object-dir (pathname object-dir)
+      :modules '((:all ..(mapcar #'first modules)) ..modules))
+    *systems*)
+name)
+```
 
 The function `make` - `systemis` used to compile and/or load a previously defined system.
 The name supplied is used to look up the definition of a system, and one of three actions is taken on the system.
@@ -1331,92 +1230,65 @@ The keyword : `cload` means to compile and then load files.
 : `load` means to load files; if there is an object (compiled) file and it is newer than the source file, then it will be loaded, otherwise the source file will be loaded.
 Finally, : `update` means to compile just those source files that have been changed since their corresponding source files were last altered, and to load the new compiled version.
 
-`(defun make-system (&key (module : al 1 ) (action :cload)`
-
-`                  (name (sys-name (first *systems*))))`
-
-`    "Compile and/or load a system or one of its modules."`
-
-`    (let ((system (find name *systems* :key #'sys-name`
-
-`            :test #'string-equal)))`
-
-`      (check-type system (not null))`
-
-`      (check-type action (member : cload : update :load))`
-
-`      (with-compilation-unit O (sys-action module system action))`
-
-`  (defun sys-action (x system action)`
-
-`    "Perform the specified action to x in this system.`
+```lisp
+(defun make-system (&key (module : al 1 ) (action :cload)
+                  (name (sys-name (first *systems*))))
+    "Compile and/or load a system or one of its modules."
+    (let ((system (find name *systems* :key #'sys-name
+            :test #'string-equal)))
+      (check-type system (not null))
+      (check-type action (member : cload : update :load))
+      (with-compilation-unit O (sys-action module system action))
+  (defun sys-action (x system action)
+    "Perform the specified action to x in this system.
+```
 
 `    X can be a module name (symbol).
 file name (string)`
 
-`    or a list."`
-
-`    (typecase x`
-
-`      (symbol (let ((files (rest (assoc x (sys-modules system)))))`
-
-`            (if (null files)`
-
-`              (warn "No files for module ~  a" x)`
-
-`              (sys-action files system action))))`
-
-`      (list (dolist (file x)`
-
-`          (sys-action file system action)))`
-
-`      ((string pathname)`
-
-`          (let ((source (merge-pathnames`
-
-`                x (sys-source-dir system)))`
-
-`            (object (merge-pathnames`
-
-`                x (sys-object-dir system))))`
-
-`          (case action`
-
-`  (:cload (compile-file source) (load object))`
-
-`  (:update (unless (newer-file-p object source)`
-
-`      (compile-file source))`
-
-`    (load object))`
-
-`  (:load (if (newer-file-p object source)`
-
-`      (load object)`
-
-`      (load source))))))`
-
-`(t (warn "Don't know how to ~  a "~a in system ~  a"`
-
-`    action x system))))`
+```lisp
+    or a list."
+    (typecase x
+      (symbol (let ((files (rest (assoc x (sys-modules system)))))
+            (if (null files)
+              (warn "No files for module ~  a" x)
+              (sys-action files system action))))
+      (list (dolist (file x)
+          (sys-action file system action)))
+      ((string pathname)
+          (let ((source (merge-pathnames
+                x (sys-source-dir system)))
+            (object (merge-pathnames
+                x (sys-object-dir system))))
+          (case action
+  (:cload (compile-file source) (load object))
+  (:update (unless (newer-file-p object source)
+      (compile-file source))
+    (load object))
+  (:load (if (newer-file-p object source)
+      (load object)
+      (load source))))))
+(t (warn "Don't know how to ~  a "~a in system ~  a"
+    action x system))))
+```
 
 To support this, we need to be able to compare the write dates on files.
 This is not hard to do, since Common Lisp provides the function `file-write-date`.
 
-`(defun newer-file-p (file1 file2)`
-
-`  "Is file1 newer than (written later than) file2?"`
-
-`  (>-num (if (probe-file filel) (file-write-date filel))`
-
-`  (if (probe-file file2) (file-write-date file2))))`
-
-`(defun >-num (x y)`
+```lisp
+(defun newer-file-p (file1 file2)
+  "Is file1 newer than (written later than) file2?"
+  (>-num (if (probe-file filel) (file-write-date filel))
+  (if (probe-file file2) (file-write-date file2))))
+(defun >-num (x y)
+```
 
 `  "True if x and y are numbers.
 and x > y."`
 
-`  (and (numberp x) (numberp y) (> x y)))`
+```lisp
+  (and (numberp x) (numberp y) (> x y)))
+```
 
 ## 25.17 Portability Problems
 {:#s0115}
@@ -1454,7 +1326,9 @@ The same warning applies to `intersection` and `set-difference`.
 Many functions do not specify how much the result shares with the input.
 The following computation has only one possible printed result:
 
-`> (remove 'x'(a b c d)) (A B C D)`
+```lisp
+> (remove 'x'(a b c d)) (A B C D)
+```
 
 However, it is not specified whether the output is `eq` or only `equal` to the second input.
 
@@ -1479,26 +1353,24 @@ What did you have to change?
 
 **Exercise  25.3 [m]** Write a `setf` method for `if` that works like this:
 
-`(setf (if test (first x) y) (+  2 3))=`
-
-`(let ((temp (+  2 3)))`
-
-`  (if test`
-
-`    (setf (first x) temp)`
-
-`    (setf y temp)))`
+```lisp
+(setf (if test (first x) y) (+  2 3))=
+(let ((temp (+  2 3)))
+  (if test
+    (setf (first x) temp)
+    (setf y temp)))
+```
 
 You will need to use `define-setf-method`, not `defsetf`.
 (Why?) Make sure you handle the case where there is no else part to the `if`.
 
 **Exercise  25.4 [h]** Write a `setf` method for `lookup`, a function to get the value for a key in an association list.
 
-`(defun lookup (key alist)`
-
-`  "Get the cdr of key's entry in the association list."`
-
-`  (cdr (assoc key alist)))`
+```lisp
+(defun lookup (key alist)
+  "Get the cdr of key's entry in the association list."
+  (cdr (assoc key alist)))
+```
 
 ## 25.19 Answers
 {:#s0125}
@@ -1507,39 +1379,25 @@ You will need to use `define-setf-method`, not `defsetf`.
 **Answer 25.4** Here is the setf method for `lookup`.
 It looks for the key in the a-list, and if the key is there, it modifies the cdr of the pair containing the key; otherwise it adds a new key/value pair to the front of the a-list.
 
-`(define-setf-method lookup (key alist-place)`
-
-`  (multiple-value-bind (temps vais stores store-form access-form)`
-
-`      (get-setf-method alist-place)`
-
-`  (let ((key-var (gensym))`
-
-`          (pair-var (gensym))`
-
-`          (result (gensym)))`
-
-`      (values`
-
-`        '(.key-var .@temps .pair-var)`
-
-`        '(.key .@vais (assoc .key-var ,access-form))`
-
-`        '(.result)`
-
-`        '(if .pair-var`
-
-`            (setf (cdr .pair-var) .result)`
-
-`            (let ((.(first stores)`
-
-`                (acons ,key-var .result .access-form)))`
-
-`              .store-form`
-
-`              ,result))`
-
-`        '(cdr .pair-var)))))`
+```lisp
+(define-setf-method lookup (key alist-place)
+  (multiple-value-bind (temps vais stores store-form access-form)
+      (get-setf-method alist-place)
+  (let ((key-var (gensym))
+          (pair-var (gensym))
+          (result (gensym)))
+      (values
+        '(.key-var .@temps .pair-var)
+        '(.key .@vais (assoc .key-var ,access-form))
+        '(.result)
+        '(if .pair-var
+            (setf (cdr .pair-var) .result)
+            (let ((.(first stores)
+                (acons ,key-var .result .access-form)))
+              .store-form
+              ,result))
+        '(cdr .pair-var)))))
+```
 
 ----------------------
 

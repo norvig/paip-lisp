@@ -81,7 +81,9 @@ That is, we expect most of the polynomials to be like *ax*3*+ bx*2*+ cx* + *d,* 
 Vectors will be used instead of lists, to save space and to allow fast access to any element.
 Thus, the representation of 5*x*3+ 10*x*2+ 20*x +* 30 will be the vector:
 
-`#(x 30 20 10 5)`
+```lisp
+#(x 30 20 10 5)
+```
 
 The main variable, *x*, is in the 0th element of the vector, and the coefficient of the *i*th power of *x* is in element *i* + 1 of the vector.
 A single variable is represented as a vector whose first coefficient is 1, and a number is represented as itself:
@@ -109,17 +111,18 @@ The functions defining the type `polynomial` follow.
 Because we are concerned with efficiency, we proclaim certain short functions to be compiled inline, use the specific function `svref` (simple-vector reference) rather than the more general aref, and provide declarations for the polynomials using the special form the.
 More details on efficiency issues are given in [Chapter 9](B9780080571157500091.xhtml).
 
-`(proclaim '(inline main-var degree coef`
+```lisp
+(proclaim '(inline main-var degree coef
+```
 
               `var= var> poly make-poly))`
 
-`(deftype polynomial () 'simple-vector)`
-
-`(defun main-var (p) (svref (the polynomial p) 0))`
-
-`(defun coef (p i)  (svref (the polynomial p) (+ i 1)))`
-
-`(defun degree (p)  (-(length (the polynomial p)) 2))`
+```lisp
+(deftype polynomial () 'simple-vector)
+(defun main-var (p) (svref (the polynomial p) 0))
+(defun coef (p i)  (svref (the polynomial p) (+ i 1)))
+(defun degree (p)  (-(length (the polynomial p)) 2))
+```
 
 We had to make another design decision in defining `coef`, the function to extract a coefficient from a polynomial.
 As stated above, the *i*th coefficient of a polynomial is in element *i* + 1 of the vector.
@@ -134,7 +137,9 @@ Now we can extract information from a polynomial, but we also need to build and 
 The function `poly` takes a variable and some coefficients and builds a vector representing the polynomial.
 `make-poly` takes a variable and a degree and produces a polynomial with all zero coefficients.
 
-`(defun poly (x &rest coefs)`
+```lisp
+(defun poly (x &rest coefs)
+```
 
     `"Make a polynomial with main variable x`
 
@@ -142,7 +147,9 @@ The function `poly` takes a variable and some coefficients and builds a vector r
 
     `(apply #'vector x coefs))`
 
-`(defun make-poly (x degree)`
+```lisp
+(defun make-poly (x degree)
+```
 
     `"Make the polynomial 0 + 0*x + 0*x^2 + ... 0*x^degree"`
 
@@ -154,11 +161,15 @@ The function `poly` takes a variable and some coefficients and builds a vector r
 
 A polynomial can be altered by setting its main variable or any one of its coefficients using the following `defsetf` forms.
 
-`(defsetf main-var (p) (val)`
+```lisp
+(defsetf main-var (p) (val)
+```
 
   `'(setf (svref (the polynomial ,p) 0) ,val))`
 
-`(defsetf coef (p i) (val)`
+```lisp
+(defsetf coef (p i) (val)
+```
 
   `'(setf (svref (the polynomial .p) (+ ,i 1)) .val))`
 
@@ -181,7 +192,9 @@ They are defined with several helping functions.
 For addition, the functions `k+poly` and `poly+same` serve analogous purposes.
 With that in mind, here's the function to convert from prefix to canonical form:
 
-`(defun prefix->canon (x)`
+```lisp
+(defun prefix->canon (x)
+```
 
   `"Convert a prefix Lisp expression to canonical form.`
 
@@ -207,13 +220,17 @@ The existing functions `poly*poly` and `poly^n` can be used directly.
 But other operators need interface functions.
 The operators + and - need interface functions that handle both unary and binary.
 
-`(dolist (item '((+ poly+) (- poly-) (* poly*poly)`
+```lisp
+(dolist (item '((+ poly+) (- poly-) (* poly*poly)
+```
 
           `(^ poly^n) (D deriv-poly)))`
 
   `(setf (get (first item) 'prefix->canon) (second item)))`
 
-`(defun poly+ (&rest args)`
+```lisp
+(defun poly+ (&rest args)
+```
 
   `"Unary or binary polynomial addition."`
 
@@ -223,7 +240,9 @@ The operators + and - need interface functions that handle both unary and binary
 
     `(2 (poly+poly (first args) (second args)))))`
 
-`(defun poly- (&rest args)`
+```lisp
+(defun poly- (&rest args)
+```
 
   `"Unary or binary polynomial subtraction."`
 
@@ -241,9 +260,10 @@ In this system, we define a canonical form by imposing an ordering on variables 
 The rule is that a polynomial `p` can have coefficients that are polynomials in a variable later in the alphabet than `p`'s main variable, but no coefficients that are polynomials in variables earlier than `p`'s main variable.
 Here's how to compare variables:
 
-`(defun var= (x y) (eq x y))`
-
-`(defun var> (x y) (string> x y))`
+```lisp
+(defun var= (x y) (eq x y))
+(defun var> (x y) (string> x y))
+```
 
 The canonical form of the variable `x` will be `#(x 0 1)`, which is 0 x *x*0 + 1 x *x*1.
 The canonical form of `(+ x y)` is `#(x #(y 0 1) 1)`.
@@ -252,7 +272,9 @@ The policy of ordering variables assures canonicality, by properly grouping like
 
 Here, then, is the code for adding two polynomials:
 
-`(defun poly+poly (p q)`
+```lisp
+(defun poly+poly (p q)
+```
 
   `"Add two polynomials."`
 
@@ -270,7 +292,9 @@ Here, then, is the code for adding two polynomials:
 
       `(t                                                                (k+poly p q)))))`
 
-`(defun k+poly (k p)`
+```lisp
+(defun k+poly (k p)
+```
 
   `"Add a constant k to a polynomial p."`
 
@@ -286,7 +310,9 @@ Here, then, is the code for adding two polynomials:
 
             `r))))`
 
-`(defun poly+same (p q)`
+```lisp
+(defun poly+same (p q)
+```
 
   `"Add two polynomials with the same main variable."`
 
@@ -306,7 +332,9 @@ Here, then, is the code for adding two polynomials:
 
         `r)))`
 
-`(defun copy-poly (p)`
+```lisp
+(defun copy-poly (p)
+```
 
   `"Make a copy a polynomial."`
 
@@ -314,7 +342,9 @@ Here, then, is the code for adding two polynomials:
 
 and the code for multiplying polynomials:
 
-`(defun poly*poly (p q)`
+```lisp
+(defun poly*poly (p q)
+```
 
   `"Multiply two polynomials."`
 
@@ -332,7 +362,9 @@ and the code for multiplying polynomials:
 
       `(t                                                                (k*poly p q)))))`
 
-`(defun k*poly (k p)`
+```lisp
+(defun k*poly (k p)
+```
 
   `"Multiply a polynomial p by a constant factor k."`
 
@@ -363,7 +395,9 @@ This is done by creating a new polynomial, `r`, whose degree is the sum of the t
 Initially, all of `r`'s coefficients are zero.
 A doubly nested loop multiplies each coefficient of `p` and `q` and adds the `result` into the appropriate coefficient of `r`.
 
-`(defun poly*same (p q)`
+```lisp
+(defun poly*same (p q)
+```
 
   `"Multiply two polynomials with the same variable."`
 
@@ -394,7 +428,9 @@ The idea is that `(- (^ 5) (^ x 5))` should return 0, not `#(x 0 0 0 0 0 0)`.
 Note that `normal` ize`-poly` is a destructive operation: it calls `delete,` which can actually alter its argument.
 Normally this is a dangerous thing, but since `normalize-poly` is replacing something with its conceptual equal, no harm is done.
 
-`(defun normalize-poly (p)`
+```lisp
+(defun normalize-poly (p)
+```
 
   `"Alter a polynomial by dropping trailing zeros."`
 
@@ -419,7 +455,9 @@ Normally this is a dangerous thing, but since `normalize-poly` is replacing some
 There are a few loose ends to clean up.
 First, the exponentiation function:
 
-`(defun poly^n (p n)`
+```lisp
+(defun poly^n (p n)
+```
 
   `"Raise polynomial p to the nth power, n>=0."`
 
@@ -437,7 +475,9 @@ First, the exponentiation function:
 
 The differentiation routine is easy, mainly because there are only two operators (+ and *) to deal with:
 
-`(defun deriv-poly (p x)`
+```lisp
+(defun deriv-poly (p x)
+```
 
   `"Return the derivative, dp/dx, of the polynomial p."`
 
@@ -518,7 +558,9 @@ All that remains is converting from canonical form back to prefix form, and from
 This is a good point to extend the prefix form to allow expressions with more than two arguments.
 First we show an updated version of `prefix->infix` that handles multiple arguments:
 
-`(defun prefix->infix (exp)`
+```lisp
+(defun prefix->infix (exp)
+```
 
   `"Translate prefix to infix expressions.`
 
@@ -534,7 +576,9 @@ First we show an updated version of `prefix->infix` that handles multiple argume
 
         `(mapcar #'prefix->infix (exp-args exp)))))`
 
-`(defun intersperse (op args)`
+```lisp
+(defun intersperse (op args)
+```
 
   `"Place op between each element of args.`
 
@@ -552,7 +596,9 @@ First we show an updated version of `prefix->infix` that handles multiple argume
 
 Now we need only convert from canonical form to prefix:
 
-`(defun canon->prefix (p)`
+```lisp
+(defun canon->prefix (p)
+```
 
   `"Convert a canonical polynomial to a lisp expression."`
 
@@ -576,7 +622,9 @@ Now we need only convert from canonical form to prefix:
 
                     `(main-var p) i)))))))`
 
-`(defun exponent->prefix (base exponent)`
+```lisp
+(defun exponent->prefix (base exponent)
+```
 
   `"Convert canonical base'exponent to prefix form."`
 
@@ -588,7 +636,9 @@ Now we need only convert from canonical form to prefix:
 
     `(t '(^ .base .exponent))))`
 
-`(defun args->prefix (op identity args)`
+```lisp
+(defun args->prefix (op identity args)
+```
 
   `"Convert argl op arg2 op ... to prefix form."`
 
@@ -614,7 +664,9 @@ Now we need only convert from canonical form to prefix:
 
 Finally, here's a top level to make use of all this:
 
-`(defun canon (infix-exp)`
+```lisp
+(defun canon (infix-exp)
+```
 
   `"Canonicalize argument and convert it back to infix"`
 
@@ -626,7 +678,9 @@ Finally, here's a top level to make use of all this:
 
         `(infix->prefix infix-exp)))))`
 
-`(defun canon-simplifier ()`
+```lisp
+(defun canon-simplifier ()
+```
 
   `"Read an expression, canonicalize it, and print the result."`
 
@@ -638,65 +692,51 @@ Finally, here's a top level to make use of all this:
 
 and an example of it in use:
 
-`> (canon-simplifier)`
-
-`CANON> (3 + x + 4 - x)`
-
-`7`
-
-`CANON> (x + y + y + x)`
-
-`((2 * X) + (2 * Y))`
-
-`CANON> (3 * x + 4 * x)`
-
-`(7 * X)`
-
-`CANON> (3 * x + y + x + 4 * x)`
-
-`((8 * X) + Y)`
-
-`CANON> (3 * x + y + z + x + 4 * x)`
-
-`((8 * X) + (Y + Z))`
-
-`CANON> ((x + 1) ^ 10)`
-
-`((X ^ 10) + (10 * (X ^ 9)) + (45 * (X ^ 8)) + (120 * (X ^ 7))`
+```lisp
+> (canon-simplifier)
+CANON> (3 + x + 4 - x)
+7
+CANON> (x + y + y + x)
+((2 * X) + (2 * Y))
+CANON> (3 * x + 4 * x)
+(7 * X)
+CANON> (3 * x + y + x + 4 * x)
+((8 * X) + Y)
+CANON> (3 * x + y + z + x + 4 * x)
+((8 * X) + (Y + Z))
+CANON> ((x + 1) ^ 10)
+((X ^ 10) + (10 * (X ^ 9)) + (45 * (X ^ 8)) + (120 * (X ^ 7))
+```
 
   `+ (210 * (X ^ 6)) + (252 * (X ^ 5)) + (210 * (X ^ 4))`
 
   `+ (120 * (X ^ 3)) + (45 * (X ^ 2)) + (10 * X) + 1)`
 
-`CANON> ((x + 1) ^ 10 + (x - 1) ^ 10)`
-
-`((2 * (X ^ 10)) + (90 * (X ^ 8)) + (420 * (X ^ 6))`
+```lisp
+CANON> ((x + 1) ^ 10 + (x - 1) ^ 10)
+((2 * (X ^ 10)) + (90 * (X ^ 8)) + (420 * (X ^ 6))
+```
 
   `+ (420 * (X ^ 4)) + (90 * (X ^ 2)) + 2)`
 
-`CANON> ((x + 1) ^ 10 - (x - 1) ^ 10)`
-
-`((20 * (X ^ 8)) + (240 * (X ^ 7)) + (504 * (X ^ 5))`
+```lisp
+CANON> ((x + 1) ^ 10 - (x - 1) ^ 10)
+((20 * (X ^ 8)) + (240 * (X ^ 7)) + (504 * (X ^ 5))
+```
 
   `+ (240 * (X ^ 3)) + (20 * X))`
 
-`CANON> (3 * x ^ 3 + 4 * x * y * (x - 1) + x ^ 2 * (x + y))`
-
-`((4 * (X ^ 3)) + ((5 * Y) * (X ^ 2)) + ((-4 * Y) * X))`
-
-`CANON> (3 * x ^ 3 + 4 * x * w * (x - 1) + x ^ 2 * (x + w))`
-
-`((((5 * (X ^ 2)) + (-4 * X)) * W) + (4 * (X ^ 3)))`
-
-`CANON> (d (3 * x ^ 2 + 2 * x + 1) / d x)`
-
-`((6 * X) + 2)`
-
-`CANON> (d(z + 3 * x + 3 * z * x ^ 2 + z ^ 2 * x ^ 3) / d z)`
-
-`(((2 * Z) * (X ^ 3)) + (3 * (X ^ 2)) + 1)`
-
-`CANON> [Abort]`
+```lisp
+CANON> (3 * x ^ 3 + 4 * x * y * (x - 1) + x ^ 2 * (x + y))
+((4 * (X ^ 3)) + ((5 * Y) * (X ^ 2)) + ((-4 * Y) * X))
+CANON> (3 * x ^ 3 + 4 * x * w * (x - 1) + x ^ 2 * (x + w))
+((((5 * (X ^ 2)) + (-4 * X)) * W) + (4 * (X ^ 3)))
+CANON> (d (3 * x ^ 2 + 2 * x + 1) / d x)
+((6 * X) + 2)
+CANON> (d(z + 3 * x + 3 * z * x ^ 2 + z ^ 2 * x ^ 3) / d z)
+(((2 * Z) * (X ^ 3)) + (3 * (X ^ 2)) + 1)
+CANON> [Abort]
+```
 
 ## 15.4 Benchmarking the Polynomial Simplifier
 {:#s0025}
@@ -711,7 +751,9 @@ The `frpoly` benchmark encodes polynomials as lists rather than vectors, and goe
 Otherwise, it is similar to the algorithms used here (although the code itself is quite different, using progs and gos and other features that have fallen into disfavor in the intervening decades).
 The particular benchmark we will use here is raising 1 ***+** x + y + z* to the 15th power:
 
-`(defun r15-test ()`
+```lisp
+(defun r15-test ()
+```
 
   `(let ((r (prefix->canon'(+ 1 (+ x (+ y z))))))`
 
@@ -737,7 +779,9 @@ For example, the alert reader may have noticed that the version of `poly^n` defi
 Usually, exponentiation is done by squaring a value when the exponent is even.
 Such an algorithm takes only log *n* multiplications instead of *n.* We can add a line to the definition of `poly^n` to get an *O*(log *n*) algorithm:
 
-`(defun poly^n (p n)`
+```lisp
+(defun poly^n (p n)
+```
 
   `"Raise polynomial p to the nth power, n>=0."`
 
@@ -751,7 +795,9 @@ Such an algorithm takes only log *n* multiplications instead of *n.* We can add 
 
       `(t (poly*poly p (poly^n p (- n 1))))))`
 
-`(defun poly^2 (p) (poly*poly p p))`
+```lisp
+(defun poly^2 (p) (poly*poly p p))
+```
 
 The surprise is that this takes *longer* to raise `*r*` to the 15th power.
 Even though it does fewer `poly*poly` operations, it is doing them on more complex arguments, and there is more work altogether.
@@ -767,7 +813,9 @@ If it gives no wrong answers, and it terminates, then it must give the right ans
 In contrast, making the change for an iterative algorithm is more complex.
 The initial algorithm is simple:
 
-`(defun poly^n (p n)`
+```lisp
+(defun poly^n (p n)
+```
 
   `(let ((result 1))`
 
@@ -777,7 +825,9 @@ The initial algorithm is simple:
 
 But to change it, we have to change the repeat loop to a `while` loop, explicitly put in the decrement of *n*, and insert a test for the even case:
 
-`(defun poly^n (p n)`
+```lisp
+(defun poly^n (p n)
+```
 
   `(let ((result 1))`
 
@@ -827,7 +877,9 @@ Following is the code for binomial exponentiation.
 It is somewhat messy, because the emphasis is on efficiency.
 This means reusing some data and using `p-add-into!` instead of the more general `poly+poly`.
 
-`(defun poly^n (p n)`
+```lisp
+(defun poly^n (p n)
+```
 
   `"Raise polynomial p to the nth power, n>=0."`
 
@@ -956,7 +1008,9 @@ So, for example, (*x*2- 1)/(*x*- 1) must be reduced to *x* + 1, not left as a qu
 The following functions build and access rational expressions but do not reduce to simplest form, except in the case where the denominator is a number.
 Building up the rest of the functionality for full rational expressions is left to a series of exercises:
 
-`(defun make-rat (numerator denominator)`
+```lisp
+(defun make-rat (numerator denominator)
+```
 
   `"Build a rational: a quotient of two polynomials."`
 
@@ -966,7 +1020,9 @@ Building up the rest of the functionality for full rational expressions is left 
 
       `(cons numeratordenominator)))`
 
-`(defun rat-numerator (rat)`
+```lisp
+(defun rat-numerator (rat)
+```
 
   `"The numerator of a rational expression."`
 
@@ -978,7 +1034,9 @@ Building up the rest of the functionality for full rational expressions is left 
 
     `(t rat)))`
 
-`(defun rat-denominator (rat)`
+```lisp
+(defun rat-denominator (rat)
+```
 
   `"The denominator of a rational expression."`
 
@@ -1057,7 +1115,9 @@ A brief history of symbolic algebra systems is given in [chapter 8](B97800805711
 
 **Answer 15.4**
 
-`(defun rat*rat (x y)`
+```lisp
+(defun rat*rat (x y)
+```
 
   `"Multiply rationals: a/b * c/d = a*c/b*d"`
 
@@ -1069,7 +1129,9 @@ A brief history of symbolic algebra systems is given in [chapter 8](B97800805711
 
                 `(rat-denominator y))))`
 
-`(defun rat+rat (x y)`
+```lisp
+(defun rat+rat (x y)
+```
 
   `"Add rationals: a/b + c/d = (a*d + c*b)/b*d"`
 
@@ -1085,7 +1147,9 @@ A brief history of symbolic algebra systems is given in [chapter 8](B97800805711
 
               `(poly*poly b d))))`
 
-`(defun rat/rat (x y)`
+```lisp
+(defun rat/rat (x y)
+```
 
   `"Divide rationals: a/b / c/d - a*d/b*c"`
 
@@ -1093,7 +1157,9 @@ A brief history of symbolic algebra systems is given in [chapter 8](B97800805711
 
 **Answer 15.6**
 
-`(defun poly/poly (p q)`
+```lisp
+(defun poly/poly (p q)
+```
 
   `"Divide p by q: if d is the greatest common divisor of p and q`
 

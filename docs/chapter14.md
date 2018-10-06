@@ -71,11 +71,11 @@ So placing a link *L* between *A* and *B* not only asserts that *L(A, B)* is tru
 *Object-oriented* languages can also be seen as syntactic variants of predicate calculus.
 Here is a statement in a typical slot-filler frame language:
 
-`(a person`
-
-`  (name = Jan)`
-
-`  (age = 32))`
+```lisp
+(a person
+  (name = Jan)
+  (age = 32))
+```
 
 This is equivalent to the logical formula:
 
@@ -187,17 +187,19 @@ It can represent conjunctions of facts: the capital of Rhode Island is Providenc
 But it can not represent disjunctions or negations: that the capital of California is *not* Los Angeles, or that the capital of New York is *either* New York City *or* Albany.
 We could try this:
 
-`(<- (not (capital LA CA)))`
-
-`(<- (or (capital Albany NY) (capital NYC NY)))`
+```lisp
+(<- (not (capital LA CA)))
+(<- (or (capital Albany NY) (capital NYC NY)))
+```
 
 but note that these last two facts concern the relation `not` and `or`, not the relation `capital`.
 Thus, they will not be considered when we ask a query about `capital`.
 Fortunately, the assertion "Either NYC or Albany is the capital of NY" can be rephrased as two assertions: "Albany is the capital of NY if NYC is not" and "NYC is the capital of NY if Albany is not:"
 
-`(<- (capital Albany NY) (not (capital NYC NY)))`
-
-`(<- (capital NYC NY) (not (capital Albany NY)))`
+```lisp
+(<- (capital Albany NY) (not (capital NYC NY)))
+(<- (capital NYC NY) (not (capital Albany NY)))
+```
 
 Unfortunately, Prolog's not is different from logic's `not`.
 When Prolog answers "no" to a query, it means the query cannot be proven from the known facts.
@@ -214,9 +216,10 @@ But for knowledge representation in general, we would like a system that does no
 
 As another example, consider the clauses:
 
-`(<- (damned) (do))`
-
-`(<- (damned) (not (do)))`
+```lisp
+(<- (damned) (do))
+(<- (damned) (not (do)))
+```
 
 With these rules, the query `(?
 (damned))` should logically be answered "yes." Furthermore, it should be possible to conclude `(damned)` without even investigating if `(do)` is provable or not.
@@ -243,15 +246,13 @@ Since those are the only two possibilities, the answer must be yes in any case.
 Logical reasoning gives us the right answer, but Prolog can not.
 We can describe the problem with the following seven assertions and one query, but Prolog can not deal with the or in the final assertion.
 
-`(<- (next-to D E))    (<- (next-to E D))`
-
-`(<- (next-to E C))    (<- (next-to C E))`
-
-`(<- (democracy D))    (<- (communist C))`
-
-`(<- (or (democracy E)  (communist E)))`
-
-`(?- (next-to ?A ?B) (democracy ?A) (communist ?B))`
+```lisp
+(<- (next-to D E))    (<- (next-to E D))
+(<- (next-to E C))    (<- (next-to C E))
+(<- (democracy D))    (<- (communist C))
+(<- (or (democracy E)  (communist E)))
+(?- (next-to ?A ?B) (democracy ?A) (communist ?B))
+```
 
 We have seen that Prolog is not very good at representing disjunctions and negations.
 It also has difficulty representing existentials.
@@ -261,7 +262,9 @@ Jan likes everyone.
 
 &forall; *x* person(*x*) => likes(Jan,*x*)
 
-`(<- (likes Jan ?x) (person ?x))`
+```lisp
+(<- (likes Jan ?x) (person ?x))
+```
 
 The Prolog translation is faithful.
 But there is no good translation for "Jan likes someone." The closest we can get is:
@@ -270,9 +273,10 @@ Jan likes someone.
 
 &exist; *x* person(x) => likes(Jan,x)
 
-`(<- (likes Jan pl))`
-
-`(<- (person pl))`
+```lisp
+(<- (likes Jan pl))
+(<- (person pl))
+```
 
 Here we have invented a new symbol, `p1`, to represent the unknown person that Jan likes, and have asserted that `p1` is a person.
 Notice that `p1` is a constant, not a variable.
@@ -288,9 +292,10 @@ Everyone likes someone.
 
 &forall;*y*&exist; *x* person (*x*) => likes (*y, x*)
 
-`(<- (likes ?y (p2 ?y)))`
-
-`(<- (person (p2 ?y)))`
+```lisp
+(<- (likes ?y (p2 ?y)))
+(<- (person (p2 ?y)))
+```
 
 Here `p2` is a Skolem function that depends on the variable `?y`.
 In other words, everyone likes some person, but not necessarily the same person.
@@ -305,16 +310,18 @@ This section explores the limits of predicate calculus's expressiveness.
 Suppose we want to assert that lions, tigers, and bears are kinds of animais.
 In predicate calculus or in Prolog we could write an implication for each case:
 
-`(<- (animal ?x) (lion ?x))`
-
-`(<- (animal ?x) (tiger ?x))`
-
-`(<- (animal ?x) (bear ?x))`
+```lisp
+(<- (animal ?x) (lion ?x))
+(<- (animal ?x) (tiger ?x))
+(<- (animal ?x) (bear ?x))
+```
 
 These implications allow us to prove that any known lion, tiger, or bear is in fact an animal.
 However, they do not allow us to answer the question "What kinds of animais are there?" It is not hard to imagine extending Prolog so that the query
 
-`(?- (<- (animal ?x) ?proposition))`
+```lisp
+(?- (<- (animal ?x) ?proposition))
+```
 
 would be legal.
 However, this happens not to be valid Prolog, and it is not even valid first-order predicate calculus (or FOPC).
@@ -357,32 +364,26 @@ However, there is no consensus on the way to approach this problem.
 Because Prolog searches depth-first, it can get caught in one branch of the search space and never examine the other branches.
 This problem can show up, for example, in trying to define a commutative relation, like `sibling`:
 
-`(<- (sibling lee kim))`
-
-`(<- (sibling ?x ?y) (sibling ?y ?x))`
+```lisp
+(<- (sibling lee kim))
+(<- (sibling ?x ?y) (sibling ?y ?x))
+```
 
 With these clauses, we expect to be able to conclude that Lee is Kim's sibling, and Kim is Lee's.
 Let's see what happens:
 
-`> (?- (sibling ?x ?y))`
-
-`?X = LEE`
-
-`?Y = KIM;`
-
-`?X = KIM`
-
-`?Y = LEE;`
-
-`?X = LEE`
-
-`?Y = KIM;`
-
-`?X = KIM`
-
-`?Y = LEE.`
-
-`No.`
+```lisp
+> (?- (sibling ?x ?y))
+?X = LEE
+?Y = KIM;
+?X = KIM
+?Y = LEE;
+?X = LEE
+?Y = KIM;
+?X = KIM
+?Y = LEE.
+No.
+```
 
 We get the expected conclusions, but they are deduced repeatedly, because the commutative clause for siblings is applied over and over again.
 This is annoying, but not critical.
@@ -390,20 +391,21 @@ Far worseis when we ask `(?- (sibling fred ?x))`.
 This query loops forever.
 Happily, this particular type of example has an easy fix: just introduce two predicates, one for data-base level facts, and one at the level of axioms and queries:
 
-`(<- (sibling-fact lee kim))`
-
-`(<- (sibling ?x ?y) (sibling-fact ?x ?y))`
-
-`(<- (sibling ?x ?y) (sibling-fact ?y ?x))`
+```lisp
+(<- (sibling-fact lee kim))
+(<- (sibling ?x ?y) (sibling-fact ?x ?y))
+(<- (sibling ?x ?y) (sibling-fact ?y ?x))
+```
 
 Another fix would be to change the interpreter to fall when a repeated goal was detected.
 This was the approach taken in GPS.
 However, even if we eliminated repeated goals, Prolog can still get stuck in one branch of a depth-first search.
 Consider the example:
 
-`(<- (natural 0))`
-
-`(<- (natural (1  + ?n)) (natural ?n))`
+```lisp
+(<- (natural 0))
+(<- (natural (1  + ?n)) (natural ?n))
+```
 
 These rules define the natural numbers (the non-negative integers).
 We can use the rules either to confirm queries like `(natural (1  + (1  + (1  + 0))))` or to generate the natural numbers, as in the query `(natural ?n)`.
@@ -411,11 +413,11 @@ So far, everything is fine.
 But suppose we wanted to define all the integers.
 One approach would be this:
 
-`(<- (integer 0))`
-
-`(<- (integer ?n) (integer (1  + ?n)))`
-
-`(<- (integer (1  + ?n)) (integer ?n))`
+```lisp
+(<- (integer 0))
+(<- (integer ?n) (integer (1  + ?n)))
+(<- (integer (1  + ?n)) (integer ?n))
+```
 
 These rules say that 0 is an integer, and any *n* is an integer if *n* + 1 is, and *n* + 1 is if *n* is.
 While these rules are correct in a logical sense, they don't work as a Prolog program.
@@ -431,9 +433,10 @@ With checking on, it takes time proportional to the size of the value, which is 
 With occurs checking off, the programmer gets the benefit of fast unification but can run into problems with circular structures.
 Consider the following clauses:
 
-`(<- (parent ?x (mother-of ?x)))`
-
-`(<- (parent ?x (father-of ?x)))`
+```lisp
+(<- (parent ?x (mother-of ?x)))
+(<- (parent ?x (father-of ?x)))
+```
 
 These clauses say that, for any person, the mother of that person and the father of that person are parents of that person.
 Now let us ask if there is a person who is his or her own parent:
@@ -441,21 +444,25 @@ Now let us ask if there is a person who is his or her own parent:
 `> (?
 (parent ?y ?y))`
 
-`?Y = [Abort]`
+```lisp
+?Y = [Abort]
+```
 
 The system has found an answer, where `?y = (mother-of ?y).` The answer can't be printed, though, because `deref` (or `subst-bindings` in the interpreter) goes into an infinite loop trying to figure out what `?y` is.
 Without the printing, there would be no infinite loop:
 
-`(<- (self-parent) (parent ?y ?y))`
+```lisp
+(<- (self-parent) (parent ?y ?y))
+```
 
 `> (?
 (self-parent))`
 
-`Yes;`
-
-`Yes;`
-
-`No.`
+```lisp
+Yes;
+Yes;
+No.
+```
 
 The `self-parent` query succeeds twice, once with the mother clause and once with the father clause.
 Has Prolog done the right thing here?
@@ -474,12 +481,16 @@ Our Prolog compiler is designed to handle "programlike" predicates-predicates wi
 The compiler does much worse on "tablelike" predicates-predicates with a large number of simple facts.
 Consider the predicate `pb`, which encodes phone-book facts in the form:
 
-`(pb (name Jan Doe) (num 415 555 1212))`
+```lisp
+(pb (name Jan Doe) (num 415 555 1212))
+```
 
 Suppose we have a few thousand entries of this kind.
 A typical query for this data base would be:
 
-`(pb (name Jan Doe) ?num)`
+```lisp
+(pb (name Jan Doe) ?num)
+```
 
 It would be inefficient to search through the facts linearly, matching each one against the query.
 It would also be inefficient to recompile the whole `pb/2` predicate every time a new entry is added.
@@ -520,17 +531,14 @@ To appreciate the problems, we need an example.
 Suppose we have the following six keys to index.
 For simplicity, the value of each key will be the key itself:
 
-`1 (p a b)`
-
-`2 (p a c)`
-
-`3 (p a ?x)`
-
-`4 (p b c)`
-
-`5 (p b (f c))`
-
-`6 (p a (f . ?x))`
+```lisp
+1 (p a b)
+2 (p a c)
+3 (p a ?x)
+4 (p b c)
+5 (p b (f c))
+6 (p a (f . ?x))
+```
 
 Now assume the query `(p ?y c)`.
 This should match keys 2, 3, and 4.
@@ -608,62 +616,47 @@ A list with its length will be called an `nlist`.
 It will be implemented as a cons cell containing the number of elements and a list of the elements themselves.
 An alternative would be to use extensible vectors with fill pointers.
 
-`;; An nlist is implemented as a (count . elements) pair:`
-
-`(defun make-empty-nlist ()`
-
-`  "Create a new, empty nlist."`
-
-`  (cons 0 nil))`
-
-`(defun nlist-n (x) "The number of elements in an nlist." (carx))`
-
-`(defun nlist-list (x) "The elements in an nlist." (cdr x))`
-
-`(defun nlist-push (item nlist)`
-
-`  "Add a new element to an nlist."`
-
-`  (incf (car nlist))`
-
-`  (push item (cdr nlist))`
-
-`  nlist)`
+```lisp
+;; An nlist is implemented as a (count . elements) pair:
+(defun make-empty-nlist ()
+  "Create a new, empty nlist."
+  (cons 0 nil))
+(defun nlist-n (x) "The number of elements in an nlist." (carx))
+(defun nlist-list (x) "The elements in an nlist." (cdr x))
+(defun nlist-push (item nlist)
+  "Add a new element to an nlist."
+  (incf (car nlist))
+  (push item (cdr nlist))
+  nlist)
+```
 
 Now we need a place to store these nlists.
 We will build the data base out of discrimination tree nodes called dtree nodes.
 Each dtree node has a field to hold the variable index, the atom indices, and pointers to two subnodes, one for the `first` and one for the `rest`.
 We implement dtrees as vectors for efficiency, and because we will never need a `dtree-p` predicate.
 
-`(defstruct (dtree (:type vector))`
-
-`  (first nil) (rest nil) (atoms nil) (var (make-empty-nlist)))`
+```lisp
+(defstruct (dtree (:type vector))
+  (first nil) (rest nil) (atoms nil) (var (make-empty-nlist)))
+```
 
 A separate dtree will be stored for each predicate.
 Since the predicates must be symbols, it is possible to store the dtrees on the predicate's property list.
 In most implementations, this will be faster than alternatives such as hash tables.
 
-`(let ((predicates nil))`
-
-`  (defun get-dtree (predicate)`
-
-`    "Fetch (or make) the dtree for this predicate."`
-
-`    (cond ((get predicate 'dtree))`
-
-`      (t (push predicate predicates)`
-
-`        (setf (get predicate 'dtree) (make-dtree)))))`
-
-`  (defun clear-dtrees ()`
-
-`    "Remove all the dtrees for all the predicates."`
-
-`    (dolist (predicate predicates)`
-
-`      (setf (get predicate 'dtree) nil))`
-
-`    (setf predicates nil)))`
+```lisp
+(let ((predicates nil))
+  (defun get-dtree (predicate)
+    "Fetch (or make) the dtree for this predicate."
+    (cond ((get predicate 'dtree))
+      (t (push predicate predicates)
+        (setf (get predicate 'dtree) (make-dtree)))))
+  (defun clear-dtrees ()
+    "Remove all the dtrees for all the predicates."
+    (dolist (predicate predicates)
+      (setf (get predicate 'dtree) nil))
+    (setf predicates nil)))
+```
 
 The function `index` takes a relation as key and stores it in the dtree for the predicate of the relation.
 It calls `dtree-index` to do all the work of storing a value under the proper indices for the key in the proper dtree node.
@@ -675,125 +668,82 @@ An alternative would be to use hash tables for the index, or even to use a schem
 I use `lookup` to look up the value of a key in a property list.
 This function, and its `setf` method, are defined on [page 896](B978008057115750025X.xhtml#p896).
 
-`(defun index (key)`
+```lisp
+(defun index (key)
+```
 
 `  "Store key in a dtree node.
 Key must be (predicate . args);`
 
-`  it is stored in the predicate's dtree."`
-
-`  (dtree-index key key (get-dtree (predicate key))))`
-
-`(defun dtree-index (key value dtree)`
-
-`  "Index value under all atoms of key in dtree."`
-
-`  (cond`
-
-`  ((consp key)      ; index on both first and rest`
-
-`    (dtree-index (first key) value`
-
-`        (or (dtree-first dtree)`
-
-`          (setf (dtree-first dtree) (make-dtree))))`
-
-`    (dtree-index (rest key) value`
-
-`        (or (dtree-rest dtree)`
-
-`          (setf (dtree-rest dtree) (make-dtree)))))`
-
-`  ((null key)) ; don't index on nil`
-
-`  ((variable-p key) ; index a variable`
-
-`    (nlist-push value (dtree-var dtree)))`
-
-`  (t ;; Make sure there is an nlist for this atom, and add to it`
-
-`    (nlist-push value (lookup-atom key dtree)))))`
-
-`(defun lookup-atom (atom dtree)`
-
-`  "Return (or create) the nlist for this atom in dtree."`
-
-`  (or (lookup atom (dtree-atoms dtree))`
-
-`    (let ((new (make-empty-nlist)))`
-
-`      (push (cons atom new) (dtree-atoms dtree))`
-
-`      new)))`
+```lisp
+  it is stored in the predicate's dtree."
+  (dtree-index key key (get-dtree (predicate key))))
+(defun dtree-index (key value dtree)
+  "Index value under all atoms of key in dtree."
+  (cond
+  ((consp key)      ; index on both first and rest
+    (dtree-index (first key) value
+        (or (dtree-first dtree)
+          (setf (dtree-first dtree) (make-dtree))))
+    (dtree-index (rest key) value
+        (or (dtree-rest dtree)
+          (setf (dtree-rest dtree) (make-dtree)))))
+  ((null key)) ; don't index on nil
+  ((variable-p key) ; index a variable
+    (nlist-push value (dtree-var dtree)))
+  (t ;; Make sure there is an nlist for this atom, and add to it
+    (nlist-push value (lookup-atom key dtree)))))
+(defun lookup-atom (atom dtree)
+  "Return (or create) the nlist for this atom in dtree."
+  (or (lookup atom (dtree-atoms dtree))
+    (let ((new (make-empty-nlist)))
+      (push (cons atom new) (dtree-atoms dtree))
+      new)))
+```
 
 Now we define a function to test the indexing routine.
 Compare the output with [figure 14.1](#f0010).
 
-`(defun test-index ()`
-
-`  (let ((props '((p a b) (p a c) (p a ?x) (p b c)`
-
-`                  (p b (f c)) (p a (f . ?x)))))`
-
-`  (clear-dtrees)`
-
-`  (mapc #'index props)`
-
-`  (write (list props (get-dtree 'p))`
-
-`    :circle t :array t :pretty t)`
-
-`  (values)))`
-
-`> (test-index)`
-
-`((#1=(P A B)`
-
-`  #2=(P A C)`
-
-`  #3=(P A ?X)`
-
-`  #4=(P B C)`
-
-`  #5=(P B (F C))`
-
-`  #6=(P A (F . ?X)))`
-
-`  #(#(NIL NIL (P (6 #6# #5# #4# #3# #2# #1#)) (0))`
-
-`  #(#(NIL NIL (B (2 #5# #4#) A (4 #6# #3# #2# #1#)) (0))`
-
-`    #(#(#(NIL NIL (F (2 #6# #5#)) (0))`
-
-`      #(#(NIL NIL (C (1 #5#)) (0))`
-
-`        #(NIL NIL NIL (0)) NIL (1 #6#))`
-
-`      (C (2 #4# #2#) B (1 #1#))`
-
-`      (1 #3#))`
-
-`    #(NIL NIL NIL (0))`
-
-`    NIL (0))`
-
-`  NIL (0))`
-
-`  NIL (0)))`
+```lisp
+(defun test-index ()
+  (let ((props '((p a b) (p a c) (p a ?x) (p b c)
+                  (p b (f c)) (p a (f . ?x)))))
+  (clear-dtrees)
+  (mapc #'index props)
+  (write (list props (get-dtree 'p))
+    :circle t :array t :pretty t)
+  (values)))
+> (test-index)
+((#1=(P A B)
+  #2=(P A C)
+  #3=(P A ?X)
+  #4=(P B C)
+  #5=(P B (F C))
+  #6=(P A (F . ?X)))
+  #(#(NIL NIL (P (6 #6# #5# #4# #3# #2# #1#)) (0))
+  #(#(NIL NIL (B (2 #5# #4#) A (4 #6# #3# #2# #1#)) (0))
+    #(#(#(NIL NIL (F (2 #6# #5#)) (0))
+      #(#(NIL NIL (C (1 #5#)) (0))
+        #(NIL NIL NIL (0)) NIL (1 #6#))
+      (C (2 #4# #2#) B (1 #1#))
+      (1 #3#))
+    #(NIL NIL NIL (0))
+    NIL (0))
+  NIL (0))
+  NIL (0)))
+```
 
 The next step is to fetch matches from the dtree data base.
 The function `fetch` takes a query, which must be a valid relation, as its argument, and returns a list of possible matches.
 It calls `dtree-fetch` to do the work:
 
-`(defun fetch (query)`
-
-`  "Return a list of buckets potentially matching the query,`
-
-`  which must be a relation of form (predicate . args)."`
-
-`  (dtree-fetch query (get-dtree (predicate query))`
-
-`      nil 0 nil most-positive-fixnum))`
+```lisp
+(defun fetch (query)
+  "Return a list of buckets potentially matching the query,
+  which must be a relation of form (predicate . args)."
+  (dtree-fetch query (get-dtree (predicate query))
+      nil 0 nil most-positive-fixnum))
+```
 
 `dtree-fetch` must be passed the query and the dtree, of course, but it is also passed four additional arguments.
 First, we have to accumulate matches indexed under variables as we are searching through the dtree.
@@ -813,76 +763,48 @@ Otherwise we look at the query pattern.
 If it is an atom, we use `dtree-atom-fetch` to return either the current index (along with the accumulated variable index) or the accumulated best answer, whichever is shorter.
 If the query is a cons, then we use `dtree-fetch` on the first part of the cons, yielding a new best answer, which is passed along to the call of `dtree-fetch` on the rest of the cons.
 
-`(defun dtree-fetch (pat dtree var-list-in var-n-in best-list best-n)`
-
-`  "Return two values: a list-of-lists of possible matches to pat.`
-
-`  and the number of elements in the list-of-lists."`
-
-`  (if (or (null dtree) (null pat) (variable-p pat))`
-
-`    (values best-list best-n)`
-
-`    (let* ((var-nlist (dtree-var dtree))`
-
-`        (var-n (+ var-n-in (nlist-n var-nlist)))`
-
-`        (var-list (if (null (nlist-list var-nlist))`
-
-`              var-list-in`
-
-`              (cons (nlist-list var-nlist)`
-
-`                var-list-in))))`
-
-`      (cond`
-
-`      ((>= var-n best-n) (values best-list best-n))`
-
-`      ((atom pat) (dtree-atom-fetch pat dtree var-list var-n`
-
-`                best-list best-n))`
-
-`      (t (multiple-value-bind (listl n1)`
-
-`          (dtree-fetch (first pat) (dtree-first dtree)`
-
-`                  var-list var-n best-list best-n)`
-
-`                (dtree-fetch (rest pat) (dtree-rest dtree)`
-
-`                      var-list var-n listl ni)))))))`
-
-`(defun dtree-atom-fetch (atom dtree var-list var-n best-list best-n)`
-
-`  "Return the answers indexed at this atom (along with the vars),`
-
-`  or return the previous best answer, if it is better."`
-
-`  (let ((atom-nlist (lookup atom (dtree-atoms dtree))))`
-
-`    (cond`
-
-`      ((or (null atom-nlist) (null (nlist-list atom-nlist)))`
-
-`        (values var-list var-n))`
-
-`      ((and atom-nlist (< (incf var-n (nlist-n atom-nlist)) best-n))`
-
-`        (values (cons (nlist-list atom-nlist) var-list) var-n))`
-
-`      (t (values best-list best-n)))))`
+```lisp
+(defun dtree-fetch (pat dtree var-list-in var-n-in best-list best-n)
+  "Return two values: a list-of-lists of possible matches to pat.
+  and the number of elements in the list-of-lists."
+  (if (or (null dtree) (null pat) (variable-p pat))
+    (values best-list best-n)
+    (let* ((var-nlist (dtree-var dtree))
+        (var-n (+ var-n-in (nlist-n var-nlist)))
+        (var-list (if (null (nlist-list var-nlist))
+              var-list-in
+              (cons (nlist-list var-nlist)
+                var-list-in))))
+      (cond
+      ((>= var-n best-n) (values best-list best-n))
+      ((atom pat) (dtree-atom-fetch pat dtree var-list var-n
+                best-list best-n))
+      (t (multiple-value-bind (listl n1)
+          (dtree-fetch (first pat) (dtree-first dtree)
+                  var-list var-n best-list best-n)
+                (dtree-fetch (rest pat) (dtree-rest dtree)
+                      var-list var-n listl ni)))))))
+(defun dtree-atom-fetch (atom dtree var-list var-n best-list best-n)
+  "Return the answers indexed at this atom (along with the vars),
+  or return the previous best answer, if it is better."
+  (let ((atom-nlist (lookup atom (dtree-atoms dtree))))
+    (cond
+      ((or (null atom-nlist) (null (nlist-list atom-nlist)))
+        (values var-list var-n))
+      ((and atom-nlist (< (incf var-n (nlist-n atom-nlist)) best-n))
+        (values (cons (nlist-list atom-nlist) var-list) var-n))
+      (t (values best-list best-n)))))
+```
 
 Here we see a call to `fetch` on the data base created by `test-index`.
 It returns two values: a list-of-lists of facts, and the total number of facts, three.
 
-`(fetch '(p ? c))`
-
-`(((P B C) (P A C))`
-
-`  ((P A ?X)))`
-
-`3`
+```lisp
+(fetch '(p ? c))
+(((P B C) (P A C))
+  ((P A ?X)))
+3
+```
 
 Now let's stop and see what we have accomplished.
 The functions `fetch and dtree-fetch` fulfill their contract of returning potential matches.
@@ -894,49 +816,39 @@ For simplicity we will use the version of `unify` with binding lists defined in 
 The function `mapc-retrieve` calls `fetch` to get a list-of-lists of potential matches and then calls `unify` to see if the match is a true one.
 If the match is true, it calls the supplied function with the binding list that represents the unification as the argument, `mapc-retrieve` is proclaimed `inline` so that functions passed to it can also be compiled in place.
 
-`(proclaim '(inline mapc-retrieve))`
-
-`(defun mapc-retrieve (fn query)`
-
-`  "For every fact that matches the query.`
-
-`  apply the function to the binding list."`
-
-`  (dolist (bucket (fetch query))`
-
-`  (dolist (answer bucket)`
-
-`    (let ((bindings (unify query answer)))`
-
-`      (unless (eq bindings fall)`
-
-`      (funcall fn bindings))))))`
+```lisp
+(proclaim '(inline mapc-retrieve))
+(defun mapc-retrieve (fn query)
+  "For every fact that matches the query.
+  apply the function to the binding list."
+  (dolist (bucket (fetch query))
+  (dolist (answer bucket)
+    (let ((bindings (unify query answer)))
+      (unless (eq bindings fall)
+      (funcall fn bindings))))))
+```
 
 There are many ways to use this retriever.
 The function `retrieve` returns a list of the matching binding lists, and `retrieve-matches` substitutes each binding list into the original query so that the resuit is a list of expressions that unify with the query.
 
-`(defun retrieve (query)`
+```lisp
+(defun retrieve (query)
+```
 
 `  "Find all facts that match query.
 Return a list of bindings."`
 
-`  (let ((answers nil))`
-
-`  (mapc-retrieve #'(lambda (bindings) (push bindings answers))`
-
-`          query)`
-
-`  answers))`
-
-`(defun retrieve-matches (query)`
-
-`  "Find all facts that match query.`
-
-`  Return a list of expressions that match the query."`
-
-`  (mapcar #'(lambda (bindings) (subst-bindings bindings query))`
-
-`      (retrieve query)))`
+```lisp
+  (let ((answers nil))
+  (mapc-retrieve #'(lambda (bindings) (push bindings answers))
+          query)
+  answers))
+(defun retrieve-matches (query)
+  "Find all facts that match query.
+  Return a list of expressions that match the query."
+  (mapcar #'(lambda (bindings) (subst-bindings bindings query))
+      (retrieve query)))
+```
 
 There is one further complication to consider.
 Recall that in our original Prolog interpreter, the function prove had to rename the variables in each clause as it retrieved it from the data base.
@@ -945,42 +857,35 @@ We could do that in `retrieve`.
 However, if we assume that the expressions indexed in discrimination trees are tablelike rather than rulelike and thus are not recursive, then we can get away with renaming the variables only once, when they are entered into the data base.
 This is done by changing `index`:
 
-`(defun index (key)`
+```lisp
+(defun index (key)
+```
 
 `  "Store key in a dtree node.
 Key must be (predicate . args);`
 
-`  it is stored in the predicate's dtree."`
-
-`  (dtree-index key (rename-variables key) ; store unique vars`
-
-`          (get-dtree (predicate key))))`
+```lisp
+  it is stored in the predicate's dtree."
+  (dtree-index key (rename-variables key) ; store unique vars
+          (get-dtree (predicate key))))
+```
 
 With the new `index` in place, and after calling `test-index` to rebuild the data base, we are now ready to test the retrieval mechanism:
 
-`> (fetch '(p ?x c))`
-
-`(((P B C) (P A C))`
-
-`  ((P A ?X3408)))`
-
-`3`
-
-`> (retrieve '(p ?x c))`
-
-`(((?X3408 . C) (?X . A))`
-
-`  ((?X . A))`
-
-`  ((?X . B)))`
-
-`> (retrieve-matches '(p ?x c))`
-
-`((P A C) (P A C) (P B C))`
-
-`> (retrieve-matches '(p ?x (?fn c)))`
-
-`((P A (?FN C)) (P A (F C)) (P B (F C)))`
+```lisp
+> (fetch '(p ?x c))
+(((P B C) (P A C))
+  ((P A ?X3408)))
+3
+> (retrieve '(p ?x c))
+(((?X3408 . C) (?X . A))
+  ((?X . A))
+  ((?X . B)))
+> (retrieve-matches '(p ?x c))
+((P A C) (P A C) (P B C))
+> (retrieve-matches '(p ?x (?fn c)))
+((P A (?FN C)) (P A (F C)) (P B (F C)))
+```
 
 Actually, it is better to use `mapc-retrieve` when possible, since it doesn't cons up answers the way `retrieve` and `retrieve-matches` do.
 The macro `query-bind` is provided as a nice interface to `mapc-retrieve`.
@@ -989,59 +894,43 @@ Within this list of forms, the variables will be bound to the values that satisf
 The syntax was chosen to be the same as `multiple-value-bind`.
 Here we see a typical use of `query-bind`, its resuit, and its macro-expansion:
 
-`> (query-bind (?x ?fn) '(p ?x (?fn c))`
+```lisp
+> (query-bind (?x ?fn) '(p ?x (?fn c))
+```
 
 `  (format t "~&P holds between ~a and ~a of c." ?x ?fn))`=>
 
-`P holds between B and F of c.`
-
-`P holds between A and F of c.`
-
-`P holds between A and ?FN of c.`
-
-`NIL`
-
-`= (mapc-retrieve`
-
-`  #'(lambda (#:bindings6369)`
-
-`    (let ((?x (subst-bindings #:bindings6369 *?x))`
-
-`            (?fn (subst-bindings #:bindings6369 *?fn)))`
-
-`      (format t "~&P holds between ~a and ~a of c." ?x ?fn)))`
-
-`  '(p ?x (?fn c)))`
+```lisp
+P holds between B and F of c.
+P holds between A and F of c.
+P holds between A and ?FN of c.
+NIL
+= (mapc-retrieve
+  #'(lambda (#:bindings6369)
+    (let ((?x (subst-bindings #:bindings6369 *?x))
+            (?fn (subst-bindings #:bindings6369 *?fn)))
+      (format t "~&P holds between ~a and ~a of c." ?x ?fn)))
+  '(p ?x (?fn c)))
+```
 
 Here is the implementation:
 
-`(defmacro query-bind (variables query &body body)`
-
-`  "Execute the body for each match to the query.`
-
-`  Within the body, bind each variable."`
-
-`  (let* ((bindings (gensym "BINDINGS"))`
-
-`    (vars-and-vals`
-
-`      (mapcar`
-
-`        #'(lambda (var)`
-
-`          (list var '(subst-bindings ,bindings * ,var)))`
-
-`        variables)))`
-
-`  '(mapc-retrieve`
-
-`    #'(lambda (,bindings)`
-
-`      (let ,vars-and-vals`
-
-`        ,@body))`
-
-`    ,query)))`
+```lisp
+(defmacro query-bind (variables query &body body)
+  "Execute the body for each match to the query.
+  Within the body, bind each variable."
+  (let* ((bindings (gensym "BINDINGS"))
+    (vars-and-vals
+      (mapcar
+        #'(lambda (var)
+          (list var '(subst-bindings ,bindings * ,var)))
+        variables)))
+  '(mapc-retrieve
+    #'(lambda (,bindings)
+      (let ,vars-and-vals
+        ,@body))
+    ,query)))
+```
 
 ## 14.9 A Solution to the Completeness Problem
 {:#s0050}
@@ -1057,148 +946,99 @@ On the next iteration the bounds will be increased and the proof may succeed.
 If the search is never eut off by a depth bound, then there is no reason to go on to the next iteration, because all proofs have already been found.
 The special variable `*search-cut-off*` keeps track of this.
 
-`(defvar *search-cut-off* nil "Has the search been stopped?")`
-
-`(defun prove-all (goals bindings depth)`
-
-`  "Find a solution to the conjunction of goals."`
-
-`  ;; This version just passes the depth on to PROVE.`
-
-`  (cond ((eq bindings fail) fail)`
-
-`      ((null goals) bindings)`
-
-`      (t (prove (first goals) bindings (rest goals) depth))))`
-
-`(defun prove (goal bindings other-goals depth)`
-
-`  "Return a list of possible solutions to goal."`
-
-`  ;; Check if the depth bound has been exceeded`
-
-`  (if (= depth 0)  ;***`
-
-`    (progn (setf *search-cut-off* t)  ;***`
-
-`        fall)  ;***`
-
-`    (let ((clauses (get-clauses (predicate goal))))`
-
-`      (if (listp clauses)`
-
-`        (some`
-
-`          #'(lambda (clause)`
-
-`            (let ((new-clause (rename-variables clause)))`
-
-`              (prove-all`
-
-`                (append (clause-body new-clause) other-goals)`
-
-`                (unify goal (clause-head new-clause) bindings)`
-
-`                (- depth 1))))  ;***`
-
-`          clauses)`
-
-`        ;; The predicate's "clauses" can be an atom:`
-
-`        ;; a primitive function to call`
-
-`        (funcall clauses (rest goal) bindings`
-
-`                other-goals depth))))) ;***`
+```lisp
+(defvar *search-cut-off* nil "Has the search been stopped?")
+(defun prove-all (goals bindings depth)
+  "Find a solution to the conjunction of goals."
+  ;; This version just passes the depth on to PROVE.
+  (cond ((eq bindings fail) fail)
+      ((null goals) bindings)
+      (t (prove (first goals) bindings (rest goals) depth))))
+(defun prove (goal bindings other-goals depth)
+  "Return a list of possible solutions to goal."
+  ;; Check if the depth bound has been exceeded
+  (if (= depth 0)  ;***
+    (progn (setf *search-cut-off* t)  ;***
+        fall)  ;***
+    (let ((clauses (get-clauses (predicate goal))))
+      (if (listp clauses)
+        (some
+          #'(lambda (clause)
+            (let ((new-clause (rename-variables clause)))
+              (prove-all
+                (append (clause-body new-clause) other-goals)
+                (unify goal (clause-head new-clause) bindings)
+                (- depth 1))))  ;***
+          clauses)
+        ;; The predicate's "clauses" can be an atom:
+        ;; a primitive function to call
+        (funcall clauses (rest goal) bindings
+                other-goals depth))))) ;***
+```
 
 `prove` and `prove-all` now implement search cutoff, but we need something to control the iterative deepening of the search.
 First we define parameters to control the iteration: one for the initial depth, one for the maximum depth, and one for the increment between iterations.
 Setting the initial and increment values to one will make the results come out in strict breadth-first order, but will duplicate more effort than a slightly larger value.
 
-`(defparameter *depth-start* 5`
-
-`  "The depth of the first round of iterative search.")`
-
-`(defparameter *depth-incr* 5`
-
-`  "Increase each iteration of the search by this amount.")`
-
-`(defparameter *depth-max* most-positive-fixnum`
-
-`  "The deepest we will ever search.")`
+```lisp
+(defparameter *depth-start* 5
+  "The depth of the first round of iterative search.")
+(defparameter *depth-incr* 5
+  "Increase each iteration of the search by this amount.")
+(defparameter *depth-max* most-positive-fixnum
+  "The deepest we will ever search.")
+```
 
 A new version of `top-level-prove` will be used to control the iteration.
 It calls `prove-all` for all depths from the starting depth to the maximum depth, increasing by the increment.
 However, it only proceeds to the next iteration if the search was eut off at some point in the previous iteration.
 
-`(defun top-level-prove (goals)`
-
-`  (let ((all-goals`
-
-`      '(,@goals (show-prolog-vars ,@(variables-in goals)))))`
-
-`    (loop for depth from *depth-start* to *depth-max* by *depth-incr*`
-
-`      while (let ((*search-cut-off* nil))`
-
-`        (prove-all all-goals no-bindings depth)`
-
-`        *search-cut-off*)))`
-
-`  (format t "~&No.")`
-
-`  (values))`
+```lisp
+(defun top-level-prove (goals)
+  (let ((all-goals
+      '(,@goals (show-prolog-vars ,@(variables-in goals)))))
+    (loop for depth from *depth-start* to *depth-max* by *depth-incr*
+      while (let ((*search-cut-off* nil))
+        (prove-all all-goals no-bindings depth)
+        *search-cut-off*)))
+  (format t "~&No.")
+  (values))
+```
 
 There is one final complication.
 When we increase the depth of search, we may find some new proof s, but we will also find all the old proof s that were found on the previous iteration.
 We can modify `show-prolog-vars` to only print proofs that are found with a depth less than the increment-that is, those that were not found on the previous iteration.
 
-`(defun show-prolog-vars (vars bindings other-goals depth)`
-
-`  "Print each variable with its binding.`
-
-`  Then ask the user if more solutions are desired."`
-
-`  (if (> depth *depth-incr*)`
-
-`    fall`
-
-`    (progn`
-
-`      (if (null vars)`
-
-`        (format t "~&Yes")`
-
-`        (dolist (var vars)`
-
-`          (format t "~&~a = ~a" var`
-
-`            (subst-bindings bindings var))))`
-
-`      (if (continue-p)`
-
-`        fall`
-
-`        (prove-all other-goals bindings depth)))))`
+```lisp
+(defun show-prolog-vars (vars bindings other-goals depth)
+  "Print each variable with its binding.
+  Then ask the user if more solutions are desired."
+  (if (> depth *depth-incr*)
+    fall
+    (progn
+      (if (null vars)
+        (format t "~&Yes")
+        (dolist (var vars)
+          (format t "~&~a = ~a" var
+            (subst-bindings bindings var))))
+      (if (continue-p)
+        fall
+        (prove-all other-goals bindings depth)))))
+```
 
 To test that this works, try setting `*depth-max*` to 5 and running the following assertions and query.
 The infinite loop is avoided, and the first four solutions are found.
 
-`(<- (natural 0))`
-
-`(<- (natural (1  + ?n)) (natural ?n))`
-
-`> (?- (natural ?n))`
-
-`?N = 0;`
-
-`?N = (1  + 0);`
-
-`?N = (1  + (1  + 0));`
-
-`?N = (1  + (1  + (1  + 0)));`
-
-`No.`
+```lisp
+(<- (natural 0))
+(<- (natural (1  + ?n)) (natural ?n))
+> (?- (natural ?n))
+?N = 0;
+?N = (1  + 0);
+?N = (1  + (1  + 0));
+?N = (1  + (1  + (1  + 0)));
+No.
+```
 
 ## 14.10 Solutions to the Expressiveness Problems
 {:#s0055}
@@ -1265,26 +1105,28 @@ Thus, to find out what kinds of animais there are, use the query `(sub ?kind ani
 To find out what individual animais there are, use the query `(ind ?x animal)`.
 To find out what individual animais of what kinds there are, use:
 
-`(and (sub ?kind animal) (ind ?x ?kind))`
+```lisp
+(and (sub ?kind animal) (ind ?x ?kind))
+```
 
 The implemention of this new language can be based directly on the previous implementation of dtrees.
 Each assertion is stored as a fact in a dtree, except that the components of an and assertion are stored separately.
 The function `add-fact` does this:
 
-`(defun add-fact (fact)`
-
-`  "Add the fact to the data base."`
-
-`  (if (eq (predicate fact) 'and)`
-
-`    (mapc #'add-fact (args fact))`
-
-`    (index fact)))`
+```lisp
+(defun add-fact (fact)
+  "Add the fact to the data base."
+  (if (eq (predicate fact) 'and)
+    (mapc #'add-fact (args fact))
+    (index fact)))
+```
 
 Querying this new data base consists of querying the dtree just as before, but with a special case for conjunctive (and) queries.
 Conceptually, the function to do this, `retrieve-fact`, should be as simple as the following:
 
-`(defun retrieve-fact (query)`
+```lisp
+(defun retrieve-fact (query)
+```
 
 `  "Find all facts that match query.
 Return a list of bindings.`
@@ -1292,18 +1134,20 @@ Return a list of bindings.`
 `  Warning!!
 this version is incomplete."`
 
-`  (if (eq (predicate query) 'and)`
-
-`    (retrieve-conjunction (args query))`
-
-`    (retrieve query bindings)))`
+```lisp
+  (if (eq (predicate query) 'and)
+    (retrieve-conjunction (args query))
+    (retrieve query bindings)))
+```
 
 Unfortunately, there are some complications.
 Think about what must be done in `retrieve-conjunction`.
 It is passed a list of conjuncts and must return a list of binding lists, where each binding list satisfies the query.
 For example, to find out what people were born on July Ist, we could use the query:
 
-`(and (val birthday ?p july-1) (ind ?p person))`
+```lisp
+(and (val birthday ?p july-1) (ind ?p person))
+```
 
 `retrieve-conjunction` could solve this problem by first calling `retrieve-fact` on `(val birthday ?p july-1)`.
 Once that is done, there is only one conjunct remaining, but in general there could be several, so we need to call `retrieve-conjunction` recursively with two arguments: the remainingconjuncts, and the resultthat `retrieve-fact` gave for the first solution.
@@ -1312,73 +1156,56 @@ Furthermore, when it comes time to call `retrieve-fact` on the second conjunct, 
 So `retrieve-fact` must accept a binding list as its second argument.
 Thus we have:
 
-`(defun retrieve-fact (query &optional (bindings no-bindings))`
+```lisp
+(defun retrieve-fact (query &optional (bindings no-bindings))
+```
 
 `  "Find all facts that match query.
 Return a list of bindings."`
 
-`  (if (eq (predicate query) 'and)`
-
-`    (retrieve-conjunction (args query) (list bindings))`
-
-`    (retrieve query bindings)))`
-
-`(defun retrieve-conjunction (conjuncts bindings-lists)`
-
-`  "Return a list of binding lists satisfying the conjuncts."`
-
-`  (mapcan`
-
-`    #'(lambda (bindings)`
-
-`      (cond ((eq bindings fall) nil)`
-
-`        ((null conjuncts) (list bindings))`
-
-`        (t (retrieve-conjunction`
-
-`          (rest conjuncts)`
-
-`          (retrieve-fact`
-
-`            (subst-bindings bindings (first conjuncts))`
-
-`            bindings)))))`
-
-`    bindings-lists))`
+```lisp
+  (if (eq (predicate query) 'and)
+    (retrieve-conjunction (args query) (list bindings))
+    (retrieve query bindings)))
+(defun retrieve-conjunction (conjuncts bindings-lists)
+  "Return a list of binding lists satisfying the conjuncts."
+  (mapcan
+    #'(lambda (bindings)
+      (cond ((eq bindings fall) nil)
+        ((null conjuncts) (list bindings))
+        (t (retrieve-conjunction
+          (rest conjuncts)
+          (retrieve-fact
+            (subst-bindings bindings (first conjuncts))
+            bindings)))))
+    bindings-lists))
+```
 
 Notice that `retrieve` and therefore `mapc-retrieve` now also must accept a binding list.
 The changes to them are shown in the following.
 In each case the extra argument is made optional so that previously written functions that call these functions without passing in the extra argument will still work.
 
-`(defun mapc-retrieve (fn query &optional (bindings no-bindings))`
-
-`  "For every fact that matches the query,`
-
-`  apply the function to the binding list."`
-
-`  (dolist (bucket (fetch query))`
-
-`    (dolist (answer bucket)`
-
-`      (let ((new-bindings (unify query answer bindings)))`
-
-`        (unless (eq new-bindings fall)`
-
-`          (funcall fn new-bindings))))))`
-
-`(defun retrieve (query &optional (bindings no-bindings))`
+```lisp
+(defun mapc-retrieve (fn query &optional (bindings no-bindings))
+  "For every fact that matches the query,
+  apply the function to the binding list."
+  (dolist (bucket (fetch query))
+    (dolist (answer bucket)
+      (let ((new-bindings (unify query answer bindings)))
+        (unless (eq new-bindings fall)
+          (funcall fn new-bindings))))))
+(defun retrieve (query &optional (bindings no-bindings))
+```
 
 `  "Find all facts that match query.
 Return a list of bindings."`
 
-`  (let ((answers nil))`
-
-`    (mapc-retrieve #'(lambda (bindings) (push bindings answers))`
-
-`              query bindings)`
-
-`    answers))`
+```lisp
+  (let ((answers nil))
+    (mapc-retrieve #'(lambda (bindings) (push bindings answers))
+              query bindings)
+    answers))
+```
 
 Now `add-fact` and `retrieve-fact` comprise all we need to implement the language.
 Here is a short example where `add-fact` is used to add facts about bears and dogs, both as individuals and as species:
@@ -1403,23 +1230,17 @@ Now `retrieve-fact` is used to answer three questions: What kinds of animais are
 What are the Latin names of each kind of animal?
 and What are the colors of each individual bear?
 
-`> (retrieve-fact '(sub ?kind animal))`
-
-`(((?KIND . DOG))`
-
-`((?KIND . BEAR)))`
-
-`> (retrieve-fact '(and (sub ?kind animal)`
-
-`          (val latin-name ?kind ?latin)))`
-
-`(((?LATIN . CANIS-FAMILIARIS) (?KIND . DOG))`
-
-`  ((?LATIN . URSIDAE) (?KIND . BEAR)))`
-
-`> (retrieve-fact '(and (ind ?x bear) (val color ?x ?c)))`
-
-`(((?C . BROWN) (?X . YOGI)))`
+```lisp
+> (retrieve-fact '(sub ?kind animal))
+(((?KIND . DOG))
+((?KIND . BEAR)))
+> (retrieve-fact '(and (sub ?kind animal)
+          (val latin-name ?kind ?latin)))
+(((?LATIN . CANIS-FAMILIARIS) (?KIND . DOG))
+  ((?LATIN . URSIDAE) (?KIND . BEAR)))
+> (retrieve-fact '(and (ind ?x bear) (val color ?x ?c)))
+(((?C . BROWN) (?X . YOGI)))
+```
 
 ### Improvements
 {:#s9010}
@@ -1429,23 +1250,17 @@ There are quite a few improvements that can be made to this system.
 One direction is to provide different kinds of answers to queries.
 The following two functions are similar to `retrieve-matches` in that they return lists of solutions that match the query, rather than lists of possible bindings:
 
-`(defun retrieve-bagof (query)`
-
-`  "Find all facts that match query.`
-
-`  Return a list of queries with bindings filled in."`
-
-`  (mapcar #'(lambda (bindings) (subst-bindings bindings query))`
-
-`      (retrieve-fact query)))`
-
-`(defun retrieve-setof (query)`
-
-`  "Find all facts that match query.`
-
-`  Return a list of unique queries with bindings filled in."`
-
-`  (remove-duplicates (retrieve-bagof query) :test #'equal))`
+```lisp
+(defun retrieve-bagof (query)
+  "Find all facts that match query.
+  Return a list of queries with bindings filled in."
+  (mapcar #'(lambda (bindings) (subst-bindings bindings query))
+      (retrieve-fact query)))
+(defun retrieve-setof (query)
+  "Find all facts that match query.
+  Return a list of unique queries with bindings filled in."
+  (remove-duplicates (retrieve-bagof query) :test #'equal))
+```
 
 Another direction to take is to provide better error checking.
 The current system does not complain if a fact or query is ill-formed.
@@ -1464,88 +1279,64 @@ It is done in a data-driven style to make it easier to add new primitives, shoul
 The function `add-fact` checks that each argument to a primitive relation is a nonvariable atom, and it also calls `fact-present-p` to check if the fact is already present in the data base.
 If not, it indexes the fact and calls `run-attached-fn` to do additional checking and caching:
 
-`(defparameter *primitives* '(and sub ind rel val))`
-
-`(defun add-fact (fact)`
-
-`  "Add the fact to the data base."`
-
-`  (cond ((eq (predicate fact) 'and)`
-
-`      (mapc #'add-fact (args fact)))`
-
-`    ((or (not (every #'atom (args fact)))`
-
-`        (some #'variable-p (args fact))`
-
-`        (not (member (predicate fact) *primitives*)))`
-
-`      (error "Ill-formed fact: ~a" fact))`
-
-`    ((not (fact-present-p fact))`
-
-`      (index fact)`
-
-`      (run-attached-fn fact)))`
-
-`  t)`
-
-`(defun fact-present-p (fact)`
-
-`  "Is this fact present in the data base?"`
-
-`  (retrieve fact))`
+```lisp
+(defparameter *primitives* '(and sub ind rel val))
+(defun add-fact (fact)
+  "Add the fact to the data base."
+  (cond ((eq (predicate fact) 'and)
+      (mapc #'add-fact (args fact)))
+    ((or (not (every #'atom (args fact)))
+        (some #'variable-p (args fact))
+        (not (member (predicate fact) *primitives*)))
+      (error "Ill-formed fact: ~a" fact))
+    ((not (fact-present-p fact))
+      (index fact)
+      (run-attached-fn fact)))
+  t)
+(defun fact-present-p (fact)
+  "Is this fact present in the data base?"
+  (retrieve fact))
+```
 
 The attached functions are stored on the operator's property list under the indicator `attached-fn:`
 
-`(defun run-attached-fn (fact)`
-
-`  "Run the function associated with the predicate of this fact."`
-
-`  (apply (get (predicate fact) 'attached-fn) (args fact)))`
-
-`(defmacro def-attached-fn (pred args &body body)`
-
-`  "Define the attached function for a primitive."`
-
-`  '(setf (get '.pred 'attached-fn)`
-
-`      #'(lambda .args ..body)))`
+```lisp
+(defun run-attached-fn (fact)
+  "Run the function associated with the predicate of this fact."
+  (apply (get (predicate fact) 'attached-fn) (args fact)))
+(defmacro def-attached-fn (pred args &body body)
+  "Define the attached function for a primitive."
+  '(setf (get '.pred 'attached-fn)
+      #'(lambda .args ..body)))
+```
 
 The attached functions for `ind` and `val` are fairly simple.
 If we know `(sub bear animal)`, then when `(ind Yogi bear)` is asserted, we have to also assert `(ind Yogi animal)`.
 Similarly, the values in a `val` assertion must be individuals of the categories in the relation's `rel` assertion.
 That is, if `(rel birthday animal date)` is a fact and `(val birthday Lee july-1)` is added, then we can conclude `(ind Lee animal)` and `(ind july-1 date).` The following functions add the appropriate facts:
 
-`(def-attached-fn ind (individual category)`
-
-`  ;; Cache facts about inherited categories`
-
-`  (query-bind (?super) '(sub .category ?super)`
-
-`    (add-fact '(ind .individual .?super))))`
-
-`(def-attached-fn val (relation indl ind2)`
-
-`  ;; Make sure the individuals are the right kinds`
-
-`  (query-bind (?cat1 ?cat2) '(rel .relation ?cat1 ?cat2)`
-
-`    (add-fact '(ind .ind1 .?cat1))`
-
-`    (add-fact '(ind .ind2 .?cat2))))`
+```lisp
+(def-attached-fn ind (individual category)
+  ;; Cache facts about inherited categories
+  (query-bind (?super) '(sub .category ?super)
+    (add-fact '(ind .individual .?super))))
+(def-attached-fn val (relation indl ind2)
+  ;; Make sure the individuals are the right kinds
+  (query-bind (?cat1 ?cat2) '(rel .relation ?cat1 ?cat2)
+    (add-fact '(ind .ind1 .?cat1))
+    (add-fact '(ind .ind2 .?cat2))))
+```
 
 The attached function for rel simply runs the attached function for any individual of the given relation.
 Normally one would make all `rel` assertions before `ind` assertions, so this will have no effect at all.
 But we want to be sure the data base stays consistent even if facts are asserted in an unusual order.
 
-`(def-attached-fn rel (relation cat1 cat2)`
-
-`  ;; Run attached function for any IND's of this relation`
-
-`  (query-bind (?a ?b) '(ind .relation ?a ?b)`
-
-`    (run-attached-fn '(ind .relation .?a .?b))))`
+```lisp
+(def-attached-fn rel (relation cat1 cat2)
+  ;; Run attached function for any IND's of this relation
+  (query-bind (?a ?b) '(ind .relation ?a ?b)
+    (run-attached-fn '(ind .relation .?a .?b))))
+```
 
 The most complicated attached function is for `sub`.
 Adding a fact such as `(sub bear animal)` causes the following to happen:
@@ -1562,138 +1353,79 @@ The following accomplishes these four tasks.
 It does it with four calls to `index-new-fact`, which is used instead of `add-fact` because we don't need to run the attached function on the new facts.
 We do, however, need to make sure that we aren't indexing the same fact twice.
 
-`(def-attached-fn sub (subcat supercat)`
-
-`  ;; Cache SUB facts`
-
-`  (query-bind (?super-super) '(sub ,supercat ?super-super)`
-
-`    (index-new-fact '(sub ,subcat ,?super-super))`
-
-`    (query-bind (?sub-sub) '(sub ?sub-sub ,subcat)`
-
-`      (index-new-fact '(sub ,?sub-sub ,?super-super))))`
-
-`  (query-bind (?sub-sub) '(sub ?sub-sub ,subcat)`
-
-`    (index-new-fact '(sub ,?sub-sub ,supercat)))`
-
-`  ;; Cache IND facts`
-
-`  (query-bind (?super-super) '(sub ,subcat ?super-super)`
-
-`    (query-bind (?sub-sub) '(sub ?sub-sub ,supercat)`
-
-`      (query-bind (?ind) '(ind ?ind ,?sub-sub)`
-
-`        (index-new-fact '(ind ,?ind ,?super-super))))))`
-
-`(defun index-new-fact (fact)`
-
-`  "Index the fact in the data base unless it is already there."`
-
-`  (unless (fact-present-p fact)`
-
-`    (index fact)))`
+```lisp
+(def-attached-fn sub (subcat supercat)
+  ;; Cache SUB facts
+  (query-bind (?super-super) '(sub ,supercat ?super-super)
+    (index-new-fact '(sub ,subcat ,?super-super))
+    (query-bind (?sub-sub) '(sub ?sub-sub ,subcat)
+      (index-new-fact '(sub ,?sub-sub ,?super-super))))
+  (query-bind (?sub-sub) '(sub ?sub-sub ,subcat)
+    (index-new-fact '(sub ,?sub-sub ,supercat)))
+  ;; Cache IND facts
+  (query-bind (?super-super) '(sub ,subcat ?super-super)
+    (query-bind (?sub-sub) '(sub ?sub-sub ,supercat)
+      (query-bind (?ind) '(ind ?ind ,?sub-sub)
+        (index-new-fact '(ind ,?ind ,?super-super))))))
+(defun index-new-fact (fact)
+  "Index the fact in the data base unless it is already there."
+  (unless (fact-present-p fact)
+    (index fact)))
+```
 
 The following function tests the attached functions.
 It shows that adding the single fact `(sub bear animal)` to the given data base causes 18 new facts to be added.
 
-`(defun test-bears ()`
-
-`  (clear-dtrees)`
-
-`  (mapc #'add-fact`
-
-`      '((sub animal living-thing)`
-
-`        (sub living-thing thing) (sub polar-bear bear)`
-
-`        (sub grizzly bear) (ind Yogi bear) (ind Lars polar-bear)`
-
-`        (ind Helga grizzly)))`
-
-`  (trace index)`
-
-`  (add-fact '(sub bear animal))`
-
-`  (untrace index))`
-
-`>(test-bears)`
-
-`(1 ENTER INDEX: (SUB BEAR ANIMAL))`
-
-`(1 EXIT INDEX: T)`
-
-`(1 ENTER INDEX: (SUB BEAR THING))`
-
-`(1 EXIT INDEX: T)`
-
-`(1 ENTER INDEX: (SUB GRIZZLY THING))`
-
-`(1 EXIT INDEX: T)`
-
-`(1 ENTER INDEX: (SUB POLAR-BEAR THING))`
-
-`(1 EXIT INDEX: T)`
-
-`(1 ENTER INDEX: (SUB BEAR LIVING-THING))`
-
-`(1 EXIT INDEX: T)`
-
-`(1 ENTER INDEX: (SUB GRIZZLY LIVING-THING))`
-
-`(1 EXIT INDEX: T)`
-
-`(1 ENTER INDEX: (SUB POLAR-BEAR LIVING-THING))`
-
-`(1 EXIT INDEX: T)`
-
-`(1 ENTER INDEX: (SUB GRIZZLY ANIMAL))`
-
-`(1 EXIT INDEX: T)`
-
-`(1 ENTER INDEX: (SUB POLAR-BEAR ANIMAL))`
-
-`(1 EXIT INDEX: T)`
-
-`(1 ENTER INDEX: (IND LARS LIVING-THING))`
-
-`(1 EXIT INDEX: T)`
-
-`(1 ENTER INDEX: (IND HELGA LIVING-THING)`
-
-`(1 EXIT INDEX: T)`
-
-`(1 ENTER INDEX: (IND YOGI LIVING-THING))`
-
-`(1 EXIT INDEX: T)`
-
-`(1 ENTER INDEX: (IND LARS THING))`
-
-`(1 EXIT INDEX: T)`
-
-`(1 ENTER INDEX: (IND HELGA THING))`
-
-`(1 EXIT INDEX: T)`
-
-`(1 ENTER INDEX: (IND YOGI THING))`
-
-`(1 EXIT INDEX: T)`
-
-`(1 ENTER INDEX: (IND LARS ANIMAL))`
-
-`(1 EXIT INDEX: T)`
-
-`(1 ENTER INDEX: (IND HELGA ANIMAL))`
-
-`(1 EXIT INDEX: T)`
-
-`(1 ENTER INDEX: (IND YOGI ANIMAL))`
-
-`(1 EXIT INDEX: T)`
-
-`(INDEX)`
+```lisp
+(defun test-bears ()
+  (clear-dtrees)
+  (mapc #'add-fact
+      '((sub animal living-thing)
+        (sub living-thing thing) (sub polar-bear bear)
+        (sub grizzly bear) (ind Yogi bear) (ind Lars polar-bear)
+        (ind Helga grizzly)))
+  (trace index)
+  (add-fact '(sub bear animal))
+  (untrace index))
+>(test-bears)
+(1 ENTER INDEX: (SUB BEAR ANIMAL))
+(1 EXIT INDEX: T)
+(1 ENTER INDEX: (SUB BEAR THING))
+(1 EXIT INDEX: T)
+(1 ENTER INDEX: (SUB GRIZZLY THING))
+(1 EXIT INDEX: T)
+(1 ENTER INDEX: (SUB POLAR-BEAR THING))
+(1 EXIT INDEX: T)
+(1 ENTER INDEX: (SUB BEAR LIVING-THING))
+(1 EXIT INDEX: T)
+(1 ENTER INDEX: (SUB GRIZZLY LIVING-THING))
+(1 EXIT INDEX: T)
+(1 ENTER INDEX: (SUB POLAR-BEAR LIVING-THING))
+(1 EXIT INDEX: T)
+(1 ENTER INDEX: (SUB GRIZZLY ANIMAL))
+(1 EXIT INDEX: T)
+(1 ENTER INDEX: (SUB POLAR-BEAR ANIMAL))
+(1 EXIT INDEX: T)
+(1 ENTER INDEX: (IND LARS LIVING-THING))
+(1 EXIT INDEX: T)
+(1 ENTER INDEX: (IND HELGA LIVING-THING)
+(1 EXIT INDEX: T)
+(1 ENTER INDEX: (IND YOGI LIVING-THING))
+(1 EXIT INDEX: T)
+(1 ENTER INDEX: (IND LARS THING))
+(1 EXIT INDEX: T)
+(1 ENTER INDEX: (IND HELGA THING))
+(1 EXIT INDEX: T)
+(1 ENTER INDEX: (IND YOGI THING))
+(1 EXIT INDEX: T)
+(1 ENTER INDEX: (IND LARS ANIMAL))
+(1 EXIT INDEX: T)
+(1 ENTER INDEX: (IND HELGA ANIMAL))
+(1 EXIT INDEX: T)
+(1 ENTER INDEX: (IND YOGI ANIMAL))
+(1 EXIT INDEX: T)
+(INDEX)
+```
 
 ### A Frame Language
 {:#s9015}
@@ -1707,72 +1439,64 @@ We will continue to use the same data base in the same format, but we will provi
 Here is an example of the frame syntax for individuals, which uses the operator a.
 Note that it is more compact than the equivalent notation using the primitives.
 
-`(a person (name Joe) (age 27)) =`
-
-`(and (ind person1 person)`
-
-`  (val name person1 Joe)`
-
-`  (val age person1 27))`
+```lisp
+(a person (name Joe) (age 27)) =
+(and (ind person1 person)
+  (val name person1 Joe)
+  (val age person1 27))
+```
 
 The syntax also allows for nested expressions to appear as the values of slots.
 Notice that the Skolem constant `person1` was generated automatically; an alternative is to supply a constant for the individual after the category name.
 For example, the following says that Joe is a person of age 27 whose best friend is a person named Fran who is 28 and whose best friend is Joe:
 
-`(a person p1 (name Joe) (age 27)`
-
-`  (best-friend (a person (name Fran) (age 28)`
-
-`          (best-friend pl)))) =`
-
-`(and (ind p1 person) (val name p1 joe) (val age p1 27)`
-
-`  (ind person2 person) (val name person2 fran)`
-
-`  (val age person2 28) (val best-friend person2 pl)`
-
-`  (val best-friend p1 person2))`
+```lisp
+(a person p1 (name Joe) (age 27)
+  (best-friend (a person (name Fran) (age 28)
+          (best-friend pl)))) =
+(and (ind p1 person) (val name p1 joe) (val age p1 27)
+  (ind person2 person) (val name person2 fran)
+  (val age person2 28) (val best-friend person2 pl)
+  (val best-friend p1 person2))
+```
 
 The frame syntax for categories uses the operator `each`.
 For example:
 
-`(each person (isa animal) (name person-name) (age integer)) =`
-
-`(and (sub person animal)`
-
-`  (rel name person person-name)`
-
-`  (rel age person integer))`
+```lisp
+(each person (isa animal) (name person-name) (age integer)) =
+(and (sub person animal)
+  (rel name person person-name)
+  (rel age person integer))
+```
 
 The syntax for queries is the same as for assertions, except that variables are used instead of the Skolem constants.
 This is true even when the Skolem constants are automatically generated, as in the following query:
 
-`(a person (age 27)) = (AND (IND ?3 PERSON) (VAL AGE ?3 27))`
+```lisp
+(a person (age 27)) = (AND (IND ?3 PERSON) (VAL AGE ?3 27))
+```
 
 To support the frame notation, we define the macros `a` and `each` to make assertions and `??` to make queries.
 
-`(defmacro a (&rest args)`
-
-`  "Define a new individual and assert facts about it in the data base."`
-
-`  '(add-fact ',(translate-exp (cons 'a args))))`
-
-`(defmacro each (&rest args)`
-
-`  "Define a new category and assert facts about it in the data base."`
-
-`  '(add-fact ',(transiate-exp (cons 'each args))))`
+```lisp
+(defmacro a (&rest args)
+  "Define a new individual and assert facts about it in the data base."
+  '(add-fact ',(translate-exp (cons 'a args))))
+(defmacro each (&rest args)
+  "Define a new category and assert facts about it in the data base."
+  '(add-fact ',(transiate-exp (cons 'each args))))
+```
 
 `(defmacro ??
 (&rest queries)`
 
-`  "Return a list of answers satisfying the query or queries."`
-
-`  '(retrieve-setof`
-
-`    '.(translate-exp (maybe-add 'and (replace-?-vars queries))`
-
-`          :query)))`
+```lisp
+  "Return a list of answers satisfying the query or queries."
+  '(retrieve-setof
+    '.(translate-exp (maybe-add 'and (replace-?-vars queries))
+          :query)))
+```
 
 All three of these macros call on `translate-exp` to translate from the frame syntax to the primitive syntax.
 Note that an `a` or `each` expression is computing a conjunction of primitive relations, but it is also computing a *term* when it is used as the nested value of a slot.
@@ -1783,121 +1507,70 @@ The local function `translate` translates any kind of expression, `transiate-sio
 The optional argument `query-mode-p` tells what to do if the individual is not provided in an `a` expression.
 If `query-mode-p` is true, the individual will be represented by a variable; otherwise it will be a Skolem constant.
 
-`(defun translate-exp (exp &optional query-mode-p)`
-
-`  "Translate exp into a conjunction of the four primitives."`
-
-`  (let ((conjuncts nil))`
-
-`    (labels`
-
-`      ((collect-fact (&rest terms) (push terms conjuncts))`
-
-`        (translate (exp)`
-
-`          ;; Figure out what kind of expression this is`
-
-`          (cond`
-
-`            ((atom exp) exp)`
-
-`            ((eq (first exp) 'a) (translate-a (rest exp)))`
-
-`            ((eq (first exp) 'each) (translate-each (rest exp)))`
-
-`            (t (apply #'collect-fact exp) exp)))`
-
-`        (translate-a (args)`
-
-`          ;; translate (A category [ind] (rel filler)*)`
-
-`          (let* ((category (pop args))`
-
-`              (self (cond ((and args (atom (first args)))`
-
-`                  (pop args))`
-
-`                (query-mode-p (gentemp "?"))`
-
-`                (t (gentemp (string category))))))`
-
-`            (collect-fact 'ind self category)`
-
-`            (dolist (slot args)`
-
-`              (translate-slot 'val self slot))`
-
-`            self))`
-
-`        (translate-each (args)`
-
-`          ;; translate (EACH category [(isa cat*)] (slot cat)*)`
-
-`          (let* ((category (pop args)))`
-
-`            (when (eq (predicate (first args)) 'isa)`
-
-`              (dolist (super (rest (pop args)))`
-
-`                (collect-fact 'sub category super)))`
-
-`            (dolist (slot args)`
-
-`              (translate-slot 'rel category slot))`
-
-`            category))`
-
-`        (translate-slot (primitive self slot)`
-
-`          ;; translate (relation value) into a REL or SUB`
-
-`          (assert (= (length slot) 2))`
-
-`          (collect-fact primitive (first slot) self`
-
-`                  (translate (second slot)))))`
-
-`      ;; Body of translate-exp:`
-
-`      (translate exp) ;; Build up the list of conjuncts`
-
-`      (maybe-add 'and (nreverse conjuncts)))))`
+```lisp
+(defun translate-exp (exp &optional query-mode-p)
+  "Translate exp into a conjunction of the four primitives."
+  (let ((conjuncts nil))
+    (labels
+      ((collect-fact (&rest terms) (push terms conjuncts))
+        (translate (exp)
+          ;; Figure out what kind of expression this is
+          (cond
+            ((atom exp) exp)
+            ((eq (first exp) 'a) (translate-a (rest exp)))
+            ((eq (first exp) 'each) (translate-each (rest exp)))
+            (t (apply #'collect-fact exp) exp)))
+        (translate-a (args)
+          ;; translate (A category [ind] (rel filler)*)
+          (let* ((category (pop args))
+              (self (cond ((and args (atom (first args)))
+                  (pop args))
+                (query-mode-p (gentemp "?"))
+                (t (gentemp (string category))))))
+            (collect-fact 'ind self category)
+            (dolist (slot args)
+              (translate-slot 'val self slot))
+            self))
+        (translate-each (args)
+          ;; translate (EACH category [(isa cat*)] (slot cat)*)
+          (let* ((category (pop args)))
+            (when (eq (predicate (first args)) 'isa)
+              (dolist (super (rest (pop args)))
+                (collect-fact 'sub category super)))
+            (dolist (slot args)
+              (translate-slot 'rel category slot))
+            category))
+        (translate-slot (primitive self slot)
+          ;; translate (relation value) into a REL or SUB
+          (assert (= (length slot) 2))
+          (collect-fact primitive (first slot) self
+                  (translate (second slot)))))
+      ;; Body of translate-exp:
+      (translate exp) ;; Build up the list of conjuncts
+      (maybe-add 'and (nreverse conjuncts)))))
+```
 
 The auxiliary functions `maybe-add` and `replace-?-vars` are shown in the following:
 
-`(defun maybe-add (op exps &optional if-nil)`
-
-`  "For example, (maybe-add 'and exps t) returns`
-
-`  t if exps is nil, (first exps) if there is only one,`
-
-`  and (and expl exp2...) if there are several exps."`
-
-`  (cond ((null exps) if-nil)`
-
-`    ((length=1 exps) (first exps))`
-
-`    (t (cons op exps))))`
-
-`(defun length=1 (x)`
-
-`  "Is x a list of length 1?"`
-
-`  (and (consp x) (null (cdr x))))`
-
-`(defun replace-?-vars (exp)`
-
-`  "Replace each ? in exp with a temporary var: ?123"`
-
-`  (cond ((eq exp '?) (gentemp "?"))`
-
-`    ((atom exp) exp)`
-
-`    (t (reuse-cons (replace-?-vars (first exp))`
-
-`          (replace-?-vars (rest exp))`
-
-`          exp))))`
+```lisp
+(defun maybe-add (op exps &optional if-nil)
+  "For example, (maybe-add 'and exps t) returns
+  t if exps is nil, (first exps) if there is only one,
+  and (and expl exp2...) if there are several exps."
+  (cond ((null exps) if-nil)
+    ((length=1 exps) (first exps))
+    (t (cons op exps))))
+(defun length=1 (x)
+  "Is x a list of length 1?"
+  (and (consp x) (null (cdr x))))
+(defun replace-?-vars (exp)
+  "Replace each ? in exp with a temporary var: ?123"
+  (cond ((eq exp '?) (gentemp "?"))
+    ((atom exp) exp)
+    (t (reuse-cons (replace-?-vars (first exp))
+          (replace-?-vars (rest exp))
+          exp))))
+```
 
 ### Possible Worlds: Truth, Negation, and Disjunction
 {:#s19055}
@@ -1961,86 +1634,72 @@ The difference is that the facts are also indexed by the current world.
 To support this, we need to modify the notion of the numbered list, or `nlist`, to include a numbered association list, or `nalist`.
 The following is an `nalist` showing six facts indexed under three different worlds: `W0, Wl`, and `W2`:
 
-`(6 (W0 #1# #2# #3#) (Wl #4#) (W2 #5# #6#))`
+```lisp
+(6 (W0 #1# #2# #3#) (Wl #4#) (W2 #5# #6#))
+```
 
 The fetching routine will remain unchanged, but the postfetch processing will have to sort through the nalists to find only the facts in the current world.
 It would also be possible for `fetch` to do this work, but the reasoning is that most facts will be indexed under the "real world," and only a few facts will exist in alternative, hypothetical worlds.
 Therefore, we should delay the effort of sorting through the answers to elimina te those answers in the wrong world-it may be that the first answer fetched will suffice, and then it would have been a waste to go through and eliminate other answers.
 The following changes to `index` and `dtree-index` add support for worlds:
 
-`(defvar *world* 'W0 "The current world used by index and fetch.")`
-
-`(defun index (key &optional (world *world*))`
+```lisp
+(defvar *world* 'W0 "The current world used by index and fetch.")
+(defun index (key &optional (world *world*))
+```
 
 `  "Store key in a dtree node.
 Key must be (predicate . args);`
 
-`  it is stored in the dtree, indexed by the world."`
-
-`  (dtree-index key key world (get-dtree (predicate key))))`
-
-`(defun dtree-index (key value world dtree)`
-
-`  "Index value under all atoms of key in dtree."`
-
-`  (cond`
-
-`    ((consp key)    ; index on both first and rest`
-
-`      (dtree-index (first key) value world`
-
-`            (or (dtree-first dtree)`
-
-`              (setf (dtree-first dtree) (make-dtree))))`
-
-`      (dtree-index (rest key) value world`
-
-`            (or (dtree-rest dtree)`
-
-`              (setf (dtree-rest dtree) (make-dtree)))))`
-
-`    ((null key))    ; don't index on nil`
-
-`    ((variable-p key)    ; index a variable`
-
-`      (nalist-push world value (dtree-var dtree)))`
+```lisp
+  it is stored in the dtree, indexed by the world."
+  (dtree-index key key world (get-dtree (predicate key))))
+(defun dtree-index (key value world dtree)
+  "Index value under all atoms of key in dtree."
+  (cond
+    ((consp key)    ; index on both first and rest
+      (dtree-index (first key) value world
+            (or (dtree-first dtree)
+              (setf (dtree-first dtree) (make-dtree))))
+      (dtree-index (rest key) value world
+            (or (dtree-rest dtree)
+              (setf (dtree-rest dtree) (make-dtree)))))
+    ((null key))    ; don't index on nil
+    ((variable-p key)    ; index a variable
+      (nalist-push world value (dtree-var dtree)))
+```
 
 `    (t ;; Make sure there is an nlist for this atom.
 and add to it`
 
-`      (nalist-push world value (lookup-atom key dtree)))))`
+```lisp
+      (nalist-push world value (lookup-atom key dtree)))))
+```
 
 The new function `nalist-push` adds a value to an nalist, either by inserting the value in an existing key's list or by adding a new key/value list:
 
-`(defun nalist-push (key val nalist)`
-
-`  "Index val under key in a numbered al ist."`
-
-`  ;; An nalist is of the form (count (key val*)*)`
-
-`  ;; Ex: (6 (nums 12 3) (letters a b c))`
-
-`  (incf (car nalist))`
-
-`  (let ((pair (assoc key (cdr nalist))))`
-
-`    (if pair`
-
-`      (push val (cdr pair))`
-
-`      (push (list key val) (cdr nalist)))))`
+```lisp
+(defun nalist-push (key val nalist)
+  "Index val under key in a numbered al ist."
+  ;; An nalist is of the form (count (key val*)*)
+  ;; Ex: (6 (nums 12 3) (letters a b c))
+  (incf (car nalist))
+  (let ((pair (assoc key (cdr nalist))))
+    (if pair
+      (push val (cdr pair))
+      (push (list key val) (cdr nalist)))))
+```
 
 In the following, `fetch` is used on the same data base created by `test-index`, indexed under the world `W0`.
 This time the resuit is a list-of-lists of world/values a-lists.
 The count, 3, is the same as before.
 
-`>(fetch '(p ?x c))`
-
-`(((W0 (P B C) (P A C)))`
-
-`  ((W0 (P A ?X))))`
-
-`3`
+```lisp
+>(fetch '(p ?x c))
+(((W0 (P B C) (P A C)))
+  ((W0 (P A ?X))))
+3
+```
 
 So far, worlds have been represented as symbols, with the implication that different symbols represent completely distinct worlds.
 That doesn't make worlds very easy to use.
@@ -2054,9 +1713,10 @@ To support inheritance, we will implement worlds as structures with a name field
 Searching through the inheritance lattice could become costly, so we will do it only once each time the user changes worlds, and mark all the current worlds by setting the `current` field on or off.
 Here is the definition for the world structure:
 
-`(defstruct (world (:print-function print-world))`
-
-`  name parents current)`
+```lisp
+(defstruct (world (:print-function print-world))
+  name parents current)
+```
 
 We will need a way to get from the name of a world to the world structure.
 Assuming names are symbols, we can store the structure on the name's property list.
@@ -2064,140 +1724,103 @@ The function `get-world` gets the structure for a name, or builds a new one and 
 `get-world` can also be passed a world instead of a name, in which case it just returns the world.
 We also include a definition of the default initial world.
 
-`(defun get-world (name &optional current (parents (list *world*)))`
-
-`  "Look up or create the world with this name.`
-
-`  If the world is new, give it the list of parents."`
-
-`  (cond ((world-p name) name) ; ok if it already is a world`
-
-`      ((get name 'world))`
-
-`      (t (setf (get name 'world)`
-
-`          (make-world :name name :parents parents`
-
-`            :current current)))))`
-
-`(defvar *world* (get-world 'W0 nil nil)`
-
-`  "The current world used by index and fetch.")`
+```lisp
+(defun get-world (name &optional current (parents (list *world*)))
+  "Look up or create the world with this name.
+  If the world is new, give it the list of parents."
+  (cond ((world-p name) name) ; ok if it already is a world
+      ((get name 'world))
+      (t (setf (get name 'world)
+          (make-world :name name :parents parents
+            :current current)))))
+(defvar *world* (get-world 'W0 nil nil)
+  "The current world used by index and fetch.")
+```
 
 The function `use-world` is used to switch to a new world.
 It first makes the current world and all its parents no longer current, and then makes the new chosen world and all its parents current.
 The function `use-new-world` is more efficient in the common case where you want to create a new world that inherits from the current world.
 It doesn't have to turn any worlds off; it j ust crea tes the new world and makes it current.
 
-`(defun use-world (world)`
-
-`  "Make this world current."`
-
-`  ;; If passed a name, look up the world it names`
-
-`  (setf world (get-world world))`
-
-`  (unless (eq world *world*)`
-
-`    ;; Turn the old world(s) off and the new one(s) on,`
-
-`    ;; unless we are already using the new world`
-
-`    (set-world-current *world* nil)`
-
-`    (set-world-current world t)`
-
-`    (setf *world* world)))`
-
-`(defun use-new-world ()`
-
-`  "Make up a new world and use it.`
-
-`  The world inherits from the current world."`
-
-`  (setf *wor1d* (get-world (gensym "W")))`
-
-`  (setf (world-current *world*) t)`
-
-`  *world*)`
-
-`(defun set-world-current (world on/off)`
-
-`  "Set the current field of world and its parents on or off."`
-
-`  ;; nil is off, anything else is on.`
-
-`  (setf (world-current world) on/off)`
-
-`  (dolist (parent (world-parents world))`
-
-`    (set-world-current parent on/off)))`
+```lisp
+(defun use-world (world)
+  "Make this world current."
+  ;; If passed a name, look up the world it names
+  (setf world (get-world world))
+  (unless (eq world *world*)
+    ;; Turn the old world(s) off and the new one(s) on,
+    ;; unless we are already using the new world
+    (set-world-current *world* nil)
+    (set-world-current world t)
+    (setf *world* world)))
+(defun use-new-world ()
+  "Make up a new world and use it.
+  The world inherits from the current world."
+  (setf *wor1d* (get-world (gensym "W")))
+  (setf (world-current *world*) t)
+  *world*)
+(defun set-world-current (world on/off)
+  "Set the current field of world and its parents on or off."
+  ;; nil is off, anything else is on.
+  (setf (world-current world) on/off)
+  (dolist (parent (world-parents world))
+    (set-world-current parent on/off)))
+```
 
 We also add a print function for worlds, which just prints the world's name.
 
-`(defun print-world (world &optional (stream t) depth)`
-
-`  (declare (ignore depth))`
-
-`  (prin1 (world-name world) stream))`
+```lisp
+(defun print-world (world &optional (stream t) depth)
+  (declare (ignore depth))
+  (prin1 (world-name world) stream))
+```
 
 The format of the dtree data base has changed to include worlds, so we need new retrieval functions to search through this new format.
 Here the functions `mapc-retrieve, retrieve`, and `retrieve-bagof` are modified to give new versions that treat worlds.
 To reflect this change, the new functions all have names ending in -`in-world`:
 
-`(defun mapc-retrieve-in-world (fn query)`
-
-`  "For every fact in the current world that matches the query,`
-
-`  apply the function to the binding list."`
-
-`  (dolist (bucket (fetch query))`
-
-`    (dolist (world/entries bucket)`
-
-`      (when (world-current (first world/entries))`
-
-`        (dolist (answer (rest world/entries))`
-
-`          (let ((bindings (unify query answer)))`
-
-`            (unless (eq bindings fall)`
-
-`              (funcall fn bindings))))))))`
-
-`(defun retrieve-in-world (query)`
+```lisp
+(defun mapc-retrieve-in-world (fn query)
+  "For every fact in the current world that matches the query,
+  apply the function to the binding list."
+  (dolist (bucket (fetch query))
+    (dolist (world/entries bucket)
+      (when (world-current (first world/entries))
+        (dolist (answer (rest world/entries))
+          (let ((bindings (unify query answer)))
+            (unless (eq bindings fall)
+              (funcall fn bindings))))))))
+(defun retrieve-in-world (query)
+```
 
 `  "Find all facts that match query.
 Return a list of bindings."`
 
-`  (let ((answers nil))`
-
-`    (mapc-retrieve-in-world`
-
-`      #'(lambda (bindings) (push bindings answers))`
-
-`      query)`
-
-`    answers))`
-
-`(defun retrieve-bagof-in-world (query)`
-
-`  "Find all facts in the current world that match query.`
-
-`  Return a list of queries with bindings filled in."`
-
-`  (mapcar #'(lambda (bindings) (subst-bindings bindings query))`
-
-`          (retrieve-in-world query)))`
+```lisp
+  (let ((answers nil))
+    (mapc-retrieve-in-world
+      #'(lambda (bindings) (push bindings answers))
+      query)
+    answers))
+(defun retrieve-bagof-in-world (query)
+  "Find all facts in the current world that match query.
+  Return a list of queries with bindings filled in."
+  (mapcar #'(lambda (bindings) (subst-bindings bindings query))
+          (retrieve-in-world query)))
+```
 
 Now let's see how these worlds work.
 First, in `W0` we see that the facts from `test-index` are still in the data base:
 
-`> *world* => W0`
+```lisp
+> *world* => W0
+```
 
 `> (retrieve-bagof-in-world '(p ?z c))`=>
 
-`((P A C) (P A C) (P B C))`
+```lisp
+((P A C) (P A C) (P B C))
+```
 
 Now we create and use a new world that inherits from `W0`.
 Two new facts are added to this new world:
@@ -2212,11 +1835,15 @@ We see that the two new facts are accessible in this world:
 
 `> (retrieve-bagof-in-world '(p ?z c))`=>
 
-`((P A C) (P A C) (P B C) (P NEW C))`
+```lisp
+((P A C) (P A C) (P B C) (P NEW C))
+```
 
 `> (retrieve-bagof-in-world '(~p ?x ?y))`=>
 
-`((~P B B))`
+```lisp
+((~P B B))
+```
 
 Now we create another world as an alternative to the current one by first switching back to the original `W0`, then creating the new world, and then adding some facts:
 
@@ -2232,11 +1859,15 @@ Here we see that the facts entered in `W7031` are not accessible, but the facts 
 
 `> (retrieve-bagof-in-world '(p ?z c))`=>
 
-`((P A C) (P A C) (P B C) (P NEWEST C))`
+```lisp
+((P A C) (P A C) (P B C) (P NEWEST C))
+```
 
 `> (retrieve-bagof-in-world '(~p ?x ?y))`=>
 
-`((~P C NEWEST))`
+```lisp
+((~P C NEWEST))
+```
 
 ### Unification, Equality, Types, and Skolem Constants
 {:#s9155}
@@ -2246,9 +1877,10 @@ The lesson of the zebra puzzle in [section 11.4](B978008057115750011X.xhtml#s004
 However, this advantage can quickly disappear when the representation forces the problem solver to enumerate possible solutions rather than treating a whole range of solutions as one.
 For example, consider the following query in the frame language and its expansion into primitives:
 
-`(a person (name Fran))`
-
-`= (and (ind ?p person) (val name ?p fran))`
+```lisp
+(a person (name Fran))
+= (and (ind ?p person) (val name ?p fran))
+```
 
 The way to answer this query is to enumerate all individuals `?p` of type `person` and then check the `name` slot of each such person.
 It would be more efficient if `(ind ?p person)` did not act as an enumeration, but rather as a constraint on the possible values of `?p`.
@@ -2342,38 +1974,29 @@ Use it to solve Moore 's problem ([page 466](#p466)).
 
 **Answer 14.1**
 
-`(let ((dtrees (make-hash-table :test #'eq)))`
-
-`  (defun get-dtree (predicate)`
-
-`    "Fetch (or make) the dtree for this predicate."`
-
-`    (setf (gethash predicate dtrees)`
-
-`        (or (gethash predicate dtrees)`
-
-`          (make-dtree))))`
-
-`  (defun clear-dtrees ()`
-
-`  "Remove all the dtrees for all the predicates."`
-
-`  (clrhash dtrees)))`
+```lisp
+(let ((dtrees (make-hash-table :test #'eq)))
+  (defun get-dtree (predicate)
+    "Fetch (or make) the dtree for this predicate."
+    (setf (gethash predicate dtrees)
+        (or (gethash predicate dtrees)
+          (make-dtree))))
+  (defun clear-dtrees ()
+  "Remove all the dtrees for all the predicates."
+  (clrhash dtrees)))
+```
 
 **Answer 14.5** Hint: here is the code for `nlist-delete`.
 Now figure out how to find all the nlists that an item is indexed under.
 
-`(defun nlist-delete (item nlist)`
-
-`  "Remove an element from an nlist.`
-
-`  Assumes that item is present exactly once."`
-
-`  (decf (car nlist))`
-
-`  (setf (cdr nlist) (delete item (cdr nlist) :count 1))`
-
-`  nlist)`
+```lisp
+(defun nlist-delete (item nlist)
+  "Remove an element from an nlist.
+  Assumes that item is present exactly once."
+  (decf (car nlist))
+  (setf (cdr nlist) (delete item (cdr nlist) :count 1))
+  nlist)
+```
 
 ----------------------
 

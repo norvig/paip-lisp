@@ -156,52 +156,31 @@ Figure  4.1
 Glossary for the GPS Program
 Here is the complete GPS program itself:
 
-`(defvar *state* nil "The current state: a list of conditions.")`
-
-`(defvar *ops* nil "A list of available operators.")`
-
-`(defstruct op "An operation"`
-
-`  (action nil) (preconds nil) (add-list nil) (del-list nil))`
-
-`(defun GPS (*state* goals *ops*)`
-
-`  "General Problem Solver: achieve ail goals using *ops*."`
-
-`  (if (every #'achieve goals) 'solved))`
-
-`(defun achieve (goal)`
-
-`  "A goal is achieved if it already holds,`
-
-`  or if there is an appropriate op for it that is applicable."`
-
-`  (or (member goal *state*)`
-
-`    (some #'apply-op`
-
-`      (find-all goal *ops* :test #'appropriate-p))))`
-
-`(defun appropriate-p (goal op)`
-
-`  "An op is appropriate to a goal if it is in its add list."`
-
-`  (member goal (op-add-list op)))`
-
-`(defun apply-op (op)`
-
-`  "Print a message and update *state* if op is applicable."`
-
-`  (when (every #'achieve (op-preconds op))`
-
-`    (print (list 'executing (op-action op)))`
-
-`    (setf *state* (set-difference *state* (op-del-list op)))`
-
-`    (setf *state* (union *state* (op-add-list op)))`
-
-`  t))`
-
+```lisp
+(defvar *state* nil "The current state: a list of conditions.")
+(defvar *ops* nil "A list of available operators.")
+(defstruct op "An operation"
+  (action nil) (preconds nil) (add-list nil) (del-list nil))
+(defun GPS (*state* goals *ops*)
+  "General Problem Solver: achieve ail goals using *ops*."
+  (if (every #'achieve goals) 'solved))
+(defun achieve (goal)
+  "A goal is achieved if it already holds,
+  or if there is an appropriate op for it that is applicable."
+  (or (member goal *state*)
+    (some #'apply-op
+      (find-all goal *ops* :test #'appropriate-p))))
+(defun appropriate-p (goal op)
+  "An op is appropriate to a goal if it is in its add list."
+  (member goal (op-add-list op)))
+(defun apply-op (op)
+  "Print a message and update *state* if op is applicable."
+  (when (every #'achieve (op-preconds op))
+    (print (list 'executing (op-action op)))
+    (setf *state* (set-difference *state* (op-del-list op)))
+    (setf *state* (union *state* (op-add-list op)))
+  t))
+```
 We can see the program is made up of seven definitions.
 These correspond to the seven items in the specification above.
 In general, you shouldn't expect such a perfect fit between specification and implementation.
@@ -211,10 +190,10 @@ They are the most common toplevel forms in Lisp, but there is nothing magic abou
 
 The two `defvar` forms, repeated below, declare special variables named `*state*` and `*ops*,` which can then be accessed from anywhere in the program.
 
-`(defvar *state* nil "The current state: a list of conditions.")`
-
-`(defvar *ops* nil "A list of available operators.")`
-
+```lisp
+(defvar *state* nil "The current state: a list of conditions.")
+(defvar *ops* nil "A list of available operators.")
+```
 The `defstruct` form defines a structure called an `op`, which has slots called `action, preconds, add-list,` and `del-list`.
 Structures in Common Lisp are similar to structures in C, or records in Pascal.
 The `defstruct` automatically defines a constructor function, which is called `make-op`, and an access function for each slot of the structure.
@@ -223,32 +202,24 @@ The `defstruct` also defines a copier function, `copy-op`, a predicate, `op-p`, 
 None of those are used in the GPS program.
 Roughly speaking, it is as if the `defstruct` form
 
-`(defstruct op "An operation"`
-
-`  (action nil) (preconds nil) (add-list nil) (del-list nil))`
-
+```lisp
+(defstruct op "An operation"
+  (action nil) (preconds nil) (add-list nil) (del-list nil))
+```
 expanded into the following definitions:
 
-`(defun make-op (&key action precondsadd-list del-list)`
-
-`  (vector 'op action preconds add-list del-list))`
-
-`(defun op-action (op) (elt op 1))`
-
-`(defun op-preconds (op) (elt op 2))`
-
-`(defun op-add-list (op) (elt op 3))`
-
-`(defun op-del-list (op) (elt op 4))`
-
-`(defun copy-op (op) (copy-seq op))`
-
-`(defun op-p (op)`
-
-`  (and (vectorp op) (eq (elt op 0) 'op)))`
-
-`(setf (documentation 'op 'structure) "An operation")`
-
+```lisp
+(defun make-op (&key action precondsadd-list del-list)
+  (vector 'op action preconds add-list del-list))
+(defun op-action (op) (elt op 1))
+(defun op-preconds (op) (elt op 2))
+(defun op-add-list (op) (elt op 3))
+(defun op-del-list (op) (elt op 4))
+(defun copy-op (op) (copy-seq op))
+(defun op-p (op)
+  (and (vectorp op) (eq (elt op 0) 'op)))
+(setf (documentation 'op 'structure) "An operation")
+```
 Next in the GPS program are four function definitions.
 The main function GPS`,` is passed three arguments.
 The first is the current state of the world, the second the goal state, and the third a list of allowable operators.
@@ -276,14 +247,12 @@ This section will define a list of operators applicable to the "driving to nurse
 First, we need to construct the list of operators for the domain.
 The `defstruct` form for the type `op` automatically defines the function `make-op`, which can be used as follows:
 
-`(make-op :action 'drive-son-to-school`
-
-`    :preconds '(son-at-home car-works)`
-
-`    :add-list '(son-at-school)`
-
-`    :del-list '(son-at-home))`
-
+```lisp
+(make-op :action 'drive-son-to-school
+    :preconds '(son-at-home car-works)
+    :add-list '(son-at-school)
+    :del-list '(son-at-home))
+```
 This expression returns an operator whose action is the symbol `drive-son-to-school` and whose preconditions, add-list and delete-list are the specified lists.
 The intent of this operator is that whenever the son is at home and the car works, `drive-son-to-school` can be applied, changing the state by deleting the fact that the son is at home, and adding the fact that he is at school.
 
@@ -299,94 +268,57 @@ With this operator as a model, we can define other operators corresponding to Ne
 There will be an operator for installing a battery, telling the repair shop the problem, and telephoning the shop.
 We can fill in the "and so on" by adding operators for looking up the shop's phone number and for giving the shop money:
 
-`(defparameter *school-ops*`
-
-`  (list`
-
-`    (make-op :action 'drive-son-to-school`
-
-`      :preconds '(son-at-home car-works)`
-
-`      :add-list '(son-at-school)`
-
-`      :del-list '(son-at-home))`
-
-`    (make-op :action 'shop-installs-battery`
-
-`      :preconds '(car-needs-battery shop-knows-problem shop-has-money)`
-
-`      :add-list '(car-works))`
-
-`    (make-op :action 'tel 1-shop-problem`
-
-`      :preconds '(in-communication-with-shop)`
-
-`      :add-list '(shop-knows-problem))`
-
-`    (make-op raction 'telephone-shop`
-
-`      :preconds '(know-phone-number)`
-
-`      :add-list '(in-communication-with-shop))`
-
-`    (make-op .-action 'look-up-number`
-
-`      :preconds '(have-phone-book)`
-
-`      :add-list '(know-phone-number))`
-
-`    (make-op :action 'give-shop-money`
-
-`      :preconds '(have-money)`
-
-`      :add-list '(shop-has-money)`
-
-`      :del-list '(have-money))))`
-
+```lisp
+(defparameter *school-ops*
+  (list
+    (make-op :action 'drive-son-to-school
+      :preconds '(son-at-home car-works)
+      :add-list '(son-at-school)
+      :del-list '(son-at-home))
+    (make-op :action 'shop-installs-battery
+      :preconds '(car-needs-battery shop-knows-problem shop-has-money)
+      :add-list '(car-works))
+    (make-op :action 'tel 1-shop-problem
+      :preconds '(in-communication-with-shop)
+      :add-list '(shop-knows-problem))
+    (make-op raction 'telephone-shop
+      :preconds '(know-phone-number)
+      :add-list '(in-communication-with-shop))
+    (make-op .-action 'look-up-number
+      :preconds '(have-phone-book)
+      :add-list '(know-phone-number))
+    (make-op :action 'give-shop-money
+      :preconds '(have-money)
+      :add-list '(shop-has-money)
+      :del-list '(have-money))))
+```
 The next step is to pose some problems to GPS and examine the solutions.
 Following are three sample problems.
 In each case, the goal is the same: to achieve the single condition `son-at-school`.
 The list of available operators is also the same in each problem; the difference is in the initial state.
 Each of the three examples consists of the prompt, ">", which is printed by the Lisp system, followed by a call to GPS, " ( `gps`... )", which is typed by the user, then the output from the program, "(`EXECUTING`...)", and finally the resuit of the function call, which can be either `SOLVED` or `NIL`.
 
-`> (gps '(son-at-home car-needs-battery have-money have-phone-book)`
-
-`    '(son-at-school)`
-
-`    *school-ops*)`
-
-`(EXECUTING LOOK-UP-NUMBER)`
-
-`(EXECUTING TELEPHONE-SHOP)`
-
-`(EXECUTING TELL-SHOP-PROBLEM)`
-
-`(EXECUTING GIVE-SHOP-MONEY)`
-
-`(EXECUTING SHOP-INSTALLS-BATTERY)`
-
-`(EXECUTING DRIVE-SON-TO-SCHOOL)`
-
-`SOLVED`
-
-`> (gps '(son-at-home car-needs-battery have-money)`
-
-`    '(son-at-school)`
-
-`    *school-ops*)`
-
-`NIL`
-
-`> (gps '(son-at-home car-works)`
-
-`    '(son-at-school)`
-
-`    *school-ops*)`
-
-`(EXECUTING DRIVE-SON-TO-SCHOOL)`
-
-`SOLVED`
-
+```lisp
+> (gps '(son-at-home car-needs-battery have-money have-phone-book)
+    '(son-at-school)
+    *school-ops*)
+(EXECUTING LOOK-UP-NUMBER)
+(EXECUTING TELEPHONE-SHOP)
+(EXECUTING TELL-SHOP-PROBLEM)
+(EXECUTING GIVE-SHOP-MONEY)
+(EXECUTING SHOP-INSTALLS-BATTERY)
+(EXECUTING DRIVE-SON-TO-SCHOOL)
+SOLVED
+> (gps '(son-at-home car-needs-battery have-money)
+    '(son-at-school)
+    *school-ops*)
+NIL
+> (gps '(son-at-home car-works)
+    '(son-at-school)
+    *school-ops*)
+(EXECUTING DRIVE-SON-TO-SCHOOL)
+SOLVED
+```
 In all three examples the goal is to have the son at school.
 The only operator that has `son-at-school` in its add-list is `drive-son-to-school`, so GPS selects that operator initially.
 Before it can execute the operator, GPS has to solve for the preconditions.
@@ -427,38 +359,27 @@ Perhaps the add-list should contain something like "got some exercise" or "feel 
 Consider the problem of not only getting the child to school but also having some money left over to use for the rest of the day.
 GPS can easily solve this problem from the following initial condition:
 
-`(gps '(son-at-home have-money car-works)`
-
-`    '(have-money son-at-school)`
-
-`    *school-ops*)`
-
-`(EXECUTING DRIVE-SON-TO-SCHOOL)`
-
-`SOLVED`
-
+```lisp
+(gps '(son-at-home have-money car-works)
+    '(have-money son-at-school)
+    *school-ops*)
+(EXECUTING DRIVE-SON-TO-SCHOOL)
+SOLVED
+```
 However, in the next example GPS incorrectly reports success, when in fact it has spent the money on the battery.
 
-`> (gps '(son-at-home car-needs-battery have-money have-phone-book)`
-
-`    '(have-money son-at-school)`
-
-`    *school-ops*)`
-
-`(EXECUTING LOOK-UP-NUMBER)`
-
-`(EXECUTING TELEPHONE-SHOP)`
-
-`(EXECUTING TELL-SHOP-PROBLEM)`
-
-`(EXECUTING GIVE-SHOP-MONEY)`
-
-`(EXECUTING SHOP-INSTALLS-BATTERY)`
-
-`(EXECUTING DRIVE-SON-TO-SCHOOL)`
-
-`SOLVED`
-
+```lisp
+> (gps '(son-at-home car-needs-battery have-money have-phone-book)
+    '(have-money son-at-school)
+    *school-ops*)
+(EXECUTING LOOK-UP-NUMBER)
+(EXECUTING TELEPHONE-SHOP)
+(EXECUTING TELL-SHOP-PROBLEM)
+(EXECUTING GIVE-SHOP-MONEY)
+(EXECUTING SHOP-INSTALLS-BATTERY)
+(EXECUTING DRIVE-SON-TO-SCHOOL)
+SOLVED
+```
 The "bug" is that GPS uses the expression (`every #'achieve goals`) to achieve a set of goals.
 If this expression returns true, it means that every one of the goals has been achieved in sequence, but it doesn't mean they are ail still true at the end.
 In other words, the goal (`have-money son-at-school`), which we intended to mean "end up in a state where both have-money and son-at-school are true," was interpreted by GPS to mean "`first achieve have-money`, and then achieve `son-at-school`." Sometimes achieving one goal can undo another, previously achieved goal.
@@ -468,12 +389,11 @@ Modifying the program to recognize the "prerequisite clobbers sibling goal" prob
 First note that we call (`every #`'`achieve`*something*) twice within the program, so let's replace those two forms with ( `achieve-all`*something*).
 We can then define `achieve-all` as follows:
 
-`(defun achieve-all (goals)`
-
-`  "Try to achieve each goal, then make sure they still hold."`
-
-`  (and (every #'achieve goals) (subsetp goals *state*)))`
-
+```lisp
+(defun achieve-all (goals)
+  "Try to achieve each goal, then make sure they still hold."
+  (and (every #'achieve goals) (subsetp goals *state*)))
+```
 The Common Lisp function subsetp returns true if its first argument is a subset of its second.
 In `achieve-all`, it returns true if every one of the goals is still in the current state after achieving ail the goals.
 This is just what we wanted to test.
@@ -489,26 +409,18 @@ Another way to address the "prerequisite clobbers sibling goal" problem is just 
 If we want to get the kid to school and still have some money left, why not just specify the goal as (`son-at-school have-money`) rather than (`have-money son-at-school`)?
 Let's see what happens when we try that:
 
-`> (gps '(son-at-home car-needs-battery have-money have-phone-book)`
-
-`    '(son-at-school have-money)`
-
-`    *school-ops*)`
-
-`(EXECUTING LOOK-UP-NUMBER)`
-
-`(EXECUTING TELEPHONE-SHOP)`
-
-`(EXECUTING TELL-SHOP-PROBLEM)`
-
-`(EXECUTING GIVE-SHOP-MONEY)`
-
-`(EXECUTING SHOP-INSTALLS-BATTERY)`
-
-`(EXECUTING DRIVE-SON-TO-SCHOOL)`
-
-`NIL`
-
+```lisp
+> (gps '(son-at-home car-needs-battery have-money have-phone-book)
+    '(son-at-school have-money)
+    *school-ops*)
+(EXECUTING LOOK-UP-NUMBER)
+(EXECUTING TELEPHONE-SHOP)
+(EXECUTING TELL-SHOP-PROBLEM)
+(EXECUTING GIVE-SHOP-MONEY)
+(EXECUTING SHOP-INSTALLS-BATTERY)
+(EXECUTING DRIVE-SON-TO-SCHOOL)
+NIL
+```
 GPS returns nil, reflecting the fact that the goal cannot be achieved, but only after executing all actions up to and including driving to school.
 I call this the "leaping before you look" problem, because if you asked the program to solve for the two goals `(jump off-cliff land-safely)` it would happily jump first, only to discover that it had no operator to land safely.
 This is less than prudent behavior.
@@ -527,67 +439,47 @@ Suppose we want to add an operator for finding out a phone number by asking some
 Of course, in order to ask someone something, you need to be in communication with him or her.
 The asking-for-aphone-number operator could be implemented as follows:
 
-`(push (make-op :action 'ask-phone-number`
-
-`      :preconds '(in-communication-with-shop)`
-
-`      :add-1 i st '(know-phone-number))`
-
-`    *school-ops*)`
-
+```lisp
+(push (make-op :action 'ask-phone-number
+      :preconds '(in-communication-with-shop)
+      :add-1 i st '(know-phone-number))
+    *school-ops*)
+```
 (The special form ( `push`*item list*) puts the item on the front of the list; it is equivalent to (setf *list* (`cons`*item list*) ) in the simple case.) Unfortunately, something unexpected happens when we attempt to solve seemingly simple problems with this new set of operators.
 Consider the following:
 
-`> (gps '(son-at-home car-needs-battery have-money)`
-
-`    '(son-at-school)`
-
-`    *school-ops*)`
-
-`>>TRAP 14877 (SYSTEM:PDL-OVERFLOW EH: :REGULAR)`
-
-`The regular push-down list has overflown.`
-
-`While in the function ACHIEVE <- EVERY <- REMOVE`
-
+```lisp
+> (gps '(son-at-home car-needs-battery have-money)
+    '(son-at-school)
+    *school-ops*)
+>>TRAP 14877 (SYSTEM:PDL-OVERFLOW EH: :REGULAR)
+The regular push-down list has overflown.
+While in the function ACHIEVE <- EVERY <- REMOVE
+```
 The error message (which will vary from one implementation of Common Lisp to another) means that too many recursively nested function calls were made.
 This indicates either a very complex problem or, more commonly, a bug in the program leading to infinite recursion.
 One way to try to see the cause of the bug is to trace a relevant function, such as `achieve`:
 
 `> (trace achieve)`=> `(ACHIEVE)`
 
-`> (gps '(son-at-home car-needs-battery have-money)`
-
-`    '(son-at-school)`
-
-`    *school-ops*)`
-
-`(1 ENTER ACHIEVE: SON-AT-SCHOOL)`
-
-`  (2 ENTER ACHIEVE: SON-AT-HOME)`
-
-`  (2 EXIT ACHIEVE: (SON-AT-HOME CAR-NEEDS-BATTERY HAVE-MONEY))`
-
-`  (2 ENTER ACHIEVE: CAR-WORKS)`
-
-`    (3 ENTER ACHIEVE: CAR-NEEDS-BATTERY)`
-
-`    (3 EXIT ACHIEVE: (CAR-NEEDS-BATTERY HAVE-MONEY))`
-
-`    (3 ENTER ACHIEVE: SHOP-KNOWS-PROBLEM)`
-
-`      (4 ENTER ACHIEVE: IN-COMMUNICATION-WITH-SHOP)`
-
-`        (5 ENTER ACHIEVE: KNOW-PHONE-NUMBER)`
-
-`          (6 ENTER ACHIEVE: IN-COMMUNICATION-WITH-SHOP)`
-
-`            (7 ENTER ACHIEVE: KNOW-PHONE-NUMBER)`
-
-`              (8 ENTER ACHIEVE: IN-COMMUNICATION-WITH-SHOP)`
-
-`                (9 ENTER ACHIEVE: KNOW-PHONE-NUMBER)`
-
+```lisp
+> (gps '(son-at-home car-needs-battery have-money)
+    '(son-at-school)
+    *school-ops*)
+(1 ENTER ACHIEVE: SON-AT-SCHOOL)
+  (2 ENTER ACHIEVE: SON-AT-HOME)
+  (2 EXIT ACHIEVE: (SON-AT-HOME CAR-NEEDS-BATTERY HAVE-MONEY))
+  (2 ENTER ACHIEVE: CAR-WORKS)
+    (3 ENTER ACHIEVE: CAR-NEEDS-BATTERY)
+    (3 EXIT ACHIEVE: (CAR-NEEDS-BATTERY HAVE-MONEY))
+    (3 ENTER ACHIEVE: SHOP-KNOWS-PROBLEM)
+      (4 ENTER ACHIEVE: IN-COMMUNICATION-WITH-SHOP)
+        (5 ENTER ACHIEVE: KNOW-PHONE-NUMBER)
+          (6 ENTER ACHIEVE: IN-COMMUNICATION-WITH-SHOP)
+            (7 ENTER ACHIEVE: KNOW-PHONE-NUMBER)
+              (8 ENTER ACHIEVE: IN-COMMUNICATION-WITH-SHOP)
+                (9 ENTER ACHIEVE: KNOW-PHONE-NUMBER)
+```
 The output from trace gives us the necessary clues.
 Newell and Simon talk of "oscillating among ends, functions required, and means that perform them." Here it seems we have an infinite oscillation between being in communication with the shop (levels 4, 6, 8,...) and knowing the shop's phone number (levels 5, 7, 9,...).
 The reasoning is as follows: we want the shop to know about the problem with the battery, and this requires being in communication with him or her.
@@ -616,8 +508,9 @@ A call to `dbg` will resuit in output if the first argument to `dbg`, the identi
 The other arguments to `dbg` are a format string followed by a list of arguments to be printed according to the format string.
 In other words, we will write functions that include calls to `dbg` like:
 
-`(dbg :gps "The current goal is: ~a" goal)`
-
+```lisp
+(dbg :gps "The current goal is: ~a" goal)
+```
 If we have turned on debugging with `(debug :gps)`, then calls to dbg with the identifier :`gps` will print output.
 The output is turned off with `(undebug :gps)`.
 `debug` and `undebug` are designed to be similar to `trace` and `untrace`, in that they turn diagnostic output on and off.
@@ -632,49 +525,37 @@ Sending different types of output to different streams allows the user some flex
 For example, debugging output could be directed to a separate window, or it could be copied to a file.
 Second, the function `fresh-line` advances to the next line of output, unless the output stream is already at the start of the line.
 
-`(defvar *dbg-ids* nil "Identifiers used by dbg")`
-
-`(defun dbg (id format-string &rest args)`
-
-`  "Print debugging info if (DEBUG ID) has been specified."`
-
-`  (when (member id *dbg-ids*)`
-
-`    (fresh-line *debug-io*)`
-
-`    (apply #'format *debug-io* format-string args)))`
-
-`(defun debug (&rest ids)`
-
-`  "Start dbg output on the given ids."`
-
-`  (setf *dbg-ids* (union ids *dbg-ids*)))`
-
-`(defun undebug (&rest ids)`
-
+```lisp
+(defvar *dbg-ids* nil "Identifiers used by dbg")
+(defun dbg (id format-string &rest args)
+  "Print debugging info if (DEBUG ID) has been specified."
+  (when (member id *dbg-ids*)
+    (fresh-line *debug-io*)
+    (apply #'format *debug-io* format-string args)))
+(defun debug (&rest ids)
+  "Start dbg output on the given ids."
+  (setf *dbg-ids* (union ids *dbg-ids*)))
+(defun undebug (&rest ids)
+```
 `  "Stop dbg on the ids.
 With no ids, stop dbg al together.
 "`
 
-`  (setf *dbg-ids* (if (null ids) nil`
-
-`            (set-difference *dbg-ids* ids))))`
-
+```lisp
+  (setf *dbg-ids* (if (null ids) nil
+            (set-difference *dbg-ids* ids))))
+```
 Sometimes it is easier to view debugging output if it is indented according to some pattern, such as the depth of nested calls to a function.
 To generate indented output, the function `dbg-indent` is defined:
 
-`(defun dbg-indent (id indent format-string &rest args)`
-
-`  "Print indented debugging info if (DEBUG ID) has been specified."`
-
-`  (when (member id *dbg-ids*)`
-
-`    (fresh-line *debug-io*)`
-
-`    (dotimes (i indent) (princ " " *debug-io*))`
-
-`    (apply #'format *debug-io* format-string args)))`
-
+```lisp
+(defun dbg-indent (id indent format-string &rest args)
+  "Print indented debugging info if (DEBUG ID) has been specified."
+  (when (member id *dbg-ids*)
+    (fresh-line *debug-io*)
+    (dotimes (i indent) (princ " " *debug-io*))
+    (apply #'format *debug-io* format-string args)))
+```
 ## 4.11 GPS Version 2: A More General Problem Solver
 {:#s0060}
 {:.h1hd}
@@ -692,41 +573,29 @@ Each message is actually a condition, a list of the form (executing *operator*).
 This solves the "running around the block" problem: we could call `GPS` with an initial goal of `((executing run-around-block))`, and it would execute the `run-around-block` operator, thereby satisfying the goal.
 The following code defines a new function, op, which builds operators that include the message in their add-list.
 
-`(defun executing-p (x)`
-
-`  "Is x of the form: (executing ...) ?"`
-
-`  (starts-with x 'executing))`
-
-`(defun starts-with (list x)`
-
-`  "Is this a list whose first element is x?"`
-
-`  (and (consp list) (eql (first list) x)))`
-
-`(defun convert-op (op)`
-
-`  "Make op conform to the (EXECUTING op) convention."`
-
-`  (unless (some #'executing-p (op-add-list op))`
-
-`    (push (list 'executing (op-action op)) (op-add-list op)))`
-
-`  op)`
-
-`(defun op (action &key preconds add-list del-list)`
-
-`  "Make a new operator that obeys the (EXECUTING op) convention."`
-
-`  (convert-op`
-
-`    (make-op :action action :preconds preconds`
-
-`          :add-list add-list :del-list del-list)))`
-
+```lisp
+(defun executing-p (x)
+  "Is x of the form: (executing ...) ?"
+  (starts-with x 'executing))
+(defun starts-with (list x)
+  "Is this a list whose first element is x?"
+  (and (consp list) (eql (first list) x)))
+(defun convert-op (op)
+  "Make op conform to the (EXECUTING op) convention."
+  (unless (some #'executing-p (op-add-list op))
+    (push (list 'executing (op-action op)) (op-add-list op)))
+  op)
+(defun op (action &key preconds add-list del-list)
+  "Make a new operator that obeys the (EXECUTING op) convention."
+  (convert-op
+    (make-op :action action :preconds preconds
+          :add-list add-list :del-list del-list)))
+```
 Operators built by op will be correct, but we can convert existing operators using `convert-op` directly:
 
-`(mapc #'convert-op *school-ops*)`
+```lisp
+(mapc #'convert-op *school-ops*)
+```
 
 This is an example of exploratory programming: instead of starting ail over when we discover a limitation of the first version, we can use Lisp to alter existing data structures for the new version of the program.
 
@@ -737,17 +606,14 @@ Thus, the value of `GPS` itself is the list of actions taken to arrive at the fi
 `GPS` no longer returns `SOLVED` when it finds a solution, but it still obeys the convention of returning nil for failure, and non-nil for success.
 In general, it is a good idea to have a program return a meaningful value rather than print that value, if there is the possibility that some other program might ever want to use the value.
 
-`(defvar *ops* nil "A list of available operators.")`
-
-`(defstruct op "An operation"`
-
-`  (action nil) (preconds nil) (add-list nil) (del-list nil))`
-
-`(defun GPS (state goals &optional (*ops* *ops*))`
-
-`  "General Problem Solver: from state, achieve goals using *ops*."`
-
-`  (remove-if #'atom (achieve-all (cons '(start) state) goals nil)))`
+```lisp
+(defvar *ops* nil "A list of available operators.")
+(defstruct op "An operation"
+  (action nil) (preconds nil) (add-list nil) (del-list nil))
+(defun GPS (state goals &optional (*ops* *ops*))
+  "General Problem Solver: from state, achieve goals using *ops*."
+  (remove-if #'atom (achieve-all (cons '(start) state) goals nil)))
+```
 
 The first major change in version 2 is evident from the first line of the program: there is no `*state*` variable.
 Instead, the program keeps track of local state variables.
@@ -790,39 +656,25 @@ If the condition is already in the state, then achieve succeeds and returns the 
 On the other hand, if the goal condition is already in the goal stack, then there is no sense continuing-we will be stuck in an endless loop-so `achieve` returns nil.
 Otherwise, `achieve` looks through the list of operators, trying to find one appropriate to apply.
 
-`(defun achieve-all (state goals goal-stack)`
-
-`  "Achieve each goal, and make sure they still hold at the end."`
-
-`  (let ((current-state state))`
-
-`    (if (and (every #'(lambda (g)`
-
-`            (setf current-state`
-
-`              (achieve current-state g goal-stack)))`
-
-`          goals)`
-
-`        (subsetp goals current-state :test #'equal))`
-
-`      current-state)))`
-
-`(defun achieve (state goal goal-stack)`
-
-`  "A goal is achieved if it already holds,`
-
-`  or if there is an appropriate op for it that is applicable."`
-
-`  (dbg-indent :gps (length goal-stack) "Goal: "a" goal)`
-
-`  (cond ((member-equal goal state) state)`
-
-`      ((member-equal goal goal-stack) nil)`
-
-`      (t (some #'(lambda (op) (apply-op state goal op goal-stack))`
-
-`          (find-all goal *ops* :test #'appropriate-p)))))`
+```lisp
+(defun achieve-all (state goals goal-stack)
+  "Achieve each goal, and make sure they still hold at the end."
+  (let ((current-state state))
+    (if (and (every #'(lambda (g)
+            (setf current-state
+              (achieve current-state g goal-stack)))
+          goals)
+        (subsetp goals current-state :test #'equal))
+      current-state)))
+(defun achieve (state goal goal-stack)
+  "A goal is achieved if it already holds,
+  or if there is an appropriate op for it that is applicable."
+  (dbg-indent :gps (length goal-stack) "Goal: "a" goal)
+  (cond ((member-equal goal state) state)
+      ((member-equal goal goal-stack) nil)
+      (t (some #'(lambda (op) (apply-op state goal op goal-stack))
+          (find-all goal *ops* :test #'appropriate-p)))))
+```
 
 The goal `( (executing run-around-block) )` is a list of one condition, where the condition happens to be a two-element list.
 Allowing lists as conditions gives us more flexibility, but we also have to be careful.
@@ -833,43 +685,32 @@ Since this is done several times, we introduce the function `member-equal`.
 In fact, we could have carried the abstraction one step further and defined `member-situation`, a function to test if a condition is true in a situation.
 This would allow the user to change the matching function from `eql` to `equal`, and to anything else that might be useful.
 
-`(defun member-equal (item list)`
-
-`  (member item list :test #'equal))`
+```lisp
+(defun member-equal (item list)
+  (member item list :test #'equal))
+```
 
 The function `apply-op`, which used to change the state irrevocably and print a message reflecting this, now returns the new state instead of printing anything.
 It first computes the state that would result from achieving all the preconditions of the operator.
 If it is possible to arrive at such a state, then `apply-op` returns a new state derived from this state by adding what's in the add-list and removing everything in the delete-list.
 
-`(defun apply-op (state goal op goal-stack)`
-
-`  "Return a new, transformed state if op is applicable."`
-
-`  (dbg-indent :gps (length goal-stack) "Consider: ~a" (op-action op))`
-
-`  (let ((state2 (achieve-all state (op-preconds op)`
-
-`            (cons goal goal-stack))))`
-
-`    (unless (null state2)`
-
-`      ;; Return an updated state`
-
-`      (dbg-indent :gps (length goal-stack) "Action: ~a" (op-action op))`
-
-`      (append (remove-if #'(lambda (x)`
-
-`            (member-equal x (op-del-list op)))`
-
-`          state2)`
-
-`        (op-add-list op)))))`
-
-`(defun appropriate-p (goal op)`
-
-`  "An op is appropriate to a goal if it is in its add-list."`
-
-`  (member-equal goal (op-add-list op)))`
+```lisp
+(defun apply-op (state goal op goal-stack)
+  "Return a new, transformed state if op is applicable."
+  (dbg-indent :gps (length goal-stack) "Consider: ~a" (op-action op))
+  (let ((state2 (achieve-all state (op-preconds op)
+            (cons goal goal-stack))))
+    (unless (null state2)
+      ;; Return an updated state
+      (dbg-indent :gps (length goal-stack) "Action: ~a" (op-action op))
+      (append (remove-if #'(lambda (x)
+            (member-equal x (op-del-list op)))
+          state2)
+        (op-add-list op)))))
+(defun appropriate-p (goal op)
+  "An op is appropriate to a goal if it is in its add-list."
+  (member-equal goal (op-add-list op)))
+```
 
 There is one last complication in the way we compute the new state.
 In version 1 of GPS, states were (conceptually) unordered sets of conditions, so we could use uni on and `set-difference` to operate on them.
@@ -879,15 +720,13 @@ Thus, we have to use the functions append and `remove-if`, since these are defin
 Finally, the last difference in version 2 is that it introduces a new function: use.
 This function is intended to be used as a sort of declaration that a given list of operators is to be used for a series of problems.
 
-`(defun use (oplist)`
-
-`  "Use oplist as the default list of operators."`
-
-`  ;; Return something useful, but not too verbose:`
-
-`  ;; the number of operators.`
-
-`   (length (setf *ops* oplist)))`
+```lisp
+(defun use (oplist)
+  "Use oplist as the default list of operators."
+  ;; Return something useful, but not too verbose:
+  ;; the number of operators.
+   (length (setf *ops* oplist)))
+```
 
 Calling use sets the parameter `*ops*,` so that it need not be specified on each call to GPS.
 Accordingly, in the definition of GPS itself the third argument, `*ops*`, is now optional; if it is not supplied, a default will be used.
@@ -901,29 +740,20 @@ So after a sequence of calls we eventually reach achieve, which references `*ops
 The definition of GPS is repeated here, along with an alternate version that binds a local variable and explicitly sets and resets the special variable `*ops*`.
 Clearly, the idiom of binding a special variable is more concise, and while it can be initially confusing, it is useful once understood.
 
-`(defun GPS (state goals &optional (*ops* *ops*))`
-
-`  "General Problem Solver: from state, achieve goals using *ops*."`
-
-`  (remove-if #'atom (achieve-all (cons '(start) state) goals nil)))`
-
-`(defun GPS (state goals &optional (ops *ops*))`
-
-`  "General Problem Solver: from state, achieve goals using *ops*."`
-
-`  (let ((old-ops *ops*))`
-
-`    (setf *ops* ops)`
-
-`    (let ((resuit (remove-if #'atom (achieve-all`
-
-`                  (cons'(start) state)`
-
-`                  goals nil ))))`
-
-`      (setf *ops* old-ops)`
-
-`      resuit)))`
+```lisp
+(defun GPS (state goals &optional (*ops* *ops*))
+  "General Problem Solver: from state, achieve goals using *ops*."
+  (remove-if #'atom (achieve-all (cons '(start) state) goals nil)))
+(defun GPS (state goals &optional (ops *ops*))
+  "General Problem Solver: from state, achieve goals using *ops*."
+  (let ((old-ops *ops*))
+    (setf *ops* ops)
+    (let ((resuit (remove-if #'atom (achieve-all
+                  (cons'(start) state)
+                  goals nil ))))
+      (setf *ops* old-ops)
+      resuit)))
+```
 
 Now let's see how version 2 performs.
 We use the list of operators that includes the "asking the shop their phone number" operator.
@@ -931,122 +761,79 @@ First we make sure it will still do the examples version 1 did:
 
 `> (use *school-ops*)`=> `7`
 
-`> (gps '(son-at-home car-needs-battery have-money have-phone-book)`
-
-`      '(son-at-school))`
-
-`((START)`
-
-`  (EXECUTING LOOK-UP-NUMBER)`
-
-`  (EXECUTING TELEPHONE-SHOP)`
-
-`  (EXECUTING TELL-SHOP-PROBLEM)`
-
-`  (EXECUTING GIVE-SHOP-MONEY)`
-
-`  (EXECUTING SHOP-INSTALLS-BATTERY)`
-
-`  (EXECUTING DRIVE-SON-TO-SCHOOL))`
+```lisp
+> (gps '(son-at-home car-needs-battery have-money have-phone-book)
+      '(son-at-school))
+((START)
+  (EXECUTING LOOK-UP-NUMBER)
+  (EXECUTING TELEPHONE-SHOP)
+  (EXECUTING TELL-SHOP-PROBLEM)
+  (EXECUTING GIVE-SHOP-MONEY)
+  (EXECUTING SHOP-INSTALLS-BATTERY)
+  (EXECUTING DRIVE-SON-TO-SCHOOL))
+```
 
 `> (debug :gps)`=> `(:GPS)`
 
-`> (gps '(son-at-home car-needs-battery have-money have-phone-book)`
-
-`      '(son-at-school))`
-
-`Goal: SON-AT-SCHOOL`
-
-`Consider: DRIVE-SON-TO-SCHOOL`
-
-`  Goal: SON-AT-HOME`
-
-`  Goal: CAR-WORKS`
-
-`  Consider: SHOP-INSTALLS-BATTERY`
-
-`    Goal: CAR-NEEDS-BATTERY`
-
-`    Goal: SHOP-KNOWS-PROBLEM`
-
-`    Consider: TELL-SHOP-PROBLEM`
-
-`      Goal: IN-COMMUNICATION-WITH-SHOP`
-
-`      Consider: TELEPHONE-SHOP`
-
-`        Goal: KNOW-PHONE-NUMBER`
-
-`        Consider: ASK-PHONE-NUMBER`
-
-`          Goal: IN-COMMUNICATION-WITH-SHOP`
-
-`        Consider: LOOK-UP-NUMBER`
-
-`          Goal: HAVE-PHONE-BOOK`
-
-`        Action: LOOK-UP-NUMBER`
-
-`      Action: TELEPHONE-SHOP`
-
-`    Action: TELL-SHOP-PROBLEM`
-
-`    Goal: SHOP-HAS-MONEY`
-
-`    Consider: GIVE-SHOP-MONEY`
-
-`      Goal: HAVE-MONEY`
-
-`    Action: GIVE-SHOP-MONEY`
-
-`  Action: SHOP-INSTALLS-BATTERY`
-
-`Action: DRIVE-SON-TO-SCHOOL`
-
-`((START)`
-
-`  (EXECUTING LOOK-UP-NUMBER)`
-
-`  (EXECUTING TELEPHONE-SHOP)`
-
-`  (EXECUTING TELL-SHOP-PROBLEM)`
-
-`  (EXECUTING GIVE-SHOP-MONEY)`
-
-`  (EXECUTING SHOP-INSTALLS-BATTERY)`
-
-`  (EXECUTING DRIVE-SON-TO-SCHOOL))`
+```lisp
+> (gps '(son-at-home car-needs-battery have-money have-phone-book)
+      '(son-at-school))
+Goal: SON-AT-SCHOOL
+Consider: DRIVE-SON-TO-SCHOOL
+  Goal: SON-AT-HOME
+  Goal: CAR-WORKS
+  Consider: SHOP-INSTALLS-BATTERY
+    Goal: CAR-NEEDS-BATTERY
+    Goal: SHOP-KNOWS-PROBLEM
+    Consider: TELL-SHOP-PROBLEM
+      Goal: IN-COMMUNICATION-WITH-SHOP
+      Consider: TELEPHONE-SHOP
+        Goal: KNOW-PHONE-NUMBER
+        Consider: ASK-PHONE-NUMBER
+          Goal: IN-COMMUNICATION-WITH-SHOP
+        Consider: LOOK-UP-NUMBER
+          Goal: HAVE-PHONE-BOOK
+        Action: LOOK-UP-NUMBER
+      Action: TELEPHONE-SHOP
+    Action: TELL-SHOP-PROBLEM
+    Goal: SHOP-HAS-MONEY
+    Consider: GIVE-SHOP-MONEY
+      Goal: HAVE-MONEY
+    Action: GIVE-SHOP-MONEY
+  Action: SHOP-INSTALLS-BATTERY
+Action: DRIVE-SON-TO-SCHOOL
+((START)
+  (EXECUTING LOOK-UP-NUMBER)
+  (EXECUTING TELEPHONE-SHOP)
+  (EXECUTING TELL-SHOP-PROBLEM)
+  (EXECUTING GIVE-SHOP-MONEY)
+  (EXECUTING SHOP-INSTALLS-BATTERY)
+  (EXECUTING DRIVE-SON-TO-SCHOOL))
+```
 
 `> (undebug)`=> `NIL`
 
-`> (gps '(son-at-home car-works)`
-
-`      '(son-at-school))`
-
-`((START)`
-
-`  (EXECUTING DRIVE-SON-TO-SCHOOL))`
+```lisp
+> (gps '(son-at-home car-works)
+      '(son-at-school))
+((START)
+  (EXECUTING DRIVE-SON-TO-SCHOOL))
+```
 
 Now we see that version 2 can also handle the three cases that version 1 got wrong.
 In each case, the program avoids an infinite loop, and also avoids leaping before it looks.
 
-`> (gps '(son-at-home car-needs-battery have-money have-phone-book)`
-
-`      '(have-money son-at-school))`
-
-`NIL`
-
-`> (gps '(son-at-home car-needs-battery have-money have-phone-book)`
-
-`      '(son-at-school have-money))`
-
-`NIL`
-
-`(gps '(son-at-home car-needs-battery have-money)`
-
-`      '(son-at-school) )`
-
-`NIL`
+```lisp
+> (gps '(son-at-home car-needs-battery have-money have-phone-book)
+      '(have-money son-at-school))
+NIL
+> (gps '(son-at-home car-needs-battery have-money have-phone-book)
+      '(son-at-school have-money))
+NIL
+(gps '(son-at-home car-needs-battery have-money)
+      '(son-at-school) )
+NIL
+```
 
 Finally, we see that this version of GPS also works on trivial problems requiring no action:
 
@@ -1065,78 +852,50 @@ Just to make things complicated, assume the monkey is holding a toy ball and can
 In trying to represent this scenario, we have some flexibility in choosing what to put in the current state and what to put in with the operators.
 For now, assume we define the operators as follows:
 
-`(defparameter *banana-ops*`
-
-`  (list`
-
-`    (op 'climb-on-chair`
-
-`      :preconds '(chair-at-middle-room at-middle-room on-floor)`
-
-`      :add-list '(at-bananas on-chair)`
-
-`      :del-list '(at-middle-room on-floor))`
-
-`    (op 'push-chair-from-door-to-middle-room`
-
-`      :preconds '(chair-at-door at-door)`
-
-`      :add-list '(chair-at-middle-room at-middle-room)`
-
-`      :del-list '(chair-at-door at-door))`
-
-`    (op 'walk-from-door-to-middle-room`
-
-`      :preconds '(at-door on-floor)`
-
-`      :add-list '(at-middle-room)`
-
-`      :del-list '(at-door))`
-
-`    (op 'grasp-bananas`
-
-`      :preconds '(at-bananas empty-handed)`
-
-`      :add-list '(has-bananas)`
-
-`      :del-list '(empty-handed))`
-
-`    (op 'drop-ball`
-
-`      :preconds '(has-ball)`
-
-`      :add-list '(empty-handed)`
-
-`      :del-list '(has-ball))`
-
-`    (op 'eat-bananas`
-
-`      :preconds '(has-bananas)`
-
-`      :add-list '(empty-handed not-hungry)`
-
-`      :del-list '(has-bananas hungry))))`
+```lisp
+(defparameter *banana-ops*
+  (list
+    (op 'climb-on-chair
+      :preconds '(chair-at-middle-room at-middle-room on-floor)
+      :add-list '(at-bananas on-chair)
+      :del-list '(at-middle-room on-floor))
+    (op 'push-chair-from-door-to-middle-room
+      :preconds '(chair-at-door at-door)
+      :add-list '(chair-at-middle-room at-middle-room)
+      :del-list '(chair-at-door at-door))
+    (op 'walk-from-door-to-middle-room
+      :preconds '(at-door on-floor)
+      :add-list '(at-middle-room)
+      :del-list '(at-door))
+    (op 'grasp-bananas
+      :preconds '(at-bananas empty-handed)
+      :add-list '(has-bananas)
+      :del-list '(empty-handed))
+    (op 'drop-ball
+      :preconds '(has-ball)
+      :add-list '(empty-handed)
+      :del-list '(has-ball))
+    (op 'eat-bananas
+      :preconds '(has-bananas)
+      :add-list '(empty-handed not-hungry)
+      :del-list '(has-bananas hungry))))
+```
 
 Using these operators, we could pose the problem of becoming not-hungry, given the initial state of being at the door, standing on the floor, holding the ball, hungry, and with the chair at the door.
 `GPS` can find a solution to this problem:
 
 `> (use *banana-ops*)`=> `6`
 
-`> (GPS '(at-door on-floor has-ball hungry chair-at-door)`
-
-`      '(not-hungry))`
-
-`((START)`
-
-`  (EXECUTING PUSH-CHAIR-FROM-DOOR-TO-MIDDLE-ROOM)`
-
-`  (EXECUTING CLIMB-ON-CHAIR)`
-
-`  (EXECUTING DROP-BALL)`
-
-`  (EXECUTING GRASP-BANANAS)`
-
-`  (EXECUTING EAT-BANANAS))`
+```lisp
+> (GPS '(at-door on-floor has-ball hungry chair-at-door)
+      '(not-hungry))
+((START)
+  (EXECUTING PUSH-CHAIR-FROM-DOOR-TO-MIDDLE-ROOM)
+  (EXECUTING CLIMB-ON-CHAIR)
+  (EXECUTING DROP-BALL)
+  (EXECUTING GRASP-BANANAS)
+  (EXECUTING EAT-BANANAS))
+```
 
 Notice we did not need to make any changes at all to the `GPS` program.
 We just used a different set of operators.
@@ -1153,35 +912,23 @@ We will assume a particular maze, diagrammed here.
 It is much easier to define some functions to help build the operators for this domain than it would be to type in all the operators directly.
 The following code defines a set of operators for mazes in general, and for this maze in particular:
 
-`(defun make-maze-ops (pair)`
-
-`  "Make maze ops in both directions"`
-
-`  (list (make-maze-op (first pair) (second pair))`
-
-`      (make-maze-op (second pair) (first pair))))`
-
-`(defun make-maze-op (here there)`
-
-`  "Make an operator to move between two places"`
-
-`  (op '(move from ,here to ,there)`
-
-`    :preconds '((at ,here))`
-
-`    :add-list '((at .there))`
-
-`    :del-list '((at .here))))`
-
-`(defparameter *maze-ops*`
-
-`  (mappend #'make-maze-ops`
-
-`    '((1 2) (2 3) (3 4) (4 9) (9 14) (9 8) (8 7) (7 12) (12 13)`
-
-`      (12 11) (11 6) (11 16) (16 17) (17 22) (21 22) (22 23)`
-
-`      (23 18) (23 24) (24 19) (19 20) (20 15) (15 10) (10 5) (20 25))))`
+```lisp
+(defun make-maze-ops (pair)
+  "Make maze ops in both directions"
+  (list (make-maze-op (first pair) (second pair))
+      (make-maze-op (second pair) (first pair))))
+(defun make-maze-op (here there)
+  "Make an operator to move between two places"
+  (op '(move from ,here to ,there)
+    :preconds '((at ,here))
+    :add-list '((at .there))
+    :del-list '((at .here))))
+(defparameter *maze-ops*
+  (mappend #'make-maze-ops
+    '((1 2) (2 3) (3 4) (4 9) (9 14) (9 8) (8 7) (7 12) (12 13)
+      (12 11) (11 6) (11 16) (16 17) (17 22) (21 22) (22 23)
+      (23 18) (23 24) (24 19) (19 20) (20 15) (15 10) (10 5) (20 25))))
+```
 
 Note the backquote notation, ( ' ).
 It is covered in [section 3.2](B9780080571157500030.xhtml#s0020), [page 67](B9780080571157500030.xhtml#p67).
@@ -1192,43 +939,27 @@ Note that there is nothing that says the places in the maze are arranged in a fi
 
 `> (use *maze-ops*)`=> `48`
 
-`> (gps '((at 1)) '((at 25)))`
-
-`((START)`
-
-`  (EXECUTING-(MOVE-FROM-1 TO 2))`
-
-`  (EXECUTING-(MOVE-FROM-2 TO 3))`
-
-`  (EXECUTING-(MOVE-FROM-3 TO 4))`
-
-`  (EXECUTING-(MOVE-FROM-4 TO 9))`
-
-`  (EXECUTING-(MOVE-FROM-9 TO 8))`
-
-`  (EXECUTING-(MOVE-FROM-8 TO 7))`
-
-`  (EXECUTING-(MOVE-FROM-7 TO 12))`
-
-`  (EXECUTING-(MOVE-FROM-12 TO 11))`
-
-`  (EXECUTING-(MOVE-FROM-11 TO 16))`
-
-`  (EXECUTING-(MOVE-FROM-16 TO 17))`
-
-`  (EXECUTING-(MOVE-FROM-17 TO 22))`
-
-`  (EXECUTING-(MOVE-FROM-22 TO 23))`
-
-`  (EXECUTING-(MOVE-FROM-23 TO 24))`
-
-`  (EXECUTING-(MOVE-FROM-24 TO 19))`
-
-`  (EXECUTING-(MOVE-FROM-19 TO 20))`
-
-`  (EXECUTING-(MOVE-FROM-20 TO 25))`
-
-`  (AT 25))`
+```lisp
+> (gps '((at 1)) '((at 25)))
+((START)
+  (EXECUTING-(MOVE-FROM-1 TO 2))
+  (EXECUTING-(MOVE-FROM-2 TO 3))
+  (EXECUTING-(MOVE-FROM-3 TO 4))
+  (EXECUTING-(MOVE-FROM-4 TO 9))
+  (EXECUTING-(MOVE-FROM-9 TO 8))
+  (EXECUTING-(MOVE-FROM-8 TO 7))
+  (EXECUTING-(MOVE-FROM-7 TO 12))
+  (EXECUTING-(MOVE-FROM-12 TO 11))
+  (EXECUTING-(MOVE-FROM-11 TO 16))
+  (EXECUTING-(MOVE-FROM-16 TO 17))
+  (EXECUTING-(MOVE-FROM-17 TO 22))
+  (EXECUTING-(MOVE-FROM-22 TO 23))
+  (EXECUTING-(MOVE-FROM-23 TO 24))
+  (EXECUTING-(MOVE-FROM-24 TO 19))
+  (EXECUTING-(MOVE-FROM-19 TO 20))
+  (EXECUTING-(MOVE-FROM-20 TO 25))
+  (AT 25))
+```
 
 There is one subtle bug that the maze domain points out.
 We wanted GPS to return a list of the actions executed.
@@ -1243,44 +974,33 @@ The moral is that when a programmer uses puns-saying what's convenient instead o
 What we really want to do is not to remove atoms but to find all elements that denote actions.
 The code below says what we mean:
 
-`(defun GPS (state goals &optional (*ops* *ops*))`
-
-`  "General Problem Solver: from state, achieve goals using *ops*."`
-
-`  (find-all-if #'action-p`
-
-`        (achieve-all (cons '(start) state) goals nil)))`
-
-`(defun action-p (x)`
-
-`  "Is x something that is (start) or (executing ...)?"`
-
-`  (or (equal x '(start)) (executing-p x)))`
+```lisp
+(defun GPS (state goals &optional (*ops* *ops*))
+  "General Problem Solver: from state, achieve goals using *ops*."
+  (find-all-if #'action-p
+        (achieve-all (cons '(start) state) goals nil)))
+(defun action-p (x)
+  "Is x something that is (start) or (executing ...)?"
+  (or (equal x '(start)) (executing-p x)))
+```
 
 The domain of maze solving also points out an advantage of version 2: that it returns a representation of the actions taken rather than just printing them out.
 The reason this is an advantage is that we may want to use the results for something, rather than just look at them.
 Suppose we wanted a function that gives us a path through a maze as a list of locations to visit in turn.
 We could do this by calling GPS as a subfunction and then manipulating the results:
 
-`(defun find-path (start end)`
-
-`  "Search a maze for a path from start to end."`
-
-`  (let ((results (GPS '((at .start)) '((at .end)))))`
-
-`    (unless (null results)`
-
-`      (cons start (mapcar #'destination`
-
-`              (remove '(start) results`
-
-`                  :itest #'equal))))))`
-
-`(defun destination (action)`
-
-`  "Find the Y in (executing (move from X to Y))"`
-
-`  (fifth (second action)))`
+```lisp
+(defun find-path (start end)
+  "Search a maze for a path from start to end."
+  (let ((results (GPS '((at .start)) '((at .end)))))
+    (unless (null results)
+      (cons start (mapcar #'destination
+              (remove '(start) results
+                  :itest #'equal))))))
+(defun destination (action)
+  "Find the Y in (executing (move from X to Y))"
+  (fifth (second action)))
+```
 
 The function `find-path` calls GPS to get the `results`.
 If this is `nil`, there is no answer, but if it is not, then take the `rest` of `results` (in other words, ignore the `(START)` part).
@@ -1290,7 +1010,9 @@ Pick out the destination, `*y*,` from each `(EXECUTING (MOVE FROM x TO y))` form
 
 `> (find-path 1 25)`=>
 
-`(1 2 3 4 9 8 7 12 11 16 17 22 23 24 19 20 25)`
+```lisp
+(1 2 3 4 9 8 7 12 11 16 17 22 23 24 19 20 25)
+```
 
 `> (find-path 1 1)`=> `(1)`
 
@@ -1307,47 +1029,29 @@ We will assume that each block can have only one other block directly on top of 
 The only action that can be taken in this world is to move a single block that has nothing on top of it either to the top of another block or onto the table that represents the block world.
 We will create an operator for each possible block move.
 
-`(defun make-block-ops (blocks)`
-
-`  (let ((ops nil))`
-
-`    (dolist (a blocks)`
-
-`      (dolist (b blocks)`
-
-`        (unless (equal a b)`
-
-`          (dolist (c blocks)`
-
-`            (unless (or (equal c a) (equal c b))`
-
-`              (push (move-op abc) ops)))`
-
-`          (push (move-op a 'table b) ops)`
-
-`          (push (move-op a b 'table) ops))))`
-
-`    ops))`
-
-`(defun move-op (a b c)`
-
-`  "Make an operator to move A from B to C."`
-
-`  (op '(move ,a from ,b to ,c)`
-
-`      :preconds '((space on ,a) (space on ,c) (,a on ,b))`
-
-`      :add-list (move-ons abc)`
-
-`      :del-list (move-ons a c b)))`
-
-`(defun move-ons (a b c)`
-
-`  (if (eq b 'table)`
-
-`      '((,a on ,c))`
-
-`      '((.a on ,c) (space on ,b))))`
+```lisp
+(defun make-block-ops (blocks)
+  (let ((ops nil))
+    (dolist (a blocks)
+      (dolist (b blocks)
+        (unless (equal a b)
+          (dolist (c blocks)
+            (unless (or (equal c a) (equal c b))
+              (push (move-op abc) ops)))
+          (push (move-op a 'table b) ops)
+          (push (move-op a b 'table) ops))))
+    ops))
+(defun move-op (a b c)
+  "Make an operator to move A from B to C."
+  (op '(move ,a from ,b to ,c)
+      :preconds '((space on ,a) (space on ,c) (,a on ,b))
+      :add-list (move-ons abc)
+      :del-list (move-ons a c b)))
+(defun move-ons (a b c)
+  (if (eq b 'table)
+      '((,a on ,c))
+      '((.a on ,c) (space on ,b))))
+```
 
 Now we try these operators out on some problems.
 The simplest possible problem is stacking one block on another:
@@ -1356,15 +1060,13 @@ The simplest possible problem is stacking one block on another:
 
 `> (use (make-block-ops '(a b)))`=> `4`
 
-`> (gps '((a on table) (b on table) (space on a) (space on b)`
-
-`      (space on table))`
-
-`    '((a on b) (b on table)))`
-
-`((START)`
-
-`  (EXECUTING (MOVE A FROM TABLE TO B)))`
+```lisp
+> (gps '((a on table) (b on table) (space on a) (space on b)
+      (space on table))
+    '((a on b) (b on table)))
+((START)
+  (EXECUTING (MOVE A FROM TABLE TO B)))
+```
 
 Here is a slightly more complex problem: inverting a stack of two blocks.
 This time we show the debugging output.
@@ -1373,37 +1075,24 @@ This time we show the debugging output.
 
 `> (debug :gps)`=> `(:GPS)`
 
-`> (gps '((a on b) (b on table) (space on a) (space on table))`
-
-`      '((b on a)))`
-
-`Goal: (B ON A)`
-
-`Consider: (MOVE B FROM TABLE TO A)`
-
-`  Goal: (SPACE ON B)`
-
-`  Consider: (MOVE A FROM B TO TABLE)`
-
-`    Goal: (SPACE ON A)`
-
-`    Goal: (SPACE ON TABLE)`
-
-`    Goal: (A ON B)`
-
-`  Action: (MOVE A FROM B TO TABLE)`
-
-`  Goal: (SPACE ON A)`
-
-`  Goal: (B ON TABLE)`
-
-`Action: (MOVE B FROM TABLE TO A)`
-
-`((START)`
-
-`  (EXECUTING (MOVE A FROM B TO TABLE))`
-
-`  (EXECUTING (MOVE B FROM TABLE TO A)))`
+```lisp
+> (gps '((a on b) (b on table) (space on a) (space on table))
+      '((b on a)))
+Goal: (B ON A)
+Consider: (MOVE B FROM TABLE TO A)
+  Goal: (SPACE ON B)
+  Consider: (MOVE A FROM B TO TABLE)
+    Goal: (SPACE ON A)
+    Goal: (SPACE ON TABLE)
+    Goal: (A ON B)
+  Action: (MOVE A FROM B TO TABLE)
+  Goal: (SPACE ON A)
+  Goal: (B ON TABLE)
+Action: (MOVE B FROM TABLE TO A)
+((START)
+  (EXECUTING (MOVE A FROM B TO TABLE))
+  (EXECUTING (MOVE B FROM TABLE TO A)))
+```
 
 `> (undebug)`=> `NIL`
 
@@ -1413,25 +1102,18 @@ In the blocks world, we have:
 
 ![u04-04-9780080571157](images/B9780080571157500042/u04-04-9780080571157.jpg)     
 
-`> (use (make-block-ops '(a b c))) 18`
-
-`> (gps '((a on b) (b on c) (c on table) (space on a) (space on table))`
-
-`      '((b on a) (c on b)))`
-
-`((START)`
-
-`  (EXECUTING (MOVE A FROM B TO TABLE))`
-
-`  (EXECUTING (MOVE B FROM C TO A))`
-
-`  (EXECUTING (MOVE C FROM TABLE TO B)))`
-
-`> (gps '((a on b) (b on c) (c on table) (space on a) (space on table))`
-
-`      '((c on b) (b on a)))`
-
-`NIL`
+```lisp
+> (use (make-block-ops '(a b c))) 18
+> (gps '((a on b) (b on c) (c on table) (space on a) (space on table))
+      '((b on a) (c on b)))
+((START)
+  (EXECUTING (MOVE A FROM B TO TABLE))
+  (EXECUTING (MOVE B FROM C TO A))
+  (EXECUTING (MOVE C FROM TABLE TO B)))
+> (gps '((a on b) (b on c) (c on table) (space on a) (space on table))
+      '((c on b) (b on a)))
+NIL
+```
 
 In the first case, the tower was built by putting B on A first, and then C on B.
 In the second case, the program gets C on B first, but clobbers that goal while getting B on A.
@@ -1439,39 +1121,25 @@ The "prerequisite clobbers sibling goal" situation is recognized, but the progra
 One thing we could do is try to vary the order of the conjunct goals.
 That is, we could change `achieve-all` as follows:
 
-`(defun achieve-all (state goals goal-stack)`
-
-`  "Achieve each goal, trying several orderings."`
-
-`  (some #'(lambda (goals) (achieve-each state goals goal-stack))`
-
-`      (orderings goals)))`
-
-`(defun achieve-each (state goals goal-stack)`
-
-`  "Achieve each goal, and make sure they still hold at the end."`
-
-`  (let ((current-state state))`
-
-`    (if (and (every #'(lambda (g)`
-
-`            (setf current-state`
-
-`              (achieve current-state g goal-stack)))`
-
-`          goals)`
-
-`        (subsetp goals current-state :test #'equal))`
-
-`      current-state)))`
-
-`(defun orderings (l)`
-
-`  (if (> (length l) l)`
-
-`      (list l (reverse l))`
-
-`      (list l)))`
+```lisp
+(defun achieve-all (state goals goal-stack)
+  "Achieve each goal, trying several orderings."
+  (some #'(lambda (goals) (achieve-each state goals goal-stack))
+      (orderings goals)))
+(defun achieve-each (state goals goal-stack)
+  "Achieve each goal, and make sure they still hold at the end."
+  (let ((current-state state))
+    (if (and (every #'(lambda (g)
+            (setf current-state
+              (achieve current-state g goal-stack)))
+          goals)
+        (subsetp goals current-state :test #'equal))
+      current-state)))
+(defun orderings (l)
+  (if (> (length l) l)
+      (list l (reverse l))
+      (list l)))
+```
 
 Now we can represent the goal either way, and we'll still get an answer.
 Notice that we only consider two orderings: the order given and the reversed order.
@@ -1485,17 +1153,14 @@ Consider the simple task of getting block C on the table in the following diagra
 
 ![u04-05-9780080571157](images/B9780080571157500042/u04-05-9780080571157.jpg)     
 
-`> (gps '((c on a) (a on table) (b on table)`
-
-`      (space on c) (space on b) (space on table))`
-
-`    '((c on table)))`
-
-`((START)`
-
-`  (EXECUTING (MOVE C FROM A TO B))`
-
-`  (EXECUTING (MOVE C FROM B TO TABLE)))`
+```lisp
+> (gps '((c on a) (a on table) (b on table)
+      (space on c) (space on b) (space on table))
+    '((c on table)))
+((START)
+  (EXECUTING (MOVE C FROM A TO B))
+  (EXECUTING (MOVE C FROM B TO TABLE)))
+```
 
 The solution is correct, but there is an easier solution that moves C directly to the table.
 The simpler solution was not found because of an accident: it happens that `make-block-ops` defines the operators so that moving C from B to the table comes before moving C from A to the table.
@@ -1505,21 +1170,16 @@ The following example takes four steps when it could be done in two:
 
 ![u04-06-9780080571157](images/B9780080571157500042/u04-06-9780080571157.jpg)     
 
-`> (gps '((c on a) (a on table) (b on table)`
-
-`      (space on c) (space on b) (space on table))`
-
-`    '((c on table) (a on b)))`
-
-`((START)`
-
-`  (EXECUTING (MOVE C FROM A TO B))`
-
-`  (EXECUTING (MOVE C FROM B TO TABLE))`
-
-`  (EXECUTING (MOVE A FROM TABLE TO C))`
-
-`  (EXECUTING (MOVE A FROM C TO B)))`
+```lisp
+> (gps '((c on a) (a on table) (b on table)
+      (space on c) (space on b) (space on table))
+    '((c on table) (a on b)))
+((START)
+  (EXECUTING (MOVE C FROM A TO B))
+  (EXECUTING (MOVE C FROM B TO TABLE))
+  (EXECUTING (MOVE A FROM TABLE TO C))
+  (EXECUTING (MOVE A FROM C TO B)))
+```
 
 How could we find shorter solutions?
 One way would be to do a full-fledged search: shorter solutions are tried first, temporarily abandoned when something else looks more promising, and then reconsidered later on.
@@ -1528,79 +1188,54 @@ A less drastic solution is to do a limited rearrangement of the order in which o
 In particular, this means that operators with all preconditions filled would always be tried before other operators.
 To implement this approach, we change `achieve`:
 
-`(defun achieve (state goal goal-stack)`
-
-`  "A goal is achieved if it already holds,`
-
-`  or if there is an appropriate op for it that is applicable."`
-
-`  (dbg-indent :gps (length goal-stack) "Goal:~a" goal)`
-
-`  (cond ((member-equal goal state) state)`
-
-`      ((member-equal goal goal-stack) nil)`
-
-`      (t (some #'(lambda (op) (apply-op state goal op goal-stack))`
-
-`          (appropriate-ops goal state))))) ;***`
-
-`(defun appropriate-ops (goal state)`
-
-`  "Return a list of appropriate operators,`
-
-`  sorted by the number of unfulfilled preconditions."`
-
-`  (sort (copy-list (find-all goal *ops* :test #'appropriate-p)) #'<`
-
-`      :key #'(lambda (op)`
-
-`          (count-if #'(lambda (precond)`
-
-`              (not (member-equal precond state)))`
-
-`            (op-preconds op)))))`
+```lisp
+(defun achieve (state goal goal-stack)
+  "A goal is achieved if it already holds,
+  or if there is an appropriate op for it that is applicable."
+  (dbg-indent :gps (length goal-stack) "Goal:~a" goal)
+  (cond ((member-equal goal state) state)
+      ((member-equal goal goal-stack) nil)
+      (t (some #'(lambda (op) (apply-op state goal op goal-stack))
+          (appropriate-ops goal state))))) ;***
+(defun appropriate-ops (goal state)
+  "Return a list of appropriate operators,
+  sorted by the number of unfulfilled preconditions."
+  (sort (copy-list (find-all goal *ops* :test #'appropriate-p)) #'<
+      :key #'(lambda (op)
+          (count-if #'(lambda (precond)
+              (not (member-equal precond state)))
+            (op-preconds op)))))
+```
 
 Now we get the solutions we wanted:
 
 ![u04-07-9780080571157](images/B9780080571157500042/u04-07-9780080571157.jpg)     
 
-`> (gps '((c on a) (a on table) (b on table)`
-
-`      (space on c) (space on b) (space on table))`
-
-`    '((c on table) (a on b)))`
-
-`((START)`
-
-`  (EXECUTING (MOVE C FROM A TO TABLE))`
-
-`  (EXECUTING (MOVE A FROM TABLE TO B)))`
+```lisp
+> (gps '((c on a) (a on table) (b on table)
+      (space on c) (space on b) (space on table))
+    '((c on table) (a on b)))
+((START)
+  (EXECUTING (MOVE C FROM A TO TABLE))
+  (EXECUTING (MOVE A FROM TABLE TO B)))
+```
 
 ![u04-08-9780080571157](images/B9780080571157500042/u04-08-9780080571157.jpg)     
 
-`(gps '((a on b) (b on c) (c on table) (space on a) (space on table))`
-
-`      '((b on a) (c on b)))`
-
-`((START)`
-
-`  (EXECUTING (MOVE A FROM B TO TABLE))`
-
-`  (EXECUTING (MOVE B FROM C TO A))`
-
-`  (EXECUTING (MOVE C FROM TABLE TO B)))`
-
-`> (gps '((a on b) (b on c) (c on table) (space on a) (space on table))`
-
-`      '((c on b) (b on a)))`
-
-`((START)`
-
-`  (EXECUTING (MOVE A FROM B TO TABLE))`
-
-`  (EXECUTING (MOVE B FROM C TO A))`
-
-`  (EXECUTING (MOVE C FROM TABLE TO B)))`
+```lisp
+(gps '((a on b) (b on c) (c on table) (space on a) (space on table))
+      '((b on a) (c on b)))
+((START)
+  (EXECUTING (MOVE A FROM B TO TABLE))
+  (EXECUTING (MOVE B FROM C TO A))
+  (EXECUTING (MOVE C FROM TABLE TO B)))
+> (gps '((a on b) (b on c) (c on table) (space on a) (space on table))
+      '((c on b) (b on a)))
+((START)
+  (EXECUTING (MOVE A FROM B TO TABLE))
+  (EXECUTING (MOVE B FROM C TO A))
+  (EXECUTING (MOVE C FROM TABLE TO B)))
+```
 
 ### The Sussman Anomaly
 {:#s0085}
@@ -1613,13 +1248,12 @@ Consider:
 
 This doesn't look too hard, so let's see how our GPS handles it:
 
-`> (setf start '((c on a) (a on table) (b on table) (space on c)`
-
-`        (space on b) (space on table)))`
-
-`((C ON A) (A ON TABLE) (B ON TABLE) (SPACE ON C)`
-
-`  (SPACE ON B) (SPACE ON TABLE))`
+```lisp
+> (setf start '((c on a) (a on table) (b on table) (space on c)
+        (space on b) (space on table)))
+((C ON A) (A ON TABLE) (B ON TABLE) (SPACE ON C)
+  (SPACE ON B) (SPACE ON TABLE))
+```
 
 `> (gps start '((a on b) (b on c)))`=> `NIL`
 
@@ -1648,49 +1282,34 @@ This prevents GPS from taking an ill-advised action, but we shall see that even 
 
 To see the problem, add another operator to the front of the `*school-ops*` list and turn the debugging output back on:
 
-`(use (push (op 'taxi-son-to-school`
-
-`        :preconds '(son-at-home have-money)`
-
-`        :add-list '(son-at-school)`
-
-`        :del-list '(son-at-home have-money))`
-
-`      *school-ops*))`
-
-`(debug :gps)`
+```lisp
+(use (push (op 'taxi-son-to-school
+        :preconds '(son-at-home have-money)
+        :add-list '(son-at-school)
+        :del-list '(son-at-home have-money))
+      *school-ops*))
+(debug :gps)
+```
 
 Now, consider the problem of getting the child to school without using any money:
 
-`> (gps '(son-at-home have-money car-works)`
-
-`      '(son-at-school have-money))`
-
-`Goal: SON-AT-SCHOOL`
-
-`Consider: TAXI-SON-TO-SCHOOL`
-
-`  Goal: SON-AT-HOME`
-
-`  Goal: HAVE-MONEY`
-
-`Action: TAXI-SON-TO-SCHOOL`
-
-`Goal: HAVE-MONEY`
-
-`Goal: HAVE-MONEY`
-
-`Goal: SON-AT-SCHOOL`
-
-`Consider: TAXI-SON-TO-SCHOOL`
-
-`  Goal: SON-AT-HOME`
-
-`  Goal: HAVE-MONEY`
-
-`Action: TAXI-SON-TO-SCHOOL`
-
-`NIL`
+```lisp
+> (gps '(son-at-home have-money car-works)
+      '(son-at-school have-money))
+Goal: SON-AT-SCHOOL
+Consider: TAXI-SON-TO-SCHOOL
+  Goal: SON-AT-HOME
+  Goal: HAVE-MONEY
+Action: TAXI-SON-TO-SCHOOL
+Goal: HAVE-MONEY
+Goal: HAVE-MONEY
+Goal: SON-AT-SCHOOL
+Consider: TAXI-SON-TO-SCHOOL
+  Goal: SON-AT-HOME
+  Goal: HAVE-MONEY
+Action: TAXI-SON-TO-SCHOOL
+NIL
+```
 
 The first five lines of output successfully solve the `son-at-school` goal with the `TAXI-SON-TO-SCHOOL` action.
 The next line shows an unsuccessful attempt to solve the `have-money` goal.
@@ -1726,13 +1345,12 @@ It would be a lot more economical, in the maze domain, to have one operator that
 Similarly, we have defined an operator where the monkey pushes the chair from the door to the middle of the room, but it would be better to have an operator where the monkey can push the chair from wherever it is to any other nearby location, or better yet, an operator to push any "pushable" object from one location to a nearby one, as long as there is no intervening obstacle.
 The conclusion is that we would like to have variables in the operators, so we could say something like:
 
-`(op '(push X from A to B)`
-
-`  :preconds '((monkey at A) (X at A) (pushable X) (path A B))`
-
-`  :add-list '((monkey at B) (X at B))`
-
-`  :del-list '((monkey at A) (X at A)))`
+```lisp
+(op '(push X from A to B)
+  :preconds '((monkey at A) (X at A) (pushable X) (path A B))
+  :add-list '((monkey at B) (X at B))
+  :del-list '((monkey at A) (X at A)))
+```
 
 Often we want to characterize a state in terms of something more abstract than a list of conditions.
 For example, in solving a chess problem, the goal is to have the opponent in checkmate, a situation that cannot be economically described in terms of primitives like `(black king on A 4)`, so we need to be able to state some kind of constraint on the goal state, rather than just listing its components.
@@ -1884,46 +1502,33 @@ Your program will be more efficient if, like Chapman's Tweak !!!(span) {:.smallc
 **Answer 4.1** In this version, the format string `""&"V@T"?`" breaks down as follows: means go to a fresh line; `""V@T"` means insert spaces `(@T)` but use the next argument `(V)` to get the number of spaces.
 The `""?"` is the indirection operator: use the next argument as a format string, and the argument following that as the list of arguments for the format string.
 
-`(defun dbg-indent (id indent format-string &rest args)`
-
-`  "Print indented debugging info if (DEBUG ID) has been specified."`
-
-`  (when (member id *dbg-ids*)`
-
-`    (format *debug-io* ""&"V@T"?" (* 2 indent) format-string args)))`
+```lisp
+(defun dbg-indent (id indent format-string &rest args)
+  "Print indented debugging info if (DEBUG ID) has been specified."
+  (when (member id *dbg-ids*)
+    (format *debug-io* ""&"V@T"?" (* 2 indent) format-string args)))
+```
 
 **Answer 4.2** Here is one solution.
 The sophisticated Lisp programmer should also see the exercise on [page 680](B9780080571157500194.xhtml#p680).
 
-`(defun permutations (bag)`
-
-`  "Return a list of ail the permutations of the input."`
-
-`  ;; If the input is nil, there is only one permutation:`
-
-`  ;; nil itself`
-
-`  (if (null bag)`
-
-`      '(())`
-
-`      ;; Otherwise, take an element, e, out of the bag`
-
-`      ;; Generate ail permutations of the remaining elements,`
-
-`      ;; And add e to the front of each of these.`
-
-`      ;; Do this for ail possible e to generate ail permutations,`
-
-`      (mapcan #'(lambda (e)`
-
-`          (mapcar #'(lambda (p) (cons e p))`
-
-`            (permutations`
-
-`              (remove e bag :count 1 :test #'eq))))`
-
-`        bag)))`
+```lisp
+(defun permutations (bag)
+  "Return a list of ail the permutations of the input."
+  ;; If the input is nil, there is only one permutation:
+  ;; nil itself
+  (if (null bag)
+      '(())
+      ;; Otherwise, take an element, e, out of the bag
+      ;; Generate ail permutations of the remaining elements,
+      ;; And add e to the front of each of these.
+      ;; Do this for ail possible e to generate ail permutations,
+      (mapcan #'(lambda (e)
+          (mapcar #'(lambda (p) (cons e p))
+            (permutations
+              (remove e bag :count 1 :test #'eq))))
+        bag)))
+```
 
 ----------------------
 
