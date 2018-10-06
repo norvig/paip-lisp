@@ -7,10 +7,12 @@ debug = false
 
 def code?(str)
   return false unless str =~ /`/
-  return false if str == '```'
-  return true if str[0] == '`' && str[-1] == '`'
+  return false unless str[0] == '`' && str[-1] == '`'
 
-  false
+  # let's make sure there aren't more ` in the middle
+  return false if str[1 .. -2] =~ /`/
+
+  true
 end
 
 def convert_code_line(str)
@@ -55,6 +57,7 @@ while (line = lines.shift)
   end
 
   convert_code_block(code_block)
+  puts
 
 end
 
