@@ -7,6 +7,7 @@ debug = false
 
 def code?(str)
   return false unless str =~ /`/
+  return false if str == '```'
   return true if str[0] == '`' && str[-1] == '`'
 
   false
@@ -17,14 +18,11 @@ def convert_code_line(str)
 end
 
 def convert_code_block(arr)
-  arr.each_with_index do |line, idx|
-    arr[idx] = convert_code_line(line)
+  puts '```lisp'
+  arr.each do |line|
+    puts convert_code_line(line)
   end
-
-  arr.unshift '```lisp'
-  arr << '```'
-
-  arr
+  puts '```'
 end
 
 lines = []
@@ -35,39 +33,28 @@ while (line = ARGF.gets)
 end
 
 warn 'parsing file...'
-index = 0
-while index < lines.length
+
+while (line = lines.shift)
   STDERR.printf '.'
-  line = lines[index]
   unless code?(line)
     puts line unless debug
-    # print line?
-    # we might just modify in place
-    index += 1
     next
   end
 
-  code_block = []
+  code_block = [line]
 
-  while index < lines.length
-    line = lines[index]
-    if line == ''
-      index += 1
-      next
-    end
+  while (line = lines.shift)
+    next if line == ''
+
     if code?(line)
       code_block << line
-      index += 1
     else
-      index -= 1
+      lines.unshift line
       break
     end
   end
 
-  block = convert_code_block(code_block)
-
-  # change in place? or just print?
-  puts block.join "\n"
+  convert_code_block(code_block)
 
 end
 
