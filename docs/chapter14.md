@@ -79,7 +79,7 @@ Here is a statement in a typical slot-filler frame language:
 
 This is equivalent to the logical formula:
 
-&exist;p: person(p) ![images](images/B9780080571157500145/cap.png) name(p,Jan) ![images](images/B9780080571157500145/cap.png) age(p,32)
+&exist;p: person(p) &and; name(p,Jan) &and; age(p,32)
 
 The frame notation has the advantage of being easier to read, in some people's opinion.
 However, the frame notation is less expressive.
@@ -108,7 +108,7 @@ This is easy to show: assuming the computer's memory has *n* bits, and the equat
 
 b0=0&and;b1=0&and;b2=1...&and;bn=0
 
-![si1_e](images/si1_e.gif)
+![si1_e](images/chapter14/si1_e.gif)
 
 Once we can represent a state of the computer, it becomes possible to represent any computer program in predicate calculus as a set of axioms that map one state onto another.
 Thus, predicate calculus is shown to be a *sufficient* language for representing anything that goes on inside a computer-it can be used as a tool for analyzing any program from the outside.
@@ -121,7 +121,7 @@ For example, we may want to manipulate numbers inside the computer by using the 
 
 x=y=>yxy=x
 
-![si2_e](images/B9780080571157500145/si2_e.gif)
+![si2_e](images/chapter14/si2_e.gif)
 
 Predicate calculus also serves another purpose: as a tool that can be used *by* a program rather than *on* a program.
 All programs need to manipulate data, and some programs will manipulate data that is considered to be in predicate calculus notation.
@@ -236,7 +236,7 @@ His problem concerned three colored blocks, but we will update it to deal with t
 Suppose that a certain Eastern European country, *E*, has just decided if it will remain under communist rule or become a democracy, but we do not know the outcome of the decision.
 *E* is situated between the democracy *D* and the communist country *C*:
 
-![u14-02-9780080571157](images/B9780080571157500145/u14-02-9780080571157.jpg)     
+![u14-02](images/chapter14/u14-02.jpg)
 
 The question is: Is there a communist country next to a democracy?
 Moore points out that the answer is "yes," but discovering this requires reasoning by cases.
@@ -556,10 +556,11 @@ To create the index, we essentially superimpose the list structure of all the ke
 At each position in the tree, we create an index of the keys that have either an atom or a variable at that position.
 [Figure 14.1](#f0010) shows the discrimination tree for the six keys.
 
-![f14-01-9780080571157](images/B9780080571157500145/f14-01-9780080571157.jpg)     
-Figure 14.1
-!!!(span) {:.fignum}
-Discrimination Tree with Six Keys
+| []() |
+|---|
+| ![f14-01](images/chapter14/f14-01.jpg) |
+| Figure 14.1: Discrimination Tree with Six Keys |
+
 Consider the query `(p ?y c)`.
 Either the `p` or the `c` could be used as an index.
 The `p` in the predicate position retrieves all six keys.
