@@ -39,7 +39,7 @@ We will be able to develop a simplified version that is not quite a champion but
 {:#s0010}
 {:.h1hd}
 
-Othello is played on a 8-by-8 board, which is initially set up with four pieces in the center, as shown in [figure  18.1](#f0010).
+Othello is played on a 8-by-8 board, which is initially set up with four pieces in the center, as shown in [figure 18.1](#f0010).
 The two players, black and white, alternate turns, with black playing first.
 On each turn, a player places a single piece of his own color on the board.
 No piece can be moved once it is placed, but subsequent moves may flip a piece from one color to another.
@@ -47,20 +47,21 @@ Each piece must be placed so that it *brackets* one or more opponent pieces.
 That is, when black plays a piece there must be a line (horizontal, vertical, or diagonal) that goes through the piece just played, then through one or more white pieces, and then to another black piece.
 The intervening white pieces are flipped over to black.
 If there are bracketed white pieces in more than one direction, they are all flipped.
-[Figure  18.2 (a)](#f0015) indicates the legal moves for black with small dots.
-[Figure  18.2 (b)](#f0015) shows the position after black moves to square b4.
+[Figure 18.2 (a)](#f0015) indicates the legal moves for black with small dots.
+[Figure 18.2 (b)](#f0015) shows the position after black moves to square b4.
 Players alternate turns, except that a player who has no legal moves must pass.
 When neither player has any moves, the game is over, and the player with the most pieces on the board wins.
 This usually happens because there are no empty squares left, but it occasionally happens earlier in the game.
 
-![f18-01-9780080571157](images/B9780080571157500182/f18-01-9780080571157.jpg)     
-Figure  18.1
-!!!(span) {:.fignum}
-The Othello Board
-![f18-02-9780080571157](images/B9780080571157500182/f18-02-9780080571157.jpg)     
-Figure  18.2
-!!!(span) {:.fignum}
-Legal Othello Moves
+| []() |
+|---|
+| ![f18-01](images/chapter18/f18-01.jpg) |
+| Figure 18.1: The Othello Board |
+
+| []() |
+|---|
+| ![f18-02](images/chapter18/f18-02.jpg) |
+| Figure 18.2: Legal Othello Moves |
 
 ## 18.2 Representation Choices
 {:#s0015}
@@ -156,13 +157,16 @@ Here's the new 100-element board:
 The horizontal direction is now &plusmn;1, vertical is &plusmn;10, and the diagonals are &plusmn;9 and &plusmn;11.
 We'll tentatively adopt this latest representation, but leave open the possibility of changing to another format.
 With this much decided, we are ready to begin.
-[Figure  18.3](#f0020) is the glossary for the complete program.
+[Figure 18.3](#f0020) is the glossary for the complete program.
 A glossary for a second version of the program is on [page 623](#p623).
 
-![f18-03-9780080571157](images/B9780080571157500182/f18-03-9780080571157.jpg)     
-Figure  18.3
-!!!(span) {:.fignum}
-Glossary for the Othello Program
+| []() |
+|---|
+| ![f18-03](images/chapter18/f18-03.jpg) |
+| Figure 18.3: Glossary for the Othello Program |
+
+*(ed: this should be a markdown table)*
+
 What follows is the code for directions and pieces.
 We explicitly define the type `piece` to be a number from `empty` to `outer` (0 to 3), and define the function `name-of` to map from a piece number to a character: a dot for empty, `@` for black, 0 for white, and a question mark (which should never be printed) for `outer`.
 
@@ -482,14 +486,15 @@ Using this knowledge, a clever player can temporarily sacrifice pieces to obtain
 We can approximate some of this reasoning with the `weighted-squares` evaluation function.
 Like `count-difference`, it adds up all the player's pieces and subtracts the opponents, but each piece is weighted according to the square it occupies.
 Edge squares are weighted highly, corner squares higher still, and squares adjacent to the corners and edges have negative weights, because occupying these squares often gives the opponent a means of capturing the desirable square.
-[Figure  18.4](#f0025) shows the standard nomenclature for edge squares: X, A, B, and C.
+[Figure 18.4](#f0025) shows the standard nomenclature for edge squares: X, A, B, and C.
 In general, X and C squares are to be avoided, because taking them gives the opponent a chance to take the corner.
 The `weighted-squares` evaluation function reflects this.
 
-![f18-04-9780080571157](images/B9780080571157500182/f18-04-9780080571157.jpg)     
-Figure  18.4
-!!!(span) {:.fignum}
-Names for Edge Squares
+| []() |
+|---|
+| ![f18-04](images/chapter18/f18-04.jpg) |
+| Figure 18.4: Names for Edge Squares |
+
 ```lisp
 (defparameter *weights*
     '#(0      0      0    0    0    0    0      0      0 0
@@ -536,7 +541,7 @@ By searching through several levels of moves, we can steer away from potential d
 
 Another way to look at the `maximizer` function is as a search function that searches only one level, or *ply*, deep:
 
-![u18-01-9780080571157](images/B9780080571157500182/u18-01-9780080571157.jpg)     
+![u18-01](images/chapter18/u18-01.jpg)
 
 The top of the tree is the current board position, and the squares below that indicate possible moves.
 The `maximizer` function evaluates each of these and picks the best move, which is underlined in the diagram.
@@ -545,7 +550,7 @@ Now let's see how a 3-ply search might go.
 The first step is to apply `maximizer` to the positions just above the bottom of the tree.
 Suppose we get the following values:
 
-![u18-02-9780080571157](images/B9780080571157500182/u18-02-9780080571157.jpg)     
+![u18-02](images/chapter18/u18-02.jpg)
 
 Each position is shown as having two possible legal moves, which is unrealistic but makes the diagram fit on the page.
 In a real game, five to ten legal moves per position is typical.
@@ -556,11 +561,11 @@ Going up a level, it is the opponent's turn to move.
 We can assume the opponent will choose the move that results in the minimal value to us, which would be the maximal value to the opponent.
 Thus, the opponent's choices would be the 10- and 9-valued positions, avoiding the 20- and 23-valued positions.
 
-![u18-03-9780080571157](images/B9780080571157500182/u18-03-9780080571157.jpg)     
+![u18-03](images/chapter18/u18-03.jpg)
 
 Now it is our turn to move again, so we apply `maximizer` once again to get the final value of the top-level position:
 
-![u18-04-9780080571157](images/B9780080571157500182/u18-04-9780080571157.jpg)     
+![u18-04](images/chapter18/u18-04.jpg)
 
 If the opponent plays as expected, we will always follow the left branch of the tree and end up at the position with value 10.
 If the opponent plays otherwise, we will end up at a position with a better value.
@@ -690,7 +695,7 @@ It looks at every line of play, including many improbable ones.
 Fortunately, there is a way to find the optimal line of play without looking at every possible position.
 Let's go back to our familiar search tree:
 
-![u18-05-9780080571157](images/B9780080571157500182/u18-05-9780080571157.jpg)     
+![u18-05](images/chapter18/u18-05.jpg)
 
 Here we have marked certain positions with question marks.
 The idea is that the whole search tree evaluates to 10 regardless of the value of the positions labeled ?*i*.
@@ -1049,10 +1054,13 @@ While we're at it, we'll also print the list of possible moves:
     (h8->88 (read)))
 ```
 
-![f18-05-9780080571157](images/B9780080571157500182/f18-05-9780080571157.jpg)     
-Figure  18.5
-!!!(span) {:.fignum}
-Glossary for the Tournament Version of Othello
+| []() |
+|---|
+| ![f18-05](images/chapter18/f18-05.jpg) |
+| Figure 18.5: Glossary for the Tournament Version of Othello |
+
+*(ed: should be a markdown table)*
+
 The `othello` function needn't worry about notation, but it does need to monitor the time.
 We make up a new data structure, the clock, which is an array of integers saying how much time (in internal units) each player has left.
 For example, (`aref clock black`) is the amount of time black has left to make all his moves.
@@ -1504,8 +1512,6 @@ The table measures the number of boards investigated, the number of those boards
 | 51124 | 39806 | 193 | 45709 | 45710 | 135 | 19297 | 15064 | 69 |
 | 24743 | 18777 | 105 | 20003 | 20004 | 65 | 15627 | 11737 | 66 |
 | 1.0 | 1.0 | 1.0 | .81 | 1.07 | .62 | .63 | .63 | .63 |
-
-![t0010](images/B9780080571157500182/t0010.png)
 
 The last two lines of the table give the averages and the averages normalized to the random-ordering strategy's performance.
 The sorted-ordering strategy takes only 62% of the time of the random-ordering strategy, and the static-ordering takes 63%.
