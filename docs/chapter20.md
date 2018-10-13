@@ -643,13 +643,13 @@ Until we define our representation more carefully, there is no way to tell.
 Indeed, it seems that there is a potential problem in the representation, in that the predicate `kiss` sometimes has individuals as its arguments, and sometimes groups.
 More careful representations of "The girls kissed the girls" include the following candidates, using predicate calculus:
 
-> &forall;`x`&forall;`y x`![f0005](images/chapter20/f0005.jpg) `girls` &and; `y`![f0005](images/chapter20/f0005.jpg) `girls => kiss(x,y)`
+> &forall;`x`&forall;`y x` &isin; `girls` &and; `y` &isin; `girls => kiss(x,y)`
 
-> &forall;`x`&forall;`y x`![f0005](images/chapter20/f0005.jpg) `girls` &and; `y`&epsilon;`girls` &and; `x`&ne;`y => kiss(x,y)`
+> &forall;`x` &forall;`y x` &isin; `girls` &and; `y`&epsilon;`girls` &and; `x`&ne;`y => kiss(x,y)`
 
-> &forall;`x`&exist;`y,z x`![f0005](images/chapter20/f0005.jpg) `girls` &and; `y`![f0005](images/chapter20/f0005.jpg) `girls` &and; `z`![f0005](images/chapter20/f0005.jpg) `girls => kiss(x,y)` &and; `kiss(z,x)`
+> &forall;`x`&exist;`y,z x`&isin; `girls` &and; `y`&isin; `girls` &and; `z`&isin; `girls => kiss(x,y)` &and; `kiss(z,x)`
 
-> &forall;`x`&exist;`y x`![f0005](images/chapter20/f0005.jpg) `girls` &and; `y`![f0005](images/chapter20/f0005.jpg) `girls => kiss(x,y)`&or; `kiss(y,x)`
+> &forall;`x`&exist;`y x`&isin; `girls` &and; `y`&isin; `girls => kiss(x,y)`&or; `kiss(y,x)`
 
 The first of these says that every girl kisses every other girl.
 The second says the same thing, except that a girl need not kiss herself.
@@ -1007,23 +1007,23 @@ However, there are linguistic phenomena that require just these kinds of constra
 
 Our rule for relative clauses was a very simple one: a relative clause consists of the word "that" followed by a sentence that is missing its subject, as in "every man that loves a woman."
 Not all relative clauses follow this pattern.
-It is also possible to form a relative clause by omitting the object of the embedded sentence: "every man that a woman loves ![f0010](images/chapter20/f0010.jpg) . "
-In this sentence, the symbol ![f0010](images/chapter20/f0010.jpg) indicates a gap, which is understood as being filled by the head of the complete noun phrase, the man.
+It is also possible to form a relative clause by omitting the object of the embedded sentence: "every man that a woman loves &blank;."
+In this sentence, the symbol &blank; indicates a gap, which is understood as being filled by the head of the complete noun phrase, the man.
 This has been called a *filler-gap dependency.*
 It is also known as a *long-distance dependency,* because the gap can occur arbitrarily far from the filler.
 For example, all of the following are valid noun phrases:
 
-The person that Lee likes ![f0010](images/chapter20/f0010.jpg)
+The person that Lee likes &blank;
 
-The person that Kim thinks Lee likes ![f0010](images/chapter20/f0010.jpg)
+The person that Kim thinks Lee likes &blank;
 
-The person that Jan says Kim thinks Lee likes ![f0010](images/chapter20/f0010.jpg)
+The person that Jan says Kim thinks Lee likes &blank;
 
 In each case, the gap is filled by the head noun, the person.
 But any number of relative clauses can intervene between the head noun and the gap.
 
 The same kind of filler-gap dependency takes place in questions that begin with "who," "what," "where," and other interrogative pronouns.
-For example, we can ask a question about the subject of a sentence, as in "Who likes Lee?", or about the object, as in "Who does Kim like ![f0010](images/chapter20/f0010.jpg) ?"
+For example, we can ask a question about the subject of a sentence, as in "Who likes Lee?", or about the object, as in "Who does Kim like &blank;?"
 
 Here is a grammar that covers relative clauses with gapped subjects or objects.
 The rules for `S, VP,` and `NP` are augmented with a pair of arguments representing an accumulator for gaps.
@@ -1088,7 +1088,7 @@ Here's the complete grammar:
 
 Here are some sentence/parse pairs covered by this grammar:
 
-`Every man that`![f0010](images/chapter20/f0010.jpg) `loves a woman likes a person.`
+`Every man that` &blank; `loves a woman likes a person.`
 
 ```lisp
 (AND (ALL ?28 (AND (MAN ?28)
@@ -1102,7 +1102,7 @@ Here are some sentence/parse pairs covered by this grammar:
 
       `(AND (EXISTS ?39 (AND (PERSON ?39) T)) (LIKE ?28 ?39)))`
 
-`Every man that a woman loves`![f0010](images/chapter20/f0010.jpg) `likes a person.`
+`Every man that a woman loves` &blank; `likes a person.`
 
 ```lisp
 (AND (ALL ?37 (AND (MAN ?37)
@@ -1114,7 +1114,7 @@ Here are some sentence/parse pairs covered by this grammar:
 
       `(AND (EXISTS ?39 (AND (PERSON ?39) T)) (LIKE ?37 ?39)))`
 
-`Every man that loves a bird that`![f0010](images/chapter20/f0010.jpg) `flies likes a person.`
+`Every man that loves a bird that` &blank; `flies likes a person.`
 
 ```lisp
 (AND (ALL ?28 (AND (MAN ?28)
