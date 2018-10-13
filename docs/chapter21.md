@@ -18,16 +18,18 @@ For each category we introduce examples, analyze them linguistically, and finall
 
 As the last chapter should have made clear, analysis more often results in complication than in simplification.
 For example, starting with a simple rule like `(S --> NP VP)`, we soon find that we have to add arguments to handle agreement, semantics, and gapping information.
-[Figure  21.1](#f0010) lists the grammatical categories and their arguments.
+[Figure 21.1](#f0010) lists the grammatical categories and their arguments.
 Note that the semantic argument, `sem`, is always last, and the gap accumulators, `gap1` and `gap2`, are next-to-last whenever they occur.
 All single-letter arguments denote metavariables; for example, each noun phrase (category NP) will have a semantic interpretation, `sem`, that is a conjunction of relations involving the variable `x`.
 Similarly, the `hin modifiers` is a variable that refers to the head-the thing that is being modified.
 The other arguments and categories will be explained in turn, but it is handy to have this figure to refer back to.
 
-![f21-01-9780080571157](images/B9780080571157500212/f21-01-9780080571157.jpg)     
-Figure  21.1
-!!!(span) {:.fignum}
-Grammatical Categories and their Arguments
+| []() |
+|---|
+| ![f21-01](images/chapter21/f21-01.jpg) |
+| Figure 21.1: Grammatical Categories and their Arguments |
+
+*(ed: should be a markdown table)*
 
 ## 21.1 Noun Phrases
 {:#s0010}
@@ -67,7 +69,7 @@ Plural nouns can stand alone as noun phrases, as in "dogs," but singular nouns n
 ```
 
 Finally, a noun phrase may appear externally to a construction, in which case the noun phrase passed in by the first gap argument will be consumed, but no words from the input will be.
-An example is the ![f0005](images/B9780080571157500212/f0005.jpg) in " Whom does Kim like ![f0005](images/B9780080571157500212/f0005.jpg) ?"
+An example is the ![f0005](images/chapter21/f0005.jpg) in " Whom does Kim like ![f0005](images/chapter21/f0005.jpg) ?"
 
 ```lisp
 (rule (NP ? agr ?case ?wh ?x (gap (NP ?agr ?case ?x)) (gap nil) t)
@@ -103,7 +105,8 @@ Next is the metavariable used to refer to the head.
 The final three arguments are the two gap accumulators and the semantics, which work the same way here as we have seen before.
 Notice that the lexicon entry for each `Noun` can have a list of complements that are considered as postnoun modifiers, but there can be only adjuncts as prenoun modifiers.
 Also note that gaps can appear in the postmodifiers but not in the premodifiers.
-For example, we can have "What is Kevin the former mayor of ![f0005](images/B9780080571157500212/f0005.jpg) `?`," where the answer might be "Boston." But even though we can construct a noun phrase like "the education president," where "education" is a prenoun modifier of "president," we cannot construct "* What is George the ![f0005](images/B9780080571157500212/f0005.jpg) president?," intending that the answer be "education."
+For example, we can have "What is Kevin the former mayor of ![f0005](images/chapter21/f0005.jpg) `?`," where the answer might be "Boston."
+But even though we can construct a noun phrase like "the education president," where "education" is a prenoun modifier of "president," we cannot construct "* What is George the ![f0005](images/chapter21/f0005.jpg) president?," intending that the answer be "education."
 
 There are four cases for modification.
 First, a complement is a kind of modifier.
@@ -171,7 +174,8 @@ Prepositional phrases can be adjuncts for nouns or verbs, as in "man in the midd
       (PP ?prep ?prep ?wh ?np ?x ?g1 ?g2 ?sem))
 ```
 
-Here are the rules for prepositional phrases, which can be either a preposition followed by a noun phrase or can be gapped, as in "to whom are you speaking ![f0005](images/B9780080571157500212/f0005.jpg) ?" The object of a preposition is always in the objective case: "with him" not "*with he."
+Here are the rules for prepositional phrases, which can be either a preposition followed by a noun phrase or can be gapped, as in "to whom are you speaking ![f0005](images/chapter21/f0005.jpg) ?"
+The object of a preposition is always in the objective case: "with him" not "*with he."
 
 ```lisp
 (rule (PP ?prep ?role ?wh ?np ?x ?gl ?g2 :sem) ==>
@@ -866,8 +870,6 @@ The word "not" is also listed here; it is not an auxiliary, but it does modify t
 | `(word must` | `modal necessary` | `present)` |
 | `(word not not)` |
 
-![t0040](images/B9780080571157500212/t0040.png)
-
 ### Nouns
 {:#s0075}
 {:.h2hd}
@@ -973,8 +975,6 @@ The following names were convenient for one example or another:
 | `(word Kim` | `name 3sing)` | `(word LA` | `name 3sing)` |
 | `(word Lee` | `name 3sing)` | `(word SF` | `name 3sing)` |
 
-![t0050](images/B9780080571157500212/t0050.png)
-
 ### Adjectives
 {:#s0090}
 {:.h2hd}
@@ -989,8 +989,6 @@ Here are a few adjectives:
 | `(word old` | `adj old)` | `(word smart` | `adj smart)` |
 | `(word green` | `adj green)` | `(word red` | `adj red)` |
 | `(word tall` | `adj tall)` | `(word fun` | `adj fun)` |
-
-![t0055](images/B9780080571157500212/t0055.png)
 
 ### Adverbs
 {:#s0095}
