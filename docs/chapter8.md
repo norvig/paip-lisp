@@ -207,10 +207,13 @@ The main function, `simplifier` will repeatedly print a prompt, read an input, a
 Input and output is in infix and the computation is in prefix, so we need to convert accordingly; the function simp does this, and the function `simplify` takes care of a single prefix expression.
 It is summarized in [figure  8.1](#f0010).
 
-![f08-01-9780080571157](images/B978008057115750008X/f08-01-9780080571157.jpg)     
-Figure  8.1
-!!!(span) {:.fignum}
-Glossary for the Simplifier
+| []() |
+|---|
+| ![f08-01-9780080571157](images/chapter8/f08-01.jpg) |
+| Figure 8.1: Glossary for the Simplifier |
+
+(ed: this should be a markdown table)
+
 Here is the program:
 
 ```lisp
@@ -582,7 +585,7 @@ The basic rule is:
 
 &int;fxdx=&int;fududxdx.
 
-![si1_e](images/B978008057115750008X/si1_e.gif)
+![si1_e](images/chapter8/si1_e.gif)
 
 As an example, consider *&int; x* sin(*x*2) *dx*.
 Using the substitution *u* = *x*2, we can differentiate to get *du*/*dx* = 2*x*.
@@ -590,14 +593,14 @@ Then by applying the basic rule, we get:
 
 &int;xsinx2dx=12&int;sinududxdx=12&int;sinudu.
 
-![si2_e](images/B978008057115750008X/si2_e.gif)
+![si2_e](images/chapter8/si2_e.gif)
 
 Assume we have a table of integrals that includes the rule *&int;* sin(*x*) *dx* = - cos(*x*).
 Then we can get the final answer:
 
 -12cosx2.
 
-![si3_e](images/B978008057115750008X/si3_e.gif)
+![si3_e](images/chapter8/si3_e.gif)
 
 Abstracting from this example, the general algorithm for integrating an expression *y* with respect to *x* is:
 
@@ -615,7 +618,7 @@ Abstracting from this example, the general algorithm for integrating an expressi
 
 This algorithm is nondeterministic, as there may be many factors of *y*.
 In our example, *f*(*u*) = sin(*x*2), *u* = *x*2, and *du*/*dx* = 2*x*.
-So k=12 !!!(span) {:.hiddenClass} ![si4_e](images/B978008057115750008X/si4_e.gif), and the answer is -12cosx2 !!!(span) {:.hiddenClass} ![si5_e](images/B978008057115750008X/si5_e.gif).
+So k=12 !!!(span) {:.hiddenClass} ![si4_e](images/chapter8/si4_e.gif), and the answer is -12cosx2 !!!(span) {:.hiddenClass} ![si5_e](images/chapter8/si5_e.gif).
 
 The first step in implementing this technique is to make sure that division is done correctly.
 We need to be able to pick out the factors of *y*, divide expressions, and then determine if a quotient is free of *x*.
@@ -931,20 +934,20 @@ It is based on the rule:
 
 &int;udv=uv-&int;vdu
 
-![si6_e](images/B978008057115750008X/si6_e.gif)
+![si6_e](images/chapter8/si6_e.gif)
 
 So, for example, given
 
 &int;xcosxdx
 
-![si7_e](images/B978008057115750008X/si7_e.gif)
+![si7_e](images/chapter8/si7_e.gif)
 
 we can take *u* = *x*, *dv* = cos *xdx*.
 Then we can determine *v* = sin *x* by integration, and come up with the solution:
 
 &int;xcosxdx=xsinx-&int;sinxx1dx=xsinx+cosx
 
-![si8_e](images/B978008057115750008X/si8_e.gif)
+![si8_e](images/chapter8/si8_e.gif)
 
 It is easy to program an integration by parts routine.
 The hard part is to program the control component.
