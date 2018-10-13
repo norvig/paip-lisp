@@ -390,8 +390,6 @@ Both of these approaches rely on the fact that `defun` returns the name of the f
 | 1000 | 7.0e208 | - | .001 | 1000 |
 | 1000 | 7.0e208 | - | .876 | 0 |
 
-![t0010](images/B9780080571157500091/t0010.png)
-
 Now we show a table giving the values of `(fib *n*)` for certain *n*, and the time in seconds to compute the value, before and after `(memoize 'fib)`.
 For larger values of *n*, approximations are shown in the table, although `fib` actually returns an exact integer.
 With the unmemoized version, I stopped at *n*  =  34, because the times were getting too long.
@@ -1695,8 +1693,6 @@ Total elapsed time: 22.819614  seconds
 | `906` | `0.20` | `1%` | `SIMPLIFY` |
 | `274` | `1.98` | `9%` | `SIMPLIFY-EXP` |
 
-![t10010](images/B9780080571157500091/t10010.png)
-
 Running the test takes 6.6  seconds normally, although the time triples when the profiling overhead is added in.
 It should be clear that to speed things up, we have to either speed up or cut down on the number of calls to `pat-match` or `variable-p`, since together they account for 89% of the calls (and 89% of the time as well).
 We will look at three methods for achieving both those goals.
@@ -2267,8 +2263,6 @@ The following table summarizes the execution time and number of function calls o
 | simplify | 906 | 408 | 408 | 545 | 906 |
 | simplify-exp | 274 | 118 | 118 | 118 | 274 |
 
-![t0030](images/B9780080571157500091/t0030.png)
-
 ## 9.7 History and References
 {:#s0070}
 {:.h1hd}
@@ -2341,8 +2335,6 @@ Since this is over the limit of 170, the player's final score is 0.
 | 4th num. | - | - | - | - | - | -5 | -5 | 65 |
 | total | 03 | 43 | 49 | 55 | 85 | 90 | 120 | 0 |
 
-![t0035](images/B9780080571157500091/t0035.png)
-
 Write a function that allows you to play a game or a series of games.
 The function should take as argument a function representing a strategy for playing the game.
 
@@ -2401,14 +2393,14 @@ Thus, *Tn* is roughly proportional to *Fn*:
 
 Tn=FnTiFi
 
-![si1_e](images/B9780080571157500091/si1_e.gif)
+![si1_e](images/chapter9/si1_e.gif)
 
 We could use some small value of *Ti* to calculate *T*100 if we knew *F*100.
 Fortunately, we can use the equation:
 
 Fn&alpha;&Phi;n
 
-![si2_e](images/B9780080571157500091/si2_e.gif)
+![si2_e](images/chapter9/si2_e.gif)
 
 Where &phi;  =  (1  +  &radic;(5))/2  &asymp;  1.618.
 This equation was derived by de Moivre in 1718 (see Knuth, Donald E.
@@ -2421,7 +2413,7 @@ Putting history aside, given *T*25  &asymp;  1.1  *sec* we can now calculate:
 
 T100&asymp;&Phi;1001.1sec&Phi;25&asymp;5x1015sec
 
-![si3_e](images/B9780080571157500091/si3_e.gif)
+![si3_e](images/chapter9/si3_e.gif)
 
 which is roughly 150 million years.
 We can also see that the timing data in the table fits the equation fairly well.
