@@ -1436,7 +1436,8 @@ Also, this definition negates most of the advantage of compilation.
 The goals inside an and or or will be interpreted by `call`, rather than being compiled.
 
 We can also define `not,` or at least the normal Prolog `not,` which is quite distinct from the logical `not.`
-In fact, in some dialects, `not` is written \+, which is supposed to be ![u12-07](images/chapter12/u12-07.jpg) , that is, "can not be derived." The interpretation is that if goal G can not be proved, then (`not G` ) is true.
+In fact, in some dialects, `not` is written \+, which is supposed to be &#x22AC;, that is, "can not be derived."
+The interpretation is that if goal G can not be proved, then (`not G` ) is true.
 Logically, there is a difference between (`not G` ) being true and being unknown, but ignoring that difference makes Prolog a more practical programming language.
 See [Lloyd 1987](B9780080571157500285.xhtml#bb0745) for more on the formal semantics of negation in Prolog.
 
