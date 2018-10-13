@@ -93,12 +93,12 @@ After that we will return to the main core of EMYCIN, !!!(span) {:.smallcaps} th
 Finally, we will show how to add some medical knowledge to EMYCIN !!!(span) {:.smallcaps} to reconstruct MYCIN.
 !!!(span) {:.smallcaps} A glossary of the program is in [figure  16.1](#f0010).
 
-![f16-01-9780080571157](images/B9780080571157500169/f16-01-9780080571157.jpg)     
-Figure  16.1
-!!!(span) {:.fignum}
-Glossary for the EMYCIN
-!!!(span) {:.smallcaps}
-Program
+| []() |
+|---|
+| ![f16-01](images/chapter16/f16-01.jpg) |
+| Figure 16.1: Glossary for the EMYCIN Program |
+
+*(ed: this could be a markdown table)*
 
 ## 16.1 Dealing with Uncertainty
 {:#s0010}
@@ -132,7 +132,7 @@ combine (A, B) =
 
 A+B-AB;A,B>0A+B+AB;A,B<0A+B1-minAB;otherwise
 
-![si1_e](images/B9780080571157500169/si1_e.gif)
+![si1_e](images/chapter16/si1_e.gif)
 
 According to this formula, combine(.60,.40) = .76, which is a compromise between the extremes of .60 and 1.00.
 It is the same as the probability p(A or B), assuming that A and B are independent.
@@ -648,10 +648,11 @@ Finally, there is a level for organisms found in each culture.
 The current organism is stored under both the `organism` and `current-instance` keys.
 The context tree is shown in [figure  16.2](#f0015).
 
-![f16-02-9780080571157](images/B9780080571157500169/f16-02-9780080571157.jpg)     
-Figure  16.2
-!!!(span) {:.fignum}
-A Context Tree
+| []() |
+|---|
+| ![f16-02](images/chapter16/f16-02.jpg) |
+| Figure 16.2: A Context Tree |
+
 ```lisp
 (defun new-instance (context)
 ```
