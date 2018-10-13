@@ -502,8 +502,6 @@ A third style, the *data-driven* or *generic* style, fills in only one box at a 
 | `interest` | *generic* | | |
 | `...` | | | |
 
-![t0010](images/B9780080571157500133/t0010.png)
-
 In this table there is no particular organization to either axis; both messages and classes are listed in random order.
 This ignores the fact that classes are organized hierarchically: both limited-account and password-account are subclasses of account.
 This was implicit in the definition of the classes, because both `limited-account` and `password-account` contain accounts as components and delegate messages to those components.
