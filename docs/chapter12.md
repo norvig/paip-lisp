@@ -96,10 +96,13 @@ This section presents the compiler summarized in [figure  12.1](#f0010).
 At the top level is the function `prolog-compile`, which takes a symbol, looks at the clauses defined for that symbol, and groups the clauses by arity.
 Each symbol/arity is compiled into a separate Lisp function by `compile-predicate`.
 
-![f12-01-9780080571157](images/B9780080571157500121/f12-01-9780080571157.jpg)     
-Figure  12.1
-!!!(span) {:.fignum}
-Glossary for the Prolog Compiler
+| []() |
+|---|
+| ![f12-01](images/chapter12/f12-01.jpg) |
+| Figure 12.1: Glossary for the Prolog Compiler |
+
+(ed: this should be a markdown table)
+
 ```lisp
 (defun prolog-compile (symbol &optional
             (clauses (get-clauses symbol)))
@@ -752,8 +755,6 @@ The first column is the unification call, the second is the generated code, and 
 | 11 | `(= ?x (f ? x))` | `nil` | `-` |
 | 12 | `(= ?x ?)` | `t` | `-` |
 
-![t0015](images/B9780080571157500121/t0015.png)
-
 From this table we can craft our new version of `compile-unify`.
 The first part is fairly easy.
 It takes care of the first three cases in this table and makes sure that `compile-unify-variable` is called with a variable as the first argument for the other cases.
@@ -1289,8 +1290,6 @@ The following table shows times in seconds to execute these routines on lists of
 | `irev 20` | .22 | .010 | 22 | .028 | .0005 |
 | `irev 100` | 9.81 | .054 | 181 | .139 | .0014 |
 
-![t0020](images/B9780080571157500121/t0020.png)
-
 This benchmark is too small to be conclusive, but on these examples the Prolog compiler is 16 to 181 times faster than the Prolog interpreter, slightly faster than interpreted Lisp, but still 17 to 90 times slower than compiled Lisp.
 This suggests that the Prolog interpreter cannot be used as a practical programming tool, but the Prolog compiler can.
 
@@ -1436,7 +1435,8 @@ Note that these are only binary connectives, not the *n*-ary special forms used 
 Also, this definition negates most of the advantage of compilation.
 The goals inside an and or or will be interpreted by `call`, rather than being compiled.
 
-We can also define `not,` or at least the normal Prolog `not,` which is quite distinct from the logical `not.` In fact, in some dialects, `not` is written \+, which is supposed to be ![u12-07-9780080571157](images/B9780080571157500121/u12-07-9780080571157.jpg) , that is, "can not be derived." The interpretation is that if goal G can not be proved, then (`not G` ) is true.
+We can also define `not,` or at least the normal Prolog `not,` which is quite distinct from the logical `not.`
+In fact, in some dialects, `not` is written \+, which is supposed to be ![u12-07](images/chapter12/u12-07.jpg) , that is, "can not be derived." The interpretation is that if goal G can not be proved, then (`not G` ) is true.
 Logically, there is a difference between (`not G` ) being true and being unknown, but ignoring that difference makes Prolog a more practical programming language.
 See [Lloyd 1987](B9780080571157500285.xhtml#bb0745) for more on the formal semantics of negation in Prolog.
 
