@@ -134,12 +134,13 @@ The first point of deviation is that before we substitute the values of the `pat
 The other difference is that once we're done, we don't just print the response; instead we have to solve the set of equations and print the answers.
 The program is summarized in [figure 7.1](#f0010).
 
-![f08-01-9780080571157](images/B9780080571157500078/f08-01-9780080571157.jpg)     
-Figure  7.1
-!!!(span) {:.fignum}
-Glossary for the STUDENT
-!!!(span) {:.smallcaps}
-Program
+| []() |
+|---|
+| ![f07-01](images/chapter7/f07-01.jpg) |
+| Figure 7.1: Glossary for the STUDENT Program |
+
+(ed: this should be a markdown table)
+
 Before looking carefully at the program, let's try a sample problem: "If z is 3, what is twice z?" Applying the rules to the input gives the following trace:
 
 ```lisp
