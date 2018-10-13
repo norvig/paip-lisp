@@ -69,7 +69,7 @@ Plural nouns can stand alone as noun phrases, as in "dogs," but singular nouns n
 ```
 
 Finally, a noun phrase may appear externally to a construction, in which case the noun phrase passed in by the first gap argument will be consumed, but no words from the input will be.
-An example is the ![f0005](images/chapter21/f0005.jpg) in " Whom does Kim like ![f0005](images/chapter21/f0005.jpg) ?"
+An example is the &blank; in "Whom does Kim like &blank;?"
 
 ```lisp
 (rule (NP ? agr ?case ?wh ?x (gap (NP ?agr ?case ?x)) (gap nil) t)
@@ -105,8 +105,8 @@ Next is the metavariable used to refer to the head.
 The final three arguments are the two gap accumulators and the semantics, which work the same way here as we have seen before.
 Notice that the lexicon entry for each `Noun` can have a list of complements that are considered as postnoun modifiers, but there can be only adjuncts as prenoun modifiers.
 Also note that gaps can appear in the postmodifiers but not in the premodifiers.
-For example, we can have "What is Kevin the former mayor of ![f0005](images/chapter21/f0005.jpg) `?`," where the answer might be "Boston."
-But even though we can construct a noun phrase like "the education president," where "education" is a prenoun modifier of "president," we cannot construct "* What is George the ![f0005](images/chapter21/f0005.jpg) president?," intending that the answer be "education."
+For example, we can have "What is Kevin the former mayor of &blank;?," where the answer might be "Boston."
+But even though we can construct a noun phrase like "the education president," where "education" is a prenoun modifier of "president," we cannot construct "* What is George the &blank; president?," intending that the answer be "education."
 
 There are four cases for modification.
 First, a complement is a kind of modifier.
@@ -174,7 +174,7 @@ Prepositional phrases can be adjuncts for nouns or verbs, as in "man in the midd
       (PP ?prep ?prep ?wh ?np ?x ?g1 ?g2 ?sem))
 ```
 
-Here are the rules for prepositional phrases, which can be either a preposition followed by a noun phrase or can be gapped, as in "to whom are you speaking ![f0005](images/chapter21/f0005.jpg) ?"
+Here are the rules for prepositional phrases, which can be either a preposition followed by a noun phrase or can be gapped, as in "to whom are you speaking &blank;?"
 The object of a preposition is always in the objective case: "with him" not "*with he."
 
 ```lisp
