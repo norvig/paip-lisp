@@ -348,8 +348,6 @@ The performance of the memoized version is quite acceptable; for N=5, a 20-word 
 | 7 | 1430 | 5.80 | 247 | 116 | - | | |
 | 8 | 4862 | 20.47 | 238 | 144 | - | | |
 
-![t0015](images/B9780080571157500194/t0015.png)
-
 **Exercise  19.1 [h]** It seems that we could be more efficient still by memoizing with a table consisting of a vector whose length is the number of words in the input (plus one).
 Implement this approach and see if it entails less overhead than the more general hash table approach.
 
@@ -761,8 +759,6 @@ I also added brackets to allow input that says explicitly how it should be parse
 | `        (D -> 1 1) (D -> 2 2) (D -> 3 3) (D -> 4 4) (D -> 5 5)` |
 | `        (D -> 6 6) (D -> 7 7) (D -> 8 8) (D -> 9 9) (D -> 0 0)))` |
 
-![t0020](images/B9780080571157500194/t0020.png)
-
 The following scoring functions take trees as inputs and compute bonuses or penalties for those trees.
 The scoring function `prefer  <`, used for the word "to," gives a one-point penalty for reversed ranges: "5 to 1" gets a score of -1, while "1 to 5" gets a score of 0.
 The scorer for "and," `prefer-disjoint`, gives a one-point penalty for intersecting lists: "1 to 3 and 7 to 9" gets a score of 0, while "1 to 4 and 2 to 5" gets -1.
@@ -890,8 +886,6 @@ Now we can try some examples:
 | `-2.9` | `(1 3 4 6 7 9)` | `(((1 AND (3 T0 7)) AND 9) WITHOUT (5 AND 2))` |
 | `-2.9` | `(1 3 4 6 7 9)` | `((1 AND ((3 T0 7) AND 9)) WITHOUT (5 AND 2))` |
 
-![t0025](images/B9780080571157500194/t0025.png)
-
 In each case, the preference rules are able to assign higher scores to more reasonable interpretations.
 It turns out that, in each case, all the interpretations with positive scores represent the same set of numbers, while interpretations with negative scores seem worse.
 Seeing all the scores in gory detail may be of academic interest, but what we really want is something to pick out the best interpretation.
@@ -977,8 +971,6 @@ Please pick one:
 | `-2.7` | `(1 2 4 5 1 2 4 5)` | `(((1 TO 5) WITHOUT (3 AND 7)) REPEAT 2)` |
 | `-2.7` | `(1 2 4 5)` | `((1 TO 5) WITHOUT ((3 AND 7) REPEAT 2))` |
 | `-2.7` | `(1 2 4 5)` | `((1 TO 5) WITHOUT (3 AND (7 REPEAT 2)))` |
-
-![t0030](images/B9780080571157500194/t0030.png)
 
 This last example points out a potential problem: I wasn't sure what was a good scoring function for "repeat", so I left it blank, it defaulted to 0, and we end up with two parses with the same score.
 This example suggests that "repeat" should probably involve `inv-span` like the other modifiers, but perhaps other factors should be involved as well.

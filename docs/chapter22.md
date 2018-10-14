@@ -145,12 +145,15 @@ In the interpreter `interp`, the main conditional has eight cases, corresponding
 For the moment we will stick with `t` and `nil` instead of `#t` and `#f`.
 After developing a simple interpreter, we will add support for macros, then develop a tail-recursive interpreter, and finally a continuation-passing interpreter.
 (These terms will be defined when the time comes.).
-The glossary for `interp` is in [figure  22.1](#f0010).
+The glossary for `interp` is in [figure 22.1](#f0010).
 
-![f22-01-9780080571157](images/B9780080571157500224/f22-01-9780080571157.jpg)     
-Figure  22.1
-!!!(span) {:.fignum}
-Glossary for the Scheme Interpreter
+| []() |
+|---|
+| ![f22-01](images/chapter22/f22-01.jpg) |
+| Figure 22.1: Glossary for the Scheme Interpreter |
+
+*(ed: should be a markdown table)*
+
 The simple interpreter has eight cases to worry about: (1) If the expression is a symbol, look up its value in the environment.
 (2) If it is an atom that is not a symbol (such as a number), just return it.
 Otherwise, the expression must be a list.

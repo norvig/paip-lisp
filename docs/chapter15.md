@@ -43,7 +43,7 @@ We will speak of a polynomial's *main variable, coefficients,* and *degree.* In 
 
 5xx3+bxx2+cxx+1
 
-![si1_e](images/B9780080571157500157/si1_e.gif)
+![si1_e](images/chapter15/si1_e.gif)
 
 the main variable is *x,* the degree is 3 (the highest power of *x*), and the coefficients are 5, *b, c* and 1.
 We can define an input format for polynomials as follows:
@@ -103,10 +103,13 @@ The word "polynomial" is used ambiguously to refer to both the mathematical conc
 
 A glossary for the canonical simplifier program is given in [figure  15.1](#f0010).
 
-![f15-01-9780080571157](images/B9780080571157500157/f15-01-9780080571157.jpg)     
-Figure  15.1
-!!!(span) {:.fignum}
-Glossary for the Symbolic Manipulation Program
+| []() |
+|---|
+| ![f15-01](images/chapter15/f15-01.jpg) |
+| Figure 15.1: Glossary for the Symbolic Manipulation Program |
+
+*(ed: should be a markdown table)*
+
 The functions defining the type `polynomial` follow.
 Because we are concerned with efficiency, we proclaim certain short functions to be compiled inline, use the specific function `svref` (simple-vector reference) rather than the more general aref, and provide declarations for the polynomials using the special form the.
 More details on efficiency issues are given in [Chapter 9](B9780080571157500091.xhtml).
@@ -541,11 +544,11 @@ For example:
 
 &int;ax2+bxdx=ax33+bx22+c.
 
-![si2_e](images/B9780080571157500157/si2_e.gif)
+![si2_e](images/chapter15/si2_e.gif)
 
 Write a function to integrate polynomials and install it in `prefix->canon`.
 
-**Exercise  15.2 [m]** Add support for *definite* integrais, such as &int;abydx !!!(span) {:.hiddenClass} ![si3_e](images/B9780080571157500157/si3_e.gif).
+**Exercise  15.2 [m]** Add support for *definite* integrals, such as &int;abydx !!!(span) {:.hiddenClass} ![si3_e](images/chapter15/si3_e.gif).
 You will need to make up a suitable notation and properly install it in both `infix->prefix` and `prefix->canon`.
 A full implementation of this feature would have to consider infinity as a bound, as well as the problem of integrating over singularises.
 You need not address these problems.
@@ -859,19 +862,19 @@ The binomial theorem states that
 
 a+bn=&Sigma;i=0nn!i!n-i!aibn-i
 
-![si4_e](images/B9780080571157500157/si4_e.gif)
+![si4_e](images/chapter15/si4_e.gif)
 
 for example,
 
 a+b3=b3+3ab2+3a2b+a3
 
-![si5_e](images/B9780080571157500157/si5_e.gif)
+![si5_e](images/chapter15/si5_e.gif)
 
 We can use this theorem to compute a power of a polynomial all at once, instead of computing it by repeated multiplication or squaring.
 Of course, a polynomial will in general be a sum of more than two components, so we have to decid`e` how to split it into the *a* and *b* pieces.
 There are two obvious ways: either eut the polynomial in half, so that *a* and *b* will be of equal size, or split off one component at a time.
 Fateman shows that the latter method is more efficient in most cases.
-In other words, a polynomial k1xn+k2xn-1+k3xn-2+... !!!(span) {:.hiddenClass} ![si6_e](images/B9780080571157500157/si6_e.gif) will be treated as the sum *a + b* where *a*=  *k*1*xn* and *b* is the rest of the polynomial.
+In other words, a polynomial k1xn+k2xn-1+k3xn-2+... !!!(span) {:.hiddenClass} ![si6_e](images/chapter15/si6_e.gif) will be treated as the sum *a + b* where *a*=  *k*1*xn* and *b* is the rest of the polynomial.
 
 Following is the code for binomial exponentiation.
 It is somewhat messy, because the emphasis is on efficiency.
@@ -984,8 +987,6 @@ The following table compares the times for `r15-test` with the three versions of
 | 7 | iterative `poly^n` | .98 | 28 |
 | 8 | binomial `poly^n` | .23 | 120 |
 
-![t0010](images/B9780080571157500157/t0010.png)
-
 As we remarked earlier, the general techniques of memoization, indexing, and compilation provide for dramatic speed-ups.
 However, in the end, they do not lead to the fastest program.
 Instead, the fastest version was achieved by throwing out the original rule-based program, replacing it with a canonical-form-based program, and fine-tuning the algorithms within that program, using mathematical analysis.
@@ -1072,7 +1073,7 @@ For example, the following three expressions are all equivalent  :
 
 sinxcosx-&pi;2eix-e-ix2i
 
-![si7_e](images/B9780080571157500157/si7_e.gif)
+![si7_e](images/chapter15/si7_e.gif)
 
 If we are interested in assuring we have a canonical form, the safest thing is to allow only *e**x*** and log(*x*).
 All the other functions can be defined in terms of these two.

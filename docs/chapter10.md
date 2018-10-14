@@ -156,8 +156,6 @@ Here is the disassembled code for f from Allegro Common Lisp for a Motorola 6800
 | `26:` | `unlk` | `a6` |
 | `28:` | `rtd` | `#8` |
 
-![t0010](images/B9780080571157500108/t0010.png)
-
 This may look intimidating at first glance, but you don't have to be an expert at 68000 assembler to gain some appreciation of what is going on here.
 The instructions labeled 0-8 (labels are in the leftmost column) comprise the typical function preamble for the 68000.
 They do subroutine linkage and store the new function object and constant vector into registers.
@@ -205,8 +203,6 @@ Contrast this to the code for `g`, which has no declarations and is compiled at 
 | `78:` | `move.l` | `-8(a6),a5` | |
 | `82:` | `unlk` | `a6` | |
 | `84:` | `rtd` | `#8` | |
-
-![t0015](images/B9780080571157500108/t0015.png)
 
 See how much more work is done.
 The first four instructions ensure that the right number of arguments have been passed to `g`.
@@ -339,8 +335,6 @@ We can see what these compile into for the TI Explorer, but remember that your c
 | `    11 PUSH` | `LOCAL|0` | `; D` |
 | `    12 RETURN CALL-4` | `FEF|3` | `; #'LIST*` |
 
-![t0025](images/B9780080571157500108/t0025.png)
-
 With the regular argument list, we just push the four variables on the argument stack and branch to the list function.
 ([Chapter 22](B9780080571157500224.xhtml) explains why a tail-recursive call is just a branch statement.)
 
@@ -364,8 +358,6 @@ Let's compare with optional arguments:
 | `  32 PUSH` | `ARG|2` | ; `C` |
 | `  33 PUSH` | `ARG|3` | ; `D` |
 | `  34 TAIL-REC CALL-4` | `FEF|4` | ; `#'LIST` |
-
-![t0030](images/B9780080571157500108/t0030.png)
 
 Although this assembly language may be harder to read, it turns out that optional arguments are handled very efficiently.
 The calling sequence stores the number of optional arguments on top of the stack, and the `DISPATCH` instruction uses this to index into a table stored at location `FEF|5` (an offset five words from the start of the function).
@@ -400,8 +392,6 @@ Unfortunately, keyword arguments don't fare as well:
 | `  33 PUSH` | `LOCAL|4` | |
 | `  34 RETURN CALL-4` | `FEF|6` | ;`#'LIST` |
 
-![t0035](images/B9780080571157500108/t0035.png)
-
 It is not important to be able to read all this assembly language.
 The point is that there is considerable overhead, even though this architecture has a specific instruction `(%STORE-KEY-WORD-ARGS)` to help deal with keyword arguments.
 
@@ -426,8 +416,6 @@ First, here's the assembly code for reg, to give you an idea of the minimal call
 | `34:` | `move.l` | `-  8(a6),a5` | |
 | `38:` | `unlk` | `a6` | |
 | `40:` | `rtd` | `#10` | |
-
-![t0040](images/B9780080571157500108/t0040.png)
 
 Now we see that `&rest` arguments take a lot more code in this system:
 
@@ -460,8 +448,6 @@ Now we see that `&rest` arguments take a lot more code in this system:
 | `62`: | `move.l` | `#4,dl` | |
 | `64` | `jmp` | `(a4)` | |
 
-![t0045](images/B9780080571157500108/t0045.png)
-
 The loop from 20-26 builds up the `&rest` list one cons at a time.
 Part of the difficulty is that cons could initiate a garbage collection at any time, so the list has to be built in a place that the garbage collector will know about.
 The function with optional arguments is even worse, taking 34 instructions (104 bytes), and keywords are worst of all, weighing in at 71 instructions (178 bytes), and including a loop.
@@ -491,8 +477,6 @@ The inline proclamation should allow the compiler to compile a call to key as a 
 | `  14 PUSH CALL-1` | `FEF|3` | `; #'SORT` |
 | `  15 TAIL-REC CALL-4` | `FEF|4` | `; #'NO-KEY` |
 
-![t0050](images/B9780080571157500108/t0050.png)
-
 The overhead only comes into play when the keywords are not known at compile time.
 In the following example, the compiler is forced to call key, not `no-key`, because it doesn't know what the keyword `k` will be at run time:
 
@@ -506,8 +490,6 @@ In the following example, the compiler is forced to call key, not `no-key`, beca
 | `  12 PUSH` | `FEF|3` | `; ':A` |
 | `  13 PUSH` | `ARG|2` | ; `Y` |
 | `  14 TAIL-REC CALL-4` | `FEF|4` | ; `#'KEY` |
-
-![t0055](images/B9780080571157500108/t0055.png)
 
 Of course, in this simple example I could have replaced `no-key` with `list`, but in general there will be some more complex processing.
 If I had proclaimed `no-key` inline as well, then I would get the following:
@@ -523,8 +505,6 @@ If I had proclaimed `no-key` inline as well, then I would get the following:
 | `  13 PUSH` | `ARG|1` | `; Y` |
 | `  14 PUSH CALL-1` | `FEF|3` | `; #'SORT` |
 | `  15 TAIL-REC CALL-4` | `FEF|4` | `; #'LIST` |
-
-![t0060](images/B9780080571157500108/t0060.png)
 
 If you like, you can define a macro to automatically define the interface to the keyword-less function:
 

@@ -148,12 +148,14 @@ Since our program is just a simulation-it won't be actually driving a car or dia
 {:.h1hd}
 
 The specification is complete enough to lead directly to a complete Common Lisp program.
-[Figure  4.1](#f0010) summarizes the variables, data types, and functions that make up the GPS program, along with some of the Common Lisp functions used to implement it.
+[Figure 4.1](#f0010) summarizes the variables, data types, and functions that make up the GPS program, along with some of the Common Lisp functions used to implement it.
 
-![f04-01-9780080571157](images/B9780080571157500042/f04-01-9780080571157.jpg)     
-Figure  4.1
-!!!(span) {:.fignum}
-Glossary for the GPS Program
+| []() |
+|---|
+| ![f04-01](images/chapter4/f04-01.jpg) |
+| Figure 4.1: Glossary for the GPS Program |
+(editor: this should be a markdown table)
+
 Here is the complete GPS program itself:
 
 ```lisp
@@ -561,12 +563,14 @@ To generate indented output, the function `dbg-indent` is defined:
 {:.h1hd}
 
 At this point we are ready to put together a new version of GPS with solutions for the "running around the block," "prerequisite clobbers sibling goal," "leaping before you look," and "recursive subgoal" problems.
-The glossary for the new version is in [figure  4.2](#f0015).
+The glossary for the new version is in [figure 4.2](#f0015).
 
-![f04-02-9780080571157](images/B9780080571157500042/f04-02-9780080571157.jpg)     
-Figure  4.2
-!!!(span) {:.fignum}
-Glossary for Version 2 of`GPS`
+| []() |
+|---|
+| ![f04-02](images/chapter4/f04-02.jpg) |
+| Figure 4.2: Glossary for Version 2 of `GPS` |
+(editor: this should be a markdown table)
+
 The most important change is that, instead of printing a message when each operator is applied, we will instead have `GPS` return the resulting state.
 A list of "messages" in each state indicates what actions have been taken.
 Each message is actually a condition, a list of the form (executing *operator*).
@@ -907,7 +911,7 @@ We just used a different set of operators.
 Now we will consider another "classic" problem, maze searching.
 We will assume a particular maze, diagrammed here.
 
-![u04-01-9780080571157](images/B9780080571157500042/u04-01-9780080571157.jpg)     
+![u04-01](images/chapter4/u04-01.jpg)
 
 It is much easier to define some functions to help build the operators for this domain than it would be to type in all the operators directly.
 The following code defines a set of operators for mazes in general, and for this maze in particular:
@@ -1056,7 +1060,7 @@ We will create an operator for each possible block move.
 Now we try these operators out on some problems.
 The simplest possible problem is stacking one block on another:
 
-![u04-02-9780080571157](images/B9780080571157500042/u04-02-9780080571157.jpg)     
+![u04-02](images/chapter4/u04-02.jpg)
 
 `> (use (make-block-ops '(a b)))`=> `4`
 
@@ -1071,7 +1075,7 @@ The simplest possible problem is stacking one block on another:
 Here is a slightly more complex problem: inverting a stack of two blocks.
 This time we show the debugging output.
 
-![u04-03-9780080571157](images/B9780080571157500042/u04-03-9780080571157.jpg)     
+![u04-03](images/chapter4/u04-03.jpg)
 
 `> (debug :gps)`=> `(:GPS)`
 
@@ -1100,7 +1104,7 @@ Sometimes it matters what order you try the conjuncts in.
 For example, you can't have your cake and eat it too, but you can take a picture of your cake and eat it too, as long as you take the picture *before* eating it.
 In the blocks world, we have:
 
-![u04-04-9780080571157](images/B9780080571157500042/u04-04-9780080571157.jpg)     
+![u04-04](images/chapter4/u04-04.jpg)
 
 ```lisp
 > (use (make-block-ops '(a b c))) 18
@@ -1151,7 +1155,7 @@ Another possibility would be to consider all possible permutations of the goals,
 Another consideration is the efficiency of solutions.
 Consider the simple task of getting block C on the table in the following diagram:
 
-![u04-05-9780080571157](images/B9780080571157500042/u04-05-9780080571157.jpg)     
+![u04-05](images/chapter4/u04-05.jpg)
 
 ```lisp
 > (gps '((c on a) (a on table) (b on table)
@@ -1168,7 +1172,7 @@ So the first operator is tried, and it succeeds provided C is on B.
 Thus, the two-step solution is found before the one-step solution is ever considered.
 The following example takes four steps when it could be done in two:
 
-![u04-06-9780080571157](images/B9780080571157500042/u04-06-9780080571157.jpg)     
+![u04-06](images/chapter4/u04-06.jpg)
 
 ```lisp
 > (gps '((c on a) (a on table) (b on table)
@@ -1209,7 +1213,7 @@ To implement this approach, we change `achieve`:
 
 Now we get the solutions we wanted:
 
-![u04-07-9780080571157](images/B9780080571157500042/u04-07-9780080571157.jpg)     
+![u04-07](images/chapter4/u04-07.jpg)
 
 ```lisp
 > (gps '((c on a) (a on table) (b on table)
@@ -1220,7 +1224,7 @@ Now we get the solutions we wanted:
   (EXECUTING (MOVE A FROM TABLE TO B)))
 ```
 
-![u04-08-9780080571157](images/B9780080571157500042/u04-08-9780080571157.jpg)     
+![u04-08](images/chapter4/u04-08.jpg)
 
 ```lisp
 (gps '((a on b) (b on c) (c on table) (space on a) (space on table))
@@ -1244,7 +1248,7 @@ Now we get the solutions we wanted:
 Surprisingly, there are problems that can't be solved by *any* reordering of goals.
 Consider:
 
-![u04-09-9780080571157](images/B9780080571157500042/u04-09-9780080571157.jpg)     
+![u04-09](images/chapter4/u04-09.jpg)
 
 This doesn't look too hard, so let's see how our GPS handles it:
 
