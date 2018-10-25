@@ -77,15 +77,15 @@ As noted in [chapter 1](chapter1.md), "special form" is the term used to refer b
 
 The most commonly used special forms are:
 
-| definitions | conditional | variables | iteration | other |
-|---|---|---|---|---|
-| `defun` | `and` | `let` | `do` | `declare` |
-| `defstruct` | `case` | `let*` | `do*` | `function` |
-| `defvar` | `cond` | `pop` | `dolist` | `progn` |
-| `defparameter` | `if` | `push` | `dotimes` | `quote` |
-| `defconstant` | `or` | `setf` | `loop` | `return` |
-| `defmacro` | `unless` | `incf` | | `trace` |
-| `labels` | `when` | `decf` | | `untrace` |
+| definitions    | conditional | variables | iteration | other      |
+|----------------|-------------|-----------|-----------|------------|
+| `defun`        | `and`       | `let`     | `do`      | `declare`  |
+| `defstruct`    | `case`      | `let*`    | `do*`     | `function` |
+| `defvar`       | `cond`      | `pop`     | `dolist`  | `progn`    |
+| `defparameter` | `if`        | `push`    | `dotimes` | `quote`    |
+| `defconstant`  | `or`        | `setf`    | `loop`    | `return`   |
+| `defmacro`     | `unless`    | `incf`    |           | `trace`    |
+| `labels`       | `when`      | `decf`    |           | `untrace`  |
 
 To be precise, only `declare`, `function`, `if`, `labels`, `let`, `let*`, `progn` and `quote` are true special forms.
 The others are actually defined as macros that expand into calls to more primitive special forms and functions.
@@ -195,13 +195,13 @@ The `and` form tests whether every one of a list of conditions is true, and `or`
 Both evaluate the arguments left to right, and stop as soon as the final result can be determined.
 Here is a table of equivalences:
 
-| **conditional** | `if` **form** | `cond` **form** |
-|---|---|---|
-| `(when` *test a b c*) | `(if` *test* `(progn` *a  b c*)) | `(cond` (*test a b c*)) |
-| `(unless` *test x y*) | `(if (not` *test*) `(progn` *x y*)) | `(cond ((not` *test*) *x y*)) |
-| `(and` *a b c*) | `(if` *a* `(if` *b c*)) | `(cond` (*a* `(cond` (*b c*)))) |
-| `(or` *a b c*) | `(if` *a a* `(if` *b b c*)) | `(cond (a)` (*b*) (*c*)) |
-| `(*case*` *a* (*b c*) `*(t x*))` | `(if (eql` *a 'b*) *c x*) | `(cond ((eql `*a 'b*) *c*) (*tx*)) |
+| **conditional**                  | `if` **form**                       | `cond` **form**                    |
+|----------------------------------|-------------------------------------|------------------------------------|
+| `(when` *test a b c*)            | `(if` *test* `(progn` *a  b c*))    | `(cond` (*test a b c*))            |
+| `(unless` *test x y*)            | `(if (not` *test*) `(progn` *x y*)) | `(cond ((not` *test*) *x y*))      |
+| `(and` *a b c*)                  | `(if` *a* `(if` *b c*))             | `(cond` (*a* `(cond` (*b c*))))    |
+| `(or` *a b c*)                   | `(if` *a a* `(if` *b b c*))         | `(cond (a)` (*b*) (*c*))           |
+| `(*case*` *a* (*b c*) `*(t x*))` | `(if (eql` *a 'b*) *c x*)           | `(cond ((eql `*a 'b*) *c*) (*tx*)) |
 
 It is considered poor style to use `and` and `or` for anything other than testing a logical condition, `when, unless,` and `if` can all be used for taking conditional action.
 For example:
@@ -249,25 +249,25 @@ You can think of the `e` as standing for either "exhaustive" or "error."
 The forms `ccase` and `ctypecase` also signal errors, but they can be continuable errors (as opposed to fatal errors): the user is offered the chance to change the expression to something that satisfies one of the matches.
 Here are some examples of case forms and their `cond` equivalents:
 
-| []() | |
-|---|---|
-| `(case x` | `(cond` |
-|   `(1 10)` |   `((eql x 1) 10)` |
-|   `(2 20))` |   `((eql x 2) 20))` |
-| | |
-| `(typecase x` | `(cond` |
-|   `(number (abs x))` |   `((typep x 'number) (abs x))` |
-|   `(list (length x)))` |   `((typep x 'list) (length x)))` |
-| | |
-| `(ecase x` | `(cond` |
-|   `(1 10)` |   `((eql x 1) 10)` |
-|   `(2 20))` |   `((eql x 2) 20)` |
-| |   `(t (error "no valid case")))` |
-| | |
-| `(etypecase x` | `(cond` |
-|   `(number (abs x))` |   `((typep x 'number) (abs x))` |
-|   `(list (length x)))` |   `((typep x 'list) (length x))` |
-| |   `(t (error "no valid typecase")))` |
+| []()                 |                                    |
+|----------------------|------------------------------------|
+| `(case x`            | `(cond`                            |
+| `(1 10)`             | `((eql x 1) 10)`                   |
+| `(2 20))`            | `((eql x 2) 20))`                  |
+|                      |                                    |
+| `(typecase x`        | `(cond`                            |
+| `(number (abs x))`   | `((typep x 'number) (abs x))`      |
+| `(list (length x)))` | `((typep x 'list) (length x)))`    |
+|                      |                                    |
+| `(ecase x`           | `(cond`                            |
+| `(1 10)`             | `((eql x 1) 10)`                   |
+| `(2 20))`            | `((eql x 2) 20)`                   |
+|                      | `(t (error "no valid case")))`     |
+|                      |                                    |
+| `(etypecase x`       | `(cond`                            |
+| `(number (abs x))`   | `((typep x 'number) (abs x))`      |
+| `(list (length x)))` | `((typep x 'list) (length x))`     |
+|                      | `(t (error "no valid typecase")))` |
 
 ### Special Forms for Dealing with Variables and Places
 
@@ -275,13 +275,13 @@ The special form `setf` is used to assign a new value to a variable or *place,* 
 A place, or *generalized variable* is a name for a location that can have a value stored in it.
 Here is a table of corresponding assignment forms in Lisp and Pascal:
 
-| []() | |
-|---|---|
-| `;; Lisp` | `/* Pascal */` |
-| `(setf x 0)` | `x := 0;` |
-| `(setf (aref A i j) 0)` | `A[i,j] := 0;` |
-| `(setf (rest list) nil)` | `list^.rest := nil;` |
-| `(setf (name-middle b) 'Q)` | `b\middle := "Q";` |
+| []()                        |                      |
+|-----------------------------|----------------------|
+| `;; Lisp`                   | `/* Pascal */`       |
+| `(setf x 0)`                | `x := 0;`            |
+| `(setf (aref A i j) 0)`     | `A[i,j] := 0;`       |
+| `(setf (rest list) nil)`    | `list^.rest := nil;` |
+| `(setf (name-middle b) 'Q)` | `b\middle := "Q";`   |
 
 `setf` can be used to set a component of a structure as well as to set a variable.
 In languages like Pascal, the expressions that can appear on the left-hand side of an assignment statement are limited by the syntax of the language.
@@ -315,11 +315,11 @@ Each variable is bound to the corresponding value, and then the body is evaluate
 Defining a local variable with a `let` form is really no different from defining parameters to an anonymous function.
 The former is equivalent to:
 
-| []() | |
-|---|---|
+| []()                        |
+|-----------------------------|
 | ((`lambda` (*variable*... ) |
-| `  ` *body*... ) |
-| *value*...)|
+| `  ` *body*... )            |
+| *value*...)                 |
 
 ```lisp
 ((lambda (x y)
@@ -394,16 +394,16 @@ Many languages have a small number of reserved words for forming iterative loops
 For example, Pascal has `while, repeat,` and `for` statements.
 In contrast, Common Lisp has an almost bewildering range of possibilities, as summarized below:
 
-| []() | |
-|---|---|
-| `dolist` | loop over elements of a list |
-| `dotimes` | loop over successive integers |
-| `do, do*` | general loop, sparse syntax |
-| `loop` | general loop, verbose syntax |
-| `mapc, mapcar` | loop over elements of lists(s) |
-| `some, every` | loop over list until condition |
+| []()                  |                                 |
+|-----------------------|---------------------------------|
+| `dolist`              | loop over elements of a list    |
+| `dotimes`             | loop over successive integers   |
+| `do, do*`             | general loop, sparse syntax     |
+| `loop`                | general loop, verbose syntax    |
+| `mapc, mapcar`        | loop over elements of lists(s)  |
+| `some, every`         | loop over list until condition  |
 | `find, reduce,`*etc.* | more specific looping functions |
-| *recursion* | general repetition |
+| *recursion*           | general repetition              |
 
 To explain each possibility we will present versions of the function `length`, which returns the number of elements in a list.
 First, the special form `dolist` can be used to iterate over the elements of a list.
@@ -595,25 +595,25 @@ The following two tables assume these two values:
 
 The first table lists functions that work on any number of lists but do not accept keywords:
 
-| []() | | |
-|---|---|---|
-| `(every #' oddp y)` | => `nil` | test if every element satisfies a predicate |
-| `(some #' oddp y)` | => `t` | test if some element satisfies predicate |
-| `(mapcar #'- y)` | => `(-1 -2 -3)` | apply function to each element and return result |
-| `(mapc #'print y)` | *prints* `1 2 3` | perform operation on each element |
+| []()                |                  |                                                  |
+|---------------------|------------------|--------------------------------------------------|
+| `(every #' oddp y)` | => `nil`         | test if every element satisfies a predicate      |
+| `(some #' oddp y)`  | => `t`           | test if some element satisfies predicate         |
+| `(mapcar #'- y)`    | => `(-1 -2 -3)`  | apply function to each element and return result |
+| `(mapc #'print y)`  | *prints* `1 2 3` | perform operation on each element                |
 
 The second table lists functions that have `-if` and `-if-not` versions and also accept keyword arguments:
 
-| []() | | |
-|---|---|---|
-| `(member 2 y)` | =>`(2 3)` | see if element is in list |
-| `(count 'b x)` | => 1 | count the number of matching elements |
-| `(delete 1 y)` | => `(2 3)` | omit matching elements |
-| `(find 2 y)` | => `2` | find first element that matches |
-| `(position 'a x)` | => 0 | find index of element in sequence |
-| `(reduce #'+ y)` | => `6` | apply function to successive elements |
-| `(remove 2 y)` | => (1 `3)` | like `delete`, but makes a new copy |
-| `(substitute 4 2 y)` | => `(1 4 3)` | replace elements with new ones |
+| []()                 |              |                                       |
+|----------------------|--------------|---------------------------------------|
+| `(member 2 y)`       | =>`(2 3)`    | see if element is in list             |
+| `(count 'b x)`       | => 1         | count the number of matching elements |
+| `(delete 1 y)`       | => `(2 3)`   | omit matching elements                |
+| `(find 2 y)`         | => `2`       | find first element that matches       |
+| `(position 'a x)`    | => 0         | find index of element in sequence     |
+| `(reduce #'+ y)`     | => `6`       | apply function to successive elements |
+| `(remove 2 y)`       | => (1 `3)`   | like `delete`, but makes a new copy   |
+| `(substitute 4 2 y)` | => `(1 4 3)` | replace elements with new ones        |
 
 ### Repetition through Recursion
 Lisp has gained a reputation as a "recursive" language, meaning that Lisp encourages programmers to write functions that call themselves.
@@ -905,32 +905,32 @@ For the sake of example, assume we have the following assignments:
 The most important functions on lists are summarized here.
 The more complicated ones are explained more thoroughly when they are used.
 
-| []() | | |
-|---|---|---|
-| `(first x)` | => `a` | first element of a list |
-| `(second x)` | `=> b` | second element of a list |
-| `(third x)` | => `c` | third element of a list |
-| `(nth 0 x)` | => `a` | nth element of a list, `0`-based |
-| `(rest x)` | => `(b c)` | all but the first element |
-| `(car x)` | => `a` | another name for the first element of a list |
-| `(cdr x)` | => `(b c)` | another name for all but the first element |
-| `(last x)` | => `(c)` | last cons cell in a list |
-| `(length x)` | => 3 | number of elements in a list |
-| `(reverse x)` | => `(c b a)` | puts list in reverse order |
-| `(cons 0 y)` | => `(0 1 2 3)` | add to front of list |
-| `(append x y)` | => `(a b c 1 2 3)` | append together elements |
-| `(list x y)` | => `((a b c) (1 2 3))` | make a new list |
-| `(list* 1 2 x)` | => `(1 2 a b` c) | append last argument to others |
-| `(null nil)` | => `T` | predicate is true of the empty list |
-| `(null x)` | => `nil` | ... and false for everything else |
-| `(listp x)` | => `T` | predicate is true of any list, including `nil` |
-| `(listp 3)` | => `nil` | ... and is false for nonlists |
-| `(consp x)` | => `t` | predicate is true of non-nil lists |
-| `(consp nil)` | => `nil` | ... and false for atoms, including `nil` |
-| `(equal x x)` | => `t` | true for lists that look the same |
-| `(equal x y)` | `nil` | ... and false for lists that look different |
-| `(sort y #'>)` | => `(3 2 1)` | sort a list according to a comparison function |
-| `(subseq x 1 2)` | => `(B)` | subsequence with given start and end points |
+| []()             |                        |                                                |
+|------------------|------------------------|------------------------------------------------|
+| `(first x)`      | => `a`                 | first element of a list                        |
+| `(second x)`     | `=> b`                 | second element of a list                       |
+| `(third x)`      | => `c`                 | third element of a list                        |
+| `(nth 0 x)`      | => `a`                 | nth element of a list, `0`-based               |
+| `(rest x)`       | => `(b c)`             | all but the first element                      |
+| `(car x)`        | => `a`                 | another name for the first element of a list   |
+| `(cdr x)`        | => `(b c)`             | another name for all but the first element     |
+| `(last x)`       | => `(c)`               | last cons cell in a list                       |
+| `(length x)`     | => 3                   | number of elements in a list                   |
+| `(reverse x)`    | => `(c b a)`           | puts list in reverse order                     |
+| `(cons 0 y)`     | => `(0 1 2 3)`         | add to front of list                           |
+| `(append x y)`   | => `(a b c 1 2 3)`     | append together elements                       |
+| `(list x y)`     | => `((a b c) (1 2 3))` | make a new list                                |
+| `(list* 1 2 x)`  | => `(1 2 a b` c)       | append last argument to others                 |
+| `(null nil)`     | => `T`                 | predicate is true of the empty list            |
+| `(null x)`       | => `nil`               | ... and false for everything else              |
+| `(listp x)`      | => `T`                 | predicate is true of any list, including `nil` |
+| `(listp 3)`      | => `nil`               | ... and is false for nonlists                  |
+| `(consp x)`      | => `t`                 | predicate is true of non-nil lists             |
+| `(consp nil)`    | => `nil`               | ... and false for atoms, including `nil`       |
+| `(equal x x)`    | => `t`                 | true for lists that look the same              |
+| `(equal x y)`    | `nil`                  | ... and false for lists that look different    |
+| `(sort y #'>)`   | => `(3 2 1)`           | sort a list according to a comparison function |
+| `(subseq x 1 2)` | => `(B)`               | subsequence with given start and end points    |
 
 We said that (`cons` *a b*) builds a longer list by adding element *a* to the front of list *b,* but what if *b* is not a list?
 This is not an error; the result is an object *x* such that (`first` *x*) => *a* (`rest`*x*) => *b,* and where *x* prints as (*a* . *b*).
@@ -988,15 +988,15 @@ Finally, `equalp` is like `equal` except it also matches upper- and lowercase ch
 The following table summarizes the results of applying each of the four predicates to various values of *x* and *y*.
 The ? value means that the result depends on your implementation: two integers that are `eql` may or may not be `eq`.
 
-| *x* | *y* | `eq` | `eql` | `equal` | `equalp` |
-|---|---|---|---|---|---|
-| `'X` | `'x` | `T` | `T` | `T` | `T` |
-| `'0` | `'0` | `?` | `T` | `T` | `T` |
-| `'(x)` | `'(x)` | `nil` | `nil` | `T` | `T` |
-| `'"xy"` | `'"xy"` | `nil` | `nil` | `T` | `T` |
-| `'"Xy"` | `'"xY"` | `nil` | `nil` | `nil` | `T` |
-| `'0` | `'0.0` | `nil` | `nil` | `nil` | `T` |
-| `'0` | `'1` | `nil` | `nil` | `nil` | `nil` |
+| *x*     | *y*     | `eq`  | `eql` | `equal` | `equalp` |
+|---------|---------|-------|-------|---------|----------|
+| `'X`    | `'x`    | `T`   | `T`   | `T`     | `T`      |
+| `'0`    | `'0`    | `?`   | `T`   | `T`     | `T`      |
+| `'(x)`  | `'(x)`  | `nil` | `nil` | `T`     | `T`      |
+| `'"xy"` | `'"xy"` | `nil` | `nil` | `T`     | `T`      |
+| `'"Xy"` | `'"xY"` | `nil` | `nil` | `nil`   | `T`      |
+| `'0`    | `'0.0`  | `nil` | `nil` | `nil`   | `T`      |
+| `'0`    | `'1`    | `nil` | `nil` | `nil`   | `nil`    |
 
 In addition, there are specialized equality predicates such as =, `tree-equal, char-equal,` and `string-equal,` which compare numbers, trees, characters, and strings, respectively.
 
@@ -1204,24 +1204,24 @@ The name `sublis` is uncharacteristically short and confusing; a better name wou
 The most commonly used functions on numbers are listed here.
 There are quite a few other numeric functions that have been omitted.
 
-| []() | | |
-|---|---|---|
-| `(+ 4 2)` | => `6` | add |
-| `(- 4 2)` | => `2` | subtract |
-| `(* 4 2)` | => `8` | multiply |
-| `(/ 4 2)` | => `2` | divide |
-| `(> 100 99)` | => `t` | greater than (also `>=`, greater than or equal to) |
-| `(= 100 100)` | => `t` | equal (also `/=`, not equal) |
-| `(< 99 100)` | => `t` | less than (also `<=`, less than or equal to) |
-| `(random 100)` | `=> 42` | random integer from 0 to 99 |
-| `(expt 4 2)` | => `16` | exponentiation (also exp, *e<sup>x</sup>* and `log`) |
-| `(sin pi)` | => `0.0` | sine function (also `cos`, `tan,` etc.) |
-| `(asin 0)` | => `0.0` | arcsine or sin<sup>-1</sup> function (also `acos, atan`, etc.) |
-| `(min 2 3 4)` | => `2` | minimum (also `max`) |
-| `(abs -3)` | => `3` | absolute value |
-| `(sqrt 4)` | => `2` | square root |
-| `(round 4.1)` | => `4` | round off (also `truncate, floor, ceiling`) |
-| `(rem 11 5)` | => 1 | remainder (also `mod`) |
+| []()           |          |                                                                |
+|----------------|----------|----------------------------------------------------------------|
+| `(+ 4 2)`      | => `6`   | add                                                            |
+| `(- 4 2)`      | => `2`   | subtract                                                       |
+| `(* 4 2)`      | => `8`   | multiply                                                       |
+| `(/ 4 2)`      | => `2`   | divide                                                         |
+| `(> 100 99)`   | => `t`   | greater than (also `>=`, greater than or equal to)             |
+| `(= 100 100)`  | => `t`   | equal (also `/=`, not equal)                                   |
+| `(< 99 100)`   | => `t`   | less than (also `<=`, less than or equal to)                   |
+| `(random 100)` | `=> 42`  | random integer from 0 to 99                                    |
+| `(expt 4 2)`   | => `16`  | exponentiation (also exp, *e<sup>x</sup>* and `log`)           |
+| `(sin pi)`     | => `0.0` | sine function (also `cos`, `tan,` etc.)                        |
+| `(asin 0)`     | => `0.0` | arcsine or sin<sup>-1</sup> function (also `acos, atan`, etc.) |
+| `(min 2 3 4)`  | => `2`   | minimum (also `max`)                                           |
+| `(abs -3)`     | => `3`   | absolute value                                                 |
+| `(sqrt 4)`     | => `2`   | square root                                                    |
+| `(round 4.1)`  | => `4`   | round off (also `truncate, floor, ceiling`)                    |
+| `(rem 11 5)`   | => 1     | remainder (also `mod`)                                         |
 
 ## 3.9 Functions on Sets
 
@@ -1239,15 +1239,15 @@ This implementation returned (`C D`) as the answer, but another might return (`D
 They are equivalent sets, so either is valid, and your program should not depend on the order of elements in the result.
 Here are the main functions on sets:
 
-| []() | | |
-|---|---|---|
-| `(intersection r s)` | => `(c d)` | find common elements of two sets |
-| `(union r s)` | => `(a b c d e)` | find all elements in either of two sets |
-| `(set-difference r s)` | => `(a b)` | find elements in one but not other set |
-| `(member 'd r)` | => `(d)` | check if an element is a member of a set |
-| `(subsetp s r)` | => `nil` | see if all elements of one set are in another |
-| `(adjoin 'b s`) | => `(b c d e)` | add an element to a set |
-| `(adjoin 'c s)` | => `(c d e)` | ... but don't add duplicates |
+| []()                   |                  |                                               |
+|------------------------|------------------|-----------------------------------------------|
+| `(intersection r s)`   | => `(c d)`       | find common elements of two sets              |
+| `(union r s)`          | => `(a b c d e)` | find all elements in either of two sets       |
+| `(set-difference r s)` | => `(a b)`       | find elements in one but not other set        |
+| `(member 'd r)`        | => `(d)`         | check if an element is a member of a set      |
+| `(subsetp s r)`        | => `nil`         | see if all elements of one set are in another |
+| `(adjoin 'b s`)        | => `(b c d e)`   | add an element to a set                       |
+| `(adjoin 'c s)`        | => `(c d e)`     | ... but don't add duplicates                  |
 
 It is also possible to represent a set with a sequence of bits, given a particular universe of discourse.
 For example, if every set we are interested in must be a subset of (`a b c d e`), then we can use the bit sequence 11110 to represent (`a b c d`), 00000 to represent the empty set, and 11001 to represent (`a b e`).
@@ -1260,13 +1260,13 @@ Computation will be faster, because the computer's underlying instruction set wi
 Common Lisp provides a full complement of functions on both bit vectors and integers.
 The following table lists some, their correspondence to the list functions.
 
-| `lists` | `integers` | `bit vectors` |
-|---|---|---|
-| `intersection` | `logand` | `bit-and` |
-| `union` | `logior` | `bit-ior` |
-| `set-difference` | `logandc2` | `bit-andc2` |
-| `member` | `logbitp` | `bit` |
-| `length` | `logcount` | |
+| `lists`          | `integers` | `bit vectors` |
+|------------------|------------|---------------|
+| `intersection`   | `logand`   | `bit-and`     |
+| `union`          | `logior`   | `bit-ior`     |
+| `set-difference` | `logandc2` | `bit-andc2`   |
+| `member`         | `logbitp`  | `bit`         |
+| `length`         | `logcount` |               |
 
 For example,
 
@@ -1341,27 +1341,27 @@ These are useful mainly for testing objects (as with the typecase macro) and for
 
 Here is a table of the most commonly used data types:
 
-| Type | Example | Explanation |
-|---|---|---|
-| `character` | `#\c` | A single letter, number, or punctuation mark. |
-| `number` | `42` | The most common numbers are floats and integers. |
-| `float` | `3.14159` | A number with a decimal point. |
-| `integer` | `42` | A whole number, of either fixed or indefinite size: |
-| `fixnum` | `123` | An integer that fits in a single word of storage. |
-| `bignum` | `123456789` | An integer of unbounded size. |
-| `function` | `#'sin` | A function can be applied to an argument list. |
-| `symbol` | `sin` | Symbols can name fns and vars, and are themselves objects. |
-| `null` | `nil` | The object `nil` is the only object of type null. |
-| `keyword` | `:key` | Keywords are a subtype of symbol. |
-| `sequence` | `(a b c)` | Sequences include lists and vectors. |
-| `list` | `(a b c)` | A list is either a `cons` or `null`. |
-| `vector` | `#(a b c)` | A vector is a subtype of sequence. |
-| `cons` | `(a b c)` | A cons is a non-nil list. |
-| `atom` | `t` | An atom is anything that is not a cons. |
-| `string` | `"abc"` | A string is a type of vector of characters. |
-| `array` | `#lA(a b c)` | Arrays include vectors and higher-dimensional arrays. |
-| `structure` | `#S(type ...)` | Structures are defined by `defstruct`. |
-| `hash-table` | ... | Hash tables are created by `make-hash-table`. |
+| Type         | Example        | Explanation                                                |
+|--------------|----------------|------------------------------------------------------------|
+| `character`  | `#\c`          | A single letter, number, or punctuation mark.              |
+| `number`     | `42`           | The most common numbers are floats and integers.           |
+| `float`      | `3.14159`      | A number with a decimal point.                             |
+| `integer`    | `42`           | A whole number, of either fixed or indefinite size:        |
+| `fixnum`     | `123`          | An integer that fits in a single word of storage.          |
+| `bignum`     | `123456789`    | An integer of unbounded size.                              |
+| `function`   | `#'sin`        | A function can be applied to an argument list.             |
+| `symbol`     | `sin`          | Symbols can name fns and vars, and are themselves objects. |
+| `null`       | `nil`          | The object `nil` is the only object of type null.          |
+| `keyword`    | `:key`         | Keywords are a subtype of symbol.                          |
+| `sequence`   | `(a b c)`      | Sequences include lists and vectors.                       |
+| `list`       | `(a b c)`      | A list is either a `cons` or `null`.                       |
+| `vector`     | `#(a b c)`     | A vector is a subtype of sequence.                         |
+| `cons`       | `(a b c)`      | A cons is a non-nil list.                                  |
+| `atom`       | `t`            | An atom is anything that is not a cons.                    |
+| `string`     | `"abc"`        | A string is a type of vector of characters.                |
+| `array`      | `#lA(a b c)`   | Arrays include vectors and higher-dimensional arrays.      |
+| `structure`  | `#S(type ...)` | Structures are defined by `defstruct`.                     |
+| `hash-table` | ...            | Hash tables are created by `make-hash-table`.              |
 
 Almost every data type has a *recognizer predicate* - a function that returns true for only elements of that type.
 In general, a predicate is a function that always returns one of two values: true or false.
@@ -1402,20 +1402,20 @@ Similarly, `null` is a subtype of both `symbol` and `list.`
 
 The following table shows a number of more specialized data types that are not used as often:
 
-| Type | Example | Explanation |
-|---|---|---|
-| `t` | `42` | Every object is of type `t.` |
-| `nil` | | No object is of type `nil`. |
-| `complex` | `#C(0 1)` | Imaginary numbers. |
-| `bit` | `0` | Zero or one. |
-| `rational` | `2/3` | Rationals include integers and ratios. |
-| `ratio` | `2/3` | Exact fractional numbers. |
-| `simple-array` | `#lA(x y)` | An array that is not displaced or adjustable. |
-| `readtable` | `...` | A mapping from characters to their meanings to read. |
-| `package` | `...` | A collection of symbols that form a module. |
-| `pathname` | `#P"/usr/spool/mail"` | A file or directory name. |
-| `stream` | `...` | A pointer to an open file; used for reading or printing. |
-| `random-state` | `...` | A state used as a seed by `random.` |
+| Type           | Example               | Explanation                                              |
+|----------------|-----------------------|----------------------------------------------------------|
+| `t`            | `42`                  | Every object is of type `t.`                             |
+| `nil`          |                       | No object is of type `nil`.                              |
+| `complex`      | `#C(0 1)`             | Imaginary numbers.                                       |
+| `bit`          | `0`                   | Zero or one.                                             |
+| `rational`     | `2/3`                 | Rationals include integers and ratios.                   |
+| `ratio`        | `2/3`                 | Exact fractional numbers.                                |
+| `simple-array` | `#lA(x y)`            | An array that is not displaced or adjustable.            |
+| `readtable`    | `...`                 | A mapping from characters to their meanings to read.     |
+| `package`      | `...`                 | A collection of symbols that form a module.              |
+| `pathname`     | `#P"/usr/spool/mail"` | A file or directory name.                                |
+| `stream`       | `...`                 | A pointer to an open file; used for reading or printing. |
+| `random-state` | `...`                 | A state used as a seed by `random.`                      |
 
 In addition, there are even more specialized types, such as `short-float`, `compiled-function`, and `bit-vector`.
 It is also possible to construct more exact types, such as (`vector (integer 0 3) 100`), which represents a vector of 100 elements, each of which is an integer from 0 to 3, inclusive.
