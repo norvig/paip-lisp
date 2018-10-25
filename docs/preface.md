@@ -279,11 +279,11 @@ Readers can test their level of understanding by faithfully doing the exercises.
 The exercises are graded on the scale [s], [m], [h], [d], which can be interpreted either as a level of difficulty or as an expected time it will take to do the exercise:
 
 | Code | Difficulty | Time to Do |
-|---|---|---|
-| [s] | Simple | Seconds |
-| [m] | Medium | Minutes |
-| [h] | Hard | Hours |
-| [d] | Difficult | Days |
+|------|------------|------------|
+| [s]  | Simple     | Seconds    |
+| [m]  | Medium     | Minutes    |
+| [h]  | Hard       | Hours      |
+| [d]  | Difficult  | Days       |
 
 The time to do the exercise is measured from the point that the concepts have been well understood.
 If the reader is unclear on the underlying concepts, it might take hours of review to understand a [m] problem.
