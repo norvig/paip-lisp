@@ -958,12 +958,13 @@ Another strategy would be for the mountaineer to turn back and try again when th
 As a concrete example of a problem that can be solved by search, consider the task of planning a flight across the North American continent in a small airplane, one whose range is limited to 1000 kilometers.
 Suppose we have a list of selected cities with airports, along with their position in longitude and latitude:
 
-!!!(table)
+```
+(defstruct (city (:type list)) name long lat)
+(defparameter *cities*
+```
 
-| []()                                            |                 |                  |                  |
-| ---                                             | ---             | ---              | ---              |
-| `(defstruct (city (:type list)) name long lat)` |
-| `(defparameter *cities*`                        |
+| []()            |                 |                  |                  |
+|-----------------|-----------------|------------------|------------------|
 | `'((Atlanta`    | `84.23 33.45)`  | `(Los-Angeles`   | `118.15 34.03`   |
 | `(Boston`       | `71.05 42.21)`  | `(Memphis`       | `90.03 35.09)`   |
 | `(Chicago`      | `87.37 41.50)`  | `(New-York`      | `73.58 40.47)`   |
