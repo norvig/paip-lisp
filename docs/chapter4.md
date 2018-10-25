@@ -150,9 +150,9 @@ Since our program is just a simulation-it won't be actually driving a car or dia
 The specification is complete enough to lead directly to a complete Common Lisp program.
 [Figure 4.1](#f0010) summarizes the variables, data types, and functions that make up the GPS program, along with some of the Common Lisp functions used to implement it.
 
-| []() |
-|---|
-| ![f04-01](images/chapter4/f04-01.jpg) |
+| []()                                     |
+|------------------------------------------|
+| ![f04-01](images/chapter4/f04-01.jpg)    |
 | Figure 4.1: Glossary for the GPS Program |
 (editor: this should be a markdown table)
 
@@ -565,9 +565,9 @@ To generate indented output, the function `dbg-indent` is defined:
 At this point we are ready to put together a new version of GPS with solutions for the "running around the block," "prerequisite clobbers sibling goal," "leaping before you look," and "recursive subgoal" problems.
 The glossary for the new version is in [figure 4.2](#f0015).
 
-| []() |
-|---|
-| ![f04-02](images/chapter4/f04-02.jpg) |
+| []()                                        |
+|---------------------------------------------|
+| ![f04-02](images/chapter4/f04-02.jpg)       |
 | Figure 4.2: Glossary for Version 2 of `GPS` |
 (editor: this should be a markdown table)
 
