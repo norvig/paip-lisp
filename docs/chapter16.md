@@ -93,9 +93,9 @@ After that we will return to the main core of EMYCIN, !!!(span) {:.smallcaps} th
 Finally, we will show how to add some medical knowledge to EMYCIN !!!(span) {:.smallcaps} to reconstruct MYCIN.
 !!!(span) {:.smallcaps} A glossary of the program is in [figure  16.1](#f0010).
 
-| []() |
-|---|
-| ![f16-01](images/chapter16/f16-01.jpg) |
+| []()                                         |
+|----------------------------------------------|
+| ![f16-01](images/chapter16/f16-01.jpg)       |
 | Figure 16.1: Glossary for the EMYCIN Program |
 
 *(ed: this could be a markdown table)*
@@ -648,10 +648,10 @@ Finally, there is a level for organisms found in each culture.
 The current organism is stored under both the `organism` and `current-instance` keys.
 The context tree is shown in [figure  16.2](#f0015).
 
-| []() |
-|---|
+| []()                                   |
+|----------------------------------------|
 | ![f16-02](images/chapter16/f16-02.jpg) |
-| Figure 16.2: A Context Tree |
+| Figure 16.2: A Context Tree            |
 
 ```lisp
 (defun new-instance (context)
