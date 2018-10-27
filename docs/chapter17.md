@@ -27,10 +27,10 @@ This chapter covers one small aspect of high-level vision.
 In this chapter we look at the line-diagram labeling problem: Given a list of lines and the vertexes at which they intersect, how can we determine what the lines represent?
 For example, given the nine lines in [figure 17.1](#f0010), how can we interpret the diagram as a cube?
 
-| []() |
-|---|
+| []()                                   |
+|----------------------------------------|
 | ![f17-01](images/chapter17/f17-01.jpg) |
-| Figure 17.1: A Cube |
+| Figure 17.1: A Cube                    |
 
 Before we can arrive at an interpretation, we have to agree on what the candidates are.
 After all, [figure 17.1](#f0010) could be just a hexagon with three lines in the middle.
@@ -62,10 +62,10 @@ Vertex A is the near corner of the cube, and the three lines coming out of it ar
 Lines GD and DF are concave lines, indicating the junction between the cube and the surface on which it is resting.
 The remaining lines are boundary lines, indicating that there is no physical connection between the cube and the background there, but that there are other sides of the cube that cannot be seen.
 
-| []() |
-|---|
+| []()                                   |
+|----------------------------------------|
 | ![f17-02](images/chapter17/f17-02.jpg) |
-| Figure 17.2: A Line-labeled Cube |
+| Figure 17.2: A Line-labeled Cube       |
 
 The line-labeling technique developed in this chapter is based on a simple idea.
 First we enumerate all the possible vertexes, and all the possible labelings for each vertex.
@@ -76,9 +76,9 @@ The vertexes are listed in [figure 17.3](#f0020).
 Each vertex imposes some constraints on the lines that compose it.
 For example, in a W vertex, the middle line can be labeled with a + or -, but not with an arrow.
 
-| []() |
-|---|
-| ![f17-03](images/chapter17/f17-03.jpg) |
+| []()                                          |
+|-----------------------------------------------|
+| ![f17-03](images/chapter17/f17-03.jpg)        |
 | Figure 17.3: The Possible Vertexes and Labels |
 
 Each line connects two vertexes, so it must satisfy both constraints.
@@ -100,10 +100,10 @@ This constrains vertex D in such a way that line DA must be convex (+).
 In the middle picture the constraint on vertex D has propagated to vertex A, and in the right-hand picture it propagates to vertex B.
 Soon, the whole cube will be uniquely labeled.
 
-| []() |
-|---|
+| []()                                   |
+|----------------------------------------|
 | ![f17-04](images/chapter17/f17-04.jpg) |
-| Figure 17.4: Propagating Constraints |
+| Figure 17.4: Propagating Constraints   |
 
 Many diagrams will be labeled uniquely by this constraint propagation process.
 Some diagrams, however, are ambiguous.
@@ -116,9 +116,9 @@ That completes the sketch of the line-labeling algorithm.
 We are now ready to implement a labeling program.
 It's glossary is in [figure 17.5](#f0030).
 
-| []() |
-|---|
-| ![f17-05](images/chapter17/f17-05.jpg) |
+| []()                                                |
+|-----------------------------------------------------|
+| ![f17-05](images/chapter17/f17-05.jpg)              |
 | Figure 17.5: Glossary for the Line-Labeling Program |
 
 *(ed: should be a markdown table)*
@@ -400,10 +400,10 @@ The name is followed by a list of vertex descriptions.
 Each description is a list consisting of the name of a vertex, the vertex type (Y, A, L, or T), and the names of the neighboring vertexes.
 Here again is the `defdiagram` description for the cube shown in [figure 17.6](#f0035).
 
-| []() |
-|---|
+| []()                                   |
+|----------------------------------------|
 | ![f17-06](images/chapter17/f17-06.jpg) |
-| Figure 17.6: A Cube |
+| Figure 17.6: A Cube                    |
 
 ```lisp
 (defdiagram cube
@@ -564,9 +564,9 @@ These are shown in [figure 17.7](#f0040).
 It would be nice if we could supply information about where the cube is attached, and see if we can get a unique interpretation.
 The function ground takes a diagram and modifies it by making one or more lines be grounded lines-lines that have a concave (-) label, corresponding to a junction with the ground.
 
-| []() |
-|---|
-| ![f17-07](images/chapter17/f17-07.jpg) |
+| []()                                          |
+|-----------------------------------------------|
+| ![f17-07](images/chapter17/f17-07.jpg)        |
 | Figure 17.7: Four Interpretations of the Cube |
 
 ```lisp
@@ -618,13 +618,15 @@ The rest is done by constraint propagation.
 The next example yields the same four interpretations, in the same order (free floating, attached at bottom, attached at right, and attached at left) when interpreted ungrounded.
 The grounded version yields the unique solution shown in the following output and in [figure 17.9](#f0050).
 
-| []() |
-|---|
+| []()                                   |
+|----------------------------------------|
 | ![f17-08](images/chapter17/f17-08.jpg) |
-| Figure 17.8: Cube on a Plate |
+| Figure 17.8: Cube on a Plate           |
 
+| []()                                   |
+|----------------------------------------|
 | ![f17-09](images/chapter17/f17-09.jpg) |
-| Figure 17.9: Labeled Cube on a Plate |
+| Figure 17.9: Labeled Cube on a Plate   |
 
 ```lisp
 (defdiagram cube-on-plate
@@ -838,20 +840,20 @@ It is interesting that the same fact that makes the processing of the poiuyt tak
 This section considers one more example, and considers what to do when there are apparent errors in the input.
 The example is taken from Charniak and McDermott's *Introduction to Artificial Intelligence*, page 138, and shown in [figure 17.12](#f0065).
 
-| []() |
-|---|
-| ![f17-10](images/chapter17/f17-10.jpg) |
+| []()                                          |
+|-----------------------------------------------|
+| ![f17-10](images/chapter17/f17-10.jpg)        |
 | Figure 17.10: An Impossible Figure (A Poiuyt) |
 
-| []() |
-|---|
+| []()                                   |
+|----------------------------------------|
 | ![f17-11](images/chapter17/f17-11.jpg) |
-| Figure 17.11: A Tower |
+| Figure 17.11: A Tower                  |
 
-| []() |
-|---|
+| []()                                   |
+| ---------------------------------------|
 | ![f17-12](images/chapter17/f17-12.jpg) |
-| Figure 17.12: Diagram of an arch |
+| Figure 17.12: Diagram of an arch       |
 
 ```lisp
 (defdiagram arch
