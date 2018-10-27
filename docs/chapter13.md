@@ -490,17 +490,14 @@ In the traditional procedural style, we write function definitions that fill in 
 In the object-oriented style, we write class definitions that fill in a column at a time.
 A third style, the *data-driven* or *generic* style, fills in only one box at a time.
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| | `account limited-account` | `password-account` | `...` |
-| `name` | | *object* | |
-| `deposit` | | *oriented* | |
-| `withdraw` | *function oriented* | | |
-| `balance` | | | |
-| `interest` | *generic* | | |
-| `...` | | | |
+|            | `account limited-account` | `password-account` | `...` |
+| ---        | ---                       | ---                | ---   |
+| `name`     |                           | *object*           |       |
+| `deposit`  |                           | *oriented*         |       |
+| `withdraw` | *function oriented*       |                    |       |
+| `balance`  |                           |                    |       |
+| `interest` | *generic*                 |                    |       |
+| `...`      |                           |                    |       |
 
 In this table there is no particular organization to either axis; both messages and classes are listed in random order.
 This ignores the fact that classes are organized hierarchically: both limited-account and password-account are subclasses of account.
@@ -558,16 +555,13 @@ There have been many proposals for adding object-oriented features to Lisp, some
 Recently, one approach has been approved to become an official part of Common Lisp, so we will abandon our ad hoc approach and devote the rest of this chapter to CLOS, the Common Lisp Object System.
 The correspondence between our system and CLOS is summarized here:
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| our system | CLOS |
-| `define-class` | `defclass` |
-| *`methods defined in class`* | `defmethod` |
-| *`class-name`* | `make-instance` |
-| `call-next-method` | `call-next-method` |
-| `ensure-generic-fn` | `ensure-generic-function` |
+| our system                   | CLOS                      |
+|------------------------------|---------------------------|
+| `define-class`               | `defclass`                |
+| *`methods defined in class`* | `defmethod`               |
+| *`class-name`*               | `make-instance`           |
+| `call-next-method`           | `call-next-method`        |
+| `ensure-generic-fn`          | `ensure-generic-function` |
 
 Like most object-oriented systems, CLOS is primarily concerned with defining classes and methods for them, and in creating instances of the classes.
 In CLOS the macro `defclass` defines a class, `defmethod` defines a method, and `make-instance` creates an instance of a class-an object.
@@ -1124,14 +1118,19 @@ The metaphor of passing a message to an object does not apply here, unless we co
 It is striking that this style of method definition is very similar to the style used in Prolog.
 As another example, compare the following two definitions of `len`, a relation/function to compute the length of a list:
 
-!!!(table)
+```
+;; CLOS
+(defmethod len ((x null)) 0)
+(defmethod len ((x cons))
+(+  1 (len (rest x))))
+```
 
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `;; CLOS` | `%% Prolog` |
-| `(defmethod len ((x null)) 0)` | `len([],0).` |
-| `(defmethod len ((x cons))` | `len(CXIL].N1) :-` |
-|   `(+  1 (len (rest x))))` |   `len(L.N). NI is N+1.` |
+```
+%% Prolog
+len([],0).
+len(CXIL].N1) :-
+len(L.N). NI is N+1.
+```
 
 ## 13.10 Advantages of Object-Oriented Programming
 {:#s0065}
