@@ -198,23 +198,20 @@ Overall, the parser seems to work fine, but the range of sentences we can parse 
 The following grammar includes a wider variety of linguistic phenomena: adjectives, prepositional phrases, pronouns, and proper names.
 It also uses the usual linguistic conventions for category names, summarized in the table below:
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| | Category | Examples |
-| S | Sentence | *John likes Mary* |
-| NP | Noun Phrase | *John; a blue table* |
-| VP | Verb Phrase | *likes Mary; hit the ball* |
-| PP | Prepositional Phrase | *to Mary; with the man* |
-| A | Adjective | *little; blue* |
-| A  + | A list of one or more adjectives | *little blue* |
-| D | Determiner | *the; a* |
-| N | Noun | *ball; table* |
-| Name | Proper Name | *John; Mary* |
-| P | Preposition | *to; with* |
-| Pro | Pronoun | *you; me* |
-| V | Verb | *liked; hit* |
+|      | Category                         | Examples                   |
+|------|----------------------------------|----------------------------|
+| S    | Sentence                         | *John likes Mary*          |
+| NP   | Noun Phrase                      | *John; a blue table*       |
+| VP   | Verb Phrase                      | *likes Mary; hit the ball* |
+| PP   | Prepositional Phrase             | *to Mary; with the man*    |
+| A    | Adjective                        | *little; blue*             |
+| A  + | A list of one or more adjectives | *little blue*              |
+| D    | Determiner                       | *the; a*                   |
+| N    | Noun                             | *ball; table*              |
+| Name | Proper Name                      | *John; Mary*               |
+| P    | Preposition                      | *to; with*                 |
+| Pro  | Pronoun                          | *you; me*                  |
+| V    | Verb                             | *liked; hit*               |
 
 Here is the grammar:
 
@@ -332,21 +329,18 @@ We can get a more systematic comparison by looking at a range of examples.
 For example, consider sentences of the form "The man hit the table [with the ball]*" for zero or more repetitions of the PP "with the ball." In the following table we record N, the number of repetitions of the PP, along with the number of resulting parses,[2](#fn0020) and for both memoized and unmemoized versions of parse, the number of seconds to produce the parse, the number of parses per second (PPS), and the number of recursive calls to `parse`.
 The performance of the memoized version is quite acceptable; for N=5, a 20-word sentence is parsed into 132 possibilities in .68 seconds, as opposed to the 20 seconds it takes in the unmemoized version.
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| | Memoized | Unmemoized |
-| N | Parses | Secs | PPS | Calls | Secs | PPS | Calls |
-| 0 | 1 | 0.02 | 60 | 4 | 0.02 | 60 | 17 |
-| 1 | 2 | 0.02 | 120 | 11 | 0.07 | 30 | 96 |
-| 2 | 5 | 0.05 | 100 | 21 | 0.23 | 21 | 381 |
-| 3 | 14 | 0.10 | 140 | 34 | 0.85 | 16 | 1388 |
-| 4 | 42 | 0.23 | 180 | 50 | 3.17 | 13 | 4999 |
-| 5 | 132 | 0.68 | 193 | 69 | 20.77 | 6 | 18174 |
-| 6 | 429 | 1.92 | 224 | 91 | - | | |
-| 7 | 1430 | 5.80 | 247 | 116 | - | | |
-| 8 | 4862 | 20.47 | 238 | 144 | - | | |
+|      |        | Memoized |     |       | Unmemoized |     |       |
+| N    | Parses | Secs     | PPS | Calls | Secs       | PPS | Calls |
+|------|--------|----------|-----|-------|------------|-----|-------|
+| 0    | 1      | 0.02     | 60  | 4     | 0.02       | 60  | 17    |
+| 1    | 2      | 0.02     | 120 | 11    | 0.07       | 30  | 96    |
+| 2    | 5      | 0.05     | 100 | 21    | 0.23       | 21  | 381   |
+| 3    | 14     | 0.10     | 140 | 34    | 0.85       | 16  | 1388  |
+| 4    | 42     | 0.23     | 180 | 50    | 3.17       | 13  | 4999  |
+| 5    | 132    | 0.68     | 193 | 69    | 20.77      | 6   | 18174 |
+| 6    | 429    | 1.92     | 224 | 91    | -          |     |       |
+| 7    | 1430   | 5.80     | 247 | 116   | -          |     |       |
+| 8    | 4862   | 20.47    | 238 | 144   | -          |     |       |
 
 **Exercise  19.1 [h]** It seems that we could be more efficient still by memoizing with a table consisting of a vector whose length is the number of words in the input (plus one).
 Implement this approach and see if it entails less overhead than the more general hash table approach.
@@ -735,29 +729,31 @@ I added the postnominal adjectives "shuffled," which randomly permutes the list 
 I also added the operator "repeat," as in "1 to 3 repeat 5," which repeats a list a certain number of times.
 I also added brackets to allow input that says explicitly how it should be parsed.
 
-!!!(table)
+`(use`
 
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `(use` |
-| `        '((NP` | `->` | `(NP CONJ NP)` | `infix-funcal1` | `infix-scorer)` |
-| `        (NP` | `->` | `(N P N)` | `infix-funcal1` | `infix-scorer)` |
-| `        (NP` | `->` | `(N)` | `list)` | |
-| `        (NP` | `->` | `([ NP ])` | `arg2)` | |
-| `        (NP` | `->` | `(NP ADJ)` | `rev-funcall` | `rev-scorer)` |
-| `        (NP` | `->` | `(NP OP N)` | `infix-funcall)` | |
-| `        (N` | `->` | `(D)` | `identity)` | |
-| `        (N` | `->` | `(N D)` | `10*N+D)` | |
-| `        (P` | `->` | `to` | `integers` | `prefer  <)` |
-| `        ([` | `->` | `[` | `[)` | |
-| `        (]` | `->` | `]` | `])` | |
-| `        (OP` | `->` | `repeat` | `repeat)` | |
-| `        (CONJ` | `-> and` | `append` | `prefer-disjoint)` |
-| `        (CONJ` | `-> without` | `set-difference` | `prefer-subset)` |
-| `        (ADJ` | | `-> reversed` | `reverse` | `inv-span)` |
-| `        (ADJ` | | `-> shuffled` | `permute` | `prefer-not-singleton)` |
-| `        (D -> 1 1) (D -> 2 2) (D -> 3 3) (D -> 4 4) (D -> 5 5)` |
-| `        (D -> 6 6) (D -> 7 7) (D -> 8 8) (D -> 9 9) (D -> 0 0)))` |
+| []()    |      |                |                  |                         |
+|---------|------|----------------|------------------|-------------------------|
+| `'((NP` | `->` | `(NP CONJ NP)` | `infix-funcal1`  | `infix-scorer)`         |
+| `(NP`   | `->` | `(N P N)`      | `infix-funcal1`  | `infix-scorer)`         |
+| `(NP`   | `->` | `(N)`          | `list)`          |                         |
+| `(NP`   | `->` | `([ NP ])`     | `arg2)`          |                         |
+| `(NP`   | `->` | `(NP ADJ)`     | `rev-funcall`    | `rev-scorer)`           |
+| `(NP`   | `->` | `(NP OP N)`    | `infix-funcall)` |                         |
+| `(N`    | `->` | `(D)`          | `identity)`      |                         |
+| `(N`    | `->` | `(N D)`        | `10*N+D)`        |                         |
+| `(P`    | `->` | `to`           | `integers`       | `prefer  <)`            |
+| `([`    | `->` | `[`            | `[)`             |                         |
+| `(]`    | `->` | `]`            | `])`             |                         |
+| `(OP`   | `->` | `repeat`       | `repeat)`        |                         |
+| `(CONJ` |      | `-> and`       | `append`         | `prefer-disjoint)`      |
+| `(CONJ` |      | `-> without`   | `set-difference` | `prefer-subset)`        |
+| `(ADJ`  |      | `-> reversed`  | `reverse`        | `inv-span)`             |
+| `(ADJ`  |      | `-> shuffled`  | `permute`        | `prefer-not-singleton)` |
+
+```
+(D -> 1 1) (D -> 2 2) (D -> 3 3) (D -> 4 4) (D -> 5 5)
+(D -> 6 6) (D -> 7 7) (D -> 8 8) (D -> 9 9) (D -> 0 0)))
+```
 
 The following scoring functions take trees as inputs and compute bonuses or penalties for those trees.
 The scoring function `prefer  <`, used for the word "to," gives a one-point penalty for reversed ranges: "5 to 1" gets a score of -1, while "1 to 5" gets a score of 0.
@@ -842,49 +838,62 @@ We will need a way to show off the preference rankings:
 
 Now we can try some examples:
 
-!!!(table)
+```
+> (all-parses '(1 to 6 without 3 and 4))
+```
 
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `> (all-parses '(1 to 6 without 3 and 4))` |
-| `Score` | `Semantics` | `(1 TO 6 WITHOUT 3 AND 4)` |
-| `=======` | `===========` | `========================` |
-| `0.3` | `(12 5 6)` | `((1 TO 6) WITHOUT (3 AND 4))` |
-| `-0.7` | `(12 4 5 6 4)` | `(((1 TO 6) WITHOUT 3) AND 4)` |
-| `> (all-parses '(1 and 3 to 7 and 9 without 5 and 6))` |
-| `Score` | `Semantics` | `(1 AND 3 T0 7 AND 9 WITHOUT 5 AND 6)` |
-| `=======` | `===========` | `=================================` |
-| `0.2` | `(1 3 4 7 9)` | `(1 AND (((3 T0 7) AND 9) WITHOUT (5 AND 6)))` |
-| `0.1` | `(1 3 4 7 9)` | `(((1 AND (3 T0 7)) AND 9) WITHOUT (5 AND 6))` |
-| `0.1` | `(1 3 4 7 9)` | `((1 AND ((3 T0 7) AND 9)) WITHOUT (5 AND 6))` |
-| `-0.8` | `(1 3 4 6 7 9 6)` | `((1 AND (((3 T0 7) AND 9) WITHOUT 5)) AND 6)` |
-| `-0.8` | `(1 3 4 6 7 9 6)` | `(1 AND ((((3 T0 7) AND 9) WITHOUT 5) AND 6))` |
-| `-0.9` | `(1 3 4 6 7 9 6)` | `((((1 AND (3 T0 7)) AND 9) WITHOUT 5) AND 6)` |
-| `-0.9` | `(1 3 4 6 7 9 6)` | `(((1 AND ((3 T0 7) AND 9)) WITHOUT 5) AND 6)` |
-| `-2.0` | `(1 3 4 5 6 7 9)` | `((1 AND (3 TO 7)) AND (9 WITHOUT (5 AND 6)))` |
-| `-2.0` | `(1 3 4 5 6 7 9)` | `(1 AND ((3 TO 7) AND (9 WITHOUT (5 AND 6))))` |
-| `-3.0` | `(1 3 4 5 6 7 9 6)` | `(((1 AND (3 TO 7)) AND (9 WITHOUT 5)) AND 6)` |
-| `-3.0` | `(1 3 4 5 6 7 9 6)` | `((1 AND (3 TO 7)) AND ((9 WITHOUT 5) AND 6))` |
-| `-3.0` | `(1 3 4 5 6 7 9 6)` | `((1 AND ((3 TO 7) AND (9 WITHOUT 5))) AND 6)` |
-| `-3.0` | `(1 3 4 5 6 7 9 6)` | `(1 AND (((3 T0 7) AND (9 WITHOUT 5)) AND 6))` |
-| `-3.0` | `(1 3 4 5 6 7 9 6)` | `(1 AND ((3 T0 7) AND ((9 WITHOUT 5) AND 6)))` |
-| `> (all -parses '(1 and 3 to 7 and 9 without 5 and 2))` |
-| `Score` | `Semantics` | `(1 AND 3 T0 7 AND 9 WITHOUT 5 AND 2)` |
-| `======` | `================` | `===================================` |
-| `0.2` | `(1 3 4 6 7 9 2)` | `((1 AND (((3 T0 7) AND 9) WITHOUT 5)) AND 2)` |
-| `0.2` | `(1 3 4 6 7 9 2)` | `(1 AND ((((3 T0 7) AND 9) WITHOUT 5) AND 2))` |
-| `0.1` | `(1 3 4 6 7 9 2)` | `((((1 AND (3 T0 7)) AND 9) WITHOUT 5) AND 2)` |
-| `0.1` | `(1 3 4 6 7 9 2)` | `(((1 AND ((3 T0 7) AND 9)) WITHOUT 5) AND 2)` |
-| `-2.0` | `(1 3 4 5 6 7 9 2)` | `(((1 AND (3 T0 7)) AND (9 WITHOUT 5)) AND 2)` |
-| `-2.0` | `(1 3 4 5 6 7 9 2)` | `((1 AND (3 T0 7)) AND ((9 WITHOUT 5) AND 2))` |
-| `-2.0` | `(1 3 4 5 6 7 9)` | `((1 AND (3 T0 7)) AND (9 WITHOUT (5 AND 2)))` |
-| `-2.0` | `(1 3 4 5 6 7 9 2)` | `((1 AND ((3 T0 7) AND (9 WITHOUT 5))) AND 2)` |
-| `-2.0` | `(1 3 4 5 6 7 9 2)` | `(1 AND (((3 T0 7) AND (9 WITHOUT 5)) AND 2))` |
-| `-2.0` | `(1 3 4 5 6 7 9 2)` | `(1 AND ((3 T0 7) AND ((9 WITHOUT 5) AND 2)))` |
-| `-2.0` | `(1 3 4 5 6 7 9)` | `(1 AND ((3 T0 7) AND (9 WITHOUT (5 AND 2))))` |
-| `-2.8` | `(1 3 4 6 7 9)` | `(1 AND (((3 T0 7) AND 9) WITHOUT (5 AND 2)))` |
-| `-2.9` | `(1 3 4 6 7 9)` | `(((1 AND (3 T0 7)) AND 9) WITHOUT (5 AND 2))` |
-| `-2.9` | `(1 3 4 6 7 9)` | `((1 AND ((3 T0 7) AND 9)) WITHOUT (5 AND 2))` |
+| []()      |                |                                |
+|-----------|----------------|--------------------------------|
+| `Score`   | `Semantics`    | `(1 TO 6 WITHOUT 3 AND 4)`     |
+| `=======` | `===========`  | `========================`     |
+| `0.3`     | `(12 5 6)`     | `((1 TO 6) WITHOUT (3 AND 4))` |
+| `-0.7`    | `(12 4 5 6 4)` | `(((1 TO 6) WITHOUT 3) AND 4)` |
+
+```
+> (all-parses '(1 and 3 to 7 and 9 without 5 and 6))
+```
+
+| []()      |                     |                                                |
+|-----------|---------------------|------------------------------------------------|
+| `Score`   | `Semantics`         | `(1 AND 3 T0 7 AND 9 WITHOUT 5 AND 6)`         |
+| `=======` | `===========`       | `=================================`            |
+| `0.2`     | `(1 3 4 7 9)`       | `(1 AND (((3 T0 7) AND 9) WITHOUT (5 AND 6)))` |
+| `0.1`     | `(1 3 4 7 9)`       | `(((1 AND (3 T0 7)) AND 9) WITHOUT (5 AND 6))` |
+| `0.1`     | `(1 3 4 7 9)`       | `((1 AND ((3 T0 7) AND 9)) WITHOUT (5 AND 6))` |
+| `-0.8`    | `(1 3 4 6 7 9 6)`   | `((1 AND (((3 T0 7) AND 9) WITHOUT 5)) AND 6)` |
+| `-0.8`    | `(1 3 4 6 7 9 6)`   | `(1 AND ((((3 T0 7) AND 9) WITHOUT 5) AND 6))` |
+| `-0.9`    | `(1 3 4 6 7 9 6)`   | `((((1 AND (3 T0 7)) AND 9) WITHOUT 5) AND 6)` |
+| `-0.9`    | `(1 3 4 6 7 9 6)`   | `(((1 AND ((3 T0 7) AND 9)) WITHOUT 5) AND 6)` |
+| `-2.0`    | `(1 3 4 5 6 7 9)`   | `((1 AND (3 TO 7)) AND (9 WITHOUT (5 AND 6)))` |
+| `-2.0`    | `(1 3 4 5 6 7 9)`   | `(1 AND ((3 TO 7) AND (9 WITHOUT (5 AND 6))))` |
+| `-3.0`    | `(1 3 4 5 6 7 9 6)` | `(((1 AND (3 TO 7)) AND (9 WITHOUT 5)) AND 6)` |
+| `-3.0`    | `(1 3 4 5 6 7 9 6)` | `((1 AND (3 TO 7)) AND ((9 WITHOUT 5) AND 6))` |
+| `-3.0`    | `(1 3 4 5 6 7 9 6)` | `((1 AND ((3 TO 7) AND (9 WITHOUT 5))) AND 6)` |
+| `-3.0`    | `(1 3 4 5 6 7 9 6)` | `(1 AND (((3 T0 7) AND (9 WITHOUT 5)) AND 6))` |
+| `-3.0`    | `(1 3 4 5 6 7 9 6)` | `(1 AND ((3 T0 7) AND ((9 WITHOUT 5) AND 6)))` |
+
+```
+> (all -parses '(1 and 3 to 7 and 9 without 5 and 2))
+```
+
+| []()     |                     |                                                |
+|----------|---------------------|------------------------------------------------|
+| `Score`  | `Semantics`         | `(1 AND 3 T0 7 AND 9 WITHOUT 5 AND 2)`         |
+| `======` | `================`  | `===================================`          |
+| `0.2`    | `(1 3 4 6 7 9 2)`   | `((1 AND (((3 T0 7) AND 9) WITHOUT 5)) AND 2)` |
+| `0.2`    | `(1 3 4 6 7 9 2)`   | `(1 AND ((((3 T0 7) AND 9) WITHOUT 5) AND 2))` |
+| `0.1`    | `(1 3 4 6 7 9 2)`   | `((((1 AND (3 T0 7)) AND 9) WITHOUT 5) AND 2)` |
+| `0.1`    | `(1 3 4 6 7 9 2)`   | `(((1 AND ((3 T0 7) AND 9)) WITHOUT 5) AND 2)` |
+| `-2.0`   | `(1 3 4 5 6 7 9 2)` | `(((1 AND (3 T0 7)) AND (9 WITHOUT 5)) AND 2)` |
+| `-2.0`   | `(1 3 4 5 6 7 9 2)` | `((1 AND (3 T0 7)) AND ((9 WITHOUT 5) AND 2))` |
+| `-2.0`   | `(1 3 4 5 6 7 9)`   | `((1 AND (3 T0 7)) AND (9 WITHOUT (5 AND 2)))` |
+| `-2.0`   | `(1 3 4 5 6 7 9 2)` | `((1 AND ((3 T0 7) AND (9 WITHOUT 5))) AND 2)` |
+| `-2.0`   | `(1 3 4 5 6 7 9 2)` | `(1 AND (((3 T0 7) AND (9 WITHOUT 5)) AND 2))` |
+| `-2.0`   | `(1 3 4 5 6 7 9 2)` | `(1 AND ((3 T0 7) AND ((9 WITHOUT 5) AND 2)))` |
+| `-2.0`   | `(1 3 4 5 6 7 9)`   | `(1 AND ((3 T0 7) AND (9 WITHOUT (5 AND 2))))` |
+| `-2.8`   | `(1 3 4 6 7 9)`     | `(1 AND (((3 T0 7) AND 9) WITHOUT (5 AND 2)))` |
+| `-2.9`   | `(1 3 4 6 7 9)`     | `(((1 AND (3 T0 7)) AND 9) WITHOUT (5 AND 2))` |
+| `-2.9`   | `(1 3 4 6 7 9)`     | `((1 AND ((3 T0 7) AND 9)) WITHOUT (5 AND 2))` |
 
 In each case, the preference rules are able to assign higher scores to more reasonable interpretations.
 It turns out that, in each case, all the interpretations with positive scores represent the same set of numbers, while interpretations with negative scores seem worse.
@@ -959,18 +968,19 @@ Please pick one:
 (1 2 4 5 7 1 2 4 5 7)
 ```
 
-!!!(table)
+```
+> (all-parses '(1 to 5 without 3 and 7 repeat 2))
+```
 
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `> (all-parses '(1 to 5 without 3 and 7 repeat 2))` |
-| `Score` | `Semantics` | `(1 TO 5 WITHOUT 3 AND 7 REPEAT 2)` |
-| `==========` | `=========` | `===========================` |
-| `0.3` | `(1 2 4 5 7 1 2 4 5 7)` | `((((1 TO 5) WITHOUT 3) AND 7) REPEAT 2)` |
-| `0.3` | `(1 2 4 5 7 7)` | `(((1 TO 5) WITHOUT 3) AND (7 REPEAT 2))` |
-| `-2.7` | `(1 2 4 5 1 2 4 5)` | `(((1 TO 5) WITHOUT (3 AND 7)) REPEAT 2)` |
-| `-2.7` | `(1 2 4 5)` | `((1 TO 5) WITHOUT ((3 AND 7) REPEAT 2))` |
-| `-2.7` | `(1 2 4 5)` | `((1 TO 5) WITHOUT (3 AND (7 REPEAT 2)))` |
+| []()         |                         |                                           |
+|--------------|-------------------------|-------------------------------------------|
+| `Score`      | `Semantics`             | `(1 TO 5 WITHOUT 3 AND 7 REPEAT 2)`       |
+| `==========` | `=========`             | `===========================`             |
+| `0.3`        | `(1 2 4 5 7 1 2 4 5 7)` | `((((1 TO 5) WITHOUT 3) AND 7) REPEAT 2)` |
+| `0.3`        | `(1 2 4 5 7 7)`         | `(((1 TO 5) WITHOUT 3) AND (7 REPEAT 2))` |
+| `-2.7`       | `(1 2 4 5 1 2 4 5)`     | `(((1 TO 5) WITHOUT (3 AND 7)) REPEAT 2)` |
+| `-2.7`       | `(1 2 4 5)`             | `((1 TO 5) WITHOUT ((3 AND 7) REPEAT 2))` |
+| `-2.7`       | `(1 2 4 5)`             | `((1 TO 5) WITHOUT (3 AND (7 REPEAT 2)))` |
 
 This last example points out a potential problem: I wasn't sure what was a good scoring function for "repeat", so I left it blank, it defaulted to 0, and we end up with two parses with the same score.
 This example suggests that "repeat" should probably involve `inv-span` like the other modifiers, but perhaps other factors should be involved as well.
