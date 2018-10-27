@@ -556,9 +556,9 @@ To create the index, we essentially superimpose the list structure of all the ke
 At each position in the tree, we create an index of the keys that have either an atom or a variable at that position.
 [Figure 14.1](#f0010) shows the discrimination tree for the six keys.
 
-| []() |
-|---|
-| ![f14-01](images/chapter14/f14-01.jpg) |
+| []()                                           |
+|------------------------------------------------|
+| ![f14-01](images/chapter14/f14-01.jpg)         |
 | Figure 14.1: Discrimination Tree with Six Keys |
 
 Consider the query `(p ?y c)`.
@@ -1077,29 +1077,25 @@ Statements in the language must have one of five primitive operators: `sub, rel,
 
 The following table gives some examples, along with English translations:
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `(sub dog animal)` | Dog is a kind of animal. |
+| []()                         |                                                                |
+|------------------------------|----------------------------------------------------------------|
+| `(sub dog animal)`           | Dog is a kind of animal.                                       |
 | `(rel birthday animal date)` | The birthday relation holds between each animal and some date. |
-| `(ind fido dog)` | The individual Fido is categorized as a dog. |
-| `(val birthday fido july-1)` | The birthday of Fido is July-1. |
-| `(and *AB*)` | Both *A* and *B* are true. |
+| `(ind fido dog)`             | The individual Fido is categorized as a dog.                   |
+| `(val birthday fido july-1)` | The birthday of Fido is July-1.                                |
+| `(and *AB*)`                 | Both *A* and *B* are true.                                     |
 
 For those who feel more comfortable with predicate calculus, the following table gives the formal definition of each primitive.
 The most complicated definition is for rel.
 The form (rel *R A B*) means that every *R* holds between an individual of *A* and an individual of *B,* and furthermore that every individual of *A* participates in at least one *R* relation.
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `(sub`*AB*) | &forall;*x:A*(*x*) &Superset; *B*(*x*) |
-| `(rel`*RAB*) | &forall;*x,y* : *R*(*x,y*) &Superset; *A*(*x*) A *B*(*y*) *^*&forall;*xA*(*x*) &Superset; &exist;*y* : *R*(*x, y*) |
-| `(ind`*IC)* | *C*(*I*) |
-| `(val`*RIV*) | *R*(*I, V*) |
-| `(and`*P Q...*) | *P ^ Q...* |
+| []()            |                                                                                                                    |
+|-----------------|--------------------------------------------------------------------------------------------------------------------|
+| `(sub`*AB*)     | &forall;*x:A*(*x*) &Superset; *B*(*x*)                                                                             |
+| `(rel`*RAB*)    | &forall;*x,y* : *R*(*x,y*) &Superset; *A*(*x*) A *B*(*y*) *^*&forall;*xA*(*x*) &Superset; &exist;*y* : *R*(*x, y*) |
+| `(ind`*IC)*     | *C*(*I*)                                                                                                           |
+| `(val`*RIV*)    | *R*(*I, V*)                                                                                                        |
+| `(and`*P Q...*) | *P ^ Q...*                                                                                                         |
 
 Queries in the language, not surprisingly, have the same form as assertions, except that they may contain variables as well as constants.
 Thus, to find out what kinds of animais there are, use the query `(sub ?kind animal)`.
@@ -1587,15 +1583,12 @@ The second possibility is to include the truth value as part of the proposition.
 There are several syntactic variations on this theme.
 The following table shows the possibilities for the propositions "Jan likes Dean is true" and "Jan likes Ian is false:"
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| Approach | True Prop. | False Prop. |
-| 1) | `(likes Jan Dean) -- true` | `(likes Jan Ian) -- false` |
-| (2a) | `(likes true Jan Dean)` | `(likes false Jan Ian)` |
-| (2b) | `(likes Jan Dean)` | `(not (likes Jan Dean))` |
-| (2c) | `(likes Jan Dean)` | `(~  likes Jan Dean)` |
+| Approach | True Prop.                 | False Prop.                |
+|----------|----------------------------|----------------------------|
+| 1)       | `(likes Jan Dean) -- true` | `(likes Jan Ian) -- false` |
+| (2a)     | `(likes true Jan Dean)`    | `(likes false Jan Ian)`    |
+| (2b)     | `(likes Jan Dean)`         | `(not (likes Jan Dean))`   |
+| (2c)     | `(likes Jan Dean)`         | `(~  likes Jan Dean)`      |
 
 The difference between (1) and (2) shows up when we want to make a query.
 With (1), we make the single query `(likes Jan Dean)` (or perhaps `(likes Jan ?x))`, and the answers will tell us who Jan does and does not like.
