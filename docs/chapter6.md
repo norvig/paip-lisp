@@ -497,18 +497,20 @@ This is one of the few cases where it is appropriate to call `eval`: when we wan
 Here are two examples using `?if`.
 The first succeeds because `(+  3 4)` is indeed `7`, and the second fails because `(>  3 4)` is false.
 
-!!!(table)
+| []()           |                                                 |
+|----------------|-------------------------------------------------|
+| `> (pat-match` | `'(?x ?op ?y is ?z (?if (eq1 (?op ?x ?y) ?z)))` |
+|                | `'(3 + 4 is 7))`                                |
 
-| []()                                     |                                                 |
-| ---                                      | ---                                             |
-| `> (pat-match`                           | `'(?x ?op ?y is ?z (?if (eq1 (?op ?x ?y) ?z)))` |
-|                                          | `'(3 + 4 is 7))`                                |
-| `((?Z . 7) (?Y . 4) (?0P . +) (?X . 3))` |
-| `> (pat-match`                           | `'(?x ?op ?y (?if (?op ?x ?y)))`                |
-|                                          | `'(3 > 4))`                                     |
-| `NIL`                                    |                                                 |
+```
+((?Z . 7) (?Y . 4) (?0P . +) (?X . 3))
+```
 
-![t0025](images/B9780080571157500066/t0025.png)
+| []()           |                                  |
+|----------------|----------------------------------|
+| `> (pat-match` | `'(?x ?op ?y (?if (?op ?x ?y)))` |
+|                | `'(3 > 4))`                      |
+| `NIL`          |                                  |
 
 The syntax we have defined for patterns has two virtues: first, the syntax is very general, so it is easy to extend.
 Second, the syntax can be easily manipulated by `pat-match`.

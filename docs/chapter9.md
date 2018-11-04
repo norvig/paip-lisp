@@ -2555,8 +2555,6 @@ A fanciful example, resurrecting a number of obsolete Lisps, follows:
     (read-time-case
 ```
 
-!!!(table)
-
 | []()             |                              |
 |------------------|------------------------------|
 | `#+Explorer`     | `(time :microsecond-time)`   |

@@ -399,8 +399,6 @@ The simplest kind of question has an interrogative noun phrase as its subject: "
 
 The following table lists some sentences that can be parsed by this rule, showing the XP and subject of each.
 
-!!!(table)
-
 | Sentence                  | XP                 | Subject            |
 |---------------------------|--------------------|--------------------|
 | Kim likes Lee             | Kim                | Kim                |
@@ -843,19 +841,17 @@ Following are the modal auxiliary verbs.
 Again, it is difficult to specify semantics for them.
 The word "not" is also listed here; it is not an auxiliary, but it does modify them.
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `(word can` | `modal able` | `past)` |
-| `(word could` | `modal able` | `present)` |
-| `(word may` | `modal possible` | `past)` |
-| `(word might` | `modal possible` | `present)` |
-| `(word shall` | `modal mandatory` | `past)` |
-| `(word should` | `modal mandatory` | `present)` |
-| `(word will` | `modal expected` | `past)` |
-| `(word would` | `modal expected` | `present)` |
-| `(word must` | `modal necessary` | `present)` |
+| []()             |                   |            |
+|------------------|-------------------|------------|
+| `(word can`      | `modal able`      | `past)`    |
+| `(word could`    | `modal able`      | `present)` |
+| `(word may`      | `modal possible`  | `past)`    |
+| `(word might`    | `modal possible`  | `present)` |
+| `(word shall`    | `modal mandatory` | `past)`    |
+| `(word should`   | `modal mandatory` | `present)` |
+| `(word will`     | `modal expected`  | `past)`    |
+| `(word would`    | `modal expected`  | `present)` |
+| `(word must`     | `modal necessary` | `present)` |
 | `(word not not)` |
 
 ### Nouns

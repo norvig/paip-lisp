@@ -735,8 +735,6 @@ We can even do some occurs checking at compile time: `(= ?x (f ?x))` should fail
 The following table lists these improvements, along with a breakdown for the cases of unifying a bound `(?arg1)` or unbound `(?x)` variable agains another expression.
 The first column is the unification call, the second is the generated code, and the third is the bindings that will be added as a resuit of the call:
 
-!!!(table)
-
 |      | Unification         | Code                    | Bindings            |
 |------|---------------------|-------------------------|---------------------|
 | 1    | `(= 3 3)`           | `t`                     | `-`                 |
