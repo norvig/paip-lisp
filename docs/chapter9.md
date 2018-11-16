@@ -367,28 +367,26 @@ Or define a macro that combines `defun` and `memoize`:
 
 Both of these approaches rely on the fact that `defun` returns the name of the function defined.
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| *n* | `(fib *n*)` | unmemoized | memoized | memoized up to |
-| 25 | 121393 | 1.1 | .010 | 0 |
-| 26 | 196418 | 1.8 | .001 | 25 |
-| 27 | 317811 | 2.9 | .001 | 26 |
-| 28 | 514229 | 4.7 | .001 | 27 |
-| 29 | 832040 | 8.2 | .001 | 28 |
-| 30 | 1346269 | 12.4 | .001 | 29 |
-| 31 | 2178309 | 20.1 | .001 | 30 |
-| 32 | 3524578 | 32.4 | .001 | 31 |
-| 33 | 5702887 | 52.5 | .001 | 32 |
-| 34 | 9227465 | 81.5 | .001 | 33 |
-| 50 | 2.0e10 | - | .014 | 34 |
-| 100 | 5.7e20 | - | .031 | 50 |
-| 200 | 4.5e41 | - | .096 | 100 |
-| 500 | 2.2e104 | - | .270 | 200 |
-| 1000 | 7.0e208 | - | .596 | 500 |
-| 1000 | 7.0e208 | - | .001 | 1000 |
-| 1000 | 7.0e208 | - | .876 | 0 |
+| []() |             |            |          |                |
+|------|-------------|------------|----------|----------------|
+| *n*  | `(fib *n*)` | unmemoized | memoized | memoized up to |
+| 25   | 121393      | 1.1        | .010     | 0              |
+| 26   | 196418      | 1.8        | .001     | 25             |
+| 27   | 317811      | 2.9        | .001     | 26             |
+| 28   | 514229      | 4.7        | .001     | 27             |
+| 29   | 832040      | 8.2        | .001     | 28             |
+| 30   | 1346269     | 12.4       | .001     | 29             |
+| 31   | 2178309     | 20.1       | .001     | 30             |
+| 32   | 3524578     | 32.4       | .001     | 31             |
+| 33   | 5702887     | 52.5       | .001     | 32             |
+| 34   | 9227465     | 81.5       | .001     | 33             |
+| 50   | 2.0e10      | -          | .014     | 34             |
+| 100  | 5.7e20      | -          | .031     | 50             |
+| 200  | 4.5e41      | -          | .096     | 100            |
+| 500  | 2.2e104     | -          | .270     | 200            |
+| 1000 | 7.0e208     | -          | .596     | 500            |
+| 1000 | 7.0e208     | -          | .001     | 1000           |
+| 1000 | 7.0e208     | -          | .876     | 0              |
 
 Now we show a table giving the values of `(fib *n*)` for certain *n*, and the time in seconds to compute the value, before and after `(memoize 'fib)`.
 For larger values of *n*, approximations are shown in the table, although `fib` actually returns an exact integer.
@@ -734,28 +732,24 @@ F1
 > (disassemble 'fl)
 ```
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `6 PUSH` | `ARGIO ; N` |
-| `7 MOVEM` | `PDL-PUSH` |
-| `8 *` | `PDL-POP` |
-| `9 RETURN` | `PDL-POP` |
+| []()       |             |
+|------------|-------------|
+| `6 PUSH`   | `ARGIO ; N` |
+| `7 MOVEM`  | `PDL-PUSH`  |
+| `8 *`      | `PDL-POP`   |
+| `9 RETURN` | `PDL-POP`   |
 
 ```lisp
 Fl
 > (disassemble 'f2)
 ```
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `6 PUSH` | `ARGO ; N` |
-| `7 MOVEM` | `PDL-PUSH` |
-| `8 *` | `PDL-POP` |
-| `9 RETURN` | `PDL-POP` |
+| []()       |            |
+|------------|------------|
+| `6 PUSH`   | `ARGO ; N` |
+| `7 MOVEM`  | `PDL-PUSH` |
+| `8 *`      | `PDL-POP`  |
+| `9 RETURN` | `PDL-POP`  |
 
 ```lisp
 F2
@@ -1682,16 +1676,14 @@ Evaluation of (MAPCAR #'SIMPLIFY *TEST-DATA*) took 6.612  seconds.
 Total elapsed time: 22.819614  seconds
 ```
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `Count` | `Secs` | `Time%` | `Name` |
-| `51690` | `11.57` | `51%` | `PAT-MATCH` |
-| `37908` | `8.75` | `38%` | `VARIABLE-P` |
-| `1393` | `0.32` | `1%` | `MATCH-VARIABLE` |
-| `906` | `0.20` | `1%` | `SIMPLIFY` |
-| `274` | `1.98` | `9%` | `SIMPLIFY-EXP` |
+| []()    |         |         |                  |
+|---------|---------|---------|------------------|
+| `Count` | `Secs`  | `Time%` | `Name`           |
+| `51690` | `11.57` | `51%`   | `PAT-MATCH`      |
+| `37908` | `8.75`  | `38%`   | `VARIABLE-P`     |
+| `1393`  | `0.32`  | `1%`    | `MATCH-VARIABLE` |
+| `906`   | `0.20`  | `1%`    | `SIMPLIFY`       |
+| `274`   | `1.98`  | `9%`    | `SIMPLIFY-EXP`   |
 
 Running the test takes 6.6  seconds normally, although the time triples when the profiling overhead is added in.
 It should be clear that to speed things up, we have to either speed up or cut down on the number of calls to `pat-match` or `variable-p`, since together they account for 89% of the calls (and 89% of the time as well).
@@ -1716,16 +1708,13 @@ The simplifier was timed for all four combinations of `eq` or `equal` hash table
 The fastest result was `equal` hashing and nonresetting.
 Note that with `eq` hashing, the resetting version was faster, presumably because it couldn't take advantage of the common subexpressions between examples (since they aren't `eq`).
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
 | hashing | resetting | time |
-| none | - | 6.6 |
-| equal | yes | 3.8 |
-| equal | no | 3.0 |
-| eq | yes | 7.0 |
-| eq | no | 10.2 |
+|---------|-----------|------|
+| none    | -         | 6.6  |
+| equal   | yes       | 3.8  |
+| equal   | no        | 3.0  |
+| eq      | yes       | 7.0  |
+| eq      | no        | 10.2 |
 
 This approach makes the function `simplify` remember the work it has done, in a hash table.
 If the overhead of hash table maintenance becomes too large, there is an alternative: make the data remember what simplify has done.
@@ -2249,19 +2238,17 @@ It is an open question what performance you will get on other problems and on ot
 
 The following table summarizes the execution time and number of function calls on the test data:
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| | original | memo | memo  +  index | memo  +  comp | comp |
-| run time (secs) | 6.6 | 3.0 | .98 | .15 | .05 |
-| speed-up | - | 2 | 7 | 44 | 130 |
-| calls |
-| pat-match | 51690 | 20003 | 5159 | 0 | 0 |
-| variable-p | 37908 | 14694 | 4798 | 0 | 0 |
-| match-variable | 1393 | 551 | 551 | 0 | 0 |
-| simplify | 906 | 408 | 408 | 545 | 906 |
-| simplify-exp | 274 | 118 | 118 | 118 | 274 |
+| []()            |          |       |              |             |      |
+|-----------------|----------|-------|--------------|-------------|------|
+|                 | original | memo  | memo + index | memo + comp | comp |
+| run time (secs) | 6.6      | 3.0   | .98          | .15         | .05  |
+| speed-up        | -        | 2     | 7            | 44          | 130  |
+| calls           |
+| pat-match       | 51690    | 20003 | 5159         | 0           | 0    |
+| variable-p      | 37908    | 14694 | 4798         | 0           | 0    |
+| match-variable  | 1393     | 551   | 551          | 0           | 0    |
+| simplify        | 906      | 408   | 408          | 545         | 906  |
+| simplify-exp    | 274      | 118   | 118          | 118         | 274  |
 
 ## 9.7 History and References
 {:#s0070}
@@ -2324,16 +2311,14 @@ The player first rolls a 3 and places it in the ones column of the first number,
 On the last roll the player rolls a 6 and ends up with a total of 180.
 Since this is over the limit of 170, the player's final score is 0.
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| roll | 3 | 4 | 6 | 6 | 3 | 5 | 3 | 6 |
-| lst num. | -3 | 43 | 43 | 43 | 43 | 43 | 43 | 43 |
-| 2nd num. | - | - | -6 | -6 | 36 | 36 | 36 | 36 |
-| 3rd num. | - | - | - | -6 | -6 | -6 | 36 | 36 |
-| 4th num. | - | - | - | - | - | -5 | -5 | 65 |
-| total | 03 | 43 | 49 | 55 | 85 | 90 | 120 | 0 |
+| []()     |    |    |    |    |    |    |     |    |
+|----------|----|----|----|----|----|----|-----|----|
+| roll     | 3  | 4  | 6  | 6  | 3  | 5  | 3   | 6  |
+| lst num. | -3 | 43 | 43 | 43 | 43 | 43 | 43  | 43 |
+| 2nd num. | -  | -  | -6 | -6 | 36 | 36 | 36  | 36 |
+| 3rd num. | -  | -  | -  | -6 | -6 | -6 | 36  | 36 |
+| 4th num. | -  | -  | -  | -  | -  | -5 | -5  | 65 |
+| total    | 03 | 43 | 49 | 55 | 85 | 90 | 120 | 0  |
 
 Write a function that allows you to play a game or a series of games.
 The function should take as argument a function representing a strategy for playing the game.
@@ -2570,19 +2555,17 @@ A fanciful example, resurrecting a number of obsolete Lisps, follows:
     (read-time-case
 ```
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `#+Explorer` | `(time :microsecond-time)` |
-| `#+Franz` | `(sys:time)` |
-| `#+(or PSL UCI)` | `(time)` |
-| `#+YKT` | `(currenttime)` |
-| `#+MTS` | `(status 39)` |
-| `#+Interlisp` | `(clock 1)` |
-| `#+Lispl.5` | `(tempus-fugit)` |
-| `;; otherwise` | |
-| | `(get-internal-real-time)))` |
+| []()             |                              |
+|------------------|------------------------------|
+| `#+Explorer`     | `(time :microsecond-time)`   |
+| `#+Franz`        | `(sys:time)`                 |
+| `#+(or PSL UCI)` | `(time)`                     |
+| `#+YKT`          | `(currenttime)`              |
+| `#+MTS`          | `(status 39)`                |
+| `#+Interlisp`    | `(clock 1)`                  |
+| `#+Lispl.5`      | `(tempus-fugit)`             |
+| `;; otherwise`   |                              |
+|                  | `(get-internal-real-time)))` |
 
 **Answer 9.13** Yes.
 Computing (`head pipe`) may be a trivial computation, but it will be done many times.

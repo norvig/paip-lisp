@@ -207,9 +207,9 @@ The main function, `simplifier` will repeatedly print a prompt, read an input, a
 Input and output is in infix and the computation is in prefix, so we need to convert accordingly; the function simp does this, and the function `simplify` takes care of a single prefix expression.
 It is summarized in [figure  8.1](#f0010).
 
-| []() |
-|---|
-| ![f08-01-9780080571157](images/chapter8/f08-01.jpg) |
+| []()                                    |
+|-----------------------------------------|
+| ![f08-01](images/chapter8/f08-01.jpg)   |
 | Figure 8.1: Glossary for the Simplifier |
 
 (ed: this should be a markdown table)
@@ -407,12 +407,10 @@ We will require a new infix-to-prefix translation rule.
 While we're at it, we'll add a rule for indefinite integration as well, although we won't write simplification rules for integration yet.
 Here are the new notations:
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| math | infix | prefix |
-| *dy*/*dx* | `d y / d x` | `(d y x)` |
+| []()        |             |             |
+|-------------|-------------|-------------|
+| math        | infix       | prefix      |
+| *dy*/*dx*   | `d y / d x` | `(d y x)`   |
 | *&int; ydx* | `Int y d x` | `(int y x)` |
 
 And here are the necessary infix-to-prefix rules:

@@ -88,13 +88,11 @@ Thus, the representation of 5*x*3+ 10*x*2+ 20*x +* 30 will be the vector:
 The main variable, *x*, is in the 0th element of the vector, and the coefficient of the *i*th power of *x* is in element *i* + 1 of the vector.
 A single variable is represented as a vector whose first coefficient is 1, and a number is represented as itself:
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
+| []()              |                                        |
+|-------------------|----------------------------------------|
 | `#(x 30 20 10 5)` | represents 5*x*3 + 10*x*2 + 20*x* + 30 |
-| `#(x 0 1)` | represents *x* |
-| `5` | represents 5 |
+| `#(x 0 1)`        | represents *x*                         |
+| `5`               | represents 5                           |
 
 The fact that a number is represented as itself is a possible source of confusion.
 The number 5, for example, is a polynomial by our mathematical definition of polynomials.
@@ -103,9 +101,9 @@ The word "polynomial" is used ambiguously to refer to both the mathematical conc
 
 A glossary for the canonical simplifier program is given in [figure  15.1](#f0010).
 
-| []() |
-|---|
-| ![f15-01](images/chapter15/f15-01.jpg) |
+| []()                                                        |
+|-------------------------------------------------------------|
+| ![f15-01](images/chapter15/f15-01.jpg)                      |
 | Figure 15.1: Glossary for the Symbolic Manipulation Program |
 
 *(ed: should be a markdown table)*
@@ -971,21 +969,19 @@ result c`
 Using this version of `poly^n, r15-test` takes only .23 seconds, four times faster than the previous version.
 The following table compares the times for `r15-test` with the three versions of `poly^n`, along with the times for applying `simply` to the `r15` polynomial, for various versions of `simplify`:
 
-!!!(table)
 
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| | program | secs | speed-up |
-| | **rule-based versions** |
-| 1 | original | 27.8 | - |
-| 2 | memoization | 7.7 | 4 |
-| 3 | memo+index | 4.0 | 7 |
-| 4 | compilation only | 2.5 | 11 |
-| 5 | memo+compilation | 1.9 | 15 |
-| | **canonical versions** |
-| 6 | squaring `poly^n` | 1.6 | 17 |
-| 7 | iterative `poly^n` | .98 | 28 |
-| 8 | binomial `poly^n` | .23 | 120 |
+|      | program                 | secs | speed-up |
+|------|-------------------------|------|----------|
+|      | **rule-based versions** |      |          |
+| 1    | original                | 27.8 | -        |
+| 2    | memoization             | 7.7  | 4        |
+| 3    | memo+index              | 4.0  | 7        |
+| 4    | compilation only        | 2.5  | 11       |
+| 5    | memo+compilation        | 1.9  | 15       |
+|      | **canonical versions**  |      |          |
+| 6    | squaring `poly^n`       | 1.6  | 17       |
+| 7    | iterative `poly^n`      | .98  | 28       |
+| 8    | binomial `poly^n`       | .23  | 120      |
 
 As we remarked earlier, the general techniques of memoization, indexing, and compilation provide for dramatic speed-ups.
 However, in the end, they do not lead to the fastest program.

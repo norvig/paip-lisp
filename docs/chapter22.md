@@ -55,24 +55,21 @@ The empty list is denoted by `()`, and it is distinct from the false value, #f.
 There are also minor lexical differences in the conventions for complex numbers and numbers in different bases, but these can be ignored for all the programs in this book.
 Also, in Scheme a single macro, `define`, serves to define both variables and functions.
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| Scheme | Common Lisp |
-| *var* | *var* |
-| *constant* | *constant* |
-| (`quote`*x*) or '*x* | (`quote`*x*) or '*x* |
-| (`begin`*x*...) | (`progn`*x*...) |
-| (`set!`*var x*) | (`setq`*var x*) |
-| (`if`*pab*) | (`if`*pab*) |
-| (`lambda`*parms x*...) | `#'` (`lambda`*parms x*...) |
-| (*fn arg*...) | (*fn arg*...) or (`funcall`*fn arg*...) |
-| `#t` | `t` |
-| `#f` | `nil` |
-| `( )` | `nil` |
-| (`define`*varexp*) | (`defparameter`*var exp*) |
-| (`define` (*fnparm*...) *body*) | (`defun`*fn* (*parm*...) *body*) |
+| Scheme                          | Common Lisp                             |
+|---------------------------------|-----------------------------------------|
+| *var*                           | *var*                                   |
+| *constant*                      | *constant*                              |
+| (`quote`*x*) or '*x*            | (`quote`*x*) or '*x*                    |
+| (`begin`*x*...)                 | (`progn`*x*...)                         |
+| (`set!`*var x*)                 | (`setq`*var x*)                         |
+| (`if`*pab*)                     | (`if`*pab*)                             |
+| (`lambda`*parms x*...)          | `#'` (`lambda`*parms x*...)             |
+| (*fn arg*...)                   | (*fn arg*...) or (`funcall`*fn arg*...) |
+| `#t`                            | `t`                                     |
+| `#f`                            | `nil`                                   |
+| `( )`                           | `nil`                                   |
+| (`define`*varexp*)              | (`defparameter`*var exp*)               |
+| (`define` (*fnparm*...) *body*) | (`defun`*fn* (*parm*...) *body*)        |
 
 **Exercise  22**.**1** [**s**] What does the following expression evaluate to in Scheme?
 How many errors does it have as a Common Lisp expression?
@@ -101,31 +98,28 @@ Despite the fact that Scheme has `cons`, it calls the result a `pair` rather tha
 Scheme recognizes not all lambda expressions will be "functions" according to the mathematical definition of function, and so it uses the term "procedure" instead.
 Here is a partial list of correspondences between the two dialects:
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
 | Scheme Procedure | Common Lisp Function |
-| `char-ready?` | `listen` |
-| `char?` | `characterp` |
-| `eq?` | `eq` |
-| `equal?` | `equal` |
-| `eqv?` | `eql` |
-| `even?` | `evenp` |
-| `for-each` | `mapc` |
-| `integer?` | `integerp` |
-| `list->string` | `coerce` |
-| `list->vector` | `coerce` |
-| `list-ref` | `nth` |
-| `list-tail` | `nthcdr` |
-| `map` | `mapcar` |
-| `negative?` | `minusp` |
-| `pair?` | `consp` |
-| `procedure?` | `functionp` |
-| `set!` | `setq` |
-| `set-car!` | `replaca` |
-| `vector-set!` | `setf` |
-| `string-set!` | `setf` |
+|------------------|----------------------|
+| `char-ready?`    | `listen`             |
+| `char?`          | `characterp`         |
+| `eq?`            | `eq`                 |
+| `equal?`         | `equal`              |
+| `eqv?`           | `eql`                |
+| `even?`          | `evenp`              |
+| `for-each`       | `mapc`               |
+| `integer?`       | `integerp`           |
+| `list->string`   | `coerce`             |
+| `list->vector`   | `coerce`             |
+| `list-ref`       | `nth`                |
+| `list-tail`      | `nthcdr`             |
+| `map`            | `mapcar`             |
+| `negative?`      | `minusp`             |
+| `pair?`          | `consp`              |
+| `procedure?`     | `functionp`          |
+| `set!`           | `setq`               |
+| `set-car!`       | `replaca`            |
+| `vector-set!`    | `setf`               |
+| `string-set!`    | `setf`               |
 
 ## 22.1 A Scheme Interpreter
 {:#s0010}
@@ -1175,12 +1169,9 @@ The `amb` operator for nondeterministic choice was proposed by [John McCarthy (1
 **Exercise  22.5 [m]** While Scheme does not provide full-blown support for optional and keyword arguments, it does support rest parameters.
 Modify the interpreter to support the Scheme syntax for rest parameters:
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| Scheme | Common Lisp |
-| (`lambda x`*body*) | (`lambda` (`&rest x`) *body*) |
+| Scheme                     | Common Lisp                       |
+|----------------------------|-----------------------------------|
+| (`lambda x`*body*)         | (`lambda` (`&rest x`) *body*)     |
 | (`lambda (x y . z)`*body*) | (`lambda` (`x y &rest z`) *body*) |
 
 **Exercise  22.6 [h]** The representation of environments is somewhat wasteful.

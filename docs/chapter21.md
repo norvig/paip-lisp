@@ -24,9 +24,9 @@ All single-letter arguments denote metavariables; for example, each noun phrase 
 Similarly, the `hin modifiers` is a variable that refers to the head-the thing that is being modified.
 The other arguments and categories will be explained in turn, but it is handy to have this figure to refer back to.
 
-| []() |
-|---|
-| ![f21-01](images/chapter21/f21-01.jpg) |
+| []()                                                    |
+|---------------------------------------------------------|
+| ![f21-01](images/chapter21/f21-01.jpg)                  |
 | Figure 21.1: Grammatical Categories and their Arguments |
 
 *(ed: should be a markdown table)*
@@ -270,17 +270,14 @@ Thus, we say "Kim likes Lee," not "*Kim liking Lee." Subject-predicate agreement
 The other tenses show up as complements to other verbs.
 For example, the complement to "want" is an infinitive: "Kim wants *to like* Lee" and the complement to the modal auxiliary verb "would" is a nonfinite verb: "Kim would *like* Lee." If this were in the present tense, it would be "likes," not "like." The inflection argument takes on one of the forms in the table here:
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| Expression | Type | Example |
-| `(finite ?agr present)` | present tense | eat, eats |
-| `(finite ?agr past)` | past tense | ate |
-| `nonfinite` | nonfinite | eat |
-| `infinitive` | infinitive | to eat |
-| `-en` | past participle | eaten |
-| `-ing` | present participle | eating |
+| Expression              | Type               | Example   |
+|-------------------------|--------------------|-----------|
+| `(finite ?agr present)` | present tense      | eat, eats |
+| `(finite ?agr past)`    | past tense         | ate       |
+| `nonfinite`             | nonfinite          | eat       |
+| `infinitive`            | infinitive         | to eat    |
+| `-en`                   | past participle    | eaten     |
+| `-ing`                  | present participle | eating    |
 
 The second argument is a metavariable that refers to the subject, and the third is the subject's complement slot.
 We adopt the convention that the subject slot must always be the first among the verb's complements.
@@ -402,16 +399,13 @@ The simplest kind of question has an interrogative noun phrase as its subject: "
 
 The following table lists some sentences that can be parsed by this rule, showing the XP and subject of each.
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| Sentence | XP | Subject |
-| Kim likes Lee | Kim | Kim |
-| Lee, Kim likes | Lee | Kim |
-| In god, we trust | In god | we |
+| Sentence                  | XP                 | Subject            |
+|---------------------------|--------------------|--------------------|
+| Kim likes Lee             | Kim                | Kim                |
+| Lee, Kim likes            | Lee                | Kim                |
+| In god, we trust          | In god             | we                 |
 | That Kim likes Lee amazes | That Kim likes Lee | That Kim likes Lee |
-| Who likes Lee? | Who | Who |
+| Who likes Lee?            | Who                | Who                |
 
 The most common type of command has no subject at all: "Be quiet" or "Go to your room." When the subject is missing, the meaning is that the command refers to *you*, the addressee of the command.
 The subject can also be mentioned explicitly, and it can be "you," as in "You be quiet," but it need not be: "Somebody shut the door" or "Everybody sing along." We provide a rule only for commands with subject omitted, since it can be difficult to distinguish a command with a subject from a declarative sentence.
@@ -727,42 +721,38 @@ Then "all the others" can be represented by the list that is negative in the thi
 There is no way to distinguish second-person singular from plural in this scheme, but English does not make that distinction.
 Here are the necessary abbreviations:
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `(abbrev 1sing` | `(+---))` |
-| `(abbrev 1plur` | `(-+--))` |
-| `(abbrev 3sing` | `(--+-))` |
-| `(abbrev 3plur` | `(- - - +))` |
-| `(abbrev 2pers` | `(----))` |
-| `(abbrev ~3sing` | `(??-?))` |
+| []()             |              |
+|------------------|--------------|
+| `(abbrev 1sing`  | `(+---))`    |
+| `(abbrev 1plur`  | `(-+--))`    |
+| `(abbrev 3sing`  | `(--+-))`    |
+| `(abbrev 3plur`  | `(- - - +))` |
+| `(abbrev 2pers`  | `(----))`    |
+| `(abbrev ~3sing` | `(??-?))`    |
 
 The next step is to provide abbreviations for some of the common verb complement lists:
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `(abbrev v/intrans` | `((agt 1 (NP ?))))` |
-| `(abbrev v/trans` | `((agt 1 (NP ?)) (obj 2 (NP ?))))` |
-| `(abbrev v/ditrans` | `((agt 1 (NP ?)) (goal 2 (NP ?)) (obj 3 (NP ?))))` |
-| `(abbrev v/trans2` | `((agt 1 (NP ?)) (obj 2 (NP ?)) (goal 2 (PP to ?))))` |
-| `(abbrev v/trans4` | `((agt 1 (NP ?)) (obj 2 (NP ?)) (ben 2 (PP for ?))))` |
-| `(abbrev v/it-null` | `((nil 1 it)))` |
-| `(abbrev v/opt-that` | `((exp 1 (NP ?)) (con 2 (clause (that) (finite ? ?)))))` |
-| `(abbrev v/subj-that` | `((con 1 (clause that (finite ? ?))) (exp 2 (NP ?))))` |
-| `(abbrev v/it-that` | `((nil 1 it) (exp 2 (NP ?))` |
-| | `(con 3 (clause that (finite ? ?)))))` |
-| `(abbrev v/inf` | `((agt 1 (NP ?x)) (con 3 (VP infinitive ?x))))` |
-| `(abbrev v/promise` | `((agt 1 (NP ?x)) (goal (2) (NP ?y))` |
-| | `(con 3 (VP infinitive ?x))))` |
-| `(abbrev v/persuade` | `((agt 1 (NP ?x)) (goal 2 (NP ?y))` |
-| | `(con 3 (VP infinitive ?y))))` |
-| `(abbrev v/want` | `((agt 1 (NP ?x)) (con 3 (VP infinitive ?x))))` |
-| `(abbrev v/p-up` | `((agt 1 (NP ?)) (pat 2 (NP ?)) (nil 3 (P up))))` |
-| `(abbrev v/pp-for` | `((agt 1 (NP ?)) (pat 2 (PP for ?))))` |
-| `(abbrev v/pp-after` | `((agt 1 (NP ?)) (pat 2 (PP after ?))))` |
+| []()                  |                                                          |
+|-----------------------|----------------------------------------------------------|
+| `(abbrev v/intrans`   | `((agt 1 (NP ?))))`                                      |
+| `(abbrev v/trans`     | `((agt 1 (NP ?)) (obj 2 (NP ?))))`                       |
+| `(abbrev v/ditrans`   | `((agt 1 (NP ?)) (goal 2 (NP ?)) (obj 3 (NP ?))))`       |
+| `(abbrev v/trans2`    | `((agt 1 (NP ?)) (obj 2 (NP ?)) (goal 2 (PP to ?))))`    |
+| `(abbrev v/trans4`    | `((agt 1 (NP ?)) (obj 2 (NP ?)) (ben 2 (PP for ?))))`    |
+| `(abbrev v/it-null`   | `((nil 1 it)))`                                          |
+| `(abbrev v/opt-that`  | `((exp 1 (NP ?)) (con 2 (clause (that) (finite ? ?)))))` |
+| `(abbrev v/subj-that` | `((con 1 (clause that (finite ? ?))) (exp 2 (NP ?))))`   |
+| `(abbrev v/it-that`   | `((nil 1 it) (exp 2 (NP ?))`                             |
+|                       | `(con 3 (clause that (finite ? ?)))))`                   |
+| `(abbrev v/inf`       | `((agt 1 (NP ?x)) (con 3 (VP infinitive ?x))))`          |
+| `(abbrev v/promise`   | `((agt 1 (NP ?x)) (goal (2) (NP ?y))`                    |
+|                       | `(con 3 (VP infinitive ?x))))`                           |
+| `(abbrev v/persuade`  | `((agt 1 (NP ?x)) (goal 2 (NP ?y))`                      |
+|                       | `(con 3 (VP infinitive ?y))))`                           |
+| `(abbrev v/want`      | `((agt 1 (NP ?x)) (con 3 (VP infinitive ?x))))`          |
+| `(abbrev v/p-up`      | `((agt 1 (NP ?)) (pat 2 (NP ?)) (nil 3 (P up))))`        |
+| `(abbrev v/pp-for`    | `((agt 1 (NP ?)) (pat 2 (PP for ?))))`                   |
+| `(abbrev v/pp-after`  | `((agt 1 (NP ?)) (pat 2 (PP after ?))))`                 |
 
 ### Verbs
 {:#s0065}
@@ -815,59 +805,53 @@ Auxiliary verbs are simple enough to be described directly with the word macro.
 Each entry lists the auxiliary itself, the tense it is used to construct, and the tense it must be followed by.
 The auxiliaries "have" and "do" are listed, along with "to," which is used to construct infinitive clauses and thus can be treated as if it were an auxiliary.
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `(word have` | `aux nonfinite -en)` |
-| `(word have` | `aux (finite ~3sing present) -en)` |
-| `(word has` | `aux (finite 3sing present) -en)` |
-| `(word had` | `aux (finite ? past) -en)` |
-| `(word having` | `aux -ing -en)` |
-| `(word do` | `aux (finite ~3sing present) nonfinite)` |
-| `(word does` | `aux (finite 3sing present) nonfinite)` |
-| `(word did` | `aux (finite        ? past)        nonfinite)` |
-| `(word to` | `aux infinitive nonfinite)` |
+| []()           |                                                |
+|----------------|------------------------------------------------|
+| `(word have`   | `aux nonfinite -en)`                           |
+| `(word have`   | `aux (finite ~3sing present) -en)`             |
+| `(word has`    | `aux (finite 3sing present) -en)`              |
+| `(word had`    | `aux (finite ? past) -en)`                     |
+| `(word having` | `aux -ing -en)`                                |
+| `(word do`     | `aux (finite ~3sing present) nonfinite)`       |
+| `(word does`   | `aux (finite 3sing present) nonfinite)`        |
+| `(word did`    | `aux (finite        ? past)        nonfinite)` |
+| `(word to`     | `aux infinitive nonfinite)`                    |
 
 The auxiliary "be" is special: in addition to its use as both an auxiliary and main verb, it also is used in passives and as the main verb in aux-inverted sentences.
 The function `copula` is used to keep track of all these uses.
 It will be defined in the next section, but you can see it takes two arguments, a list of senses for the main verb, and a list of entries for the auxiliary verb.
 The three senses correspond to the examples "He is a fool," "He is a Republican," and "He is in Indiana," respectively.
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `(copula` | |
-|   `'((nil` | `((nil 1 (NP ?x)) (nil 2 (Adj ?x))))` |
-|     `(is-a` | `((exp 1 (NP ?x)) (arg2 2 (NP ?y))))` |
-|     `(is-loc` | `((exp 1 (NP ?x)) (?prep 2 (PP ?prep ?)))))` |
-|   `'((be` | `nonfinite -ing)` |
-|     `(been` | `-en -ing)` |
-|     `(being` | `-ing -en)` |
-|     `(am` | `(finite 1sing present) -ing)` |
-|     `(is` | `(finite 3sing present) -ing)` |
-|     `(are` | `(finite 2pers present) -ing)` |
-|     `(were` | `(finite (- - ? ?) past) -ing) ; 2nd sing or pl` |
-|     `(was` | `(finite (? - ? -) past) -ing))) ; 1st or 3rd sing` |
+| []()      |                                                     |
+|-----------|-----------------------------------------------------|
+| `(copula` |                                                     |
+| `'((nil`  | `((nil 1 (NP ?x)) (nil 2 (Adj ?x))))`               |
+| `(is-a`   | `((exp 1 (NP ?x)) (arg2 2 (NP ?y))))`               |
+| `(is-loc` | `((exp 1 (NP ?x)) (?prep 2 (PP ?prep ?)))))`        |
+| `'((be`   | `nonfinite -ing)`                                   |
+| `(been`   | `-en -ing)`                                         |
+| `(being`  | `-ing -en)`                                         |
+| `(am`     | `(finite 1sing present) -ing)`                      |
+| `(is`     | `(finite 3sing present) -ing)`                      |
+| `(are`    | `(finite 2pers present) -ing)`                      |
+| `(were`   | `(finite (- - ? ?) past) -ing) ; 2nd sing or pl`    |
+| `(was`    | `(finite (? - ? -) past) -ing))) ; 1st or 3rd sing` |
 
 Following are the modal auxiliary verbs.
 Again, it is difficult to specify semantics for them.
 The word "not" is also listed here; it is not an auxiliary, but it does modify them.
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `(word can` | `modal able` | `past)` |
-| `(word could` | `modal able` | `present)` |
-| `(word may` | `modal possible` | `past)` |
-| `(word might` | `modal possible` | `present)` |
-| `(word shall` | `modal mandatory` | `past)` |
-| `(word should` | `modal mandatory` | `present)` |
-| `(word will` | `modal expected` | `past)` |
-| `(word would` | `modal expected` | `present)` |
-| `(word must` | `modal necessary` | `present)` |
+| []()             |                   |            |
+|------------------|-------------------|------------|
+| `(word can`      | `modal able`      | `past)`    |
+| `(word could`    | `modal able`      | `present)` |
+| `(word may`      | `modal possible`  | `past)`    |
+| `(word might`    | `modal possible`  | `present)` |
+| `(word shall`    | `modal mandatory` | `past)`    |
+| `(word should`   | `modal mandatory` | `present)` |
+| `(word will`     | `modal expected`  | `past)`    |
+| `(word would`    | `modal expected`  | `present)` |
+| `(word must`     | `modal necessary` | `present)` |
 | `(word not not)` |
 
 ### Nouns
@@ -906,58 +890,48 @@ The first noun shows a complement list that is sufficient to parse "the destruct
 Here we list the nominative, objective, and genitive pronouns, followed by interrogative and relative pronouns.
 The only thing missing are reflexive pronouns, such as "myself."
 
-!!!(table)
+| []()         |                                                 |
+|--------------|-------------------------------------------------|
+| `(word I`    | `pronoun 1sing (common nom) -wh speaker)`       |
+| `(word we`   | `pronoun 1plur (common nom) -wh speaker+other)` |
+| `(word you`  | `pronoun 2pers (common` ?) `-wh listener)`      |
+| `(word he`   | `pronoun 3sing (common nom) -wh male)`          |
+| `(word she`  | `pronoun 3sing (common nom) -wh female)`        |
+| `(word it`   | `pronoun 3sing (common` ?) `-wh anything)`      |
+| `(word they` | `pronoun 3plur (common nom) -wh anything)`      |
 
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `(word I` | `pronoun 1sing (common nom) -wh speaker)` |
-| `(word we` | `pronoun 1plur (common nom) -wh speaker+other)` |
-| `(word you` | `pronoun 2pers (common` ?) `-wh listener)` |
-| `(word he` | `pronoun 3sing (common nom) -wh male)` |
-| `(word she` | `pronoun 3sing (common nom) -wh female)` |
-| `(word it` | `pronoun 3sing (common` ?) `-wh anything)` |
-| `(word they` | `pronoun 3plur (common nom) -wh anything)` |
+| []()         |                                                 |
+|--------------|-------------------------------------------------|
+| `(word me`   | `pronoun 1sing (common obj) -wh speaker)`       |
+| `(word us`   | `pronoun 1plur (common obj) -wh speaker+other)` |
+| `(word him`  | `pronoun 3sing (common obj) -wh male)`          |
+| `(word her`  | `pronoun 3sing (common obj) -wh female)`        |
+| `(word them` | `pronoun 3plur (common obj) -wh anything)`      |
 
-!!!(table)
+| []()          |                                        |
+|---------------|----------------------------------------|
+| `(word my`    | `pronoun 1sing gen -wh speaker)`       |
+| `(word our`   | `pronoun 1plur gen -wh speaker+other)` |
+| `(word your`  | `pronoun 2pers gen -wh listener)`      |
+| `(word his`   | `pronoun 3sing gen -wh male)`          |
+| `(word her`   | `pronoun 3sing gen -wh female)`        |
+| `(word its`   | `pronoun 3sing gen -wh anything)`      |
+| `(word their` | `pronoun 3plur gen -wh anything)`      |
+| `(word whose` | `pronoun 3sing gen +wh anything)`      |
 
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `(word me` | `pronoun 1sing (common obj) -wh speaker)` |
-| `(word us` | `pronoun 1plur (common obj) -wh speaker+other)` |
-| `(word him` | `pronoun 3sing (common obj) -wh male)` |
-| `(word her` | `pronoun 3sing (common obj) -wh female)` |
-| `(word them` | `pronoun 3plur (common obj) -wh anything)` |
+| []()          |                                      |
+|---------------|--------------------------------------|
+| `(word who`   | `pronoun ? (common ?) +wh person)`   |
+| `(word whom`  | `pronoun ? (common obj) +wh person)` |
+| `(word what`  | `pronoun ? (common ?) +wh thing)`    |
+| `(word which` | `pronoun ? (common ?) +wh thing)`    |
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `(word my` | `pronoun 1sing gen -wh speaker)` |
-| `(word our` | `pronoun 1plur gen -wh speaker+other)` |
-| `(word your` | `pronoun 2pers gen -wh listener)` |
-| `(word his` | `pronoun 3sing gen -wh male)` |
-| `(word her` | `pronoun 3sing gen -wh female)` |
-| `(word its` | `pronoun 3sing gen -wh anything)` |
-| `(word their` | `pronoun 3plur gen -wh anything)` |
-| `(word whose` | `pronoun 3sing gen +wh anything)` |
-
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `(word who` | `pronoun ? (common ?) +wh person)` |
-| `(word whom` | `pronoun ? (common obj) +wh person)` |
-| `(word what` | `pronoun ? (common ?) +wh thing)` |
-| `(word which` | `pronoun ? (common ?) +wh thing)` |
-
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `(word who` | `rel-pro ? person)` |
-| `(word which` | `rel-pro ? thing)` |
-| `(word that` | `rel-pro ? thing)` |
-| `(word whom` | `rel-pro (common obj) person)` |
+| []()          |                                |
+|---------------|--------------------------------|
+| `(word who`   | `rel-pro ? person)`            |
+| `(word which` | `rel-pro ? thing)`             |
+| `(word that`  | `rel-pro ? thing)`             |
+| `(word whom`  | `rel-pro (common obj) person)` |
 
 ### Names
 {:#s0085}
@@ -965,15 +939,13 @@ The only thing missing are reflexive pronouns, such as "myself."
 
 The following names were convenient for one example or another:
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `(word God` | `name 3sing)` | `(word Lynn` | `name 3sing)` |
-| `(word Jan` | `name 3sing)` | `(word Mary` | `name 3sing)` |
-| `(word John` | `name 3sing)` | `(word NY` | `name 3sing)` |
-| `(word Kim` | `name 3sing)` | `(word LA` | `name 3sing)` |
-| `(word Lee` | `name 3sing)` | `(word SF` | `name 3sing)` |
+| []()         |               |              |               |
+|--------------|---------------|--------------|---------------|
+| `(word God`  | `name 3sing)` | `(word Lynn` | `name 3sing)` |
+| `(word Jan`  | `name 3sing)` | `(word Mary` | `name 3sing)` |
+| `(word John` | `name 3sing)` | `(word NY`   | `name 3sing)` |
+| `(word Kim`  | `name 3sing)` | `(word LA`   | `name 3sing)` |
+| `(word Lee`  | `name 3sing)` | `(word SF`   | `name 3sing)` |
 
 ### Adjectives
 {:#s0090}
@@ -981,14 +953,12 @@ The following names were convenient for one example or another:
 
 Here are a few adjectives:
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `(word big` | `adj big)` | `(word bad` | `adj bad)` |
-| `(word old` | `adj old)` | `(word smart` | `adj smart)` |
-| `(word green` | `adj green)` | `(word red` | `adj red)` |
-| `(word tall` | `adj tall)` | `(word fun` | `adj fun)` |
+| []()          |              |               |              |
+|---------------|--------------|---------------|--------------|
+| `(word big`   | `adj big)`   | `(word bad`   | `adj bad)`   |
+| `(word old`   | `adj old)`   | `(word smart` | `adj smart)` |
+| `(word green` | `adj green)` | `(word red`   | `adj red)`   |
+| `(word tall`  | `adj tall)`  | `(word fun`   | `adj fun)`   |
 
 ### Adverbs
 {:#s0095}
@@ -996,16 +966,14 @@ Here are a few adjectives:
 
 The adverbs covered here include interrogatives:
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
+| []()            |                    |
+|-----------------|--------------------|
 | `(word quickly` | `adv -wh quickly)` |
-| `(word slowly` | `adv -wh slowly)` |
-| `(word where` | `adv +wh loc)` |
-| `(word when` | `adv +wh time)` |
-| `(word why` | `adv +wh reason)` |
-| `(word how` | `adv +wh manner)` |
+| `(word slowly`  | `adv -wh slowly)`  |
+| `(word where`   | `adv +wh loc)`     |
+| `(word when`    | `adv +wh time)`    |
+| `(word why`     | `adv +wh reason)`  |
+| `(word how`     | `adv +wh manner)`  |
 
 ### Articles
 {:#s0100}
@@ -1013,24 +981,22 @@ The adverbs covered here include interrogatives:
 
 The common articles are listed here:
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `(word the` | `art 3sing the)` |
-| `(word the` | `art 3plur group)` |
-| `(word a` | `art 3sing a)` |
-| `(word an` | `art 3sing a)` |
+| []()          |                    |
+|---------------|--------------------|
+| `(word the`   | `art 3sing the)`   |
+| `(word the`   | `art 3plur group)` |
+| `(word a`     | `art 3sing a)`     |
+| `(word an`    | `art 3sing a)`     |
 | `(word every` | `art 3sing every)` |
-| `(word each` | `art 3sing each)` |
-| `(word all` | `art 3sing all)` |
-| `(word some` | `art` ? `some)` |
-| `(word this` | `art 3sing this)` |
-| `(word that` | `art 3sing that)` |
-| `(word these` | `art 3plur this)` |
-| `(word those` | `art 3plur that)` |
-| `(word what` | `art` ? `wh)` |
-| `(word which` | `art` ? `wh)` |
+| `(word each`  | `art 3sing each)`  |
+| `(word all`   | `art 3sing all)`   |
+| `(word some`  | `art` ? `some)`    |
+| `(word this`  | `art 3sing this)`  |
+| `(word that`  | `art 3sing that)`  |
+| `(word these` | `art 3plur this)`  |
+| `(word those` | `art 3plur that)`  |
+| `(word what`  | `art` ? `wh)`      |
+| `(word which` | `art` ? `wh)`      |
 
 ### Cardinal and Ordinal Numbers
 {:#s0105}
@@ -1055,22 +1021,20 @@ To go beyond 20, we would need a subgrammar of numbers.
 
 Here is a fairly complete list of prepositions:
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `(word above prep)` | `(word about prep)` | `(word around prep)` |
-| `(word across prep)` | `(word after prep)` | `(word against prep)` |
-| `(word along prep)` | `(word at prep)` | `(word away prep)` |
-| `(word before prep)` | `(word behind prep)` | `(word below prep)` |
-| `(word beyond prep)` | `(word by prep)` | `(word down prep)` |
-| `(word for prep)` | `(word from prep)` | `(word in prep)` |
-| `(word of prep)` | `(word off prep)` | `(word on prep)` |
-| `(word out prep)` | `(word over prep)` | `(word past prep)` |
-| `(word since prep)` | `(word through prep)` | `(word throughout prep)` |
-| `(word till prep)` | `(word to prep)` | `(word under prep)` |
-| `(word until prep)` | `(word up prep)` | `(word with prep)` |
-| `(word without prep)` | | |
+| []()                  |                       |                          |
+|-----------------------|-----------------------|--------------------------|
+| `(word above prep)`   | `(word about prep)`   | `(word around prep)`     |
+| `(word across prep)`  | `(word after prep)`   | `(word against prep)`    |
+| `(word along prep)`   | `(word at prep)`      | `(word away prep)`       |
+| `(word before prep)`  | `(word behind prep)`  | `(word below prep)`      |
+| `(word beyond prep)`  | `(word by prep)`      | `(word down prep)`       |
+| `(word for prep)`     | `(word from prep)`    | `(word in prep)`         |
+| `(word of prep)`      | `(word off prep)`     | `(word on prep)`         |
+| `(word out prep)`     | `(word over prep)`    | `(word past prep)`       |
+| `(word since prep)`   | `(word through prep)` | `(word throughout prep)` |
+| `(word till prep)`    | `(word to prep)`      | `(word under prep)`      |
+| `(word until prep)`   | `(word up prep)`      | `(word with prep)`       |
+| `(word without prep)` |                       |                          |
 
 ## 21.12 Supporting the Lexicon
 {:#s0115}

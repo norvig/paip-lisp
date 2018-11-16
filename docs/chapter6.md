@@ -179,13 +179,11 @@ It succeeds because the < matches one of the three possibilities specified by `(
 
 Here is an example of an `?and` pattern that checks if an expression is both a number and odd:
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
+| []()           |                                                |
+|----------------|------------------------------------------------|
 | `> (pat-match` | `'(x = (?and (?is ?n numberp) (?is ?n oddp)))` |
-| | `'(x = 3))` |
-| `((?N . 3))` | |
+|                | `'(x = 3))`                                    |
+| `((?N . 3))`   |                                                |
 
 The next pattern uses `?not` to insure that two parts are not equal:
 
@@ -206,25 +204,23 @@ It has to be listed as a segment pattern rather than a single pattern because it
 When the description of a problem gets this complicated, it is a good idea to attempt a more formal specification.
 The following table describes a grammar of patterns, using the same grammar rule format described in [chapter 2](B9780080571157500029.xhtml).
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| *pat*=> | *var* | match any one expression |
-| *Constant* | match just this atom |
-| *segment*-*pat* | match something against a sequence |
-| *single*-*pat* | match something against one expression |
-| (*pat*. *pat*) | match the first and the rest |
-| *single*-*pat*=> | (?`is`*var predicate*) | test predicate on one expression |
-| (?`or`*pat*...) | match any pattern on one expression |
-| (?`and`*pat*...) | match every pattern on one expression |
-| (?`not`*pat*...) | succeed if pattern(s) do not match |
-| *segment*-*pat*=> | ( (?* *var*)...) | match zero or more expressions |
-| ( (?+ *var*) ... ) | match one or more expressions |
-| ( ( ?? *var*) ... ) | match zero or one expression |
-| ( ( ?`if`*exp* )...) | test if exp (which may contain variables) is true |
-| *Var*=> | ?*chars* | a symbol starting with ? |
-| *constant*=> | *atom* | any nonvariable atom |
+| []()              |                        |                                                   |
+|-------------------|------------------------|---------------------------------------------------|
+| *pat*=>           | *var*                  | match any one expression                          |
+|                   | *Constant*             | match just this atom                              |
+|                   | *segment*-*pat*        | match something against a sequence                |
+|                   | *single*-*pat*         | match something against one expression            |
+|                   | (*pat*. *pat*)         | match the first and the rest                      |
+| *single*-*pat*=>  | (?`is`*var predicate*) | test predicate on one expression                  |
+|                   | (?`or`*pat*...)        | match any pattern on one expression               |
+|                   | (?`and`*pat*...)       | match every pattern on one expression             |
+|                   | (?`not`*pat*...)       | succeed if pattern(s) do not match                |
+| *segment*-*pat*=> | ( (?* *var*)...)       | match zero or more expressions                    |
+|                   | ( (?+ *var*) ... )     | match one or more expressions                     |
+|                   | ( ( ?? *var*) ... )    | match zero or one expression                      |
+|                   | ( ( ?`if`*exp* )...)   | test if exp (which may contain variables) is true |
+| *Var* =>          | ?*chars*               | a symbol starting with ?                          |
+| *constant* =>     | *atom*                 | any nonvariable atom                              |
 
 ![t0015](images/B9780080571157500066/t0015.png)
 
@@ -460,12 +456,10 @@ The first successful match is achieved with the first variable, ?`x`, matching t
 In the next example, ?`x` is first matched against nil and ?`y` against (`b c d` ), but that fails, so we try matching ?`x` against a segment of length one.
 That fails too, but finally the match succeeds with ?`x` matching the two-element segment (`b c`), and ?`y` matching (`d`).
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `> (pat-match` | `'(a (?* ?x) (?* ?y) ?x ?y)` |
-| | `'(a b c d (b c) (d))) => ((?Y D) (?X B C))` |
+| []()           |                                              |
+| ---            | ---                                          |
+| `> (pat-match` | `'(a (?* ?x) (?* ?y) ?x ?y)`                 |
+|                | `'(a b c d (b c) (d))) => ((?Y D) (?X B C))` |
 
 Given `segment-match`, it is easy to define the function to match one-or-more elements and the function to match zero-or-one element:
 
@@ -503,18 +497,20 @@ This is one of the few cases where it is appropriate to call `eval`: when we wan
 Here are two examples using `?if`.
 The first succeeds because `(+  3 4)` is indeed `7`, and the second fails because `(>  3 4)` is false.
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
+| []()           |                                                 |
+|----------------|-------------------------------------------------|
 | `> (pat-match` | `'(?x ?op ?y is ?z (?if (eq1 (?op ?x ?y) ?z)))` |
-| | `'(3 + 4 is 7))` |
-| `((?Z . 7) (?Y . 4) (?0P . +) (?X . 3))` |
-| `> (pat-match` | `'(?x ?op ?y (?if (?op ?x ?y)))` |
-| | `'(3 > 4))` |
-| `NIL` | |
+|                | `'(3 + 4 is 7))`                                |
 
-![t0025](images/B9780080571157500066/t0025.png)
+```
+((?Z . 7) (?Y . 4) (?0P . +) (?X . 3))
+```
+
+| []()           |                                  |
+|----------------|----------------------------------|
+| `> (pat-match` | `'(?x ?op ?y (?if (?op ?x ?y)))` |
+|                | `'(3 > 4))`                      |
+| `NIL`          |                                  |
 
 The syntax we have defined for patterns has two virtues: first, the syntax is very general, so it is easy to extend.
 Second, the syntax can be easily manipulated by `pat-match`.
@@ -964,23 +960,24 @@ Another strategy would be for the mountaineer to turn back and try again when th
 As a concrete example of a problem that can be solved by search, consider the task of planning a flight across the North American continent in a small airplane, one whose range is limited to 1000 kilometers.
 Suppose we have a list of selected cities with airports, along with their position in longitude and latitude:
 
-!!!(table)
+```
+(defstruct (city (:type list)) name long lat)
+(defparameter *cities*
+```
 
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `(defstruct (city (:type list)) name long lat)` |
-| `(defparameter *cities*` |
-| `'((Atlanta` | `84.23 33.45)` | `(Los-Angeles` | `118.15 34.03` |
-| `(Boston` | `71.05 42.21)` | `(Memphis` | `90.03 35.09)` |
-| `(Chicago` | `87.37 41.50)` | `(New-York` | `73.58 40.47)` |
-| `(Denver` | `105.00 39.45)` | `(Oklahoma-City` | `97.28 35.26)` |
-| `(Eugene` | `123.05 44.03)` | `(Pittsburgh` | `79.57 40.27)` |
-| `(Flagstaff` | `111.41 35.13)` | `(Quebec` | `71.11 46.49)` |
-| `(Grand-Jet` | `108.37 39.05)` | `(Reno` | `119.49 39.30)` |
-| `(Houston` | `105.00 34.00)` | `(San-Francisco` | `122.26 37.47)` |
-| `(Indianapolis` | `86.10 39.46)` | `(Tampa` | `82.27 27.57)` |
-| `(Jacksonville` | `81.40 30.22)` | `(Victoria` | `123.21 48.25)` |
-| `(Kansas-City` | `94.35 39.06)` | `(Wilmington` | `77.57 34.14)))` |
+| []()            |                 |                  |                  |
+|-----------------|-----------------|------------------|------------------|
+| `'((Atlanta`    | `84.23 33.45)`  | `(Los-Angeles`   | `118.15 34.03`   |
+| `(Boston`       | `71.05 42.21)`  | `(Memphis`       | `90.03 35.09)`   |
+| `(Chicago`      | `87.37 41.50)`  | `(New-York`      | `73.58 40.47)`   |
+| `(Denver`       | `105.00 39.45)` | `(Oklahoma-City` | `97.28 35.26)`   |
+| `(Eugene`       | `123.05 44.03)` | `(Pittsburgh`    | `79.57 40.27)`   |
+| `(Flagstaff`    | `111.41 35.13)` | `(Quebec`        | `71.11 46.49)`   |
+| `(Grand-Jet`    | `108.37 39.05)` | `(Reno`          | `119.49 39.30)`  |
+| `(Houston`      | `105.00 34.00)` | `(San-Francisco` | `122.26 37.47)`  |
+| `(Indianapolis` | `86.10 39.46)`  | `(Tampa`         | `82.27 27.57)`   |
+| `(Jacksonville` | `81.40 30.22)`  | `(Victoria`      | `123.21 48.25)`  |
+| `(Kansas-City`  | `94.35 39.06)`  | `(Wilmington`    | `77.57 34.14)))` |
 
 ![t0030](images/B9780080571157500066/t0030.png)
 
@@ -999,10 +996,10 @@ Two other useful functions are `neighbors`, which finds all the cities within 10
 The former uses `find-a11-if`, which was defined on [page 101](B9780080571157500030.xhtml#p101) as a synonym for `remove-if-not`.
 
 
-| []() |
-|---|
+| []()                                  |
+|---------------------------------------|
 | ![f06-01](images/chapter6/f06-01.jpg) |
-| Figure 6.1: A Map of Some Cities |
+| Figure 6.1: A Map of Some Cities      |
 
 ```lisp
 (defun neighbors (city)
@@ -1162,10 +1159,10 @@ In general, there may be even worse dead ends lurking in the search space.
 Look what happens when we limit the airplane's range to 700 kilometers.
 The map is shown in [figure 6.2](#f0015).
 
-| []() |
-|---|
-| ![f06-02](images/chapter6/f06-02.jpg) |
-| Figure 6.2: A Map of Cities within 700  km |
+| []()                                      |
+|-------------------------------------------|
+| ![f06-02](images/chapter6/f06-02.jpg)     |
+| Figure 6.2: A Map of Cities within 700 km |
 
 If we try to plan a trip from Tampa to Quebec, we can run into problems with the dead end at Wilmington, North Carolina.
 With a beam width of 1, the path to Jacksonville and then Wilmington will be tried first.
@@ -1318,15 +1315,15 @@ The reason `tree-search` works is that any graph can be treated as a tree, if we
 For example, the graph in [figure 6.3](#f0020) can be rendered as a tree.
 [Figure 6.4](#f0025) shows only the top four levels of the tree; each of the bottom nodes (except the 6  s) needs to be expanded further.
 
-| []() |
-|---|
+| []()                                  |
+|---------------------------------------|
 | ![f06-03](images/chapter6/f06-03.jpg) |
-| Figure 6.3: A Graph with Six Nodes |
+| Figure 6.3: A Graph with Six Nodes    |
 
-| []() |
-|---|
+| []()                                  |
+|---------------------------------------|
 | ![f06-04](images/chapter6/f06-04.jpg) |
-| Figure 6.4: The Corresponding Tree |
+| Figure 6.4: The Corresponding Tree    |
 
 In searching for paths through the graph of cities, we were implicitly turning the graph into a tree.
 That is, if `tree-search` found two paths from Pittsburgh to Kansas City (via Chicago or Indianapolis), then it would treat them as two independent paths, just as if there were two distinct Kansas Cities.
@@ -1537,9 +1534,9 @@ For example, in the three-block blocks world, there are only 13 different states
 They could be arranged in a graph and searched just as we searched for a route between cities.
 [Figure 6.5](#f0030) shows this graph.
 
-| []() |
-|---|
-| ![f06-05](images/chapter6/f06-05.jpg) |
+| []()                                    |
+|-----------------------------------------|
+| ![f06-05](images/chapter6/f06-05.jpg)   |
 | Figure 6.5: The Blocks World as a Graph |
 
 The function `search-gps` does just that.
@@ -1670,12 +1667,10 @@ The problem is that it will only rebind a segment variable based on a failure to
 In all the examples above, the "rest of the pattern after the segment variable" was the whole pattern, so `pat-match` always worked properly.
 But if a segment variable appears nested inside a list, then the rest of the segment variable's sublist is only a part of the rest of the whole pattern, as the following example shows:
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `> (pat-match` | `'(((?* ?x) (?* ?y)) ?x ?y)` |
-| | `'((a b c d ) (a b) (c d)))`=> `NIL` |
+| []()           |                                      |
+| ---            | ---                                  |
+| `> (pat-match` | `'(((?* ?x) (?* ?y)) ?x ?y)`         |
+|                | `'((a b c d ) (a b) (c d)))`=> `NIL` |
 
 The correct answer with `?x` bound to `(a b)` and `?y` bound to `(c d)` is not found because the inner segment match succeeds with `?x` bound to `( )` and `?y` bound to `(a b c d)`, and once we leave the inner match and return to the top level, there is no going back for alternative bindings.
 
@@ -1717,13 +1712,11 @@ Here is another version that does all of the above and also handles multiple val
       ;; Now update the history variables
 ```
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
+| []()           |          |                   |
+| ---            | ---      | ---               |
 | `(setf +++ ++` | `/// //` | `*** (first ///)` |
-| `++ +` | `// /` | `** (first //)` |
-| `+ -` | `/ vais` | `* (first /))` |
+| `++ +`         | `// /`   | `** (first //)`   |
+| `+ -`          | `/ vais` | `* (first /))`    |
 
 ```lisp
       ;; Finally print the computed value(s)

@@ -489,9 +489,9 @@ We will build a single uniform data base of clauses, without distinguishing rule
 The simplest representation of clauses is as a cons cell holding the head and the body.
 For facts, the body will be empty.
 
-| []() |
-|---|
-| ![f11-01](images/chapter11/f11-01.jpg) |
+| []()                                             |
+|--------------------------------------------------|
+| ![f11-01](images/chapter11/f11-01.jpg)           |
 | Figure 11.1: Glossary for the Prolog Interpreter |
 
 (ed: this should be a markdown table)

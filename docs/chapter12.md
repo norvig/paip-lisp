@@ -96,9 +96,9 @@ This section presents the compiler summarized in [figure  12.1](#f0010).
 At the top level is the function `prolog-compile`, which takes a symbol, looks at the clauses defined for that symbol, and groups the clauses by arity.
 Each symbol/arity is compiled into a separate Lisp function by `compile-predicate`.
 
-| []() |
-|---|
-| ![f12-01](images/chapter12/f12-01.jpg) |
+| []()                                          |
+|-----------------------------------------------|
+| ![f12-01](images/chapter12/f12-01.jpg)        |
 | Figure 12.1: Glossary for the Prolog Compiler |
 
 (ed: this should be a markdown table)
@@ -314,12 +314,10 @@ We will adopt the convention that returning `:pass` means the macro decided not 
 All that remains is `compile-arg`, a function to compile the arguments to goals in the body.
 There are three cases to consider, as shown in the compilation to the argument of `q` below:
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `1 (<- (p ?x) (q ?x))` | `(q/1 ?x cont)` |
-| `2 (<- (p ?x) (q (f a b)))` | `(q/1 '(f a b) cont)` |
+| []()                         |                              |
+|------------------------------|------------------------------|
+| `1 (<- (p ?x) (q ?x))`       | `(q/1 ?x cont)`              |
+| `2 (<- (p ?x) (q (f a b)))`  | `(q/1 '(f a b) cont)`        |
 | `3 (<- (p ?x) (q (f ?x b)))` | `(q/1 (list 'f ?x 'b) cont)` |
 
 In case 1, the argument is a variable, and it is compiled as is.
@@ -737,23 +735,20 @@ We can even do some occurs checking at compile time: `(= ?x (f ?x))` should fail
 The following table lists these improvements, along with a breakdown for the cases of unifying a bound `(?arg1)` or unbound `(?x)` variable agains another expression.
 The first column is the unification call, the second is the generated code, and the third is the bindings that will be added as a resuit of the call:
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| | Unification | Code | Bindings |
-| 1 | `(= 3 3)` | `t` | `-` |
-| 2 | `(= 3 4)` | `nil` | `-` |
-| 3 | `(= (f ?x) (?p 3))` | `t` | `(?x . 3) (?p . f)` |
-| 4 | `(= ?arg1 ?y)` | `t` | `(?y . ?arg1)` |
-| 5 | `(= ?arg1 ?arg2)` | `(unify! ?arg1 ?arg2)` | `(?arg1 . ?arg2)` |
-| 6 | `(= ?arg1 3)` | `(unify! ?arg1 3)` | `(?arg1 . 3)` |
-| 7 | `(= ?arg1 (f ? y))` | `(unify! ?arg1 . . . )` | `(?y . ?y)` |
-| 8 | `(= ?x ?y)` | `t` | `(?y . ?y)` |
-| 9 | `(= ?x 3)` | `t` | `(?x . 3)` |
-| 10 | `(= ?x (f ? y))` | `(unify! ?x . . . )` | `(?y . ?y)` |
-| 11 | `(= ?x (f ? x))` | `nil` | `-` |
-| 12 | `(= ?x ?)` | `t` | `-` |
+|      | Unification         | Code                    | Bindings            |
+|------|---------------------|-------------------------|---------------------|
+| 1    | `(= 3 3)`           | `t`                     | `-`                 |
+| 2    | `(= 3 4)`           | `nil`                   | `-`                 |
+| 3    | `(= (f ?x) (?p 3))` | `t`                     | `(?x . 3) (?p . f)` |
+| 4    | `(= ?arg1 ?y)`      | `t`                     | `(?y . ?arg1)`      |
+| 5    | `(= ?arg1 ?arg2)`   | `(unify! ?arg1 ?arg2)`  | `(?arg1 . ?arg2)`   |
+| 6    | `(= ?arg1 3)`       | `(unify! ?arg1 3)`      | `(?arg1 . 3)`       |
+| 7    | `(= ?arg1 (f ? y))` | `(unify! ?arg1 . . . )` | `(?y . ?y)`         |
+| 8    | `(= ?x ?y)`         | `t`                     | `(?y . ?y)`         |
+| 9    | `(= ?x 3)`          | `t`                     | `(?x . 3)`          |
+| 10   | `(= ?x (f ? y))`    | `(unify! ?x . . . )`    | `(?y . ?y)`         |
+| 11   | `(= ?x (f ? x))`    | `nil`                   | `-`                 |
+| 12   | `(= ?x ?)`          | `t`                     | `-`                 |
 
 From this table we can craft our new version of `compile-unify`.
 The first part is fairly easy.
@@ -1279,16 +1274,13 @@ The Prolog `irev` is equivalent to this Lisp program:
 The following table shows times in seconds to execute these routines on lists of length 20 and 100, for both Prolog and Lisp, both interpreted and compiled.
 (Only compiled Lisp could execute rev on a 100-element list without running out of stack space.) Times for the zebra puzzle are also included, although there is no Lisp version of this program.
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| Problem | Interp. Prolog | Comp. Prolog | Speed-up | Interp. Lisp | Comp. Lisp |
-| `zebra` | 278.000 | 17.241 | 16 | - | - |
-| `rev 20` | 4.24 | .208 | 20 | .241 | .0023 |
-| `rev 100` | - | - | - | - | .0614 |
-| `irev 20` | .22 | .010 | 22 | .028 | .0005 |
-| `irev 100` | 9.81 | .054 | 181 | .139 | .0014 |
+| Problem    | Interp. Prolog | Comp. Prolog | Speed-up | Interp. Lisp | Comp. Lisp |
+|------------|----------------|--------------|----------|--------------|------------|
+| `zebra`    | 278.000        | 17.241       | 16       | -            | -          |
+| `rev 20`   | 4.24           | .208         | 20       | .241         | .0023      |
+| `rev 100`  | -              | -            | -        | -            | .0614      |
+| `irev 20`  | .22            | .010         | 22       | .028         | .0005      |
+| `irev 100` | 9.81           | .054         | 181      | .139         | .0014      |
 
 This benchmark is too small to be conclusive, but on these examples the Prolog compiler is 16 to 181 times faster than the Prolog interpreter, slightly faster than interpreted Lisp, but still 17 to 90 times slower than compiled Lisp.
 This suggests that the Prolog interpreter cannot be used as a practical programming tool, but the Prolog compiler can.
@@ -1912,24 +1904,21 @@ D.
 Warren and his colleagues.
 The names for the primitives in the last section are also taken from Edinburgh Prolog.
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| | Prolog | Prolog-In-Lisp |
-| atom | `lower` | `const` |
-| variable | `Upper` | `?var` |
-| anonymous | `-` | `?` |
-| goal | `p(Var,const)` | `(p ?var const)` |
-| rule | `p(X) :- q(X).` | `(<- (p ?x) (q ?x))` |
-| fact | `p(a).` | `(<- (p a))` |
-| query | `?- p(X).` | `(?- (p ?x))` |
-| list | `[a,b,c]` | `(a b c)` |
-| cons | `[a| Rest]` | `(a . ?rest)` |
-| nil | `[]` | `()` |
-| and | `p(X). q(X)` | `(and (p ?x) (q ?x)>` |
-| or | `P(X): q(X)` | `(or (p ?x) (q ?x))` |
-| not | `\+ p(X)` | `(not (p ?x))` |
+|           | Prolog          | Prolog-In-Lisp        |
+|-----------|-----------------|-----------------------|
+| atom      | `lower`         | `const`               |
+| variable  | `Upper`         | `?var`                |
+| anonymous | `-`             | `?`                   |
+| goal      | `p(Var,const)`  | `(p ?var const)`      |
+| rule      | `p(X) :- q(X).` | `(<- (p ?x) (q ?x))`  |
+| fact      | `p(a).`         | `(<- (p a))`          |
+| query     | `?- p(X).`      | `(?- (p ?x))`         |
+| list      | `[a,b,c]`       | `(a b c)`             |
+| cons      | `[a| Rest]`     | `(a . ?rest)`         |
+| nil       | `[]`            | `()`                  |
+| and       | `p(X). q(X)`    | `(and (p ?x) (q ?x)>` |
+| or        | `P(X): q(X)`    | `(or (p ?x) (q ?x))`  |
+| not       | `\+ p(X)`       | `(not (p ?x))`        |
 
 We have adopted Lisp's bias toward lists; terms are built out of atoms, variables, and conses of other terms.
 In real Prolog cons cells are provided, but terms are usually built out of *structures*, not lists.

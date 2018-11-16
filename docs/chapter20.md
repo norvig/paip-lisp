@@ -108,14 +108,11 @@ With the Horn-clause-based grammar formalism we are developing here, we can add 
 In English, the agreement rule does not have a big impact.
 For all verbs except *be,* the difference only shows up in the third-person singular of the present tense:
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| | Singular | Plural |
-| first person second person third person | I you he/she | sleep sleep sleeps | we you they | sleep sleep sleep |
-
-![t0010](images/chapter20/t0010.png)
+|               | Singular |        | Plural |       |
+|---------------|----------|--------|--------|-------|
+| first person  | I        | sleep  | we     | sleep |
+| second person | you      | sleep  | you    | sleep |
+| third person  | he/she   | sleeps | they   | sleep |
 
 Thus, the agreement argument will take on one of the two values `3sg` or `"3sg` to indicate third-person-singular or not-third-person-singular.
 We could write:

@@ -53,15 +53,15 @@ Players alternate turns, except that a player who has no legal moves must pass.
 When neither player has any moves, the game is over, and the player with the most pieces on the board wins.
 This usually happens because there are no empty squares left, but it occasionally happens earlier in the game.
 
-| []() |
-|---|
+| []()                                   |
+|----------------------------------------|
 | ![f18-01](images/chapter18/f18-01.jpg) |
-| Figure 18.1: The Othello Board |
+| Figure 18.1: The Othello Board         |
 
-| []() |
-|---|
+| []()                                   |
+|----------------------------------------|
 | ![f18-02](images/chapter18/f18-02.jpg) |
-| Figure 18.2: Legal Othello Moves |
+| Figure 18.2: Legal Othello Moves       |
 
 ## 18.2 Representation Choices
 {:#s0015}
@@ -160,9 +160,9 @@ With this much decided, we are ready to begin.
 [Figure 18.3](#f0020) is the glossary for the complete program.
 A glossary for a second version of the program is on [page 623](#p623).
 
-| []() |
-|---|
-| ![f18-03](images/chapter18/f18-03.jpg) |
+| []()                                          |
+|-----------------------------------------------|
+| ![f18-03](images/chapter18/f18-03.jpg)        |
 | Figure 18.3: Glossary for the Othello Program |
 
 *(ed: this should be a markdown table)*
@@ -490,10 +490,10 @@ Edge squares are weighted highly, corner squares higher still, and squares adjac
 In general, X and C squares are to be avoided, because taking them gives the opponent a chance to take the corner.
 The `weighted-squares` evaluation function reflects this.
 
-| []() |
-|---|
+| []()                                   |
+|----------------------------------------|
 | ![f18-04](images/chapter18/f18-04.jpg) |
-| Figure 18.4: Names for Edge Squares |
+| Figure 18.4: Names for Edge Squares    |
 
 ```lisp
 (defparameter *weights*
@@ -1054,9 +1054,9 @@ While we're at it, we'll also print the list of possible moves:
     (h8->88 (read)))
 ```
 
-| []() |
-|---|
-| ![f18-05](images/chapter18/f18-05.jpg) |
+| []()                                                        |
+|-------------------------------------------------------------|
+| ![f18-05](images/chapter18/f18-05.jpg)                      |
 | Figure 18.5: Glossary for the Tournament Version of Othello |
 
 *(ed: should be a markdown table)*
@@ -1489,29 +1489,26 @@ The following table compares the performance of the random-ordering strategy, th
 All strategies search 6 ply deep.
 The table measures the number of boards investigated, the number of those boards that were evaluated (in all cases the evaluation function was `modified-weighted-squares`) and the time in seconds to compute a move.
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| random order | sorted order | static order |
+| random | order |      | sorted | order |      | static | order |      |
 | boards | evals | secs | boards | evals | secs | boards | evals | secs |
-| 13912 | 10269 | 69 | 5556 | 5557 | 22 | 2365 | 1599 | 19 |
-| 9015 | 6751 | 56 | 6571 | 6572 | 25 | 3081 | 2188 | 18 |
-| 9820 | 7191 | 46 | 11556 | 11557 | 45 | 5797 | 3990 | 31 |
-| 4195 | 3213 | 20 | 5302 | 5303 | 17 | 2708 | 2019 | 15 |
-| 10890 | 7336 | 60 | 10709 | 10710 | 38 | 3743 | 2401 | 23 |
-| 13325 | 9679 | 63 | 6431 | 6432 | 24 | 4222 | 2802 | 24 |
-| 13163 | 9968 | 58 | 9014 | 9015 | 32 | 6657 | 4922 | 31 |
-| 16642 | 12588 | 70 | 9742 | 9743 | 33 | 10421 | 7488 | 51 |
-| 18016 | 13366 | 80 | 11002 | 11003 | 37 | 9508 | 7136 | 41 |
-| 23295 | 17908 | 104 | 15290 | 15291 | 48 | 26435 | 20282 | 111 |
-| 34120 | 25895 | 143 | 22994 | 22995 | 75 | 20775 | 16280 | 78 |
-| 56117 | 43230 | 224 | 46883 | 46884 | 150 | 48415 | 36229 | 203 |
-| 53573 | 41266 | 209 | 62252 | 62253 | 191 | 37803 | 28902 | 148 |
-| 43943 | 33184 | 175 | 31039 | 31040 | 97 | 33180 | 24753 | 133 |
-| 51124 | 39806 | 193 | 45709 | 45710 | 135 | 19297 | 15064 | 69 |
-| 24743 | 18777 | 105 | 20003 | 20004 | 65 | 15627 | 11737 | 66 |
-| 1.0 | 1.0 | 1.0 | .81 | 1.07 | .62 | .63 | .63 | .63 |
+|--------|-------|------|--------|-------|------|--------|-------|------|
+| 13912  | 10269 | 69   | 5556   | 5557  | 22   | 2365   | 1599  | 19   |
+| 9015   | 6751  | 56   | 6571   | 6572  | 25   | 3081   | 2188  | 18   |
+| 9820   | 7191  | 46   | 11556  | 11557 | 45   | 5797   | 3990  | 31   |
+| 4195   | 3213  | 20   | 5302   | 5303  | 17   | 2708   | 2019  | 15   |
+| 10890  | 7336  | 60   | 10709  | 10710 | 38   | 3743   | 2401  | 23   |
+| 13325  | 9679  | 63   | 6431   | 6432  | 24   | 4222   | 2802  | 24   |
+| 13163  | 9968  | 58   | 9014   | 9015  | 32   | 6657   | 4922  | 31   |
+| 16642  | 12588 | 70   | 9742   | 9743  | 33   | 10421  | 7488  | 51   |
+| 18016  | 13366 | 80   | 11002  | 11003 | 37   | 9508   | 7136  | 41   |
+| 23295  | 17908 | 104  | 15290  | 15291 | 48   | 26435  | 20282 | 111  |
+| 34120  | 25895 | 143  | 22994  | 22995 | 75   | 20775  | 16280 | 78   |
+| 56117  | 43230 | 224  | 46883  | 46884 | 150  | 48415  | 36229 | 203  |
+| 53573  | 41266 | 209  | 62252  | 62253 | 191  | 37803  | 28902 | 148  |
+| 43943  | 33184 | 175  | 31039  | 31040 | 97   | 33180  | 24753 | 133  |
+| 51124  | 39806 | 193  | 45709  | 45710 | 135  | 19297  | 15064 | 69   |
+| 24743  | 18777 | 105  | 20003  | 20004 | 65   | 15627  | 11737 | 66   |
+| 1.0    | 1.0   | 1.0  | .81    | 1.07  | .62  | .63    | .63   | .63  |
 
 The last two lines of the table give the averages and the averages normalized to the random-ordering strategy's performance.
 The sorted-ordering strategy takes only 62% of the time of the random-ordering strategy, and the static-ordering takes 63%.

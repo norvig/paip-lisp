@@ -91,52 +91,50 @@ The special meaning of these characters to the Lisp reader can be escaped either
 (defparameter *student-rules* (mapcar #'expand-pat-match-abbrev
 ```
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| `'(((?x* |.|)` | `        ?x)` |
-| `    ((?x*  |.| ?y*)` | `(?x ?y))` |
-| `    ((if ?x* |,| then ?y*)` | `(?x ?y))` |
-| `    ((if ?x* then ?y*)` | `(?x ?y))` |
-| `    ((if ?x* |,| ?y*)` | `(?x ?y))` |
-| `    ((?x* |,| and ?y*)` | `(?x ?y))` |
-| `    ((find ?x* and ?y*)` | `((= to-find-1 ?x) (= to-find-2 ?y)))` |
-| `    ((find ?x*)` | `(= to-find ?x))` |
-| `    ((?x* equals ?y*)` | `(= ?x ?y))` |
-| `    ((?x* same as ?y*)` | `(= ?x ?y))` |
-| `    ((?x* = ?y*)` | `(= ?x ?y))` |
-| `    ((?x* is equal to ?y*)` | `(= ?x ?y))` |
-| `    ((?x* is ?y*)` | `(= ?x ?y))` |
-| `    ((?x* - ?y*)` | `(- ?x ?y))` |
-| `    ((?x* minus ?y*)` | `(- ?x ?y))` |
-| `((difference between ?x* and ?y*)` | `(- ?y ?x))` |
-| `((difference ?x* and ?y*)` | `(- ?y ?x))` |
-| `((?x* + ?y*)` | `(+ ?x ?y))` |
-| `((?x* plus ?y*)` | `(+ ?x ?y))` |
-| `((sum ?x* and ?y*)` | `(+ ?x ?y))` |
-| `((product ?x* and ?y*)` | `(* ?x ?y))` |
-| `((?x* * ?y*)` | `(* ?x ?y))` |
-| `((?x* times ?y*)` | `(* ?x ?y))` |
-| `((?x* / ?y*)` | `(/ ?x ?y))` |
-| `((?x* per ?y*)` | `(/ ?x ?y))` |
-| `((?x* divided by ?y*)` | `(/ ?x ?y))` |
-| `((half ?x*)` | `(/ ?x 2))` |
-| `((one half ?x*)` | `(/ ?x 2))` |
-| `((twice ?x*)` | `(* 2 ?x))` |
-| `((square ?x*)` | `(* ?x ?x))` |
-| `((?x* % less than ?y*)` | `(* ?y (/ (- 100 ?x) 100)))` |
-| `((?x* % more than ?y*)` | `(* ?y (/ (+ 100 ?x) 100)))` |
-| `((?x* % ?y*)` | `(* (/ ?x 100) ?y)))))` |
+| []()                                |                                         |
+|-------------------------------------|-----------------------------------------|
+| `'(((?x* |.|)`                      | `        ?x)`                           |
+| `    ((?x*  |.| ?y*)`               | `(?x ?y))`                              |
+| `    ((if ?x* |,| then ?y*)`        | `(?x ?y))`                              |
+| `    ((if ?x* then ?y*)`            | `(?x ?y))`                              |
+| `    ((if ?x* |,| ?y*)`             | `(?x ?y))`                              |
+| `    ((?x* |,| and ?y*)`            | `(?x ?y))`                              |
+| `    ((find ?x* and ?y*)`           | `((= to-find-1 ?x) (= to-find-2 ?y)))`  |
+| `    ((find ?x*)`                   | `(= to-find ?x))`                       |
+| `    ((?x* equals ?y*)`             | `(= ?x ?y))`                            |
+| `    ((?x* same as ?y*)`            | `(= ?x ?y))`                            |
+| `    ((?x* = ?y*)`                  | `(= ?x ?y))`                            |
+| `    ((?x* is equal to ?y*)`        | `(= ?x ?y))`                            |
+| `    ((?x* is ?y*)`                 | `(= ?x ?y))`                            |
+| `    ((?x* - ?y*)`                  | `(- ?x ?y))`                            |
+| `    ((?x* minus ?y*)`              | `(- ?x ?y))`                            |
+| `((difference between ?x* and ?y*)` | `(- ?y ?x))`                            |
+| `((difference ?x* and ?y*)`         | `(- ?y ?x))`                            |
+| `((?x* + ?y*)`                      | `(+ ?x ?y))`                            |
+| `((?x* plus ?y*)`                   | `(+ ?x ?y))`                            |
+| `((sum ?x* and ?y*)`                | `(+ ?x ?y))`                            |
+| `((product ?x* and ?y*)`            | `(* ?x ?y))`                            |
+| `((?x* * ?y*)`                      | `(* ?x ?y))`                            |
+| `((?x* times ?y*)`                  | `(* ?x ?y))`                            |
+| `((?x* / ?y*)`                      | `(/ ?x ?y))`                            |
+| `((?x* per ?y*)`                    | `(/ ?x ?y))`                            |
+| `((?x* divided by ?y*)`             | `(/ ?x ?y))`                            |
+| `((half ?x*)`                       | `(/ ?x 2))`                             |
+| `((one half ?x*)`                   | `(/ ?x 2))`                             |
+| `((twice ?x*)`                      | `(* 2 ?x))`                             |
+| `((square ?x*)`                     | `(* ?x ?x))`                            |
+| `((?x* % less than ?y*)`            | `(* ?y (/ (- 100 ?x) 100)))`            |
+| `((?x* % more than ?y*)`            | `(* ?y (/ (+ 100 ?x) 100)))`            |
+| `((?x* % ?y*)`                      | `(* (/ ?x 100) ?y)))))`                 |
 
 The main section of STUDENT !!!(span) {:.smallcaps} will search through the list of rules for a response, just as ELIZA !!!(span) {:.smallcaps} did.
 The first point of deviation is that before we substitute the values of the `pat-match` variables into the response, we must first recursively translate the value of each variable, using the same list of pattern-response rules.
 The other difference is that once we're done, we don't just print the response; instead we have to solve the set of equations and print the answers.
 The program is summarized in [figure 7.1](#f0010).
 
-| []() |
-|---|
-| ![f07-01](images/chapter7/f07-01.jpg) |
+| []()                                         |
+|----------------------------------------------|
+| ![f07-01](images/chapter7/f07-01.jpg)        |
 | Figure 7.1: Glossary for the STUDENT Program |
 
 (ed: this should be a markdown table)
@@ -293,14 +291,12 @@ Next we have to deal with the case where the unknown is in a complex expression 
 Because we are allowing four operators and the unknown can be either on the right or the left, there are eight possibilities.
 Letting X stand for an expression containing the unknown and A and B stand for expressions with no unknowns, the possibilities and their solutions are as follows:
 
-!!!(table)
-
-| []() | | | | | | | | | |
-|---|---|---|---|---|---|---|---|---|---|
-| (1) `X*A=B`  =>  `X=B/A` | (5) `A*X=B`  =>  `X=B/A` |
-| (2) `X+A=B`  =>  `X=B-A` | (6) `A+X=B`  =>  `X=B-A` |
-| (3) `X/A=B`  =>  `X=B*A` | (7) `A/X=B`  =>  `X=A/B` |
-| (4) `X-A=B`  =>  `X=B+A` | (8) `A-X=B`  =>  `X=A-B` |
+| []()                   |                        |
+|------------------------|------------------------|
+| (1) `X*A=B` => `X=B/A` | (5) `A*X=B` => `X=B/A` |
+| (2) `X+A=B` => `X=B-A` | (6) `A+X=B` => `X=B-A` |
+| (3) `X/A=B` => `X=B*A` | (7) `A/X=B` => `X=A/B` |
+| (4) `X-A=B` => `X=B+A` | (8) `A-X=B` => `X=A-B` |
 
 Possibilities (1) through (4) are handled by case III, (5) and (6) by case IV, and (7) and (8) by case V.
 In each case, the transformation does not give us the final answer, since X need not be the unknown; it might be a complex expression involving the unknown.
