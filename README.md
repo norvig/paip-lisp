@@ -15,6 +15,8 @@ The book is available in these formats:
 * epub: [PAIP-safari.epub](https://github.com/norvig/paip-lisp/blob/master/PAIP-safari.epub) (much cleaner)
 * and `chapter?.md` markdown files:
 
+# Table of Contents
+
 - **Paradigms of Artificial Intelligence Programming**
   * [Front matter](docs/frontmatter.md)
   * [Preface](docs/preface.md)
@@ -123,3 +125,8 @@ your system you may have to alter its definition, in
 or a chapter number or a list of chapter numbers, can be used to see examples
 of the use of various functions.  For example, `(do-examples 1)` shows
 the examples from chapter 1. Access this by doing `(requires "examples")`.
+
+# Other resources
+
+* I wrote a [retrospective](http://norvig.com/Lisp-retro.html) on the book.
+* There is a nice [Python version](https://github.com/dhconnelly/paip-python) of the code, by Georgia Tech.
