@@ -88,7 +88,7 @@ The [Lisp code files](https://github.com/norvig/paip-lisp/tree/master/lisp) are 
 | 14   | [krep.lisp](lisp/krep.lisp)         | Final KR code: worlds and attached functions                           |
 | 15   | [cmacsyma.lisp](lisp/cmacsyma.lisp) | Efficient Macsyma with canonical form                                  |
 | 16   | [mycin.lisp](lisp/mycin.lisp)       | The Emycin expert system shell                                         |
-| 16   | [mysin-r.lisp](lisp/mysin-r.lisp)   | Some rules for a medical application of emycin                         |
+| 16   | [mycin-r.lisp](lisp/mycin-r.lisp)   | Some rules for a medical application of emycin                         |
 | 17   | [waltz.lisp](lisp/waltz.lisp)       | A Line-Labeling program using the Waltz algorithm                      |
 | 18   | [othello.lisp](lisp/othello.lisp)   | The Othello playing program and some strategies                        |
 | 18   | [othello2.lisp](lisp/othello2.lisp) | Additional strategies for Othello                                      |
