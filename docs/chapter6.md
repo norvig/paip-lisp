@@ -222,8 +222,6 @@ The following table describes a grammar of patterns, using the same grammar rule
 | *Var* =>          | ?*chars*               | a symbol starting with ?                          |
 | *constant* =>     | *atom*                 | any nonvariable atom                              |
 
-![t0015](images/B9780080571157500066/t0015.png)
-
 Despite the added complexity, all patterns can still be classified into five cases.
 The pattern must be either a variable, constant, a (generalized) segment pattern, a (generalized) single-element pattern, or a cons of two patterns.
 The following definition of `pat-match` reflects the five cases (along with two checks for failure):
@@ -978,8 +976,6 @@ Suppose we have a list of selected cities with airports, along with their positi
 | `(Indianapolis` | `86.10 39.46)`  | `(Tampa`         | `82.27 27.57)`   |
 | `(Jacksonville` | `81.40 30.22)`  | `(Victoria`      | `123.21 48.25)`  |
 | `(Kansas-City`  | `94.35 39.06)`  | `(Wilmington`    | `77.57 34.14)))` |
-
-![t0030](images/B9780080571157500066/t0030.png)
 
 This example introduces a new option to `defstruct`.
 Instead of just giving the name of the structure, it is also possible to use:
