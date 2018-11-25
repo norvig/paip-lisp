@@ -26,7 +26,7 @@
   (mapcar
     #'(lambda (op)
         (append
-          (remove-if #'(lambda (x) 
+          (remove-if #'(lambda (x)
                          (member-equal x (op-del-list op)))
                      state)
           (op-add-list op)))

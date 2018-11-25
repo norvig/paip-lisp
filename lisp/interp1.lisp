@@ -62,7 +62,7 @@
   "Initialize the scheme interpreter with some global variables."
   ;; Define Scheme procedures as CL functions:
   (mapc #'init-scheme-proc *scheme-procs*)
-  ;; Define the boolean `constants'. Unfortunately, this won't 
+  ;; Define the boolean `constants'. Unfortunately, this won't
   ;; stop someone from saying: (set! t nil)
   (set-global-var! t t)
   (set-global-var! nil nil))
@@ -176,7 +176,7 @@
 (def-scheme-macro define (name &rest body)
   (if (atom name)
       `(begin (set! ,name . ,body) ',name)
-      `(define ,(first name) 
+      `(define ,(first name)
          (lambda ,(rest name) . ,body))))
 
 (def-scheme-macro delay (computation)

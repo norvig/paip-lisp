@@ -55,7 +55,7 @@
   "Build an augmented DCG rule that handles :sem, :ex,
   and automatic conjunctiontive constituents."
   (if (eq (last1 head) :sem)
-      ;; Handle :sem 
+      ;; Handle :sem
       (let* ((?sem (gensym "?SEM")))
         (make-augmented-dcg
           `(,@(butlast head) ,?sem)
@@ -64,7 +64,7 @@
       ;; Separate out examples from body
       (multiple-value-bind (exs new-body)
           (partition-if #'(lambda (x) (starts-with x :ex)) body)
-        ;; Handle conjunctions 
+        ;; Handle conjunctions
         (let ((rule `(rule ,(handle-conj head) --> ,@new-body)))
           (if (null exs)
               rule

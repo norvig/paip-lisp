@@ -14,14 +14,14 @@
   (cond
     ((symbolp x) (funcall cc (get-var x env)))
     ((atom x) (funcall cc x))
-    ((scheme-macro (first x))                 
-     (interp (scheme-macro-expand x) env cc)) 
+    ((scheme-macro (first x))
+     (interp (scheme-macro-expand x) env cc))
     ((case (first x)
        (QUOTE  (funcall cc (second x)))
        (BEGIN  (interp-begin (rest x) env cc))
        (SET!   (interp (third x) env
                        #'(lambda (val)
-                           (funcall cc (set-var! (second x) 
+                           (funcall cc (set-var! (second x)
                                                  val env)))))
        (IF     (interp (second x) env
                        #'(lambda (pred)
@@ -81,7 +81,7 @@
 (defun init-scheme-proc (f)
   "Define a Scheme primitive procedure as a CL function."
   (if (listp f)
-      (set-global-var! (first f) 
+      (set-global-var! (first f)
                        #'(lambda (cont &rest args)
                            (funcall cont (apply (second f) args))))
       (init-scheme-proc (list f f))))

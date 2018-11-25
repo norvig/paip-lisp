@@ -4,7 +4,7 @@
 
 ;;;; File clos.lisp: Object-oriented programming examples
 
-(defstruct account 
+(defstruct account
   (name "") (balance 0.00) (interest-rate .06))
 
 (defun account-withdraw (account amt)
@@ -85,7 +85,7 @@
 
 (defun generic-fn-p (fn-name)
   "Is this a generic function?"
-  (and (fboundp fn-name) 
+  (and (fboundp fn-name)
        (eq (get fn-name 'generic-fn) (symbol-function fn-name))))
 
 ;;; ==============================

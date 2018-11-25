@@ -2,7 +2,7 @@
 ;;;; Code from Paradigms of AI Programming
 ;;;; Copyright (c) 1991 Peter Norvig
 
-;;;; File prologc1.lisp: Version 1 of the prolog compiler, 
+;;;; File prologc1.lisp: Version 1 of the prolog compiler,
 ;;;; including the destructive unification routines from Chapter 11.
 
 (requires "prolog")

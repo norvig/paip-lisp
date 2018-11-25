@@ -30,7 +30,7 @@
 (deftype board () '(simple-array piece (100)))
 
 (defun bref (board square) (aref board square))
-(defsetf bref (board square) (val) 
+(defsetf bref (board square) (val)
   `(setf (aref ,board ,square) ,val))
 
 (defun copy-board (board)
@@ -87,7 +87,7 @@
   "Would this move result in any flips in this direction?
   If so, return the square number of the bracketing piece."
   ;; A flip occurs if, starting at the adjacent square, c, there
-  ;; is a string of at least one opponent pieces, bracketed by 
+  ;; is a string of at least one opponent pieces, bracketed by
   ;; one of player's pieces
   (let ((c (+ move dir)))
     (and (eql (bref board c) (opponent player))
@@ -104,7 +104,7 @@
   "Compute the player to move next, or NIL if nobody can move."
   (let ((opp (opponent previous-player)))
     (cond ((any-legal-move? opp board) opp)
-          ((any-legal-move? previous-player board) 
+          ((any-legal-move? previous-player board)
            (when print
              (format t "~&~c has no moves and must pass."
                      (name-of opp)))
@@ -132,7 +132,7 @@
 
 (defun maximizer (eval-fn)
   "Return a strategy that will consider every legal move,
-  apply EVAL-FN to each resulting board, and choose 
+  apply EVAL-FN to each resulting board, and choose
   the move for which EVAL-FN returns the best score.
   FN takes two arguments: the player-to-move and board"
   #'(lambda (player board)
@@ -163,7 +163,7 @@
   "Sum of the weights of player's squares minus opponent's."
   (let ((opp (opponent player)))
     (loop for i in all-squares
-          when (eql (bref board i) player) 
+          when (eql (bref board i) player)
           sum (aref *weights* i)
           when (eql (bref board i) opp)
           sum (- (aref *weights* i)))))
@@ -207,7 +207,7 @@
   "A strategy that searches PLY levels and then uses EVAL-FN."
   #'(lambda (player board)
       (multiple-value-bind (value move)
-          (minimax player board ply eval-fn) 
+          (minimax player board ply eval-fn)
         (declare (ignore value))
         move)))
 
@@ -243,7 +243,7 @@
   #'(lambda (player board)
       (multiple-value-bind (value move)
           (alpha-beta player board losing-value winning-value
-                      depth eval-fn) 
+                      depth eval-fn)
         (declare (ignore value))
         move)))
 
@@ -272,7 +272,7 @@
     "Return a list of all squares adjacent to a square."
     (aref neighbor-table square)))
 
-(let ((square-names 
+(let ((square-names
         (cross-product #'symbol
                        '(? a b c d e f g h ?)
                        '(? 1 2 3 4 5 6 7 8 ?))))
@@ -296,19 +296,19 @@
 
 (defvar *move-number* 1 "The number of the move to be played")
 
-(defun othello (bl-strategy wh-strategy 
+(defun othello (bl-strategy wh-strategy
                 &optional (print t) (minutes 30))
   "Play a game of othello.  Return the score, where a positive
   difference means black, the first player, wins."
   (let ((board (initial-board))
         (clock (make-array (+ 1 (max black white))
-                           :initial-element 
-                           (* minutes 60 
+                           :initial-element
+                           (* minutes 60
                               internal-time-units-per-second))))
     (catch 'game-over
       (loop for *move-number* from 1
             for player = black then (next-to-play board player print)
-            for strategy = (if (eql player black) 
+            for strategy = (if (eql player black)
                                bl-strategy
                                wh-strategy)
             until (null player)
@@ -341,7 +341,7 @@
        (THROW 'game-over (if (eql player black) -64 64)))
       ((and (valid-p move) (legal-p move player board))
        (when print
-         (format t "~&~c moves to ~a." 
+         (format t "~&~c moves to ~a."
                  (name-of player) (88->h8 move)))
        (make-move move player board))
       (t (warn "Illegal move: ~a" (88->h8 move))
@@ -372,7 +372,7 @@
       (floor (round time internal-time-units-per-second) 60)
     (format nil "~2d:~2,'0d" min sec)))
 
-(defun random-othello-series (strategy1 strategy2 
+(defun random-othello-series (strategy1 strategy2
                               n-pairs &optional (n-random 10))
   "Play a series of 2*n games, starting from a random position."
   (othello-series
@@ -415,7 +415,7 @@
                              :initial-element 0)))
     ;; Play the games
     (dotimes (i N)
-      (loop for j from (+ i 1) to (- N 1) do 
+      (loop for j from (+ i 1) to (- N 1) do
           (let* ((wins (random-othello-series
                          (elt strategies i)
                          (elt strategies j)
