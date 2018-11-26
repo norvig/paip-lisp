@@ -49,7 +49,7 @@
 
 (defvar *grammar* *simple-grammar*
   "The grammar used by generate.  Initially, this is
-  *simple-grammar*, but we can switch to other grammers.")
+  *simple-grammar*, but we can switch to other grammars.")
 
 ;;; ==============================
 
