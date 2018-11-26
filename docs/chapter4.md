@@ -16,11 +16,11 @@ Moreover, their ability to do these things is going to increase rapidly until-in
 
 Although GPS never lived up to these exaggerated claims, it was still an important program for historical reasons.
 It was the first program to separate its problem solving strategy from its knowledge of particular problems, and it spurred much further research in problem solving.
-For ail these reasons, it is a fitting object of study.
+For all these reasons, it is a fitting object of study.
 
 The original GPS program had a number of minor features that made it quite complex.
 In addition, it was written in an obsolete low-level language, IPL, that added gratuitous complexity.
-In fact, the conf using nature of IPL was probably an important reason for the grand claims about GPS.
+In fact, the confusing nature of IPL was probably an important reason for the grand claims about GPS.
 If the program was that complicated, it *must* do something important.
 We will be ignoring some of the subtleties of the original program, and we will use Common Lisp, a much more perspicuous language than IPL.
 The result will be a version of GPS that is quite simple, yet illustrates some important points about AI.
@@ -39,23 +39,15 @@ We follow all five stages in the development of our versions of GPS, with the ho
 To summarize, the five stages of an AI programming project are:
 
 1.  **Describe** the problem in vague terms
-!!!(p) {:.numlist}
 
 2.  **Specify** the problem in algorithmic terms
-!!!(p) {:.numlist}
 
 3.  **Implement** the problem in a programming language
-!!!(p) {:.numlist}
 
 4.  **Test** the program on representative examples
-!!!(p) {:.numlist}
 
-5.  **Debug** and **analyze** the resulting program, and repeat the process
-!!!(p) {:.numlist}
 
 ## 4.1 Stage 1: Description
-{:#s0010}
-{:.h1hd}
 
 As our problem description, we will start with a quote from Newell and Simon's 1972 book, *Human Problem Solving:*
 
@@ -106,8 +98,6 @@ However, if we can define these notions better, it seems we won't need any new n
 Thus, we will arbitrarily decide that the problem description is complete, and move on to the problem specification.
 
 ## 4.2 Stage 2: Specification
-{:#s0015}
-{:.h1hd}
 
 At this point we have an idea-admittedly vague-of what it means to solve a problem in GPS`.` We can refine these notions into representations that are closer to Lisp as follows:
 
@@ -122,7 +112,7 @@ This list will be constant over the course of a problem, or even a series of pro
 *   An operator can be represented as a structure composed of an action, a list of preconditions, and a list of effects.
 We can place limits on the kinds of possible effects by saying that an effect either adds or deletes a condition from the current state.
 Thus, the list of effects can be split into an add-list and a delete-list.
-This was the approach taken by the Strips !!!(span) {:.smallcaps} [1](#fn0010) implementation of GPS, which we will be in effect reconstructing in this chapter.
+This was the approach taken by the Strips [1](#fn0010) implementation of GPS, which we will be in effect reconstructing in this chapter.
 The original GPS allowed more flexibility in the specification of effects, but flexibility leads to inefficiency.
 
 *   A complete problem is described to GPS in terms of a starting state, a goal state, and a set of known operators.
@@ -144,8 +134,6 @@ Once the preconditions have been achieved, applying an operator means executing 
 Since our program is just a simulation-it won't be actually driving a car or dialing a telephone-we must be content simply to print out the action, rather than taking any real action.
 
 ## 4.3 Stage 3: Implementation
-{:#s0020}
-{:.h1hd}
 
 The specification is complete enough to lead directly to a complete Common Lisp program.
 [Figure 4.1](#f0010) summarizes the variables, data types, and functions that make up the GPS program, along with some of the Common Lisp functions used to implement it.
@@ -164,7 +152,7 @@ Here is the complete GPS program itself:
 (defstruct op "An operation"
   (action nil) (preconds nil) (add-list nil) (del-list nil))
 (defun GPS (*state* goals *ops*)
-  "General Problem Solver: achieve ail goals using *ops*."
+  "General Problem Solver: achieve all goals using *ops*."
   (if (every #'achieve goals) 'solved))
 (defun achieve (goal)
   "A goal is achieved if it already holds,
@@ -186,7 +174,7 @@ Here is the complete GPS program itself:
 We can see the program is made up of seven definitions.
 These correspond to the seven items in the specification above.
 In general, you shouldn't expect such a perfect fit between specification and implementation.
-There are two `defvar` forms, one `defstruct`, and `four defun forms`.
+There are two `defvar` forms, one `defstruct`, and four `defun` forms.
 These are the Common Lisp forms for defining variables, structures, and functions, respectively.
 They are the most common toplevel forms in Lisp, but there is nothing magic about them; they are just special forms that have the side effect of adding new definitions to the Lisp environment.
 
@@ -196,10 +184,10 @@ The two `defvar` forms, repeated below, declare special variables named `*state*
 (defvar *state* nil "The current state: a list of conditions.")
 (defvar *ops* nil "A list of available operators.")
 ```
-The `defstruct` form defines a structure called an `op`, which has slots called `action, preconds, add-list,` and `del-list`.
+The `defstruct` form defines a structure called an `op`, which has slots called `action`, `preconds`, `add-list`, and `del-list`.
 Structures in Common Lisp are similar to structures in C, or records in Pascal.
 The `defstruct` automatically defines a constructor function, which is called `make-op`, and an access function for each slot of the structure.
-The access functions are called `op-action`, `op-preconds, op-add-list`, and `op-del-list`.
+The access functions are called `op-action`, `op-preconds`, `op-add-list`, and `op-del-list`.
 The `defstruct` also defines a copier function, `copy-op`, a predicate, `op-p`, and `setf` definitions for changing each slot.
 None of those are used in the GPS program.
 Roughly speaking, it is as if the `defstruct` form
@@ -211,7 +199,7 @@ Roughly speaking, it is as if the `defstruct` form
 expanded into the following definitions:
 
 ```lisp
-(defun make-op (&key action precondsadd-list del-list)
+(defun make-op (&key action preconds add-list del-list)
   (vector 'op action preconds add-list del-list))
 (defun op-action (op) (elt op 1))
 (defun op-preconds (op) (elt op 2))
@@ -223,12 +211,12 @@ expanded into the following definitions:
 (setf (documentation 'op 'structure) "An operation")
 ```
 Next in the GPS program are four function definitions.
-The main function GPS`,` is passed three arguments.
+The main function `GPS`, is passed three arguments.
 The first is the current state of the world, the second the goal state, and the third a list of allowable operators.
 The body of the function says simply that if we can achieve every one of the goals we have been given, then the problem is solved.
 The unstated alternative is that otherwise, the problem is not solved.
 
-The function a chieve is given as an argument a single goal.
+The function achieve is given as an argument a single goal.
 The function succeeds if that goal is already true in the current state (in which case we don't have to do anything) or if we can apply an appropriate operator.
 This is accomplished by first building the list of appropriate operators and then testing each in turn until one can be applied.
 `achieve` calls `find-all`, which we defined on [page 101](B9780080571157500030.xhtml#p101).
@@ -239,11 +227,9 @@ The function `appropriate-p` tests if an operator is appropriate for achieving a
 
 Finally, the function `apply-op` says that if we can achieve all the preconditions for an appropriate operator, then we can apply the operator.
 This involves printing a message to that effect and changing the state of the world by deleting what was in the delete-list and adding what was in the add-list.
-`apply-op` is also a predicate; it returns t only when the operator can be applied.
+`apply-op` is also a predicate; it returns `t` only when the operator can be applied.
 
 ## 4.4 Stage 4: Test
-{:#s0025}
-{:.h1hd}
 
 This section will define a list of operators applicable to the "driving to nursery school" domain and will show how to pose and solve some problems in that domain.
 First, we need to construct the list of operators for the domain.
@@ -280,13 +266,13 @@ We can fill in the "and so on" by adding operators for looking up the shop's pho
     (make-op :action 'shop-installs-battery
       :preconds '(car-needs-battery shop-knows-problem shop-has-money)
       :add-list '(car-works))
-    (make-op :action 'tel 1-shop-problem
+    (make-op :action 'tell-shop-problem
       :preconds '(in-communication-with-shop)
       :add-list '(shop-knows-problem))
-    (make-op raction 'telephone-shop
+    (make-op :action 'telephone-shop
       :preconds '(know-phone-number)
       :add-list '(in-communication-with-shop))
-    (make-op .-action 'look-up-number
+    (make-op :action 'look-up-number
       :preconds '(have-phone-book)
       :add-list '(know-phone-number))
     (make-op :action 'give-shop-money
@@ -324,18 +310,16 @@ SOLVED
 In all three examples the goal is to have the son at school.
 The only operator that has `son-at-school` in its add-list is `drive-son-to-school`, so GPS selects that operator initially.
 Before it can execute the operator, GPS has to solve for the preconditions.
-In the first example, the program ends up working backward through the operators `shop-installs-battery, give-shop-money, tell-shop-problem`, and `telephone-shop` to `look-up-number`, which has no outstanding preconditions.
+In the first example, the program ends up working backward through the operators `shop-installs-battery`, `give-shop-money`, `tell-shop-problem`, and `telephone-shop` to `look-up-number`, which has no outstanding preconditions.
 Thus, the `look-up-number` action can be executed, and the program moves on to the other actions.
 As Aristotle said, "What is the last in the order of analysis seems to be first in the order of becoming."
 
 The second example starts out exactly the same, but the `look-up-number` operator fails because its precondition, `have-phone-book`, cannot be achieved.
-Knowing the phone number is a precondition, directly or indirectly, of ail the operators, so no action is taken and GPS returns `NIL`.
+Knowing the phone number is a precondition, directly or indirectly, of all the operators, so no action is taken and GPS returns `NIL`.
 
 Finally, the third example is much more direct; the initial state specifies that the car works, so the driving operator can be applied immediately.
 
 ## 4.5 Stage 5: Analysis, or "We Lied about the G"
-{:#s0030}
-{:.h1hd}
 
 In the sections that follow, we examine the question of just how general this General Problem Solver is.
 The next four sections point out limitations of our version of GPS, and we will show how to correct these limitations in a second version of the program.
@@ -346,8 +330,6 @@ AI programming is largely exploratory programming; the aim is often to discover 
 This is in contrast to a more traditional notion of programming, where the problem is completely specified before the first line of code is written.
 
 ## 4.6 The Running Around the Block Problem
-{:#s0035}
-{:.h1hd}
 
 Representing the operator "driving from home to school" is easy: the precondition and delete-list includes being at home, and the add-list includes being at school.
 But suppose we wanted to represent "running around the block." There would be no net change of location, so does that mean there would be no addor delete-list?
@@ -355,8 +337,6 @@ If so, there would be no reason ever to apply the operator.
 Perhaps the add-list should contain something like "got some exercise" or "feel tired," or something more general like "experience running around the block." We will return to this question later.
 
 ## 4.7 The Clobbered Sibling Goal Problem
-{:#s0040}
-{:.h1hd}
 
 Consider the problem of not only getting the child to school but also having some money left over to use for the rest of the day.
 GPS can easily solve this problem from the following initial condition:
@@ -383,8 +363,8 @@ However, in the next example GPS incorrectly reports success, when in fact it ha
 SOLVED
 ```
 The "bug" is that GPS uses the expression (`every #'achieve goals`) to achieve a set of goals.
-If this expression returns true, it means that every one of the goals has been achieved in sequence, but it doesn't mean they are ail still true at the end.
-In other words, the goal (`have-money son-at-school`), which we intended to mean "end up in a state where both have-money and son-at-school are true," was interpreted by GPS to mean "`first achieve have-money`, and then achieve `son-at-school`." Sometimes achieving one goal can undo another, previously achieved goal.
+If this expression returns true, it means that every one of the goals has been achieved in sequence, but it doesn't mean they are all still true at the end.
+In other words, the goal (`have-money son-at-school`), which we intended to mean "end up in a state where both have-money and son-at-school are true," was interpreted by GPS to mean "first achieve `have-money`, and then achieve `son-at-school`." Sometimes achieving one goal can undo another, previously achieved goal.
 We will call this the "prerequisite clobbers sibling goal" problem.[2](#fn0015) That is, `have-money` and `son-at-school` are sibling goals, one of the prerequisites for the plan for `son-at-school` is `car-works`, and achieving that goal clobbers the `have-money goal`.
 
 Modifying the program to recognize the "prerequisite clobbers sibling goal" problem is straightforward.
@@ -397,15 +377,13 @@ We can then define `achieve-all` as follows:
   (and (every #'achieve goals) (subsetp goals *state*)))
 ```
 The Common Lisp function subsetp returns true if its first argument is a subset of its second.
-In `achieve-all`, it returns true if every one of the goals is still in the current state after achieving ail the goals.
+In `achieve-all`, it returns true if every one of the goals is still in the current state after achieving all the goals.
 This is just what we wanted to test.
 
 The introduction of `achieve-all` prevents GPS from returning true when one of the goals gets clobbered, but it doesn't force GPS to replan and try to recover from a clobbered goal.
 We won't consider that possibility now, but we will take it up again in the section on the blocks world domain, which was Sussman's primary example.
 
 ## 4.8 The Leaping before You Look Problem
-{:#s0045}
-{:.h1hd}
 
 Another way to address the "prerequisite clobbers sibling goal" problem is just to be more careful about the order of goals in a goal list.
 If we want to get the kid to school and still have some money left, why not just specify the goal as (`son-at-school have-money`) rather than (`have-money son-at-school`)?
@@ -424,7 +402,7 @@ Let's see what happens when we try that:
 NIL
 ```
 GPS returns nil, reflecting the fact that the goal cannot be achieved, but only after executing all actions up to and including driving to school.
-I call this the "leaping before you look" problem, because if you asked the program to solve for the two goals `(jump off-cliff land-safely)` it would happily jump first, only to discover that it had no operator to land safely.
+I call this the "leaping before you look" problem, because if you asked the program to solve for the two goals `(jump-off-cliff land-safely)` it would happily jump first, only to discover that it had no operator to land safely.
 This is less than prudent behavior.
 
 The problem arises because planning and execution are interleaved.
@@ -433,18 +411,16 @@ An alternative would be to replace the single global `*state*` with distinct loc
 This alternative is a good one for another, independent reason, as we shall see in the next section.
 
 ## 4.9 The Recursive Subgoal Problem
-{:#s0050}
-{:.h1hd}
 
 In our simulated nursery school world there is only one way to find out a phone number: to look it up in the phone book.
 Suppose we want to add an operator for finding out a phone number by asking someone.
 Of course, in order to ask someone something, you need to be in communication with him or her.
-The asking-for-aphone-number operator could be implemented as follows:
+The asking-for-a-phone-number operator could be implemented as follows:
 
 ```lisp
 (push (make-op :action 'ask-phone-number
       :preconds '(in-communication-with-shop)
-      :add-1 i st '(know-phone-number))
+      :add-list '(know-phone-number))
     *school-ops*)
 ```
 (The special form ( `push`*item list*) puts the item on the front of the list; it is equivalent to (setf *list* (`cons`*item list*) ) in the simple case.) Unfortunately, something unexpected happens when we attempt to solve seemingly simple problems with this new set of operators.
@@ -491,8 +467,6 @@ As Aristotle put it, "If we are to be always deliberating, we shall have to go o
 One way to avoid the problem is to have achieve keep track of all the goals that are being worked on and give up if it sees a loop in the goal stack.
 
 ## 4.10 The Lack of Intermediate Information Problem
-{:#s0055}
-{:.h1hd}
 
 When GPS fails to find a solution, it just returns `nil`.
 This is annoying in cases where the user expected a solution to be found, because it gives no information about the cause of failure.
@@ -559,8 +533,6 @@ To generate indented output, the function `dbg-indent` is defined:
     (apply #'format *debug-io* format-string args)))
 ```
 ## 4.11 GPS Version 2: A More General Problem Solver
-{:#s0060}
-{:.h1hd}
 
 At this point we are ready to put together a new version of GPS with solutions for the "running around the block," "prerequisite clobbers sibling goal," "leaping before you look," and "recursive subgoal" problems.
 The glossary for the new version is in [figure 4.2](#f0015).
@@ -601,9 +573,9 @@ Operators built by op will be correct, but we can convert existing operators usi
 (mapc #'convert-op *school-ops*)
 ```
 
-This is an example of exploratory programming: instead of starting ail over when we discover a limitation of the first version, we can use Lisp to alter existing data structures for the new version of the program.
+This is an example of exploratory programming: instead of starting all over when we discover a limitation of the first version, we can use Lisp to alter existing data structures for the new version of the program.
 
-The definition of the variable `*ops*` and the structure op are exactly the same as before, and the rest of the program consists of five functions we have already seen: `GPS, achieve-all, achieve, appropriate-p`, and `apply-op`.
+The definition of the variable `*ops*` and the structure op are exactly the same as before, and the rest of the program consists of five functions we have already seen: `GPS`, `achieve-all`, `achieve`, `appropriate-p`, and `apply-op`.
 At the top level, the function `GPS` calls `achieve-all`, which returns either nil or a valid state.
 From this we remove all the atoms, which leaves only the elements of the final state that are lists-in other words, the actions of the form (`executing`*operator*).
 Thus, the value of `GPS` itself is the list of actions taken to arrive at the final state.
@@ -622,11 +594,11 @@ In general, it is a good idea to have a program return a meaningful value rather
 The first major change in version 2 is evident from the first line of the program: there is no `*state*` variable.
 Instead, the program keeps track of local state variables.
 This is to solve the "leaping before you look" problem, as outlined before.
-The functions `achieve`, `achieve-all`, and `apply-op` ail take an extra argument which is the current state, and all return a new state as their value.
+The functions `achieve`, `achieve-all`, and `apply-op` all take an extra argument which is the current state, and all return a new state as their value.
 They also must still obey the convention of returning nil when they fail.
 
 Thus we have a potential ambiguity: does nil represent failure, or does it represent a valid state that happens to have no conditions?
-We resolve the ambiguity by adopting the convention that ail states must have at least one condition.
+We resolve the ambiguity by adopting the convention that all states must have at least one condition.
 This convention is enforced by the function GPS.
 Instead of calling (`achieve-all state goals nil`), GPS calls `(achieve-all (cons '(start) state) goals nil)`.
 Soeven if the user passes GPS a null initial state, it will pass on a state containing `(start)` to `achieve-all`.
@@ -634,7 +606,7 @@ From then on, we are guaranteed that no state will ever become nil, because the 
 (An add-list can never be nil, because if it were, the operator would not be appropriate.
 Besides, every operator includes the (executing ...) condition.)
 
-Note that the final value we return from GPS has ail the atoms removed, so we end up reporting only the actions performed, since they are represented by conditions of the form (`executing *action*`).
+Note that the final value we return from GPS has all the atoms removed, so we end up reporting only the actions performed, since they are represented by conditions of the form (`executing *action*`).
 Adding the `(start)` condition at the beginning also serves to differentiate between a problem that cannot be solved and one that is solved without executing any actions.
 Failure returns nil, while a solution with no steps will at least include the `(start)` condition, if nothing else.
 
@@ -652,11 +624,11 @@ The other big change in version 2 is the introduction of a goal stack to solve t
 The program keeps track of the goals it is working on and immediately fails if a goal appears as a subgoal of itself.
 This test is made in the second clause of `achieve`.
 
-The function `achieve-a11` tries to achieve each one of the goals in turn, setting the variable `state2` to be the value returned from each successive call to `achieve`.
+The function `achieve-all` tries to achieve each one of the goals in turn, setting the variable `current-state` to be the value returned from each successive call to `achieve`.
 If all goals are achieved in turn, and if all the goals still hold at the end (as `subsetp` checks for), then the final state is returned; otherwise the function fails, returning nil.
 
-Most of the work is done `by achieve`, which gets passed a state, a single goal condition, and the stack of goals worked on so far.
-If the condition is already in the state, then achieve succeeds and returns the state.
+Most of the work is done by `achieve`, which gets passed a state, a single goal condition, and the stack of goals worked on so far.
+If the condition is already in the state, then `achieve` succeeds and returns the state.
 On the other hand, if the goal condition is already in the goal stack, then there is no sense continuing-we will be stuck in an endless loop-so `achieve` returns nil.
 Otherwise, `achieve` looks through the list of operators, trying to find one appropriate to apply.
 
@@ -684,7 +656,7 @@ The goal `( (executing run-around-block) )` is a list of one condition, where th
 Allowing lists as conditions gives us more flexibility, but we also have to be careful.
 The problem is that not all lists that look alike actually are the same.
 The predicate equal essentially tests to see if its two arguments look alike, while the predicate `eql` tests to see if its two arguments actually are identical.
-Since functions like `member` use `eql` by default, we have to specify with `a :test` keyword that we want `equal` instead.
+Since functions like `member` use `eql` by default, we have to specify with a `:test` keyword that we want `equal` instead.
 Since this is done several times, we introduce the function `member-equal`.
 In fact, we could have carried the abstraction one step further and defined `member-situation`, a function to test if a condition is true in a situation.
 This would allow the user to change the matching function from `eql` to `equal`, and to anything else that might be useful.
@@ -717,11 +689,11 @@ If it is possible to arrive at such a state, then `apply-op` returns a new state
 ```
 
 There is one last complication in the way we compute the new state.
-In version 1 of GPS, states were (conceptually) unordered sets of conditions, so we could use uni on and `set-difference` to operate on them.
+In version 1 of GPS, states were (conceptually) unordered sets of conditions, so we could use `union` and `set-difference` to operate on them.
 In version 2, states become ordered lists, because we need to preserve the ordering of actions.
-Thus, we have to use the functions append and `remove-if`, since these are defined to preserve order, while union and `set-diffrence` are not.
+Thus, we have to use the functions `append` and `remove-if`, since these are defined to preserve order, while `union` and `set-difference` are not.
 
-Finally, the last difference in version 2 is that it introduces a new function: use.
+Finally, the last difference in version 2 is that it introduces a new function: `use`.
 This function is intended to be used as a sort of declaration that a given list of operators is to be used for a series of problems.
 
 ```lisp
@@ -732,9 +704,9 @@ This function is intended to be used as a sort of declaration that a given list 
    (length (setf *ops* oplist)))
 ```
 
-Calling use sets the parameter `*ops*,` so that it need not be specified on each call to GPS.
+Calling use sets the parameter `*ops*`, so that it need not be specified on each call to GPS.
 Accordingly, in the definition of GPS itself the third argument, `*ops*`, is now optional; if it is not supplied, a default will be used.
-The default value for *`ops*` is given as `*ops*`.
+The default value for `*ops*` is given as `*ops*`.
 This may seem redundant or superfluous-how could a variable be its own default?
 The answer is that the two occurrences of `*ops*` look alike, but they actually refer to two completely separate bindings of the special variable `*ops*`.
 Most of the time, variables in parameter lists are local variables, but there is no rule against binding a special variable as a parameter.
@@ -844,8 +816,6 @@ Finally, we see that this version of GPS also works on trivial problems requirin
 `> (gps '(son-at-home) '(son-at-home))`=> `((START))`
 
 ## 4.12 The New Domain Problem: Monkey and Bananas
-{:#s0065}
-{:.h1hd}
 
 To show that GPS is at all general, we have to make it work in different domains.
 We will start with a "classic" AI problem.[3](#fn0020) Imagine the following scenario: a hungry monkey is standing at the doorway to a room.
@@ -859,27 +829,33 @@ For now, assume we define the operators as follows:
 ```lisp
 (defparameter *banana-ops*
   (list
-    (op 'climb-on-chair
+    (make-op
+      :action'climb-on-chair
       :preconds '(chair-at-middle-room at-middle-room on-floor)
       :add-list '(at-bananas on-chair)
       :del-list '(at-middle-room on-floor))
-    (op 'push-chair-from-door-to-middle-room
+    (make-op 
+      :action 'push-chair-from-door-to-middle-room
       :preconds '(chair-at-door at-door)
       :add-list '(chair-at-middle-room at-middle-room)
       :del-list '(chair-at-door at-door))
-    (op 'walk-from-door-to-middle-room
+    (make-op 
+      :action 'walk-from-door-to-middle-room
       :preconds '(at-door on-floor)
       :add-list '(at-middle-room)
       :del-list '(at-door))
-    (op 'grasp-bananas
+    (make-op '
+      :action grasp-bananas
       :preconds '(at-bananas empty-handed)
       :add-list '(has-bananas)
       :del-list '(empty-handed))
-    (op 'drop-ball
+    (make-op 
+      :action 'drop-ball
       :preconds '(has-ball)
       :add-list '(empty-handed)
       :del-list '(has-ball))
-    (op 'eat-bananas
+    (make-op 
+      :action 'eat-bananas
       :preconds '(has-bananas)
       :add-list '(empty-handed not-hungry)
       :del-list '(has-bananas hungry))))
@@ -905,8 +881,6 @@ Notice we did not need to make any changes at all to the `GPS` program.
 We just used a different set of operators.
 
 ## 4.13 The Maze Searching Domain
-{:#s0070}
-{:.h1hd}
 
 Now we will consider another "classic" problem, maze searching.
 We will assume a particular maze, diagrammed here.
@@ -923,10 +897,11 @@ The following code defines a set of operators for mazes in general, and for this
       (make-maze-op (second pair) (first pair))))
 (defun make-maze-op (here there)
   "Make an operator to move between two places"
-  (op '(move from ,here to ,there)
+  (make-op 
+    :action '(move from ,here to ,there)
     :preconds '((at ,here))
-    :add-list '((at .there))
-    :del-list '((at .here))))
+    :add-list '((at ,there))
+    :del-list '((at ,here))))
 (defparameter *maze-ops*
   (mappend #'make-maze-ops
     '((1 2) (2 3) (3 4) (4 9) (9 14) (9 8) (8 7) (7 12) (12 13)
@@ -1000,7 +975,7 @@ We could do this by calling GPS as a subfunction and then manipulating the resul
     (unless (null results)
       (cons start (mapcar #'destination
               (remove '(start) results
-                  :itest #'equal))))))
+                  :test #'equal))))))
 (defun destination (action)
   "Find the Y in (executing (move from X to Y))"
   (fifth (second action)))
@@ -1023,8 +998,6 @@ Pick out the destination, `*y*,` from each `(EXECUTING (MOVE FROM x TO y))` form
 `> (equal (find-path 1 25) (reverse (find-path 25 1)))`=> `T`
 
 ## 4.14 The Blocks World Domain
-{:#s0075}
-{:.h1hd}
 
 Another domain that has attracted more than its share of attention in AI circles is the blocks world domain.
 Imagine a child's set of building blocks on a table top.
@@ -1047,7 +1020,8 @@ We will create an operator for each possible block move.
     ops))
 (defun move-op (a b c)
   "Make an operator to move A from B to C."
-  (op '(move ,a from ,b to ,c)
+  (make-op 
+      :action '(move ,a from ,b to ,c)
       :preconds '((space on ,a) (space on ,c) (,a on ,b))
       :add-list (move-ons abc)
       :del-list (move-ons a c b)))
@@ -1242,8 +1216,6 @@ Now we get the solutions we wanted:
 ```
 
 ### The Sussman Anomaly
-{:#s0085}
-{:.h2hd}
 
 Surprisingly, there are problems that can't be solved by *any* reordering of goals.
 Consider:
@@ -1268,8 +1240,6 @@ In other words, no combination of plans for the two individual goals can solve t
 This is a surprising fact, and the example has come to be known as "the Sussman anomaly."[4](#fn0025) We will return to this problem in [chapter 6](B9780080571157500066.xhtml).
 
 ## 4.15 Stage 5 Repeated: Analysis of Version 2
-{:#s0090}
-{:.h1hd}
 
 We have shown that GPS is extensible to multiple domains.
 The main point is that we didn't need to change the program itself to get the new domains to work; we just changed the list of operators passed to GPS.
@@ -1278,8 +1248,6 @@ Although version 2 is a big improvement over version 1, it still leaves much to 
 Now we will discover a few of the most troubling problems.
 
 ## 4.16 The Not Looking after You Don't Leap Problem
-{:#s0095}
-{:.h1hd}
 
 We solved the "leaping before you look" problem by introducing variables to hold a representation of possible future states, rather than just a single variable representing the current state.
 This prevents GPS from taking an ill-advised action, but we shall see that even with all the repair strategies introduced in the last section, it doesn't guarantee that a solution will be found whenever one is possible.
@@ -1287,7 +1255,8 @@ This prevents GPS from taking an ill-advised action, but we shall see that even 
 To see the problem, add another operator to the front of the `*school-ops*` list and turn the debugging output back on:
 
 ```lisp
-(use (push (op 'taxi-son-to-school
+(use (push (make-op 
+        :action 'taxi-son-to-school
         :preconds '(son-at-home have-money)
         :add-list '(son-at-school)
         :del-list '(son-at-home have-money))
@@ -1323,7 +1292,7 @@ Then, the `son-at-school` goal is achieved again by the `TAXI-SON-TO-SCHOOL` act
 But the check for consistency in `achieve-each` fails, and there are no repairs available.
 The goal fails, even though there is a valid solution: driving to school.
 
-The problem is that `achieve` uses some to look at the `appropriate-ops`.
+The problem is that `achieve` uses `some` to look at the `appropriate-ops`.
 Thus, if there is some appropriate operator, `achieve` succeeds.
 If there is only one goal, this will yield a correct solution.
 However, if there are multiple goals, as in this case, achieve will still only find one way to fulfill the first goal.
@@ -1332,25 +1301,24 @@ In domains like the block world and maze world, repair often works, because all 
 But in the taxi example, no amount of plan repair can get the money back once it is spent, so the whole plan fails.
 
 There are two ways around this problem.
-The first approach is to examine ail possible solutions, not just the first solution that achieves each subgoal.
+The first approach is to examine all possible solutions, not just the first solution that achieves each subgoal.
 The language Prolog, to be discussed in [chapter 11](B978008057115750011X.xhtml), does just that.
 The second approach is to have achieve and `achieve-all` keep track of a list of goals that must be *protected*.
 In the taxi example, we would trivially achieve the `have-money` goal and then try to achieve `son-at-school`, while protecting the goal `have-money`.
 An operator would only be appropriate if it didn't delete any protected goals.
 This approach still requires some kind of repair or search through multiple solution paths.
 If we tried only one ordering-achieving `son-at-school` and then trying to protect it while achieving `have-money`-then we would not find the solution.
-David Warren's WARPLAN !!!(span) {:.smallcaps} planner makes good use of the idea of protected goals.
+David Warren's WARPLAN planner makes good use of the idea of protected goals.
 
 ## 4.17 The Lack of Descriptive Power Problem
-{:#s0100}
-{:.h1hd}
 
 It would be a lot more economical, in the maze domain, to have one operator that says we can move from here to there if we are at "here," and if there is a connection from "here" to "there." Then the input to a particular problem could list the valid connections, and we could solve any maze with this single operator.
 Similarly, we have defined an operator where the monkey pushes the chair from the door to the middle of the room, but it would be better to have an operator where the monkey can push the chair from wherever it is to any other nearby location, or better yet, an operator to push any "pushable" object from one location to a nearby one, as long as there is no intervening obstacle.
 The conclusion is that we would like to have variables in the operators, so we could say something like:
 
 ```lisp
-(op '(push X from A to B)
+(make-op 
+  :action '(push X from A to B)
   :preconds '((monkey at A) (X at A) (pushable X) (path A B))
   :add-list '((monkey at B) (X at B))
   :del-list '((monkey at A) (X at A)))
@@ -1369,8 +1337,6 @@ Or we may be satisfied with a partial solution, if a complete solution is imposs
 We may also want to take the cost (and time) of computation into account.
 
 ## 4.18 The Perfect Information Problem
-{:#s0105}
-{:.h1hd}
 
 All the operators we have seen so far have unambiguous results; they add or delete certain things from the current state, and GPS always knows exactly what they are going to do.
 In the real world, things are rarely so cut and dried.
@@ -1381,8 +1347,6 @@ In the nursery school problem, we could represent the problem with the car batte
 In the real world, we are seldom this careful; we get in the car, and only when it doesn't start do we consider the possibility of a dead battery.
 
 ## 4.19 The Interacting Goals Problem
-{:#s0110}
-{:.h1hd}
 
 People tend to have multiple goals, rather than working on one at a time.
 Not only do I want to get the kid to nursery school, but I want to avoid getting hit by another car, get to my job on time, get my work done, meet my friends, have some fun, continue breathing, and so on.
@@ -1402,11 +1366,9 @@ Herb Simon coined the term "satisficing" to describe the strategy of satisfying 
 GPS only knows success and failure, and thus has no way of maximizing partial success.
 
 ## 4.20 The End of GPS
-{:#s0115}
-{:.h1hd}
 
 These last four sections give a hint as to the scope of the limitations of GPS.
-In fact, it is not a very general problem solver at ail.
+In fact, it is not a very general problem solver at all.
 It *is* general in the sense that the algorithm is not tied to a particular domain; we can change domain by changing the operators.
 But GPS fails to be general in that it can't solve many interesting problems.
 It is confined to small tricks and games.
@@ -1434,7 +1396,7 @@ Keep it in mind the next time you have to name a program.
 > *Remember GPS?
 By now, "GPS" is a colorless term denotinga particularly stupid program to solve puzzles.
 But it originally meant "General Problem Solver " which caused everybody a lot of needless excitement and distraction.
-It should have been called *lfgns !!!(span) {:.smallcaps} *-"Local Feature-Guided Network Searcher."*
+It should have been called *lfgns *-"Local Feature-Guided Network Searcher."*
 
 Nonetheless, GPS has been a useful vehicle for exploring programming in general, and AI programming in particular.
 More importantly, it has been a useful vehicle for exploring "the nature of deliberation." Surely we'll admit that Aristotle was a smarter person than you or me, yet with the aid of the computational model of mind as a guiding metaphor, and the further aid of a working computer program to help explore the metaphor, we have been led to a more thorough appreciation of means-ends analysis-at least within the computational model.
@@ -1447,24 +1409,20 @@ But the means toward that end involved an investigation and formalization of the
 By that measure, our reconstruction of GPS is a success to the degree in which it leads the reader to a better under standing of the issues.
 
 ## 4.21 History and References
-{:#s0120}
-{:.h1hd}
 
 The original GPS is documented in Newell and Simon's 1963 paper and in their 1972 book, *Human Problem Solving*, as well as in Ernst and Newell 1969.
-The implementation in this chapter is based on the Strips !!!(span) {:.smallcaps} program (Fikes and Nilsson 1971).
+The implementation in this chapter is based on the Strips program (Fikes and Nilsson 1971).
 
 There are other important planning programs.
-Earl Sacerdoti's Abstrips !!!(span) {:.smallcaps} program was a modification of Strips !!!(span) {:.smallcaps} that allowed for hierarchical planning.
+Earl Sacerdoti's Abstrips program was a modification of Strips that allowed for hierarchical planning.
 The idea was to sketch out a skeletal plan that solved the entire program at an abstract level, and then fill in the details.
-David Warren's Warplan !!!(span) {:.smallcaps} planner is covered in Warren 1974a,b and in a section of Coelho and Cotta 1988.
-Austin Tate's Nonlin !!!(span) {:.smallcaps} system (Tate 1977) achieved greater efficiency by considering a plan as a partially ordered sequence of operations rather than as a strictly ordered sequence of situations.
-David Chapman's Tweak !!!(span) {:.smallcaps} synthesizes and formalizes the state of the art in planning as of 1987.
+David Warren's Warplan planner is covered in Warren 1974a,b and in a section of Coelho and Cotta 1988.
+Austin Tate's Nonlin system (Tate 1977) achieved greater efficiency by considering a plan as a partially ordered sequence of operations rather than as a strictly ordered sequence of situations.
+David Chapman's Tweak synthesizes and formalizes the state of the art in planning as of 1987.
 
-Ail of these papers-and quite a few other important planning papers-are reprinted in Allen, Hendler, and Tate 1990.
+All of these papers-and quite a few other important planning papers-are reprinted in Allen, Hendler, and Tate 1990.
 
 ## 4.22 Exercises
-{:#s0125}
-{:.h1hd}
 
 **Exercise  4.1 [m]** It is possible to implement dbg using a single call to format.
 Can you figure out the format directives to do this?
@@ -1487,7 +1445,7 @@ Write a program that keeps track of the remaining goals so that it does not get 
 Hint: have achieve take an extra argument indicating the goals that remain to be achieved after the current goal is achieved.
 `achieve` should succeed only if it can achieve the current goal and also `achieve-all` the remaining goals.
 
-**Exercise  4.5 [d]** Write a planning program that, like Warren's Warplan !!!(span) {:.smallcaps} , keeps track of the list of goals that remain to be done as well as the list of goals that have been achieved and should not be undone.
+**Exercise  4.5 [d]** Write a planning program that, like Warren's Warplan, keeps track of the list of goals that remain to be done as well as the list of goals that have been achieved and should not be undone.
 The program should never undo a goal that has been achieved, but it should allow for the possibility of reordering steps that have already been taken.
 In this way, the program will solve the Sussman anomaly and similar problems.
 
@@ -1495,13 +1453,11 @@ In this way, the program will solve the Sussman anomaly and similar problems.
 Read [chapters 5](B9780080571157500054.xhtml) and [6](B9780080571157500066.xhtml) tolearn about pattern matching.
 Write a version of GPS that uses the pattern matching tools, and thus allows variables in the operators.
 Apply it to the maze and blocks world domains.
-Your program will be more efficient if, like Chapman's Tweak !!!(span) {:.smallcaps} program, you allow for the possibility of variables that remain unbound as long as possible.
+Your program will be more efficient if, like Chapman's Tweak program, you allow for the possibility of variables that remain unbound as long as possible.
 
 **Exercise  4.7 [d]** Speculate on the design of a planner that can address the *Perfect Information* and *Interacting Goals* problems.
 
 ## 4.23 Answers
-{:#s0130}
-{:.h1hd}
 
 **Answer 4.1** In this version, the format string `""&"V@T"?`" breaks down as follows: means go to a fresh line; `""V@T"` means insert spaces `(@T)` but use the next argument `(V)` to get the number of spaces.
 The `""?"` is the indirection operator: use the next argument as a format string, and the argument following that as the list of arguments for the format string.
@@ -1518,15 +1474,15 @@ The sophisticated Lisp programmer should also see the exercise on [page 680](B97
 
 ```lisp
 (defun permutations (bag)
-  "Return a list of ail the permutations of the input."
+  "Return a list of all the permutations of the input."
   ;; If the input is nil, there is only one permutation:
   ;; nil itself
   (if (null bag)
       '(())
       ;; Otherwise, take an element, e, out of the bag
-      ;; Generate ail permutations of the remaining elements,
+      ;; Generate all permutations of the remaining elements,
       ;; And add e to the front of each of these.
-      ;; Do this for ail possible e to generate ail permutations,
+      ;; Do this for all possible e to generate all permutations,
       (mapcan #'(lambda (e)
           (mapcar #'(lambda (p) (cons e p))
             (permutations
@@ -1536,17 +1492,14 @@ The sophisticated Lisp programmer should also see the exercise on [page 680](B97
 
 ----------------------
 
-[1](#xfn0010)Strips !!!(span) {:.smallcaps} is the Stanford Research Institute Problem Solver, designed by [Richard Fikes and Nils Nilsson (1971)](B9780080571157500285.xhtml#bb0405).
-!!!(p) {:.ftnote1}
+[1](#xfn0010)Strips is the Stanford Research Institute Problem Solver, designed by [Richard Fikes and Nils Nilsson (1971)](B9780080571157500285.xhtml#bb0405).
 
 [2](#xfn0015) Gerald Sussman, in his book *A Computer Model of Skill Acquisition,* uses the term "prerequisite clobbers brother goal" or PCBG.
 I prefer to be gender neutral, even at the risk of being labeled a historical revisionist.
-!!!(p) {:.ftnote1}
 
 [3](#xfn0020) Originally posed by [Saul Amarel (1968)](B9780080571157500285.xhtml#bb0045).
-!!!(p) {:.ftnote1}
 
 [4](#xfn0025) A footnote in Waldinger 1977 says, "This problem was proposed by Allen Brown.
 Perhaps many children thought of it earlier but did not recognize that it was hard." The problem is named after Gerald Sussman because he popularized it in Sussman 1973.
-!!!(p) {:.ftnote1}
+
 
