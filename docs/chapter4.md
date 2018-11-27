@@ -77,7 +77,7 @@ The theory of means-ends analysis was laid down quite elegantly by Aristotle 230
 3,1112b):
 
 > *We deliberate not about ends, but about means.
-For a doctor does not deliberate whether he shall heal, nor an orator whether he shall persuade, nor a statesman whether he shall produce law and order, nor does any one else deliberate about his end.
+For a doctor does not deliberate whether he shall heal, nor an orator whether he shall persuade, nor a statesman whether he shall produce law and order, nor does anyone else deliberate about his end.
 They assume the end and consider how and by what means it is attained; and if it seems to be produced by several means they consider by which it is most easily and best produced, while if it is achieved by one only they consider how it will be achieved by this and by what means this will be achieved, till they come to the first cause, which in the order of discovery is last... and what is last in the order of analysis seems to be first in the order of becoming.
 And if we come on an impossibility, we give up the search, e.g., if we need money and this cannot be got; but if a thing appears possible we try to do it.*
 
@@ -99,7 +99,7 @@ Thus, we will arbitrarily decide that the problem description is complete, and m
 
 ## 4.2 Stage 2: Specification
 
-At this point we have an idea-admittedly vague-of what it means to solve a problem in GPS`.` We can refine these notions into representations that are closer to Lisp as follows:
+At this point we have an idea-admittedly vague-of what it means to solve a problem in `GPS`. We can refine these notions into representations that are closer to Lisp as follows:
 
 *   We can represent the current state of the world-"what I have"-or the goal state-"what I want"-as sets of conditions.
 Common Lisp doesn't have a data type for sets, but it does have lists, which can be used to implement sets.
@@ -131,7 +131,7 @@ Otherwise, we have to find some appropriate operator and try to apply it.
 *   We can apply an operator if we can achieve all the preconditions.
 But this is easy, because we just defined the notion of achieving a goal in the previous paragraph.
 Once the preconditions have been achieved, applying an operator means executing the action and updating the current state in term of the operator's add-list and delete-list.
-Since our program is just a simulation-it won't be actually driving a car or dialing a telephone-we must be content simply to print out the action, rather than taking any real action.
+Since our program is just a simulation-it won't be actually driving a car or dialling a telephone-we must be content simply to print out the action, rather than taking any real action.
 
 ## 4.3 Stage 3: Implementation
 
@@ -284,7 +284,7 @@ The next step is to pose some problems to GPS and examine the solutions.
 Following are three sample problems.
 In each case, the goal is the same: to achieve the single condition `son-at-school`.
 The list of available operators is also the same in each problem; the difference is in the initial state.
-Each of the three examples consists of the prompt, ">", which is printed by the Lisp system, followed by a call to GPS, " ( `gps`... )", which is typed by the user, then the output from the program, "(`EXECUTING`...)", and finally the resuit of the function call, which can be either `SOLVED` or `NIL`.
+Each of the three examples consists of the prompt, ">", which is printed by the Lisp system, followed by a call to GPS, " ( `gps`... )", which is typed by the user, then the output from the program, "(`EXECUTING`...)", and finally the result of the function call, which can be either `SOLVED` or `NIL`.
 
 ```lisp
 > (gps '(son-at-home car-needs-battery have-money have-phone-book)
@@ -332,7 +332,7 @@ This is in contrast to a more traditional notion of programming, where the probl
 ## 4.6 The Running Around the Block Problem
 
 Representing the operator "driving from home to school" is easy: the precondition and delete-list includes being at home, and the add-list includes being at school.
-But suppose we wanted to represent "running around the block." There would be no net change of location, so does that mean there would be no addor delete-list?
+But suppose we wanted to represent "running around the block." There would be no net change of location, so does that mean there would be no add or delete-list?
 If so, there would be no reason ever to apply the operator.
 Perhaps the add-list should contain something like "got some exercise" or "feel tired," or something more general like "experience running around the block." We will return to this question later.
 
@@ -480,7 +480,7 @@ The functions `debug` and `undebug` are used to add or remove message classes to
 In this chapter, all the debugging output will use the identifier :`gps`.
 Other programs will use other identifiers, and a complex program will use many identifiers.
 
-A call to `dbg` will resuit in output if the first argument to `dbg`, the identifier, is one that was specified in a call to `debug`.
+A call to `dbg` will result in output if the first argument to `dbg`, the identifier, is one that was specified in a call to `debug`.
 The other arguments to `dbg` are a format string followed by a list of arguments to be printed according to the format string.
 In other words, we will write functions that include calls to `dbg` like:
 
@@ -601,7 +601,7 @@ Thus we have a potential ambiguity: does nil represent failure, or does it repre
 We resolve the ambiguity by adopting the convention that all states must have at least one condition.
 This convention is enforced by the function GPS.
 Instead of calling (`achieve-all state goals nil`), GPS calls `(achieve-all (cons '(start) state) goals nil)`.
-Soeven if the user passes GPS a null initial state, it will pass on a state containing `(start)` to `achieve-all`.
+So even if the user passes GPS a null initial state, it will pass on a state containing `(start)` to `achieve-all`.
 From then on, we are guaranteed that no state will ever become nil, because the only function that builds a new state is `apply-op`, and we can see by looking at the last line of `apply-op` that it always appends something onto the state it is returning.
 (An add-list can never be nil, because if it were, the operator would not be appropriate.
 Besides, every operator includes the (executing ...) condition.)
@@ -617,8 +617,8 @@ Be careful when defining and using semipredicates: (1) Decide if nil could ever 
 In this program, GPS is the only function the user should call, so once we have accounted for it, we're covered.
 (3) Insure that the *program* can't supply nil as a value.
 We did this by seeing that there was only one place in the program where new states were constructed, and that this new state was formed by appending a one-element list onto another state.
-By following this three-step procedure, we have an informai proof that the semipredicates involving states will function properly.
-This kind of informai proof procedure is a common element of good program design.
+By following this three-step procedure, we have an informal proof that the semipredicates involving states will function properly.
+This kind of informal proof procedure is a common element of good program design.
 
 The other big change in version 2 is the introduction of a goal stack to solve the recursive subgoal problem.
 The program keeps track of the goals it is working on and immediately fails if a goal appears as a subgoal of itself.
@@ -724,11 +724,11 @@ Clearly, the idiom of binding a special variable is more concise, and while it c
   "General Problem Solver: from state, achieve goals using *ops*."
   (let ((old-ops *ops*))
     (setf *ops* ops)
-    (let ((resuit (remove-if #'atom (achieve-all
+    (let ((result (remove-if #'atom (achieve-all
                   (cons'(start) state)
                   goals nil ))))
       (setf *ops* old-ops)
-      resuit)))
+      result)))
 ```
 
 Now let's see how version 2 performs.
@@ -830,7 +830,7 @@ For now, assume we define the operators as follows:
 (defparameter *banana-ops*
   (list
     (make-op
-      :action'climb-on-chair
+      :action 'climb-on-chair
       :preconds '(chair-at-middle-room at-middle-room on-floor)
       :add-list '(at-bananas on-chair)
       :del-list '(at-middle-room on-floor))
@@ -844,8 +844,8 @@ For now, assume we define the operators as follows:
       :preconds '(at-door on-floor)
       :add-list '(at-middle-room)
       :del-list '(at-door))
-    (make-op '
-      :action grasp-bananas
+    (make-op 
+      :action 'grasp-bananas
       :preconds '(at-bananas empty-handed)
       :add-list '(has-bananas)
       :del-list '(empty-handed))
@@ -1014,7 +1014,7 @@ We will create an operator for each possible block move.
         (unless (equal a b)
           (dolist (c blocks)
             (unless (or (equal c a) (equal c b))
-              (push (move-op abc) ops)))
+              (push (move-op a b c) ops)))
           (push (move-op a 'table b) ops)
           (push (move-op a b 'table) ops))))
     ops))
@@ -1023,7 +1023,7 @@ We will create an operator for each possible block move.
   (make-op 
       :action '(move ,a from ,b to ,c)
       :preconds '((space on ,a) (space on ,c) (,a on ,b))
-      :add-list (move-ons abc)
+      :add-list (move-ons a b c)
       :del-list (move-ons a c b)))
 (defun move-ons (a b c)
   (if (eq b 'table)
@@ -1295,7 +1295,7 @@ The goal fails, even though there is a valid solution: driving to school.
 The problem is that `achieve` uses `some` to look at the `appropriate-ops`.
 Thus, if there is some appropriate operator, `achieve` succeeds.
 If there is only one goal, this will yield a correct solution.
-However, if there are multiple goals, as in this case, achieve will still only find one way to fulfill the first goal.
+However, if there are multiple goals, as in this case, achieve will still only find one way to fulfil the first goal.
 If the first solution is a bad one, the only recourse is to try to repair it.
 In domains like the block world and maze world, repair often works, because all steps are reversible.
 But in the taxi example, no amount of plan repair can get the money back once it is spent, so the whole plan fails.
@@ -1358,7 +1358,7 @@ Rather, there is a continual process of achieving some goals, partially achievin
 In addition to having active goals, people also are aware of undesirable situations that they are trying to avoid.
 For example, suppose I have a goal of visiting a friend in the hospital.
 This requires being at the hospital.
-One applicable operator might be to walk to the hospital, while another would be to severly injure myself and wait for the ambulance to take me there.
+One applicable operator might be to walk to the hospital, while another would be to severely injure myself and wait for the ambulance to take me there.
 The second operator achieves the goal just as well (perhaps faster), but it has an undesirable side effect.
 This could be addressed either with a notion of solution cost, as outlined in the last section, or with a list of background goals that every solution attempts to protect.
 
@@ -1380,7 +1380,7 @@ Computing a solution to these problems takes time that grows exponentially as th
 This is a property of the problems themselves, and holds no matter how clever the programmer is.
 Exponential growth means that problems that can be solved in seconds for, say, a five-input case may take trillions of years when there are 100 inputs.
 Buying a faster computer won't help much.
-Af ter all, if a problem would take a trillion years to solve on your computer, it won't help much to buy 1000 computers each 1000 times faster than the one you have: you're still left with a million years wait.
+After all, if a problem would take a trillion years to solve on your computer, it won't help much to buy 1000 computers each 1000 times faster than the one you have: you're still left with a million years wait.
 For a theoretical computer scientist, discovering that a problem is NP-hard is an end in itself.
 But for an AI worker, it means that the wrong question is being asked.
 Many problems are NP-hard when we insist on the optimal solution but are much easier when we accept a solution that might not be the best.
@@ -1394,7 +1394,7 @@ The following quote from Drew McDermott's article "Artificial Intelligence Meets
 Keep it in mind the next time you have to name a program.
 
 > *Remember GPS?
-By now, "GPS" is a colorless term denotinga particularly stupid program to solve puzzles.
+By now, "GPS" is a colorless term denoting a particularly stupid program to solve puzzles.
 But it originally meant "General Problem Solver " which caused everybody a lot of needless excitement and distraction.
 It should have been called *lfgns *-"Local Feature-Guided Network Searcher."*
 
@@ -1406,7 +1406,7 @@ The appeal of AI can be seen as a split between means and ends.
 The end of a successful AI project can be a program that accomplishes some useful task better, faster, or cheaper than it could be before.
 By that measure, GPS is a mostly a failure, as it doesn't solve many problems particularly well.
 But the means toward that end involved an investigation and formalization of the problem-solving process.
-By that measure, our reconstruction of GPS is a success to the degree in which it leads the reader to a better under standing of the issues.
+By that measure, our reconstruction of GPS is a success to the degree in which it leads the reader to a better understanding of the issues.
 
 ## 4.21 History and References
 
