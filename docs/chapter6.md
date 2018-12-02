@@ -5,12 +5,10 @@
 
 > -Thomas Carlyle (1795-1881)
 
-In [chapters 4](B9780080571157500042.xhtml) and [5](B9780080571157500054.xhtml) we were concerned with building two particular programs, GPS !!!(span) {:.smallcaps} and ELIZA !!!(span) {:.smallcaps} In this chapter, we will reexamine those two programs to discover some common patterns.
+In [chapters 4](B9780080571157500042.xhtml) and [5](B9780080571157500054.xhtml) we were concerned with building two particular programs, GPS and ELIZA. In this chapter, we will reexamine those two programs to discover some common patterns.
 Those patterns will be abstracted out to form reusable software tools that will prove helpful in subsequent chapters.
 
 ## 6.1 An Interactive Interpreter Tool
-{:#s0010}
-{:.h1hd}
 
 The structure of the function `eliza` is a common one.
 It is repeated below:
@@ -19,7 +17,7 @@ It is repeated below:
 (defun eliza ()
   "Respond to user input using pattern matching rules."
   (loop
-    (print 'eliza  >)
+    (print 'eliza>)
     (print (flatten (use-eliza-rules (read))))))
 ```
 
@@ -44,11 +42,11 @@ It may seem facetious to say those four symbols and eight parentheses constitute
 When we write that line, have we really accomplished anything?
 One answer to that question is to consider what we would have to do to write a Lisp (or Pascal) interpreter in Pascal.
 We would need a lexical analyzer and a symbol table manager.
-This is a considerable amount of work, but it is all handled by read.
+This is a considerable amount of work, but it is all handled by `read`.
 We would need a syntactic parser to assemble the lexical tokens into statements.
-read also handles this, but only because Lisp statements have trivial syntax: the syntax of lists and atoms.
-Thus read serves fine as a syntactic parser for Lisp, but would fail for Pascal.
-Next, we need the evaluation or interpretation part of the interpreter; eval does this nicely, and could handle Pascal just as well if we parsed Pascal syntax into Lisp expressions, `print` does much less work than `read` or `eval`, but is still quite handy.
+`read` also handles this, but only because Lisp statements have trivial syntax: the syntax of lists and atoms.
+Thus `read` serves fine as a syntactic parser for Lisp, but would fail for Pascal.
+Next, we need the evaluation or interpretation part of the interpreter; `eval` does this nicely, and could handle Pascal just as well if we parsed Pascal syntax into Lisp expressions, `print` does much less work than `read` or `eval`, but is still quite handy.
 
 The important point is not whether one line of code can be considered an implementation of Lisp; it is to recognize common patterns of computation.
 Both `eliza` and `lisp` can be seen as interactive interpreters that read some input, transform or evaluate the input in some way, print the result, and then go back for more input.
@@ -83,7 +81,7 @@ This function could then be used in writing each new interpreter:
 (defun lisp ()
   (interactive-interpreter '> #'eval))
 (defun eliza ()
-  (interactive-interpreter 'eliza  >
+  (interactive-interpreter 'eliza>
     #'(lambda (x) (flatten (use-eliza-rules x)))))
 ```
 
@@ -94,7 +92,7 @@ Or, with the help of the higher-order function compose:
   "Return the function that computes (f (g x))."
   #'(lambda (x) (funcall f (funcall g x))))
 (defun eliza ()
-  (interactive-interpreter 'eliza  >
+  (interactive-interpreter 'eliza>
     (compose #'flatten #'use-eliza-rules)))
 ```
 
@@ -122,33 +120,27 @@ The function `prompt-generator`, for example, returns a function that will print
 
 ```lisp
 (defun interactive-interpreter (prompt transformer)
-  "Read an expression, transform it, and print the result."
-  (loop
-    (handler-case
-      (progn
-        (if (stringp prompt)
-          (print prompt)
-          (funcall prompt))
-        (print (funcall transformer (read))))
-```
-
-`      ;; In case of error.
-do this:`
-
-```lisp
-      (error (condition)
-        (format t "~&;; Error ~a ignored, back to top level."
-          condition)))))
+	   "Read an expression, transform it, and print the result."
+	   (loop
+	      (handler-case
+		  (progn
+		    (if (stringp prompt)
+			(print prompt)
+			(funcall prompt))
+		    (print (funcall transformer (read))))
+		;; In case of error, do this:
+		(error (condition)
+		  (format t "~&;; Error ~a ignored, back to top level."
+			  condition)))))
+          
 (defun prompt-generator (&optional (num 0) (ctl-string "[~d] "))
   "Return a function that prints prompts like [l], [2], etc."
   #'(lambda () (format t ctl-string (incf num))))
 ```
 
 ## 6.2 A Pattern-Matching Tool
-{:#s0015}
-{:.h1hd}
 
-The `pat-match` function was a pattern matcher defined specifically for the ELIZA !!!(span) {:.smallcaps} program.
+The `pat-match` function was a pattern matcher defined specifically for the ELIZA program.
 Subsequent programs will need pattern matchers too, and rather than write specialized matchers for each new program, it is easier to define one general pattern matcher that can serve most needs, and is extensible in case novel needs come up.
 
 The problem in designing a "general" tool is deciding what features to provide.
@@ -179,11 +171,9 @@ It succeeds because the < matches one of the three possibilities specified by `(
 
 Here is an example of an `?and` pattern that checks if an expression is both a number and odd:
 
-| []()           |                                                |
-|----------------|------------------------------------------------|
-| `> (pat-match` | `'(x = (?and (?is ?n numberp) (?is ?n oddp)))` |
-|                | `'(x = 3))`                                    |
-| `((?N . 3))`   |                                                |
+```lisp
+> (pat-match '(x = (?and (?is ?n numberp) (?is ?n oddp))) '(x = 3)) => ((?N . 3))
+```
 
 The next pattern uses `?not` to insure that two parts are not equal:
 
@@ -211,14 +201,14 @@ The following table describes a grammar of patterns, using the same grammar rule
 |                   | *segment*-*pat*        | match something against a sequence                |
 |                   | *single*-*pat*         | match something against one expression            |
 |                   | (*pat*. *pat*)         | match the first and the rest                      |
-| *single*-*pat*=>  | (?`is`*var predicate*) | test predicate on one expression                  |
-|                   | (?`or`*pat*...)        | match any pattern on one expression               |
-|                   | (?`and`*pat*...)       | match every pattern on one expression             |
-|                   | (?`not`*pat*...)       | succeed if pattern(s) do not match                |
+| *single*-*pat*=>  | (?is *var predicate*) | test predicate on one expression                  |
+|                   | (?or *pat*...)        | match any pattern on one expression               |
+|                   | (?and *pat*...)       | match every pattern on one expression             |
+|                   | (?not *pat*...)       | succeed if pattern(s) do not match                |
 | *segment*-*pat*=> | ( (?* *var*)...)       | match zero or more expressions                    |
 |                   | ( (?+ *var*) ... )     | match one or more expressions                     |
 |                   | ( ( ?? *var*) ... )    | match zero or one expression                      |
-|                   | ( ( ?`if`*exp* )...)   | test if exp (which may contain variables) is true |
+|                   | ( ( ?if*exp* )...)   | test if exp (which may contain variables) is true |
 | *Var* =>          | ?*chars*               | a symbol starting with ?                          |
 | *constant* =>     | *atom*                 | any nonvariable atom                              |
 
