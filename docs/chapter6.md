@@ -202,7 +202,7 @@ The following table describes a grammar of patterns, using the same grammar rule
 |                   | *Constant*             | match just this atom                              |
 |                   | *segment*-*pat*        | match something against a sequence                |
 |                   | *single*-*pat*         | match something against one expression            |
-|                   | (*pat*. *pat*)         | match the first and the rest                      |
+|                   | (*pat* . *pat*)         | match the first and the rest                      |
 | *single*-*pat*=>  | (?is *var predicate*) | test predicate on one expression                  |
 |                   | (?or *pat*...)        | match any pattern on one expression               |
 |                   | (?and *pat*...)       | match every pattern on one expression             |
@@ -210,7 +210,7 @@ The following table describes a grammar of patterns, using the same grammar rule
 | *segment*-*pat*=> | ( (?* *var*)...)       | match zero or more expressions                    |
 |                   | ( (?+ *var*) ... )     | match one or more expressions                     |
 |                   | ( ( ?? *var*) ... )    | match zero or one expression                      |
-|                   | ( ( ?if*exp* )...)   | test if exp (which may contain variables) is true |
+|                   | ( ( ?if *exp* )...)   | test if exp (which may contain variables) is true |
 | *Var* =>          | ?*chars*               | a symbol starting with ?                          |
 | *constant* =>     | *atom*                 | any nonvariable atom                              |
 
@@ -236,7 +236,7 @@ The following definition of `pat-match` reflects the five cases (along with two 
     (t fail)))
 ```
 
-For completeness, we repeat here the necessary constants and low-level functions from ELIZA !!!(span) {:.smallcaps} :
+For completeness, we repeat here the necessary constants and low-level functions from ELIZA:
 
 ```lisp
 (defconstant fail nil "Indicates pat-match failure")
@@ -246,7 +246,7 @@ For completeness, we repeat here the necessary constants and low-level functions
   
 (defun variable-p (x)
   "Is x a variable (a symbol beginning with '?')?"
-  (and (symbolp x) (equal (char (symbol-name x) 0) #\?)))
+  (and (symbolp x) (equal (elt (symbol-name x) 0) #\?)))
   
 (defun get-binding (var bindings)
   "Find a (variable . value) pair in a binding list."
@@ -270,13 +270,13 @@ For completeness, we repeat here the necessary constants and low-level functions
   "Add a (var . value) pair to a binding list."
   (cons (make-binding var val)
     ;; Once we add a "real" binding,
-    ;; we can get rid of the dumrny no-bindings
+    ;; we can get rid of the dummy no-bindings
     (if (eq bindings no-bindings)
       nil
       bindings)))
       
 (defun match-variable (var input bindings)
-  "Does VAR match input? Uses (or updates) and returns bindings."`
+  "Does VAR match input? Uses (or updates) and returns bindings."
   (let ((binding (get-binding var bindings)))
     (cond ((not binding) (extend-bindings var input bindings))
       ((equal input (binding-val binding)) bindings)
@@ -427,21 +427,21 @@ If it is not a constant, then we just return the first possible starting positio
    starting at position start. If pat1 is non-constant, then just  return start."
    (cond ((and (atom pat1) (not (variable-p pat1)))
 	  (position pat1 input :start start :test #'equal))
-	 ((< start (length input)) start)
+	 ((<= start (length input)) start)
 	 (t nil)))
 ```
 
 In the first example below, the segment variable `?x` matches the sequence (`b c`).
 In the second example, there are two segment variables in a row.
-The first successful match is achieved with the first variable, ?`x`, matching the empty sequence, and the second one, ?`y`, matching (`b c`).
+The first successful match is achieved with the first variable, `?x`, matching the empty sequence, and the second one, `?y`, matching (`b c`).
 
 ```lisp
 > (pat-match '(a (?* ?x) d) '(a b c d)) => ((?X B C))
 > (pat-match '(a (?* ?x) (?* ?y) d) '(a b c d))=> ((?Y B C) (?X))
 ```
 
-In the next example, ?`x` is first matched against nil and ?`y` against (`b c d` ), but that fails, so we try matching ?`x` against a segment of length one.
-That fails too, but finally the match succeeds with ?`x` matching the two-element segment (`b c`), and ?`y` matching (`d`).
+In the next example, `?x` is first matched against nil and `?y` against (`b c d` ), but that fails, so we try matching `?x` against a segment of length one.
+That fails too, but finally the match succeeds with `?x` matching the two-element segment (`b c`), and `?y` matching (`d`).
 
 | []()           |                                              |
 | ---            | ---                                          |
