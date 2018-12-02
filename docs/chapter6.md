@@ -80,6 +80,7 @@ This function could then be used in writing each new interpreter:
 ```lisp
 (defun lisp ()
   (interactive-interpreter '> #'eval))
+  
 (defun eliza ()
   (interactive-interpreter 'eliza>
     #'(lambda (x) (flatten (use-eliza-rules x)))))
@@ -91,6 +92,7 @@ Or, with the help of the higher-order function compose:
 (defun compose (f g)
   "Return the function that computes (f (g x))."
   #'(lambda (x) (funcall f (funcall g x))))
+  
 (defun eliza ()
   (interactive-interpreter 'eliza>
     (compose #'flatten #'use-eliza-rules)))
@@ -120,18 +122,18 @@ The function `prompt-generator`, for example, returns a function that will print
 
 ```lisp
 (defun interactive-interpreter (prompt transformer)
-	   "Read an expression, transform it, and print the result."
-	   (loop
-	      (handler-case
-		  (progn
-		    (if (stringp prompt)
-			(print prompt)
-			(funcall prompt))
-		    (print (funcall transformer (read))))
-		;; In case of error, do this:
-		(error (condition)
-		  (format t "~&;; Error ~a ignored, back to top level."
-			  condition)))))
+   "Read an expression, transform it, and print the result."
+   (loop
+      (handler-case
+	  (progn
+	    (if (stringp prompt)
+		(print prompt)
+		(funcall prompt))
+	    (print (funcall transformer (read))))
+	;; In case of error, do this:
+	(error (condition)
+	  (format t "~&;; Error ~a ignored, back to top level."
+		  condition)))))
           
 (defun prompt-generator (&optional (num 0) (ctl-string "[~d] "))
   "Return a function that prints prompts like [l], [2], etc."
@@ -212,8 +214,6 @@ The following table describes a grammar of patterns, using the same grammar rule
 | *Var* =>          | ?*chars*               | a symbol starting with ?                          |
 | *constant* =>     | *atom*                 | any nonvariable atom                              |
 
-![t0015](images/B9780080571157500066/t0015.png)
-
 Despite the added complexity, all patterns can still be classified into five cases.
 The pattern must be either a variable, constant, a (generalized) segment pattern, a (generalized) single-element pattern, or a cons of two patterns.
 The following definition of `pat-match` reflects the five cases (along with two checks for failure):
@@ -224,7 +224,7 @@ The following definition of `pat-match` reflects the five cases (along with two 
   (cond ((eq bindings fail) fail)
     ((variable-p pattern)
       (match-variable pattern input bindings))
-    ((eq1 pattern input) bindings)
+    ((eql pattern input) bindings)
     ((segment-pattern-p pattern)
       (segment-matcher pattern input bindings))
     ((single-pattern-p pattern) ; ***
@@ -240,24 +240,32 @@ For completeness, we repeat here the necessary constants and low-level functions
 
 ```lisp
 (defconstant fail nil "Indicates pat-match failure")
+
 (defconstant no-bindings '((t . t))
   "Indicates pat-match success, with no variables.")
+  
 (defun variable-p (x)
   "Is x a variable (a symbol beginning with '?')?"
   (and (symbolp x) (equal (char (symbol-name x) 0) #\?)))
+  
 (defun get-binding (var bindings)
   "Find a (variable . value) pair in a binding list."
   (assoc var bindings))
+
 (defun binding-var (binding)
   "Get the variable part of a single binding."
   (car binding))
+  
 (defun binding-val (binding)
   "Get the value part of a single binding."
   (cdr binding))
+  
 (defun make-binding (var val) (cons var val))
+
 (defun lookup (var bindings)
   "Get the value part (for var) from a binding list."
   (binding-val (get-binding var bindings)))
+  
 (defun extend-bindings (var val bindings)
   "Add a (var . value) pair to a binding list."
   (cons (make-binding var val)
@@ -265,14 +273,10 @@ For completeness, we repeat here the necessary constants and low-level functions
     ;; we can get rid of the dumrny no-bindings
     (if (eq bindings no-bindings)
       nil
-      bindings)
+      bindings)))
+      
 (defun match-variable (var input bindings)
-```
-
-`  "Does VAR match input?
-Uses (or updates) and returns bindings."`
-
-```lisp
+  "Does VAR match input? Uses (or updates) and returns bindings."`
   (let ((binding (get-binding var bindings)))
     (cond ((not binding) (extend-bindings var input bindings))
       ((equal input (binding-val binding)) bindings)
@@ -295,9 +299,9 @@ This style of programming, where pattern/action pairs are stored in a table, is 
 It is a very flexible style that is appropriate for writing extensible systems.
 
 There are many ways to implement tables in Common Lisp, as discussed in [section 3.6](B9780080571157500030.xhtml#s0080), [page 73](B9780080571157500030.xhtml#p73).
-In this case, the keys to the table will be symbols (like ?*), and it is fine if the representation of the table is distributed across memory.
+In this case, the keys to the table will be symbols  (like `?*`), and it is fine if the representation of the table is distributed across memory.
 Thus, property lists are an appropriate choice.
-We will have two tables, represented by the `segment-match` property and the `single-match` property of symbols like ?*.
+We will have two tables, represented by the `segment-match` property and the `single-match` property of symbols like `?*`.
 The value of each property will be the name of a function that implements the match.
 Here are the table entries to implement the grammar listed previously:
 
@@ -307,13 +311,8 @@ Here are the table entries to implement the grammar listed previously:
 (setf (get '?and 'single-match) 'match-and)
 (setf (get '?not 'single-match) 'match-not)
 (setf (get '?* 'segment-match) 'segment-match)
-(setf (get '?+ 'segment-match) 'segment-match  +)
-```
-
-`(setf (get '??
-'segment-match) 'segment-match?)`
-
-```lisp
+(setf (get '?+ 'segment-match) 'segment-match+)
+(setf (get '?? 'segment-match) 'segment-match?)
 (setf (get '?if 'segment-match) 'match-if)
 ```
 
@@ -327,28 +326,28 @@ A function that looks up a data-driven function and calls it (such as `segment-m
   (and (consp pattern) (consp (first pattern))
     (symbolp (first (first pattern)))
     (segment-match-fn (first (first pattern)))))
+    
 (defun single-pattern-p (pattern)
-  "Is this a single-matching pattern?
-```
-
-`  E.g.
-(?is x predicate) (?and . patterns) (?or . patterns)."`
-
-```lisp
+  "Is this a single-matching pattern? 
+  E.g. (?is x predicate) (?and . patterns) (?or . patterns)."
   (and (consp pattern)
       (single-match-fn (first pattern))))
+      
 (defun segment-matcher (pattern input bindings)
   "Call the right function for this kind of segment pattern."
   (funcall (segment-match-fn (first (first pattern)))
         pattern input bindings))
+	
 (defun single-matcher (pattern input bindings)
   "Call the right function for this kind of single pattern."
   (funcall (single-match-fn (first pattern))
         (rest pattern) input bindings))
+	
 (defun segment-match-fn (x)
   "Get the segment-match function for x,
   if it is a symbol that has one."
   (when (symbolp x) (get x 'segment-match)))
+  
 (defun single-match-fn (x)
   "Get the single-match function for x,
   if it is a symbol that has one."
@@ -369,6 +368,7 @@ First, the single-pattern matching functions:
         (not (funcall pred input)))
       fail
       new-bindings)))
+      
 (defun match-and (patterns input bindings)
   "Succeed if all the patterns match the input."
   (cond ((eq bindings fail) fail)
@@ -376,6 +376,7 @@ First, the single-pattern matching functions:
       (t (match-and (rest patterns) input
               (pat-match (first patterns) input
                   bindings)))))
+		  
 (defun match-or (patterns input bindings)
   "Succeed if any one of the patterns match the input."
   (if (null patterns)
@@ -385,6 +386,7 @@ First, the single-pattern matching functions:
         (if (eq new-bindings fail)
           (match-or (rest patterns) input bindings)
           new-bindings))))
+	  
 (defun match-not (patterns input bindings)
   "Succeed if none of the patterns match the input
   This will never bind any variables."
@@ -394,10 +396,10 @@ First, the single-pattern matching functions:
 ```
 
 Now the segment-pattern matching functions.
-`segment-match` is similar to the version presented as part of ELIZA !!!(span) {:.smallcaps} . The difference is in how we determine pos, the position of the first element of the input that could match the next element of the pattern after the segment variable.
-In ELIZA !!!(span) {:.smallcaps} , we assumed that the segment variable was either the last element of the pattern or was followed by a constant.
+`segment-match` is similar to the version presented as part of ELIZA. The difference is in how we determine `pos`, the position of the first element of the input that could match the next element of the pattern after the segment variable.
+In ELIZA, we assumed that the segment variable was either the last element of the pattern or was followed by a constant.
 In the following version, we allow nonconstant patterns to follow segment variables.
-The function `first -match - pos` is added to handle this.
+The function `first-match-pos` is added to handle this.
 If the following element is in fact a constant, the same calculation is done using `position`.
 If it is not a constant, then we just return the first possible starting position-unless that would put us past the end of the input, in which case we return nil to indicate failure:
 
@@ -419,22 +421,17 @@ If it is not a constant, then we just return the first possible starting positio
               (if (eq b2 fail)
                 (segment-match pattern input bindings (+ pos 1))
                 b2)))))))
-(defun first-match-pos (patl input start)
-  "Find the first position that pat1 could possibly match input,
+		
+ (defun first-match-pos (pat1 input start)
+   "Find the first position that pat1 could possibly match input,
+   starting at position start. If pat1 is non-constant, then just  return start."
+   (cond ((and (atom pat1) (not (variable-p pat1)))
+	  (position pat1 input :start start :test #'equal))
+	 ((< start (length input)) start)
+	 (t nil)))
 ```
 
-`  starting at position start.
-If pat1 is non-constant, then just`
-
-```lisp
-  return start."
-  (cond ((and (atom pat1) (not (variable-p pat1)))
-        (position pat1 input :start start :test #'equal))
-      ((< start (length input)) start)
-      (t nil)))
-```
-
-In the first example below, the segment variable ?`x` matches the sequence (`b c`).
+In the first example below, the segment variable `?x` matches the sequence (`b c`).
 In the second example, there are two segment variables in a row.
 The first successful match is achieved with the first variable, ?`x`, matching the empty sequence, and the second one, ?`y`, matching (`b c`).
 
