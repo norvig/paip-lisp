@@ -138,31 +138,53 @@ Since our program is just a simulation-it won't be actually driving a car or dia
 The specification is complete enough to lead directly to a complete Common Lisp program.
 [Figure 4.1](#f0010) summarizes the variables, data types, and functions that make up the GPS program, along with some of the Common Lisp functions used to implement it.
 
-| []()                                     |
-|------------------------------------------|
-| ![f04-01](images/chapter4/f04-01.jpg)    |
-| Figure 4.1: Glossary for the GPS Program |
-(editor: this should be a markdown table)
+| Symbol             | Use                                                   |
+| ------             | ---                                                   |
+|                    | **Top-Level Function**                                |
+| `GPS`              | Solve a goal from a state using a list of operators.  |
+|                    | **Special Variables**                                 |
+| `*state*`          | The current state, a list of conditions.              |
+| `*ops*`            | A list of available operators.                        |
+|                    | **Data Types**                                        |
+| `op`               | An operation with preconds, add-list and del-list.    |
+|                    | **Functions**                                         |
+| `achieve`          | Achieve an individual goal.                           |
+| `appropriate-p`    | Decide if an operator is appropriate for a goal.      |
+| `apply-op`         | Apply operator to current state.                      |
+|                    | **Selected Common Lisp Functions**                    |
+| `member`           | Test if an elementis a member of a list. (p.78)       |
+| `set-difference`   | All elements in one set but not the other.            |
+| `union`            | All elements in either of the two sets.               |
+| `every`            | Test if every element of a list passes a test. (p. 62)|
+| `some`             | Test if any element of a list passes a test.          |
+|                    | **Previously Defined Functions**                      |
+| `find-all`         | A list of all matching elements. (p. 101)             |
 
 Here is the complete GPS program itself:
 
 ```lisp
 (defvar *state* nil "The current state: a list of conditions.")
+
 (defvar *ops* nil "A list of available operators.")
+
 (defstruct op "An operation"
   (action nil) (preconds nil) (add-list nil) (del-list nil))
+  
 (defun GPS (*state* goals *ops*)
   "General Problem Solver: achieve all goals using *ops*."
   (if (every #'achieve goals) 'solved))
+  
 (defun achieve (goal)
   "A goal is achieved if it already holds,
   or if there is an appropriate op for it that is applicable."
   (or (member goal *state*)
     (some #'apply-op
       (find-all goal *ops* :test #'appropriate-p))))
+      
 (defun appropriate-p (goal op)
   "An op is appropriate to a goal if it is in its add list."
   (member goal (op-add-list op)))
+  
 (defun apply-op (op)
   "Print a message and update *state* if op is applicable."
   (when (every #'achieve (op-preconds op))
@@ -201,13 +223,20 @@ expanded into the following definitions:
 ```lisp
 (defun make-op (&key action preconds add-list del-list)
   (vector 'op action preconds add-list del-list))
+
 (defun op-action (op) (elt op 1))
+
 (defun op-preconds (op) (elt op 2))
+
 (defun op-add-list (op) (elt op 3))
+
 (defun op-del-list (op) (elt op 4))
+
 (defun copy-op (op) (copy-seq op))
+
 (defun op-p (op)
   (and (vectorp op) (eq (elt op 0) 'op)))
+  
 (setf (documentation 'op 'structure) "An operation")
 ```
 Next in the GPS program are four function definitions.
@@ -503,21 +532,19 @@ Second, the function `fresh-line` advances to the next line of output, unless th
 
 ```lisp
 (defvar *dbg-ids* nil "Identifiers used by dbg")
+
 (defun dbg (id format-string &rest args)
   "Print debugging info if (DEBUG ID) has been specified."
   (when (member id *dbg-ids*)
     (fresh-line *debug-io*)
     (apply #'format *debug-io* format-string args)))
+    
 (defun debug (&rest ids)
   "Start dbg output on the given ids."
   (setf *dbg-ids* (union ids *dbg-ids*)))
+  
 (defun undebug (&rest ids)
-```
-`  "Stop dbg on the ids.
-With no ids, stop dbg al together.
-"`
-
-```lisp
+ "Stop dbg on the ids. With no ids, stop dbg altogether."
   (setf *dbg-ids* (if (null ids) nil
             (set-difference *dbg-ids* ids))))
 ```
@@ -537,11 +564,38 @@ To generate indented output, the function `dbg-indent` is defined:
 At this point we are ready to put together a new version of GPS with solutions for the "running around the block," "prerequisite clobbers sibling goal," "leaping before you look," and "recursive subgoal" problems.
 The glossary for the new version is in [figure 4.2](#f0015).
 
-| []()                                        |
-|---------------------------------------------|
-| ![f04-02](images/chapter4/f04-02.jpg)       |
-| Figure 4.2: Glossary for Version 2 of `GPS` |
-(editor: this should be a markdown table)
+
+| Symbol             | Use                                                   |
+| ------             | ---                                                   |
+|                    | **Top-Level Function**                                |
+| `GPS`              | Solve a goal from a state using a list of operators.  |
+|                    | **Special Variables**                                 |
+| `*ops*`            | A list of available operators.                        |
+|                    | **Data Types**                                        |
+| `op`               | An operation with preconds, add-list and del-list.    |
+|                    | **Major Functions**                                   |
+| `achieve-all`      | Achieve a list of goals.                              |
+| `achieve`          | Achieve an individual goal.                           |
+| `appropriate-p`    | Decide if an operator is appropriate for a goal.      |
+| `apply-op`         | Apply operator to current state.                      |
+|                    | **Auxiliary Functions**                               |
+| `executing-p`      | Is a condition an *executing* form?                   |
+| `starts-with`      | Is the argument a list that starts with a given atom? |
+| `convert-op`       | Convert an operator to use the *executing* convention.|
+| `op`               | Create an operator.                                   |
+| `use`              | Use a list of operators.                              |
+| `member-equal`     | Test if an element is equal to a member of a list.    |
+|                    | **Selected Common Lisp Functions**                    |
+| `member`           | Test if an elementis a member of a list. (p.78)       |
+| `set-difference`   | All elements in one set but not the other.            |
+| `subsetp`          | Is one set wholly contained in another?               |
+| `union`            | All elements in either of the two sets.               |
+| `every`            | Test if every element of a list passes a test. (p. 62)|
+| `some`             | Test if any element of a list passes a test.          |
+| `remove-if`        | Remove all items satisfying a test.                   |
+|                    | **Previously Defined Functions**                      |
+| `find-all`         | A list of all matching elements. (p. 101)             |
+| `find-all-if`      | A list of all elements satisfying a predicate.        |
 
 The most important change is that, instead of printing a message when each operator is applied, we will instead have `GPS` return the resulting state.
 A list of "messages" in each state indicates what actions have been taken.
@@ -553,14 +607,17 @@ The following code defines a new function, op, which builds operators that inclu
 (defun executing-p (x)
   "Is x of the form: (executing ...) ?"
   (starts-with x 'executing))
+  
 (defun starts-with (list x)
   "Is this a list whose first element is x?"
   (and (consp list) (eql (first list) x)))
+  
 (defun convert-op (op)
   "Make op conform to the (EXECUTING op) convention."
   (unless (some #'executing-p (op-add-list op))
     (push (list 'executing (op-action op)) (op-add-list op)))
   op)
+  
 (defun op (action &key preconds add-list del-list)
   "Make a new operator that obeys the (EXECUTING op) convention."
   (convert-op
@@ -584,8 +641,10 @@ In general, it is a good idea to have a program return a meaningful value rather
 
 ```lisp
 (defvar *ops* nil "A list of available operators.")
+
 (defstruct op "An operation"
   (action nil) (preconds nil) (add-list nil) (del-list nil))
+  
 (defun GPS (state goals &optional (*ops* *ops*))
   "General Problem Solver: from state, achieve goals using *ops*."
   (remove-if #'atom (achieve-all (cons '(start) state) goals nil)))
@@ -642,6 +701,7 @@ Otherwise, `achieve` looks through the list of operators, trying to find one app
           goals)
         (subsetp goals current-state :test #'equal))
       current-state)))
+      
 (defun achieve (state goal goal-stack)
   "A goal is achieved if it already holds,
   or if there is an appropriate op for it that is applicable."
@@ -683,6 +743,7 @@ If it is possible to arrive at such a state, then `apply-op` returns a new state
             (member-equal x (op-del-list op)))
           state2)
         (op-add-list op)))))
+        
 (defun appropriate-p (goal op)
   "An op is appropriate to a goal if it is in its add-list."
   (member-equal goal (op-add-list op)))
@@ -720,6 +781,7 @@ Clearly, the idiom of binding a special variable is more concise, and while it c
 (defun GPS (state goals &optional (*ops* *ops*))
   "General Problem Solver: from state, achieve goals using *ops*."
   (remove-if #'atom (achieve-all (cons '(start) state) goals nil)))
+  
 (defun GPS (state goals &optional (ops *ops*))
   "General Problem Solver: from state, achieve goals using *ops*."
   (let ((old-ops *ops*))
@@ -829,33 +891,33 @@ For now, assume we define the operators as follows:
 ```lisp
 (defparameter *banana-ops*
   (list
-    (make-op
-      :action 'climb-on-chair
+    (op
+      'climb-on-chair
       :preconds '(chair-at-middle-room at-middle-room on-floor)
       :add-list '(at-bananas on-chair)
       :del-list '(at-middle-room on-floor))
-    (make-op 
-      :action 'push-chair-from-door-to-middle-room
+    (op 
+      'push-chair-from-door-to-middle-room
       :preconds '(chair-at-door at-door)
       :add-list '(chair-at-middle-room at-middle-room)
       :del-list '(chair-at-door at-door))
-    (make-op 
-      :action 'walk-from-door-to-middle-room
+    (op 
+      'walk-from-door-to-middle-room
       :preconds '(at-door on-floor)
       :add-list '(at-middle-room)
       :del-list '(at-door))
-    (make-op 
-      :action 'grasp-bananas
+    (op 
+      'grasp-bananas
       :preconds '(at-bananas empty-handed)
       :add-list '(has-bananas)
       :del-list '(empty-handed))
-    (make-op 
-      :action 'drop-ball
+    (op 
+      'drop-ball
       :preconds '(has-ball)
       :add-list '(empty-handed)
       :del-list '(has-ball))
-    (make-op 
-      :action 'eat-bananas
+    (op 
+      'eat-bananas
       :preconds '(has-bananas)
       :add-list '(empty-handed not-hungry)
       :del-list '(has-bananas hungry))))
@@ -897,8 +959,8 @@ The following code defines a set of operators for mazes in general, and for this
       (make-maze-op (second pair) (first pair))))
 (defun make-maze-op (here there)
   "Make an operator to move between two places"
-  (make-op 
-    :action '(move from ,here to ,there)
+  (op 
+    '(move from ,here to ,there)
     :preconds '((at ,here))
     :add-list '((at ,there))
     :del-list '((at ,here))))
@@ -1020,8 +1082,8 @@ We will create an operator for each possible block move.
     ops))
 (defun move-op (a b c)
   "Make an operator to move A from B to C."
-  (make-op 
-      :action '(move ,a from ,b to ,c)
+  (op 
+      '(move ,a from ,b to ,c)
       :preconds '((space on ,a) (space on ,c) (,a on ,b))
       :add-list (move-ons a b c)
       :del-list (move-ons a c b)))
@@ -1104,6 +1166,7 @@ That is, we could change `achieve-all` as follows:
   "Achieve each goal, trying several orderings."
   (some #'(lambda (goals) (achieve-each state goals goal-stack))
       (orderings goals)))
+      
 (defun achieve-each (state goals goal-stack)
   "Achieve each goal, and make sure they still hold at the end."
   (let ((current-state state))
@@ -1113,6 +1176,7 @@ That is, we could change `achieve-all` as follows:
           goals)
         (subsetp goals current-state :test #'equal))
       current-state)))
+      
 (defun orderings (l)
   (if (> (length l) l)
       (list l (reverse l))
@@ -1175,6 +1239,7 @@ To implement this approach, we change `achieve`:
       ((member-equal goal goal-stack) nil)
       (t (some #'(lambda (op) (apply-op state goal op goal-stack))
           (appropriate-ops goal state))))) ;***
+          
 (defun appropriate-ops (goal state)
   "Return a list of appropriate operators,
   sorted by the number of unfulfilled preconditions."
@@ -1255,8 +1320,7 @@ This prevents GPS from taking an ill-advised action, but we shall see that even 
 To see the problem, add another operator to the front of the `*school-ops*` list and turn the debugging output back on:
 
 ```lisp
-(use (push (make-op 
-        :action 'taxi-son-to-school
+(use (push (op 'taxi-son-to-school
         :preconds '(son-at-home have-money)
         :add-list '(son-at-school)
         :del-list '(son-at-home have-money))
@@ -1317,8 +1381,8 @@ Similarly, we have defined an operator where the monkey pushes the chair from th
 The conclusion is that we would like to have variables in the operators, so we could say something like:
 
 ```lisp
-(make-op 
-  :action '(push X from A to B)
+(op 
+  '(push X from A to B)
   :preconds '((monkey at A) (X at A) (pushable X) (path A B))
   :add-list '((monkey at B) (X at B))
   :del-list '((monkey at A) (X at A)))
