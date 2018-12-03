@@ -477,6 +477,7 @@ These are rules in the sense that they assert, "If you see A, then respond with 
 
 ```lisp
 (defun rule-pattern (rule) (first rule))
+
 (defun rule-responses (rule) (rest rule))
 ```
 
