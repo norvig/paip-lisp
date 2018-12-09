@@ -54,7 +54,7 @@
   "Compile a lambda form into a closure with compiled code."
   (assert (and (listp args) (every #'symbolp args)) ()
           "Lambda arglist must be a list of symbols, not ~a" args)
-  ;; For now, no &rest parameters.  
+  ;; For now, no &rest parameters.
   ;; The next version will support Scheme's version of &rest
   (make-fn
     :env env :args args
@@ -112,7 +112,7 @@
   (if (atom name)
       `(name! (set! ,name . ,body) ',name)
       (scheme-macro-expand
-         `(define ,(first name) 
+         `(define ,(first name)
             (lambda ,(rest name) . ,body)))))
 
 (defun name! (fn name)
@@ -130,7 +130,7 @@
 
 (defun show-fn (fn &optional (stream *standard-output*) (depth 0))
   "Print all the instructions in a function.
-  If the argument is not a function, just princ it, 
+  If the argument is not a function, just princ it,
   but in a column at least 8 spaces wide."
   (if (not (fn-p fn))
       (format stream "~8a" fn)

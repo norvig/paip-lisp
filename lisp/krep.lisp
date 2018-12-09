@@ -147,7 +147,7 @@
                   (or (dtree-rest dtree)
                       (setf (dtree-rest dtree) (make-dtree)))))
     ((null key))                ; don't index on nil
-    
+
     ((variable-p key)           ; index a variable
      (nalist-push world value (dtree-var dtree)))
     (t ;; Make sure there is an nlist for this atom, and add to it
@@ -273,7 +273,7 @@
     (run-attached-fn `(ind ,relation ,?a ,?b))))
 
 (def-attached-fn sub (subcat supercat)
-  ;; Cache SUB facts 
+  ;; Cache SUB facts
   (query-bind (?super-super) `(sub ,supercat ?super-super)
     (index-new-fact `(sub ,subcat ,?super-super))
     (query-bind (?sub-sub) `(sub ?sub-sub ,subcat)

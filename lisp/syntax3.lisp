@@ -7,7 +7,7 @@
 
 (defvar *grammar* "The grammar used by GENERATE.")
 
-(defstruct (rule (:type list) 
+(defstruct (rule (:type list)
                  (:constructor rule (lhs -> rhs &optional sem score)))
   lhs -> rhs sem score)
 
@@ -18,7 +18,7 @@
   "Switch to a new grammar."
   (clear-memoize 'rules-starting-with)
   (clear-memoize 'lexical-rules)
-  (length (setf *grammar* 
+  (length (setf *grammar*
                 (mapcar #'(lambda (r) (apply #'rule r))
                         grammar))))
 
@@ -32,7 +32,7 @@
 
 (defun rules-starting-with (cat)
   "Return a list of rules where cat starts the rhs."
-  (find-all cat *grammar* 
+  (find-all cat *grammar*
             :key #'(lambda (rule) (first-or-nil (rule-rhs rule)))))
 
 (defun first-or-nil (x)
@@ -106,7 +106,7 @@
       (mapcan
         #'(lambda (p)
             (if (eq (parse-lhs p) (first needed))
-                (extend-parse lhs sem score 
+                (extend-parse lhs sem score
                               (append1 rhs (parse-tree p)) ;***
                               (parse-rem p) (rest needed))))
         (parse rem))))
@@ -245,5 +245,5 @@
   (if (null bag)
       nil
       (let ((e (random-elt bag)))
-        (cons e (permute (remove e bag :count 1 :test #'eq)))))) 
+        (cons e (permute (remove e bag :count 1 :test #'eq))))))
 

@@ -38,7 +38,7 @@
   (x + y - x = y)
   )))
 
-(setf *simplification-rules* 
+(setf *simplification-rules*
  (append *simplification-rules* (mapcar #'simp-rule
   '((s * n = n * s)
     (n * (m * x) = (n * m) * x)
@@ -49,7 +49,7 @@
     (x + (y + n) = (x + y) + n)
     ((x + n) + y = (x + y) + n)))))
 
-(setf *simplification-rules* 
+(setf *simplification-rules*
  (append *simplification-rules* (mapcar #'simp-rule '(
   (log 1         = 0)
   (log 0         = undefined)
@@ -70,14 +70,14 @@
   ))))
 
 
-(setf *simplification-rules* 
+(setf *simplification-rules*
  (append *simplification-rules* (mapcar #'simp-rule '(
   (d x / d x       = 1)
   (d (u + v) / d x = (d u / d x) + (d v / d x))
   (d (u - v) / d x = (d u / d x) - (d v / d x))
   (d (- u) / d x   = - (d u / d x))
   (d (u * v) / d x = u * (d v / d x) + v * (d u / d x))
-  (d (u / v) / d x = (v * (d u / d x) - u * (d v / d x)) 
+  (d (u / v) / d x = (v * (d u / d x) - u * (d v / d x))
                      / v ^ 2) ; [This corrects an error in the first printing]
   (d (u ^ n) / d x = n * u ^ (n - 1) * (d u / d x))
   (d (u ^ v) / d x = v * u ^ (v - 1) * (d u / d x)
@@ -88,7 +88,7 @@
   (d (e ^ u) / d x = (e ^ u) * (d u / d x))
   (d u / d x       = 0)))))
 
-        
+
 (integration-table
   '((Int log(x) d x = x * log(x) - x)
     (Int exp(x) d x = exp(x))

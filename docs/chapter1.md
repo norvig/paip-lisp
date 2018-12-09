@@ -534,8 +534,8 @@ Although all non-nil values are considered true, by convention the constant `t` 
 (defun first-name (name)
   "Select the first name from a name represented as a list."
   (if (member (first name) *titles*)
-  (first-name (rest name))
-  (first name)))
+      (first-name (rest name))
+      (first name)))
 ```
 
 When we map the new `first-name` over the list of names, the results are more encouraging.
@@ -688,7 +688,7 @@ This problem can be solved very easily using `mappend` as a component:
 ```lisp
 (defun numbers-and-negations (input)
   "Given a list, return only the numbers and their negations."
-  (mappend #' number-and-negation input))
+  (mappend #'number-and-negation input))
 
 (defun number-and-negation (x)
   "If x is a number, return a list of x and -x."
@@ -1145,7 +1145,6 @@ Example:
   (cond ((= n 0) 1)
         ((evenp n) (expt (power x (/ n 2)) 2))
         (t (* x (power x (- n 1))))))
-
 ```
 
 ### Answer 1.3
@@ -1159,7 +1158,7 @@ Example:
               (count-atoms (rest exp))))))
 
 (defun count-all-atoms (exp &optional (if-null 1))
-  "Return the total number of atoms in the expression, 
+  "Return the total number of atoms in the expression,
   counting nil as an atom only in non-tail position."
   (cond ((null exp) if-null)
         ((atom exp) 1)

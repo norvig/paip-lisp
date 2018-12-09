@@ -26,7 +26,7 @@
 
 (deftype polynomial () 'simple-vector)
 
-(defsetf main-var (p) (val) 
+(defsetf main-var (p) (val)
   `(setf (svref (the polynomial ,p) 0) ,val))
 
 (defsetf coef (p i) (val)
@@ -37,7 +37,7 @@
 (defun degree (p)   (- (length (the polynomial p)) 2))
 
 (defun poly (x &rest coefs)
-  "Make a polynomial with main variable x 
+  "Make a polynomial with main variable x
   and coefficients in increasing order."
   (apply #'vector x coefs))
 
@@ -58,7 +58,7 @@
                 (mapcar #'prefix->canon (exp-args x))))
         (t (error "Not a polynomial: ~a" x))))
 
-(dolist (item '((+ poly+) (- poly-) (* poly*poly) 
+(dolist (item '((+ poly+) (- poly-) (* poly*poly)
                 (^ poly^n) (D deriv-poly)))
   (setf (get (first item) 'prefix->canon) (second item)))
 

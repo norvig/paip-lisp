@@ -68,7 +68,7 @@
  why   - to see why this question is asked
  help  - to see this list
  xxx   - (for some specific xxx) if there is a definite answer
- (xxx .5 yyy .4) - If there are several answers with 
+ (xxx .5 yyy .4) - If there are several answers with
                    different certainty factors.")
 
 (defun ask-vals (parm inst)
@@ -127,7 +127,7 @@
         (t (cons (list (first reply) (second reply))
                  (parse-reply (rest2 reply))))))
 
-(defstruct (parm (:constructor 
+(defstruct (parm (:constructor
                   new-parm (name &optional context type-restriction
                             prompt ask-first reader)))
   name (context nil) (prompt "~&What is the ~*~a of ~2:*~a?")
@@ -236,7 +236,7 @@
     (loop for pair in (get-vals parm inst)
           when (funcall op (first pair) val)
           sum (second pair))))
-               
+
 (defun reject-premise (premise)
   "A premise is rejected if it is known false, without
   needing to call find-out recursively."
@@ -283,7 +283,7 @@
         (get-context-data contexts)))))
 
 (defmacro defrule (number &body body)
-  "Define a rule with conditions, a certainty factor, and 
+  "Define a rule with conditions, a certainty factor, and
   conclusions.  Example: (defrule R001 if ... then .9 ...)"
   (assert (eq (first body) 'if))
   (let* ((then-part (member 'then body))
@@ -338,7 +338,7 @@
           (cf->english (rule-cf rule)) (rule-cf rule))
   (print-conditions (rule-conclusions rule) stream))
 
-(defun print-conditions (conditions &optional 
+(defun print-conditions (conditions &optional
                          (stream t) (num 1))
   "Print a list of numbered conditions."
   (dolist (condition conditions)

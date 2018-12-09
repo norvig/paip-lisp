@@ -171,7 +171,7 @@
 (defun anonymous-variables-in (tree)
   "Return a list of all variables that occur only once in tree."
   (values (anon-vars-in tree nil nil)))
- 
+
 (defun anon-vars-in (tree seen-once seen-more)
   "Walk the data structure TREE, returning a list of variabless
    seen once, and a list of variables seen more than once."
@@ -288,8 +288,8 @@
 
 (defun compile-clause (parms clause cont)
   "Transform away the head, and compile the resulting body."
-  (bind-unbound-vars       
-    parms                  
+  (bind-unbound-vars
+    parms
     (compile-body
       (nconc
         (mapcar #'make-= parms (args (clause-head clause)))
@@ -297,7 +297,7 @@
       cont
       (mapcar #'self-cons parms))))                    ;***
 
-(defvar *uncompiled* nil 
+(defvar *uncompiled* nil
   "Prolog symbols that have not been compiled.")
 
 (defun add-clause (clause)
@@ -388,13 +388,13 @@
   (cond
     ((null body)
      `(funcall ,cont))
-    ((eq (first body) '!)                              ;*** 
+    ((eq (first body) '!)                              ;***
      `(progn ,(compile-body (rest body) cont bindings) ;***
              (return-from ,*predicate* nil)))          ;***
     (t (let* ((goal (first body))
               (macro (prolog-compiler-macro (predicate goal)))
-              (macro-val (if macro 
-                             (funcall macro goal (rest body) 
+              (macro-val (if macro
+                             (funcall macro goal (rest body)
                                       cont bindings))))
         (if (and macro (not (eq macro-val :pass)))
             macro-val
@@ -406,7 +406,7 @@
               ,(if (null (rest body))
                    cont
                    `#'(lambda ()
-                        ,(compile-body 
+                        ,(compile-body
                            (rest body) cont
                            (bind-new-variables bindings goal))))))))))
 

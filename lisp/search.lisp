@@ -37,7 +37,7 @@
       (remove-if #'(lambda (child) (> child n))
                  (binary-tree x))))
 
-(defun diff (num) 
+(defun diff (num)
   "Return the function that finds the difference from num."
   #'(lambda (x) (abs (- x num))))
 
@@ -45,7 +45,7 @@
   "Return a combiner function that sorts according to cost-fn."
   #'(lambda (new old)
       (sort (append new old) #'< :key cost-fn)))
-  
+
 (defun best-first-search (start goal-p successors cost-fn)
   "Search lowest cost states first until goal is reached."
   (tree-search (list start) goal-p successors (sorter cost-fn)))
@@ -53,14 +53,14 @@
 (defun price-is-right (price)
   "Return a function that measures the difference from price,
   but gives a big penalty for going over price."
-  #'(lambda (x) (if (> x price) 
+  #'(lambda (x) (if (> x price)
                     most-positive-fixnum
                     (- price x))))
 
 (defun beam-search (start goal-p successors cost-fn beam-width)
   "Search highest scoring states first until goal is reached,
   but never consider more than beam-width states at a time."
-  (tree-search (list start) goal-p successors 
+  (tree-search (list start) goal-p successors
                #'(lambda (old new)
                    (let ((sorted (funcall (sorter cost-fn) old new)))
                      (if (> beam-width (length sorted))
@@ -71,10 +71,10 @@
 
 (defparameter *cities*
   '((Atlanta      84.23 33.45) (Los-Angeles   118.15 34.03)
-    (Boston       71.05 42.21) (Memphis        90.03 35.09)  
-    (Chicago      87.37 41.50) (New-York       73.58 40.47) 
+    (Boston       71.05 42.21) (Memphis        90.03 35.09)
+    (Chicago      87.37 41.50) (New-York       73.58 40.47)
     (Denver      105.00 39.45) (Oklahoma-City  97.28 35.26)
-    (Eugene      123.05 44.03) (Pittsburgh     79.57 40.27) 
+    (Eugene      123.05 44.03) (Pittsburgh     79.57 40.27)
     (Flagstaff   111.41 35.13) (Quebec         71.11 46.49)
     (Grand-Jct   108.37 39.05) (Reno          119.49 39.30)
     (Houston     105.00 34.00) (San-Francisco 122.26 37.47)
@@ -89,7 +89,7 @@
                         (< (air-distance c city) 1000.0)))
                *cities*))
 
-(defun city (name) 
+(defun city (name)
   "Find the city with this name."
   (assoc name *cities*))
 
@@ -193,7 +193,7 @@
 (defun graph-search (states goal-p successors combiner
                      &optional (state= #'eql) old-states)
   "Find a state that satisfies goal-p.  Start with states,
-  and search according to successors and combiner.  
+  and search according to successors and combiner.
   Don't try the same state twice."
   (dbg :search "~&;; Search: ~a" states)
   (cond ((null states) fail)

@@ -15,7 +15,7 @@
       (cond
         ((symbolp x) (get-var x env))
         ((atom x) x)
-        ((scheme-macro (first x)) 
+        ((scheme-macro (first x))
          (setf x (scheme-macro-expand x)) (go :INTERP))
         ((case (first x)
            (QUOTE  (second x))

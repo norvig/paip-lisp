@@ -55,7 +55,7 @@
 
 (defun student (words)
   "Solve certain Algebra Word Problems."
-  (solve-equations 
+  (solve-equations
     (create-list-of-equations
       (translate-to-expression (remove-if #'noise-word-p words)))))
 
@@ -96,7 +96,7 @@
 
 (defun solve (equations known)
   "Solve a system of equations by constraint propagation."
-  ;; Try to solve for one equation, and substitute its value into 
+  ;; Try to solve for one equation, and substitute its value into
   ;; the others. If that doesn't work, return what is known.
   (or (some #'(lambda (equation)
                 (let ((x (one-unknown equation)))

@@ -29,7 +29,7 @@
 
 (defun possible-labelings (vertex-type)
   "The list of possible labelings for a given vertex type."
-  ;; In these labelings, R means an arrow pointing away from 
+  ;; In these labelings, R means an arrow pointing away from
   ;; the vertex, L means an arrow pointing towards it.
   (case vertex-type
     ((L) '((R L)   (L R)   (+ R)   (L +)   (- L)   (R -)))
@@ -74,21 +74,21 @@
     ;; Account for the L-R mismatch with reverse-label.
     (find-all-if
       #'(lambda (labeling)
-          (every #'member (mapcar #'reverse-label labeling) 
+          (every #'member (mapcar #'reverse-label labeling)
                  neighbor-labels))
       (vertex-labelings vertex))))
 
 (defun search-solutions (diagram)
   "Try all labelings for one ambiguous vertex, and propagate."
   ;; If there is no ambiguous vertex, return the diagram.
-  ;; If there is one, make copies of the diagram trying each of 
+  ;; If there is one, make copies of the diagram trying each of
   ;; the possible labelings.  Propagate constraints and append
   ;; all the solutions together.
   (let ((v (find-if #'ambiguous-vertex-p
                     (diagram-vertexes diagram))))
     (if (null v)
         (list diagram)
-        (mapcan 
+        (mapcan
           #'(lambda (v-labeling)
               (let* ((diagram2 (make-copy-diagram diagram))
                      (v2 (find-vertex (vertex-name v) diagram2)))
@@ -173,7 +173,7 @@
   "Build the vertex corresponding to the descriptor."
   ;; Descriptors are like: (x L y z)
   (make-vertex
-    :name (first vertex-descriptor) 
+    :name (first vertex-descriptor)
     :type (second vertex-descriptor)
     :labelings (possible-labelings (second vertex-descriptor))))
 
@@ -183,13 +183,13 @@
 
 (defun make-copy-diagram (diagram)
   "Make a copy of a diagram, preserving connectivity."
-  (let* ((new (make-diagram 
+  (let* ((new (make-diagram
                 :vertexes (mapcar #'copy-vertex
                                   (diagram-vertexes diagram)))))
     ;; Put in the neighbors for each vertex
     (dolist (v (diagram-vertexes new))
       (setf (vertex-neighbors v)
-            (mapcar #'(lambda (neighbor) 
+            (mapcar #'(lambda (neighbor)
                         (find-vertex (vertex-name neighbor) new))
                     (vertex-neighbors v))))
     new))
@@ -213,7 +213,7 @@
 
 (defmacro defdiagram (name &rest vertex-descriptors)
   "Define a diagram.  A copy can be gotten by (diagram name)."
-  `(put-diagram ',name (construct-diagram 
+  `(put-diagram ',name (construct-diagram
                          (check-diagram ',vertex-descriptors))))
 
 (defun check-diagram (vertex-descriptors)

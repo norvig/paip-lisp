@@ -15,10 +15,10 @@
 ;;; ==============================
 
 (defstruct player (score 0) (wins 0))
-  
+
 (defun determine-winner (players)
   "Increment the WINS for the player with highest score."
-  (incf (player-wins (first (sort players #'> 
+  (incf (player-wins (first (sort players #'>
                                   :key #'player-score)))))
 
 ;;; ==============================
@@ -34,7 +34,7 @@
 (defun length1.1 (list)         ; alternate version:
   (let ((len 0))                ; (not my preference)
     (dolist (element list len)  ; uses len as result here
-      (incf len))))           
+      (incf len))))
 
 ;;; ==============================
 
@@ -48,17 +48,17 @@
 ;;; ==============================
 
 (defun length3 (list)
-  (do ((len 0 (+ len 1))   ; start with LEN=0, increment 
+  (do ((len 0 (+ len 1))   ; start with LEN=0, increment
        (l list (rest l)))  ; ... on each iteration
       ((null l) len)))     ; (until the end of the list)
 
 ;;; ==============================
 
-(defun length4 (list)            
+(defun length4 (list)
   (loop for element in list      ; go through each element
-        count t))                ;   counting each one 
+        count t))                ;   counting each one
 
-(defun length5 (list)            
+(defun length5 (list)
   (loop for element in list      ; go through each element
         summing 1))              ;   adding 1 each time
 
@@ -182,19 +182,19 @@
 ;;; ==============================
 
 (defun english->french (words)
-  (sublis '((are . va) (book . libre) (friend . ami) 
+  (sublis '((are . va) (book . libre) (friend . ami)
             (hello . bonjour) (how . comment) (my . mon)
             (red . rouge) (you . tu))
           words))
 
 ;;; ==============================
 
-(defstruct node 
+(defstruct node
   name
   (yes nil)
   (no nil))
 
-(defvar *db* 
+(defvar *db*
   (make-node :name 'animal
              :yes (make-node :name 'mammal)
              :no (make-node
@@ -262,7 +262,7 @@
 ;;; ==============================
 
 (defun eat-porridge (bear)
-  (assert (< too-cold (temperature (bear-porridge bear)) too-hot) 
+  (assert (< too-cold (temperature (bear-porridge bear)) too-hot)
           (bear (bear-porridge bear))
           "~a's porridge is not just right: ~a"
           bear (hotness (bear-porridge bear)))
@@ -318,7 +318,7 @@
   "Find all those elements of sequence that match item,
   according to the keywords.  Doesn't alter sequence."
   (if test-not
-      (apply #'remove item sequence 
+      (apply #'remove item sequence
              :test-not (complement test-not) keyword-args)
       (apply #'remove item sequence
              :test (complement test) keyword-args)))

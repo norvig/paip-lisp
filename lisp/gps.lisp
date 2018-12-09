@@ -74,12 +74,12 @@
 (defun apply-op (state goal op goal-stack)
   "Return a new, transformed state if op is applicable."
   (dbg-indent :gps (length goal-stack) "Consider: ~a" (op-action op))
-  (let ((state2 (achieve-all state (op-preconds op) 
+  (let ((state2 (achieve-all state (op-preconds op)
                              (cons goal goal-stack))))
     (unless (null state2)
       ;; Return an updated state
       (dbg-indent :gps (length goal-stack) "Action: ~a" (op-action op))
-      (append (remove-if #'(lambda (x) 
+      (append (remove-if #'(lambda (x)
                              (member-equal x (op-del-list op)))
                          state2)
               (op-add-list op)))))
@@ -92,7 +92,7 @@
 
 (defun use (oplist)
   "Use oplist as the default list of operators."
-  ;; Return something useful, but not too verbose: 
+  ;; Return something useful, but not too verbose:
   ;; the number of operators.
   (length (setf *ops* oplist)))
 
@@ -214,7 +214,7 @@
              (subsetp goals current-state :test #'equal))
         current-state)))
 
-(defun orderings (l) 
+(defun orderings (l)
   (if (> (length l) 1)
       (list l (reverse l))
       (list l)))
@@ -231,10 +231,10 @@
                  (appropriate-ops goal state))))) ;***
 
 (defun appropriate-ops (goal state)
-  "Return a list of appropriate operators, 
+  "Return a list of appropriate operators,
   sorted by the number of unfulfilled preconditions."
   (sort (copy-list (find-all goal *ops* :test #'appropriate-p)) #'<
-        :key #'(lambda (op) 
+        :key #'(lambda (op)
                  (count-if #'(lambda (precond)
                                (not (member-equal precond state)))
                            (op-preconds op)))))

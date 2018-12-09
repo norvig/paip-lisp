@@ -19,7 +19,7 @@
   "A goal is achieved if it already holds,
   or if there is an appropriate op for it that is applicable."
   (or (member goal *state*)
-      (some #'apply-op 
+      (some #'apply-op
             (find-all goal *ops* :test #'appropriate-p))))
 
 (defun appropriate-p (goal op)

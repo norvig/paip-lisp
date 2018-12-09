@@ -13,7 +13,7 @@
 (requires "othello")
 
 (defconstant all-squares
-  (sort (loop for i from 11 to 88 
+  (sort (loop for i from 11 to 88
 	      when (<= 1 (mod i 10) 8) collect i)
         #'> :key #'(lambda (sq) (elt *weights* sq))))
 
@@ -179,16 +179,16 @@
 (defun init-edge-table ()
   "Initialize *edge-table*, starting from the empty board."
   ;; Initialize the static values
-  (loop for n-pieces from 0 to 10 do 
+  (loop for n-pieces from 0 to 10 do
         (map-edge-n-pieces
           #'(lambda (board index)
               (setf (aref *edge-table* index)
                     (static-edge-stability black board)))
           black (initial-board) n-pieces top-edge 0))
   ;; Now iterate five times trying to improve:
-  (dotimes (i 5) 
+  (dotimes (i 5)
     ;; Do the indexes with most pieces first
-    (loop for n-pieces from 9 downto 1 do 
+    (loop for n-pieces from 9 downto 1 do
           (map-edge-n-pieces
             #'(lambda (board index)
                 (setf (aref *edge-table* index)
@@ -215,7 +215,7 @@
            (setf (bref board sq) empty))))))
 
 (defun possible-edge-moves-value (player board index)
-  "Consider all possible edge moves. 
+  "Consider all possible edge moves.
   Combine their values into a single number."
   (combine-edge-moves
     (cons
@@ -277,7 +277,7 @@
             '(+1 -1)))
 
 (defparameter *static-edge-table*
-  '#2A(;stab  semi    un 
+  '#2A(;stab  semi    un
        (   *    0 -2000) ; X
        ( 700    *     *) ; corner
        (1200  200   -25) ; C
@@ -303,7 +303,7 @@
                           (piece-stability board sq)))))))
 
 (let ((stable 0) (semi-stable 1) (unstable 2))
-  
+
   (defun piece-stability (board sq)
     (cond
       ((corner-p sq) stable)

@@ -20,9 +20,9 @@
         ((eql pattern input) bindings)
         ((segment-pattern-p pattern)                ; ***
          (segment-match pattern input bindings))    ; ***
-        ((and (consp pattern) (consp input)) 
+        ((and (consp pattern) (consp input))
          (pat-match (rest pattern) (rest input)
-                    (pat-match (first pattern) (first input) 
+                    (pat-match (first pattern) (first input)
                                bindings)))
         (t fail)))
 
@@ -83,23 +83,23 @@
 ;;; ==============================
 
 (defparameter *eliza-rules*
- '((((?* ?x) hello (?* ?y))      
+ '((((?* ?x) hello (?* ?y))
     (How do you do.  Please state your problem.))
-   (((?* ?x) I want (?* ?y))     
+   (((?* ?x) I want (?* ?y))
     (What would it mean if you got ?y)
     (Why do you want ?y) (Suppose you got ?y soon))
-   (((?* ?x) if (?* ?y)) 
+   (((?* ?x) if (?* ?y))
     (Do you really think its likely that ?y) (Do you wish that ?y)
     (What do you think about ?y) (Really-- if ?y))
    (((?* ?x) no (?* ?y))
     (Why not?) (You are being a bit negative)
     (Are you saying "NO" just to be negative?))
-   (((?* ?x) I was (?* ?y))       
+   (((?* ?x) I was (?* ?y))
     (Were you really?) (Perhaps I already knew you were ?y)
     (Why do you tell me you were ?y now?))
-   (((?* ?x) I feel (?* ?y))     
+   (((?* ?x) I feel (?* ?y))
     (Do you often feel ?y ?))
-   (((?* ?x) I felt (?* ?y))     
+   (((?* ?x) I felt (?* ?y))
     (What other feelings do you have?))))
 
 ;;; ==============================
@@ -136,7 +136,7 @@
       x
       (list x)))
 
-(defun mappend (fn the-list)	
+(defun mappend (fn the-list)
   "Apply fn to each element of list and append the results."
   (apply #'append (mapcar fn the-list)))
 
@@ -148,21 +148,21 @@
 
 ;;;> (eliza)
 ;;;ELIZA> (hello there)
-;;;(HOW DO YOU DO. PLEASE STATE YOUR PROBLEM.) 
+;;;(HOW DO YOU DO. PLEASE STATE YOUR PROBLEM.)
 ;;;ELIZA> (i want to test this program)
-;;;(WHAT WOULD IT MEAN IF YOU GOT TO TEST THIS PROGRAM) 
+;;;(WHAT WOULD IT MEAN IF YOU GOT TO TEST THIS PROGRAM)
 ;;;ELIZA> (i could see if it works)
 ;;;(DO YOU REALLY THINK ITS LIKELY THAT IT WORKS)
 ;;;ELIZA> (no not really)
-;;;(ARE YOU SAYING "NO" JUST TO BE NEGATIVE?) 
+;;;(ARE YOU SAYING "NO" JUST TO BE NEGATIVE?)
 ;;;ELIZA> (no)
-;;;(ARE YOU SAYING "NO" JUST TO BE NEGATIVE?) 
+;;;(ARE YOU SAYING "NO" JUST TO BE NEGATIVE?)
 ;;;ELIZA> (forget it-- i was wondering how general the program is)
 ;;;(WHY DO YOU TELL ME YOU WERE WONDERING HOW GENERAL THE PROGRAM IS NOW?)
 ;;;ELIZA> (i felt like it)
-;;;(WHAT OTHER FEELINGS DO YOU HAVE?) 
+;;;(WHAT OTHER FEELINGS DO YOU HAVE?)
 ;;;ELIZA> (i feel this is enough)
-;;;(DO YOU OFTEN FEEL THIS IS ENOUGH ?) 
+;;;(DO YOU OFTEN FEEL THIS IS ENOUGH ?)
 ;;;ELIZA> [Abort]
 
 ;;; ==============================

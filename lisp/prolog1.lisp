@@ -40,7 +40,7 @@
   (setf (get predicate 'clauses) nil))
 
 (defun prove (goal bindings)
-  "Return a list of possible solutions to goal."  
+  "Return a list of possible solutions to goal."
   (mapcan #'(lambda (clause)
               (let ((new-clause (rename-variables clause)))
                 (prove-all (clause-body new-clause)
@@ -76,7 +76,7 @@
                                  found-so-far))))
 
 (defun find-anywhere-if (predicate tree)
-  "Does predicate apply to any atom in the tree?"  
+  "Does predicate apply to any atom in the tree?"
   (if (atom tree)
       (funcall predicate tree)
       (or (find-anywhere-if predicate (first tree))
@@ -91,7 +91,7 @@
     (prove-all goals no-bindings)))
 
 (defun show-prolog-solutions (vars solutions)
-  "Print the variables in each of the solutions."  
+  "Print the variables in each of the solutions."
   (if (null solutions)
       (format t "~&No.")
       (mapc #'(lambda (solution) (show-prolog-vars vars solution))

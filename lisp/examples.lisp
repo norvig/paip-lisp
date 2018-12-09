@@ -50,7 +50,7 @@
   ((first-name p) => JOHN)
   ((first-name '(Wilma Flintstone)) => WILMA)
   ((setf names '((John Q Public) (Malcolm X)
-              (Admiral Grace Murray Hopper) (Spot) 
+              (Admiral Grace Murray Hopper) (Spot)
               (Aristotle) (A A Milne) (Z Z Top)
               (Sir Larry Olivier) (Miss Scarlet))) @ 14)
   ((first-name (first names)) => JOHN)
@@ -133,7 +133,7 @@
   "functions in Lisp."
   (:section "3.2 Special Forms")
   "Start with functions and special forms for repetition:"
-  "First, functions like MAPCAR can apply to any number of lists:" 
+  "First, functions like MAPCAR can apply to any number of lists:"
   ((mapcar #'- '(1 2 3)) => (-1 -2 -3) @ 61)
   ((mapcar #'+ '(1 2) '(10 20) '(100 200)) => (111 222))
   "Second, many of the functions accept keywords:"
@@ -220,7 +220,7 @@
   "This style of programming is covered in more detail in chapter 13."
   )
 
-(defexamples 4 "GPS: The General Problem Solver" 
+(defexamples 4 "GPS: The General Problem Solver"
   "The General problem Solver, developed in 1957 by Alan Newell and Herbert"
   "Simon, embodied a grandiose vision: a single computer program that could"
   "solve ANY problem.  GPS caused quite a stir ..."
@@ -250,7 +250,7 @@
   "The bug is that when (EVERY #'ACHIEVE GOALS) returns true, it means all the"
   "goals were achieved in turn, but they might not still be all true."
 
-  (:section "4.8 The Leaping before You Look Problem") 
+  (:section "4.8 The Leaping before You Look Problem")
   "What happens if we move the HAVE-MONEY goal to the end?"
   ((gps '(son-at-home car-needs-battery have-money have-phone-book)
        '(have-money son-at-school)
@@ -277,7 +277,7 @@
   "operator is applied, we will instead have GPS return the resulting state."
   ((requires "gps"))
   "We use the list of operators that includes the 'asking the shop their"
-  "phone number' operator." 
+  "phone number' operator."
   ((push (make-op :action 'ask-phone-number
                :preconds '(in-communication-with-shop)
                :add-list '(know-phone-number))
@@ -288,7 +288,7 @@
   ((gps '(son-at-home car-needs-battery have-money have-phone-book)
 	'(son-at-school)) =>
 	((START)
-	 (EXECUTING LOOK-UP-NUMBER) 
+	 (EXECUTING LOOK-UP-NUMBER)
 	 (EXECUTING TELEPHONE-SHOP)
 	 (EXECUTING TELL-SHOP-PROBLEM)
 	 (EXECUTING GIVE-SHOP-MONEY)
@@ -299,7 +299,7 @@
   ((gps '(son-at-home car-needs-battery have-money have-phone-book)
 	'(son-at-school)) =>
 	((START)
-	 (EXECUTING LOOK-UP-NUMBER) 
+	 (EXECUTING LOOK-UP-NUMBER)
 	 (EXECUTING TELEPHONE-SHOP)
 	 (EXECUTING TELL-SHOP-PROBLEM)
 	 (EXECUTING GIVE-SHOP-MONEY)
@@ -347,7 +347,7 @@
   ((gps '((at 1)) '((at 25))) @ 135)
 
   "We can define FIND-PATH to use the results of a GPS search:"
-  ((find-path 1 25) @ 136 => 
+  ((find-path 1 25) @ 136 =>
    (1 2 3 4 9 8 7 12 11 16 17 22 23 24 19 20 25))
   ((find-path 1 1) => (1))
   ((equal (find-path 1 25) (reverse (find-path 25 1))) => T)
@@ -431,7 +431,7 @@
   "Now a version of pat-match that works with such pairs:"
   ((pat-match '(I need a ?x) '(I need a vacation))  @ 158)
   "Showing how to plug it in:"
-  ((sublis (pat-match '(I need a ?x) '(I need a vacation)) 
+  ((sublis (pat-match '(I need a ?x) '(I need a vacation))
 	   '(what would it mean to you if you got a ?X ?))
    => (what would it mean to you if you got a VACATION ?) @ 159)
   ((pat-match '(I need a ?x) '(I really need a vacation)) => nil)
@@ -464,15 +464,15 @@
   ((pat-match '(x = (?is ?n numberp)) '(x = 34)) => ((?n . 34)) @ 179)
   ((pat-match '(x = (?is ?n numberp)) '(x = x)) => NIL)
   ((pat-match '(?x (?or < = >) ?y) '(3 < 4)) => ((?Y . 4) (?X . 3)))
-  ((pat-match '(x = (?and (?is ?n numberp) (?is ?n oddp))) '(x = 3)) 
+  ((pat-match '(x = (?and (?is ?n numberp) (?is ?n oddp))) '(x = 3))
    => ((?N . 3)))
   ((pat-match '(?x /= (?not ?x)) '(3 /= 4)) => ((?X . 3)) @ 180)
   ((pat-match '(?x > ?y (?if (> ?x ?y))) '(4 > 3)) => ((?Y . 3) (?X . 4)))
   ((pat-match '(a (?* ?x) d) '(a b c d)) => ((?X B C)) @ 185)
   ((pat-match '(a (?* ?x) (?* ?y) d) '(a b c d)) => ((?Y B C) (?X)))
-  ((pat-match '(a (?* ?x) (?* ?y) ?x ?y) '(a b c d (b c) (d))) 
+  ((pat-match '(a (?* ?x) (?* ?y) ?x ?y) '(a b c d (b c) (d)))
    => ((?Y D) (?X B C)) @ 186)
-  ((pat-match '(?x ?op ?y is ?z (?if (eql (funcall ?op ?x ?y) ?z))) 
+  ((pat-match '(?x ?op ?y is ?z (?if (eql (funcall ?op ?x ?y) ?z)))
 	      '(3 + 4 is 7))
    => ((?Z . 7) (?Y . 4) (?OP . +) (?X . 3)))
   ((pat-match '(?x ?op ?y (?if (funcall ?op ?x ?y))) '(3 > 4)) => NIL)
@@ -481,7 +481,7 @@
   ((setf axyd (expand-pat-match-abbrev '(a ?x* ?y* d)))
    => (A (?* ?X) (?* ?Y) D))
   ((pat-match axyd '(a b c d)) => ((?Y B C) (?X)))
-  ((pat-match '(((?* ?x) (?* ?y)) ?x ?y) '((a b c d) (a b) (c d))) 
+  ((pat-match '(((?* ?x) (?* ?y)) ?x ?y) '((a b c d) (a b) (c d)))
    => NIL)
   ((requires "eliza-pm"))
 
@@ -516,7 +516,7 @@
   ((tree-search '(1) (is 6) #'next2 #'prepend) => 6 @ 208)
   ((graph-search '(1) (is 6) #'next2 #'prepend) => 6)
   ((path-states
-    (a*-search (list (make-path :state 1)) (is 6) 
+    (a*-search (list (make-path :state 1)) (is 6)
                #'next2 #'(lambda (x y) 1) (diff 6))) => (6 5 3 1) @ 210)
   (:section "6.5 GPS as Search")
   ((requires "gps-srch"))
@@ -550,11 +550,11 @@
   ((untrace isolate solve))
   (:section "7.3 Examples")
   ((student '(If the number of customers Tom gets is twice the square of
-           20 % of the number of advertisements he runs |,| 
+           20 % of the number of advertisements he runs |,|
            and the number of advertisements is 45 |,|
            then what is the number of customers Tom gets ?)) => nil @ 231)
-  ((student '(The daily cost of living for a group is the overhead cost plus 
-           the running cost for each person times the number of people in 
+  ((student '(The daily cost of living for a group is the overhead cost plus
+           the running cost for each person times the number of people in
            the group |.|  This cost for one group equals $ 100 |,|
            and the number of people in the group is 40 |.|
            If the overhead cost is 10 times the running cost |,|
@@ -595,16 +595,16 @@
   ((simp '(d (a * x ^ 2 + b * x + c) / d x)) => ((2 * (A * X)) + B) )
   "For the next one, note we had an error in the first printing of the book;"
   "the sign was reversed on the (d (u / v) ...) rule."
-  ((simp '(d ((a * x ^ 2 + b * x + c) / x) / d x)) 
+  ((simp '(d ((a * x ^ 2 + b * x + c) / x) / d x))
    => (((X * ((2 * (A * X)) + B)) - ((A * (X ^ 2)) + ((B * X) + C))) /
        (X ^ 2)))
   ((simp '(log ((d (x + x) / d x) / 2))) => 0 )
   ((simp '(log(x + x) - log x)) => (LOG 2))
   ((simp '(x ^ cos pi)) => (1 / X) )
   "These next two examples were also affected by the (d (u / v) ...) rule."
-  ((simp '(d (3 * x + (cos x) / x) / d x)) 
+  ((simp '(d (3 * x + (cos x) / x) / d x))
    => ((((X * (- (SIN X))) - (COS X)) / (X ^ 2)) + 3))
-  ((simp '(d ((cos x) / x) / d x)) 
+  ((simp '(d ((cos x) / x) / d x))
    => (((X * (- (SIN X))) - (COS X)) / (X ^ 2)))
   ((simp '(d (3 * x ^ 2 + 2 * x + 1) / d x)) => ((6 * X) + 2))
   ((simp '(sin(x + x) ^ 2 + cos(d x ^ 2 / d x) ^ 2)) => 1 )
@@ -621,24 +621,24 @@
   "In chapter 15, we develop a new version of the program that handles this problem."
 
   (:section "8.6 Integration")
-  ((set-simp-fn 'Int #'(lambda (exp) 
+  ((set-simp-fn 'Int #'(lambda (exp)
 			(integrate (exp-lhs exp) (exp-rhs exp)))) @ 258)
   ((simp '(Int x * sin(x ^ 2) d x)) => (1/2 * (- (COS (X ^ 2)))) )
-  ((simp '(Int ((3 * x ^ 3) - 1 / (3 * x ^ 3)) d x)) 
+  ((simp '(Int ((3 * x ^ 3) - 1 / (3 * x ^ 3)) d x))
    => ((3 * ((X ^ 4) / 4)) - (1/3 * ((X ^ -2) / -2))) )
   ((simp '(Int (3 * x + 2) ^ -2/3 d x)) => (((3 * X) + 2) ^ 1/3) )
   ((simp '(Int sin(x) ^ 2 * cos(x) d x)) => (((SIN X) ^ 3) / 3) )
   ((simp '(Int sin(x) / (1 + cos(x)) d x)) => (-1 * (LOG ((COS X) + 1))) )
-  ((simp '(Int (2 * x + 1) / (x ^ 2 + x - 1) d x)) 
+  ((simp '(Int (2 * x + 1) / (x ^ 2 + x - 1) d x))
    => (LOG ((X ^ 2) + (X - 1))) )
-  ((simp '(Int 8 * x ^ 2 / (x ^ 3 + 2) ^ 3 d x)) 
+  ((simp '(Int 8 * x ^ 2 / (x ^ 3 + 2) ^ 3 d x))
    => (8 * ((1/3 * (((X ^ 3) + 2) ^ -2)) / -2)) )
-  ((set-simp-fn 'Int 
+  ((set-simp-fn 'Int
 	       #'(lambda (exp)
 		   (unfactorize
 		    (factorize
 		     (integrate (exp-lhs exp) (exp-rhs exp)))))) @ 259)
-  ((simp '(Int 8 * x ^ 2 / (x ^ 3 + 2) ^ 3 d x)) 
+  ((simp '(Int 8 * x ^ 2 / (x ^ 3 + 2) ^ 3 d x))
    => (-4/3 * (((X ^ 3) + 2) ^ -2)) )
   )
 
@@ -708,7 +708,7 @@
   ((unify 'a 'a) => ((t . t)))
   "Here are some examples of UNIFIER:"
   ((unifier '(?x ?y a) '(?y ?x ?x)) => (a a a))
-  ((unifier '((?a * ?x ^ 2) + (?b * ?x) + ?c) 
+  ((unifier '((?a * ?x ^ 2) + (?b * ?x) + ?c)
 	    '(?z + (4 * 5) + 3))
    => ((?a * 5 ^ 2) + (4 * 5) + 3))
 
@@ -750,7 +750,7 @@
   ((<- (nextto ?x ?y ?list) (iright ?x ?y ?list)) @ 374)
   ((<- (nextto ?x ?y ?list) (iright ?y ?x ?list)))
   ((<- (iright ?left ?right (?left ?right . ?rest))))
-  ((<- (iright ?left ?right (?x . ?rest)) 
+  ((<- (iright ?left ?right (?x . ?rest))
        (iright ?left ?right ?rest)))
   ((<- (= ?x ?x)))
   "Now we define the zebra puzzle:"
@@ -758,7 +758,7 @@
        ;; Each house is of the form:
        ;; (house nationality pet cigarette drink house-color)
        (= ?h ((house norwegian ? ? ? ?)	;1,10
-	      ? 
+	      ?
 	      (house ? ? ? milk ?) ? ?)) ; 9
        (member (house englishman ? ? ? red) ?h)	; 2
        (member (house spaniard dog ? ? ?) ?h) ; 3
@@ -854,7 +854,7 @@
   ((defclass account* ()
      ((name :initarg :name :reader name*)
       (balance :initarg :balance :initform 0.00 :accessor balance*)
-      (interest-rate :allocation :class :initform .06 
+      (interest-rate :allocation :class :initform .06
                      :reader interest-rate*))) @ 445)
   ((setf a1 (make-instance 'account* :balance 5000.00
                           :name "Fred")) @ 446)
@@ -936,7 +936,7 @@
   ((defclass binary-tree-eql-bfs-problem
      (binary-tree-problem eql-problem bfs-problem) ()))
 
-  ((setf p1 (make-instance 'binary-tree-eql-bfs-problem 
+  ((setf p1 (make-instance 'binary-tree-eql-bfs-problem
                           :states '(1) :goal 12)))
   ((searcher p1) => 12)
 
@@ -957,19 +957,19 @@
 
   ((defmethod problem-combiner :around ((prob beam-problem) new old)
      (let ((combined (call-next-method)))
-       (subseq combined 0 (min (problem-beam-width prob) 
+       (subseq combined 0 (min (problem-beam-width prob)
                                (length combined))))))
 
   ((defclass binary-tree-eql-best-beam-problem
-     (binary-tree-problem eql-problem best-problem beam-problem) 
+     (binary-tree-problem eql-problem best-problem beam-problem)
      ()))
 
-  ((setf p3 (make-instance 'binary-tree-eql-best-beam-problem 
+  ((setf p3 (make-instance 'binary-tree-eql-best-beam-problem
                           :states '(1) :goal 12 :beam-width 3)))
 
   ((searcher p3) => 12)
 
-  ((defclass trip-problem (binary-tree-eql-best-beam-problem) 
+  ((defclass trip-problem (binary-tree-eql-best-beam-problem)
      ((beam-width :initform 1))) @ 453)
 
   ((defmethod cost-fn ((prob trip-problem) city)
@@ -978,8 +978,8 @@
   ((defmethod problem-successors ((prob trip-problem) city)
      (neighbors city)))
 
-  ((setf p4 (make-instance 'trip-problem 
-                          :states (list (city 'new-york)) 
+  ((setf p4 (make-instance 'trip-problem
+                          :states (list (city 'new-york))
                           :goal (city 'san-francisco))))
 
   ((searcher p4) =>
@@ -1167,7 +1167,7 @@
   ((print-labelings (diagram 'poiuyt)) @ 583)
   "Now we try a more complex diagram:"
   ((defdiagram tower
-     (a Y b c d)    (n L q o) 
+     (a Y b c d)    (n L q o)
      (b W g e a)    (o W y j n)
      (c W e f a)    (p L r i)
      (d W f g a)    (q W n s w)
@@ -1181,7 +1181,7 @@
      (l L h k)      (y Y v u o)
      (m L k i)      (z Y t u v)) @ 584)
   ((print-labelings (ground (diagram 'tower) 'l 'k)) @ 584))
-  
+
 (defexamples 18 "Search and the Game of Othello"
   "In this chapter we will develop a simplified Othello-playing program."
   "It will not be a champion, but is much better than beginning players."
@@ -1192,7 +1192,7 @@
   "Now we can compare the weighted squares and count difference strategies"
   "by playing two games, alternating who goes first.  The NIL as third argument"
   "means don't print the board after each move."
-  ((othello (maximizer #'weighted-squares) 
+  ((othello (maximizer #'weighted-squares)
          (maximizer #'count-difference) nil) @ 610)
   ((othello (maximizer #'count-difference)
             (maximizer #'weighted-squares) nil))
@@ -1213,7 +1213,7 @@
   "another.  The function RANDOM-OTHELLO-SERIES allows two strategies to"
   "compete in a series of games."
   ((requires "othello2"))
-  ((random-othello-series 
+  ((random-othello-series
     (alpha-beta-searcher 2 #'weighted-squares)
     (alpha-beta-searcher 2 #'modified-weighted-squares)
     5) @ 628)
@@ -1234,7 +1234,7 @@
          (alpha-beta-searcher 3 #'weighted-squares)
          (alpha-beta-searcher 3 #'modified-weighted-squares)
          #'random-strategy)
-   1 10 
+   1 10
    '(count-difference weighted modified-weighted random)))
   )
 
@@ -1484,7 +1484,7 @@
   ((do-s '(Every picture paints a story)) :input "." @ 699)
   ((do-s '(Every boy that paints a picture sleeps)) :input ".")
   ((do-s '(Every boy that sleeps paints a picture)) :input ".")
-  ((do-s '(Every boy that paints a picture that sells paints a picture 
+  ((do-s '(Every boy that paints a picture that sells paints a picture
 		 that stinks)) :input "." @ 700)
 
   (:section "20.5 Preserving Quantifier Scope Ambiguity")
@@ -1534,7 +1534,7 @@
   ((?- (word sees verb ?infl ?senses)) :input ".")
   ((try S John promised Kim to persuade Lee to sleep) :input ";;;.")
   (:section "21.14 Examples")
-  ((try S When did John promise Kim to persuade Lee to sleep) 
+  ((try S When did John promise Kim to persuade Lee to sleep)
    @ 746 :input ";;;.")
   ((try S Kim would not have been looking for Lee) @ 747 :input ";;;.")
   ((try s It should not surprise you that Kim does not like Lee) :input ";;;.")
@@ -1549,11 +1549,11 @@
   "to avoid going into a read-eval-print loop with SCHEME.  This is a new"
   "functionality, no in the book, added to make these examples easier."
   ((scheme '(+ 2 2)) @ 760 => 4 )
-  ((scheme '((if (= 1 2) * +) 3 4)) => 7) 
-  ((scheme '((if (= 1 1) * +) 3 4)) => 12 @ 761) 
+  ((scheme '((if (= 1 2) * +) 3 4)) => 7)
+  ((scheme '((if (= 1 1) * +) 3 4)) => 12 @ 761)
   ((scheme '(set! fact (lambda (n) (if (= n 0) 1
 				     (* n (fact (- n 1))))))))
-  ((scheme '(fact 5)) => 120) 
+  ((scheme '(fact 5)) => 120)
   ((scheme '(set! table (lambda (f start end)
 			  (if (<= start end)
 			      (begin
@@ -1573,7 +1573,7 @@
   ((scheme-macro-expand '(let ((x 1) (y 2)) (+ x y))) =>
    ((LAMBDA (X Y) (+ X Y)) 1 2))
   ((scheme-macro-expand
-    '(letrec 
+    '(letrec
       ((even? (lambda (x) (or (= x 0) (odd? (- x 1)))))
        (odd?  (lambda (x) (even? (- x 1)))))
       (even? z))))
