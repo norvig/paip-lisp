@@ -121,20 +121,20 @@ Below we show the function `simple-equal`, which is like the built-in function `
 
 ```lisp
 (defun simple-equal (x y)
-  "Are x and y equal?  (Don't check inside strings.)"
-  (if (or (atom x) (atom y))
-      (eql x y)
-      (and (simple-equal (first x) (first y))
-     (simple-equal (rest x) (rest y)))))
-
+   "Are x and y equal?  (Don't check inside strings.)"
+   (if (or (atom x) (atom y))
+       (eql x y)
+       (and (simple-equal (first x) (first y))
+	    (simple-equal (rest x) (rest y)))))
+        
 (defun pat-match (pattern input)
   "Does pattern match input? Any variable can match anything."
   (if (variable-p pattern)
       t
-    (if (or (atom pattern) (atom input))
-  (eql pattern input)
-        (and (pat-match (first pattern) (first input))
-       (pat-match (rest pattern) (rest input))))))
+      (if (or (atom pattern) (atom input))
+	  (eql pattern input)
+          (and (pat-match (first pattern) (first input))
+	       (pat-match (rest pattern) (rest input))))))
 ```
 
 &#9635; **Exercise 5.1 [s]** Would it be a good idea to replace the complex and form in `pat-match` with the simpler `(every #'pat-match pattern input)?`
@@ -191,13 +191,13 @@ Here's a first attempt:
 
 ```lisp
 (defun pat-match (pattern input)
-  "Does pattern match input? WARNING: buggy version."
-  (if (variable-p pattern)
-      (list (cons pattern input))
-      (if (or (atom pattern) (atom input))
-    (eql pattern input)
-    (append (pat-match (first pattern) (first input))
-      (pat-match (rest pattern) (rest input))))))
+   "Does pattern match input? WARNING: buggy version."
+   (if (variable-p pattern)
+       (list (cons pattern input))
+       (if (or (atom pattern) (atom input))
+	   (eql pattern input)
+	   (append (pat-match (first pattern) (first input))
+		   (pat-match (rest pattern) (rest input))))))
 ```
 
 This implementation looks reasonable: it returns an a-list of one element if the pattern is a variable, and it appends alists if the pattern and input are both lists.
@@ -261,23 +261,23 @@ If none of these four cases succeeds, then the match fails.
 
 ```lisp
 (defun pat-match (pattern input &optional (bindings no-bindings))
-  "Match pattern against input in the context of the bindings"
-  (cond ((eq bindings fail) fail)
-  ((variable-p pattern)
-   (match-variable pattern input bindings))
-  ((eql pattern input) bindings)
-  ((and (consp pattern) (consp input))
-   (pat-match (rest pattern) (rest input)
-        (pat-match (first pattern) (first input)
-             bindings)))
-  (t fail)))
+   "Match pattern against input in the context of the bindings"
+   (cond ((eq bindings fail) fail)
+	 ((variable-p pattern)
+	  (match-variable pattern input bindings))
+	 ((eql pattern input) bindings)
+	 ((and (consp pattern) (consp input))
+	  (pat-match (rest pattern) (rest input)
+		     (pat-match (first pattern) (first input)
+				bindings)))
+	 (t fail)))
 
 (defun match-variable (var input bindings)
   "Does VAR match input? Uses (or updates) and returns bindings."
   (let ((binding (get-binding var bindings)))
     (cond ((not binding) (extend-bindings var input bindings))
-    ((equal input (binding-val binding)) bindings)
-    (t fail))))
+	  ((equal input (binding-val binding)) bindings)
+	  (t fail))))
 ```
 
 We can now test `pat-match` and see how it works:
@@ -293,13 +293,13 @@ It does no real harm, but we can eliminate it by making `extend-bindings` a litt
 
 ```lisp
 (defun extend-bindings (var val bindings)
-  "Add a (var . value) pair to a binding list. "
-  (cons (cons var val)
-  ;; Once we add a "real" binding,
-  ;; we can get rid of the dummy no-bindings
-  (if (eq bindings no-bindings)
-      nil
-      bindings)))
+   "Add a (var . value) pair to a binding list. "
+   (cons (cons var val)
+	 ;; Once we add a "real" binding,
+	 ;; we can get rid of the dummy no-bindings
+	 (if (eq bindings no-bindings)
+	     nil
+	     bindings)))
 
 > (sublis (pat-match ' (i need a ?X) ' (i need a vacation))
           '(what would it mean to you if you got a ?X ?))
@@ -351,19 +351,19 @@ We can update `pat-match` to account for this by adding a single cond-clause.
 Defining the predicate to test for segment variables is also easy:
 
 ```lisp
-(defun pat-match (pattern input &optional (bindings no-bindings))
-  "Match pattern against input in the context of the bindings"
-  (cond ((eq bindings fail) fail)
-  ((variable-p pattern)
-   (match-variable pattern input bindings))
-  ((eql pattern input) bindings)
-  ((segment-pattern-p pattern)                ; ***
-   (segment-match pattern input bindings))    ; ***
-  ((and (consp pattern) (consp input))
-   (pat-match (rest pattern) (rest input)
-        (pat-match (first pattern) (first input)
-             bindings)))
-  (t fail)))
+ (defun pat-match (pattern input &optional (bindings no-bindings))
+   "Match pattern against input in the context of the bindings"
+   (cond ((eq bindings fail) fail)
+	 ((variable-p pattern)
+	  (match-variable pattern input bindings))
+	 ((eql pattern input) bindings)
+	 ((segment-pattern-p pattern)                ; ***
+	  (segment-match pattern input bindings))    ; ***
+	 ((and (consp pattern) (consp input))
+	  (pat-match (rest pattern) (rest input)
+		     (pat-match (first pattern) (first input)
+				bindings)))
+	 (t fail)))
 
 (defun segment-pattern-p (pattern)
   "Is this a segment matching pattern: ((?* var) . pat)"
@@ -390,23 +390,23 @@ Notice that this policy rules out the possibility of any kind of variable follow
 
 ```lisp
 (defun segment-match (pattern input bindings &optional (start 0))
-  "Match the segment pattern ((?* var) . pat) against input."
-  (let ((var (second (first pattern)))
-  (pat (rest pattern)))
-    (if (null pat)
-  (match-variable var input bindings)
-        ;; We assume that pat starts with a constant
-        ;; In other words, a pattern can't have 2 consecutive vars
-        (let ((pos (position (first pat) input
-           :start start :test #'equal)))
-    (if (null pos)
-      fail
-      (let ((b2 (pat-match pat (subseq input pos) bindings)))
-        ;; If this match failed, try another longer one
-        ;; If it worked, check that the variables match
-        (if (eq b2 fail)
-      (segment-match pattern input bindings (+ pos 1))
-      (match-variable var (subseq input 0 pos) b2))))))))
+   "Match the segment pattern ((?* var) . pat) against input."
+   (let ((var (second (first pattern)))
+	 (pat (rest pattern)))
+     (if (null pat)
+	 (match-variable var input bindings)
+	 ;; We assume that pat starts with a constant
+	 ;; In other words, a pattern can't have 2 consecutive vars
+	 (let ((pos (position (first pat) input
+			      :start start :test #'equal)))
+	   (if (null pos)
+	       fail
+	       (let ((b2 (pat-match pat (subseq input pos) bindings)))
+		 ;; If this match failed, try another longer one
+		 ;; If it worked, check that the variables match
+		 (if (eq b2 fail)
+		     (segment-match pattern input bindings (+ pos 1))
+		     (match-variable var (subseq input 0 pos) b2))))))))
 ```
 
 Some examples of segment matching follow:
@@ -437,26 +437,26 @@ This fails because `?x` is matched against the subsequence `(1 2)`, and then the
 The fix is to call `match-variable` before testing whether the `b2` fails, so that we will be sure to try `segment-match` again with a longer match no matter what the cause of the failure.
 
 ```lisp
-(defun segment-match (pattern input bindings optional (start 0))
-  "Match the segment pattern ((?* var) . pat) against input."
-  (let ((var (second (first pattern)))
-  (pat (rest pattern)))
-    (if (null pat)
-  (match-variable var input bindings)
-        ;; We assume that pat starts with a constant
-        ;; In other words, a pattern can't have 2 consecutive vars
-        (let ((pos (position (first pat) input
-           :start start :test #'equal)))
-    (if (null pos)
-        fail
-      (let ((b2 (pat-match
-             pat (subseq input pos)
-       (match-variable var (subseq input 0 pos)
-           bindings))))
-        ;; If this match failed, try another longer one
-        (if (eq b2 fail)
-      (segment-match pattern input bindings (+ pos 1))
-      b2)))))))
+(defun segment-match (pattern input bindings &optional (start 0))
+   "Match the segment pattern ((?* var) . pat) against input."
+   (let ((var (second (first pattern)))
+	 (pat (rest pattern)))
+     (if (null pat)
+	 (match-variable var input bindings)
+	 ;; We assume that pat starts with a constant
+	 ;; In other words, a pattern can't have 2 consecutive vars
+	 (let ((pos (position (first pat) input
+			      :start start :test #'equal)))
+	   (if (null pos)
+	       fail
+	       (let ((b2 (pat-match
+			  pat (subseq input pos)
+			  (match-variable var (subseq input 0 pos)
+					  bindings))))
+		 ;; If this match failed, try another longer one
+		 (if (eq b2 fail)
+		     (segment-match pattern input bindings (+ pos 1))
+		     b2)))))))
 ```
 
 Now we see that the match goes through:
@@ -477,6 +477,7 @@ These are rules in the sense that they assert, "If you see A, then respond with 
 
 ```lisp
 (defun rule-pattern (rule) (first rule))
+
 (defun rule-responses (rule) (rest rule))
 ```
 
@@ -569,14 +570,14 @@ Here is the complete program:
    (print 'eliza>)
    (write (flatten (use-eliza-rules (read))) :pretty t)))
 
-(defun use-eliza-rules (input)
-  "Find some rule with which to transform the input."
-  (some #*(lambda (rule)
-      (let ((result (pat-match (rule-pattern rule) input)))
-        (if (not (eq result fail))
-      (sublis (switch-viewpoint result)
-        (random-elt (rule-responses rule))))))
-  *eliza-rules*))
+ (defun use-eliza-rules (input)
+   "Find some rule with which to transform the input."
+   (some #'(lambda (rule)
+	     (let ((result (pat-match (rule-pattern rule) input)))
+	       (if (not (eq result fail))
+		   (sublis (switch-viewpoint result)
+			   (random-elt (rule-responses rule))))))
+	 *eliza-rules*))
 
 (defun switch-viewpoint (words)
   "Change I to you and vice versa, and so on."
@@ -743,7 +744,7 @@ No.
 If either the pattern or the input were shorter, but matched every existing element, the every expression would incorrectly return true.
 
 ```lisp
-(every #'pat-match *(a b c) '(a)) ⇒ T
+(every #'pat-match '(a b c) '(a)) ⇒ T
 ```
 
 Furthermore, if either the pattern or the input were a dotted list, then the result of the every would be undefined-some implementations might signal an error, and others might just ignore the expression after the dot.
@@ -779,14 +780,14 @@ This could also be done by altering the readtable, as in section 23.5, page 821.
 ### Answer 5.6
 
 ```lisp
-(defun eliza ()
-  "Respond to user input using pattern matching rules."
-  (loop
-   (print *eliza>)
-   (let * ((input (read-line-no-punct))
-       (response (flatten (use-eliza-rules input))))
-      (print-with-spaces response)
-      (if (equal response '(good bye)) (RETURN)))))
+ (defun eliza ()
+   "Respond to user input using pattern matching rules."
+   (loop
+      (print 'eliza>)
+      (let* ((input (read-line-no-punct))
+	      (response (flatten (use-eliza-rules input))))
+	   (print-with-spaces response)
+	   (if (equal response '(good bye)) (RETURN)))))
 
 (defun print-with-spaces (list)
   (mapc #'(lambda (x) (prin1 x) (princ " ")) list))
