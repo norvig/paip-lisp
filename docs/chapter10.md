@@ -75,9 +75,10 @@ In some cases, further optimizations are possible.
 Consider the predicate `starts-with`:
 
 ```lisp
-(defun starts-with (list x)
-  "Is this a list whose first element is x?"
-  (and (consp list) (eql (first list) x)))
+  (defun starts-with (list x)
+    "Is x a list whose first element is x?"
+    (and (consp list) (eql (first list) x)))
+  )
 ```
 
 Suppose we have a code fragment like the following:
@@ -981,23 +982,24 @@ With all these warnings in mind, here is some code to manage resources:
 
 ```lisp
 (defmacro defresource (name &key constructor (initial-copies 0)
-                  (size (max initial-copies 10)))
-  (let ((resource (symbol name '-resource))
-      (deallocate (symbol 'deallocate- name))
-      (allocate (symbol 'allocate- name)))
-    '(let ((.resource (make-array ,size :fill-pointer 0)))
-      (defun ,allocate ()
-        "Get an element from the resource pool, or make one."
-        (if (= (fill-pointer ,resource) 0)
-            ,constructor
-            (vector-pop ,resource)))
-      (defun ,deallocate (.name)
-        "Place a no-longer-needed element back in the pool."
-        (vector-push-extend ,name ,resource))
-      .(if (> initial-copies 0)
-            '(mapc #',deallocate (loop repeat ,initial-copies
-                         collect (,allocate))))
-      ',name)))
+                       (size (max initial-copies 10)))
+  (let ((resource (symbol '* (symbol name '-resource*)))
+        (deallocate (symbol 'deallocate- name))
+        (allocate (symbol 'allocate- name)))
+    `(progn
+       (defparameter ,resource (make-array ,size :fill-pointer 0))
+       (defun ,allocate ()
+         "Get an element from the resource pool, or make one."
+         (if (= (fill-pointer ,resource) 0)
+             ,constructor
+             (vector-pop ,resource)))
+       (defun ,deallocate (,name)
+         "Place a no-longer-needed element back in the pool."
+         (vector-push-extend ,name ,resource))
+       ,(if (> initial-copies 0)
+            `(mapc #',deallocate (loop repeat ,initial-copies
+                                       collect (,allocate))))
+       ',name)))
 ```
 
 Let's say we had some structure called a buffer which we were constantly making instances of and then discarding.
@@ -1042,18 +1044,17 @@ Of course, if `process` stored a *copy* of `b,` then everything is alright.
 This pattern of allocation and deallocation is so common that we can provide a macro for it:
 
 ```lisp
-(defmacro with-resource ((var resource &optional protect) &rest body)
+defmacro with-resource ((var resource &optional protect) &rest body)
   "Execute body with VAR bound to an instance of RESOURCE."
   (let ((allocate (symbol 'allocate- resource))
-      (deallocate (symbol 'deallocate- resource)))
+        (deallocate (symbol 'deallocate- resource)))
     (if protect
-      '(let ((,var nil))
-        (unwind-protect
-          (progn (setf ,var (,allocate)) ,@body)
-          (unless (null ,var) (,deallocate ,var))))
-      '(let ((,var (,allocate)))
-        ,@body
-        (,deallocate ,var)))))
+        `(let ((,var nil))
+           (unwind-protect (progn (setf ,var (,allocate)) ,@body)
+             (unless (null ,var) (,deallocate ,var))))
+        `(let ((,var (,allocate)))
+           ,@body
+           (,deallocate var)))))
 ```
 
 The macro allows for an optional argument that sets up an `unwind` - protect environment, so that the buffer gets deallocated even when the body is abnormally exited.
@@ -1222,28 +1223,35 @@ In the definitions below, we change the name `tconc` to the more standard `enque
 ;;; A queue is a (last . contents) pair
 (proclaim '(inline queue-contents make-queue enqueue dequeue
                 front empty-queue-p queue-nconc))
+
 (defun queue-contents (q) (cdr q))
+
 (defun make-queue ()
   "Build a new queue, with no elements."
   (let ((q (cons nil nil)))
     (setf (car q) q)))
+
 (defun enqueue (item q)
   "Insert item at the end of the queue."
   (setf (car q)
-          (setf (rest (car q))
-            (cons item nil)))
+        (setf (rest (car q))
+              (cons item nil)))
   q)
+
 (defun dequeue (q)
   "Remove an item from the front of the queue."
   (pop (cdr q))
   (if (null (cdr q)) (setf (car q) q))
   q)
+
 (defun front (q) (first (queue-contents q)))
+
 (defun empty-queue-p (q) (null (queue-contents q)))
+
 (defun queue-nconc (q list)
   "Add the elements of LIST to the end of the queue."
   (setf (car q)
-          (last (setf (rest (car q)) list))))
+        (last (setf (rest (car q)) list))))
 ```
 
 ### The Right Data Structure: Tables

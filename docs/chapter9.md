@@ -153,24 +153,17 @@ This process is called *memoization*.
 The function `memo` below is a higher-order function that takes a function as input and returns a new function that will compute the same results, but not do the same computation twice.
 
 ```lisp
-(defun memo (fn)
+(defun memo (fn &key (key #'first) (test #'eql) name)
+  "Return a memo-function of fn."
+  (let ((table (make-hash-table :test test)))
+    (setf (get name 'memo) table)
+    #'(lambda (&rest args)
+        (let ((k (funcall key args)))
+          (multiple-value-bind (val found-p)
+              (gethash k table)
+            (if found-p val
+                (setf (gethash k table) (apply fn args))))))))
 ```
-
-      `"Return a memo-function of fn."`
-
-      `(let ((table (make-hash-table)))`
-
-          `#'(lambda (x)`
-
-                  `(multiple-value-bind (val found-p)`
-
-                      `(gethash x table)`
-
-              `(if found-p`
-
-                            `val`
-
-                            `(setf (gethash x table) (funcall fn x)))))))`
 
 The expression (`memo #'fib`) will produce a function that remembers its results between calls, so that, for example, if we apply it to 3 twice, the first call will do the computation of (`fib 3`), but the second will just look up the result in a hash table.
 With `fib` traced, it would look like this:
@@ -209,12 +202,10 @@ It would be better if even the internal, recursive calls were memoized, but they
 We can solve this problem easily enough with the function `memoize`:
 
 ```lisp
-(defun memoize (fn-name)
+(defun memoize (fn-name &key (key #'first) (test #'eql))
+  "Replace fn-name's global definition with a memoized version."
+  (clear-memoize fn-name)
 ```
-
-      `"Replace fn-name's global definition with a memoized version."`
-
-      `(setf (symbol-function fn-name) (memo (symbol-function fn-name))))`
 
 When passed a symbol that names a function, `memoize` changes the global definition of the function to a memo-function.
 Thus, any recursive calls will go first to the memo-function, rather than to the original function.
@@ -355,13 +346,9 @@ Or define a macro that combines `defun` and `memoize`:
 
 ```lisp
 (defmacro defun-memo (fn args &body body)
-```
+  "Define a memoized function."
+  `(memoize (defun ,fn ,args . ,body)))
 
-      `"Define a memoized function."`
-
-      `'(memoize (defun ,fn ,args . ,body)))`
-
-```lisp
 (defun-memo f (x) ...)
 ```
 
@@ -424,46 +411,33 @@ If you want to use all the arguments, specify `identity` as the key.
 Note that if the key is a list of arguments, then you will have to use `equal` hash tables.
 
 ```lisp
-(defun memo (fn name key test)
+(defun memo (fn &key (key #'first) (test #'eql) name)
+  "Return a memo-function of fn."
+  (let ((table (make-hash-table :test test)))
+    (setf (get name 'memo) table)
+    #'(lambda (&rest args)
+        (let ((k (funcall key args)))
+          (multiple-value-bind (val found-p)
+              (gethash k table)
+            (if found-p val
+                (setf (gethash k table) (apply fn args))))))))
 ```
-
-      `"Return a memo-function of fn."`
-
-      `(let ((table (make-hash-table :test test)))`
-
-          `(setf (get name 'memo) table)`
-
-          `#'(lambda (&rest args)`
-
-                  `(let ((k (funcall key args)))`
-
-                          `(multiple-value-bind (val found-p)`
-
-                                `(gethash k table)`
-
-                          `(if found-p val`
-
-                                              `(setf (gethash k table) (apply fn args))))))))`
 
 ```lisp
 (defun memoize (fn-name &key (key #'first) (test #'eql))
+  "Replace fn-name's global definition with a memoized version."
+  (clear-memoize fn-name)
+  (setf (symbol-function fn-name)
+        (memo (symbol-function fn-name)
+              :name fn-name :key key :test test)))
 ```
-
-      `"Replace fn-name's global definition with a memoized version."`
-
-      `(setf (symbol-function fn-name)`
-
-                  `(memo (symbol-function fn-name) fn-name key test)))`
 
 ```lisp
 (defun clear-memoize (fn-name)
+  "Clear the hash table from a memo function."
+  (let ((table (get fn-name 'memo)))
+    (when table (clrhash table))))
 ```
-
-      `"Clear the hash table from a memo function."`
-
-      `(let ((table (get fn-name 'memo)))`
-
-                  `(when table (clrhash table))))`
 
 ## 9.2 Compiling One Language into Another
 {:#s0015}
@@ -506,12 +480,10 @@ It makes use of the auxiliary functions `one-of` and `rule-lhs` and `rule-rhs` f
   `(list (random-elt set)))`
 
 ```lisp
-(defun random-elt (choices)
+(defun random-elt (seq)
+  "Pick a random element out of a sequence."
+  (elt seq (random (length seq))))
 ```
-
-  `"Choose an element from a list at random."`
-
-  `(elt choices (random (length choices))))`
 
 The function `compile-rule` turns a rule into a function definition by building up Lisp code that implements all the actions that generate would take in interpreting the rule.
 There are three cases.
@@ -568,11 +540,9 @@ Finally, if there are several elements in the right-hand side, they are each tur
 
 ```lisp
 (defun length=1 (x)
+  "Is x a list of length 1?"
+  (and (consp x) (null (cdr x))))
 ```
-
-  `"Is X a list of length 1?"`
-
-  `(and (consp x) (null (rest x))))`
 
 The Lisp code built by `compile-rule` must be compiled or interpreted to make it available to the Lisp system.
 We can do that with one of the following forms.
@@ -785,13 +755,12 @@ The function `force` checks if the function needs to be called, and returns the 
 If `force` is passed an argument that is not a delay, it just returns the argument.
 
 ```lisp
-(defstruct delay (value nil) (function nil))
+(defstruct delay value (computed? nil))
+
 (defmacro delay (&rest body)
+  "A computation that can be executed later by FORCE."
+  `(make-delay :value #'(lambda () . ,body)))
 ```
-
-  `"A computation that can be executed later by FORCE."`
-
-  `'(make-delay :function #'(lambda () . ,body)))`
 
 ```lisp
 (defun force (x)
@@ -814,6 +783,7 @@ If `force` is passed an argument that is not a delay, it just returns the argume
                   `(setf (delay-function x) nil))`
 
             `(delay-value x))))`
+```
 
 Here's an example of the use of `delay`.
 The list `x` is constructed using a combination of normal evaluation and delayed evaluation.
@@ -2455,8 +2425,8 @@ We take care to elimina te duplicate positions by sorting each set of piles, and
                         collect (sort* (list* i (-  ni) s/n)
                                                       #'>>))))
 (defun sort* (seq pred &key key)
-    "Sort without altering the sequence"
-    (sort (copy-seq seq) pred :key key))
+  "Sort without altering the sequence"
+  (sort (copy-seq seq) pred :key key))
 ```
 
 This time a loss is defined as a position from which you have no moves, or one from which your opponent can force a win no matter what you do.
@@ -2541,9 +2511,9 @@ To guard against this, we can make `roll-die` use a random state that is not acc
 Here's one way to do it:
 
 ```lisp
-(defmacro read-time-case (first-case &rest other-cases)
+  (defmacro read-time-case (first-case &rest other-cases)
     "Do the first case, where normally cases are
-    specified with #+or possibly #- marks."
+    specified with #+ or possibly #- marks."
     (declare (ignore other-cases))
     first-case)
 ```
