@@ -622,8 +622,10 @@ An alternative would be to use extensible vectors with fill pointers.
 (defun make-empty-nlist ()
   "Create a new, empty nlist."
   (cons 0 nil))
-(defun nlist-n (x) "The number of elements in an nlist." (carx))
+
+(defun nlist-n (x) "The number of elements in an nlist." (car x))
 (defun nlist-list (x) "The elements in an nlist." (cdr x))
+
 (defun nlist-push (item nlist)
   "Add a new element to an nlist."
   (incf (car nlist))
@@ -646,17 +648,21 @@ Since the predicates must be symbols, it is possible to store the dtrees on the 
 In most implementations, this will be faster than alternatives such as hash tables.
 
 ```lisp
-(let ((predicates nil))
-  (defun get-dtree (predicate)
-    "Fetch (or make) the dtree for this predicate."
-    (cond ((get predicate 'dtree))
-      (t (push predicate predicates)
-        (setf (get predicate 'dtree) (make-dtree)))))
-  (defun clear-dtrees ()
-    "Remove all the dtrees for all the predicates."
-    (dolist (predicate predicates)
-      (setf (get predicate 'dtree) nil))
-    (setf predicates nil)))
+;; Not all Lisps handle the closure properly, so change the local PREDICATES
+;; to a global *predicates* - norvig Jun 11 1996
+(defvar *predicates* nil)
+
+(defun get-dtree (predicate)
+  "Fetch (or make) the dtree for this predicate."
+  (cond ((get predicate 'dtree))
+	(t (push predicate *predicates*)
+	   (setf (get predicate 'dtree) (make-dtree)))))
+
+(defun clear-dtrees ()
+  "Remove all the dtrees for all the predicates."
+  (dolist (predicate *predicates*)
+    (setf (get predicate 'dtree) nil))
+  (setf *predicates* nil))
 ```
 
 The function `index` takes a relation as key and stores it in the dtree for the predicate of the relation.
@@ -671,35 +677,32 @@ This function, and its `setf` method, are defined on [page 896](B978008057115750
 
 ```lisp
 (defun index (key)
-```
-
-`  "Store key in a dtree node.
-Key must be (predicate . args);`
-
-```lisp
+  "Store key in a dtree node.  Key must be (predicate . args);
   it is stored in the predicate's dtree."
   (dtree-index key key (get-dtree (predicate key))))
+
 (defun dtree-index (key value dtree)
   "Index value under all atoms of key in dtree."
   (cond
-  ((consp key)      ; index on both first and rest
-    (dtree-index (first key) value
-        (or (dtree-first dtree)
-          (setf (dtree-first dtree) (make-dtree))))
-    (dtree-index (rest key) value
-        (or (dtree-rest dtree)
-          (setf (dtree-rest dtree) (make-dtree)))))
-  ((null key)) ; don't index on nil
-  ((variable-p key) ; index a variable
-    (nlist-push value (dtree-var dtree)))
-  (t ;; Make sure there is an nlist for this atom, and add to it
-    (nlist-push value (lookup-atom key dtree)))))
+    ((consp key)               ; index on both first and rest
+     (dtree-index (first key) value
+                  (or (dtree-first dtree)
+                      (setf (dtree-first dtree) (make-dtree))))
+     (dtree-index (rest key) value
+                  (or (dtree-rest dtree)
+                      (setf (dtree-rest dtree) (make-dtree)))))
+    ((null key))               ; don't index on nil
+    ((variable-p key)          ; index a variable
+     (nlist-push value (dtree-var dtree)))
+    (t ;; Make sure there is an nlist for this atom, and add to it
+     (nlist-push value (lookup-atom key dtree)))))
+
 (defun lookup-atom (atom dtree)
   "Return (or create) the nlist for this atom in dtree."
   (or (lookup atom (dtree-atoms dtree))
-    (let ((new (make-empty-nlist)))
-      (push (cons atom new) (dtree-atoms dtree))
-      new)))
+      (let ((new (make-empty-nlist)))
+        (push (cons atom new) (dtree-atoms dtree))
+        new)))
 ```
 
 Now we define a function to test the indexing routine.
@@ -708,12 +711,13 @@ Compare the output with [figure 14.1](#f0010).
 ```lisp
 (defun test-index ()
   (let ((props '((p a b) (p a c) (p a ?x) (p b c)
-                  (p b (f c)) (p a (f . ?x)))))
-  (clear-dtrees)
-  (mapc #'index props)
-  (write (list props (get-dtree 'p))
-    :circle t :array t :pretty t)
-  (values)))
+                 (p b (f c)) (p a (f . ?x)))))
+    (clear-dtrees)
+    (mapc #'index props)
+    (write (list props (get-dtree 'p))
+           :circle t :array t :pretty t)
+    (values)))
+
 > (test-index)
 ((#1=(P A B)
   #2=(P A C)
@@ -743,7 +747,7 @@ It calls `dtree-fetch` to do the work:
   "Return a list of buckets potentially matching the query,
   which must be a relation of form (predicate . args)."
   (dtree-fetch query (get-dtree (predicate query))
-      nil 0 nil most-positive-fixnum))
+               nil 0 nil most-positive-fixnum))
 ```
 
 `dtree-fetch` must be passed the query and the dtree, of course, but it is also passed four additional arguments.
@@ -766,34 +770,35 @@ If the query is a cons, then we use `dtree-fetch` on the first part of the cons,
 
 ```lisp
 (defun dtree-fetch (pat dtree var-list-in var-n-in best-list best-n)
-  "Return two values: a list-of-lists of possible matches to pat.
+  "Return two values: a list-of-lists of possible matches to pat,
   and the number of elements in the list-of-lists."
   (if (or (null dtree) (null pat) (variable-p pat))
-    (values best-list best-n)
-    (let* ((var-nlist (dtree-var dtree))
-        (var-n (+ var-n-in (nlist-n var-nlist)))
-        (var-list (if (null (nlist-list var-nlist))
-              var-list-in
-              (cons (nlist-list var-nlist)
-                var-list-in))))
-      (cond
-      ((>= var-n best-n) (values best-list best-n))
-      ((atom pat) (dtree-atom-fetch pat dtree var-list var-n
-                best-list best-n))
-      (t (multiple-value-bind (listl n1)
-          (dtree-fetch (first pat) (dtree-first dtree)
-                  var-list var-n best-list best-n)
-                (dtree-fetch (rest pat) (dtree-rest dtree)
-                      var-list var-n listl ni)))))))
+      (values best-list best-n)
+      (let* ((var-nlist (dtree-var dtree))
+             (var-n (+ var-n-in (nlist-n var-nlist)))
+             (var-list (if (null (nlist-list var-nlist))
+                           var-list-in
+                           (cons (nlist-list var-nlist)
+                                 var-list-in))))
+        (cond
+          ((>= var-n best-n) (values best-list best-n))
+          ((atom pat) (dtree-atom-fetch pat dtree var-list var-n
+                                        best-list best-n))
+          (t (multiple-value-bind (list1 n1)
+                 (dtree-fetch (first pat) (dtree-first dtree)
+                              var-list var-n best-list best-n)
+               (dtree-fetch (rest pat) (dtree-rest dtree)
+                            var-list var-n list1 n1)))))))
+
 (defun dtree-atom-fetch (atom dtree var-list var-n best-list best-n)
   "Return the answers indexed at this atom (along with the vars),
   or return the previous best answer, if it is better."
   (let ((atom-nlist (lookup atom (dtree-atoms dtree))))
     (cond
       ((or (null atom-nlist) (null (nlist-list atom-nlist)))
-        (values var-list var-n))
+       (values var-list var-n))
       ((and atom-nlist (< (incf var-n (nlist-n atom-nlist)) best-n))
-        (values (cons (nlist-list atom-nlist) var-list) var-n))
+       (values (cons (nlist-list atom-nlist) var-list) var-n))
       (t (values best-list best-n)))))
 ```
 
@@ -819,14 +824,15 @@ If the match is true, it calls the supplied function with the binding list that 
 
 ```lisp
 (proclaim '(inline mapc-retrieve))
+
 (defun mapc-retrieve (fn query)
-  "For every fact that matches the query.
+  "For every fact that matches the query,
   apply the function to the binding list."
   (dolist (bucket (fetch query))
-  (dolist (answer bucket)
-    (let ((bindings (unify query answer)))
-      (unless (eq bindings fall)
-      (funcall fn bindings))))))
+    (dolist (answer bucket)
+      (let ((bindings (unify query answer)))
+        (unless (eq bindings fail)
+          (funcall fn bindings))))))
 ```
 
 There are many ways to use this retriever.
@@ -834,21 +840,17 @@ The function `retrieve` returns a list of the matching binding lists, and `retri
 
 ```lisp
 (defun retrieve (query)
-```
-
-`  "Find all facts that match query.
-Return a list of bindings."`
-
-```lisp
+  "Find all facts that match query.  Return a list of bindings."
   (let ((answers nil))
-  (mapc-retrieve #'(lambda (bindings) (push bindings answers))
-          query)
-  answers))
+    (mapc-retrieve #'(lambda (bindings) (push bindings answers))
+                   query)
+    answers))
+
 (defun retrieve-matches (query)
   "Find all facts that match query.
   Return a list of expressions that match the query."
   (mapcar #'(lambda (bindings) (subst-bindings bindings query))
-      (retrieve query)))
+          (retrieve query)))
 ```
 
 There is one further complication to consider.
@@ -921,16 +923,16 @@ Here is the implementation:
   "Execute the body for each match to the query.
   Within the body, bind each variable."
   (let* ((bindings (gensym "BINDINGS"))
-    (vars-and-vals
-      (mapcar
-        #'(lambda (var)
-          (list var '(subst-bindings ,bindings * ,var)))
-        variables)))
-  '(mapc-retrieve
-    #'(lambda (,bindings)
-      (let ,vars-and-vals
-        ,@body))
-    ,query)))
+         (vars-and-vals
+           (mapcar
+             #'(lambda (var)
+                 (list var `(subst-bindings ,bindings ',var)))
+             variables)))
+    `(mapc-retrieve
+       #'(lambda (,bindings)
+           (let ,vars-and-vals
+             ,@body))
+       ,query)))
 ```
 
 ## 14.9 A Solution to the Completeness Problem
@@ -949,32 +951,34 @@ The special variable `*search-cut-off*` keeps track of this.
 
 ```lisp
 (defvar *search-cut-off* nil "Has the search been stopped?")
+
 (defun prove-all (goals bindings depth)
   "Find a solution to the conjunction of goals."
   ;; This version just passes the depth on to PROVE.
   (cond ((eq bindings fail) fail)
-      ((null goals) bindings)
-      (t (prove (first goals) bindings (rest goals) depth))))
+        ((null goals) bindings)
+        (t (prove (first goals) bindings (rest goals) depth))))
+
 (defun prove (goal bindings other-goals depth)
   "Return a list of possible solutions to goal."
   ;; Check if the depth bound has been exceeded
-  (if (= depth 0)  ;***
-    (progn (setf *search-cut-off* t)  ;***
-        fall)  ;***
-    (let ((clauses (get-clauses (predicate goal))))
-      (if (listp clauses)
-        (some
-          #'(lambda (clause)
-            (let ((new-clause (rename-variables clause)))
-              (prove-all
-                (append (clause-body new-clause) other-goals)
-                (unify goal (clause-head new-clause) bindings)
-                (- depth 1))))  ;***
-          clauses)
-        ;; The predicate's "clauses" can be an atom:
-        ;; a primitive function to call
-        (funcall clauses (rest goal) bindings
-                other-goals depth))))) ;***
+  (if (= depth 0)                            ;***
+      (progn (setf *search-cut-off* t)       ;***
+             fail)                           ;***
+      (let ((clauses (get-clauses (predicate goal))))
+        (if (listp clauses)
+            (some
+              #'(lambda (clause)
+                  (let ((new-clause (rename-variables clause)))
+                    (prove-all
+                      (append (clause-body new-clause) other-goals)
+                      (unify goal (clause-head new-clause) bindings)
+                      (- depth 1))))          ;***
+              clauses)
+            ;; The predicate's "clauses" can be an atom:
+            ;; a primitive function to call
+            (funcall clauses (rest goal) bindings
+                     other-goals depth)))))   ;***
 ```
 
 `prove` and `prove-all` now implement search cutoff, but we need something to control the iterative deepening of the search.
@@ -997,11 +1001,11 @@ However, it only proceeds to the next iteration if the search was eut off at som
 ```lisp
 (defun top-level-prove (goals)
   (let ((all-goals
-      '(,@goals (show-prolog-vars ,@(variables-in goals)))))
+          `(,@goals (show-prolog-vars ,@(variables-in goals)))))
     (loop for depth from *depth-start* to *depth-max* by *depth-incr*
-      while (let ((*search-cut-off* nil))
-        (prove-all all-goals no-bindings depth)
-        *search-cut-off*)))
+          while (let ((*search-cut-off* nil))
+                  (prove-all all-goals no-bindings depth)
+                  *search-cut-off*)))
   (format t "~&No.")
   (values))
 ```
@@ -1015,16 +1019,16 @@ We can modify `show-prolog-vars` to only print proofs that are found with a dept
   "Print each variable with its binding.
   Then ask the user if more solutions are desired."
   (if (> depth *depth-incr*)
-    fall
-    (progn
-      (if (null vars)
-        (format t "~&Yes")
-        (dolist (var vars)
-          (format t "~&~a = ~a" var
-            (subst-bindings bindings var))))
-      (if (continue-p)
-        fall
-        (prove-all other-goals bindings depth)))))
+      fail
+      (progn
+        (if (null vars)
+            (format t "~&Yes")
+            (dolist (var vars)
+              (format t "~&~a = ~a" var
+                      (subst-bindings bindings var))))
+        (if (continue-p)
+            fail
+            (prove-all other-goals bindings depth)))))
 ```
 
 To test that this works, try setting `*depth-max*` to 5 and running the following assertions and query.
@@ -1114,8 +1118,8 @@ The function `add-fact` does this:
 (defun add-fact (fact)
   "Add the fact to the data base."
   (if (eq (predicate fact) 'and)
-    (mapc #'add-fact (args fact))
-    (index fact)))
+      (mapc #'add-fact (args fact))
+      (index fact)))
 ```
 
 Querying this new data base consists of querying the dtree just as before, but with a special case for conjunctive (and) queries.
@@ -1155,26 +1159,22 @@ Thus we have:
 
 ```lisp
 (defun retrieve-fact (query &optional (bindings no-bindings))
-```
-
-`  "Find all facts that match query.
-Return a list of bindings."`
-
-```lisp
+  "Find all facts that match query.  Return a list of bindings."
   (if (eq (predicate query) 'and)
-    (retrieve-conjunction (args query) (list bindings))
-    (retrieve query bindings)))
+      (retrieve-conjunction (args query) (list bindings))
+      (retrieve query bindings)))
+
 (defun retrieve-conjunction (conjuncts bindings-lists)
   "Return a list of binding lists satisfying the conjuncts."
   (mapcan
     #'(lambda (bindings)
-      (cond ((eq bindings fall) nil)
-        ((null conjuncts) (list bindings))
-        (t (retrieve-conjunction
-          (rest conjuncts)
-          (retrieve-fact
-            (subst-bindings bindings (first conjuncts))
-            bindings)))))
+        (cond ((eq bindings fail) nil)
+              ((null conjuncts) (list bindings))
+              (t (retrieve-conjunction
+                   (rest conjuncts)
+                   (retrieve-fact
+                     (subst-bindings bindings (first conjuncts))
+                     bindings)))))
     bindings-lists))
 ```
 
@@ -1189,18 +1189,14 @@ In each case the extra argument is made optional so that previously written func
   (dolist (bucket (fetch query))
     (dolist (answer bucket)
       (let ((new-bindings (unify query answer bindings)))
-        (unless (eq new-bindings fall)
+        (unless (eq new-bindings fail)
           (funcall fn new-bindings))))))
+
 (defun retrieve (query &optional (bindings no-bindings))
-```
-
-`  "Find all facts that match query.
-Return a list of bindings."`
-
-```lisp
+  "Find all facts that match query.  Return a list of bindings."
   (let ((answers nil))
     (mapc-retrieve #'(lambda (bindings) (push bindings answers))
-              query bindings)
+                   query bindings)
     answers))
 ```
 
@@ -1252,7 +1248,8 @@ The following two functions are similar to `retrieve-matches` in that they retur
   "Find all facts that match query.
   Return a list of queries with bindings filled in."
   (mapcar #'(lambda (bindings) (subst-bindings bindings query))
-      (retrieve-fact query)))
+          (retrieve-fact query)))
+
 (defun retrieve-setof (query)
   "Find all facts that match query.
   Return a list of unique queries with bindings filled in."
@@ -1301,10 +1298,11 @@ The attached functions are stored on the operator's property list under the indi
 (defun run-attached-fn (fact)
   "Run the function associated with the predicate of this fact."
   (apply (get (predicate fact) 'attached-fn) (args fact)))
+
 (defmacro def-attached-fn (pred args &body body)
   "Define the attached function for a primitive."
-  '(setf (get '.pred 'attached-fn)
-      #'(lambda .args ..body)))
+  `(setf (get ',pred 'attached-fn)
+         #'(lambda ,args .,body)))
 ```
 
 The attached functions for `ind` and `val` are fairly simple.
@@ -1315,13 +1313,14 @@ That is, if `(rel birthday animal date)` is a fact and `(val birthday Lee july-1
 ```lisp
 (def-attached-fn ind (individual category)
   ;; Cache facts about inherited categories
-  (query-bind (?super) '(sub .category ?super)
-    (add-fact '(ind .individual .?super))))
-(def-attached-fn val (relation indl ind2)
+  (query-bind (?super) `(sub ,category ?super)
+    (add-fact `(ind ,individual ,?super))))
+
+(def-attached-fn val (relation ind1 ind2)
   ;; Make sure the individuals are the right kinds
-  (query-bind (?cat1 ?cat2) '(rel .relation ?cat1 ?cat2)
-    (add-fact '(ind .ind1 .?cat1))
-    (add-fact '(ind .ind2 .?cat2))))
+  (query-bind (?cat1 ?cat2) `(rel ,relation ?cat1 ?cat2)
+    (add-fact `(ind ,ind1 ,?cat1))
+    (add-fact `(ind ,ind2 ,?cat2))))
 ```
 
 The attached function for rel simply runs the attached function for any individual of the given relation.
@@ -1331,8 +1330,8 @@ But we want to be sure the data base stays consistent even if facts are asserted
 ```lisp
 (def-attached-fn rel (relation cat1 cat2)
   ;; Run attached function for any IND's of this relation
-  (query-bind (?a ?b) '(ind .relation ?a ?b)
-    (run-attached-fn '(ind .relation .?a .?b))))
+  (query-bind (?a ?b) `(ind ,relation ?a ?b)
+    (run-attached-fn `(ind ,relation ,?a ,?b))))
 ```
 
 The most complicated attached function is for `sub`.
@@ -1353,17 +1352,18 @@ We do, however, need to make sure that we aren't indexing the same fact twice.
 ```lisp
 (def-attached-fn sub (subcat supercat)
   ;; Cache SUB facts
-  (query-bind (?super-super) '(sub ,supercat ?super-super)
-    (index-new-fact '(sub ,subcat ,?super-super))
-    (query-bind (?sub-sub) '(sub ?sub-sub ,subcat)
-      (index-new-fact '(sub ,?sub-sub ,?super-super))))
-  (query-bind (?sub-sub) '(sub ?sub-sub ,subcat)
-    (index-new-fact '(sub ,?sub-sub ,supercat)))
+  (query-bind (?super-super) `(sub ,supercat ?super-super)
+    (index-new-fact `(sub ,subcat ,?super-super))
+    (query-bind (?sub-sub) `(sub ?sub-sub ,subcat)
+      (index-new-fact `(sub ,?sub-sub ,?super-super))))
+  (query-bind (?sub-sub) `(sub ?sub-sub ,subcat)
+    (index-new-fact `(sub ,?sub-sub ,supercat)))
   ;; Cache IND facts
-  (query-bind (?super-super) '(sub ,subcat ?super-super)
-    (query-bind (?sub-sub) '(sub ?sub-sub ,supercat)
-      (query-bind (?ind) '(ind ?ind ,?sub-sub)
-        (index-new-fact '(ind ,?ind ,?super-super))))))
+  (query-bind (?super-super) `(sub ,subcat ?super-super)
+    (query-bind (?sub-sub) `(sub ?sub-sub ,supercat)
+      (query-bind (?ind) `(ind ?ind ,?sub-sub)
+        (index-new-fact `(ind ,?ind ,?super-super))))))
+
 (defun index-new-fact (fact)
   "Index the fact in the data base unless it is already there."
   (unless (fact-present-p fact)
