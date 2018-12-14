@@ -101,41 +101,24 @@ First, the program is written in traditional procedural style:
 
 ```lisp
 (defstruct account
-```
+  (name "") (balance 0.00) (interest-rate .06))
 
-  `(name "") (balance 0.00) (interest-rate .06))`
-
-```lisp
 (defun account-withdraw (account amt)
-```
+  "Make a withdrawal from this account."
+  (if (<= amt (account-balance account))
+      (decf (account-balance account) amt)
+      'insufficient-funds))
 
-  `"Make a withdrawal from this account."`
-
-  `(if (<= amt (account-balance account))`
-
-        `(decf (account-balance account) amt)`
-
-        `'insufficient-funds))`
-
-```lisp
 (defun account-deposit (account amt)
-```
+  "Make a deposit to this account."
+  (incf (account-balance account) amt))
 
-  `"Make a deposit to this account."`
-
-  `(incf (account-balance account) amt))`
-
-```lisp
 (defun account-interest (account)
+  "Accumulate interest in this account."
+  (incf (account-balance account)
+        (* (account-interest-rate account)
+           (account-balance account))))
 ```
-
-  `"Accumulate interest in this account."`
-
-  `(incf (account-balance account)`
-
-        `(* (account-interest-rate account)`
-
-  `(account-balance account))))`
 
 We can create new bank accounts with `make-account` and modify them with `account-withdraw, account-deposit,` and `account-interest.` This is a simple problem, and this simple solution suffices.
 Problems appear when we change the specification of the problem, or when we envision ways that this implementation could be inadvertently used in error.
@@ -150,35 +133,21 @@ Here is the same program written in object-oriented style (using plain Lisp):
 
 ```lisp
 (defun new-account (name &optional (balance 0.00)
+                    (interest-rate .06))
+  "Create a new account that knows the following messages:"
+  #'(lambda (message)
+      (case message
+        (withdraw #'(lambda (amt)
+                      (if (<= amt balance)
+                          (decf balance amt)
+                          'insufficient-funds)))
+        (deposit  #'(lambda (amt) (incf balance amt)))
+        (balance  #'(lambda () balance))
+        (name     #'(lambda () name))
+        (interest #'(lambda ()
+                      (incf balance
+                            (* interest-rate balance)))))))
 ```
-
-                          `(interest-rate .06))`
-
-  `"Create a new account that knows the following messages:"`
-
-  `#'(lambda (message)`
-
-      `(case message`
-
-        `(withdraw #'(lambda (amt)`
-
-                            `(if (<= amt balance)`
-
-                                `(decf balance amt)`
-
-                                `'insufficient-funds)))`
-
-        `(deposit #'(lambda (amt) (incf balance amt)))`
-
-        `(balance #'(lambda () balance))`
-
-        `(name #'(lambda () name))`
-
-        `(interest #'(lambda ()`
-
-                            `(incf balance`
-
-                                `(* interest-rate balance)))))))`
 
 The function `new-account` creates account objects, which are implemented as closures that encapsulate three variables: the name, balance, and interest rate of the account.
 An account object also encapsulates functions to handle the five messages to which the object can respond.
@@ -194,21 +163,14 @@ The name send comes from the Flavors object-oriented system, which is discussed 
 
 ```lisp
 (defun get-method (object message)
-```
+  "Return the method that implements message for this object."
+  (funcall object message))
 
-  `"Return the method that implements message for this object."`
-
-  `(funcall object message))`
-
-```lisp
 (defun send (object message &rest args)
+  "Get the function to implement the message,
+  and apply the function to the args."
+  (apply (get-method object message) args))
 ```
-
-  `"Get the function to implement the message,`
-
-  `and apply the function to the args."`
-
-  `(apply (get-method object message) args))`
 
 Here is an example of the use of `new-account` and `send`:
 
@@ -244,11 +206,9 @@ For example, we could define:
 
 ```lisp
 (defun withdraw (object &rest args)
+  "Define withdraw as a generic function on objects."
+  (apply (get-method object 'withdraw) args))
 ```
-
-  `"Define withdraw as a generic function on objects."`
-
-  `(apply (get-method object 'withdraw) args))`
 
 and then write `(withdraw acct x)` instead of `(send acct 'withdraw x)`.
 The function `withdraw` is generic because it not only works on account objects but also works on any other class of object that handles the `withdraw` message.
@@ -273,59 +233,33 @@ For example, you might want to have all instances of the class `account` share t
 
 ```lisp
 (defmacro define-class (class inst-vars class-vars &body methods)
-```
+  "Define a class for object-oriented programming."
+  ;; Define constructor and generic functions for methods
+  `(let ,class-vars
+     (mapcar #'ensure-generic-fn ',(mapcar #'first methods))
+     (defun ,class ,inst-vars
+       #'(lambda (message)
+           (case message
+             ,@(mapcar #'make-clause methods))))))
 
-  `"Define a class for object-oriented programming."`
-
-  `;; Define constructor and generic functions for methods`
-
-  `'(let ,class-vars`
-
-        `(mapcar #'ensure-generic-fn ',(mapcar #'first methods))`
-
-        `(defun .class ,inst-vars`
-
-  `#'(lambda (message)`
-
-                `(case message`
-
-  `                  ,@(mapcar #'make-clause methods))))))`
-
-```lisp
 (defun make-clause (clause)
-```
+  "Translate a message from define-class into a case clause."
+  `(,(first clause) #'(lambda ,(second clause) .,(rest2 clause))))
 
-  `"Translate a message from define-class into a case clause."`
-
-  `'(,(first clause) #'(lambda ,(second clause) .,(rest2 clause))))`
-
-```lisp
 (defun ensure-generic-fn (message)
-```
+  "Define an object-oriented dispatch function for a message,
+  unless it has already been defined as one."
+  (unless (generic-fn-p message)
+    (let ((fn #'(lambda (object &rest args)
+                  (apply (get-method object message) args))))
+      (setf (symbol-function message) fn)
+      (setf (get message 'generic-fn) fn))))
 
-  `"Define an object-oriented dispatch function for a message,`
-
-  `unless it has already been defined as one."`
-
-  `(unless (generic-fn-p message)`
-
-      `(let ((fn #'(lambda (object &rest args)`
-
-                    `(apply (get-method object message) args))))`
-
-        `(setf (symbol-function message) fn)`
-
-        `(setf (get message 'generic-fn) fn))))`
-
-```lisp
 (defun generic-fn-p (fn-name)
+  "Is this a generic function?"
+  (and (fboundp fn-name)
+       (eq (get fn-name 'generic-fn) (symbol-function fn-name))))
 ```
-
-  `"Is this a generic function?"`
-
-  `(and (fboundp fn-name)`
-
-        `(eq (get fn-name 'generic-fn) (symbol-function fn-name))))`
 
 Now we define the class account with this macro.
 We make `interest-rate` a class variable, one that is shared by all accounts:
