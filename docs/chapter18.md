@@ -118,8 +118,8 @@ Directions can also be implemented as integers, representing the numerical diffe
 To get a feel for this, take a look at the board:
 
 ```lisp
-  0    1    2    3    4    5    6    7
-  8    9 10 11 12 13 14 15
+ 0  1  2  3  4  5  6  7
+ 8  9 10 11 12 13 14 15
 16 17 18 19 20 21 22 23
 24 25 26 27 28 29 30 31
 32 33 34 35 36 37 38 39
@@ -142,7 +142,7 @@ It also has the minor advantage that legal squares are represented by numbers in
 Here's the new 100-element board:
 
 ```lisp
-  0    1    2    3    4    5    6    7    8    9
+ 0  1  2  3  4  5  6  7  8  9
 10 11 12 13 14 15 16 17 18 19
 20 21 22 23 24 25 26 27 28 29
 30 31 32 33 34 35 36 37 38 39
@@ -172,12 +172,16 @@ We explicitly define the type `piece` to be a number from `empty` to `outer` (0 
 
 ```lisp
 (defconstant all-directions '(-11 -10 -9 -1 1 9 10 11))
+
 (defconstant empty 0 "An empty square")
 (defconstant black 1 "A black piece")
 (defconstant white 2 "A white piece")
 (defconstant outer 3 "Marks squares outside the 8x8 board")
-(deftype piece () '(integer ,empty ,outer))
-(defun name-of (piece) (char ".@0?" piece))
+
+(deftype piece () `(integer ,empty ,outer))
+
+(defun name-of (piece) (char ".@O?" piece))
+
 (defun opponent (player) (if (eql player black) white black))
 ```
 
@@ -188,46 +192,53 @@ Also, even though there is no contiguous range of numbers that represents the le
 
 ```lisp
 (deftype board () '(simple-array piece (100)))
+
 (defun bref (board square) (aref board square))
 (defsetf bref (board square) (val)
-    '(setf (aref ,board ,square) ,val))
+  `(setf (aref ,board ,square) ,val))
+
 (defun copy-board (board)
-    (copy-seq board))
+  (copy-seq board))
+
 (defconstant all-squares
-    (loop for i from 11 to 88 when (<= 1 (mod i 10) 8) collect i))
+  (loop for i from 11 to 88 when (<= 1 (mod i 10) 8) collect i))
+
 (defun initial-board ()
-    "Return a board, empty except for four pieces in the middle."
-    ;; Boards are 100-element vectors, with elements 11-88 used,
-```
+  "Return a board, empty except for four pieces in the middle."
+  ;; Boards are 100-element vectors, with elements 11-88 used,
+  ;; and the others marked with the sentinel OUTER.  Initially
+  ;; the 4 center squares are taken, the others empty.
+  (let ((board (make-array 100 :element-type 'piece
+                           :initial-element outer)))
+    (dolist (square all-squares)
+      (setf (bref board square) empty))
+    (setf (bref board 44) white   (bref board 45) black
+          (bref board 54) black   (bref board 55) white)
+    board))
 
-`    ;; and the others marked with the sentinel OUTER.
-Initially`
+(defun print-board (&optional (board *board*) clock)
+  "Print a board, along with some statistics."
+  ;; First print the header and the current score
+  (format t "~2&    a b c d e f g h   [~c=~2a ~c=~2a (~@d)]"
+          (name-of black) (count black board)
+          (name-of white) (count white board)
+          (count-difference black board))
+  ;; Print the board itself
+  (loop for row from 1 to 8 do
+        (format t "~&  ~d " row)
+        (loop for col from 1 to 8
+              for piece = (bref board (+ col (* 10 row)))
+              do (format t "~c " (name-of piece))))
+  ;; Finally print the time remaining for each player
+  (when clock
+    (format t "  [~c=~a ~c=~a]~2&"
+            (name-of black) (time-string (elt clock black))
+            (name-of white) (time-string (elt clock white)))))
 
-```lisp
-    ;; the 4 center squares are taken, the others empty.
-    (let ((board (make-array 100 :element-type 'piece
-                                        :initial-element outer)))
-        (dolist (square all-squares)
-            (setf (bref board square) empty))
-        (setf (bref board 44) white (bref board 45) black
-                  (bref board 54) black (bref board 55) white)
-        board))
-(defun print-board (board)
-    "Print a board, along with some statistics."
-    (format t "~2&      1 2 3 4 5 6 7 8    [~c  =~2a ~c  =~2a (~@d)]"
-                  (name-of black) (count black board)
-                  (name-of white) (count white board)
-                  (count-difference black board))
-    (loop for row from 1 to 8 do
-              (format t "~&~d" (* 10 row))
-              (loop for col from 1 to 8
-                      for piece = (bref board (+ col (* 10 row)))
-                      do (format t "~c" (name-of piece))))
-    (format t "~2&"))
 (defun count-difference (player board)
-    "Count player's pieces minus opponent's pieces."
-    (- (count player board)
-      (count (opponent player) board)))
+  "Count player's pieces minus opponent's pieces."
+  (- (count player board)
+     (count (opponent player) board)))
 ```
 
 Now let's take a look at the initial board, as it is printed by `print-board`, and by a raw `write` (I added the line breaks to make it easier to read):
@@ -262,26 +273,23 @@ Here's the code:
 
 ```lisp
 (defun valid-p (move)
-    "Valid moves are numbers in the range 11-88 that end in 1-8."
-    (and (integerp move) (<= 11 move 88) (<= 1 (mod move 10) 8)))
+  "Valid moves are numbers in the range 11-88 that end in 1-8."
+  (and (integerp move) (<= 11 move 88) (<= 1 (mod move 10) 8)))
+
 (defun legal-p (move player board)
-    "A Legal move must be into an empty square, and it must
-    flip at least one opponent piece."
-    (and (eql (bref board move) empty)
-```
+  "A Legal move must be into an empty square, and it must
+  flip at least one opponent piece."
+  (and (eql (bref board move) empty)
+       (some #'(lambda (dir) (would-flip? move player board dir))
+             all-directions)))
 
-`          (some #'(lambda (dir) (would-flip?
-move player board dir))`
-
-```lisp
-                      all-directions)))
 (defun make-move (move player board)
-    "Update board to reflect move by player"
-    ;; First make the move, then make any flips
-    (setf (bref board move) player)
-    (dolist (dir all-directions)
-        (make-flips move player board dir))
-    board)
+  "Update board to reflect move by player"
+  ;; First make the move, then make any flips
+  (setf (bref board move) player)
+  (dolist (dir all-directions)
+    (make-flips move player board dir))
+  board)
 ```
 
 Now all we need is to `make-flips`.
@@ -291,36 +299,28 @@ Note that `would-flip?` is a semipredicate that returns false if no flips would 
 
 ```lisp
 (defun make-flips (move player board dir)
-    "Make any flips in the given direction."
-```
+  "Make any flips in the given direction."
+  (let ((bracketer (would-flip? move player board dir)))
+    (when bracketer
+      (loop for c from (+ move dir) by dir until (eql c bracketer)
+            do (setf (bref board c) player)))))
 
-`    (let ((bracketer (would-flip?
-move player board dir)))`
+(defun would-flip? (move player board dir)
+  "Would this move result in any flips in this direction?
+  If so, return the square number of the bracketing piece."
+  ;; A flip occurs if, starting at the adjacent square, c, there
+  ;; is a string of at least one opponent pieces, bracketed by
+  ;; one of player's pieces
+  (let ((c (+ move dir)))
+    (and (eql (bref board c) (opponent player))
+         (find-bracketing-piece (+ c dir) player board dir))))
 
-```lisp
-        (when bracketer
-            (loop for c from (+ move dir) by dir until (eql c bracketer)
-                    do (setf (bref board c) player)))))
-```
-
-`(defun would-flip?
-(move player board dir)`
-
-```lisp
-    "Would this move result in any flips in this direction?
-    If so, return the square number of the bracketing piece."
-    ;; A flip occurs if, starting at the adjacent square, c, there
-    ;; is a string of at least one opponent pieces, bracketed by
-    ;; one of player's pieces
-    (let ((c (+ move dir)))
-        (and (eql (bref board c) (opponent player))
-                (find-bracketing-piece (+ c dir) player board dir))))
 (defun find-bracketing-piece (square player board dir)
-    "Return the square number of the bracketing piece."
-    (cond ((eql (bref board square) player) square)
-              ((eql (bref board square) (opponent player))
-                (find-bracketing-piece (+ square dir) player board dir))
-              (t nil)))
+  "Return the square number of the bracketing piece."
+  (cond ((eql (bref board square) player) square)
+        ((eql (bref board square) (opponent player))
+         (find-bracketing-piece (+ square dir) player board dir))
+        (t nil)))
 ```
 
 Finally we can write the function that actually monitors a game.
@@ -331,31 +331,27 @@ Each function takes two arguments: the color to move (black or white) and the cu
 The function should return a legal move number.
 
 ```lisp
-(defun othello (bl-strategy wh-strategy &optional (print t))
-```
-
-`    "Play a game of Othello.
-Return the score, where a positive`
-
-```lisp
-    difference means black (the first player) wins."
-    (let ((board (initial-board)))
-        (loop for player = black
-                    then (next-to-play board player print)
-                for strategy = (if (eql player black)
-                          bl-strategy
-                          wh-strategy)
+(defun othello (bl-strategy wh-strategy
+                &optional (print t) (minutes 30))
+  "Play a game of othello.  Return the score, where a positive
+  difference means black, the first player, wins."
+  (let ((board (initial-board))
+        (clock (make-array (+ 1 (max black white))
+                           :initial-element
+                           (* minutes 60
+                              internal-time-units-per-second))))
+    (catch 'game-over
+      (loop for *move-number* from 1
+            for player = black then (next-to-play board player print)
+            for strategy = (if (eql player black)
+                               bl-strategy
+                               wh-strategy)
             until (null player)
-            do (get-move strategy player board print))
-    (when print
-```
-
-`        (format t "~&The game is over.
-Final result:")`
-
-```lisp
-        (print-board board))
-    (count-difference black board)))
+            do (get-move strategy player board print clock))
+      (when print
+        (format t "~&The game is over.  Final result:")
+        (print-board board clock))
+      (count-difference black board))))
 ```
 
 We need to be able to determine who plays next at any point.
@@ -367,31 +363,20 @@ If neither player has more, the game is a draw.
 
 ```lisp
 (defun next-to-play (board previous-player print)
-    "Compute the player to move next, or NIL if nobody can move."
-    (let ((opp (opponent previous-player)))
-```
+  "Compute the player to move next, or NIL if nobody can move."
+  (let ((opp (opponent previous-player)))
+    (cond ((any-legal-move? opp board) opp)
+          ((any-legal-move? previous-player board)
+           (when print
+             (format t "~&~c has no moves and must pass."
+                     (name-of opp)))
+           previous-player)
+          (t nil))))
 
-`        (cond ((any-legal-move?
-opp board) opp)`
-
-`                ((any-legal-move?
-previous-player board)`
-
-```lisp
-                  (when print
-                      (format t "~&~c has no moves and must pass."
-                                (name-of opp)))
-                  previous-player)
-                (t nil))))
-```
-
-`(defun any-legal-move?
-(player board)`
-
-```lisp
-    "Does player have any legal moves in this position?"
-    (some #'(lambda (move) (legal-p move player board))
-            all-squares))
+(defun any-legal-move? (player board)
+  "Does player have any legal moves in this position?"
+  (some #'(lambda (move) (legal-p move player board))
+        all-squares))
 ```
 
 Note that the argument `print` (of `othello`, `next-to-play`, and below, `get-move`) determines if information about the progress of the game will be printed.
@@ -425,9 +410,11 @@ Here we define two simple strategies:
     (declare (ignore board))
     (format t "~&~c to move: " (name-of player))
     (read))
+
 (defun random-strategy (player board)
     "Make any legal move."
     (random-elt (legal-moves player board)))
+
 (defun legal-moves (player board)
     "Returns a list of legal moves for player"
     (loop for move in all-squares
@@ -454,24 +441,25 @@ It calls `maximizer`, a higher-order function that chooses the best move accordi
 
 ```lisp
 (defun maximize-difference (player board)
-    "A strategy that maximizes the difference in pieces."
-    (funcall (maximizer #'count-difference) player board))
+  "A strategy that maximizes the difference in pieces."
+  (funcall (maximizer #'count-difference) player board))
+
 (defun maximizer (eval-fn)
-    "Return a strategy that will consider every legal move,
-    apply EVAL-FN to each resulting board, and choose
-    the move for which EVAL-FN returns the best score.
-    FN takes two arguments: the player-to-move and board"
-    #'(lambda (player board)
-            (let* ((moves (legal-moves player board))
-                    (scores (mapcar #'(lambda (move)
-                                (funcall
-                                    eval-fn
-                                    player
-                                    (make-move move player
-                                            (copy-board board))))
-                            moves))
-                  (best (apply #'max scores)))
-            (elt moves (position best scores)))))
+  "Return a strategy that will consider every legal move,
+  apply EVAL-FN to each resulting board, and choose
+  the move for which EVAL-FN returns the best score.
+  FN takes two arguments: the player-to-move and board"
+  #'(lambda (player board)
+      (let* ((moves (legal-moves player board))
+             (scores (mapcar #'(lambda (move)
+         (funcall
+          eval-fn
+          player
+          (make-move move player
+               (copy-board board))))
+                             moves))
+             (best  (apply #'max scores)))
+        (elt moves (position best scores)))))
 ```
 
 **Exercise  18.1** Play some games with `maximize-difference` against `random-strategy` and `human`.
@@ -497,24 +485,25 @@ The `weighted-squares` evaluation function reflects this.
 
 ```lisp
 (defparameter *weights*
-    '#(0      0      0    0    0    0    0      0      0 0
-          0 120 -20 20   5   5 20 -20 120 0
-          0 -20 -40 -5 -5 -5 -5 -40 -20 0
-          0   20   -5 15   3   3 15   -5   20 0
-          0     5   -5   3   3   3   3   -5     5 0
-          0     5   -5   3   3   3   3   -5     5 0
-          0   20   -5 15   3   3 15   -5   20 0
-          0 -20 -40 -5 -5 -5 -5 -40 -20 0
-          0 120 -20 20   5   5 20 -20 120 0
-          0     0     0   0   0   0   0     0     0 0))
+  '#(0   0   0  0  0  0  0   0   0 0
+     0 120 -20 20  5  5 20 -20 120 0
+     0 -20 -40 -5 -5 -5 -5 -40 -20 0
+     0  20  -5 15  3  3 15  -5  20 0
+     0   5  -5  3  3  3  3  -5   5 0
+     0   5  -5  3  3  3  3  -5   5 0
+     0  20  -5 15  3  3 15  -5  20 0
+     0 -20 -40 -5 -5 -5 -5 -40 -20 0
+     0 120 -20 20  5  5 20 -20 120 0
+     0   0   0  0  0  0  0   0   0 0))
+
 (defun weighted-squares (player board)
-    "Sum of the weights of player's squares minus opponent's.
-    (let ((opp (opponent player)))
-        (loop for i in all-squares
-                when (eql (bref board i) player)
-                sum (aref *weights* i)
-                when (eql (bref board i) opp)
-                sum (- (aref *weights* i)))))
+  "Sum of the weights of player's squares minus opponent's."
+  (let ((opp (opponent player)))
+    (loop for i in all-squares
+          when (eql (bref board i) player)
+          sum (aref *weights* i)
+          when (eql (bref board i) opp)
+          sum (- (aref *weights* i)))))
 ```
 
 **Exercise  18.2** Compare strategies by evaluating the two forms below.
@@ -598,13 +587,14 @@ If we were trying to maximize the margin of victory, then `final-value` would be
 
 ```lisp
 (defconstant winning-value most-positive-fixnum)
-(defconstant losing-value most-negative-fixnum)
+(defconstant losing-value  most-negative-fixnum)
+
 (defun final-value (player board)
-    "Is this a win, loss, or draw for player?"
-    (case (signum (count-difference player board))
-        (-1 losing-value)
-        ( 0 0)
-        (+1 winning-value)))
+  "Is this a win, loss, or draw for player?"
+  (case (signum (count-difference player board))
+    (-1 losing-value)
+    ( 0 0)
+    (+1 winning-value)))
 ```
 
 Fourth, and finally, we need to decide on the parameters for the minimax function.
@@ -617,34 +607,29 @@ We use multiple values for this.
 
 ```lisp
 (defun minimax (player board ply eval-fn)
-    "Find the best move, for PLAYER, according to EVAL-FN,
-    searching PLY levels deep and backing up values."
-    (if (= ply 0)
-            (funcall eval-fn player board)
-            (let ((moves (legal-moves player board)))
-                (if (null moves)
-```
-
-`                  (if (any-legal-move?
-(opponent player) board)`
-
-```lisp
-                        (- (minimax (opponent player) board
-                                  (- ply 1) eval-fn))
-                        (final-value player board))
-                  (let ((best-move nil)
-                              (best-val nil))
-                      (dolist (move moves)
-            (let* ((board2 (make-move move player
-                                        (copy-board board)))
-                    (val (- (minimax
-                              (opponent player) board2
-                              (- ply 1) eval-fn))))
-              (when (or (null best-val)
-                          (> val best-val))
-                  (setf best-val  val)
-                  (setf best-move move))))
-        (values best-val best-move))))))
+  "Find the best move, for PLAYER, according to EVAL-FN,
+  searching PLY levels deep and backing up values."
+  (if (= ply 0)
+      (funcall eval-fn player board)
+      (let ((moves (legal-moves player board)))
+        (if (null moves)
+            (if (any-legal-move? (opponent player) board)
+                (- (minimax (opponent player) board
+                            (- ply 1) eval-fn))
+                (final-value player board))
+            (let ((best-move nil)
+                  (best-val nil))
+              (dolist (move moves)
+                (let* ((board2 (make-move move player
+                                          (copy-board board)))
+                       (val (- (minimax
+                                 (opponent player) board2
+                                 (- ply 1) eval-fn))))
+                  (when (or (null best-val)
+                            (> val best-val))
+                    (setf best-val val)
+                    (setf best-move move))))
+              (values best-val best-move))))))
 ```
 
 The `minimax` function cannot be used as a strategy function as is, because it takes too many arguments and returns too many values.
@@ -654,12 +639,12 @@ Remember that a strategy is a function of two arguments: the player and the boar
 
 ```lisp
 (defun minimax-searcher (ply eval-fn)
-    "A strategy that searches PLY levels and then uses EVAL-FN."
-    #'(lambda (player board)
-            (multiple-value-bind (value move)
-                  (minimax player board ply eval-fn)
-                (declare (ignore value))
-                move)))
+  "A strategy that searches PLY levels and then uses EVAL-FN."
+  #'(lambda (player board)
+      (multiple-value-bind (value move)
+          (minimax player board ply eval-fn)
+        (declare (ignore value))
+        move)))
 ```
 
 We can test the minimax strategy, and see that searching ahead 3 ply is indeed better than looking at only 1 ply.
@@ -728,44 +713,40 @@ The test `until (>= achievable cutoff)` in the penultimate line of `minimax` doe
 
 ```lisp
 (defun alpha-beta (player board achievable cutoff ply eval-fn)
-    "Find the best move, for PLAYER, according to EVAL-FN,
-    searching PLY levels deep and backing up values,
-    using cutoffs whenever possible."
-    (if (= ply 0)
-        (funcall eval-fn player board)
-        (let ((moves (legal-moves player board)))
-            (if (null moves)
-```
-
-`                (if (any-legal-move?
-(opponent player) board)`
-
-```lisp
-                    (- (alpha-beta (opponent player) board
-                                    (- cutoff) (- achievable)
-                                    (- ply 1) eval-fn))
-                    (final-value player board))
+  "Find the best move, for PLAYER, according to EVAL-FN,
+  searching PLY levels deep and backing up values,
+  using cutoffs whenever possible."
+  (if (= ply 0)
+      (funcall eval-fn player board)
+      (let ((moves (legal-moves player board)))
+        (if (null moves)
+            (if (any-legal-move? (opponent player) board)
+                (- (alpha-beta (opponent player) board
+                               (- cutoff) (- achievable)
+                               (- ply 1) eval-fn))
+                (final-value player board))
             (let ((best-move (first moves)))
-                (loop for move in moves do
-                  (let* ((board2 (make-move move player
+              (loop for move in moves do
+                (let* ((board2 (make-move move player
                                           (copy-board board)))
-                        (val (- (alpha-beta
-                                    (opponent player) board2
-                                    (- cutoff) (- achievable)
-                                    (- ply 1) eval-fn))))
-                      (when (> val achievable)
-                          (setf achievable val)
-                          (setf best-move move)))
-                  until (>= achievable cutoff))
-            (values achievable best-move))))))
+                       (val (- (alpha-beta
+                                 (opponent player) board2
+                                 (- cutoff) (- achievable)
+                                 (- ply 1) eval-fn))))
+                  (when (> val achievable)
+                    (setf achievable val)
+                    (setf best-move move)))
+                until (>= achievable cutoff))
+              (values achievable best-move))))))
+
 (defun alpha-beta-searcher (depth eval-fn)
-    "A strategy that searches to DEPTH and then uses EVAL-FN."
-    #'(lambda (player board)
-        (multiple-value-bind (value move)
-            (alpha-beta player board losing-value winning-value
-                                    depth eval-fn)
-                (declare (ignore value))
-                move)))
+  "A strategy that searches to DEPTH and then uses EVAL-FN."
+  #'(lambda (player board)
+      (multiple-value-bind (value move)
+          (alpha-beta player board losing-value winning-value
+                      depth eval-fn)
+        (declare (ignore value))
+        move)))
 ```
 
 It must be stressed that `alpha-beta` computes the exact same result as the full-search version of `minimax`.
@@ -977,27 +958,29 @@ The `modified-weighted-squares` evaluation function does just that.
 
 ```lisp
 (defun modified-weighted-squares (player board)
-    "Like WEIGHTED-SQUARES, but don't take off for moving
-    near an occupied corner."
-    (let ((w (weighted-squares player board)))
-        (dolist (corner '(11 18 81 88))
-            (when (not (eql (bref board corner) empty))
-                (dolist (c (neighbors corner))
-                    (when (not (eql (bref board c) empty))
-                        (incf w (* (- 5 (aref *weights* c))
-                                    (if (eql (bref board c) player)
-                                          +1 -1)))))))
-        w))
-(let ((neighbor-table (make-array 100 : initial-element nil)))
-    ;; Initialize the neighbor table
-    (dolist (square all-squares)
-        (dolist (dir all-directions)
-            (if (valid-p (+ square dir))
-                    (push (+ square dir)
-                            (aref neighbor-table square)))))
-    (defun neighbors (square)
-        "Return a list of all squares adjacent to a square."
-        (aref neighbor-table square)))
+  "Like WEIGHTED-SQUARES, but don't take off for moving
+  near an occupied corner."
+  (let ((w (weighted-squares player board)))
+    (dolist (corner '(11 18 81 88))
+      (when (not (eql (bref board corner) empty))
+        (dolist (c (neighbors corner))
+          (when (not (eql (bref board c) empty))
+            (incf w (* (- 5 (aref *weights* c))
+                       (if (eql (bref board c) player)
+                           +1 -1)))))))
+    w))
+
+(let ((neighbor-table (make-array 100 :initial-element nil)))
+  ;; Initialize the neighbor table
+  (dolist (square all-squares)
+    (dolist (dir all-directions)
+      (if (valid-p (+ square dir))
+          (push (+ square dir)
+                (aref neighbor-table square)))))
+
+  (defun neighbors (square)
+    "Return a list of all squares adjacent to a square."
+    (aref neighbor-table square)))
 ```
 
 ## 18.7 The Tournament Version of Othello
@@ -1012,31 +995,27 @@ We can write routines to translate between this notation and the one we were usi
 
 ```lisp
 (let ((square-names
-            (cross-product #'symbol
-```
+        (cross-product #'symbol
+                       '(? a b c d e f g h ?)
+                       '(? 1 2 3 4 5 6 7 8 ?))))
 
-`                        '(?
-a b c d e f g h ?)`
+  (defun h8->88 (str)
+    "Convert from alphanumeric to numeric square notation."
+    (or (position (string str) square-names :test #'string-equal)
+        str))
 
-`                        '(?
-1 2 3 4 5 6 7 8 ?))))`
+  (defun 88->h8 (num)
+    "Convert from numeric to alphanumeric square notation."
+    (if (valid-p num)
+        (elt square-names num)
+        num)))
 
-```lisp
-    (defun h8->88 (str)
-        "Convert from alphanumeric to numeric square notation."
-        (or (position (string str) square-names :test #'string-equal)
-                str))
-    (defun 88->h8 (num)
-        "Convert from numeric to alphanumeric square notation."\
-        (if (valid-p num)
-                (elt square-names num)
-                num)))
-    (defun cross-product (fn xlist ylist)
-        "Return a list of all (fn x y) values."
-        (mappend #'(lambda (y)
-                          (mapcar #'(lambda (x) (funcall fn x y))
-                                  xlist))
-                ylist))
+(defun cross-product (fn xlist ylist)
+  "Return a list of all (fn x y) values."
+  (mappend #'(lambda (y)
+               (mapcar #'(lambda (x) (funcall fn x y))
+                       xlist))
+           ylist))
 ```
 
 Note that these routines return their input unchanged when it is not one of the expected values.
@@ -1048,10 +1027,10 @@ While we're at it, we'll also print the list of possible moves:
 
 ```lisp
 (defun human (player board)
-    "A human player for the game of Othello"
-    (format t "~&~c to move ~a: " (name-of player)
-                  (mapcar #'88->h8 (legal-moves player board)))
-    (h8->88 (read)))
+  "A human player for the game of Othello"
+  (format t "~&~c to move ~a: " (name-of player)
+          (mapcar #'88->h8 (legal-moves player board)))
+  (h8->88 (read)))
 ```
 
 | []()                                                        |
@@ -1074,37 +1053,28 @@ Then, if get-move encounters a forfeit or resignation, it can `throw` an appropr
 
 ```lisp
 (defvar *move-number* 1 "The number of the move to be played")
+
 (defun othello (bl-strategy wh-strategy
-                  &optional (print t) (minutes 30))
-```
-
-`    "Play a game of othello.
-Return the score, where a positive`
-
-```lisp
-    difference means black, the first player, wins."
-    (let ((board (initial-board))
-            (clock (make-array (+1 (max black white))
-                        :initial-element
-                        (* minutes 60
+                &optional (print t) (minutes 30))
+  "Play a game of othello.  Return the score, where a positive
+  difference means black, the first player, wins."
+  (let ((board (initial-board))
+        (clock (make-array (+ 1 (max black white))
+                           :initial-element
+                           (* minutes 60
                               internal-time-units-per-second))))
-        (catch 'game-over
-            (loop for *move-number* from 1
-                for player = black then (next-to-play board player print)
-                for strategy = (if (eql player black)
-                          bl-strategy
-                          wh-strategy)
-                until (null player)
-                do (get-move strategy player board print clock))
-            (when print
-```
-
-`                      (format t "~&The game is over.
-Final result:")`
-
-```lisp
-                      (print-board board clock))
-            (count-difference black board))))
+    (catch 'game-over
+      (loop for *move-number* from 1
+            for player = black then (next-to-play board player print)
+            for strategy = (if (eql player black)
+                               bl-strategy
+                               wh-strategy)
+            until (null player)
+            do (get-move strategy player board print clock))
+      (when print
+        (format t "~&The game is over.  Final result:")
+        (print-board board clock))
+      (count-difference black board))))
 ```
 
 Strategies now have to comply with the time-limit rule, so they may want to look at the time remaining.
@@ -1121,31 +1091,32 @@ The function `replace` copies the real clock into `*clock*`, and also copies the
 ```lisp
 (defvar *clock* (make-array 3) "A copy of the game clock")
 (defvar *board* (initial-board) "A copy of the game board")
+
 (defun get-move (strategy player board print clock)
-    "Call the player's strategy function to get a move.
-    Keep calling until a legal move is made."
-    ;; Note we don't pass the strategy function the REAL board.
-    ;; If we did, it could cheat by changing the pieces on the board.
-    (when print (print-board board clock))
-    (replace *clock* clock)
-    (let* ((t0 (get-internal-real-time))
-                  (move (funcall strategy player (replace *board* board)))
-                  (t1 (get-internal-real-time)))
-        (decf (elt clock player) (- t1 t0))
-        (cond
-            ((< (elt clock player) 0)
-              (format t "~&~c has no time left and forfeits."
-                      (name-of player))
-              (THROW 'game-over (if (eql player black) -64 64)))
-            ((eq move 'resign)
-              (THROW 'game-over (if (eql player black) -64 64)))
-            ((and (valid-p move) (legal-p move player board))
-              (when print
-                  (format t "~&~c moves to ~  a."
-                          (name-of player) (88->h8 move)))
-              (make-move move player board))
-            (t (warn "Illegal move: ~  a" (88->h8 move))
-                  (get-move strategy player board print clock)))))
+  "Call the player's strategy function to get a move.
+  Keep calling until a legal move is made."
+  ;; Note we don't pass the strategy function the REAL board.
+  ;; If we did, it could cheat by changing the pieces on the board.
+  (when print (print-board board clock))
+  (replace *clock* clock)
+  (let* ((t0 (get-internal-real-time))
+         (move (funcall strategy player (replace *board* board)))
+         (t1 (get-internal-real-time)))
+    (decf (elt clock player) (- t1 t0))
+    (cond
+      ((< (elt clock player) 0)
+       (format t "~&~c has no time left and forfeits."
+               (name-of player))
+       (THROW 'game-over (if (eql player black) -64 64)))
+      ((eq move 'resign)
+       (THROW 'game-over (if (eql player black) -64 64)))
+      ((and (valid-p move) (legal-p move player board))
+       (when print
+         (format t "~&~c moves to ~a."
+                 (name-of player) (88->h8 move)))
+       (make-move move player board))
+      (t (warn "Illegal move: ~a" (88->h8 move))
+         (get-move strategy player board print clock)))))
 ```
 
 Finally, the function `print-board` needs to print the time remaining for each player; this requires an auxiliary function to get the number of minutes and seconds from an internal-format time interval.
@@ -1154,28 +1125,29 @@ Also note the esoteric format option: `"~2, '0d"` prints a decimal number using 
 
 ```lisp
 (defun print-board (&optional (board *board*) clock)
-    "Print a board, along with some statistics."
-    ;; First print the header and the current score
-    (format t "~2&  a b c d e f g h   [~c  =~2a ~c  =~2a (~@d)]"
-                  (name-of black) (count black board)
-                  (name-of white) (count white board)
-                  (count-difference black board))
-    ;; Print the board itself
-    (loop for row from 1 to 8 do
-                (format t "~&~d" row)
-                (loop for col from 1 to 8
-                        for piece = (bref board (+ col (* 10 row)))
-                        do (format t "~c " (name-of piece))))
-    ;; Finally print the time remaining for each player
-    (when clock
-        (format t " [~c  =~a ~c  =~a]~2&"
-                  (name-of black) (time-string (elt clock black))
-                  (name-of white) (time-string (elt clock white)))))
+  "Print a board, along with some statistics."
+  ;; First print the header and the current score
+  (format t "~2&    a b c d e f g h   [~c=~2a ~c=~2a (~@d)]"
+          (name-of black) (count black board)
+          (name-of white) (count white board)
+          (count-difference black board))
+  ;; Print the board itself
+  (loop for row from 1 to 8 do
+        (format t "~&  ~d " row)
+        (loop for col from 1 to 8
+              for piece = (bref board (+ col (* 10 row)))
+              do (format t "~c " (name-of piece))))
+  ;; Finally print the time remaining for each player
+  (when clock
+    (format t "  [~c=~a ~c=~a]~2&"
+            (name-of black) (time-string (elt clock black))
+            (name-of white) (time-string (elt clock white)))))
+
 (defun time-string (time)
-    "Return a string representing this internal time in min:secs."
-    (multiple-value-bind (min  sec)
-            (floor (round time internal-time-units-per-second) 60)
-        (format nil "~2d:~2,'0d" min sec)))
+  "Return a string representing this internal time in min:secs."
+  (multiple-value-bind (min sec)
+      (floor (round time internal-time-units-per-second) 60)
+    (format nil "~2d:~2,'0d" min sec)))
 ```
 
 ## 18.8 Playing a Series of Games
@@ -1187,22 +1159,20 @@ The following function allows two strategies to compete in a series of games:
 
 ```lisp
 (defun othello-series (strategy1 strategy2 n-pairs)
-    "Play a series of 2*n-pairs games, swapping sides."
-    (let ((scores (loop repeat n-pairs
-                        collect (othello strategy1 strategy2 nil)
-                        collect (- (othello strategy2 strategy1 nil)))))
-        ;; Return the number of wins, (1/2 for a tie),
-        ;; the total of thepoint differences, and the
-```
-
-`        ;; scores themselves.
-all from strategy1's point of view.`
-
-```lisp
-        (values (+ (count-if #'plusp scores)
-                    (/ (count-if #'zerop scores) 2))
-                (apply #'+ scores)
-                scores)))
+  "Play a series of 2*n-pairs games, swapping sides."
+  (let ((scores
+          (loop repeat n-pairs
+             for random-state = (make-random-state)
+             collect (othello strategy1 strategy2 nil)
+             do (setf *random-state* random-state)
+             collect (- (othello strategy2 strategy1 nil)))))
+    ;; Return the number of wins (1/2 for a tie),
+    ;; the total of the point differences, and the
+    ;; scores themselves, all from strategy1's point of view.
+    (values (+ (count-if #'plusp scores)
+               (/ (count-if #'zerop scores) 2))
+            (apply #'+ scores)
+            scores)))
 ```
 
 Let's see what happens when we use it to pit the two weighted-squares functions against each other in a series of ten games:
@@ -1231,18 +1201,19 @@ This is a better solution because it uses existing functions rather than modifyi
 
 ```lisp
 (defun random-othello-series (strategy1 strategy2
-                            n-pairs &optional (n-random 10))
-    "Play a series of 2*n games, starting from a random position."
-    (othello-series
-        (switch-strategies #'random-strategy n-random strategy1)
-        (switch-strategies #'random-strategy n-random strategy2)
-        n-pairs))
+                              n-pairs &optional (n-random 10))
+  "Play a series of 2*n games, starting from a random position."
+  (othello-series
+    (switch-strategies #'random-strategy n-random strategy1)
+    (switch-strategies #'random-strategy n-random strategy2)
+    n-pairs))
+
 (defun switch-strategies (strategy1 m strategy2)
-    "Make a new strategy that plays strategy1 for m moves,
-    then plays according to strategy2."
-    #'(lambda (player board)
-            (funcall (if (<= *move-number* m) strategy1 strategy2)
-                  player board)))
+  "Make a new strategy that plays strategy1 for m moves,
+  then plays according to strategy2."
+  #'(lambda (player board)
+      (funcall (if (<= *move-number* m) strategy1 strategy2)
+               player board)))
 ```
 
 There is a problem with this kind of series: it may be that one of the strategies just happens to get better random positions.
@@ -1252,30 +1223,20 @@ That way the same random position will be duplicated.
 
 ```lisp
 (defun othello-series (strategy1 strategy2 n-pairs)
-```
-
-`    "Play a series of 2*n-pairs games.
-swapping sides."`
-
-```lisp
-    (let ((scores
-                (loop repeat n-pairs
-                      for random-state = (make-random-state)
-                      collect (othello strategy1 strategy2 nil)
-                      do (setf *random-state* random-state)
-                      collect (- (othello strategy2 strategy1 nil)))))
-        ;; Return the number of wins (1/2 for a tie).
-        ;; the total of the point differences, and the
-```
-
-`        ;; scores themselves.
-all from strategy1's point of view.`
-
-```lisp
-        (values (+ (count-if #'plusp scores)
-                          (/ (count-if #'zerop scores) 2))
-                  (apply #'+ scores)
-                  scores)))
+  "Play a series of 2*n-pairs games, swapping sides."
+  (let ((scores
+          (loop repeat n-pairs
+             for random-state = (make-random-state)
+             collect (othello strategy1 strategy2 nil)
+             do (setf *random-state* random-state)
+             collect (- (othello strategy2 strategy1 nil)))))
+    ;; Return the number of wins (1/2 for a tie),
+    ;; the total of the point differences, and the
+    ;; scores themselves, all from strategy1's point of view.
+    (values (+ (count-if #'plusp scores)
+               (/ (count-if #'zerop scores) 2))
+            (apply #'+ scores)
+            scores)))
 ```
 
 Now we are in a position to do a more meaningful test.
@@ -1300,46 +1261,42 @@ When there are more than two strategies to be compared at the same time, the fol
 
 ```lisp
 (defun round-robin (strategies n-pairs &optional
-                        (n-random 10) (names strategies))
-    "Play a tournament among the strategies.
-    N-PAIRS = games each strategy plays as each col or against
-```
-
-`    each opponent.
-So with N strategies, a total of`
-
-```lisp
-    N*(N-1)*N-PAIRS games are played."
-    (let* ((N (length strategies))
-                (totals (make-array N :initial-element 0))
-                (scores (make-array (list N N)
-                                : initial-element 0)))
-        ;; Play the games
-        (dotimes (i N)
-            (loop for j from (+i 1) to (- N 1) do
-                  (let* ((wins (random-othello-series
-                                (elt strategies i)
-                                (elt strategies j)
-                                n-pairs n-random))
-                        (losses (- (* 2 n-pairs) wins)))
-                  (incf (aref scores i j) wins)
-                  (incf (aref scores j i) losses)
-                  (incf (aref totals i) wins)
-                  (incf (aref totals j) losses))))
+                    (n-random 10) (names strategies))
+  "Play a tournament among the strategies.
+  N-PAIRS = games each strategy plays as each color against
+  each opponent.  So with N strategies, a total of
+  N*(N-1)*N-PAIRS games are played."
+  (let* ((N (length strategies))
+         (totals (make-array N :initial-element 0))
+         (scores (make-array (list N N)
+                             :initial-element 0)))
+    ;; Play the games
+    (dotimes (i N)
+      (loop for j from (+ i 1) to (- N 1) do
+          (let* ((wins (random-othello-series
+                         (elt strategies i)
+                         (elt strategies j)
+                         n-pairs n-random))
+                 (losses (- (* 2 n-pairs) wins)))
+            (incf (aref scores i j) wins)
+            (incf (aref scores j i) losses)
+            (incf (aref totals i) wins)
+            (incf (aref totals j) losses))))
     ;; Print the results
     (dotimes (i N)
-        (format t "~&~a~20  T ~  4f: " (elt names i) (elt totals i))
-        (dotimes (j N)
-            (format t "~4f " (if (= i j) '---
-                                      (aref scores i j)))))))
+      (format t "~&~a~20T ~4f: " (elt names i) (elt totals i))
+      (dotimes (j N)
+        (format t "~4f " (if (= i j) '---
+                             (aref scores i j)))))))
 ```
 
 Here is a comparison of five strategies that search only 1 ply:
 
 ```lisp
 (defun mobility (player board)
-    "The number of moves a player has."
-    (length (legal-moves player board)))
+  "The number of moves a player has."
+  (length (legal-moves player board)))
+
 > (round-robin
     (list (maximizer #'count-difference)
                 (maximizer #'mobility)
@@ -1416,70 +1373,64 @@ The search is the same except that nodes are passed around instead of boards, an
 
 ```lisp
 (defstruct (node) square board value)
+
 (defun alpha-beta-searcher2 (depth eval-fn)
-    "Return a strategy that does A-B search with sorted moves."
-    #'(lambda (player board)
-        (multiple-value-bind (value node)
-                (alpha-beta2
-                    player (make-node :board board
-                                  :value (funcall eval-fn player board))
-                    losing-value winning-value depth eval-fn)
-            (declare (ignore value))
-            (node-square node))))
+  "Return a strategy that does A-B search with sorted moves."
+  #'(lambda (player board)
+      (multiple-value-bind (value node)
+          (alpha-beta2
+            player (make-node :board board
+                              :value (funcall eval-fn player board))
+            losing-value winning-value depth eval-fn)
+        (declare (ignore value))
+        (node-square node))))
+
 (defun alpha-beta2 (player node achievable cutoff ply eval-fn)
-```
-
-`    "A-B search.
-sorting moves by eval-fn"`
-
-```lisp
-    ;; Returns two values: achievable-value and move-to-make
-    (if (= ply 0)
-        (values (node-value node) node)
-        (let* ((board (node-board node))
-                      (nodes (legal-nodes player board eval-fn)))
-            (if (null nodes)
-```
-
-`                  (if (any-legal-move?
-(opponent player) board)`
-
-```lisp
-                      (values (- (alpha-beta2 (opponent player)
-                                      (negate-value node)
-                                      (- cutoff) (- achievable)
-                                      (- ply 1) eval-fn))
-                              nil)
-                      (values (final-value player board) nil))
+  "A-B search, sorting moves by eval-fn"
+  ;; Returns two values: achievable-value and move-to-make
+  (if (= ply 0)
+      (values (node-value node) node)
+      (let* ((board (node-board node))
+             (nodes (legal-nodes player board eval-fn)))
+        (if (null nodes)
+            (if (any-legal-move? (opponent player) board)
+                (values (- (alpha-beta2 (opponent player)
+                                        (negate-value node)
+                                        (- cutoff) (- achievable)
+                                        (- ply 1) eval-fn))
+                        nil)
+                (values (final-value player board) nil))
             (let ((best-node (first nodes)))
-                (loop for move in nodes
-                          for val = (- (alpha-beta2
-                                    (opponent player)
-                                    (negate-value move)
-                                    (- cutoff) (- achievable)
-                                    (- ply 1) eval-fn))
-                          do (when (> val achievable)
-                              (setf achievable val)
-                              (setf best-node move))
-                          until (>= achievable cutoff))
-                      (values achievable best-node))))))
+              (loop for move in nodes
+                    for val = (- (alpha-beta2
+                                   (opponent player)
+                                   (negate-value move)
+                                   (- cutoff) (- achievable)
+                                   (- ply 1) eval-fn))
+                    do (when (> val achievable)
+                         (setf achievable val)
+                         (setf best-node move))
+                    until (>= achievable cutoff))
+              (values achievable best-node))))))
+
 (defun negate-value (node)
-    "Set the value of a node to its negative."
-    (setf (node-value node) (- (node-value node)))
-    node)
+  "Set the value of a node to its negative."
+  (setf (node-value node) (- (node-value node)))
+  node)
+
 (defun legal-nodes (player board eval-fn)
-    "Return a list of legal moves, each one packed into a node."
-    (let ((moves (legal-moves player board)))
-        (sort (map-into
-                moves
-                #'(lambda (move)
-                      (let ((new-board (make-move move player
-                                        (copy-board board))))
-                          (make-node
-                              :square move :board new-board
-                              :value (funcall eval-fn player new-board))))
-                moves)
-            #'> :key #'node-value)))
+  "Return a list of legal moves, each one packed into a node."
+  (let ((moves (legal-moves player board)))
+    (sort (map-into
+            moves
+            #'(lambda (move)
+                (let ((new-board (make-move move player
+                                            (copy-board board))))
+                  (make-node
+                    :square move :board new-board
+                    :value (funcall eval-fn player new-board))))
+            moves)
+          #'> :key #'node-value)))
 ```
 
 (Note the use of the function `map-into`.
@@ -1543,7 +1494,7 @@ This is a safe assumption, as even the fastest Othello programs can only search 
 
 ```lisp
 (defvar *ply-boards*
-    (apply #'vector (loop repeat 40 collect (initial-board))))
+  (apply #'vector (loop repeat 40 collect (initial-board))))
 ```
 
 Now that we have sharply limited the number of boards needed, we may want to reevaluate the implementation of boards.
@@ -1579,57 +1530,54 @@ Everything else is unchanged, except that we get a new board by recycling the `*
 
 ```lisp
 (defun alpha-beta3 (player board achievable cutoff ply eval-fn
-                      killer)
-    "A-B search, putting killer move first."
-    (if (= ply 0)
-        (funcall eval-fn player board)
-        (let ((moves (put-first killer (legal-moves player board))))
-            (if (null moves)
-```
+                    killer)
+  "A-B search, putting killer move first."
+  (if (= ply 0)
+      (funcall eval-fn player board)
+      (let ((moves (put-first killer (legal-moves player board))))
+        (if (null moves)
+            (if (any-legal-move? (opponent player) board)
+                (- (alpha-beta3 (opponent player) board
+                                (- cutoff) (- achievable)
+                                (- ply 1) eval-fn nil))
+                (final-value player board))
+            (let ((best-move (first moves))
+                  (new-board (aref *ply-boards* ply))
+                  (killer2 nil)
+                  (killer2-val winning-value))
+              (loop for move in moves
+                    do (multiple-value-bind (val reply)
+                           (alpha-beta3
+                             (opponent player)
+                             (make-move move player
+                                        (replace new-board board))
+                             (- cutoff) (- achievable)
+                             (- ply 1) eval-fn killer2)
+                         (setf val (- val))
+                         (when (> val achievable)
+                           (setf achievable val)
+                           (setf best-move move))
+                         (when (and reply (< val killer2-val))
+                           (setf killer2 reply)
+                           (setf killer2-val val)))
+                    until (>= achievable cutoff))
+              (values achievable best-move))))))
 
-`                (if (any-legal-move?
-(opponent player) board)`
-
-```lisp
-                    (- (alpha-beta3 (opponent player) board
-                                    (- cutoff) (- achievable)
-                                    (- ply 1) eval-fn nil))
-                    (final-value player board))
-                (let ((best-move (first moves))
-                        (new-board (aref *ply-boards* ply))
-                        (killer2 nil)
-                        (killer2-val winning-value))
-                    (loop for move in moves
-                            do (multiple-value-bind (val reply)
-                                    (alpha-beta3
-                                        (opponent player)
-                                        (make-move move player
-                                            (replace new-board board))
-                                        (- cutoff) (- achievable)
-                                        (- ply 1) eval-fn killer2)
-                                (setf val (- val))
-                                (when (> val achievable)
-                                    (setf achievable val)
-                                    (setf best-move move))
-                                (when (and reply (< val killer2-val))
-                                    (setf killer2 reply)
-                                    (setf killer2-val  val)))
-                            until (>= achievable cutoff))
-                        (values achievable best-move))))))
 (defun alpha-beta-searcher3 (depth eval-fn)
-    "Return a strategy that does A-B search with killer moves."
-    #'(lambda (player board)
-        (multiple-value-bind (value move)
-                (alpha-beta3 player board losing-value winning-value
-                        depth eval-fn nil)
-            (declare (ignore value))
-            move)))
+  "Return a strategy that does A-B search with killer moves."
+  #'(lambda (player board)
+      (multiple-value-bind (value move)
+          (alpha-beta3 player board losing-value winning-value
+                       depth eval-fn nil)
+        (declare (ignore value))
+        move)))
+
 (defun put-first (killer moves)
-    "Move the killer move to the front of moves,
-    if the killer move is in fact a legal move."
-    (if (member killer moves)
-        (cons killer (delete killer moves))
-        moves))
+  "Move the killer move to the front of moves,
+  if the killer move is in fact a legal move."
+  (if (member killer moves)
+      (cons killer (delete killer moves))
+      moves))
 ```
 
 Another experiment on a single game reveals that adding the killer heuristic to staticordering search (again at 6-ply) cuts the number of boards and evaluations, and the total time, all by about 20%.
@@ -1678,21 +1626,21 @@ The following function computes both current and potential mobility for a player
 
 ```lisp
 (defun mobility (player board)
-    "Current mobility is the number of legal moves.
-    Potential mobility is the number of blank squares
-    adjacent to an opponent that are not legal moves.
-    Returns current and potential mobility for player."
-    (let ((opp (opponent player))
-            (current 0) ; player's current mobility
-            (potential 0)) ; player's potential mobility
+  "Current Mobility is the number of legal moves.
+  Potential mobility is the number of blank squares
+  adjacent to an opponent that are not legal moves.
+  Returns current and potential mobility for player."
+  (let ((opp (opponent player))
+        (current 0)    ; player's current mobility
+        (potential 0)) ; player's potential mobility
     (dolist (square all-squares)
-        (when (eql (bref board square) empty)
-            (cond ((legal-p square player board)
-      (incf current))
-        ((some #'(lambda (sq) (eql (bref board sq) opp))
-                (neighbors square))
-            (incf potential)))))
-(values current (+ current potential))))
+      (when (eql (bref board square) empty)
+        (cond ((legal-p square player board)
+               (incf current))
+              ((some #'(lambda (sq) (eql (bref board sq) opp))
+                     (neighbors square))
+               (incf potential)))))
+    (values current (+ current potential))))
 ```
 
 ### Edge Stability
@@ -1732,13 +1680,14 @@ Each edge has ten squares because the X-squares are included.
 
 ```lisp
 (defvar *edge-table* (make-array (expt 3 10))
-    "Array of values to player-to-move for edge positions.")
+  "Array of values to player-to-move for edge positions.")
+
 (defconstant edge-and-x-lists
-    '((22 11 12 13 14 15 16 17 18 27)
-        (72 81 82 83 84 85 86 87 88 77)
-        (22 11 21 31 41 51 61 71 81 72)
-        (27 18 28 38 48 58 68 78 88 77))
-    "The four edges (with their X-squares).")
+  '((22 11 12 13 14 15 16 17 18 27)
+    (72 81 82 83 84 85 86 87 88 77)
+    (22 11 21 31 41 51 61 71 81 72)
+    (27 18 28 38 48 58 68 78 88 77))
+  "The four edges (with their X-squares).")
 ```
 
 Now for each edge we can compute an index into the edge table by building a 10-digit base-3 number, where each digit is 1 if the corresponding edge square is occupied by the player, 2 if by the opponent, and 0 if empty.
@@ -1746,19 +1695,20 @@ The function `edge-index` computes this, and `edge-stability` sums the values of
 
 ```lisp
 (defun edge-index (player board squares)
-    "The index counts 1 for player; 2 for opponent,
-    on each square---summed as a base 3 number."
-    (let ((index 0))
-        (dolist (sq squares)
-            (setq index (+ (* index 3)
-                    (cond ((eql (bref board sq) empty) 0)
-                            ((eql (bref board sq) player) 1)
-                            (t 2)))))
-        index))
+  "The index counts 1 for player; 2 for opponent,
+  on each square---summed as a base 3 number."
+  (let ((index 0))
+    (dolist (sq squares)
+      (setq index (+ (* index 3)
+                     (cond ((eql (bref board sq) empty) 0)
+                           ((eql (bref board sq) player) 1)
+                           (t 2)))))
+    index))
+
 (defun edge-stability (player board)
-    "Total edge evaluation for player to move on board."
-    (loop for edge-list in edge-and-x-lists
-            sum (aref *edge-table*
+  "Total edge evaluation for player to move on board."
+  (loop for edge-list in edge-and-x-lists
+        sum (aref *edge-table*
                   (edge-index player board edge-list))))
 ```
 
@@ -1773,25 +1723,26 @@ After that, each position is updated by considering the possible moves that can 
 
 ```lisp
 (defconstant top-edge (first edge-and-x-lists))
+
 (defun init-edge-table ()
-    "Initialize *edge-table*, starting from the empty board."
-    ;; Initialize the static values
-    (loop for n-pieces from 0 to 10 do
-            (map-edge-n-pieces
-                      #'(lambda (board index)
-                          (setf (aref *edge-table* index)
-                              (static-edge-stability black board)))
-                      black (initial-board) n-pieces top-edge 0))
-    ;; Now iterate five times trying to improve:
-    (dotimes (i 5)
-        ;; Do the indexes with most pieces first
-        (loop for n-pieces from 9 downto 1 do
-            (map-edge-n-pieces
-                #'(lambda (board index)
-                    (setf (aref *edge-table* index)
-                        (possible-edge-moves-value
-                            black board index)))
-                black (initial-board) n-pieces top-edge 0))))
+  "Initialize *edge-table*, starting from the empty board."
+  ;; Initialize the static values
+  (loop for n-pieces from 0 to 10 do
+        (map-edge-n-pieces
+          #'(lambda (board index)
+              (setf (aref *edge-table* index)
+                    (static-edge-stability black board)))
+          black (initial-board) n-pieces top-edge 0))
+  ;; Now iterate five times trying to improve:
+  (dotimes (i 5)
+    ;; Do the indexes with most pieces first
+    (loop for n-pieces from 9 downto 1 do
+          (map-edge-n-pieces
+            #'(lambda (board index)
+                (setf (aref *edge-table* index)
+                      (possible-edge-moves-value
+                        black board index)))
+            black (initial-board) n-pieces top-edge 0))))
 ```
 
 The function `map-edge-n-pieces` iterates through all edge positions with a total of `n` pieces (of either color), applying a function to each such position.
@@ -1804,22 +1755,22 @@ Otherwise we first try leaving the current square blank, then try filling it wit
 
 ```lisp
 (defun map-edge-n-pieces (fn player board n squares index)
-    "Call fn on all edges with n pieces."
-    ;; Index counts 1 for player; 2 for opponent
-    (cond
-        ((< (length squares) n) nil)
-        ((null squares) (funcall fn board index))
-        (t (let ((index3 (* 3 index))
-                  (sq (first squares)))
-            (map-edge-n-pieces fn player board n (rest squares) index3)
-        (when (and (> n 0) (eql (bref board sq) empty))
-                (setf (bref board sq) player)
-                (map-edge-n-pieces fn player board (- n 1) (rest squares)
-                                (+1 index3))
-                (setf (bref board sq) (opponent player))
-                (map-edge-n-pieces fn player board (- n 1) (rest squares)
-                                (+2 index3))
-                (setf (bref board sq) empty))))))
+  "Call fn on all edges with n pieces."
+  ;; Index counts 1 for player; 2 for opponent
+  (cond
+    ((< (length squares) n) nil)
+    ((null squares) (funcall fn board index))
+    (t (let ((index3 (* 3 index))
+             (sq (first squares)))
+         (map-edge-n-pieces fn player board n (rest squares) index3)
+         (when (and (> n 0) (eql (bref board sq) empty))
+           (setf (bref board sq) player)
+           (map-edge-n-pieces fn player board (- n 1) (rest squares)
+                              (+ 1 index3))
+           (setf (bref board sq) (opponent player))
+           (map-edge-n-pieces fn player board (- n 1) (rest squares)
+                              (+ 2 index3))
+           (setf (bref board sq) empty))))))
 ```
 
 The function `possible-edge-moves-value` searches through all possible moves to determine an edge value that is more accurate than a static evaluation.
@@ -1828,28 +1779,28 @@ Since it is also possible for a player not to make any move at all on an edge, t
 
 ```lisp
 (defun possible-edge-moves-value (player board index)
-    "Consider all possible edge moves.
-    Combine their values into a single number."
-    (combine-edge-moves
-        (cons
-            (list 1.0 (aref *edge-table* index)) ;; no move
-            (loop for sq in top-edge ;; possible moves
-                when (eql (bref board sq) empty)
-                collect (possible-edge-move player board sq)))
-        player))
+  "Consider all possible edge moves.
+  Combine their values into a single number."
+  (combine-edge-moves
+    (cons
+      (list 1.0 (aref *edge-table* index)) ;; no move
+      (loop for sq in top-edge             ;; possible moves
+            when (eql (bref board sq) empty)
+            collect (possible-edge-move player board sq)))
+    player))
 ```
 
 The value of each position is determined by making the move on the board, then looking up in the table the value of the resulting position for the opponent, and negating it (since we are interested in the value to us, not to our opponent).
 
 ```lisp
 (defun possible-edge-move (player board sq)
-    "Return a (prob val) pair for a possible edge move."
-    (let ((new-board (replace (aref *ply-boards* player) board)))
-        (make-move sq player new-board)
-        (list (edge-move-probability player board sq)
-            (- (aref *edge-table*
-                (edge-index (opponent player)
-                    new-board top-edge))))))
+  "Return a (prob val) pair for a possible edge move."
+  (let ((new-board (replace (aref *ply-boards* player) board)))
+    (make-move sq player new-board)
+    (list (edge-move-probability player board sq)
+          (- (aref *edge-table*
+                   (edge-index (opponent player)
+                               new-board top-edge))))))
 ```
 
 The possible moves are combined with `combine-edge-moves`, which sorts the moves best-first.
@@ -1859,29 +1810,27 @@ In the end we round off the total value, so that we can do the run-time calculat
 
 ```lisp
 (defun combine-edge-moves (possibilities player)
-    "Combine the best moves."
-    (let ((prob 1.0)
-            (val 0.0)
-            (fn (if (eql player black) #'> #'<)))
-        (loop for pair in (sort possibilities fn :key #'second)
-                while (>= prob 0.0)
-                do (incf val (* prob (first pair) (second pair)))
-                    (decf prob (* prob (first pair))))
-        (round val)))
+  "Combine the best moves."
+  (let ((prob 1.0)
+        (val 0.0)
+        (fn (if (eql player black) #'> #'<)))
+    (loop for pair in (sort possibilities fn :key #'second)
+          while (>= prob 0.0)
+          do (incf val (* prob (first pair) (second pair)))
+             (decf prob (* prob (first pair))))
+    (round val)))
 ```
 
 We still need to compute the probability that each possible edge move is legal.
 These probabilities should reflect things such as the fact that it is easy to capture a corner if the opponent is in the adjacent X-square, and very difficult otherwise.
 First we define some functions to recognize corner and X-squares and relate them to their neighbors:
 
-`(let ((corner/xsqs '((11 . 22) (18 . 27) (81.
-72) (88 . 77))))`
-
 ```lisp
-    (defun corner-p (sq) (assoc sq corner/xsqs))
-    (defun x-square-p (sq) (rassoc sq corner/xsqs))
-    (defun x-square-for (corner) (cdr (assoc corner corner/xsqs)))
-    (defun corner-for (xsq) (car (rassoc xsq corner/xsqs))))
+(let ((corner/xsqs '((11 . 22) (18 . 27) (81. 72) (88 . 77))))
+  (defun corner-p (sq) (assoc sq corner/xsqs))
+  (defun x-square-p (sq) (rassoc sq corner/xsqs))
+  (defun x-square-for (corner) (cdr (assoc corner corner/xsqs)))
+  (defun corner-for (xsq) (car (rassoc xsq corner/xsqs))))
 ```
 
 Now we consider the probabilities.
@@ -1894,28 +1843,29 @@ If it is legal for the opponent to move into the square, then the chances are cu
 
 ```lisp
 (defun edge-move-probability (player board square)
-    "What's the probability that player can move to this square?"
-    (cond
-        ((x-square-p square) .5) ;; X-squares
-        ((legal-p square player board) 1.0) ;; immediate capture
-        ((corner-p square) ;; move to corner depends on X-square
-        (let ((x-sq (x-square-for square)))
-            (cond
-                ((eql (bref board x-sq) empty) .1)
-                ((eql (bref board x-sq) player) 0.001)
-                (t .9))))
-        (t (/ (aref
-                    '#2A((.l .4 .7)
-                        (.05 .3 *)
-                        (.01 * *))
-                    (count-edge-neighbors player board square)
-                    (count-edge-neighbors (opponent player) board square))
-                (if (legal-p square (opponent player) board) 2 1)))))
+  "What's the probability that player can move to this square?"
+  (cond
+    ((x-square-p square) .5) ;; X-squares
+    ((legal-p square player board) 1.0) ;; immediate capture
+    ((corner-p square) ;; move to corner depends on X-square
+     (let ((x-sq (x-square-for square)))
+       (cond
+         ((eql (bref board x-sq) empty) .1)
+         ((eql (bref board x-sq) player) 0.001)
+         (t .9))))
+    (t (/ (aref
+            '#2A((.1  .4 .7)
+                 (.05 .3  *)
+                 (.01  *  *))
+            (count-edge-neighbors player board square)
+            (count-edge-neighbors (opponent player) board square))
+          (if (legal-p square (opponent player) board) 2 1)))))
+
 (defun count-edge-neighbors (player board square)
-    "Count the neighbors of this square occupied by player."
-    (count-if #'(lambda (inc)
-                        (eql (bref board (+ square inc)) player))
-                '(+1 -1)))
+  "Count the neighbors of this square occupied by player."
+  (count-if #'(lambda (inc)
+                (eql (bref board (+ square inc)) player))
+            '(+1 -1)))
 ```
 
 Now we return to the problem of determining the static value of an edge position.
@@ -1926,34 +1876,34 @@ Note that corner squares are always stable, and X-squares we will call semistabl
 
 ```lisp
 (defparameter *static-edge-table*
-    '#2A(;stab semi       un
-              (      *     0 -2000) ; X
-              (  700     *         *) ; corner
-              (1200 200     -25) ; C
-              (1000 200       75) ; A
-              (1000 200       50) ; B
-              (1000 200       50) ; B
-              (1000 200       75) ; A
-              (1200 200     -25) ; C
-              (  700     *         *) ; corner
-              (      *     0 -2000) ; X
-              ))
+  '#2A(;stab  semi    un
+       (   *    0 -2000) ; X
+       ( 700    *     *) ; corner
+       (1200  200   -25) ; C
+       (1000  200    75) ; A
+       (1000  200    50) ; B
+       (1000  200    50) ; B
+       (1000  200    75) ; A
+       (1200  200   -25) ; C
+       ( 700    *     *) ; corner
+       (   *    0 -2000) ; X
+       ))
 ```
 
 The static evaluation then just sums each piece's value according to this table:
 
 ```lisp
 (defun static-edge-stability (player board)
-    "Compute this edge's static stability"
-    (loop for sq in top-edge
-            for i from 0
-            sum (cond
-                    ((eql (bref board sq) empty) 0)
-                    ((eql (bref board sq) player)
-                      (aref *static-edge-table* i
-                            (piece-stability board sq)))
-                    (t (- (aref *static-edge-table* i
-                                  (piece-stability board sq)))))))
+  "Compute this edge's static stability"
+  (loop for sq in top-edge
+        for i from 0
+        sum (cond
+              ((eql (bref board sq) empty) 0)
+              ((eql (bref board sq) player)
+               (aref *static-edge-table* i
+                     (piece-stability board sq)))
+              (t (- (aref *static-edge-table* i
+                          (piece-stability board sq)))))))
 ```
 
 The computation of stability is fairly complex.
@@ -1964,33 +1914,34 @@ Finally, if either `p1` or `p2` is nil then the piece is stable, since it must b
 
 ```lisp
 (let ((stable 0) (semi-stable 1) (unstable 2))
-    (defun piece-stability (board sq)
-        (cond
-            ((corner-p sq) stable)
-            ((x-square-p sq)
-              (if (eql (bref board (corner-for sq)) empty)
-                  unstable semi-stable))
-            (t (let* ((player (bref board sq))
-                          (opp (opponent player))
-                          (p1 (find player board :test-not #'eql
-                              :start sq :end 19))
-                          (p2 (find player board :test-not #'eql
-                              :start 11 :end sq
-                              :from-end t)))
-                  (cond
-                      ;; unstable pieces can be captured immediately
-                      ;; by playing in the empty square
-                      ((or (and (eql p1 empty) (eql p2 opp))
-                          (and (eql p2 empty) (eql p1 opp)))
-                        unstable)
-                      ;; semi-stable pieces might be captured
-                      ((and (eql p1 opp) (eql p2 opp)
-                          (find empty board :start 11 :end 19))
-                        semi-stable)
-                      ((and (eql p1 empty) (eql p2 empty))
-                        semi-stable)
-                      ;; Stable pieces can never be captured
-                      (t stable)))))))
+
+  (defun piece-stability (board sq)
+    (cond
+      ((corner-p sq) stable)
+      ((x-square-p sq)
+       (if (eql (bref board (corner-for sq)) empty)
+           unstable semi-stable))
+      (t (let* ((player (bref board sq))
+                (opp (opponent player))
+                (p1 (find player board :test-not #'eql
+                          :start sq :end 19))
+                (p2 (find player board :test-not #'eql
+                          :start 11 :end sq
+                          :from-end t)))
+           (cond
+             ;; unstable pieces can be captured immediately
+             ;; by playing in the empty square
+             ((or (and (eql p1 empty) (eql p2 opp))
+                  (and (eql p2 empty) (eql p1 opp)))
+              unstable)
+             ;; Semi-stable pieces might be captured
+             ((and (eql p1 opp) (eql p2 opp)
+                   (find empty board :start 11 :end 19))
+              semi-stable)
+             ((and (eql p1 empty) (eql p2 empty))
+              semi-stable)
+             ;; Stable pieces can never be captured
+             (t stable)))))))
 ```
 
 The edge table can now be built by a call to `init-edge-lable`.
@@ -2020,23 +1971,23 @@ The edge coefficient was doubled and the potential coefficient cut by a factor o
 
 ```lisp
 (defun Iago-eval (player board)
-    "Combine edge-stability, current mobility and
-    potential mobility to arrive at an evaluation."
-    ;; The three factors are multiplied by coefficients
-    ;; that vary by move number:
-    (let ((c-edg(+ 312000 (* 6240 *move-number*)))
+  "Combine edge-stability, current mobility and
+  potential mobility to arrive at an evaluation."
+  ;; The three factors are multiplied by coefficients
+  ;; that vary by move number:
+  (let ((c-edg (+ 312000 (* 6240 *move-number*)))
         (c-cur (if (< *move-number* 25)
-            (+ 50000 (* 2000 *move-number*))
-            (+ 75000 (* 1000 *move-number*))))
+                   (+ 50000 (* 2000 *move-number*))
+                   (+ 75000 (* 1000 *move-number*))))
         (c-pot 20000))
     (multiple-value-bind (p-cur p-pot)
-            (mobility player board)
-        (multiple-value-bind (o-cur o-pot)
-                (mobility (opponent player) board)
-            ;; Combine the three factors into one sum:
-            (+ (round (* c-edg (edge-stability player board)) 32000)
-                    (round (* c-cur (- p-cur o-cur)) (+ p-cur o-cur 2))
-                    (round (* c-pot (- p-pot o-pot)) (+ p-pot o-pot 2)))))))
+        (mobility player board)
+      (multiple-value-bind (o-cur o-pot)
+          (mobility (opponent player) board)
+        ;; Combine the three factors into one sum:
+        (+ (round (* c-edg (edge-stability player board)) 32000)
+           (round (* c-cur (- p-cur o-cur)) (+ p-cur o-cur 2))
+           (round (* c-pot  (- p-pot o-pot)) (+ p-pot o-pot 2)))))))
 ```
 
 Finally, we are ready to code the `Iago` function.
@@ -2049,8 +2000,8 @@ Despite these successes, it is likely that the evaluation function could be impr
 
 ```lisp
 (defun Iago (depth)
-    "Use an approximation of Iago's evaluation function."
-    (alpha-beta-searcher3 depth #'iago-eval))
+  "Use an approximation of Iago's evaluation function."
+  (alpha-beta-searcher3 depth #'iago-eval))
 ```
 
 ## 18.13 Other Techniques
