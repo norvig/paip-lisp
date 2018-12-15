@@ -188,31 +188,19 @@ Here are the EMYCIN !!!(span) {:.smallcaps} certainty factor combination functio
 
 ```lisp
 (defun cf-or (a b)
-```
+  "Combine the certainty factors for the formula (A or B).
+  This is used when two rules support the same conclusion."
+  (cond ((and (> a 0) (> b 0))
+         (+ a b (* -1 a b)))
+        ((and (< a 0) (< b 0))
+         (+ a b (* a b)))
+        (t (/ (+ a b)
+              (- 1 (min (abs a) (abs b)))))))
 
-  `"Combine the certainty factors for the formula (A or B).`
-
-  `This is used when two rules support the same conclusion."`
-
-  `(cond ((and (> a 0) O b 0))`
-
-        `(+ a b (* -1 a b)))`
-
-      `((and (< a 0) (< b 0))`
-
-        `(+ a b (* a b)))`
-
-              `(t (/ (+ a b)`
-
-              `(-  1 (min (abs a) (abs b)))))))`
-
-```lisp
 (defun cf-and (a b)
+  "Combine the certainty factors for the formula (A and B)."
+  (min a b))
 ```
-
-  `"Combine the certainty factors for the formula (A and B)."`
-
-  `(min a b))`
 
 Certainty factors can be seen as a generalization of truth values.
 EMYCIN !!!(span) {:.smallcaps} is a backward-chaining rule system that combines certainty factors according to the functions laid out above.
@@ -227,33 +215,20 @@ The following functions support this arbitrary cutoff point:
 
 ```lisp
 (defconstant cf-cut-off 0.2
-```
+  "Below this certainty we cut off search.")
 
-  `"Below this certainty we eut off search.")`
-
-```lisp
 (defun true-p (cf)
-```
+  "Is this certainty factor considered true?"
+  (and (cf-p cf) (> cf cf-cut-off)))
 
-  `"Is this certainty factor considered true?"`
-
-  `(and (cf-p cf) (> cf cf-cut-off)))`
-
-```lisp
 (defun false-p (cf)
-```
+  "Is this certainty factor considered false?"
+  (and (cf-p cf) (< cf (- cf-cut-off 1.0))))
 
-  `"Is this certainty factor considered false?"`
-
-  `(and (cf-p cf) (< cf (- cf-cut-off 1.0))))`
-
-```lisp
 (defun cf-p (x)
+  "Is X a valid numeric certainty factor?"
+  (and (numberp x) (<= false x true)))
 ```
-
-  `"Is X a valid numeric certainty factor?"`
-
-  `(and (numberp x) (<= false x true)))`
 
 **Exercise  16.1 [m]** Suppose you read the headline "Elvis Alive in Kalamazoo" in a tabloid newspaper to which you attribute a certainty factor of .01.
 If you combine certainties using EMYCIN's !!!(span) {:.smallcaps} combination rule, how many more copies of the newspaper would you need to see before you were .95 certain Elvis is alive?
@@ -270,13 +245,10 @@ We can implement a simple data base by providing three functions: `put-db` to ad
 
 ```lisp
 (let ((db (make-hash-table :test #'equal)))
+  (defun get-db (key) (gethash key db))
+  (defun put-db (key val) (setf (gethash key db) val))
+  (defun clear-db () (clrhash db)))
 ```
-
-  `(defun get-db (key) (gethash key db))`
-
-  `(defun put-db (key val) (setf (gethash key db) val))`
-
-  `(defun clear-db () (clrhash db)))`
 
 This data base is general enough to hold any association between key and value.
 However, most of the information we will want to store is more specific.
@@ -293,39 +265,23 @@ Also note that the data base has to be an equal hash table, because the keys may
 
 ```lisp
 (defun get-vals (parm inst)
-```
+  "Return a list of (val cf) pairs for this (parm inst)."
+  (get-db (list parm inst)))
 
-  `"Return a list of (val cf) pairs for this (parm inst)."`
-
-  `(get-db (list parm inst)))`
-
-```lisp
 (defun get-cf (parm inst val)
-```
+  "Look up the certainty factor or return unknown."
+  (or (second (assoc val (get-vals parm inst)))
+      unknown))
 
-  `"Look up the certainty factor or return unknown."`
-
-  `(or (second (assoc val (get-vals parm inst)))`
-
-      `unknown))`
-
-```lisp
 (defun update-cf (parm inst val cf)
+  "Change the certianty factor for (parm inst is val),
+  by combining the given cf with the old."
+  (let ((new-cf (cf-or cf (get-cf parm inst val))))
+    (put-db (list parm inst)
+            (cons (list val new-cf)
+                  (remove val (get-db (list parm inst))
+                          :key #'first)))))
 ```
-
-  `"Change the certainty factor for (parm inst is val),`
-
-  `by combining the given cf with the old."`
-
-  `(let ((new-cf (cf-or cf (get-cf parm inst val))))`
-
-    `(put-db (list parm inst)`
-
-          `(cons (list val new-cf)`
-
-              `(remove val (get-db (list parm inst))`
-
-                  `:key #'first)))))`
 
 The data base holds all information related to an instance of a problem.
 For example, in the medical domain, the data base would hold all information about the current patient.
@@ -356,24 +312,15 @@ Finally, `help` prints the following summary:
 
 ```lisp
 (defconstant help-string
+  "~&Type one of the following:
+ ?     - to see possible answers for this parameter
+ rule  - to show the current rule
+ why   - to see why this question is asked
+ help  - to see this list
+ xxx   - (for some specific xxx) if there is a definite answer
+ (xxx .5 yyy .4) - If there are several answers with
+                   different certainty factors.")
 ```
-
-  `"~&Type one of the following:`
-
-  `?
-- to see possible answers for this parameter`
-
-  `rule - to show the current rule`
-
-  `why - to see why this question is asked`
-
-  `help - to see this list`
-
-  `xxx - (for some specific xxx) if there is a definite answer`
-
-  `(xxx .5 yyy .4) - If there are several answers`
-
-              `with different certainty factors.")`
 
 Here is `ask-vals`.
 Note that the `why` and `rule` options assume that the current rule has been stored in the data base.
@@ -381,46 +328,25 @@ The functions `print-why`, `parm-type`, and `check-reply` will be defined shortl
 
 ```lisp
 (defun ask-vals (parm inst)
+  "Ask the user for the value(s) of inst's parm parameter,
+  unless this has already been asked.  Keep asking until the
+  user types UNKNOWN (return nil) or a valid reply (return t)."
+  (unless (get-db `(asked ,parm ,inst))
+    (put-db `(asked ,parm ,inst) t)
+    (loop
+      (let ((ans (prompt-and-read-vals parm inst)))
+        (case ans
+          (help (format t help-string))
+          (why  (print-why (get-db 'current-rule) parm))
+          (rule (princ (get-db 'current-rule)))
+          ((unk unknown) (RETURN nil))
+          (?    (format t "~&A ~a must be of type ~a"
+                        parm (parm-type parm)) nil)
+          (t    (if (check-reply ans parm inst)
+                    (RETURN t)
+                    (format t "~&Illegal reply.  ~
+                             Type ? to see legal ones."))))))))
 ```
-
-  `"Ask the user for the value(s) of inst's parm parameter,`
-
-  `unless this has already been asked.
-Keep asking until the`
-
-  `user types UNKNOWN (return nil) or a valid reply (return t)."`
-
-  `(unless (get-db '(asked .parrn ,inst))`
-
-    `(put-db '(asked .parrn ,inst) t)`
-
-    `(loop`
-
-      `(let ((ans (prompt-and-read-vals parm inst)))`
-
-        `(case ans`
-
-          `(help (format t help-string))`
-
-          `(why (print-why (get-db 'current-rule) parm))`
-
-          `(rule (princ (get-db 'current-rule)))`
-
-          `((unk unknown) (RETURN nil))`
-
-          `(?
-(format t "~&A ~  a must be of type ~  a"`
-
-                  `parm (parm-type parm)) nil)`
-
-          `(t (if (check-reply ans parm inst)`
-
-                `(RETURN t)`
-
-                `(format t "~&Illegal reply.
-~`
-
-                      `Type ? to see legal ones."))))))))`
 
 The following is `prompt-and-read-vals,` the function that actually asks the query and reads the reply.
 It basically calls `format` to print a prompt and `read` to get the reply, but there are a few subtleties.
@@ -436,78 +362,46 @@ The macro `defparm` (shown here) provides a way to define prompts and readers fo
 
 ```lisp
 (defun prompt-and-read-vals (parm inst)
-```
+  "Print the prompt for this parameter (or make one up) and
+  read the reply."
+  (fresh-line)
+  (format t (parm-prompt (get-parm parm)) (inst-name inst) parm)
+  (princ " ")
+  (finish-output)
+  (funcall (parm-reader (get-parm parm))))
 
-  `"Print the prompt for this parameter (or make one up) and`
-
-  `read the reply."`
-
-  `(fresh-line)`
-
-  `(format t (parm-prompt (get-parm parm)) (inst-name inst) parm)`
-
-  `(princ " ")`
-
-  `(finish-output)`
-
-  `(funcall (parm-reader (get-parm parm))))`
-
-```lisp
 (defun inst-name (inst)
+  "The name of this instance."
+  ;; The stored name is either like (("Jan Doe" 1.0)) or nil
+  (or (first (first (get-vals 'name inst)))
+      inst))
 ```
-
-  `"The name of this instance."`
-
-  `;; The stored name is either like (("Jan Doe" 1.0)) or nil`
-
-  `(or (first (first (get-vals 'name inst)))`
-
-      `inst))`
 
 The function `check-reply` uses `parse - reply` to convert the user's reply into a canonical form, and then checks that each value is of the right type, and that each certainty factor is valid.
 If so, the data base is updated to reflect the new certainty factors.
 
 ```lisp
 (defun check-reply (reply parm inst)
-```
+  "If reply is valid for this parm, update the DB.
+  Reply should be a val or (val1 cf1 val2 cf2 ...).
+  Each val must be of the right type for this parm."
+  (let ((answers (parse-reply reply)))
+    (when (every #'(lambda (pair)
+                     (and (typep (first pair) (parm-type parm))
+                          (cf-p (second pair))))
+                 answers)
+      ;; Add replies to the data base
+      (dolist (pair answers)
+        (update-cf parm inst (first pair) (second pair)))
+      answers)))
 
-  `"If reply is valid for this parm, update the DB.`
-
-  `Reply should be a val or (vall cfl val2 cf2 ...).`
-
-  `Each val must be of the right type for this parm."`
-
-  `(let ((answers (parse-reply reply)))`
-
-    `(when (every #'(lambda (pair)`
-
-              `(and (typep (first pair) (parm-type parm))`
-
-                `(cf-p (second pair))))`
-
-          `answers)`
-
-      `;; Add replies to the data base`
-
-      `(dolist (pair answers)`
-
-        `(update-cf parm inst (first pair) (second pair)))`
-
-      `answers)))`
-
-```lisp
 (defun parse-reply (reply)
+  "Convert the reply into a list of (value cf) pairs."
+  (cond ((null reply) nil)
+        ((atom reply) `((,reply ,true)))
+        (t (cons (list (first reply) (second reply))
+                 (parse-reply (rest2 reply))))))
 ```
-
-  `"Convert the reply into a list of (value cf) pairs."`
-
-  `(cond ((null reply) nil)`
-
-        `((atom reply) '((,reply ,true)))`
-
-        `(t (cons (list (first reply) (second reply))`
-
-          `(parse-reply (rest2 reply))))))`
 
 Parameters are implemented as structures with six slots: the name (a symbol), the context the parameter is for, the prompt used to ask for the parameter's value, a Boolean that tells if we should ask the user before or after using rules, a type restriction describing the legal values, and finally, the function used to read the value of the parameter.
 
@@ -524,45 +418,25 @@ Therefore, in the default prompt we need to use the format directive `"~*"` to s
 
 ```lisp
 (defstruct (parm (:constructor
-```
+                  new-parm (name &optional context type-restriction
+                            prompt ask-first reader)))
+  name (context nil) (prompt "~&What is the ~*~a of ~2:*~a?")
+  (ask-first nil) (type-restriction t) (reader 'read))
 
-            `new-parm (name &optional context type-restriction`
-
-                  `prompt ask-first reader)))`
-
-  `name (context nil) (prompt "~&What is the ~*~a of ~  2:*~a?")`
-
-  `(ask-first nil) (type-restriction t) (reader 'read))`
-
-```lisp
 (defmacro defparm (parm &rest args)
-```
+  "Define a parameter."
+  `(setf (get ',parm 'parm) (apply #'new-parm ',parm ',args)))
 
-  `"Define a parameter."`
-
-  `'(setf (get ',parm 'parm) (apply #'new-parm ',parm ',args)))`
-
-```lisp
 (defun parm-type (parm-name)
-```
+  "What type is expected for a value of this parameter?"
+  (parm-type-restriction (get-parm parm-name)))
 
-  `"What type is expected for a value of this parameter?"`
-
-  `(parm-type-restriction (get-parm parm-name)))`
-
-```lisp
 (defun get-parm (parm-name)
-```
+  "Look up the parameter structure with this name."
+  ;; If there is none, make one
+  (or (get parm-name 'parm)
+      (setf (get parm-name 'parm) (new-parm parm-name))))
 
-  `"Look up the parameter structure with this name."`
-
-  `;; If there is none, make one`
-
-  `(or (get parm-name 'parm)`
-
-      `(setf (get parm-name 'parm) (new-parm parm-name))))`
-
-```lisp
 (deftype yes/no () '(member yes no))
 ```
 
@@ -619,19 +493,14 @@ Contexts are implemented as structures with the following definition:
 
 ```lisp
 (defstruct context
+  "A context is a sub-domain, a type."
+  name (number 0) initial-data goals)
+
+(defmacro defcontext (name &optional initial-data goals)
+  "Define a context."
+  `(make-context :name ',name :initial-data ',initial-data
+                 :goals ',goals))
 ```
-
-  `"A context is a sub-domain, a type."`
-
-  `name (number 0) initial-data goals)`
-
-```lisp
-(defmacro defeontext (name &optional initial-data goals)
-```
-
-  `"Define a context."`
-
-  `'(make-context :name ',name :initial-data ',initial-data :goals ',goals))`
 
 The `name` field is something like `patient or organism.` Instances of contexts are numbered; the `number` field holds the number of the most recent instance.
 Each context also has two lists of parameters.
@@ -655,21 +524,14 @@ The context tree is shown in [figure  16.2](#f0015).
 
 ```lisp
 (defun new-instance (context)
+  "Create a new instance of this context."
+  (let ((instance (format nil "~a-~d"
+                          (context-name context)
+                          (incf (context-number context)))))
+  (format t "~&------ ~a ------~&" instance)
+    (put-db (context-name context) instance)
+    (put-db 'current-instance instance)))
 ```
-
-  `"Create a new instance of this context."`
-
-  `(let ((instance (format nil "~a-~d"`
-
-                `(context-name context)`
-
-                `(incf (context-number context)))))`
-
-  `(format t "~&------ ~  a ------ ~&" instance)`
-
-    `(put-db (context-name context) instance)`
-
-    `(put-db 'current-instance instance)))`
 
 ## 16.5 Backward-Chaining Revisited
 {:#s0030}
@@ -727,21 +589,21 @@ Before showing the interpreter, here is the structure definition for rules, alon
 
 ```lisp
 (defstruct (rule (:print-function print-rule))
-```
+  number premises conclusions cf)
 
-  `number premises conclusions cf)`
-
-```lisp
 (let ((rules (make-hash-table)))
+
   (defun put-rule (rule)
     "Put the rule in a table, indexed under each
     parm in the conclusion."
     (dolist (concl (rule-conclusions rule))
       (push rule (gethash (first concl) rules)))
     rule)
+
   (defun get-rules (parm)
     "A list of rules that help determine this parameter."
     (gethash parm rules))
+
   (defun clear-rules () (clrhash rules)))
 ```
 
@@ -757,21 +619,23 @@ Either way, if an answer is determined, it is stored in the data base.
   "Find the value(s) of this parameter for this instance,
   unless the values are already known.
   Some parameters we ask first; others we use rules first."
-  (or (get-db '(known ,parm ,inst))
-      (put-db '(known ,parm ,inst)
-          (if (parm-ask-first (get-parm parm))
-              (or (ask-vals parm inst) (use-rules parm))
-              (or (use-rules parm) (ask-vals parm inst))))))
+  (or (get-db `(known ,parm ,inst))
+      (put-db `(known ,parm ,inst)
+              (if (parm-ask-first (get-parm parm))
+                  (or (ask-vals parm inst) (use-rules parm))
+                  (or (use-rules parm) (ask-vals parm inst))))))
+
 (defun use-rules (parm)
   "Try every rule associated with this parameter.
   Return true if one of the rules returns true."
   (some #'true-p (mapcar #'use-rule (get-rules parm))))
+
 (defun use-rule (rule)
   "Apply a rule to the current situation."
   ;; Keep track of the rule for the explanation system:
   (put-db 'current-rule rule)
   ;; If any premise is known false, give up.
-  ;; If every premise can be proved true, then
+  ;; If every premise can be proved true,  then
   ;; draw conclusions (weighted with the certainty factor).
   (unless (some #'reject-premise (rule-premises rule))
     (let ((cf (satisfy-premises (rule-premises rule) true)))
@@ -779,6 +643,7 @@ Either way, if an answer is determined, it is stored in the data base.
         (dolist (conclusion (rule-conclusions rule))
           (conclude conclusion (* cf (rule-cf rule))))
         cf))))
+
 (defun satisfy-premises (premises cf-so-far)
   "A list of premises is satisfied if they are all true.
   A combined cf is returned."
@@ -786,9 +651,9 @@ Either way, if an answer is determined, it is stored in the data base.
   (cond ((null premises) cf-so-far)
         ((not (true-p cf-so-far)) false)
         (t (satisfy-premises
-          (rest premises)
-          (cf-and cf-so-far
-                (eval-condition (first premises)))))))
+             (rest premises)
+             (cf-and cf-so-far
+                     (eval-condition (first premises)))))))
 ```
 
 The function `eval-condition` evaluates a single condition, returning its certainty factor.
@@ -809,22 +674,25 @@ Note that `is` is the only operator allowed in conclusions, `is` is just an alia
   "See if this condition is true, optionally using FIND-OUT
   to determine unknown parameters."
   (multiple-value-bind (parm inst op val)
-    (parse-condition condition)
-      (when find-out-p
-        (find-out parm inst))
-      ;; Add up all the (val cf) pairs that satisfy the test
-      (loop for pair in (get-vals parm inst)
+      (parse-condition condition)
+    (when find-out-p
+      (find-out parm inst))
+    ;; Add up all the (val cf) pairs that satisfy the test
+    (loop for pair in (get-vals parm inst)
           when (funcall op (first pair) val)
           sum (second pair))))
+
 (defun reject-premise (premise)
   "A premise is rejected if it is known false, without
   needing to call find-out recursively."
   (false-p (eval-condition premise nil)))
+
 (defun conclude (conclusion cf)
   "Add a conclusion (with specified certainty factor) to DB."
   (multiple-value-bind (parm inst op val)
       (parse-condition conclusion)
     (update-cf parm inst val cf)))
+
 (defun is (a b) (equal a b))
 ```
 
@@ -838,9 +706,9 @@ The trick is that it uses the data base to return the current instance of the co
   So for (age patient is 21), we would return 4 values:
   (age patient-1 is 21), where patient-1 is the current patient."
   (values (first condition)
-      (get-db (second condition))
-      (third condition)
-      (fourth condition)))
+          (get-db (second condition))
+          (third condition)
+          (fourth condition)))
 ```
 
 At this point a call like (`find-out 'identity 'organism-1`) would do the right thing only if we had somehow entered the proper information on the current patient, culture, and organism.
@@ -851,38 +719,27 @@ Finally, we also need a top-level function, `emycin`, which just clears the data
 
 ```lisp
 (defun emycin (contexts)
-```
-
-`  "An Expert-System Shell.
-Accumulate data for instances of each`
-
-`  context, and solve for goals.
-Then report the findings."`
-
-```lisp
+  "An Expert System Shell.  Accumulate data for instances of each
+  context, and solve for goals.  Then report the findings."
   (clear-db)
   (get-context-data contexts))
+
 (defun get-context-data (contexts)
   "For each context, create an instance and try to find out
-```
-
-`  required data.
-Then go on to other contexts, depth first,`
-
-```lisp
+  required data.  Then go on to other contexts, depth first,
   and finally ask if there are other instances of this context."
   (unless (null contexts)
     (let* ((context (first contexts))
-        (inst (new-instance context)))
+           (inst (new-instance context)))
       (put-db 'current-rule 'initial)
       (mapc #'find-out (context-initial-data context))
       (put-db 'current-rule 'goal)
       (mapc #'find-out (context-goals context))
       (report-findings context inst)
       (get-context-data (rest contexts))
-      (when (y-or-n-p "Is there another ~  a?"
-            (context-name context))
-    (get-context-data contexts)))))
+      (when (y-or-n-p "Is there another ~a?"
+                      (context-name context))
+        (get-context-data contexts)))))
 ```
 
 ## 16.6 Interacting with the Expert
@@ -903,26 +760,21 @@ The macro `defrule` defines a rule and checks for some obvious errors:
 ```lisp
 (defmacro defrule (number &body body)
   "Define a rule with conditions, a certainty factor, and
-```
-
-`  conclusions.
-Example: (defrule R001 if ... then .9 ...)"`
-
-```lisp
+  conclusions.  Example: (defrule R001 if ... then .9 ...)"
   (assert (eq (first body) 'if))
   (let* ((then-part (member 'then body))
-          (premises (ldiff (rest body) then-part))
-          (conclusions (rest2 then-part))
-          (cf (second then-part)))
-      ;; Do some error checking:
-      (check-conditions number premises 'premise)
-      (check-conditions number conclusions 'conclusion)
-      (when (not (cf-p cf))
-        (warn "Rule ~a: Illegal certainty factor: ~a" number cf))
-      ;; Now build the rule:
-      '(put-rule
-        (make-rule :number ',number :cf ,cf :premises ',premises
-              :conclusions ',conclusions))))
+         (premises (ldiff (rest body) then-part))
+         (conclusions (rest2 then-part))
+         (cf (second then-part)))
+    ;; Do some error checking:
+    (check-conditions number premises 'premise)
+    (check-conditions number conclusions 'conclusion)
+    (when (not (cf-p cf))
+      (warn "Rule ~a: Illegal certainty factor: ~a" number cf))
+    ;; Now build the rule:
+    `(put-rule
+       (make-rule :number ',number :cf ,cf :premises ',premises
+                  :conclusions ',conclusions))))
 ```
 
 The function `check-conditions` makes sure that each rule has at least one premise and conclusion, that each condition is of the right form, and that the value of the condition is of the right type for the parameter.
@@ -941,10 +793,10 @@ It also checks that conclusions use only the operator `is`:
       (declare (ignore inst))
       (when (and (eq kind 'conclusion) (not (eq op 'is)))
         (warn "Rule ~a: Illegal operator (~a) in conclusion: ~a"
-            rule-num op condition))
+              rule-num op condition))
       (when (not (typep val (parm-type parm)))
         (warn "Rule ~a: Illegal value (~a) in ~a: ~a"
-            rule-num val kind condition)))))
+              rule-num val kind condition)))))
 ```
 
 The real EMYCIN !!!(span) {:.smallcaps} had an interactive environment that prompted the expert for each context, parameter, and rule.
@@ -966,12 +818,12 @@ The function `report-findings` prints information on all the goal parameters for
     (format t "~&Findings for ~a:" (inst-name inst))
     (dolist (goal (context-goals context))
       (let ((values (get-vals goal inst)))
-        ;; If there are any values for this goal.
+        ;; If there are any values for this goal,
         ;; print them sorted by certainty factor.
         (if values
-            (format t "~a:~{~{ ~a (~,3f) ~}~}" goal
-                (sort (copy-list values) #'> :key #'second))
-            (format t "~&~a: unknown" goal))))))
+            (format t "~& ~a:~{~{ ~a (~,3f)  ~}~}" goal
+                    (sort (copy-list values) #'> :key #'second))
+            (format t "~& ~a: unknown" goal))))))
 ```
 
 The only explanation facility our version of EMYCIN !!!(span) {:.smallcaps} offers is a way to see the current rule.
@@ -1001,36 +853,39 @@ The function `print-rule` generates this translation:
 ```lisp
 (defun print-rule (rule &optional (stream t) depth)
   (declare (ignore depth))
-  (format stream "~&Rule ~a:~& If" (rule-number rule))
+  (format stream "~&Rule ~a:~&  If" (rule-number rule))
   (print-conditions (rule-premises rule) stream)
-  (format stream "~& Then ~a (~a) that"
+  (format stream "~&  Then ~a (~a) that"
           (cf->english (rule-cf rule)) (rule-cf rule))
   (print-conditions (rule-conclusions rule) stream))
+
 (defun print-conditions (conditions &optional
-                  (stream t) (num 1))
+                         (stream t) (num 1))
   "Print a list of numbered conditions."
   (dolist (condition conditions)
     (print-condition condition stream num)))
+
 (defun print-condition (condition stream number)
   "Print a single condition in pseudo-English."
-  (format stream "~&~d)~{ ~a~}" number
+  (format stream "~&    ~d)~{ ~a~}" number
           (let ((parm (first condition))
                 (inst (second condition))
                 (op (third condition))
                 (val (fourth condition)))
             (case val
-              (YES '(the ,inst ,op ,parm))
-              (NO '(the ,inst ,op not ,parm))
-              (T '(the ,parm of the ,inst ,op ,val))))))
+              (YES `(the ,inst ,op ,parm))
+              (NO  `(the ,inst ,op not ,parm))
+              (T   `(the ,parm of the ,inst ,op ,val))))))
+
 (defun cf->english (cf)
   "Convert a certainy factor to an English phrase."
-  (cond ((= cf 1.0) "there is certain evidence")
-        ((> cf .8) "there is strongly suggestive evidence")
-        ((> cf .5) "there is suggestive evidence")
-        ((> cf 0.0) "there is weakly suggestive evidence")
-        ((= cf 0.0) "there is N0 evidence either way")
-        ((< cf 0.0) (concatenate 'string (cf->english (- cf))
-                    " AGAINST the conclusion"))))
+  (cond ((= cf  1.0) "there is certain evidence")
+        ((> cf   .8) "there is strongly suggestive evidence")
+        ((> cf   .5) "there is suggestive evidence")
+        ((> cf  0.0) "there is weakly suggestive evidence")
+        ((= cf  0.0) "there is NO evidence either way")
+        ((< cf  0.0) (concatenate 'string (cf->english (- cf))
+                                  " AGAINST the conclusion"))))
 ```
 
 If the user types `why` in response to a query, a more detailed account of the same rule is printed.
@@ -1042,21 +897,16 @@ Note the use of the `partition-if` function from page 256.
 
 ```lisp
 (defun print-why (rule parm)
-```
-
-`  "Tell why this rule is being used.
-Print what is known,`
-
-```lisp
+  "Tell why this rule is being used.  Print what is known,
   what we are trying to find out, and what we can conclude."
   (format t "~&[Why is the value of ~a being asked for?]" parm)
   (if (member rule '(initial goal))
       (format t "~&~a is one of the ~a parameters."
-            parm rule)
+              parm rule)
       (multiple-value-bind (knowns unknowns)
           (partition-if #'(lambda (premise)
-                    (true-p (eval-condition premise nil)))
-                  (rule-premises rule))
+                            (true-p (eval-condition premise nil)))
+                        (rule-premises rule))
         (when knowns
           (format t "~&It is known that:")
           (print-conditions knowns)
@@ -1086,9 +936,9 @@ All together, it had ten contexts to consider, while our version only has three:
 (defun mycin ()
   "Determine what organism is infecting a patient."
   (emycin
-      (list (defcontext patient (name sex age) ())
-            (defcontext culture (site days-old) ())
-            (defcontext organism () (identity)))))
+    (list (defcontext patient  (name sex age)  ())
+          (defcontext culture  (site days-old) ())
+          (defcontext organism ()              (identity)))))
 ```
 
 These contexts declare that we will first ask each patient's name, sex, and age, and each culture's site and the number of days ago it was isolated.
@@ -1103,23 +953,20 @@ Each parameter is given a type, and most are given prompts to improve the natura
 (defparm sex patient (member male female) "Sex:" t)
 (defparm age patient number "Age:" t)
 (defparm burn patient (member no mild serious)
-```
-
-`  "Is ~a a burn patient?
-If so.
-mild or serious?" t)`
-
-```lisp
+  "Is ~a a burn patient?  If so, mild or serious?" t)
 (defparm compromised-host patient yes/no
   "Is ~a a compromised host?")
+
 ;;; Parameters for culture:
 (defparm site culture (member blood)
   "From what site was the specimen for ~a taken?" t)
 (defparm days-old culture number
   "How many days ago was this culture (~a) obtained?" t)
+
 ;;; Parameters for organism:
 (defparm identity organism
-  (member pseudomonas klebsiella enterobacteriaceae staphylococcus bacteroides streptococcus)
+  (member pseudomonas klebsiella enterobacteriaceae
+          staphylococcus bacteroides streptococcus)
   "Enter the identity (genus) of ~a:" t)
 (defparm gram organism (member acid-fast pos neg)
   "The gram stain of ~a:" t)
@@ -1137,44 +984,50 @@ The real MYCIN !!!(span) {:.smallcaps} had about 400 rules, dealing with a much 
 
 ```lisp
 (clear-rules)
+
 (defrule 52
   if (site culture is blood)
-      (gram organism is neg)
-      (morphology organism is rod)
-      (burn patient is serious)
+     (gram organism is neg)
+     (morphology organism is rod)
+     (burn patient is serious)
   then .4
-      (identity organism is pseudomonas))
+     (identity organism is pseudomonas))
+
 (defrule 71
   if (gram organism is pos)
-      (morphology organism is coccus)
-      (growth-conformation organism is clumps)
+     (morphology organism is coccus)
+     (growth-conformation organism is clumps)
   then .7
-      (identity organism is staphylococcus))
+     (identity organism is staphylococcus))
+
 (defrule 73
   if (site culture is blood)
-      (gram organism is neg)
-      (morphology organism is rod)
-      (aerobicity organism is anaerobic)
+     (gram organism is neg)
+     (morphology organism is rod)
+     (aerobicity organism is anaerobic)
   then .9
-      (identity organism is bacteroides))
+     (identity organism is bacteroides))
+
 (defrule 75
   if (gram organism is neg)
-      (morphology organism is rod)
-      (compromised-host patient is yes)
+     (morphology organism is rod)
+     (compromised-host patient is yes)
   then .6
-      (identity organism is pseudomonas))
+     (identity organism is pseudomonas))
+
 (defrule 107
   if (gram organism is neg)
-      (morphology organism is rod)
-      (aerobicity organism is aerobic)
-then .8
-      (identity organism is enterobacteriaceae))
+     (morphology organism is rod)
+     (aerobicity organism is aerobic)
+  then .8
+     (identity organism is enterobacteriaceae))
+
 (defrule 165
   if (gram organism is pos)
-      (morphology organism is coccus)
-      (growth-conformation organism is chains)
-then .7
-      (identity organism is streptococcus))
+     (morphology organism is coccus)
+     (growth-conformation organism is chains)
+  then .7
+     (identity organism is streptococcus))
 ```
 
 Here is an example of the program in use:
