@@ -544,7 +544,7 @@ CANON> [Abort]
 
 Unlike the rule-based program, this version gets all the answers right.
 Not only is the program correct (at least as far as these examples go), it is also fast.
-We can compare it to the canonical simplifier originally written for MACSYMA !!!(span) {:.smallcaps} by William Martin (circa 1968), and modified by Richard Fateman.
+We can compare it to the canonical simplifier originally written for MACSYMA by William Martin (circa 1968), and modified by Richard Fateman.
 The modified version was used by Richard Gabriel in his suite of Common Lisp benchmarks (1985).
 The benchmark program is called `frpoly`, because it deals with polynomials and was originally written in the dialect Franz Lisp.
 The `frpoly` benchmark encodes polynomials as lists rather than vectors, and goes to great lengths to be efficient.
@@ -828,7 +828,7 @@ In general, the result will not be a wrong answer but rather the failure to find
 
 A brief history of symbolic algebra systems is given in [chapter 8](B978008057115750008X.xhtml).
 [Fateman (1979)](B9780080571157500285.xhtml#bb0385), [Martin and Fateman (1971)](B9780080571157500285.xhtml#bb0775), and [Davenport et al.
-(1988)](B9780080571157500285.xhtml#bb0270) give more details on the MACSYMA !!!(span) {:.smallcaps} system, on which this chapter is loosely based.
+(1988)](B9780080571157500285.xhtml#bb0270) give more details on the MACSYMA system, on which this chapter is loosely based.
 [Fateman (1991)](B9780080571157500285.xhtml#bb0390) discusses the `frpoly` benchmark and introduces the vector implementation used in this chapter.
 
 ## 15.8 Exercises

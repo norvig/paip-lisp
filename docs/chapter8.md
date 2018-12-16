@@ -29,11 +29,11 @@ Risch and others developed algorithms for indefinite integration of any expressi
 In other words, given a "normal" function, the Risch algorithm will return either the indefinite integral of the function or an indication that no closed-form integral is possible in terms of elementary functions.
 Such work effectively ended the era of considering integration as a problem in search.
 
-SIN !!!(span) {:.smallcaps} was further refined, merged with parts of the Risch algorithm, and put into the evolving MACSYMA !!!(span) {:.smallcaps} [1](#fn0010) program.
-For the most part, refinement of MACSYMA !!!(span) {:.smallcaps} consisted of the incorporation of new algorithms.
+SIN was further refined, merged with parts of the Risch algorithm, and put into the evolving MACSYMA [1](#fn0010) program.
+For the most part, refinement of MACSYMA consisted of the incorporation of new algorithms.
 Few heuristics of any sort survive.
-Today MACSYMA !!!(span) {:.smallcaps} is no longer considered an AI program.
-It is used daily by scientists and mathematicians, while ELIZA !!!(span) {:.smallcaps} and STUDENT !!!(span) {:.smallcaps} are now but historical footnotes.
+Today MACSYMA is no longer considered an AI program.
+It is used daily by scientists and mathematicians, while ELIZA and STUDENT are now but historical footnotes.
 
 With ELIZA !!!(span) {:.smallcaps} and STUDENT !!!(span) {:.smallcaps} we were able to develop miniature programs that duplicated most of the features of the original.
 We won't even try to develop a program worthy of the name MACSYMA !!!(span) {:.smallcaps} ; instead we will settle for a modest program to do symbolic simplification, which we will call (simply) `simplifier`.
@@ -985,7 +985,7 @@ Add rules to propagate `undefined` values and prevent them from being simplified
 
 ----------------------
 
-[1](#xfn0010)MACSYMA !!!(span) {:.smallcaps} is the Project MAC SYMbolic MAthematics program.
+[1](#xfn0010)MACSYMA is the Project MAC SYMbolic MAthematics program.
 Project MAC is the MIT research organization that was the precursor of MIT's Laboratory for Computer Science.
 MAC stood either for Machine-Aided Cognition or Multiple-Access Computer, according to one of their annual reports.
 The cynical have claimed that MAC really stood for Man Against Computer.

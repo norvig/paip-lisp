@@ -545,7 +545,7 @@ We would use this facility as follows:
 > (pat-match axyd '(a b c d)) => ((?Y B C) (?X))
 ```
 
-**Exercise  6**.**1** [**m**] Go back and change the ELIZA !!!(span) {:.smallcaps} rules to use the abbreviation facility.
+**Exercise  6**.**1** [**m**] Go back and change the ELIZA rules to use the abbreviation facility.
 Does this make the rules easier to read?
 
 **Exercise  6**.**2** [**h**] In the few prior examples, every time there was a binding of pattern variables that satisfied the input, that binding was found.

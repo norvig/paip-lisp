@@ -1107,7 +1107,7 @@ It may or may not be a coincidence that it uses Scheme as the programming langua
 It includes a Scheme interpreter.
 Winston and Horn's *Lisp* (1989) also develops a Lisp interpreter.
 
-The `amb` operator for nondeterministic choice was proposed by [John McCarthy (1963)](B9780080571157500285.xhtml#bb0800) and used in SCHEMER !!!(span) {:.smallcaps} ([Zabih et al.
+The `amb` operator for nondeterministic choice was proposed by [John McCarthy (1963)](B9780080571157500285.xhtml#bb0800) and used in SCHEMER ([Zabih et al.
 1987](B9780080571157500285.xhtml#bb1440)), a nondeterministic Lisp.
 [Ruf and Weise (1990)](B9780080571157500285.xhtml#bb1015) present another implementation of backtracking in Scheme that incorporates all of logic programming.
 

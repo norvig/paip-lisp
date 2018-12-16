@@ -9,7 +9,7 @@
 
 > MIT computer scientist
 
-STUDENT !!!(span) {:.smallcaps} was another early language understanding program, written by Daniel Bobrow as his Ph.D.
+STUDENT was another early language understanding program, written by Daniel Bobrow as his Ph.D.
 research project in 1964.
 It was designed to read and solve the kind of word problems found in high school algebra books.
 An example is:
@@ -19,17 +19,17 @@ An example is:
 STUDENT !!!(span) {:.smallcaps} could correctly reply that the number of customers is 162.
 To do this, STUDENT !!!(span) {:.smallcaps} must be far more sophisticated than ELIZA !!!(span) {:.smallcaps} ; it must process and "understand" a great deal of the input, rather than just concentrate on a few key words.
 And it must compute a response, rather than just fill in blanks.
-However, we shall see that the STUDENT !!!(span) {:.smallcaps} program uses little more than the pattern-matching techniques of ELIZA !!!(span) {:.smallcaps} to translate the input into a set of algebraic equations.
+However, we shall see that the STUDENT program uses little more than the pattern-matching techniques of ELIZA to translate the input into a set of algebraic equations.
 From there, it must know enough algebra to solve the equations, but that is not very difficult.
 
-The version of STUDENT !!!(span) {:.smallcaps} we develop here is nearly a full implementation of the original.
+The version of STUDENT we develop here is nearly a full implementation of the original.
 However, remember that while the original was state-of-the-art as of 1964, AI has made some progress in a quarter century, as subsequent chapters will attempt to show.
 
 ## 7.1 Translating English into Equations
 {:#s0010}
 {:.h1hd}
 
-The description of STUDENT !!!(span) {:.smallcaps} is:
+The description of STUDENT is:
 
 1.  Break the input into phrases that will represent equations.
 !!!(p) {:.numlist}
@@ -122,7 +122,7 @@ The special meaning of these characters to the Lisp reader can be escaped either
     ((?x* % ?y*)            (* (/ ?x 100) ?y)))))
 ```
 
-The main section of STUDENT !!!(span) {:.smallcaps} will search through the list of rules for a response, just as ELIZA !!!(span) {:.smallcaps} did.
+The main section of STUDENT will search through the list of rules for a response, just as ELIZA did.
 The first point of deviation is that before we substitute the values of the `pat-match` variables into the response, we must first recursively translate the value of each variable, using the same list of pattern-response rules.
 The other difference is that once we're done, we don't just print the response; instead we have to solve the set of equations and print the answers.
 The program is summarized in [figure 7.1](#f0010).
@@ -231,7 +231,7 @@ For now, we will accept the first-non-noise-word solution, but note that exercis
 
 The next step is to write the equation-solving section of STUDENT !!!(span) {:.smallcaps} . This is more an exercise in elementary algebra than in AI, but it is a good example of a symbol-manipulation task, and thus an interesting programming problem.
 
-The STUDENT !!!(span) {:.smallcaps} program mentioned the function `solve-equations`, passing it one argument, a list of equations to be solved.
+The STUDENT program mentioned the function `solve-equations`, passing it one argument, a list of equations to be solved.
 `solve-equations` prints the list of equations, attempts to solve them using `solve`, and prints the result.
 
 ```lisp
@@ -632,7 +632,7 @@ But that was largely the point: if you know that the language is describing an a
 OVERHEAD = (10 * RUNNING)
 ```
 
-The original STUDENT !!!(span) {:.smallcaps} could solve these equations.
+The original STUDENT could solve these equations.
 Write a routine to do so.
 You may assume there will be only two equations in two unknowns if you wish, or if you are more ambitious, you could solve a system of *n* linear equations with *n* unknowns.
 
@@ -644,7 +644,7 @@ For example, an input that contains the phrases "the rectangle's width" and "the
 If an attempt to solve the problem yields no solutions, the program should realize that `v1` and `v2` have the words "rectangle" and "width" in common, and add the equation (`= v1 v2`) and try again.
 Since the variables are arbitrary symbols, the printing routine should probably print the phrases associated with each variable rather than the variable itself.
 
-**Exercise  7.4 [h]** The original STUDENT !!!(span) {:.smallcaps} also had a set of "common knowledge" equations that it could use when necessary.
+**Exercise  7.4 [h]** The original STUDENT also had a set of "common knowledge" equations that it could use when necessary.
 These were mostly facts about conversion factors, such as (`1 inch = 2.54  cm`).
 Also included were equations like (`distance equal s rate times time`), which could be used to solve problems like "If the distance from Anabru to Champaign is 10 miles and the time it takes Sandy to travel this distance is 2 hours, what is Sandy's rate of speed?" Make changes to incorporate this facility.
 It probably only helps in conjunction with a solution to the previous exercise.
@@ -654,7 +654,7 @@ That is, given the problem "X is 3.
 Y is 4.
 How much is X  +  Y ?" it should not print values for X and Y.
 
-**Exercise  7.6 [m]** Try STUDENT !!!(span) {:.smallcaps} on the following examples.
+**Exercise  7.6 [m]** Try STUDENT on the following examples.
 Make sure you handle special characters properly:
 
 (a)  The price of a radio is 69.70 dollars.
@@ -691,13 +691,13 @@ b  =  5.*
 For example, (`12 - 6 - 3`) translates to (`- 12 (- 6 3)`) or `9`, when the usual convention is to interpret this as (`- (- 12 6) 3`) or `3`.
 Fix student to handle this convention.
 
-**Exercise  7.8 [d]** Find a mathematically oriented domain that is sufficiently limited so that STUDENT !!!(span) {:.smallcaps} can solve problems in it.
+**Exercise  7.8 [d]** Find a mathematically oriented domain that is sufficiently limited so that STUDENT can solve problems in it.
 The chemistry of solutions (calculating pH concentrations) might be an example.
 Write the necessary `*student-rules*`, and test the resulting program.
 
 **Exercise  7.9 [m]** Analyze the complexity of `one-unknown` and implement a more efficient version.
 
-**Exercise  7.10 [h]** Bobrow's paper on STUDENT !!!(span) {:.smallcaps} (1968) includes an appendix that abstractly characterizes all the problems that his system can solve.
+**Exercise  7.10 [h]** Bobrow's paper on STUDENT (1968) includes an appendix that abstractly characterizes all the problems that his system can solve.
 Generate a similar characterization for this version of the program.
 
 ## 7.6 Answers
