@@ -1,7 +1,5 @@
 # Chapter 7
-## STUDENT
-!!!(span) {:.smallcaps}
-: Solving Algebra Word Problems
+## STUDENT: Solving Algebra Word Problems
 
 > *[This] is an example par excellence* of the power of using meaning to solve linguistic problems
 
@@ -16,8 +14,8 @@ An example is:
 
 > If the number of customers Tom gets is twice the square of 20% of the number of advertisements he runs, and the number of advertisements is 45, then what is the number of customers Tom gets?
 
-STUDENT !!!(span) {:.smallcaps} could correctly reply that the number of customers is 162.
-To do this, STUDENT !!!(span) {:.smallcaps} must be far more sophisticated than ELIZA !!!(span) {:.smallcaps} ; it must process and "understand" a great deal of the input, rather than just concentrate on a few key words.
+STUDENT could correctly reply that the number of customers is 162.
+To do this, STUDENT must be far more sophisticated than ELIZA; it must process and "understand" a great deal of the input, rather than just concentrate on a few key words.
 And it must compute a response, rather than just fill in blanks.
 However, we shall see that the STUDENT program uses little more than the pattern-matching techniques of ELIZA to translate the input into a set of algebraic equations.
 From there, it must know enough algebra to solve the equations, but that is not very difficult.
@@ -42,7 +40,7 @@ The description of STUDENT is:
 !!!(p) {:.numlist}
 
 4.  Translate each English phrase into a mathematical expression.
-We use the idea of a rule-based translator as developed for ELIZA !!!(span) {:.smallcaps} .
+We use the idea of a rule-based translator as developed for ELIZA.
 !!!(p) {:.numlist}
 
 5.  Solve the resulting mathematical equations, coming up with a value for each unknown variable.
@@ -81,7 +79,7 @@ In general, the notation (`:constructor`*fn args*) creates a constructor functio
 (defun exp-args (x) (rest x))
 ```
 
-We ignored commas and periods in ELIZA !!!(span) {:.smallcaps} , but they are crucial for STUDENT !!!(span) {:.smallcaps} , so we must make allowances for them.
+We ignored commas and periods in ELIZA, but they are crucial for STUDENT, so we must make allowances for them.
 The problem is that a `","` in Lisp normally can be used only within a backquote construction, and a `"."` normally can be used only as a decimal point or in a dotted pair.
 The special meaning of these characters to the Lisp reader can be escaped either by preceding the character with a backslash (\,) or by surrounding the character by vertical bars (| , |).
 
@@ -167,7 +165,8 @@ The other complication is choosing variable names.
 Given a list of words like (`the number of customers Tom gets`), we want to choose a symbol to represent it.
 We will see below that the symbol `customers` is chosen, but that there are other possibilities.
 
-Here is the main function for STUDENT !!!(span) {:.smallcaps} . It first removes words that have no content, then translates the input to one big expression with `translate-to-expression`, and breaks that into separate equations with `create-list-of-equations`.
+Here is the main function for STUDENT.
+It first removes words that have no content, then translates the input to one big expression with `translate-to-expression`, and breaks that into separate equations with `create-list-of-equations`.
 Finally, the function `solve-equations` does the mathematics and prints the solution.
 
 ```lisp
@@ -231,7 +230,8 @@ For now, we will accept the first-non-noise-word solution, but note that exercis
 {:#s0015}
 {:.h1hd}
 
-The next step is to write the equation-solving section of STUDENT !!!(span) {:.smallcaps} . This is more an exercise in elementary algebra than in AI, but it is a good example of a symbol-manipulation task, and thus an interesting programming problem.
+The next step is to write the equation-solving section of STUDENT.
+This is more an exercise in elementary algebra than in AI, but it is a good example of a symbol-manipulation task, and thus an interesting programming problem.
 
 The STUDENT program mentioned the function `solve-equations`, passing it one argument, a list of equations to be solved.
 `solve-equations` prints the list of equations, attempts to solve them using `solve`, and prints the result.
@@ -599,18 +599,20 @@ The equations to be solved are:
 
 However, one could claim that nasty examples with division by zero don't show up in algebra texts.
 
-In summary, STUDENT !!!(span) {:.smallcaps} behaves reasonably well, doing far more than the toy program ELIZA !!!(span) {:.smallcaps} . STUDENT !!!(span) {:.smallcaps} is also quite efficient; on my machine it takes less than one second for each of the prior examples.
+In summary, STUDENT behaves reasonably well, doing far more than the toy program ELIZA.
+STUDENT is also quite efficient; on my machine it takes less than one second for each of the prior examples.
 However, it could still be extended to have more powerful equation-solving capabilities.
 Its linguistic coverage is another matter.
 While one could add new patterns, such patterns are really just tricks, and don't capture the underlying structure of English sentences.
-That is why the STUDENT !!!(span) {:.smallcaps} approach was abandoned as a research topic.
+That is why the STUDENT approach was abandoned as a research topic.
 
 ## 7.4 History and References
 {:#s0025}
 {:.h1hd}
 
 Bobrow's Ph.D.
-thesis contains a complete description of STUDENT !!!(span) {:.smallcaps} . It is reprinted in [Minsky 1968](B9780080571157500285.xhtml#bb0845).
+thesis contains a complete description of STUDENT.
+It is reprinted in [Minsky 1968](B9780080571157500285.xhtml#bb0845).
 Since then, there have been several systems that address the same task, with increased sophistication in both their mathematical and linguistic ability.
 [Wong (1981)](B9780080571157500285.xhtml#bb1420) describes a system that uses its understanding of the problem to get a better linguistic analysis.
 [Sterling et al.

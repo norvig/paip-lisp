@@ -12,17 +12,18 @@ Computers were first developed primarily to solve arithmetic problems: to add up
 Encouraged by success in these areas, people hoped that computers could also be used on more complex problems; to differentiate or integrate a mathematical expression and come up with another expression as the answer, rather than just a number.
 Several programs were developed along these lines in the 1960s and 1970s.
 They were used primarily by professional mathematicians and physicists with access to large mainframe computers.
-Recently, programs like MATHLAB !!!(span) {:.smallcaps} , DERIVE !!!(span) {:.smallcaps} , and MATHEMATICA !!!(span) {:.smallcaps} have given these capabilities to the average personal computer user.
+Recently, programs like MATHLAB, DERIVE, and MATHEMATICA have given these capabilities to the average personal computer user.
 
-It is interesting to look at some of the history of symbolic algebra, beginning in 1963 with SAINT !!!(span) {:.smallcaps} , James Slagle's program to do symbolic integration.
-Originally, SAINT !!!(span) {:.smallcaps} was heralded as a triumph of AI.
-It used general problem-solving techniques, similar in kind to GPS !!!(span) {:.smallcaps} , to search for solutions to difficult problems.
+It is interesting to look at some of the history of symbolic algebra, beginning in 1963 with SAINT, James Slagle's program to do symbolic integration.
+Originally, SAINT was heralded as a triumph of AI.
+It used general problem-solving techniques, similar in kind to GPS, to search for solutions to difficult problems.
 The program worked its way through an integration problem by choosing among the techniques known to it and backing up when an approach failed to pan out.
-SAINT'S !!!(span) {:.smallcaps} behavior on such problems was originally similar to (and eventually much better than) the performance of undergraduate calculus students.
+SAINT's behavior on such problems was originally similar to (and eventually much better than) the performance of undergraduate calculus students.
 
 Over time, the AI component of symbolic integration began to disappear.
-Joel Moses implemented a successor to SAINT !!!(span) {:.smallcaps} called SIN !!!(span) {:.smallcaps} . It used many of the same techniques, but instead of relying on search to find the right combination of techniques, it had additional mathematical knowledge that led it to pick the right technique at each step, without any provision for backing up and trying an alternative.
-SIN !!!(span) {:.smallcaps} solved more problems and was much faster than SAINT !!!(span) {:.smallcaps} , although it was not perfect: it still occasionally made the wrong choice and failed to solve a problem it could have.
+Joel Moses implemented a successor to SAINT called SIN.
+It used many of the same techniques, but instead of relying on search to find the right combination of techniques, it had additional mathematical knowledge that led it to pick the right technique at each step, without any provision for backing up and trying an alternative.
+SIN solved more problems and was much faster than SAINT, although it was not perfect: it still occasionally made the wrong choice and failed to solve a problem it could have.
 
 By 1970, the mathematician R.
 Risch and others developed algorithms for indefinite integration of any expression involving algebraic, logarithmic, or exponential extensions of rational functions.
@@ -35,8 +36,8 @@ Few heuristics of any sort survive.
 Today MACSYMA is no longer considered an AI program.
 It is used daily by scientists and mathematicians, while ELIZA and STUDENT are now but historical footnotes.
 
-With ELIZA !!!(span) {:.smallcaps} and STUDENT !!!(span) {:.smallcaps} we were able to develop miniature programs that duplicated most of the features of the original.
-We won't even try to develop a program worthy of the name MACSYMA !!!(span) {:.smallcaps} ; instead we will settle for a modest program to do symbolic simplification, which we will call (simply) `simplifier`.
+With ELIZA and STUDENT we were able to develop miniature programs that duplicated most of the features of the original.
+We won't even try to develop a program worthy of the name MACSYMA; instead we will settle for a modest program to do symbolic simplification, which we will call (simply) `simplifier`.
 Then, we will extend `simplifier` to do differentiation, and some integration problems.
 The idea is that given an expression like (2 - 1)*x* + 0, we want the program to compute the simplified form *x*.
 
@@ -50,7 +51,8 @@ For example, *x* is almost always preferable to 1*x* + 0.
 {:#s0010}
 {:.h1hd}
 
-We will represent simplifications as a list of rules, much like the rules for STUDENT !!!(span) {:.smallcaps} and ELIZA !!!(span) {:.smallcaps} . But since each simplification rule is an algebraic equation, we will store each one as an exp rather than as a `rule`.
+We will represent simplifications as a list of rules, much like the rules for STUDENT and ELIZA.
+But since each simplification rule is an algebraic equation, we will store each one as an exp rather than as a `rule`.
 To make things more legible, we will write each expression in infix form, but store them in the prefix form expected by `exp`.
 This requires an `infix->prefix` function to convert infix expressions into prefix notation.
 We have a choice as to how general we want our infix notation to be.
@@ -139,7 +141,8 @@ Because we are doing mathematics in this chapter, we adopt the mathematical conv
 {:.h1hd}
 
 Now we are ready to define the simplification rules.
-We use the definition of the data types rule and exp ([page 221](B9780080571157500078.xhtml#p221)) and `prefix->infix` ([page 228](B9780080571157500078.xhtml#p228)) from STUDENT !!!(span) {:.smallcaps} `.` They are repeated here:
+We use the definition of the data types rule and exp ([page 221](B9780080571157500078.xhtml#p221)) and `prefix->infix` ([page 228](B9780080571157500078.xhtml#p228)) from STUDENT.
+They are repeated here:
 
 ```lisp
 (defstruct (rule (:type list)) pattern response)
@@ -245,7 +248,7 @@ Here is the program:
 
 The function `simplify` assures that any compound expression will be simplified by first simplifying the arguments and then calling `simplify-exp.` This latter function searches through the simplification rules, much like `use-eliza-rules` and `translate-to-expression`.
 When it finds a match, `simplify-exp` substitutes in the proper variable values and calls `simplify` on the result, `simplify-exp` also has the ability to call `eval` to simplify an arithmetic expression to a number.
-As in STUDENT !!!(span) {:.smallcaps} , it is for the sake of this eval that we require expressions to be represented as lists in prefix notation.
+As in STUDENT, it is for the sake of this eval that we require expressions to be represented as lists in prefix notation.
 Numeric evaluation is done *after* checking the rules so that the rules can intercept expressions like (/ 1 0) and simplify them to `undefined`.
 If we did the numeric evaluation first, these expressions would yield an error when passed to eval.
 Because Common Lisp supports arbitrary precision rational numbers (fractions), we are guaranteed there will be no round-off error, unless the input explicitly includes inexact (floating-point) numbers.
@@ -895,21 +898,22 @@ SIMPLIFIER  > (Int 8 * x ^ 2 / (x ^ 3 + 2) ^ 3 d x)
 A brief history is given in the introduction to this chapter.
 An interesting point is that the history of Lisp and of symbolic algebraic manipulation are deeply intertwined.
 It is not too gross an exaggeration to say that Lisp was invented by John McCarthy to express the symbolic differentiation algorithm.
-And the development of the first high-quality Lisp system, MacLisp, was driven largely by the needs of MACSYMA !!!(span) {:.smallcaps} , one of the first large Lisp systems.
-See [McCarthy 1958](B9780080571157500285.xhtml#bb0790) for early Lisp history and the differentiation algorithm, and [Martin and Fateman 1971](B9780080571157500285.xhtml#bb0775) and [Moses (1975)](B9780080571157500285.xhtml#bb0875) for more details on MACSYMA !!!(span) {:.smallcaps} . A comprehensive book on computer algebra systems is [Davenport 1988](B9780080571157500285.xhtml#bb0270).
-It covers the MACSYMA !!!(span) {:.smallcaps} and REDUCE !!!(span) {:.smallcaps} systems as well as the algorithms behind those systems.
+And the development of the first high-quality Lisp system, MacLisp, was driven largely by the needs of MACSYMA, one of the first large Lisp systems.
+See [McCarthy 1958](B9780080571157500285.xhtml#bb0790) for early Lisp history and the differentiation algorithm, and [Martin and Fateman 1971](B9780080571157500285.xhtml#bb0775) and [Moses (1975)](B9780080571157500285.xhtml#bb0875) for more details on MACSYMA.
+A comprehensive book on computer algebra systems is [Davenport 1988](B9780080571157500285.xhtml#bb0270).
+It covers the MACSYMA and REDUCE systems as well as the algorithms behind those systems.
 
 Because symbolic differentiation is historically important, it is presented in a number of text books, from the original Lisp 1.5 Primer ([Weissman 1967](B9780080571157500285.xhtml#bb1370)) and Allen's influential [*Anatomy of Lisp* (1978)](B9780080571157500285.xhtml#bb0040) to recent texts like [Brooks 1985](B9780080571157500285.xhtml#bb0135), [Hennessey 1989](B9780080571157500285.xhtml#bb0530), and [Tanimoto 1990](B9780080571157500285.xhtml#bb1220).
 Many of these books use rules or data-driven programming, but each treats differentiation as the main task, with simplification as a separate problem.
 None of them use the approach taken here, where differentiation is just another kind of simplification.
 
-The symbolic integration programs SAINT !!!(span) {:.smallcaps} and SIN !!!(span) {:.smallcaps} are covered in [Slagle 1963](B9780080571157500285.xhtml#bb1115) and [Moses 1967](B9780080571157500285.xhtml#bb0870), respectively.
+The symbolic integration programs SAINT and SIN are covered in [Slagle 1963](B9780080571157500285.xhtml#bb1115) and [Moses 1967](B9780080571157500285.xhtml#bb0870), respectively.
 The mathematical solution to the problem of integration in closed term is addressed in [Risch 1969](B9780080571157500285.xhtml#bb0985), but be warned; this paper is not for the mathematically naive, and it has no hints on programming the algorithm.
 A better reference is [Davenport et al.
 1988](B9780080571157500285.xhtml#bb0270).
 
 In this book, techniques for improving the efficiency of algebraic manipulation are covered in [sections 9.6](B9780080571157500091.xhtml#s0035) and [10.4](B9780080571157500108.xhtml#s0025).
-[Chapter 15](B9780080571157500157.xhtml) presents a reimplementation that does not use pattern-matching, and is closer to the techniques used in MACSYMA !!!(span) {:.smallcaps} .
+[Chapter 15](B9780080571157500157.xhtml) presents a reimplementation that does not use pattern-matching, and is closer to the techniques used in MACSYMA.
 
 ## 8.8 Exercises
 {:#s0045}

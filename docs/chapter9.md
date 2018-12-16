@@ -1718,8 +1718,8 @@ Note that with `eq` hashing, the resetting version was faster, presumably becaus
 
 This approach makes the function `simplify` remember the work it has done, in a hash table.
 If the overhead of hash table maintenance becomes too large, there is an alternative: make the data remember what simplify has done.
-This approach was taken in MACSYMA !!!(span) {:.smallcaps} : it represented operators as lists rather than as atoms.
-Thus, instead of `(* 2 x)`, MACSYMA !!!(span) {:.smallcaps} would use `((*) 2 x)`.
+This approach was taken in MACSYMA: it represented operators as lists rather than as atoms.
+Thus, instead of `(* 2 x)`, MACSYMA would use `((*) 2 x)`.
 The simplification function would destructively insert a marker into the operator list.
 Thus, the result of simplifying 2*x* would be `((* simp) 2 x)`.
 Then, when the simplifier was called recursively on this expression, it would notice the `simp` marker and return the expression as is.
