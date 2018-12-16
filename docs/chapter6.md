@@ -1539,10 +1539,10 @@ The goal predicate tests if the current state satisfies every condition in the g
       #'(lambda (state) (subsetp goal state :test #'equal))
       #'gps-successors
       #'(lambda (state)
-        (+ (count-if #'action-p state)
-          (count-if #'(lambda (con)
-                    (not (member-equal con state)))
-                goal)))
+          (+ (count-if #'action-p state)
+             (count-if #'(lambda (con)
+                           (not (member-equal con state)))
+                       goal)))
       beam-width)))
 ```
 
@@ -1553,12 +1553,13 @@ Here is the successor function:
   "Return a list of states reachable from this one using ops."
   (mapcar
     #'(lambda (op)
-    (append
-      (remove-if #'(lambda (x)
-                    (member-equal x (op-del-list op)))
-                state)
-      (op-add-list op)))
+        (append
+          (remove-if #'(lambda (x)
+                         (member-equal x (op-del-list op)))
+                     state)
+          (op-add-list op)))
     (applicable-ops state)))
+
 (defun applicable-ops (state)
   "Return a list of all ops that are applicable now."
   (find-all-if
