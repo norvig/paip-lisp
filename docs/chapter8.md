@@ -47,8 +47,6 @@ We will be content to limit ourselves to "obvious" simplifications.
 For example, *x* is almost always preferable to 1*x* + 0.
 
 ## 8.1 Converting Infix to Prefix Notation
-{:#s0010}
-{:.h1hd}
 
 We will represent simplifications as a list of rules, much like the rules for STUDENT !!!(span) {:.smallcaps} and ELIZA !!!(span) {:.smallcaps} . But since each simplification rule is an algebraic equation, we will store each one as an exp rather than as a `rule`.
 To make things more legible, we will write each expression in infix form, but store them in the prefix form expected by `exp`.
@@ -135,8 +133,6 @@ Because we are doing mathematics in this chapter, we adopt the mathematical conv
 ```
 
 ## 8.2 Simplification Rules
-{:#s0015}
-{:.h1hd}
 
 Now we are ready to define the simplification rules.
 We use the definition of the data types rule and exp ([page 221](B9780080571157500078.xhtml#p221)) and `prefix->infix` ([page 228](B9780080571157500078.xhtml#p228)) from STUDENT !!!(span) {:.smallcaps} `.` They are repeated here:
@@ -281,8 +277,6 @@ Here we have terminated the loop by hitting the abort key on the terminal.
 In the next section, we will correct that problem.
 
 ## 8.3 Associativity and Commutativity
-{:#s0020}
-{:.h1hd}
 
 We could easily add a rule to rewrite `(3 * (2 *X))` as `((3 * 2) * X)` andhence `(6 * X)`.
 The problem is that this rule would also rewrite `(X*(2*3))` as `((X* 2) * 3)`, unless we had a way to limit the rule to apply only when it would group numbers together.
@@ -359,8 +353,6 @@ We will return to these problems in [section 8.5](#s0030).
 As an example of a potential problem, what would happen if we used the rule `(x * n = n * x)` instead of the rule `(s * n = n * s)?`
 
 ## 8.4 Logs, Trig, and Differentiation
-{:#s0025}
-{:.h1hd}
 
 In the previous section, we restricted ourselves to the simple arithmetic functions, so as not to intimidate those who are a little leery of complex mathematics.
 In this section, we add a little to the mathematical complexity, without having to alter the program itself one bit.
@@ -491,8 +483,6 @@ SIMPLIFIER  > (sin(x + x) * sin(d x ^ 2 / d x) +
 The program handles differentiation problems well and is seemingly clever in its use of the identity sin2*x* + cos2*x* = 1.
 
 ## 8.5 Limits of Rule-Based Approaches
-{:#s0030}
-{:.h1hd}
 
 In this section we return to some examples that pose problems for the simplifier.
 Here is a simple one:
@@ -537,8 +527,6 @@ We would want `(3 * x)` to sort to the same place as `x` and `(4 * x )` so that 
 In [chapter 15](B9780080571157500157.xhtml), we develop a new version of the program that handles this problem.
 
 ## 8.6 Integration
-{:#s0035}
-{:.h1hd}
 
 So far, the algebraic manipulations have been straightforward.
 There is a direct algorithm for computing the derivative of every expression.
@@ -889,8 +877,6 @@ SIMPLIFIER  > (Int 8 * x ^ 2 / (x ^ 3 + 2) ^ 3 d x)
 ```
 
 ## 8.7 History and References
-{:#s0040}
-{:.h1hd}
 
 A brief history is given in the introduction to this chapter.
 An interesting point is that the history of Lisp and of symbolic algebraic manipulation are deeply intertwined.
@@ -912,8 +898,6 @@ In this book, techniques for improving the efficiency of algebraic manipulation 
 [Chapter 15](B9780080571157500157.xhtml) presents a reimplementation that does not use pattern-matching, and is closer to the techniques used in MACSYMA !!!(span) {:.smallcaps} .
 
 ## 8.8 Exercises
-{:#s0045}
-{:.h1hd}
 
 **Exercise  8.2 [s]** Some notations use the operator ** instead of ^ to indicate exponentiation.
 `Fix infix->prefix` so that either notation is allowed.

@@ -12,8 +12,6 @@ The amazing thing is that the clauses can be defined in a way that leads to a ve
 Furthermore, the same grammar can be used for both parsing and generation (at least in some cases).
 
 ## 20.1 Parsing as Deduction
-{:#s0010}
-{:.h1hd}
 
 Here's how we could express the grammar rule "A sentence can be composed of a noun phrase followed by a verb phrase" in Prolog:
 
@@ -291,8 +289,6 @@ No.
 ```
 
 ## 20.2 Definite Clause Grammars
-{:#s0015}
-{:.h1hd}
 
 We now have a powerful and efficient tool for parsing sentences.
 However, it is getting to be a very messy tool-there are too many arguments to each goal, and it is hard to tell which arguments represent syntax, which represent semantics, which represent in/out strings, and which represent other features, like agreement.
@@ -455,8 +451,6 @@ What does it do wrong?
 How would you fix it?
 
 ## 20.3 A Simple Grammar in DCG Format
-{:#s0020}
-{:.h1hd}
 
 Here is the trivial grammar from [page 688](chapter20.xhtml#p688) in DCG format.
 
@@ -658,8 +652,6 @@ On the other hand, it would be wrong to choose one of the representations arbitr
 Maintaining ambiguity in a concise form is useful, as long as there is some way eventually to recover the proper meaning.
 
 ## 20.4 A DCG Grammar with Quantifiers
-{:#s0025}
-{:.h1hd}
 
 The problem in the representation we have been using becomes more acute when we consider other determiners, such as "every." Consider the sentence "Every picture paints a story." The preceding DCG, if given the right vocabulary, would produce the interpretation:
 
@@ -875,8 +867,6 @@ paints a picture that stinks.
                                                                                                     `(PAINT ?3 ?39)))))`
 
 ## 20.5 Preserving Quantifier Scope Ambiguity
-{:#s0030}
-{:.h1hd}
 
 Consider the simple sentence "Every man loves a woman." This sentence is ambiguous between the following two interpretations:
 
@@ -994,8 +984,6 @@ From there, we could use what we know about syntax, in addition to what we know 
 This will be covered in the next chapter.
 
 ## 20.6 Long-Distance Dependencies
-{:#s0035}
-{:.h1hd}
 
 So far, every syntactic phenomena we have considered has been expressible in a rule that imposes constraints only at a single level.
 For example, we had to impose the constraint that a subject agree with its verb, but this constraint involved two immediate constituents of a sentence, the noun phrase and verb phrase.
@@ -1132,8 +1120,6 @@ In particular, it is rare to have a gap in the subject of a sentence, except in 
 In the next chapter, we will see how to impose additional constraints on gaps.
 
 ## 20.7 Augmenting DCG Rules
-{:#s0040}
-{:.h1hd}
 
 In the previous section, we saw how to build up a semantic representation of a sentence by conjoining the semantics of the components.
 One problem with this approach is that the semantic interpretation is often something of the form `(and (and t *a) b),*` when we would prefer `(and *a b)*`.
@@ -1596,8 +1582,6 @@ and here we define `handle-conj` to substitute `S-` for `S` in the left-hand sid
       `(get predicate 'conj-category))`
 
 ## 20.8 History and References
-{:#s0045}
-{:.h1hd}
 
 As we have mentioned, Alain Colmerauer invented Prolog to use in his grammar of French (1973).
 His *metamorphosis grammar* formalism was more expressive but much less efficient than the standard DCG formalism.
@@ -1628,8 +1612,6 @@ Comparing [Woods's (1970)](B9780080571157500285.xhtml#bb1425) ATN grammar to [Pe
 The analysis is more important than the notation, as it should be.
 
 ## 20.9 Exercises
-{:#s0050}
-{:.h1hd}
 
 **Exercise  20.2 [m]** Modify the grammar (from [section 20.4](#s0025), [20.5](#s0030), [or 20.6](#s0035)) to allow for adjectives before a noun.
 
@@ -1687,16 +1669,12 @@ should compile into the equivalent of :
       `(F ?S3 ?S4))`
 
 ## 20.10 Answers
-{:#s0055}
-{:.h1hd}
 
 **Answer 20.1** It uses local variables `(?s0, ?sl ...)` that are not guaranteed to be unique.
 This is a problem if the grammar writer wants to use these symbols anywhere in his or her rules.
 The fix is to `gensym` symbols that are guaranteed to be unique.
 
 ### Answer 20.5
-{:#s0060}
-{:.h2hd}
 
 `(defun setup-braces Uoptional (on?
 t) (readtable *readtable*))`

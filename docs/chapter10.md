@@ -27,8 +27,6 @@ But if you would like your programs to run faster, the techniques described here
 *   Use the right data structure.
 
 ## 10.1 Use Declarations
-{:#s0010}
-{:.h1hd}
 
 On general-purpose computers running Lisp, much time is spent on type-checking.
 You can gain efficiency at the cost of robustness by declaring, or promising, that certain variables will always be of a given type.
@@ -286,8 +284,6 @@ The type `simple-string` is an abbreviation for `(simple-array string-char)`.
 This guide applies to most Common Lisp systems, but you should look in the implementation notes for your particular system for more advice on how to fine-tune your code.
 
 ## 10.2 Avoid Generic Functions
-{:#s0015}
-{:.h1hd}
 
 Common Lisp provides functions with great generality, but someone must pay the price for this generality.
 For example, if you write `(elt x 0)`, different machine instruction will be executed depending on if x is a list, string, or vector.
@@ -305,8 +301,6 @@ This example was simple, but in more complicated cases you can make your sequenc
 See the definition of `map-into` on [page 857](B9780080571157500248.xhtml#p857).
 
 ## 10.3 Avoid Complex Argument Lists
-{:#s0020}
-{:.h1hd}
 
 Functions with keyword arguments suffer a large degree of overhead.
 This may also be true for optional and rest arguments, although usually to a lesser degree.
@@ -609,8 +603,6 @@ But when maintainability is considered, keyword parameters look much better.
 When a program is being developed, and it is not clear if a function will eventually need additional arguments, keyword parameters may be the best choice.
 
 ## 10.4 Avoid Unnecessary Consing
-{:#s0025}
-{:.h1hd}
 
 The `cons` function may appear to execute quite quickly, but like all functions that allocate new storage, it has a hidden cost.
 When large amounts of storage are used, eventually the system must spend time garbage collecting.
@@ -838,8 +830,6 @@ Here is a definition for a version of `remove` that uses `reuse-cons`:
 ```
 
 ### Avoid Consing: Unique Lists
-{:#s9000}
-{:.h2hd}
 
 Of course, `reuse-cons` only works when you have candidate cons cells around.
 That is, (`reuse-cons a b c`) only saves space when `c` is (or might be) equal to (`cons a b`).
@@ -936,8 +926,6 @@ This can lead to significant savings when the list structures are large.
 An `eq` hash table for lists is almost as good as a property list on symbols.
 
 ### Avoid Consing: Multiple Values
-{:#s9005}
-{:.h2hd}
 
 Parameters and multiple values can also be used to pass around values, rather than building up lists.
 For example, instead of :
@@ -960,8 +948,6 @@ one could use the following approach, which doesn't generate structures:
 ```
 
 ### Avoid Consing: Resources
-{:#s9010}
-{:.h2hd}
 
 Sometimes it pays to manage explicitly the storage of instances of some data type.
 A pool of these instances may be called a *resource*.
@@ -1090,16 +1076,12 @@ A common problem is to have only a few live objects on each page, thus forcing t
 Compacting garbage collectors can collect live objects onto the same page, but using resources may interfere with this.
 
 ## 10.5 Use the Right Data Structures
-{:#s0030}
-{:.h1hd}
 
 It is important to implement key data types with the most efficient implementation.
 This can vary from machine to machine, but there are a few techniques that are universal.
 Here we consider three case studies.
 
 ### The Right Data Structure: Variables
-{:#s9015}
-{:.h2hd}
 
 As an example, consider the implementation of pattern-matching variables.
 We saw from the instrumentation of `simplify` that `variable-p` was one of the most frequently used functions.
@@ -1187,8 +1169,6 @@ Fortunately, Lisp makes it easy to switch to more efficient data structures, for
 ```
 
 ### The Right Data Structure: Queues
-{:#s9020}
-{:.h2hd}
 
 A *queue* is a data structure where one can add elements at the rear and remove them from the front.
 This is almost like a stack, except that in a stack, elements are both added and removed at the same end.
@@ -1247,8 +1227,6 @@ In the definitions below, we change the name `tconc` to the more standard `enque
 ```
 
 ### The Right Data Structure: Tables
-{:#s9030}
-{:.h2hd}
 
 A *table* is a data structure to which one can insert a key and associate it with a value, and later use the key to look up the value.
 Tables may have other operations, like counting the number of keys, clearing out all keys, or mapping a function over each key/value pair.
@@ -1399,8 +1377,6 @@ Quite a bit of searching is required before arriving at the complete set of matc
 We will return to the problem of discrimination nets with variables in [section 14.8](B9780080571157500145.xhtml#s0040), [page 472](B9780080571157500145.xhtml#p472).
 
 ## 10.6 Exercises
-{:#s0035}
-{:.h1hd}
 
 **Exercise  10.1 [h]** Define the macro `deftable,` such that `(deftable person assoc`) will act much like a `defstruct-`it will define a set of functions for manipulating a table of people: `get-person, put-person, clear-person,` and `map-person.` The table should be implemented as an association list.
 Later on, you can change the representation of the table simply by changing the form to (`deftable person hash` ), without having to change anything else in your code.
@@ -1444,8 +1420,6 @@ Analyze the time complexity of each implementation for each operation.
 Next, show how *sorted lists* can be used to implement sets, and compare the operations on sorted lists to their counterparts on unsorted lists.
 
 ## 10.7 Answers
-{:#s0040}
-{:.h1hd}
 
 **Answer 10.2**
 

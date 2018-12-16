@@ -89,8 +89,6 @@ Thus, for the second clause, we would have the code:
 where we would need a suitable let binding for the variable `?x`.
 
 ## 12.1 A Prolog Compiler
-{:#s0010}
-{:.h1hd}
 
 This section presents the compiler summarized in [figure  12.1](#f0010).
 At the top level is the function `prolog-compile`, which takes a symbol, looks at the clauses defined for that symbol, and groups the clauses by arity.
@@ -415,8 +413,6 @@ Here's what `prolog-compile` gives us:
 ```
 
 ## 12.2 Fixing the Errors in the Compiler
-{:#s0015}
-{:.h1hd}
 
 There are some problems in this version of the compiler:
 
@@ -574,8 +570,6 @@ ITEM (?))`
 ```
 
 ## 12.3 Improving the Compiler
-{:#s0020}
-{:.h1hd}
 
 This is fairly good, although there is still room for improvement.
 One minor improvement is to eliminate unneeded variables.
@@ -669,8 +663,6 @@ OLD-TRAIL)`
 ```
 
 ## 12.4 Improving the Compilation of Unification
-{:#s0025}
-{:.h1hd}
 
 Now we turn to the improvement of `compile-unify`.
 Recall that we want to elimina te certain calls to `unify!` so that, for example, the first clause of `member:`
@@ -1031,8 +1023,6 @@ OLD-TRAIL)`
 ```
 
 ## 12.5 Further Improvements to Unification
-{:#s0030}
-{:.h1hd}
 
 Could `compile-unify` be improved yet again?
 If we insist that it call `unify!,` it seems that it can't be made much better.
@@ -1090,8 +1080,6 @@ Implement this approach.
 What advantages and disadvantages does it have?
 
 ## 12.6 The User Interface to the Compiler
-{:#s0035}
-{:.h1hd}
 
 The compiler can translate Prolog to Lisp, but that does us no good unless we can conveniently arrange to compile the right Prolog relations and call the right Lisp functions.
 In other words, we have to integrate the compiler with the `<-` and `?` macros.
@@ -1221,8 +1209,6 @@ In ANSI Common Lisp there is a way to delay the printing of warnings until a ser
 Find out if `with-compilation-unit` is already defined in your implementation, or if it can be defined.
 
 ## 12.7 Benchmarking the Compiler
-{:#s0040}
-{:.h1hd}
 
 Our compiled Prolog code runs the zebra puzzle in 17.4 seconds, a 16-fold speed-up over the interpreted version, for a rate of 740 LIPS.
 
@@ -1306,8 +1292,6 @@ This is roughly equivalent to the following Lisp verison:
 ```
 
 ## 12.8 Adding More Primitives
-{:#s0045}
-{:.h1hd}
 
 Just as a Lisp compiler needs machine instructions to do input/output, arithmetic, and the like, so our Prolog system needs to be able to perform certain primitive actions.
 For the Prolog interpreter, primitives were implemented by function symbols.
@@ -1662,8 +1646,6 @@ Hint: the first corresponds to a Common Lisp function, and the second is a funct
 **Exercise  12.13 [m]** Write a version of `deref-copy` that traverses the argument expression only once.
 
 ## 12.9 The Cut
-{:#s0050}
-{:.h1hd}
 
 In Lisp, it is possible to write programs that backtrack explicitly, although it can be awkward when there are more than one or two backtrack points.
 In Prolog, backtracking is automatic and implicit, but we don't yet know of any way to *avoid* backtracking.
@@ -1889,8 +1871,6 @@ Our compiler successfully turns these two clauses into exactly the same code as 
 ```
 
 ## 12.10 "Real" Prolog
-{:#s0055}
-{:.h1hd}
 
 The Prolog-In-Lisp system developed in this chapter uses Lisp syntax because it is intended to be embedded in a Lisp system.
 Other Prolog implementations using Lisp syntax include micro-Prolog, Symbolics Prolog, and LMI Prolog.
@@ -1940,8 +1920,6 @@ How would the cut be implemented?
 Did we make the right choice in implementing our compiler with success continuations, or would failure continuations have been better?
 
 ## 12.11 History and References
-{:#s0060}
-{:.h1hd}
 
 As described in [chapter 11](B978008057115750011X.xhtml), the idea of logic programming was fairly well understood by the mid-1970s.
 But because the implementations of that time were slow, logic programming did not catch on.
@@ -1963,8 +1941,6 @@ Instead, it is modeled after Mark [Stickel's (1988)](B9780080571157500285.xhtml#
 A similar compiler is briefly sketched by Jacques [Cohen 1985](B9780080571157500285.xhtml#bb0225).
 
 ## 12.12 Exercises
-{:#s0065}
-{:.h1hd}
 
 **Exercise  12.16 [m]** Change the Prolog compiler to allow implicit `calls`.
 That is, if a goal is not a cons cell headed by a predicate, compile it as if it were a `call`.
@@ -2062,8 +2038,6 @@ Implement freeze.
 **Exercise  12.23 [m]** Write a recursive version of `anonymous-variables-in` that does not use a local function.
 
 ## 12.13 Answers
-{:#s0070}
-{:.h1hd}
 
 **Answer 12.6** Here's a version that works for Texas Instruments and Lucid implementations:
 

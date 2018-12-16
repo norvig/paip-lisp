@@ -8,8 +8,6 @@ Thus, they may not be applicable to your Lisp compiler.
 The final topic, sequence functions, shows how to write efficient functions that work for either lists or vectors.
 
 ## 24.1 Packages
-{:#s0010}
-{:.h1hd}
 
 A *package* is a symbol table that maps from strings to symbols named by those strings.
 When read is confronted with a sequence of characters like `list`, it uses the symbol table to determine that this refers to the symbol `list`.
@@ -87,8 +85,6 @@ Also note that ANSI renames the `lisp package` as `common-lisp`.
 For more on packages and building systems, see [section 25.16](B978008057115750025X.xhtml#s0110) or *Common Lisp the Language.*
 
 ### The Seven Name Spaces
-{:#s0015}
-{:.h2hd}
 
 One important fact to remember about packages is that they deal with symbols, and only indirectly deal with the uses those symbols might have.
 For example, you may think of `(export 'parse)` as exporting the function `parse`, but really it is exporting the symbol `parse`, which may happen to have a function definition associated with it.
@@ -129,8 +125,6 @@ In the following example `f`, can you identify which of the twelve uses of `f` r
         `(funcall #'f (get (symbol-value 'f) 'f))))))`
 
 ## 24.2 Conditions and Error Handling
-{:#s0020}
-{:.h1hd}
 
 An extraordinary feature of ANSI Common Lisp is the facility for handling errors.
 In most languages it is very difficult for the programmer to arrange to recover from an error.
@@ -141,8 +135,6 @@ Common Lisp provides one of the most comprehensive and easy-to-use error-handlin
 The process of error handling is divided into two parts: signaling an error, and handling it.
 
 ### Signaling Errors
-{:#s0025}
-{:.h2hd}
 
 An *error* is a condition that the program does not know how to handle.
 Since the program does not know what to do, its only recourse is to announce the occurrence of the error, with the hope that some other program or user will know what to do.
@@ -154,8 +146,6 @@ Actually, it is a bit of a simplification to talk only of *signaling errors.* Th
 The condition system in Common Lisp allows for the definition of all kinds of conditions, but we will continue to talk about errors in this brief discussion, since most conditions are in fact error conditions.
 
 ### Handling Errors
-{:#s0030}
-{:.h2hd}
 
 By default, signaling an error invokes the debugger.
 In the following example, the >> prompt means that the user is in the debugger rather than at the top level.
@@ -218,8 +208,6 @@ Through judicious use of `handler-case`, the programmer can create robust code t
 For more details, see chapter 29 of *Common Lisp the Language,* 2d edition.
 
 ## 24.3 Pretty Printing
-{:#s0035}
-{:.h1hd}
 
 ANSI Common Lisp adds a facility for user-controlled pretty printing.
 In general, *pretty printing* refers to the process of printing complex expressions in a format that uses indentation to improve readability.
@@ -228,8 +216,6 @@ Chapter 27 of *Common Lisp the Language,* 2d edition presents a pretty-printing 
 In addition, the facility is integrated with the `format` function.
 
 ## 24.4 Series
-{:#s0040}
-{:.h1hd}
 
 The functional style of programming with higher-order functions is one of the attractions of Lisp.
 The following expression to sum the square roots of the positive numbers in the list `nums` is clear and concise:
@@ -269,8 +255,6 @@ The series facility offers a convenient and efficient alternative to iterative l
 Although the series proposai has not yet been adopted as an official part of ANSI Common Lisp, its inclusion in the reference manual has made it increasingly popular.
 
 ## 24.5 The Loop Macro
-{:#s0045}
-{:.h1hd}
 
 The original specification of Common Lisp included a simple `loop` macro.
 The body of the loop was executed repeatedly, until a `return` was encountered.
@@ -492,8 +476,6 @@ Another design choice would be to return multiple values for each of the compone
 This is in fact done in one of the Lisp Machine implementations of `loop`, but I think it is a poor decision: seven components are too many to keep track of by positional notation.
 
 ### Anatomy of a Loop
-{:#s0050}
-{:.h2hd}
 
 All this has just been to set up for the real work: parsing the expressions that make up the loop with the function `parse-loop-body`.
 Every loop consists of a sequence of clauses, where the syntax of each clause is determined by the first expression of the clause, which should be a known symbol.
@@ -566,8 +548,6 @@ Now we are ready to define some `loop` keywords.
 Each of the following sections refers to (and implements the loop keywords in) a section of chapter 26 of *Common Lisp the Language*, 2d edition.
 
 ### Iteration Control (26.6)
-{:#s0055}
-{:.h2hd}
 
 Here we define keywords for iterating over elements of a sequence and for stopping the iteration.
 The following cases are covered, where uppercase words represent loop keywords:
@@ -746,8 +726,6 @@ nil))`
             `temp)))`
 
 ### End-Test Control (26.7)
-{:#s0060}
-{:.h2hd}
 
 In this section we cover the following clauses:
 
@@ -796,8 +774,6 @@ Each keyword is quite simple:
 ```
 
 ### Value Accumulation (26.8)
-{:#s0065}
-{:.h2hd}
 
 The `collect` keyword poses another challenge.
 How do you collect a list of expressions presented one at a time?
@@ -945,8 +921,6 @@ For example:
 Implement `with-collection` and `collect`.
 
 ### Variable Initialization (26.9)
-{:#s0070}
-{:.h2hd}
 
 The `with` clause allows local variables-I have included it, but recommend using a `let` instead.
 I have not included the `and` preposition, which allows the variables to nest at different levels.
@@ -971,8 +945,6 @@ Variable Initializations ("and" omitted)`
         `exps))`
 
 ### Conditional Execution (26.10)
-{:#s0075}
-{:.h2hd}
 
 `loop` also provides forms for conditional execution.
 These should be avoided whenever possible, as Lisp already has a set of perfectly good conditional macros.
@@ -1084,8 +1056,6 @@ Here is the code:
     `exps)`
 
 ### Unconditional Execution (26.11)
-{:#s0080}
-{:.h2hd}
 
 The unconditional execution keywords are do and return:
 
@@ -1104,8 +1074,6 @@ The unconditional execution keywords are do and return:
 ```
 
 ### Miscellaneous Features (26.12)
-{:#s0085}
-{:.h2hd}
 
 Finally, the miscellaneous features include the keywords `initially` and `finally`, which define the loop prologue and epilogue, and the keyword named, which gives a name to the loop for use by a `return-from` form.
 I have omitted the data-type declarations and destructuring capabilities.
@@ -1135,8 +1103,6 @@ I have omitted the data-type declarations and destructuring capabilities.
 ```
 
 ## 24.6 Sequence Functions
-{:#s0090}
-{:.h1hd}
 
 Common Lisp provides sequence functions to make the programmer's life easier: the same function can be used for lists, vectors, and strings.
 However, this ease of use comes at a cost.
@@ -1151,8 +1117,6 @@ Even those who do have access to an ANSI compiler will benefit from seeing the e
 Before defining the sequence functions, the macro `once-only` is introduced.
 
 ### Once-only: A Lesson in Macrology
-{:#s0095}
-{:.h2hd}
 
 The macro `once-only` has been around for a long time on various systems, although it didn't make it into the Common Lisp standard.
 I include it here for two reasons: first, it is used in the following `funcall-if` macro, and second, if you can understand how to write and when to use `once-only`, then you truly understand macro.
@@ -1319,8 +1283,6 @@ It is worth noting that Common Lisp automatically handles problems related to mu
 See [page 884](B978008057115750025X.xhtml#p884) for an example.
 
 ### Avoid Overusing Macros
-{:#s0100}
-{:.h2hd}
 
 A word to the wise: don't get carried away with macros.
 Use macros freely to represent your *problem*, but shy away from new macros in the implementation of your *solution,* unless absolutely necessary.
@@ -1382,8 +1344,6 @@ In general, that's the whole point of macros, and it is why macros are sometimes
 But in this case, violating referential transparency can lead to confusion.
 
 ### MAP-INTO
-{:#s0105}
-{:.h2hd}
 
 The function `map-into` is used on [page 632](B9780080571157500182.xhtml#p632).
 This function, added for the ANSI version of Common Lisp, is like `map`, except that instead of building a new sequence, the first argument is changed to hold the results.
@@ -1592,8 +1552,6 @@ This approach is efficient in execution time, but it takes up a lot of space, co
 If `map-into` is declared `inline` and the compiler is reasonably good, then it will produce code that just calls the appropriate function.
 
 ### REDUCE with :key
-{:#s0110}
-{:.h2hd}
 
 Another change in the ANSI proposal is to add a : key keyword to `reduce`.
 This is a useful addition-in fact, for years I had been using a `reduce-by` function that provided just this functionality.
@@ -1825,8 +1783,6 @@ Therefore, this is the approach I adopt.
                           `result)))))`
 
 ## 24.7 Exercises
-{:#s0115}
-{:.h1hd}
 
 **Exercise  24.2 [m]** The function reduce is a very useful one, especially with the key keyword.
 Write nonrecursive definitions for append and 1 ength using reduce.
@@ -1851,8 +1807,6 @@ Use def `loop` to implement these two keywords.
 Make them generate code conditionally, based on a global flag.
 
 ## 24.8 Answers
-{:#s0120}
-{:.h1hd}
 
 **Answer 24.1**
 

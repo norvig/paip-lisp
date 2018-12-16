@@ -36,8 +36,6 @@ This chapter is a brief introduction to natural language processing.
 The next chapter gives a more thorough treatment from the point of view of logic grammars, and the chapter after that puts it all together into a full-fledged system.
 
 ## 19.1 Parsing with a Phrase-Structure Grammar
-{:#s0010}
-{:.h1hd}
 
 To parse a sentence means to recover the constituent structure of the sentence-to discover what sequence of generation rules could have been applied to come up with the sentence.
 In general, there may be several possible derivations, in which case we say the sentence is grammatically ambiguous.
@@ -191,8 +189,6 @@ Some examples of the parser in action are shown here:
 ```
 
 ## 19.2 Extending the Grammar and Recognizing Ambiguity
-{:#s0015}
-{:.h1hd}
 
 Overall, the parser seems to work fine, but the range of sentences we can parse is quite limited with the current grammar.
 The following grammar includes a wider variety of linguistic phenomena: adjectives, prepositional phrases, pronouns, and proper names.
@@ -266,8 +262,6 @@ Here we see a phrase that is ambiguous between a sentence and a noun phrase:
 ```
 
 ## 19.3 More Efficient Parsing
-{:#s0020}
-{:.h1hd}
 
 With more complex grammars and longer sentences, the parser starts to slow down.
 The main problem is that it keeps repeating work.
@@ -346,8 +340,6 @@ The performance of the memoized version is quite acceptable; for N=5, a 20-word 
 Implement this approach and see if it entails less overhead than the more general hash table approach.
 
 ## 19.4 The Unknown-Word Problem
-{:#s0025}
-{:.h1hd}
 
 As it stands, the parser cannot deal with unknown words.
 Any sentence containing a word that is not in the grammar will be rejected, even if the program can parse all the rest of the words perfectly.
@@ -404,8 +396,6 @@ Things are not always so straightforward, unfortunately, as the following exampl
 If the program knew morphology-that a *y* at the end of a word often signais an adjective, an *s* a plural noun, and an *ed* a past-tense verb-then it could do much better.
 
 ## 19.5 Parsing into a Semantic Representation
-{:#s0030}
-{:.h1hd}
 
 Syntactic parse trees of a sentence may be interesting, but by themselves they're not very useful.
 We use sentences to communicate ideas, not to display grammatical structures.
@@ -608,8 +598,6 @@ With this new grammar, we can get single interpretations out of most reasonable 
 The example "1 2 3" shows an ambiguity between the number 123 and the list (123), but all the others are unambiguous.
 
 ## 19.6 Parsing with Preferences
-{:#s0035}
-{:.h1hd}
 
 One reason we have unambiguous interpretations is that we have a very limited domain of interpretation: we are dealing with sets of numbers, not lists.
 This is perhaps typical of the requests faced by a CD player, but it does not account for all desired input.
@@ -992,8 +980,6 @@ Unfortunately, repeated elements are not counted in sets, so for example, the li
 However, we could change the scorer for "without" to test for `sub-bag-p` (not a built-in Common Lisp function) instead, and then "repeat" would not have to be concerned with that case.
 
 ## 19.7 The Problem with Context-Free Phrase-Structure Rules
-{:#s0040}
-{:.h1hd}
 
 The fragment of English grammar we specified in [section 19.2](#s0015) admits a variety of ungrammatical phrases.
 For example, it is equally happy with both "I liked her" and "me liked she." Only the first of these should be accepted; the second should be ruled out.
@@ -1013,8 +999,6 @@ In this book we are more interested in natural languages, so in the next chapter
 Furthermore, *unification grammars* allow a natural way of attaching semantics to a parse.
 
 ## 19.8 History and References
-{:#s0045}
-{:.h1hd}
 
 There is a class of parsing algorithms known as *chart parsers* that explicitly cache partial parses and reuse them in constructing larger parses.
 Earley's algorithm (1970) is the first example, and Martin [Kay (1980)](B9780080571157500285.xhtml#bb0605) gives a good overview of the field and introduces a data structure, the *chart*, for storing substrings of a parse.
@@ -1026,8 +1010,6 @@ In fact, it is possible to write a top-down parser that is even more succinct.
 For a general overview of natural language processing, my preferences (in order) are [Allen 1987](B9780080571157500285.xhtml#bb0030), [Winograd 1983](B9780080571157500285.xhtml#bb1395) or [Gazdar and Mellish 1989](B9780080571157500285.xhtml#bb0445).
 
 ## 19.9 Exercises
-{:#s0050}
-{:.h1hd}
 
 **Exercise  19.2 [m-h]** Experiment with the grammar and the parser.
 Find sentences it cannot parse correctly, and try to add new syntactic rules to account for them.
@@ -1067,8 +1049,6 @@ You could also extend the grammar to accommodate an automatic timer, with phrase
 Replace it by an *O*(*n*) algorithm.
 
 ## 19.10 Answers
-{:#s0055}
-{:.h1hd}
 
 **Answer 19.1**
 
