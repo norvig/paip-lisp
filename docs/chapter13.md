@@ -23,7 +23,7 @@ However, some applications are more naturally seen as taking action rather than 
 Examples of functional languages are FP and Lisp without `setf`.
 
 In contrast to imperative languages are *declarative* languages, which attempt to express "what to do" rather than "how to do it." One type of declarative programming is *rule-based* programming, where a set of rules states how to transform a problem into a solution.
-Examples of rule-based systems are ELIZA !!!(span) {:.smallcaps} and STUDENT !!!(span) {:.smallcaps} .
+Examples of rule-based systems are ELIZA and STUDENT.
 
 An important kind of declarative programming is *logic programming*, where axioms are used to describe constraints, and computation is done by a constructive proof of a goal.
 An example of logic language is Prolog.
