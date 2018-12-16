@@ -47,8 +47,6 @@ Thus, in the 1990s the emphasis has shifted to *knowledge representation and rea
 No amount of knowledge can help solve an intractable problem in the worse case, but in practice the worst case rarely occurs.
 
 ## 14.1 A Taxonomy of Representation Languages
-{:#s0010}
-{:.h1hd}
 
 AI researchers have investigated hundreds of knowledge representation languages, trying to find languages that are convenient, expressive, and efficient.
 The languages can be classified into four groups, depending on what the basic unit of representation is.
@@ -93,8 +91,6 @@ The KL-ONE family of languages uses both logical formulae and objects arranged i
 Many frame languages allow *procedural attachment,* a technique that uses arbitrary procedures to compute values for expressions that are inconvenient or impossible to express in the frame language itself.
 
 ## 14.2 Predicate Calculus and its Problems
-{:#s0015}
-{:.h1hd}
 
 So far, many of our representations have been based on predicate calculus, a notation with a distinguished position in AI: it serves as the universal standard by which other representations are defined and evaluated.
 The previous section gave an example expression from a frame language.
@@ -159,8 +155,6 @@ This is not meant as an endorsement for Prolog as the ultimate knowledge represe
 Rather, it is meant solely to give us a clear and familiar foundation from which to build.
 
 ## 14.3 A Logical Language: Prolog
-{:#s0020}
-{:.h1hd}
 
 Prolog has been proposed as the answer to the problem of programming in logic.
 Why isn't it accepted as the universal representation language?
@@ -177,8 +171,6 @@ Because it does not check for circular unification, it can give incorrect answer
 Third, Prolog has no good way of adding control information to the underlying logic, making it inefficient on certain problems.
 
 ## 14.4 Problems with Prolog's Expressiveness
-{:#s0025}
-{:.h1hd}
 
 If Prolog is programming in logic, it is not the full predicate logic we are familiar with.
 The main problem is that Prolog can't express certain kinds of indefinite facts.
@@ -301,8 +293,6 @@ Here `p2` is a Skolem function that depends on the variable `?y`.
 In other words, everyone likes some person, but not necessarily the same person.
 
 ## 14.5 Problems with Predicate Calculus's Expressiveness
-{:#s0030}
-{:.h1hd}
 
 In the previous section we saw that Prolog has traded some expressiveness for efficiency.
 This section explores the limits of predicate calculus's expressiveness.
@@ -358,8 +348,6 @@ There are versions of predicate calculus that admit quantifiers like "most" in a
 However, there is no consensus on the way to approach this problem.
 
 ## 14.6 Problems with Completeness
-{:#s0035}
-{:.h1hd}
 
 Because Prolog searches depth-first, it can get caught in one branch of the search space and never examine the other branches.
 This problem can show up, for example, in trying to define a commutative relation, like `sibling`:
@@ -474,8 +462,6 @@ The same problem comes up if we ask if there are any sets that include themselve
 The query `(member ?set ?set)` will succeed, but we will not be able to print the value of `?set`.
 
 ## 14.7 Problems with Efficiency: Indexing
-{:#s0040}
-{:.h1hd}
 
 Our Prolog compiler is designed to handle "programlike" predicates-predicates with a small number of rules, perhaps with complex bodies.
 The compiler does much worse on "tablelike" predicates-predicates with a large number of simple facts.
@@ -499,8 +485,6 @@ But that is just what our compiler does.
 The solutions to the three problems-expressiveness, completeness, and indexing-will be considered in reverse order, so that the most difficult one, expressiveness, will come last.
 
 ## 14.8 A Solution to the Indexing Problem
-{:#s0045}
-{:.h1hd}
 
 A better solution to the phone-book problem is to index each phone-book entry in some kind of table that makes it easy to add, delete, and retrieve entries.
 That is what we will do in this section.
@@ -936,8 +920,6 @@ Here is the implementation:
 ```
 
 ## 14.9 A Solution to the Completeness Problem
-{:#s0050}
-{:.h1hd}
 
 We saw in [chapter 6](B9780080571157500066.xhtml) that iterative deepening is an efficient way to cover a search space without falling into an infinite loop.
 Iterative deepening can also be used to guide the search in Prolog.
@@ -1046,8 +1028,6 @@ No.
 ```
 
 ## 14.10 Solutions to the Expressiveness Problems
-{:#s0055}
-{:.h1hd}
 
 In this section we present solutions to three of the limitations described above:
 
@@ -1060,8 +1040,6 @@ In this section we present solutions to three of the limitations described above
 We also introduce a way to attach functions to predicates to do forward-chaining and error detection, and we discuss ways to extend unification to handle Skolem constants and other problems.
 
 ### Higher-Order Predications
-{:#s9055}
-{:.h2hd}
 
 First we will tackle the problem of answering questions like "What kinds of animais are there?" Paradoxically, the key to allowing more expressiveness in this case is to invent a new, more limited language and insist that all assertions and queries are made in that language.
 That way, queries that would have been higher-order in the original language become first-order in the restricted language.
@@ -1236,8 +1214,6 @@ and What are the colors of each individual bear?
 ```
 
 ### Improvements
-{:#s9010}
-{:.h2hd}
 
 There are quite a few improvements that can be made to this system.
 One direction is to provide different kinds of answers to queries.
@@ -1425,8 +1401,6 @@ It shows that adding the single fact `(sub bear animal)` to the given data base 
 ```
 
 ### A Frame Language
-{:#s9015}
-{:.h2hd}
 
 Another direction we can take is to provide an alternative syntax that will be easier to read and write.
 Many representation languages are based on the idea of *frames,* and their syntax reflects this.
@@ -1570,8 +1544,6 @@ The auxiliary functions `maybe-add` and `replace-?-vars` are shown in the follow
 ```
 
 ### Possible Worlds: Truth, Negation, and Disjunction
-{:#s19055}
-{:.h2hd}
 
 In this section we address four problems: distinguishing `unknown` from `false`, representing negations, representing disjunctions, and representing multiple possible states of affairs.
 It turns out that all four problems can be solved by introducing two new techniques: possible worlds and negated predicates.
@@ -1864,8 +1836,6 @@ Here we see that the facts entered in `W7031` are not accessible, but the facts 
 ```
 
 ### Unification, Equality, Types, and Skolem Constants
-{:#s9155}
-{:.h2hd}
 
 The lesson of the zebra puzzle in [section 11.4](B978008057115750011X.xhtml#s0040) was that unification can be used to lessen the need for backtracking, because an uninstantiated logic variable or partially instantiated term can stand for a whole range of possible solutions.
 However, this advantage can quickly disappear when the representation forces the problem solver to enumerate possible solutions rather than treating a whole range of solutions as one.
@@ -1893,8 +1863,6 @@ On the other hand, a Skolem constant can potentially unify with any other consta
 The equality mechanism is used to keep track of each Skolem variable's possible bindings.
 
 ## 14.11 History and References
-{:#s0085}
-{:.h1hd}
 
 [Brachman and Levesque (1985)](B9780080571157500285.xhtml#bb0115) collect thirty of the key papers in knowledge representation.
 Included are some early approaches to semantic network based ([Quillian 1967](B9780080571157500285.xhtml#bb0965)) and logic-based ([McCarthy 1968](B9780080571157500285.xhtml#bb0805)) representation.
@@ -1931,8 +1899,6 @@ Papers on extending unification in ways other than equality include [A&iuml;t-Ka
 Finally, papers on extending Prolog to cover disjunction and negation (i.e., non-Horn clauses) include [Loveland 1987](B9780080571157500285.xhtml#bb0755), [Plaisted 1988](B9780080571157500285.xhtml#bb0960), and [Stickel 1988](B9780080571157500285.xhtml#bb1200).
 
 ## 14.12 Exercises
-{:#s0090}
-{:.h1hd}
 
 **Exercise  14.1 [m]** Arrange to store dtrees in a hash table rather than on the property list of predicates.
 
@@ -1963,8 +1929,6 @@ This support has already been provided for dtrees, but you will have to provide 
 Use it to solve Moore 's problem ([page 466](#p466)).
 
 ## 14.13 Answers
-{:#s0095}
-{:.h1hd}
 
 **Answer 14.1**
 

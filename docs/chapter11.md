@@ -39,8 +39,6 @@ For that reason it is worth knowing.
 In subsequent chapters we will see several useful applications of the Prolog approach.
 
 ## 11.1 Idea 1: A Uniform Data Base
-{:#s0010}
-{:.h1hd}
 
 The first important Prolog idea should be familiar to readers of this book: manipulating a stored data base of assertions.
 In Prolog the assertions are called *clauses,* and they can be divided into two types: *facts,* which state a relationship that holds between some objects, and *rules,* which are used to state contingent facts.
@@ -119,8 +117,6 @@ This can be read as:
 *if it can be proved that*`x likes Lee`*and* x `likes Kim.`
 
 ## 11.2 Idea 2: Unification of Logic Variables
-{:#s0015}
-{:.h1hd}
 
 Unification is a straightforward extension of the idea of pattern matching.
 The pattern-matching functions we have seen so far have always matched a pattern (an expression containing variables) against a constant expression (one with no variables).
@@ -415,8 +411,6 @@ When *`occurs-check`* is false, we get the following answers:
 ```
 
 ### Programming with Prolog
-{:#s0020}
-{:.h2hd}
 
 The amazing thing about Prolog clauses is that they can be used to express relations that we would normally think of as "programs," not "data." For example, we can define the `member` relation, which holds between an item and a list that contains that item.
 More precisely, an item is a member of a list if it is either the first element of the list or a member of the rest of the list.
@@ -763,8 +757,6 @@ Define macros `rule` and `fact` so that we can write:
 ```
 
 ## 11.3 Idea 3: Automatic Backtracking
-{:#s0025}
-{:.h1hd}
 
 The Prolog interpreter implemented in the last section solves problems by returning a list of all possible solutions.
 We'll call this a *batch* approach, because the answers are retrieved in one uninterrupted batch of processing.
@@ -982,8 +974,6 @@ Prolog is smart enough to backtrack and find all solutions when the search space
 It is possible to devise languages that do much more in terms of automatic flow of control.[4](#fn0030) Prolog is a convenient and efficient middle ground between imperative languages and pure logic.
 
 ### Approaches to Backtracking
-{:#s0030}
-{:.h2hd}
 
 Suppose you are asked to make a "small" change to an existing program.
 The problem is that some function, `f`, which was thought to be single-valued, is now known to return two or more valid answers in certain circumstances.
@@ -1021,8 +1011,6 @@ We will see in [section 22.4](B9780080571157500224.xhtml#s0025) that the Scheme 
 Unfortunately, there is no corresponding function in Common Lisp.
 
 ### Anonymous Variables
-{:#s0035}
-{:.h2hd}
 
 Before moving on, it is useful to introduce the notion of an *anonymous variable.* This is a variable that is distinct from all others in a clause or query, but which the programmer does not want to bother to name.
 In real Prolog, the underscore is used for anonymous variables, but we will use a single question mark.
@@ -1060,8 +1048,6 @@ A named variable that is used only once in a clause can also be considered an an
 This is addressed in a different way in [section 12.3](B9780080571157500121.xhtml#s0020).
 
 ## 11.4 The Zebra Puzzle
-{:#s0040}
-{:.h1hd}
 
 Here is an example of something Prolog is very good at: a logic puzzle.
 There are fifteen facts, or constraints, in the puzzle:
@@ -1196,8 +1182,6 @@ It is arbitrary in which order these clauses are listed, and one might think it 
 In fact, if we reverse the order of these two clauses, the execution time is roughly cut in half.
 
 ## 11.5 The Synergy of Backtracking and Unification
-{:#s0045}
-{:.h1hd}
 
 Prolog's backward chaining with backtracking is a powerful technique for generating the possible solutions to a problem.
 It makes it easy to implement a *generate-and-test* strategy, where possible solutions are considered one at a time, and when a candidate solution is rejected, the next is suggested.
@@ -1244,8 +1228,6 @@ By making the unification procedure more complex, we eliminate the need for back
 **Exercise  11.3 [s]** Would a unification algorithm that delayed `member` tests be a good idea or a bad idea for the zebra puzzle?
 
 ## 11.6 Destructive Unification
-{:#s0050}
-{:.h1hd}
 
 As we saw in [section 11.2](#s0015), keeping track of a binding list of variables is a little tricky.
 It is also prone to inefficiency if the binding list grows large, because the list must be searched linearly, and because space must be allocated to hold the binding list.
@@ -1392,8 +1374,6 @@ A reasonable next step would be to use destructive unification to make a more ef
 This is left as an exercise, however, and instead we put the interpreter aside, and in the next chapter develop a compiler.
 
 ## 11.7 Prolog in Prolog
-{:#s0055}
-{:.h1hd}
 
 As stated at the start of this chapter, Prolog has many of the same features that make Lisp attractive for program development.
 Just as it is easy to write a Lisp interpreter in Lisp, it is easy to write a Prolog interpreter in Prolog.
@@ -1431,8 +1411,6 @@ No.
 ```
 
 ## 11.8 Prolog Compared to Lisp
-{:#s0060}
-{:.h1hd}
 
 Many of the features that make Prolog a successful language for AI (and for program development in general) are the same as Lisp's features.
 Let's reconsider the list of features that make Lisp different from conventional languages (see page 25) and see what Prolog has to offer:
@@ -1485,8 +1463,6 @@ Those who take that view object that Prolog's depth-first search strategy and ba
 This objection is countered by Prolog programmers who use the facilities provided by the language to build more powerful search strategies and representations, just as one would do in Lisp or any other language.
 
 ## 11.9 History and References
-{:#s0065}
-{:.h1hd}
 
 Cordell [Green (1968)](B9780080571157500285.xhtml#bb0490) was the first to articulate the view that mathematical results on theorem proving could be used to make deductions and thereby answer queries.
 However, the major technique in use at the time, resolution theorem proving (see [Robinson 1965](B9780080571157500285.xhtml#bb0995)), did not adequately constrain search, and thus was not practical.
@@ -1534,8 +1510,6 @@ The language MU-Prolog and NU-Prolog ([Naish 1986](B9780080571157500285.xhtml#bb
 The latter includes a systematic treatment of the &ne; relation and an interpretation of infinite trees.
 
 ## 11.10 Exercises
-{:#s0070}
-{:.h1hd}
 
 **Exercise  11.4 [m]** It is somewhat confusing to see "no" printed after one or more valid answers have appeared.
 Modify the program to print "no" only when there are no answers at all, and "no more" in other cases.
@@ -1635,8 +1609,6 @@ An alternative is to change the `unify` so that it takes two binding lists, one 
 Implement this alternative.
 
 ## 11.11 Answers
-{:#s0075}
-{:.h1hd}
 
 **Answer 11.9** We will choose as primitives the unary predicates `male` and `female` and the binary predicates `child` and `married`.
 The former takes the child first; the latter takes the husband first.

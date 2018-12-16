@@ -33,8 +33,6 @@ Instead of prohibiting global state (as functional programming does), object-ori
 This chapter covers the object-oriented approach.
 
 ## 13.1 Object-Oriented Programming
-{:#s0010}
-{:.h1hd}
 
 Object-oriented programming turns the world of computing on its side: instead of viewing a program primarily as a set of actions which manipulate objects, it is viewed as a set of objects that are manipulated by actions.
 The state of each object and the actions that manipulate that state are defined once and for all when the object is created.
@@ -84,8 +82,6 @@ Equivalent to generic function.
 *object:* An encapsulation of local state and behavior.
 
 ## 13.2 Objects
-{:#s0015}
-{:.h1hd}
 
 Object-oriented programming, by definition, is concerned with *objects*.
 Any datum that can be stored in computer memory can be thought of as an object.
@@ -191,8 +187,6 @@ Random Customer"`
 ```
 
 ## 13.3 Generic Functions
-{:#s0020}
-{:.h1hd}
 
 The send syntax is awkward, as it is different from the normal Lisp function-calling syntax, and it doesn't fit in with the other Lisp tools.
 For example, we might like to say (`mapcar 'balance accounts`), but with messages we would have to write that as:
@@ -222,8 +216,6 @@ The sequence functions (like `find` or `delete`) operate on lists, vectors, or s
 These functions are not implemented like `withdraw,` but they still act like generic functions.[2](#fn0020)
 
 ## 13.4 Classes
-{:#s0025}
-{:.h1hd}
 
 It is possible to write macros to make the object-oriented style easier to read and write.
 The macro `define-class` defines a class with its associated message-handling methods.
@@ -299,8 +291,6 @@ User" 2000.00)) => #<CLOSURE 24003064>`
 In this last line, the generic function `balance` is applied to `acct,` an object that was created before we even defined the account class and the function `balance.` But `balance` still works properly on this object, because it obeys the message-passing protocol.
 
 ## 13.5 Delegation
-{:#s0030}
-{:.h1hd}
 
 Suppose we want to create a new kind of account, one that requires a password for each action.
 We can define a new class, `password-account,` that has two message clauses.
@@ -415,8 +405,6 @@ The problem is that when the bank decides to offer a new kind of account, we wil
 The "definition" of the new account is scattered rather than localized, and altering a bunch of existing functions is usually more error prone than writing a new class definition.
 
 ## 13.6 Inheritance
-{:#s0035}
-{:.h1hd}
 
 In the following table, data types (classes) are listed across the horizontal axis, and functions (messages) are listed up and down the vertical axis.
 A complete program needs to fill in all the boxes, but the question is how to organize the process of filling them in.
@@ -481,8 +469,6 @@ All it does is combine the functionality of two parent classes into one.
 **Exercise  13.2 [d]** Define a version of `define-class` that handles multiple inheritance.
 
 ## 13.7 CLOS: The Common Lisp Object System
-{:#s0040}
-{:.h1hd}
 
 So far, we have developed an object-oriented programming system using a macro, `define-class`, and a protocol for implementing objects as closures.
 There have been many proposals for adding object-oriented features to Lisp, some similar to our approach, some quite different.
@@ -665,8 +651,6 @@ We would like to encapsulate the writer function for `audit-trail` so that it ca
 But once the writer function is defined it can be used anywhere, so an unscrupulous outsider can destroy the audit trail, setting it to nil or anything else.
 
 ## 13.8 A CLOS Example: Searching Tools
-{:#s0045}
-{:.h1hd}
 
 CLOS is most appropriate whenever there are several types that share related behavior.
 A good example of an application that fits this description is the set of searching tools defined in [section 6.4](B9780080571157500066.xhtml#s0025).
@@ -855,8 +839,6 @@ Simply create a class that mixes in `binary-tree-problem, eql-problem` and `bfs-
 ```
 
 ### Best-First Search
-{:#s0050}
-{:.h2hd}
 
 It should be clear how to proceed to define best-first search: define a class to represent best-first search problems, and then define the necessary methods for that class.
 Since the search strategy only affects the order in which states are explored, the only method necessary will be for `problem-combiner`.
@@ -994,8 +976,6 @@ With the definitions in place, it is easy to use the searching tool:
 ```
 
 ## 13.9 Is CLOS Object-Oriented?
-{:#s0060}
-{:.h1hd}
 
 There is some argument whether CLOS is really object-oriented at all.
 The arguments are:
@@ -1067,8 +1047,6 @@ len(L.N). NI is N+1.
 ```
 
 ## 13.10 Advantages of Object-Oriented Programming
-{:#s0065}
-{:.h1hd}
 
 Bertrand Meyer, in his book on the object-oriented language Eiffel (1988), lists five qualities that contribute to software quality:
 
@@ -1114,8 +1092,6 @@ The more programs use standard components, the more they will be able to communi
 Thus, an object-oriented program will probably be compatible with other programs developed from the same library of classes.
 
 ## 13.11 History and References
-{:#s0070}
-{:.h1hd}
 
 The first object-oriented language was Simula, which was designed by Ole-Johan Dahl and Krysten Nygaard ([1966](B9780080571157500285.xhtml#bb0265), [Nygaard and Dahl 1981](B9780080571157500285.xhtml#bb0920)) as an extension of Algol 60.
 It is still in use today, mostly in Norway and Sweden.
@@ -1203,8 +1179,6 @@ So-called modern languages like Ada and Modula support information-hiding throug
 Despite these other languages, the Lisp-based object-oriented systems are the only ones since Smalltalk to introduce important new concepts: multiple inheritance and method combination from Flavors, and multimethods from CommonLoops.
 
 ## 13.12 Exercises
-{:#s0075}
-{:.h1hd}
 
 **Exercise  13.3 [m]** Implement `deposit` and `interest` methods for the `account` class using CLOS.
 

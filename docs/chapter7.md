@@ -24,8 +24,6 @@ The version of STUDENT we develop here is nearly a full implementation of the or
 However, remember that while the original was state-of-the-art as of 1964, AI has made some progress in a quarter century, as subsequent chapters will attempt to show.
 
 ## 7.1 Translating English into Equations
-{:#s0010}
-{:.h1hd}
 
 The description of STUDENT is:
 
@@ -225,8 +223,6 @@ For now, we will accept the first-non-noise-word solution, but note that exercis
 ```
 
 ## 7.2 Solving Algebraic Equations
-{:#s0015}
-{:.h1hd}
 
 The next step is to write the equation-solving section of STUDENT.
 This is more an exercise in elementary algebra than in AI, but it is a good example of a symbol-manipulation task, and thus an interesting programming problem.
@@ -476,8 +472,6 @@ In that case, a newline-before is needed, lest the output appear on the same lin
 **Exercise  7.1 [m]** Implement `print-equations` using only primitive printing functions such as `terpri` and `princ`, along with explicit loops.
 
 ## 7.3 Examples
-{:#s0020}
-{:.h1hd}
 
 Now we move on to examples, taken from Bobrow's thesis.
 In the first example, it is necessary to insert a "then" before the word "what" to get the right answer:
@@ -610,8 +604,6 @@ While one could add new patterns, such patterns are really just tricks, and don'
 That is why the STUDENT approach was abandoned as a research topic.
 
 ## 7.4 History and References
-{:#s0025}
-{:.h1hd}
 
 Bobrow's Ph.D.
 thesis contains a complete description of STUDENT.
@@ -624,8 +616,6 @@ Certainly Bobrow's language analysis techniques were not very sophisticated by t
 But that was largely the point: if you know that the language is describing an algebraic problem of a certain type, then you don't need to know very much linguistics to get the right answer most of the time.
 
 ## 7.5 Exercises
-{:#s0030}
-{:.h1hd}
 
 **Exercise  7.2 [h]** We said earlier that our program was unable to solve pairs of linear equations, such as:
 
@@ -703,8 +693,6 @@ Write the necessary `*student-rules*`, and test the resulting program.
 Generate a similar characterization for this version of the program.
 
 ## 7.6 Answers
-{:#s0035}
-{:.h1hd}
 
 **Answer 7.1**
 

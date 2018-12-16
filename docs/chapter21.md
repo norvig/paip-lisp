@@ -32,8 +32,6 @@ The other arguments and categories will be explained in turn, but it is handy to
 *(ed: should be a markdown table)*
 
 ## 21.1 Noun Phrases
-{:#s0010}
-{:.h1hd}
 
 The simplest noun phrases are names and pronouns, such as "Kim" and "them." The rules for these cases are simple: we build up a semantic expression from a name or pronoun, and since there can be no gap, the two gap accumulator arguments are the same `(?g1)`.
 Person and number agreement is propagated in the variable `?agr`, and we also keep track of the *case* of the noun phrase.
@@ -90,8 +88,6 @@ The lone rule for `NP2` says that it consists of a noun, optionally preceded and
 ```
 
 ## 21.2 Modifiers
-{:#s0015}
-{:.h1hd}
 
 Modifiers are split into type types: *Complements* are modifiers that are expected by the head category that is being modified; they cannot stand alone.
 *Adjuncts* are modifiers that are not required but bring additional information.
@@ -147,8 +143,6 @@ The complement list for one sense of the verb "visit" is:
 This means that the first complement, the subject, is a noun phrase that fills the agent role, and the second complement is also a noun phrase that fills the object role.
 
 ## 21.3 Noun Modifiers
-{:#s0020}
-{:.h1hd}
 
 There are two main types of prenoun adjuncts.
 Most common are adjectives, as in "big slobbery dogs." Nouns can also be adjuncts, as in "water meter" or "desk lamp." Here it is clear that the second noun is the head and the first is the modifier: a desk lamp is a lamp, not a desk.
@@ -222,8 +216,6 @@ The constant `int-subj` indicates this.
 It should be noted that it is rare but not impossible to have names and pronouns with modifiers: "John the Baptist," "lovely Rita, meter maid," "Lucy in the sky with diamonds," "Sylvia in accounting on the 42nd floor," "she who must be obeyed." Here and throughout this chapter we will raise the possibility of such rare cases, leaving them as exercises for the reader.
 
 ## 21.4 Determiners
-{:#s0025}
-{:.h1hd}
 
 We will cover three kinds of determiners.
 The simplest is the article: "a dog" or "the dogs." We also allow genitive pronouns, as in "her dog," and numbers, as in "three dogs." The semantic interpretation of a determiner-phrase is of the form (*quantifier variable restriction*).
@@ -251,8 +243,6 @@ Postdeterminers include every, many, several, and few.
 Thus, we can say "all her many good ideas" or "all the King's men." But we can not say "*all much ideas" or "*the our children." The details are complicated and are omitted from this grammar.
 
 ## 21.5 Verb Phrases
-{:#s0030}
-{:.h1hd}
 
 Now that we have defined `modifiers`, verb phrases are easy.
 In fact, we only need two rules.
@@ -315,8 +305,6 @@ That is, we can't say "*Kim not like Lee," but we can add an auxiliary to get "K
 ```
 
 ## 21.6 Adverbs
-{:#s0035}
-{:.h1hd}
 
 Adverbs can serve as adjuncts before or after a verb: "to boldly go," "to go boldly." There are some limitations on where they can occur, but it is difficult to come up with firm rules; here we allow any adverb anywhere.
 We define the category `advp` for adverbial phrase, but currently restrict it to a single adverb.
@@ -332,8 +320,6 @@ We define the category `advp` for adverbial phrase, but currently restrict it to
 ```
 
 ## 21.7 Clauses
-{:#s0040}
-{:.h1hd}
 
 A clause consists of a subject followed by a predicate.
 However, the subject need not be realized immediately before the predicate.
@@ -385,8 +371,6 @@ Finally, the rules for subject-predicate agreement say that only finite predicat
 ```
 
 ## 21.8 Sentences
-{:#s0045}
-{:.h1hd}
 
 In the previous chapter we allowed only simple declarative sentences.
 The current grammar supports commands and four kinds of questions in addition to declarative sentences.
@@ -487,8 +471,6 @@ The following rule parses a verb, checks to see that it is a version of "be," an
 ```
 
 ## 21.9 XPs
-{:#s0050}
-{:.h1hd}
 
 All that remains in our grammar is the XP category.
 XPs are used in two ways: First, a phrase can be extraposed, as in "*In god* we trust," where "in god" will be parsed as an XP and then placed on the gap list until it can be taken off as an adjunct to "trust." Second, a phrase can be a complement, as in "He wants *to be a fireman,"* where the infinitive phrase is a complement of "wants."
@@ -594,8 +576,6 @@ Finally, here are the three XPs that can not be extraposed:
 ```
 
 ## 21.10 Word Categories
-{:#s0055}
-{:.h1hd}
 
 Each word category has a rule that looks words up in the lexicon and assigns the right features.
 The relation `word` is used for all lexicon access.
@@ -720,8 +700,6 @@ Here are the rules for the remaining word classes:
 ```
 
 ## 21.11 The Lexicon
-{:#s0060}
-{:.h1hd}
 
 The lexicon itself consists of a large number of entries in the `word` relation, and it would certainly be possible to ask the lexicon writer to make a long list of `word` facts.
 But to make the lexicon easier to read and write, we adopt three useful tools.
@@ -780,8 +758,6 @@ The next step is to provide abbreviations for some of the common verb complement
 ```
 
 ### Verbs
-{:#s0065}
-{:.h2hd}
 
 The macro `verb` allows us to list verbs in the form below, where the spellings of each tense can be omitted if the verb is regular:
 
@@ -823,8 +799,6 @@ The haphazard list includes verbs that are either useful for examples or illustr
 ```
 
 ### Auxiliary Verbs
-{:#s0070}
-{:.h2hd}
 
 Auxiliary verbs are simple enough to be described directly with the word macro.
 Each entry lists the auxiliary itself, the tense it is used to construct, and the tense it must be followed by.
@@ -883,8 +857,6 @@ The word "not" is also listed here; it is not an auxiliary, but it does modify t
 ```
 
 ### Nouns
-{:#s0075}
-{:.h2hd}
 
 No attempt has been made to treat nouns seriously.
 We list enough nouns here to make some of the examples work.
@@ -912,8 +884,6 @@ The first noun shows a complement list that is sufficient to parse "the destruct
 ```
 
 ### Pronouns
-{:#s0080}
-{:.h2hd}
 
 Here we list the nominative, objective, and genitive pronouns, followed by interrogative and relative pronouns.
 The only thing missing are reflexive pronouns, such as "myself."
@@ -954,8 +924,6 @@ The only thing missing are reflexive pronouns, such as "myself."
 ```
 
 ### Names
-{:#s0085}
-{:.h2hd}
 
 The following names were convenient for one example or another:
 
@@ -968,8 +936,6 @@ The following names were convenient for one example or another:
 ```
 
 ### Adjectives
-{:#s0090}
-{:.h2hd}
 
 Here are a few adjectives:
 
@@ -981,8 +947,6 @@ Here are a few adjectives:
 ```
 
 ### Adverbs
-{:#s0095}
-{:.h2hd}
 
 The adverbs covered here include interrogatives:
 
@@ -997,8 +961,6 @@ The adverbs covered here include interrogatives:
 ```
 
 ### Articles
-{:#s0100}
-{:.h2hd}
 
 The common articles are listed here:
 
@@ -1022,8 +984,6 @@ The common articles are listed here:
 ```
 
 ### Cardinal and Ordinal Numbers
-{:#s0105}
-{:.h2hd}
 
 We can take advantage of `format's` capabilities to fill up the lexicon.
 To go beyond 20, we would need a subgrammar of numbers.
@@ -1040,8 +1000,6 @@ To go beyond 20, we would need a subgrammar of numbers.
 ```
 
 ### Prepositions
-{:#s0110}
-{:.h2hd}
 
 Here is a fairly complete list of prepositions:
 
@@ -1061,8 +1019,6 @@ Here is a fairly complete list of prepositions:
 ```
 
 ## 21.12 Supporting the Lexicon
-{:#s0115}
-{:.h1hd}
 
 This section describes the implementation of the macros `word`, `verb, noun`, and `abbrev.` Abbreviations are stored in a hash table.
 The macro `abbr`e`v` and the functions `get-abbrev` and `clear-abbrevs` define the interface.
@@ -1324,8 +1280,6 @@ This option is only available for categories that are listed in the definition:
 ```
 
 ## 21.13 Other Primitives
-{:#s0120}
-{:.h1hd}
 
 To support the : `test` predicates made in various grammar rules we need definitions of the Prolog predicates `if, member, =, numberp`, and `atom`.
 They are repeated here:
@@ -1352,8 +1306,6 @@ They are repeated here:
 ```
 
 ## 21.14 Examples
-{:#s0125}
-{:.h1hd}
 
 Here are some examples of what the parser can handle.
 I have edited the output by changing variable names like `?168` to more readable names like `?J`.
@@ -1463,8 +1415,6 @@ A disambiguation procedure should be equipped to weed out such duplicates.
 ```
 
 ## 21.15 History and References
-{:#s0130}
-{:.h1hd}
 
 [Chapter 20](B9780080571157500200.xhtml) provides some basic references on natural language.
 Here we will concentrate on references that provide:
@@ -1493,8 +1443,6 @@ Naomi [Sager (1981)](B9780080571157500285.xhtml#bb1035) presents the most comple
 The grammar is separated into a simple, neat, context-free component and a rather baroque augmentation that manipulates features.
 
 ## 21.16 Exercises
-{:#s0135}
-{:.h1hd}
 
 **Exercise  21.1 [m]** Change the grammar to account better for *mass nouns.* The current grammar treats mass nouns by making them vague between singular and plural, which is incorrect.
 They should be treated separately, since there are determiners such as "much" that work only with mass nouns, and other determiners such as "these" that work only with plural count nouns.
