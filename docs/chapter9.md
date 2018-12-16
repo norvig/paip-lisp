@@ -2334,7 +2334,7 @@ Then describe a countermeasure.
 Unfortunately, there is no read-time equivalent of case.
 Implement one.
 
-**Exercise  9.11 [h]** Write a compiler for ELIZA !!!(span) {:.smallcaps} that compiles all the rules at once into a single function.
+**Exercise  9.11 [h]** Write a compiler for ELIZA that compiles all the rules at once into a single function.
 How much more efficient is the compiled version?
 
 **Exercise  9.12 [d]** Write some rules to simplify Lisp code.

@@ -28,8 +28,8 @@ The general inferencing mechanisms that worked on toy examples just did not scal
 
 The *expert-system* approach offered an alternative.
 The key to solving hard problems was seen to be the acquisition of special-case rules to break the problem into easier problems.
-According to Feigenbaum, the lesson learned from expert systems like MYCIN !!!(span) {:.smallcaps} (which we will see in [chapter 16](B9780080571157500169.xhtml)) is that the choice of inferencing mechanism is not as important as having the right knowledge.
-In this view it doesn't matter very much if MYCIN !!!(span) {:.smallcaps} uses forward- or backward-chaining, or if it uses certainty factors, probabilities, or fuzzy set theory.
+According to Feigenbaum, the lesson learned from expert systems like MYCIN (which we will see in [chapter 16](B9780080571157500169.xhtml)) is that the choice of inferencing mechanism is not as important as having the right knowledge.
+In this view it doesn't matter very much if MYCIN uses forward- or backward-chaining, or if it uses certainty factors, probabilities, or fuzzy set theory.
 What matters crucially is that we know pseudomonas is a gram-negative, rod-shaped organism that can infect patients with compromised immune systems.
 In other words, the key problem is acquiring and representing knowledge.
 

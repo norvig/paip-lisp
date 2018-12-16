@@ -1479,7 +1479,7 @@ This objection is countered by Prolog programmers who use the facilities provide
 
 Cordell [Green (1968)](B9780080571157500285.xhtml#bb0490) was the first to articulate the view that mathematical results on theorem proving could be used to make deductions and thereby answer queries.
 However, the major technique in use at the time, resolution theorem proving (see [Robinson 1965](B9780080571157500285.xhtml#bb0995)), did not adequately constrain search, and thus was not practical.
-The idea of goal-directed computing was developed in Carl Hewitt's work (1971) on the planner !!!(span) {:.smallcaps} language for robot problem solving.
+The idea of goal-directed computing was developed in Carl Hewitt's work (1971) on the planner language for robot problem solving.
 He suggested that the user provide explicit hints on how to control deduction.
 
 At about the same time and independently, Alain Colmerauer was developing a system to perform natural language analysis.

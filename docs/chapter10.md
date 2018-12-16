@@ -674,7 +674,7 @@ This is to be avoided, and it may be that reverse is actually faster than nrever
 To decide what works best on your particular system, design some test cases and time them.
 
 As an example of efficient use of storage, here is a version of `pat-match` that eliminates (almost) all consing.
-The original version of `pat-match,` as used in ELIZA !!!(span) {:.smallcaps} ([page 180](B9780080571157500066.xhtml#p180)), used an association list of variable/value pairs to represent the binding list.
+The original version of `pat-match,` as used in ELIZA ([page 180](B9780080571157500066.xhtml#p180)), used an association list of variable/value pairs to represent the binding list.
 This version uses two sequences: a sequence of variables and a sequence of values.
 The sequences are implemented as vectors instead of lists.
 In general, vectors take half as much space as lists to store the same information, since half of every list is just pointing to the next element.
