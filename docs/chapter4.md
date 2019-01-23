@@ -1504,7 +1504,7 @@ Show that, with the right list of operators, `gps` will decide to eat ice cream,
 
 The following exercises address the problems in version 2 of the program.
 
-**Exercise  4.4 [h]***The Not Looking after You Don't Leap Problem*.
+**Exercise  4.4 [h]** *The Not Looking after You Don't Leap Problem*.
 Write a program that keeps track of the remaining goals so that it does not get stuck considering only one possible operation when others will eventually lead to the goal.
 Hint: have achieve take an extra argument indicating the goals that remain to be achieved after the current goal is achieved.
 `achieve` should succeed only if it can achieve the current goal and also `achieve-all` the remaining goals.
@@ -1513,7 +1513,7 @@ Hint: have achieve take an extra argument indicating the goals that remain to be
 The program should never undo a goal that has been achieved, but it should allow for the possibility of reordering steps that have already been taken.
 In this way, the program will solve the Sussman anomaly and similar problems.
 
-**Exercise  4.6 [d]***The Lack of Descriptive Power Problem*.
+**Exercise  4.6 [d]** *The Lack of Descriptive Power Problem*.
 Read [chapters 5](B9780080571157500054.xhtml) and [6](B9780080571157500066.xhtml) tolearn about pattern matching.
 Write a version of GPS that uses the pattern matching tools, and thus allows variables in the operators.
 Apply it to the maze and blocks world domains.
