@@ -1523,14 +1523,14 @@ Your program will be more efficient if, like Chapman's Tweak program, you allow 
 
 ## 4.23 Answers
 
-**Answer 4.1** In this version, the format string `""&"V@T"?`" breaks down as follows: means go to a fresh line; `""V@T"` means insert spaces `(@T)` but use the next argument `(V)` to get the number of spaces.
-The `""?"` is the indirection operator: use the next argument as a format string, and the argument following that as the list of arguments for the format string.
+**Answer 4.1** In this version, the format string `"~&~V@T~?"` breaks down as follows: `"~&"` means go to a fresh line; `"~V@T"` means insert spaces `(@T)` but use the next argument `(V)` to get the number of spaces.
+The `"~?"` is the indirection operator: use the next argument as a format string, and the argument following that as the list of arguments for the format string.
 
 ```lisp
 (defun dbg-indent (id indent format-string &rest args)
   "Print indented debugging info if (DEBUG ID) has been specified."
   (when (member id *dbg-ids*)
-    (format *debug-io* ""&"V@T"?" (* 2 indent) format-string args)))
+    (format *debug-io* "~&~V@T~?" (* 2 indent) format-string args)))
 ```
 
 **Answer 4.2** Here is one solution.
