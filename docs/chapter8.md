@@ -801,7 +801,7 @@ It turns out that the function is a little more complicated than the simple four
 
 There are three cases.
 In any case, all factors are of the form `(^ u n)`, so we separate the factor into a base, `u`, and exponent, `n`.
-If *u* or *u*^<sup>*n*</sup> evenly divides the original expression (here represented as factors), then we have an answer.
+If *u* or *u*<sup>*n*</sup> evenly divides the original expression (here represented as factors), then we have an answer.
 But we need to check the exponent, because *&int; u<sup>n</sup>du* is *u*<sup>*n*+1</sup>/(*n* + 1) for *n*&ne; - 1, but it is log (*u*) for *n* = - 1.
 But there is a third case to consider.
 The factor may be something like `(^ (sin (^ x 2)) 1)`, in which case we should consider *f*(*u*) = sin(*x*<sup>2</sup>).
@@ -915,7 +915,7 @@ Fix `infix->prefix` so that either notation is allowed.
 What are some of the difficulties?
 
 **Exercise 8.4 [h]** There are some simple expressions involving sums that are not handled by the `integrate` function.
-The function can integrate *ax*<sup>2</sup> + *bx* + *c* but not 5(*ax*2 + *bx* + *c*).
+The function can integrate *ax*<sup>2</sup> + *bx* + *c* but not 5(*ax*<sup>2</sup> + *bx* + *c*).
 Similarly, it can integrate *x*<sup>4</sup> + 2*x*<sup>3</sup> + *x*<sup>2</sup> but not (*x*<sup>2</sup> + *x*)<sup>2</sup>, and it can do *x*<sup>3</sup> + *x*<sup>2</sup> + *x* + 1 but not (*x*<sup>2</sup> + 1)(*x* + 1).
 Modify `integrate` so that it expands out products (or small exponents) of sums.
 You will probably want to try the usual techniques first, and do the expansion only when that fails.
