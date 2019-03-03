@@ -272,11 +272,11 @@ Here is the program:
 The function `simplify` assures that any compound expression will be simplified by first simplifying the arguments and then calling `simplify-exp`. This latter function searches through the simplification rules, much like `use-eliza-rules` and `translate-to-expression`.
 When it finds a match, `simplify-exp` substitutes in the proper variable values and calls `simplify` on the result, `simplify-exp` also has the ability to call `eval` to simplify an arithmetic expression to a number.
 As in STUDENT, it is for the sake of this `eval` that we require expressions to be represented as lists in prefix notation.
-Numeric evaluation is done *after* checking the rules so that the rules can intercept expressions like (/ 1 0) and simplify them to `undefined`.
+Numeric evaluation is done *after* checking the rules so that the rules can intercept expressions like `(/ 1 0)` and simplify them to `undefined`.
 If we did the numeric evaluation first, these expressions would yield an error when passed to `eval`.
 Because Common Lisp supports arbitrary precision rational numbers (fractions), we are guaranteed there will be no round-off error, unless the input explicitly includes inexact (floating-point) numbers.
 Notice that we allow computations involving the four arithmetic operators, but exponentiation is only allowed if the exponent is an integer.
-That is because expressions like (^ 4 1/2) are not guaranteed to return 2 (the exact square root of 4); the answer might be 2.0 (an inexact number).
+That is because expressions like `(^ 4 1/2)` are not guaranteed to return 2 (the exact square root of 4); the answer might be 2.0 (an inexact number).
 Another problem is that - 2 is also a square root of 4, and in some contexts it is the correct one to use.
 
 The following trace shows some examples of the simplifier in action.
@@ -437,23 +437,23 @@ Here are the new notations:
 |-------------|-------------|-------------|
 | math | infix | prefix |
 | *dy*/*dx* | `d y / d x` | `(d y x)` |
-| *&int; ydx* | `Int y d x` | `(int y x)` |
+| &int; *ydx* | `Int y d x` | `(int y x)` |
 
 And here are the necessary infix-to-prefix rules:
 
 ```lisp
 (defparameter *infix->prefix-rules*
- (mapcar #'expand-pat-match-abbrev
- '(((x+ = y+) (= x y))
- ((- x+) (- x))
- ((+ x+) (+ x))
- ((x+ + y+) (+ x y))
- ((x+ - y+) (- x y))
- ((d y+ / d x) (d y x)) ;*** New rule
- ((Int y+ d x) (int y x)) ;*** New rule
- ((x+ * y+) (* x y))
- ((x+ / y+) (/ x y))
- ((x+ ^ y+) (^ x y)))))
+  (mapcar #'expand-pat-match-abbrev
+    '(((x+ = y+) (= x y))
+      ((- x+)    (- x))
+      ((+ x+)    (+ x))
+      ((x+ + y+) (+ x y))
+      ((x+ - y+) (- x y))
+      ((d y+ / d x) (d y x))        ;*** New rule
+      ((Int y+ d x) (int y x))      ;*** New rule
+      ((x+ * y+) (* x y))
+      ((x+ / y+) (/ x y))
+      ((x+ ^ y+) (^ x y)))))
 ```
 
 Since the new rule for differentiation occurs before the rule for division, there won't be any confusion with a differential being interpreted as a quotient.
@@ -463,23 +463,23 @@ The user can always avoid the problem by using (`d`) instead of `d` inside an in
 Now we augment the simplification rules, by copying a differentiation table out of a reference book:
 
 ```lisp
-(setf *simplification-rules*
+(setf *simplification-rules* 
  (append *simplification-rules* (mapcar #'simp-rule '(
- (d x / d x = 1)
- (d (u + v) / d x = (d u / d x) + (d v / d x))
- (d (u - v) / d x - (d u / d x) - (d v / d x))
- (d (- u) / d x = - (d u / d x))
- (d(u*v)/dx = u*(dv/dx) + v*(d u/d x))
- (d (u / v) / d x = (v * (d u / d x) - u * (d v / d x))
- / v ^ 2)
-(d (u ^ n) / d x = n * u ^ (n - 1) * (d u / d x))
-(d (u ^ V) / d x = v * u ^ (v - 1) * (d u /d x)
- + u ^ v * (log u) * (d v / d x))
-(d (log u) / d x = (d u / d x) / u)
-(d (sin u) / d x = (cos u) * (d u / d x))
-(d (cos u) / d x = - (sin u) * (d u / d x))
-(d (e ^ u) / d x = (e ^ u) * (d u / d x))
-(d u / d x = 0)))))
+  (d x / d x       = 1)
+  (d (u + v) / d x = (d u / d x) + (d v / d x))
+  (d (u - v) / d x = (d u / d x) - (d v / d x))
+  (d (- u) / d x   = - (d u / d x))
+  (d (u * v) / d x = u * (d v / d x) + v * (d u / d x))
+  (d (u / v) / d x = (v * (d u / d x) - u * (d v / d x)) 
+                     / v ^ 2) ; [This corrects an error in the first printing]
+  (d (u ^ n) / d x = n * u ^ (n - 1) * (d u / d x))
+  (d (u ^ v) / d x = v * u ^ (v - 1) * (d u / d x)
+                   + u ^ v * (log u) * (d v / d x))
+  (d (log u) / d x = (d u / d x) / u)
+  (d (sin u) / d x = (cos u) * (d u / d x))
+  (d (cos u) / d x = - (sin u) * (d u / d x))
+  (d (e ^ u) / d x = (e ^ u) * (d u / d x))
+  (d u / d x       = 0)))))
 ```
 
 We have added a default rule, `(d u / d x = 0)`; this should only apply when the expression `u` is free of the variable `x` (that is, when `u` is not a function of `x`).
@@ -606,32 +606,32 @@ Freshman calculus classes teach a variety of integration techniques.
 Fortunately, one technique-the derivative-divides technique-can be adopted to solve most of the problems that come up at the freshman calculus level, perhaps 90% of the problems given on tests.
 The basic rule is:
 
-![si1_e](images/chapter8/si1_e.gif)
+&int;*f(x)dx* = &int;*f(u)<sup>du</sup>/<sub>dx</sub>dx*
 
-As an example, consider *&int; x* sin(*x*<sup>2</sup>) *dx*.
+As an example, consider &int;*xsin(x<sup>2</sup>)dx*.
 Using the substitution *u* = *x*<sup>2</sup>, we can differentiate to get *du*/*dx* = 2*x*.
 Then by applying the basic rule, we get:
 
-![si2_e](images/chapter8/si2_e.gif)
+&int;*xsin(x<sup>2</sup>)dx* = <sup>1</sup>/<sub>2</sub>&int;*sin(u)<sup>du</sup>/<sub>dx</sub>dx* = <sup>1</sup>/<sub>2</sub>&int;*sin(u)du*
 
-Assume we have a table of integrals that includes the rule *&int;* sin(*x*) *dx* = - cos(*x*).
+Assume we have a table of integrals that includes the rule &int;*sin(x)dx* = -*cos(x)*.
 Then we can get the final answer:
 
-![si3_e](images/chapter8/si3_e.gif)
+-<sup>1</sup>/<sub>2</sub>*cos(x<sup>2</sup>)*.
 
 Abstracting from this example, the general algorithm for integrating an expression *y* with respect to *x* is:
 
-1. Pick a factor of *y*, calling it *f*(*u*).
+1. Pick a factor of *y*, calling it *f(u)*.
 
 2. Compute the derivative *du*/*dx*.
 
-3. Divide *y* by *f*(*u*) x *du*/*dx*, calling the quotient *k*.
+3. Divide *y* by *f(u)* * *du*/*dx*, calling the quotient *k*.
 
-4. If *k* is a constant (with respect to *x*), then the result is *k &int; f*(*u*)*du*.
+4. If *k* is a constant (with respect to *x*), then the result is *k* &int; *f*(*u*)*du*.
 
 This algorithm is nondeterministic, as there may be many factors of *y*.
 In our example, *f*(*u*) = sin(*x*<sup>2</sup>), *u* = *x*<sup>2</sup>, and *du*/*dx* = 2*x*.
-So ![si4_e](images/chapter8/si4_e.gif), and the answer is ![si5_e](images/chapter8/si5_e.gif).
+So *k = <sup>1</sup>/<sub>2</sub>*, and the answer is -*<sup>1</sup>/<sub>2</sub>cos(x<sup>2</sup>)*.
 
 The first step in implementing this technique is to make sure that division is done correctly.
 We need to be able to pick out the factors of *y*, divide expressions, and then determine if a quotient is free of *x*.
@@ -923,16 +923,16 @@ You will probably want to try the usual techniques first, and do the expansion o
 **Exercise 8.5 [d]** Another very general integration technique is called integration by parts.
 It is based on the rule:
 
-&int;udv=uv-&int;vdu
+&int;*udv=uv-&int;vdu*
 
 So, for example, given
 
-&int;xcos(x)dx
+&int;*xcos(x)dx*
 
-we can take *u* = *x*, *dv* = cos *xdx*.
-Then we can determine *v* = sin *x* by integration, and come up with the solution:
+we can take *u* = *x*, *dv = cos(x)dx*.
+Then we can determine *v* = *sin(x)* by integration, and come up with the solution:
 
-&int;xcos(x)dx=xsin(x)-&int;sin(x)/*1dx=xsin(x)+cos(x)
+&int;*xcos(x)dx=xsin(x)-&int;sin(x)*1dx=xsin(x)+cos(x)*
 
 It is easy to program an integration by parts routine.
 The hard part is to program the control component.
@@ -960,7 +960,7 @@ For example,
 For example, the expression `((0 / 0) - (0 / 0))` will simplify to zero, when it should simplify to `undefined`.
 Add rules to propagate `undefined` values and prevent them from being simplified away.
 
-**Exercise 8.9 [d]** Extend the method used to handle `undefined` to handle `+ infinity` and `-infinity` as well.
+**Exercise 8.9 [d]** Extend the method used to handle `undefined` to handle `+infinity` and `-infinity` as well.
 
 ----------------------
 
@@ -968,12 +968,8 @@ Add rules to propagate `undefined` values and prevent them from being simplified
 Project MAC is the MIT research organization that was the precursor of MIT's Laboratory for Computer Science.
 MAC stood either for Machine-Aided Cognition or Multiple-Access Computer, according to one of their annual reports.
 The cynical have claimed that MAC really stood for Man Against Computer.
-!!!(p) {:.ftnote1}
 
 [2](#xfn0015) The term antiderivative is more correct, because of branch point problems.
-!!!(p) {:.ftnote1}
 
 Part III
 Tools and Techniques
-!!!(p) {:.parttitle}
-
