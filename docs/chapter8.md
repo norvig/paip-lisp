@@ -18,7 +18,7 @@ It is interesting to look at some of the history of symbolic algebra, beginning 
 Originally, SAINT was heralded as a triumph of AI.
 It used general problem-solving techniques, similar in kind to GPS, to search for solutions to difficult problems.
 The program worked its way through an integration problem by choosing among the techniques known to it and backing up when an approach failed to pan out.
-SAINT'S behavior on such problems was originally similar to (and eventually much better than) the performance of undergraduate calculus students.
+SAINT's behavior on such problems was originally similar to (and eventually much better than) the performance of undergraduate calculus students.
 
 Over time, the AI component of symbolic integration began to disappear.
 Joel Moses implemented a successor to SAINT called SIN. It used many of the same techniques, but instead of relying on search to find the right combination of techniques, it had additional mathematical knowledge that led it to pick the right technique at each step, without any provision for backing up and trying an alternative.
@@ -116,8 +116,11 @@ Because we are doing mathematics in this chapter, we adopt the mathematical conv
  (member exp '(x y z m n o p q r s t u v w)))
 (pat-match-abbrev 'x + '(?+ x))
 (pat-match-abbrev 'y+ '(?+ y))
+
 (defun rule-pattern (rule) (first rule))
+
 (defun rule-response (rule) (second rule))
+
 (defparameter *infix->prefix-rules*
  (mapcar #'expand-pat-match-abbrev
  '(((x+ = y+) (= x y))
@@ -138,11 +141,15 @@ We use the definition of the data types rule and exp ([page 221](B97800805711575
 
 ```lisp
 (defstruct (rule (:type list)) pattern response)
+
 (defstruct (exp (:type list)
  (:constructor mkexp (lhs op rhs)))
  op lhs rhs)
+ 
 (defun exp-p (x) (consp x))
+
 (defun exp-args (x) (rest x))
+
 (defun prefix->infix (exp)
  "Translate prefix to infix expressions."
  (if (atom exp) exp
@@ -150,6 +157,7 @@ We use the definition of the data types rule and exp ([page 221](B97800805711575
  (if (binary-exp-p exp)
  (list (exp-lhs exp) (exp-op exp) (exp-rhs exp))
  exp))))
+ 
 (defun binary-exp-p (x)
  (and (exp-p x) (= (length (exp-args x)) 2)))
 ```
@@ -194,6 +202,7 @@ See [exercise 8.8](#st0045) for a more complete treatment of this.
  ((- x) + x = 0)
  (x + y - x = y)
  )))
+ 
 (defun ^ (x y) "Exponentiation" (expt x y))
 ```
 
@@ -233,22 +242,26 @@ Here is the program:
 (defun simplifier ()
  "Read a mathematical expression, simplify it, and print the result."
  (loop
- (print 'simplifier >)
+ (print 'simplifier>)
  (print (simp (read)))))
+ 
 (defun simp (inf) (prefix->infix (simplify (infix->prefix inf))))
+
 (defun simplify (exp)
  "Simplify an expression by first simplifying its components."
  (if (atom exp) exp
  (simplify-exp (mapcar #'simplify exp))))
+ 
 (defun simplify-exp (exp)
  "Simplify using a rule, or by doing arithmetic."
  (cond ((rule-based-translator exp *simplification-rules*
  :rule-if #'exp-lhs :rule-then #'exp-rhs
  :action #'(lambda (bindings response)
- (simplify (subiis bindings response)))))
+ (simplify (sublis bindings response)))))
  ((evaluable exp) (eval exp))
  (t exp)))
- (defun evaluable (exp)
+ 
+(defun evaluable (exp)
  "Is this an arithmetic expression that can be evaluated?"
  (and (every #'numberp (exp-args exp))
  (or (member (exp-op exp) '(+ - */))
@@ -256,11 +269,11 @@ Here is the program:
  (integerp (second (exp-args exp)))))))
 ```
 
-The function `simplify` assures that any compound expression will be simplified by first simplifying the arguments and then calling `simplify-exp.` This latter function searches through the simplification rules, much like `use-eliza-rules` and `translate-to-expression`.
+The function `simplify` assures that any compound expression will be simplified by first simplifying the arguments and then calling `simplify-exp`. This latter function searches through the simplification rules, much like `use-eliza-rules` and `translate-to-expression`.
 When it finds a match, `simplify-exp` substitutes in the proper variable values and calls `simplify` on the result, `simplify-exp` also has the ability to call `eval` to simplify an arithmetic expression to a number.
-As in STUDENT , it is for the sake of this eval that we require expressions to be represented as lists in prefix notation.
+As in STUDENT, it is for the sake of this `eval` that we require expressions to be represented as lists in prefix notation.
 Numeric evaluation is done *after* checking the rules so that the rules can intercept expressions like (/ 1 0) and simplify them to `undefined`.
-If we did the numeric evaluation first, these expressions would yield an error when passed to eval.
+If we did the numeric evaluation first, these expressions would yield an error when passed to `eval`.
 Because Common Lisp supports arbitrary precision rational numbers (fractions), we are guaranteed there will be no round-off error, unless the input explicitly includes inexact (floating-point) numbers.
 Notice that we allow computations involving the four arithmetic operators, but exponentiation is only allowed if the exponent is an integer.
 That is because expressions like (^ 4 1/2) are not guaranteed to return 2 (the exact square root of 4); the answer might be 2.0 (an inexact number).
@@ -294,11 +307,9 @@ Here we have terminated the loop by hitting the abort key on the terminal.
 In the next section, we will correct that problem.
 
 ## 8.3 Associativity and Commutativity
-{:#s0020}
- 
 
-We could easily add a rule to rewrite `(3 * (2 *X))` as `((3 * 2) * X)` andhence `(6 * X)`.
-The problem is that this rule would also rewrite `(X*(2*3))` as `((X* 2) * 3)`, unless we had a way to limit the rule to apply only when it would group numbers together.
+We could easily add a rule to rewrite `(3 * (2 *X))` as `((3 * 2) * X)` and hence `(6 * X)`.
+The problem is that this rule would also rewrite `(X*(2*3))` as `((X*2)*3)`, unless we had a way to limit the rule to apply only when it would group numbers together.
 Fortunately, `pat-match` does provide just this capability, with the `?is` pattern.
 We could write this rule:
 
@@ -318,9 +329,13 @@ We adopt similar conventions for addition, except that we prefer numbers last th
 ```lisp
 ;; Define n and m as numbers; s as a non-number:
 (pat-match-abbrev 'n '(?is n numberp))
+
 (pat-match-abbrev 'm '(?is m numberp))
+
 (pat-match-abbrev 's '(?is s not-numberp))
+
 (defun not-numberp (x) (not (numberp x)))
+
 (defun simp-rule (rule)
  "Transform a rule into proper format."
  (let ((exp (infix->prefix rule)))
@@ -369,18 +384,16 @@ SIMPLIFIER > (3 * x + 4 * x)
 We will return to these problems in [section 8.5](#s0030).
 
 **Exercise 8.1** Verify that the set of rules just prior does indeed implement the desired conventions, and that the conventions have the proper effect, and always terminate.
-As an example of a potential problem, what would happen if we used the rule `(x * n = n * x)` instead of the rule `(s * n = n * s)?`
+As an example of a potential problem, what would happen if we used the rule `(x * n = n * x)` instead of the rule `(s * n = n * s)`?
 
 ## 8.4 Logs, Trig, and Differentiation
-{:#s0025}
- 
 
 In the previous section, we restricted ourselves to the simple arithmetic functions, so as not to intimidate those who are a little leery of complex mathematics.
 In this section, we add a little to the mathematical complexity, without having to alter the program itself one bit.
 Thus, the mathematically shy can safely skip to the next section without feeling they are missing any of the fun.
 
 We start off by representing some elementary properties of the logarithmic and trigonometric functions.
-The new rules are similar to the "zero and one" rules we needed for the arithmetic operators, except here the constants e and `pi` (*e* = 2.71828... and *&pi;* = 3.14159...) are important in addition to 0 and 1.
+The new rules are similar to the "zero and one" rules we needed for the arithmetic operators, except here the constants `e` and `pi` (*e* = 2.71828... and *&pi;* = 3.14159...) are important in addition to 0 and 1.
 We also throw in some rules relating logs and exponents, and for sums and differences of logs.
 The rules assume that complex numbers are not allowed.
 If they were, log *ex* (and even *xy*) would have multiple values, and it would be wrong to arbitrarily choose one of these values.
@@ -469,7 +482,7 @@ Now we augment the simplification rules, by copying a differentiation table out 
 (d u / d x = 0)))))
 ```
 
-We have added a default rule, `(d u / d x = 0)`; this should only apply when the expression `u` is free of the variable `x` (that is, when u is not a function of `x`).
+We have added a default rule, `(d u / d x = 0)`; this should only apply when the expression `u` is free of the variable `x` (that is, when `u` is not a function of `x`).
 We could use `?if` to check this, but instead we rely on the fact that differentiation is closed over the list of operators described here-as long as we don't introduce any new operators, the answer will always be correct.
 Note that there are two rules for exponentiation, one for the case when the exponent is a number, and one when it is not.
 This was not strictly necessary, as the second rule covers both cases, but that was the way the rules were written in the table of differentials I consulted, so I left both rules in.
@@ -501,11 +514,9 @@ SIMPLIFIER > (sin(x + x) * sin(d x ^ 2 / d x) +
 1
 ```
 
-The program handles differentiation problems well and is seemingly clever in its use of the identity sin2*x* + cos2*x* = 1.
+The program handles differentiation problems well and is seemingly clever in its use of the identity sin<sup>2</sup>*x* + cos<sup>2</sup>*x* = 1.
 
 ## 8.5 Limits of Rule-Based Approaches
-{:#s0030}
- 
 
 In this section we return to some examples that pose problems for the simplifier.
 Here is a simple one:
@@ -532,7 +543,7 @@ For that we would need more rules:
 ```
 
 To handle all the cases, we would need an infinite number of rules.
-The pattern-matching language is not powerful enough to express this succintly.
+The pattern-matching language is not powerful enough to express this succinctly.
 It might help if nested sums (and products) were unnested; that is, if we allowed + to take an arbitrary number of arguments instead of just one.
 Once the arguments are grouped together, we could sort them, so that, say, all the `ys` appear before `z` and after `x`.
 Then like terms could be grouped together.
@@ -550,8 +561,6 @@ We would want `(3 * x)` to sort to the same place as `x` and `(4 * x )` so that 
 In [chapter 15](B9780080571157500157.xhtml), we develop a new version of the program that handles this problem.
 
 ## 8.6 Integration
-{:#s0035}
- 
 
 So far, the algebraic manipulations have been straightforward.
 There is a direct algorithm for computing the derivative of every expression.
@@ -568,7 +577,9 @@ The simplification function can elect not to handle the expression after all by 
 
 ```lisp
 (defun simp-fn (op) (get op 'simp-fn))
+
 (defun set-simp-fn (op fn) (setf (get op 'simp-fn) fn))
+
 (defun simplify-exp (exp)
  "Simplify using a rule, or by doing arithmetic.
  or by using the simp function supplied for this operator."
@@ -579,6 +590,7 @@ The simplification function can elect not to handle the expression after all by 
  (simplify (subiis bindings response)))))
  ((evaluable exp) (eval exp))
  (t exp)))
+ 
 (defun simplify-by-fn (exp)
  "If there is a simplification fn for this exp,
  and if applying it gives a non-null result,
@@ -598,8 +610,8 @@ The basic rule is:
 
 ![si1_e](images/chapter8/si1_e.gif)
 
-As an example, consider *&int; x* sin(*x*2) *dx*.
-Using the substitution *u* = *x*2, we can differentiate to get *du*/*dx* = 2*x*.
+As an example, consider *&int; x* sin(*x*<sup>2</sup>) *dx*.
+Using the substitution *u* = *x*sup>2</sup>, we can differentiate to get *du*/*dx* = 2*x*.
 Then by applying the basic rule, we get:
 
 &int;xsinx2dx=12&int;sinududxdx=12&int;sinudu.
@@ -615,21 +627,17 @@ Then we can get the final answer:
 
 Abstracting from this example, the general algorithm for integrating an expression *y* with respect to *x* is:
 
-1. Pick a factor of *y*, callingit *f*(*u*).
-!!!(p) {:.numlist}
+1. Pick a factor of *y*, calling it *f*(*u*).
 
 2. Compute the derivative *du*/*dx*.
-!!!(p) {:.numlist}
 
 3. Divide *y* by *f*(*u*) x *du*/*dx*, calling the quotient *k*.
-!!!(p) {:.numlist}
 
 4. If *k* is a constant (with respect to *x*), then the result is *k &int; f*(*u*)*du*.
-!!!(p) {:.numlist}
 
 This algorithm is nondeterministic, as there may be many factors of *y*.
-In our example, *f*(*u*) = sin(*x*2), *u* = *x*2, and *du*/*dx* = 2*x*.
-So k=12 !!!(span) {:.hiddenClass} ![si4_e](images/chapter8/si4_e.gif), and the answer is -12cosx2 !!!(span) {:.hiddenClass} ![si5_e](images/chapter8/si5_e.gif).
+In our example, *f*(*u*) = sin(*x*sup>2</sup>), *u* = *x*sup>2</sup>, and *du*/*dx* = 2*x*.
+So k=1//2 ![si4_e](images/chapter8/si4_e.gif), and the answer is -1//2cos(xsup>2</sup>) ![si5_e](images/chapter8/si5_e.gif).
 
 The first step in implementing this technique is to make sure that division is done correctly.
 We need to be able to pick out the factors of *y*, divide expressions, and then determine if a quotient is free of *x*.
@@ -705,20 +713,17 @@ Finally, the predicate `free-of` returns true if an expression does not have any
 (defun free-of (exp var)
  "True if expression has no occurrence of var."
  (not (find-anywhere var exp)))
+ 
 (defun find-anywhere (item tree)
-```
-
-` "Does item occur anywhere in tree?
-If so, return it."`
-
-```lisp
+ "Does item occur anywhere in tree?
+ If so, return it."
  (cond ((eql item tree) tree)
  ((atom tree) nil)
  ((find-anywhere item (first tree)))
  ((find-anywhere item (rest tree)))))
 ```
 
-In `factorize` we made use of the auxiliary function `length=1.` The function call `(length=l x)` is faster than `(= (length x) 1)` because the latter has to compute the length of the whole list, while the former merely has to see if the list has a `rest` element or not.
+In `factorize` we made use of the auxiliary function `length=1`. The function call `(length=l x)` is faster than `(= (length x) 1)` because the latter has to compute the length of the whole list, while the former merely has to see if the list has a `rest` element or not.
 
 ```lisp
 (defun length=l (x)
@@ -757,12 +762,8 @@ If none of them work, we return an expression indicating that the integral is un
  (deriv-divides factor x-factors x))
  x-factors))
  ;; < other methods here >
-```
+ (t '(int? ,(unfactorize x-factors) ,x)))))))))
 
-` (t '(int?
-,(unfactorize x-factors) ,x)))))))))`
-
-```lisp
 (defun partition-if (pred list)
  "Return 2 values: elements of list that satisfy pred,
  and elements that don't."
@@ -794,12 +795,7 @@ It turns out that the function is a little more complicated than the simple four
  '(* .(unfactorize k) (log ,u))
  '(/ (* ,(unfactorize k) (^ ,u ,(+ n 1)))
  ,(+ n 1))))
-```
-
-` ((and (= n 1) (in-integral-table?
-u))`
-
-```lisp
+ ((and (= n 1) (in-integral-table? u))
  ;; Int y'*f(y) dx = Int f(y) dy
  (let ((k2 (divide-factors
  factors
@@ -811,10 +807,10 @@ u))`
 
 There are three cases.
 In any case, all factors are of the form `(^ u n)`, so we separate the factor into a base, `u`, and exponent, `n`.
-If *u* or *un* evenly divides the original expression (here represented as factors), then we have an answer.
-But we need to check the exponent, because *&int; undu* is *u**n*+1/(*n* + 1) for *n*&ne; - 1, but it is log (*u*) for *n* = - 1.
+If *u* or *u*^<sup>*n*</sup> evenly divides the original expression (here represented as factors), then we have an answer.
+But we need to check the exponent, because *&int; u<sup>n</sup>du* is *u*<sup>*n*+1</sup>/(*n* + 1) for *n*&ne; - 1, but it is log (*u*) for *n* = - 1.
 But there is a third case to consider.
-The factor may be something like `(^ (sin (^ x 2)) 1)`, in which case we should consider *f*(*u*) = sin(*x*2).
+The factor may be something like `(^ (sin (^ x 2)) 1)`, in which case we should consider *f*(*u*) = sin(*x*<sup>2</sup>).
 This case is handled with the help of an integral table.
 We don't need a derivative table, because we can just use the simplifier for that.
 
