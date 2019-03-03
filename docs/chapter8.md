@@ -606,22 +606,16 @@ Freshman calculus classes teach a variety of integration techniques.
 Fortunately, one technique-the derivative-divides technique-can be adopted to solve most of the problems that come up at the freshman calculus level, perhaps 90% of the problems given on tests.
 The basic rule is:
 
-&int;fxdx=&int;fududxdx.
-
 ![si1_e](images/chapter8/si1_e.gif)
 
 As an example, consider *&int; x* sin(*x*<sup>2</sup>) *dx*.
 Using the substitution *u* = *x*<sup>2</sup>, we can differentiate to get *du*/*dx* = 2*x*.
 Then by applying the basic rule, we get:
 
-&int;xsinx<sup>2</sup>dx=1/2&int;sin(u)(du/dx)dx=1/2&int;sin(u)du.
-
 ![si2_e](images/chapter8/si2_e.gif)
 
 Assume we have a table of integrals that includes the rule *&int;* sin(*x*) *dx* = - cos(*x*).
 Then we can get the final answer:
-
--1/2cos(x<sup>2</sup>).
 
 ![si3_e](images/chapter8/si3_e.gif)
 
@@ -637,7 +631,7 @@ Abstracting from this example, the general algorithm for integrating an expressi
 
 This algorithm is nondeterministic, as there may be many factors of *y*.
 In our example, *f*(*u*) = sin(*x*<sup>2</sup>), *u* = *x*<sup>2</sup>, and *du*/*dx* = 2*x*.
-So k=1/2 ![si4_e](images/chapter8/si4_e.gif), and the answer is -1/2cos(x<sup>2</sup>) ![si5_e](images/chapter8/si5_e.gif).
+So ![si4_e](images/chapter8/si4_e.gif), and the answer is ![si5_e](images/chapter8/si5_e.gif).
 
 The first step in implementing this technique is to make sure that division is done correctly.
 We need to be able to pick out the factors of *y*, divide expressions, and then determine if a quotient is free of *x*.
