@@ -677,10 +677,10 @@ It keeps a list of factors and a running product of constant factors, and augmen
 
 ```lisp
 (defun unfactorize (factors)
- "Convert a list of factors back into prefix form."
- (cond ((null factors) 1)
- ((length=l factors) (first factors))
- (t '(* .(first factors) . (unfactorize (rest factors))))))
+  "Convert a list of factors back into prefix form."
+  (cond ((null factors) 1)
+        ((length=1 factors) (first factors))
+        (t `(* ,(first factors) ,(unfactorize (rest factors))))))
 ```
 
 The derivative-divides method requires a way of dividing two expressions.
@@ -915,8 +915,8 @@ Fix `infix->prefix` so that either notation is allowed.
 What are some of the difficulties?
 
 **Exercise 8.4 [h]** There are some simple expressions involving sums that are not handled by the `integrate` function.
-The function can integrate *a**x*<sup>2</sup> + *b**x* + *c* but not 5x(*a**x*2 + *b**x* + *c*).
-Similarly, it can integrate *x*<sup>4</sup> + 2*x*<sup>3</sup> + *x*<sup>2</sup> but not (*x*<sup>2</sup> + *x*)<sup>2</sup>, and it can do *x*<sup>3</sup> + *x*<sup>2</sup> + *x* + 1 but not (*x*<sup>2</sup> + 1) x (*x* + 1).
+The function can integrate *ax*<sup>2</sup> + *bx* + *c* but not 5(*ax*2 + *bx* + *c*).
+Similarly, it can integrate *x*<sup>4</sup> + 2*x*<sup>3</sup> + *x*<sup>2</sup> but not (*x*<sup>2</sup> + *x*)<sup>2</sup>, and it can do *x*<sup>3</sup> + *x*<sup>2</sup> + *x* + 1 but not (*x*<sup>2</sup> + 1)(*x* + 1).
 Modify `integrate` so that it expands out products (or small exponents) of sums.
 You will probably want to try the usual techniques first, and do the expansion only when that fails.
 
@@ -925,20 +925,14 @@ It is based on the rule:
 
 &int;udv=uv-&int;vdu
 
-![si6_e](images/chapter8/si6_e.gif)
-
 So, for example, given
 
-&int;xcosxdx
-
-![si7_e](images/chapter8/si7_e.gif)
+&int;xcos(x)dx
 
 we can take *u* = *x*, *dv* = cos *xdx*.
 Then we can determine *v* = sin *x* by integration, and come up with the solution:
 
-&int;xcosxdx=xsinx-&int;sinxx1dx=xsinx+cosx
-
-![si8_e](images/chapter8/si8_e.gif)
+&int;xcos(x)dx=xsin(x)-&int;sin(x)/*1dx=xsin(x)+cos(x)
 
 It is easy to program an integration by parts routine.
 The hard part is to program the control component.
