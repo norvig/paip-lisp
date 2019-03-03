@@ -479,7 +479,7 @@ Here are two examples using `?if`.
 The first succeeds because `(+  3 4)` is indeed `7`, and the second fails because `(>  3 4)` is false.
 
 ```lisp
-> (pat-match  '(?x ?op ?y is ?z (?if (eq1 (?op ?x ?y) ?z))) '(3 + 4 is 7)) => ((?Z . 7) (?Y . 4) (?OP . +) (?X . 3))
+> (pat-match  '(?x ?op ?y is ?z (?if (eql (?op ?x ?y) ?z))) '(3 + 4 is 7)) => ((?Z . 7) (?Y . 4) (?OP . +) (?X . 3))
 > (pat-match  '(?x ?op ?y (?if (?op ?x ?y))) '(3 > 4)) => NIL
 ```
 
@@ -687,7 +687,7 @@ Note that is does not do the test itself.
 Rather, it returns a function that can be called to perform tests:
 
 ```lisp
-(defun is (value) #'(lambda (x) (eq1 x value)))
+(defun is (value) #'(lambda (x) (eql x value)))
 ```
 
 Now we can turn on the debugging output and search through the binary tree, starting at 1, and looking for, say, 12, as the goal state.
@@ -739,7 +739,7 @@ Here we see `breadth-first-search` in action:
 ;; Search: (7 8 9 10 11 12 13)
 ;; Search: (8 9 10 11 12 13 14 15)
 ;; Search: (9 10 11 12 13 14 15 16 17)
-Search: (10 11 12 13 14 15 16 17 18 19)
+;; Search: (10 11 12 13 14 15 16 17 18 19)
 ;; Search: (11 12 13 14 15 16 17 18 19 20 21)
 ;; Search: (12 13 14 15 16 17 18 19 20 21 22 23)
 12
@@ -766,7 +766,11 @@ At most, depth-first search considers four at a time; in general it will need to
   #'(lambda (x)
           (remove-if #'(lambda (child) (> child n))
                 (binary-tree x))))
-(depth-first-search 1 (is 12) (finite-binary-tree 15))
+		
+```
+
+```lisp		
+> (depth-first-search 1 (is 12) (finite-binary-tree 15))
 ;; Search: (1)
 ;; Search: (2 3)
 ;; Search: (4 5 3)
@@ -927,7 +931,7 @@ Suppose we have a list of selected cities with airports, along with their positi
 (defstruct (city (:type list)) name long lat)
 
 (defparameter *cities*
-   '((Atlanta        84.23 33.45)      (Los Angeles       118.15 34.03     
+   '((Atlanta        84.23 33.45)      (Los Angeles       118.15 34.03)     
    (Boston           71.05 42.21)      (Memphis           90.03 35.09)     
    (Chicago          87.37 41.50)      (New York          73.58 40.47)     
    (Denver           105.00 39.45)     (Oklahoma City     97.28 35.26)     
@@ -1138,7 +1142,7 @@ Now for the implementation details.
 The function `is` still returns a predicate that tests for a value, but now it accepts `:key` and `:test` keywords:
 
 ```lisp
-(defun is (value &key (key #'identity) (test #'eq1))
+(defun is (value &key (key #'identity) (test #'eql))
   "Returns a predicate that tests for a given value."
   #'(lambda (path) (funcall test value (funcall key path))))
 ```
