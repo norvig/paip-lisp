@@ -213,7 +213,7 @@ It is summarized in [figure 8.1](#f0010).
 
 | Symbol             					| Use                                                   					|
 | ------             					| ---                                                   					|
-|                    					 **Top-Level Function**                              	 					|
+|                    					|**Top-Level Function**                              	 					|
 | `simplifier`          				| A rad-simplify-print loop.												|
 | `simp`		          				| Simplify an infix expression.												|
 | `simplify`		          			| Simplify a prefix expression.												|
@@ -222,7 +222,7 @@ It is summarized in [figure 8.1](#f0010).
 | `*simplification-rules*`  			| Rules to simplify an expression.			              					|
 |                    					| **Data Types**                                        					|
 | `exp`              					| A prefix expression				                       					|
-|                    					 **Auxiliary Functions**                                  					|
+|                    					| **Auxiliary Functions**                                  					|
 | `simplify-exp`						| Simplify a non-atomic prefix expression.									|
 | `infix->prefix`						| Convert infix to prefix notation.											|
 | `variable-p`							| The symbols m through z are variables.									|
@@ -230,7 +230,7 @@ It is summarized in [figure 8.1](#f0010).
 | `evaluable`							| Decide if an expression can be numerically evaluated.						|
 | `simp-rule`							| Transform a rule into proper format.										|
 | `lenght=1`							| Is the argument a list of length 1?										|
-|                    					 **Previously Defined Functions**                      	    				|
+|                    					| **Previously Defined Functions**                      	    			|
 | `pat-match`							| Match pattern against an input. (p. 180)									|
 | `rule-based-translator`				| Apply a set of rules. (p. 189)											|
 | `pat-match-abbrev`					| Define an abbreviation for use in `pat-match`								|
