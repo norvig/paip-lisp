@@ -611,17 +611,17 @@ The basic rule is:
 ![si1_e](images/chapter8/si1_e.gif)
 
 As an example, consider *&int; x* sin(*x*<sup>2</sup>) *dx*.
-Using the substitution *u* = *x*sup>2</sup>, we can differentiate to get *du*/*dx* = 2*x*.
+Using the substitution *u* = *x*<sup>2</sup>, we can differentiate to get *du*/*dx* = 2*x*.
 Then by applying the basic rule, we get:
 
-&int;xsinx2dx=12&int;sinududxdx=12&int;sinudu.
+&int;xsinx<sup>2</sup>dx=1/2&int;sin(u)(du/dx)dx=1/2&int;sin(u)du.
 
 ![si2_e](images/chapter8/si2_e.gif)
 
 Assume we have a table of integrals that includes the rule *&int;* sin(*x*) *dx* = - cos(*x*).
 Then we can get the final answer:
 
--12cosx2.
+-1/2cos(x<sup>2</sup>).
 
 ![si3_e](images/chapter8/si3_e.gif)
 
@@ -636,8 +636,8 @@ Abstracting from this example, the general algorithm for integrating an expressi
 4. If *k* is a constant (with respect to *x*), then the result is *k &int; f*(*u*)*du*.
 
 This algorithm is nondeterministic, as there may be many factors of *y*.
-In our example, *f*(*u*) = sin(*x*sup>2</sup>), *u* = *x*sup>2</sup>, and *du*/*dx* = 2*x*.
-So k=1//2 ![si4_e](images/chapter8/si4_e.gif), and the answer is -1//2cos(xsup>2</sup>) ![si5_e](images/chapter8/si5_e.gif).
+In our example, *f*(*u*) = sin(*x*<sup>2</sup>), *u* = *x*<sup>2</sup>, and *du*/*dx* = 2*x*.
+So k=1/2 ![si4_e](images/chapter8/si4_e.gif), and the answer is -1/2cos(x<sup>2</sup>) ![si5_e](images/chapter8/si5_e.gif).
 
 The first step in implementing this technique is to make sure that division is done correctly.
 We need to be able to pick out the factors of *y*, divide expressions, and then determine if a quotient is free of *x*.
