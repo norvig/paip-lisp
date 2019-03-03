@@ -41,7 +41,7 @@ Then, we will extend `simplifier` to do differentiation, and some integration pr
 The idea is that given an expression like (2 - 1)*x* + 0, we want the program to compute the simplified form *x*.
 
 According to the *Mathematics Dictionary* (James and James 1949), the word "simplified" is "probably the most indefinite term used seriously in mathematics." The problem is that "simplified" is relative to what you want to use the expression for next.
-Which is simpler, *x*2 + 3*x* + 2 or (*x* + 1)(*x* + 2)?
+Which is simpler, *x*<sup>2</sup> + 3*x* + 2 or (*x* + 1)(*x* + 2)?
 The first makes it easier to integrate or differentiate, the second easier to find roots.
 We will be content to limit ourselves to "obvious" simplifications.
 For example, *x* is almost always preferable to 1*x* + 0.
