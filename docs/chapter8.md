@@ -932,7 +932,7 @@ So, for example, given
 we can take *u* = *x*, *dv = cos(x)dx*.
 Then we can determine *v* = *sin(x)* by integration, and come up with the solution:
 
-&int;*xcos(x)dx=xsin(x)-&int;sin(x)*1dx=xsin(x)+cos(x)*
+&int;*xcos(x)dx=xsin(x)*-&int;*sin(x)* * *1dx=xsin(x)+cos(x)*
 
 It is easy to program an integration by parts routine.
 The hard part is to program the control component.
@@ -943,7 +943,7 @@ Implement this approach.
 **Exercise 8.6 [d]** A more complicated approach is to try to decide which ways of breaking up the original expression are promising and which are not.
 Derive some heuristics for making this division, and reimplement `integrate` to include a search component, using the search tools of [chapter 6](B9780080571157500066.xhtml).
 
-Look in a calculus textbook to see how *&int;* sin2*xdx* is evaluated by two integrations by parts and a division.
+Look in a calculus textbook to see how &int;*sin<sup>2</sup>(x)dx is evaluated by two integrations by parts and a division.
 Implement this technique as well.
 
 **Exercise 8.7 [m]** Write simplification rules for predicate calculus expressions.
