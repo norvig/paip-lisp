@@ -640,37 +640,37 @@ It keeps a list of factors and a running product of constant factors, and augmen
 
 ```lisp
 (defun factorize (exp)
- "Return a list of the factors of exp^n.
- where each factor is of the form (^ y n)."
- (let ((factors nil)
- (constant 1))
- (labels
- ((fac (x n)
- (cond
- ((numberp x)
- (setf constant (* constant (expt x n))))
- ((starts-with x '*)
- (fac (exp-lhs x) n)
- (fac (exp-rhs x) n))
- ((starts-with x '/)
- (fac (exp-lhs x) n)
- (fac (exp-rhs x) (- n)))
- ((and (starts-with x '-) (length=l (exp-args x)))
- (setf constant (- constant))
- (fac (exp-lhs x) n))
- ((and (starts-with x '^) (numberp (exp-rhs x)))
- (fac (exp-lhs x) (* n (exp-rhs x))))
- (t (let ((factor (find x factors :key #'exp-lhs
- :test #'equal)))
- (if factor
- (incf (exp-rhs factor) n)
- (push '(^ ,x ,n) factors)))))))
- ;; Body of factorize:
- (fac exp 1)
- (case constant
- (0 '((^ 0 1)))
- (1 factors)
- (t '((^ .constant 1) .,factors))))))
+  "Return a list of the factors of exp^n,
+  where each factor is of the form (^ y n)."
+  (let ((factors nil)
+        (constant 1))
+    (labels
+      ((fac (x n)
+         (cond
+           ((numberp x)
+            (setf constant (* constant (expt x n))))
+           ((starts-with x '*)
+            (fac (exp-lhs x) n)
+            (fac (exp-rhs x) n))
+           ((starts-with x '/)
+            (fac (exp-lhs x) n)
+            (fac (exp-rhs x) (- n)))
+           ((and (starts-with x '-) (length=1 (exp-args x)))
+            (setf constant (- constant))
+            (fac (exp-lhs x) n))
+           ((and (starts-with x '^) (numberp (exp-rhs x)))
+            (fac (exp-lhs x) (* n (exp-rhs x))))
+           (t (let ((factor (find x factors :key #'exp-lhs
+                                  :test #'equal)))
+                (if factor
+                    (incf (exp-rhs factor) n)
+                    (push `(^ ,x ,n) factors)))))))
+      ;; Body of factorize:
+      (fac exp 1)
+      (case constant
+        (0 '((^ 0 1)))
+        (1 factors)
+        (t `((^ ,constant 1) .,factors))))))
 ```
 
 `factorize` maps from an expression to a list of factors, but we also need `unfactorize` to turn a list back into an expression:
@@ -690,15 +690,15 @@ It turns out that most problems from freshman calculus do not require such sophi
 
 ```lisp
 (defun divide-factors (numer denom)
- "Divide a list of factors by another, producing a third."
- (let ((result (mapcar #'copy-list numer)))
- (dolist (d denom)
- (let ((factor (find (exp-lhs d) result :key #'exp-lhs
- :test #'equal)))
- (if factor
- (decf (exp-rhs factor) (exp-rhs d))
- (push '(^ ,(exp-lhs d) ,(- (exp-rhs d))) result))))
- (delete 0 result :key #'exp-rhs)))
+  "Divide a list of factors by another, producing a third."
+  (let ((result (mapcar #'copy-list numer)))
+    (dolist (d denom)
+      (let ((factor (find (exp-lhs d) result :key #'exp-lhs
+                          :test #'equal)))
+        (if factor
+            (decf (exp-rhs factor) (exp-rhs d))
+            (push `(^ ,(exp-lhs d) ,(- (exp-rhs d))) result))))
+    (delete 0 result :key #'exp-rhs)))
 ```
 
 Finally, the predicate `free-of` returns true if an expression does not have any occurrences of a particular variable in it.
@@ -733,41 +733,41 @@ If none of them work, we return an expression indicating that the integral is un
 
 ```lisp
 (defun integrate (exp x)
- ;; First try some trivial cases
- (cond
- ((free-of exp x) *(* ,exp x)) ; Int c dx = c*x
- ((starts-with exp '+) ; Int f + g =
- '(+ ,(integrate (exp-lhs exp) x) ; Int f + Int g
- ,(integrate (exp-rhs exp) x)))
- ((starts-with exp '-)
- (ecase (length (exp-args exp))
- (1 (integrate (exp-lhs exp) x)) ; Int - f = - Int f
- (2 '(- ,(integrate (exp-lhs exp) x) ; Int f - g =
- ,(integrate (exp-rhs exp) x))))) ; Int f - Int g
- ;; Now move the constant factors to the left of the integral
- ((multiple-value-bind (const-factors x-factors)
- (partition-if #'(lambda (factor) (free-of factor x))
- (factorize exp))
- (simplify
- '(* ,(unfactorize const-factors)
- ;; And try to integrate:
- ,(cond ((null x-factors) x)
- ((some #'(lambda (factor)
- (deriv-divides factor x-factors x))
- x-factors))
- ;; < other methods here >
- (t '(int? ,(unfactorize x-factors) ,x)))))))))
+  ;; First try some trivial cases
+  (cond
+    ((free-of exp x) `(* ,exp x))          ; Int c dx = c*x
+    ((starts-with exp '+)                  ; Int f + g  = 
+     `(+ ,(integrate (exp-lhs exp) x)      ;   Int f + Int g
+         ,(integrate (exp-rhs exp) x)))
+    ((starts-with exp '-)              
+     (ecase (length (exp-args exp))        
+       (1 (integrate (exp-lhs exp) x))     ; Int - f = - Int f
+       (2 `(- ,(integrate (exp-lhs exp) x) ; Int f - g  =
+              ,(integrate (exp-rhs exp) x)))))  ; Int f - Int g
+    ;; Now move the constant factors to the left of the integral
+    ((multiple-value-bind (const-factors x-factors)
+         (partition-if #'(lambda (factor) (free-of factor x))
+                       (factorize exp))
+       (identity ;simplify
+         `(* ,(unfactorize const-factors)
+             ;; And try to integrate:
+             ,(cond ((null x-factors) x)
+                    ((some #'(lambda (factor)
+                               (deriv-divides factor x-factors x))
+                           x-factors))
+                    ;; <other methods here>
+                    (t `(int? ,(unfactorize x-factors) ,x)))))))))
 
 (defun partition-if (pred list)
- "Return 2 values: elements of list that satisfy pred,
- and elements that don't."
- (let ((yes-list nil)
- (no-list nil))
- (dolist (item list)
- (if (funcall pred item)
- (push item yes-list)
- (push item no-list)))
- (values (nreverse yes-list) (nreverse no-list))))
+  "Return 2 values: elements of list that satisfy pred,
+  and elements that don't."
+  (let ((yes-list nil)
+        (no-list nil))
+    (dolist (item list)
+      (if (funcall pred item)
+          (push item yes-list)
+          (push item no-list)))
+    (values (nreverse yes-list) (nreverse no-list))))
 ```
 
 Note that the place in integrate where other techniques could be added is marked.
@@ -776,27 +776,27 @@ It turns out that the function is a little more complicated than the simple four
 
 ```lisp
 (defun deriv-divides (factor factors x)
- (assert (starts-with factor '^))
- (let* ((u (exp-lhs factor)) ; factor = u^n
- (n (exp-rhs factor))
- (k (divide-factors
- factors (factorize '(* ,factor ,(deriv u x))))))
- (cond ((free-of k x)
- ;; Int k*u^n*du/dx dx = k*Int u^n du
- ;; = k*u^(n+1)/(n+1) for n /= -1
- ;; = k*log(u) for n = -1
- (if (= n -1)
- '(* .(unfactorize k) (log ,u))
- '(/ (* ,(unfactorize k) (^ ,u ,(+ n 1)))
- ,(+ n 1))))
- ((and (= n 1) (in-integral-table? u))
- ;; Int y'*f(y) dx = Int f(y) dy
- (let ((k2 (divide-factors
- factors
- (factorize '(* ,u ,(deriv (exp-lhs u) x))))))
- (if (free-of k2 x)
- '(* ,(integrate-from-table (exp-op u) (exp-lhs u))
- ,(unfactorize k2))))))))
+  (assert (starts-with factor '^))
+  (let* ((u (exp-lhs factor))              ; factor = u^n
+         (n (exp-rhs factor))
+         (k (divide-factors 
+              factors (factorize `(* ,factor ,(deriv u x))))))
+    (cond ((free-of k x)
+           ;; Int k*u^n*du/dx dx = k*Int u^n du
+           ;;                    = k*u^(n+1)/(n+1) for n/=1
+           ;;                    = k*log(u) for n=1
+           (if (= n -1)
+               `(* ,(unfactorize k) (log ,u))
+               `(/ (* ,(unfactorize k) (^ ,u ,(+ n 1)))
+                   ,(+ n 1))))
+          ((and (= n 1) (in-integral-table? u))
+           ;; Int y'*f(y) dx = Int f(y) dy
+           (let ((k2 (divide-factors
+                       factors
+                       (factorize `(* ,u ,(deriv (exp-lhs u) x))))))
+             (if (free-of k2 x)
+                 `(* ,(integrate-from-table (exp-op u) (exp-lhs u))
+                     ,(unfactorize k2))))))))
 ```
 
 There are three cases.
@@ -809,32 +809,26 @@ This case is handled with the help of an integral table.
 We don't need a derivative table, because we can just use the simplifier for that.
 
 ```lisp
-(defun deriv (y x) (simplify '(d ,y ,x)))
+(defun deriv (y x) (simplify `(d ,y ,x)))
+
 (defun integration-table (rules)
- (dolist (i-rule rules)
- (let ((rule (infix->prefix i-rule)))
- (setf (get (exp-op (exp-lhs (exp-lhs rule))) 'int)
- rule))))
-```
+  (dolist (i-rule rules)
+    ;; changed infix->prefix to simp-rule - norvig Jun 11 1996
+    (let ((rule (simp-rule i-rule)))
+      (setf (get (exp-op (exp-lhs (exp-lhs rule))) 'int)
+            rule))))
+			
+(defun in-integral-table? (exp)
+  (and (exp-p exp) (get (exp-op exp) 'int)))
 
-`(defun in-integral-table?
-(exp)`
-
-```lisp
- (and (exp-p exp) (get (exp-op exp) 'int)))
 (defun integrate-from-table (op arg)
- (let ((rule (get op 'int)))
- (subst arg (exp-lhs (exp-lhs (exp-lhs rule))) (exp-rhs rule))))
-(integration-table
- '((Int log(x) d x = x * log(x) - x)
- (Int exp(x) d x = exp(x))
- (Int sin(x) d x = - cos(x))
- (Int cos(x) d x = sin(x))
- (Int tan(x) d x = - log(cos(x)))
- (Int sinh(x) d x = cosh(x))
- (Int cosh(x) d x = sinh(x))
- (Int tanh(x) d x = log(cosh(x)))
- ))
+  (let ((rule (get op 'int)))
+    (subst arg (exp-lhs (exp-lhs (exp-lhs rule))) (exp-rhs rule))))
+
+(set-simp-fn 'Int #'(lambda (exp)
+		      (unfactorize
+		       (factorize
+			(integrate (exp-lhs exp) (exp-rhs exp))))))
 ```
 
 The last step is to install integrate as the simplification function for the operator Int.
@@ -892,14 +886,12 @@ SIMPLIFIER > (Int 8 * x ^ 2 / (x ^ 3 + 2) ^ 3 d x)
 ```
 
 ## 8.7 History and References
-{:#s0040}
- 
 
 A brief history is given in the introduction to this chapter.
 An interesting point is that the history of Lisp and of symbolic algebraic manipulation are deeply intertwined.
 It is not too gross an exaggeration to say that Lisp was invented by John McCarthy to express the symbolic differentiation algorithm.
-And the development of the first high-quality Lisp system, MacLisp, was driven largely by the needs of MACSYMA , one of the first large Lisp systems.
-See [McCarthy 1958](B9780080571157500285.xhtml#bb0790) for early Lisp history and the differentiation algorithm, and [Martin and Fateman 1971](B9780080571157500285.xhtml#bb0775) and [Moses (1975)](B9780080571157500285.xhtml#bb0875) for more details on MACSYMA . A comprehensive book on computer algebra systems is [Davenport 1988](B9780080571157500285.xhtml#bb0270).
+And the development of the first high-quality Lisp system, MacLisp, was driven largely by the needs of MACSYMA, one of the first large Lisp systems.
+See [McCarthy 1958](B9780080571157500285.xhtml#bb0790) for early Lisp history and the differentiation algorithm, and [Martin and Fateman 1971](B9780080571157500285.xhtml#bb0775) and [Moses (1975)](B9780080571157500285.xhtml#bb0875) for more details on MACSYMA. A comprehensive book on computer algebra systems is [Davenport 1988](B9780080571157500285.xhtml#bb0270).
 It covers the MACSYMA and REDUCE systems as well as the algorithms behind those systems.
 
 Because symbolic differentiation is historically important, it is presented in a number of text books, from the original Lisp 1.5 Primer ([Weissman 1967](B9780080571157500285.xhtml#bb1370)) and Allen's influential [*Anatomy of Lisp* (1978)](B9780080571157500285.xhtml#bb0040) to recent texts like [Brooks 1985](B9780080571157500285.xhtml#bb0135), [Hennessey 1989](B9780080571157500285.xhtml#bb0530), and [Tanimoto 1990](B9780080571157500285.xhtml#bb1220).
@@ -912,21 +904,19 @@ A better reference is [Davenport et al.
 1988](B9780080571157500285.xhtml#bb0270).
 
 In this book, techniques for improving the efficiency of algebraic manipulation are covered in [sections 9.6](B9780080571157500091.xhtml#s0035) and [10.4](B9780080571157500108.xhtml#s0025).
-[Chapter 15](B9780080571157500157.xhtml) presents a reimplementation that does not use pattern-matching, and is closer to the techniques used in MACSYMA .
+[Chapter 15](B9780080571157500157.xhtml) presents a reimplementation that does not use pattern-matching, and is closer to the techniques used in MACSYMA.
 
 ## 8.8 Exercises
-{:#s0045}
- 
 
 **Exercise 8.2 [s]** Some notations use the operator ** instead of ^ to indicate exponentiation.
-`Fix infix->prefix` so that either notation is allowed.
+Fix `infix->prefix` so that either notation is allowed.
 
 **Exercise 8.3 [m]** Can the system as is deal with imaginary numbers?
 What are some of the difficulties?
 
 **Exercise 8.4 [h]** There are some simple expressions involving sums that are not handled by the `integrate` function.
-The function can integrate *a*x *x*2 + *b*x *x* + *c* but not 5 x (*a*x *x*2 + *b*x *x* + *c*).
-Similarly, it can integrate *x*4 + 2 x *x*3 + *x*2 but not (*x*2 + *x*)2, and it can do *x*3 + *x*2 + *x* + 1 but not (*x*2 + 1) x (*x* + 1).
+The function can integrate *a**x*<sup>2</sup> + *b**x* + *c* but not 5x(*a**x*2 + *b**x* + *c*).
+Similarly, it can integrate *x*<sup>4</sup> + 2*x*<sup>3</sup> + *x*<sup>2</sup> but not (*x*<sup>2</sup> + *x*)<sup>2</sup>, and it can do *x*<sup>3</sup> + *x*<sup>2</sup> + *x* + 1 but not (*x*<sup>2</sup> + 1) x (*x* + 1).
 Modify `integrate` so that it expands out products (or small exponents) of sums.
 You will probably want to try the usual techniques first, and do the expansion only when that fails.
 
