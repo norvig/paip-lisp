@@ -802,7 +802,7 @@ The higher-order function `diff`, shown in the following, returns a cost functio
 The higher-order function sorter takes a cost function as an argument and returns a combiner function that takes the lists of old and new states, appends them together, and sorts the result based on the cost function, lowest cost first.
 (The built-in function `sort` sorts a list according to a comparison function.
 In this case the smaller numbers come first.
-`sort` takes an optional : `key` argument that says how to compute the score for each element.
+`sort` takes an optional `:key` argument that says how to compute the score for each element.
 Be careful - `sort` is a destructive function.)
 
 ```lisp
@@ -867,7 +867,7 @@ Beam search is a variant of best-first search, but it is also similar to depth-f
 The difference is that beam search looks down several paths at once, instead of just one, and chooses the best one to look at next.
 But it gives up the ability to backtrack indefinitely.
 The function `beam-search` is just like `best-first-search`, except that after we sort the states, we then take only the first `beam-width` states.
-This is done with `subseq`; `(subseq*list start end*)` returns the sublist that starts at position *start* and ends just before position *end*.
+This is done with `subseq`; `(subseq list start end)` returns the sublist that starts at position *start* and ends just before position *end*.
 
 ```lisp
 (defun beam-search (start goal-p successors cost-fn beam-width)
@@ -878,7 +878,7 @@ This is done with `subseq`; `(subseq*list start end*)` returns the sublist that 
           (let ((sorted (funcall (sorter cost-fn) old new)))
             (if (> beam-width (length sorted))
               sorted
-              (subseq sorted0 beam-width))))))
+              (subseq sorted 0 beam-width))))))
 ```
 
 We can successfully search for 12 in the binary tree using a beam width of only 2:
@@ -1332,6 +1332,7 @@ Of course, there is additional overhead to test for identical states, but on gra
 
 ```lisp
 (defun next2 (x) (list (+ x 1) (+ x 2)))
+
 > (tree-search '(1) (is 6) #'next2 #'prepend)
 ;; Search: (1)
 ;; Search: (2 3)
@@ -1373,9 +1374,8 @@ Two more functions, `better-path` and `find-path`, are used to compare paths and
 
 ```lisp
 (defun a*-search (paths goal-p successors cost-fn cost-left-fn
-            &optional (state= #'eql) old-paths)
-  "Find a path whose state satisfies goal-p.
-Start with paths,
+                  &optional (state= #'eql) old-paths)
+  "Find a path whose state satisfies goal-p.  Start with paths,
   and expand successors, exploring least cost first.
   When there are duplicate states, keep the one with the
   lower cost and discard the other."
@@ -1383,35 +1383,35 @@ Start with paths,
   (cond
     ((null paths) fail)
     ((funcall goal-p (path-state (first paths)))
-      (values (first paths) paths))
+     (values (first paths) paths))
     (t (let* ((path (pop paths))
-          (state (path-state path)))
-        ;; Update PATHS and OLD-PATHS to reflect
-        ;; the new successors of STATE:
-        (setf old-paths (insert-path path old-paths))
-        (dolist (state2 (funcall successors state))
-          (let* ((cost (+ (path-cost-so-far path)
-                        (funcall cost-fn state state2)))
-              (cost2 (funcall cost-left-fn state2))
-              (path2 (make-path
-                        :state state2 :previous path
-                        :cost-so-far cost
-                        :total-cost (+ cost cost2)))
-              (old nil)
-            ;; Place the new path, path2, in the right list:
-            (cond
-              ((setf old (find-path state2 paths state=))
-              (when (better-path path2 old)
-                (setf paths (insert-path
-                          path2 (delete old paths)))))
-              ((setf old (find-path state2 old-paths state=))
-              (when (better-path path2 old)
-                (setf paths (insert-path path2 paths))
-                (setf old-paths (delete old old-paths))))
-              (t (setf paths (insert-path path2 paths))))))
-          ;; Finally, call A* again with the updated path lists:
-          (a*-search paths goal-p successors cost-fn cost-left-fn
-          state= old-paths)))))
+              (state (path-state path)))
+         ;; Update PATHS and OLD-PATHS to reflect
+         ;; the new successors of STATE:
+         (setf old-paths (insert-path path old-paths))
+         (dolist (state2 (funcall successors state))
+           (let* ((cost (+ (path-cost-so-far path)
+                           (funcall cost-fn state state2)))
+                  (cost2 (funcall cost-left-fn state2))
+                  (path2 (make-path
+                           :state state2 :previous path
+                           :cost-so-far cost
+                           :total-cost (+ cost cost2)))
+                  (old nil))
+             ;; Place the new path, path2, in the right list:
+             (cond
+               ((setf old (find-path state2 paths state=))
+                (when (better-path path2 old)
+                  (setf paths (insert-path
+                                path2 (delete old paths)))))
+               ((setf old (find-path state2 old-paths state=))
+                (when (better-path path2 old)
+                  (setf paths (insert-path path2 paths))
+                  (setf old-paths (delete old old-paths))))
+               (t (setf paths (insert-path path2 paths))))))
+         ;; Finally, call A* again with the updated path lists:
+         (a*-search paths goal-p successors cost-fn cost-left-fn
+                    state= old-paths)))))
 ```
 
 Here are the three auxiliary functions:
