@@ -68,7 +68,7 @@ But the second is more specific, as it uses the `acons` function, which is desig
 The decision between them probably hinges on obscurity: those who find `acons` to be a familiar function would prefer the second, and those who find it obscure would prefer the first.
 
 A similar choice arises in the question of setting a variable to a value.
-Some prefer `(setq x val)` because it is most specific; others use `(setq x val)`, feeling that it is more consistent to use a single form, `setf`, for all updating.
+Some prefer `(setq x val)` because it is most specific; others use `(setf x val)`, feeling that it is more consistent to use a single form, `setf`, for all updating.
 Whichever choice you make on such issues, remember the sixth maxim: be consistent.
 
 ## 3.2 Special Forms
