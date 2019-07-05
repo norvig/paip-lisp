@@ -138,34 +138,25 @@ This gets extended as a sentence with a VP needed, and eventually we get a parse
       "Bottom-up parse, returning all parses of any prefix of words."
       (unless (null words)
             (mapcan #'(lambda (rule)
-                                                  (extend-parse (rule-lhs rule) (list (first words))
-                                                                                              (rest words) nil))
-                                        (lexical-rules (first words)))))
+                        (extend-parse (rule-lhs rule) (list (first words)) (rest words) nil))
+                    (lexical-rules (first words)))))
+
 (defun extend-parse (lhs rhs rem needed)
       "Look for the categories needed to complete the parse."
       (if (null needed)
-```
-
-`              ;; If nothing needed.
-return parse and upward extensions`
-
-```lisp
+              ;; If nothing needed, return parse and upward extensions
               (let ((parse (make-parse :tree (new-tree lhs rhs) :rem rem)))
-                  (cons parse
-                                      (mapcan
-                                          # '(lambda (rule)
-                                                          (extend-parse (rule-lhs rule)
-                                                                                                      (list (parse-tree parse))
-                                                                                                      rem (rest (rule-rhs rule))))
-                                          (rules-starting-with lhs))))
+                  (cons parse 
+                        (mapcan #'(lambda (rule) 
+                                    (extend-parse (rule-lhs rule) 
+                                                  (list (parse-tree parse))
+                                                  rem (rest (rule-rhs rule))))
+                                      (rules-starting-with lhs))))
               ;; otherwise try to extend rightward
-              (mapcan
-                  #'(lambda (p)
+              (mapcan #'(lambda (p)
                           (if (eq (parse-lhs p) (first needed))
-                                              (extend-parse lhs (appendl rhs (parse-tree p))
-                                                                                            (parse-rem p) (rest needed))))
-                    (parse rem))))
-```
+                              (extend-parse lhs (appendl rhs (parse-tree p)) (parse-rem p) (rest needed))))
+                      (parse rem))))```
 
 This makes use of the auxiliary function append1:
 
