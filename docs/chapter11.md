@@ -39,8 +39,6 @@ For that reason it is worth knowing.
 In subsequent chapters we will see several useful applications of the Prolog approach.
 
 ## 11.1 Idea 1: A Uniform Data Base
-{:#s0010}
-{:.h1hd}
 
 The first important Prolog idea should be familiar to readers of this book: manipulating a stored data base of assertions.
 In Prolog the assertions are called *clauses,* and they can be divided into two types: *facts,* which state a relationship that holds between some objects, and *rules,* which are used to state contingent facts.
@@ -119,8 +117,6 @@ This can be read as:
 *if it can be proved that*`x likes Lee`*and* x `likes Kim.`
 
 ## 11.2 Idea 2: Unification of Logic Variables
-{:#s0015}
-{:.h1hd}
 
 Unification is a straightforward extension of the idea of pattern matching.
 The pattern-matching functions we have seen so far have always matched a pattern (an expression containing variables) against a constant expression (one with no variables).
@@ -317,32 +313,36 @@ In the final version of `unify` following, a variable is provided to allow the u
 
 ```lisp
 (defparameter *occurs-check* t "Should we do the occurs check?")
+
 (defun unify (x y &optional (bindings no-bindings))
   "See if x and y match with given bindings."
   (cond ((eq bindings fail) fail)
-              ((eql x y) bindings)
-              ((variable-p x) (unify-variable x y bindings))
-              ((variable-p y) (unify-variable y x bindings))
-              ((and (consp x) (consp y))
-                (unify (rest x) (rest y)
-                              (unify (first x) (first y) bindings)))
-              (t fail)))
+        ((eql x y) bindings)
+        ((variable-p x) (unify-variable x y bindings))
+        ((variable-p y) (unify-variable y x bindings))
+        ((and (consp x) (consp y))
+         (unify (rest x) (rest y)
+                (unify (first x) (first y) bindings)))
+        (t fail)))
+
 (defun unify-variable (var x bindings)
   "Unify var with x, using (and maybe extending) bindings."
   (cond ((get-binding var bindings)
-          (unify (lookup var bindings) x bindings))
-          ((and (variable-p x) (get-binding x bindings))
-          (unify var (lookup x bindings) bindings))
-          ((and *occurs-check* (occurs-check var x bindings)) fail)
-          (t (extend-bindings var x bindings))))
+         (unify (lookup var bindings) x bindings))
+        ((and (variable-p x) (get-binding x bindings))
+         (unify var (lookup x bindings) bindings))
+        ((and *occurs-check* (occurs-check var x bindings))
+         fail)
+        (t (extend-bindings var x bindings))))
+
 (defun occurs-check (var x bindings)
   "Does var occur anywhere inside x?"
   (cond ((eq var x) t)
-          ((and (variable-p x) (get-binding x bindings))
-          (occurs-check var (lookup x bindings) bindings))
-          ((consp x) (or (occurs-check var (first x) bindings)
-                  (occurs-check var (rest x) bindings)))
-          (t nil)))
+        ((and (variable-p x) (get-binding x bindings))
+         (occurs-check var (lookup x bindings) bindings))
+        ((consp x) (or (occurs-check var (first x) bindings)
+                       (occurs-check var (rest x) bindings)))
+        (t nil)))
 ```
 
 Now we consider how `unify` will be used.
@@ -356,13 +356,13 @@ The `function subst-bindings` acts like `sublis`, except that it substitutes rec
   "Substitute the value of variables in bindings into x,
   taking recursively bound variables into account."
   (cond ((eq bindings fail) fail)
-          ((eq bindings no-bindings) x)
-          ((and (variable-p x) (get-binding x bindings))
-          (subst-bindings bindings (lookup x bindings)))
-          ((atom x) x)
-          (t (reuse-cons (subst-bindings bindings (car x))
-                        (subst-bindings bindings (cdr x))
-                        x))))
+        ((eq bindings no-bindings) x)
+        ((and (variable-p x) (get-binding x bindings))
+         (subst-bindings bindings (lookup x bindings)))
+        ((atom x) x)
+        (t (reuse-cons (subst-bindings bindings (car x))
+                       (subst-bindings bindings (cdr x))
+                       x))))
 ```
 
 Now let's try `unify` on some examples:
@@ -382,8 +382,8 @@ The choice of `x` is arbitrary; an equal result would come from substituting the
 
 ```lisp
 (defun unifier (x y)
-  "Return something that unifies with both x and y (or fail)."
-  (subst-bindings (unify x y) x))
+ "Return something that unifies with both x and y (or fail)."
+ (subst-bindings (unify x y) x))
 ```
 
 Here are some examples of `unifier`:
@@ -411,8 +411,6 @@ When *`occurs-check`* is false, we get the following answers:
 ```
 
 ### Programming with Prolog
-{:#s0020}
-{:.h2hd}
 
 The amazing thing about Prolog clauses is that they can be used to express relations that we would normally think of as "programs," not "data." For example, we can define the `member` relation, which holds between an item and a list that contains that item.
 More precisely, an item is a member of a list if it is either the first element of the list or a member of the rest of the list.
@@ -512,6 +510,7 @@ Since the data base is now distributed across the property list of various symbo
 ;; Clauses are stored on the predicate's plist
 (defun get-clauses (pred) (get pred 'clauses))
 (defun predicate (relation) (first relation))
+
 (defvar *db-predicates* nil
   "A list of all predicates stored in the database.")
 ```
@@ -524,7 +523,8 @@ This language has only two syntactic constructs: the <- macro to add clauses, an
 ```lisp
 (defmacro <- (&rest clause)
   "Add a clause to the data base."
-  '(add-clause '.clause))
+  `(add-clause ',clause))
+
 (defun add-clause (clause)
   "Add a clause to the data base, indexed by head's predicate."
   ;; The predicate must be a non-variable symbol.
@@ -532,7 +532,7 @@ This language has only two syntactic constructs: the <- macro to add clauses, an
     (assert (and (symbolp pred) (not (variable-p pred))))
     (pushnew pred *db-predicates*)
     (setf (get pred 'clauses)
-      (nconc (get-clauses pred) (list clause)))
+          (nconc (get-clauses pred) (list clause)))
     pred))
 ```
 
@@ -542,6 +542,7 @@ Now all we need is a way to remove clauses, and the data base will be complete.
 (defun clear-db ()
   "Remove all clauses (for all predicates) from the data base."
   (mapc #'clear-predicate *db-predicates*))
+
 (defun clear-predicate (predicate)
   "Remove the clauses for a single predicate."
   (setf (get predicate 'clauses) nil))
@@ -560,17 +561,18 @@ The implementation is straightforward:
 (defun prove (goal bindings)
   "Return a list of possible solutions to goal."
   (mapcan #'(lambda (clause)
-    (let ((new-clause (rename-variables clause)))
-      (prove-all (clause-body new-clause)
-          (unify goal (clause-head new-clause) bindings))))
-  (get-clauses (predicate goal))))
+              (let ((new-clause (rename-variables clause)))
+                (prove-all (clause-body new-clause)
+                           (unify goal (clause-head new-clause) bindings))))
+          (get-clauses (predicate goal))))
+
 (defun prove-all (goals bindings)
-  "Return a list of solutions to the conjunction of goals.'"
+  "Return a list of solutions to the conjunction of goals."
   (cond ((eq bindings fail) fail)
-    ((null goals) (list bindings))
-    (t (mapcan #'(lambda (goall-solution)
-          (prove-all (rest goals) goall-solution))
-      (prove (first goals) bindings)))))
+        ((null goals) (list bindings))
+        (t (mapcan #'(lambda (goal1-solution)
+                       (prove-all (rest goals) goal1-solution))
+                   (prove (first goals) bindings)))))
 ```
 
 The tricky part is that we need some way of distinguishing a variable `?x` in one clause from another variable `?x` in another clause.
@@ -583,8 +585,8 @@ The function `rename-variables` does this:[3](#fn0025)
 (defun rename-variables (x)
   "Replace all variables in x with new ones."
   (sublis (mapcar #'(lambda (var) (cons var (gensym (string var))))
-    (variables-in x))
-  x))
+                  (variables-in x))
+          x))
 ```
 
 `Rename - variables` makes use of `gensym,` a function that generates a new symbol each time it is called.
@@ -595,19 +597,20 @@ The predicate `variables-in` and its auxiliary function are defined here:
 (defun variables-in (exp)
   "Return a list of all the variables in EXP."
   (unique-find-anywhere-if #'variable-p exp))
+
 (defun unique-find-anywhere-if (predicate tree
-                                                                &optional found-so-far)
-  "Return a list of leaves of tree satisfying predicate
+                                &optional found-so-far)
+  "Return a list of leaves of tree satisfying predicate,
   with duplicates removed."
   (if (atom tree)
       (if (funcall predicate tree)
-              (adjoin tree found-so-far)
-              found-so-far)
+          (adjoin tree found-so-far)
+          found-so-far)
       (unique-find-anywhere-if
-          predicate
-          (first tree)
-          (unique-find-anywhere-if predicate (rest tree)
-                                                            found-so-far))))
+        predicate
+        (first tree)
+        (unique-find-anywhere-if predicate (rest tree)
+                                 found-so-far))))
 ```
 
 Finally, we need a nice interface to the proving functions.
@@ -664,28 +667,30 @@ We can fix that by defining a new function, `top-level-prove,` which calls `prov
 Note that `show-prolog-solutions` returns no values: `(values).` This means the read-eval-print loop will not print anything when `(values)` is the result of a top-level call.
 
 ```lisp
-(defmacro ?- (&rest goals)
-  '(top-level-prove ',goals))
+(defmacro ?- (&rest goals) `(top-level-prove ',goals))
+
 (defun top-level-prove (goals)
   "Prove the goals, and print variables readably."
   (show-prolog-solutions
-      (variables-in goals)
-      (prove-all goals no-bindings)))
+    (variables-in goals)
+    (prove-all goals no-bindings)))
+
 (defun show-prolog-solutions (vars solutions)
-    "Print the variables in each of the solutions."
-    (if (null solutions)
-        (format t "~&No.")
-        (mapc #'(lambda (solution) (show-prolog-vars vars solution))
-                    solutions))
-    (values))
+  "Print the variables in each of the solutions."
+  (if (null solutions)
+      (format t "~&No.")
+      (mapc #'(lambda (solution) (show-prolog-vars vars solution))
+            solutions))
+  (values))
+
 (defun show-prolog-vars (vars bindings)
-    "Print each variable with its binding."
-    (if (null vars)
-        (format t "~&Yes")
-        (dolist (var vars)
-            (format t "~&~a = ~  a" var
-                            (subst-bindings bindings var))))
-    (princ ";"))
+  "Print each variable with its binding."
+  (if (null vars)
+      (format t "~&Yes")
+      (dolist (var vars)
+        (format t "~&~a = ~a" var
+                (subst-bindings bindings var))))
+  (princ ";"))
 ```
 
 Now let's try some queries:
@@ -752,8 +757,6 @@ Define macros `rule` and `fact` so that we can write:
 ```
 
 ## 11.3 Idea 3: Automatic Backtracking
-{:#s0025}
-{:.h1hd}
 
 The Prolog interpreter implemented in the last section solves problems by returning a list of all possible solutions.
 We'll call this a *batch* approach, because the answers are retrieved in one uninterrupted batch of processing.
@@ -971,8 +974,6 @@ Prolog is smart enough to backtrack and find all solutions when the search space
 It is possible to devise languages that do much more in terms of automatic flow of control.[4](#fn0030) Prolog is a convenient and efficient middle ground between imperative languages and pure logic.
 
 ### Approaches to Backtracking
-{:#s0030}
-{:.h2hd}
 
 Suppose you are asked to make a "small" change to an existing program.
 The problem is that some function, `f`, which was thought to be single-valued, is now known to return two or more valid answers in certain circumstances.
@@ -1010,8 +1011,6 @@ We will see in [section 22.4](B9780080571157500224.xhtml#s0025) that the Scheme 
 Unfortunately, there is no corresponding function in Common Lisp.
 
 ### Anonymous Variables
-{:#s0035}
-{:.h2hd}
 
 Before moving on, it is useful to introduce the notion of an *anonymous variable.* This is a variable that is distinct from all others in a clause or query, but which the programmer does not want to bother to name.
 In real Prolog, the underscore is used for anonymous variables, but we will use a single question mark.
@@ -1049,8 +1048,6 @@ A named variable that is used only once in a clause can also be considered an an
 This is addressed in a different way in [section 12.3](B9780080571157500121.xhtml#s0020).
 
 ## 11.4 The Zebra Puzzle
-{:#s0040}
-{:.h1hd}
 
 Here is an example of something Prolog is very good at: a logic puzzle.
 There are fifteen facts, or constraints, in the puzzle:
@@ -1185,8 +1182,6 @@ It is arbitrary in which order these clauses are listed, and one might think it 
 In fact, if we reverse the order of these two clauses, the execution time is roughly cut in half.
 
 ## 11.5 The Synergy of Backtracking and Unification
-{:#s0045}
-{:.h1hd}
 
 Prolog's backward chaining with backtracking is a powerful technique for generating the possible solutions to a problem.
 It makes it easy to implement a *generate-and-test* strategy, where possible solutions are considered one at a time, and when a candidate solution is rejected, the next is suggested.
@@ -1233,8 +1228,6 @@ By making the unification procedure more complex, we eliminate the need for back
 **Exercise  11.3 [s]** Would a unification algorithm that delayed `member` tests be a good idea or a bad idea for the zebra puzzle?
 
 ## 11.6 Destructive Unification
-{:#s0050}
-{:.h1hd}
 
 As we saw in [section 11.2](#s0015), keeping track of a binding list of variables is a little tricky.
 It is also prone to inefficiency if the binding list grows large, because the list must be searched linearly, and because space must be allocated to hold the binding list.
@@ -1381,8 +1374,6 @@ A reasonable next step would be to use destructive unification to make a more ef
 This is left as an exercise, however, and instead we put the interpreter aside, and in the next chapter develop a compiler.
 
 ## 11.7 Prolog in Prolog
-{:#s0055}
-{:.h1hd}
 
 As stated at the start of this chapter, Prolog has many of the same features that make Lisp attractive for program development.
 Just as it is easy to write a Lisp interpreter in Lisp, it is easy to write a Prolog interpreter in Prolog.
@@ -1420,8 +1411,6 @@ No.
 ```
 
 ## 11.8 Prolog Compared to Lisp
-{:#s0060}
-{:.h1hd}
 
 Many of the features that make Prolog a successful language for AI (and for program development in general) are the same as Lisp's features.
 Let's reconsider the list of features that make Lisp different from conventional languages (see page 25) and see what Prolog has to offer:
@@ -1474,12 +1463,10 @@ Those who take that view object that Prolog's depth-first search strategy and ba
 This objection is countered by Prolog programmers who use the facilities provided by the language to build more powerful search strategies and representations, just as one would do in Lisp or any other language.
 
 ## 11.9 History and References
-{:#s0065}
-{:.h1hd}
 
 Cordell [Green (1968)](B9780080571157500285.xhtml#bb0490) was the first to articulate the view that mathematical results on theorem proving could be used to make deductions and thereby answer queries.
 However, the major technique in use at the time, resolution theorem proving (see [Robinson 1965](B9780080571157500285.xhtml#bb0995)), did not adequately constrain search, and thus was not practical.
-The idea of goal-directed computing was developed in Carl Hewitt's work (1971) on the planner !!!(span) {:.smallcaps} language for robot problem solving.
+The idea of goal-directed computing was developed in Carl Hewitt's work (1971) on the planner language for robot problem solving.
 He suggested that the user provide explicit hints on how to control deduction.
 
 At about the same time and independently, Alain Colmerauer was developing a system to perform natural language analysis.
@@ -1523,8 +1510,6 @@ The language MU-Prolog and NU-Prolog ([Naish 1986](B9780080571157500285.xhtml#bb
 The latter includes a systematic treatment of the &ne; relation and an interpretation of infinite trees.
 
 ## 11.10 Exercises
-{:#s0070}
-{:.h1hd}
 
 **Exercise  11.4 [m]** It is somewhat confusing to see "no" printed after one or more valid answers have appeared.
 Modify the program to print "no" only when there are no answers at all, and "no more" in other cases.
@@ -1624,8 +1609,6 @@ An alternative is to change the `unify` so that it takes two binding lists, one 
 Implement this alternative.
 
 ## 11.11 Answers
-{:#s0075}
-{:.h1hd}
 
 **Answer 11.9** We will choose as primitives the unary predicates `male` and `female` and the binary predicates `child` and `married`.
 The former takes the child first; the latter takes the husband first.

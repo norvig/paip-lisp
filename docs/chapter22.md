@@ -122,8 +122,6 @@ Here is a partial list of correspondences between the two dialects:
 | `string-set!`    | `setf`               |
 
 ## 22.1 A Scheme Interpreter
-{:#s0010}
-{:.h1hd}
 
 As we have seen, an interpreter takes a program (or expression) as input and returns the value computed by that program.
 The Lisp function `eval` is thus an interpreter, and that is essentially the function we are trying to write in this section.
@@ -166,26 +164,21 @@ Interpret the procedure and all the arguments, and apply the procedure value to 
     ((symbolp x) (get-var x env))
     ((atom x) x)
     ((case (first x)
-      (QUOTE  (second x))
-      (BEGIN  (last1 (mapcar #'(lambda (y) (interp y env))
-                                (rest x))))
-```
-
-`      (SET!  (set-var!
-(second x) (interp (third x) env) env))`
-
-```lisp
-      (IF      (if (interp (second x) env)
-                    (interp (third x) env)
-                    (interp (fourth x) env)))
-      (LAMBDA (let ((parms (second x))
-                      (code (maybe-add 'begin (rest2 x))))
-                  #'(lambda (&rest args)
-                      (interp code (extend-env parms args env)))))
-      (t      ;; a procedure application
-                (apply (interp (first x) env)
+       (QUOTE  (second x))
+       (BEGIN  (last1 (mapcar #'(lambda (y) (interp y env))
+                              (rest x))))
+       (SET!   (set-var! (second x) (interp (third x) env) env))
+       (IF     (if (interp (second x) env)
+                   (interp (third x) env)
+                   (interp (fourth x) env)))
+       (LAMBDA (let ((parms (second x))
+                     (code (maybe-add 'begin (rest2 x))))
+                 #'(lambda (&rest args)
+                     (interp code (extend-env parms args env)))))
+       (t      ;; a procedure application
+               (apply (interp (first x) env)
                       (mapcar #'(lambda (v) (interp v env))
-                                (rest x))))))))
+                              (rest x))))))))
 ```
 
 An environment is represented as an association list of variable/value pairs, except for the global environment, which is represented by values on the `global-val` property of symbols.
@@ -206,82 +199,54 @@ Then we will interpret `( f 1 2 3 )` by interpreting the body of `f` with the en
 Scheme procedures are implemented as Common Lisp functions, and in fact all the Scheme data types are implemented by the corresponding Common Lisp types.
 Iinclude the function `init-scheme- interp` to initialize a few global values and repeat the definitions of `last1` and `length=1`:
 
-`(defun set-var!
-(var val env)`
-
 ```lisp
+(defun set-var! (var val env)
   "Set a variable to a value, in the given or global environment."
   (if (assoc var env)
-              (setf (second (assoc var env)) val)
-```
-
-`              (set-global-var!
-var val))`
-
-```lisp
+      (setf (second (assoc var env)) val)
+      (set-global-var! var val))
   val)
+
 (defun get-var (var env)
   "Get the value of a variable, from the given or global environment."
     (if (assoc var env)
-                (second (assoc var env))
-                (get-global-var var)))
-```
+        (second (assoc var env))
+        (get-global-var var)))
 
-`(defun set-global-var!
-(var val)`
-
-```lisp
+(defun set-global-var! (var val)
   (setf (get var 'global-val) val))
+
 (defun get-global-var (var)
   (let* ((default "unbound")
-            (val (get var 'global-val default)))
-      (if (eq  val default)
-          (error "Unbound scheme variable: ~  a" var
-          val)))
+         (val (get var 'global-val default)))
+    (if (eq val default)
+        (error "Unbound scheme variable: ~a" var)
+        val)))
+
 (defun extend-env (vars vals env)
   "Add some variables and values to an environment."
-  (nconc (mapcar #' list vars vals) env))
+  (nconc (mapcar #'list vars vals) env))
+
 (defparameter *scheme-procs*
-  '(+-*/=<><=>= cons car cdr not append list read member
-```
-
-`    (null?
-null) (eq?
-eq) (equal?
-equal) (eqv?
-eql)`
-
-```lisp
+  '(+ - * / = < > <= >= cons car cdr not append list read member
+    (null? null) (eq? eq) (equal? equal) (eqv? eql)
     (write prin1) (display princ) (newline terpri)))
+
 (defun init-scheme-interp ()
   "Initialize the scheme interpreter with some global variables."
   ;; Define Scheme procedures as CL functions:
   (mapc #'init-scheme-proc *scheme-procs*)
-```
+  ;; Define the boolean `constants'. Unfortunately, this won't
+  ;; stop someone from saying: (set! t nil)
+  (set-global-var! t t)
+  (set-global-var! nil nil))
 
-`  ;; Define the Boolean 'constants'.
-Unfortunately, this won't`
-
-`  ;; stop someone from saying: (set!
-t nil)`
-
-`  (set-global-var!
-t t)`
-
-`  (set-global-var!
-nil nil))`
-
-```lisp
 (defun init-scheme-proc (f)
   "Define a Scheme procedure as a corresponding CL function."
   (if (listp f)
+      (set-global-var! (first f) (symbol-function (second f)))
+      (set-global-var! f (symbol-function f))))
 ```
-
-`              (set-global-var!
-(first f) (symbol-function (second f)))`
-
-`              (set-global-var!
-f (symbol-function f))))`
 
 ```lisp
 (defun maybe-add (op exps &optional if-nil)
@@ -367,8 +332,6 @@ NIL
 ```
 
 ## 22.2 Syntactic Extension with Macros
-{:#s0015}
-{:.h1hd}
 
 Scheme has a number of other special forms that were not listed above.
 Actually, Scheme uses the term "syntax" where we have been using "special form." The remaining syntax can be defined as "derived expressions" in terms of the five primitives.
@@ -407,34 +370,26 @@ Only one clause has to be added, but we'll repeat the whole definition:
 
 ```lisp
 (defun interp (x &optional env)
-    "Interpret (evaluate) the expression x in the environment env.
-    This version handles macros."
-    (cond
-      ((symbolp x) (get-var x env))
-      ((atom x) x)
-      ((scheme-macro (first x)) ;***
-        (interp (scheme-macro-expand x) env)) ;***
+  "Interpret (evaluate) the expression x in the environment env."
+  (cond
+    ((symbolp x) (get-var x env))
+    ((atom x) x)
     ((case (first x)
-              (QUOTE (second x))
-(BEGIN (lastl (mapcar #'(lambda (y) (interp y env))
-                            (rest x))))
-```
-
-`(SET!  (set-var!
-(second x) (interp (third x) env) env))`
-
-```lisp
-(IF    (if (interp (second x) env)
-                (interp (third x) env)
-                (interp (fourth x) env)))
-(LAMBDA (let ((parms (second x))
-                  (code (maybe-add 'begin (rest2 x))))
-          #'(lambda (&rest args)
-                  (interp code (extend-env parms args env)))))
-(t          ;; a procedure application
-            (apply (interp (first x) env)
-                    (mapcar #'(lambda (v) (interp v env))
-                                  (rest x))))))))
+       (QUOTE  (second x))
+       (BEGIN  (last1 (mapcar #'(lambda (y) (interp y env))
+                              (rest x))))
+       (SET!   (set-var! (second x) (interp (third x) env) env))
+       (IF     (if (interp (second x) env)
+                   (interp (third x) env)
+                   (interp (fourth x) env)))
+       (LAMBDA (let ((parms (second x))
+                     (code (maybe-add 'begin (rest2 x))))
+                 #'(lambda (&rest args)
+                     (interp code (extend-env parms args env)))))
+       (t      ;; a procedure application
+               (apply (interp (first x) env)
+                      (mapcar #'(lambda (v) (interp v env))
+                              (rest x))))))))
 ```
 
 Now we provide a mechanism for defining macros.
@@ -604,8 +559,6 @@ The interpreter remains simple, even while the language grows.
 This also holds for the compiler, as we see in the next section.
 
 ## 22.3 A Properly Tail-Recursive Interpreter
-{:#s0020}
-{:.h1hd}
 
 Unfortunately, the interpreter presented above can not lay claim to the name Scheme, because a true Scheme must be properly tail-recursive.
 Our interpreter is tail- recursive only when run in a Common Lisp that is tail-recursive.
@@ -717,8 +670,6 @@ There are many improvements that could be made to this interpreter, but effort i
 The next chapter does just that.
 
 ## 22.4 Throw, Catch, and Call/cc
-{:#s0025}
-{:.h1hd}
 
 Tail-recursion is crucial to Scheme.
 The idea is that when the language is guaranteed to optimize tail-recursive calls, then there is no need for special forms to do iteration.
@@ -978,8 +929,6 @@ reset (lambda ()`
 Write `pop.`
 
 ## 22.5 An Interpreter Supporting Call/cc
-{:#s0030}
-{:.h1hd}
 
 It is interesting that the more a host language has to offer, the easier it is to write an interpreter.
 Perhaps the hardest part of writing a Lisp interpreter (or compiler) is garbage collection.
@@ -1084,17 +1033,10 @@ Because Scheme procedures expect a continuation as the first argument, we need t
 
 ```lisp
 (defun init-scheme-proc (f)
-  "Define a Scheme primitive procedure as a CL function."
+  "Define a Scheme procedure as a corresponding CL function."
   (if (listp f)
-```
-
-`        (set-global-var!
-(first f)`
-
-```lisp
-                              #'(lambda (cont &rest args)
-                                (funcall cont (apply (second f) args))))
-        (init-scheme-proc (list f f))))
+      (set-global-var! (first f) (symbol-function (second f)))
+      (set-global-var! f (symbol-function f))))
 ```
 
 We also need to define `call/cc`.
@@ -1111,22 +1053,17 @@ Once the working of `call/cc` is understood, the implementation is obvious:
 (defun call/cc (cc computation)
   "Make the continuation accessible to a Scheme procedure."
   (funcall computation cc
-            ;; Package up CC into a Scheme function:
-            #'(lambda (cont val)
-                (declare (ignore cont))
-                (funcall cc val))))
+           ;; Package up CC into a Scheme function:
+           #'(lambda (cont val)
+               (declare (ignore cont))
+               (funcall cc val))))
+
 ;; Now install call/cc in the global environment
+(set-global-var! 'call/cc #'call/cc)
+(set-global-var! 'call-with-current-continuation #'call/cc)
 ```
 
-`(set-global-var!
-'call/cc #'call/cc)`
-
-`(set-global-var!
-'call-with-current-continuation #'call/cc)`
-
 ## 22.6 History and References
-{:#s0035}
-{:.h1hd}
 
 Lisp interpreters and AI have a long history together.
 MIT AI Lab Memo No.
@@ -1158,13 +1095,11 @@ It may or may not be a coincidence that it uses Scheme as the programming langua
 It includes a Scheme interpreter.
 Winston and Horn's *Lisp* (1989) also develops a Lisp interpreter.
 
-The `amb` operator for nondeterministic choice was proposed by [John McCarthy (1963)](B9780080571157500285.xhtml#bb0800) and used in SCHEMER !!!(span) {:.smallcaps} ([Zabih et al.
+The `amb` operator for nondeterministic choice was proposed by [John McCarthy (1963)](B9780080571157500285.xhtml#bb0800) and used in SCHEMER ([Zabih et al.
 1987](B9780080571157500285.xhtml#bb1440)), a nondeterministic Lisp.
 [Ruf and Weise (1990)](B9780080571157500285.xhtml#bb1015) present another implementation of backtracking in Scheme that incorporates all of logic programming.
 
 ## 22.7 Exercises
-{:#s0040}
-{:.h1hd}
 
 **Exercise  22.5 [m]** While Scheme does not provide full-blown support for optional and keyword arguments, it does support rest parameters.
 Modify the interpreter to support the Scheme syntax for rest parameters:
@@ -1263,21 +1198,17 @@ Or is it possible that the expression read might call some escape function that 
 Explain how this would be done both for the first version of the interpreter and for the continuation-passing version.
 
 ## 22.8 Answers
-{:#s0045}
-{:.h1hd}
 
 **Answer 22.2** There is no way to implement a full `call/cc` to Common Lisp, but the following works for cases where the continuation is only used with dynamic extent:
 
 ```lisp
-(defun call/cc (computation)
-```
-
-`  "Call computation.
-passing it the current continuation.`
-
-```lisp
-  The continuation has only dynamic extent."
-  (funcall computation #'(lambda (x) (return-from call/cc x))))
+(defun call/cc (cc computation)
+  "Make the continuation accessible to a Scheme procedure."
+  (funcall computation cc
+           ;; Package up CC into a Scheme function:
+           #'(lambda (cont val)
+               (declare (ignore cont))
+               (funcall cc val))))
 ```
 
 **Answer 22.3** No.
@@ -1316,7 +1247,7 @@ Now `extend-env` is trivial:
 ```lisp
 (defun extend-env (vars vals env)
   "Add some variables and values to an environment."
-  (cons (cons vars vals) env))
+  (nconc (mapcar #'list vars vals) env))
 ```
 
 The advantage of this approach is that in most cases we already have a list of variables (the procedure's parameter list) and values (from the `mapcar` of `interp` over the arguments).
@@ -1381,19 +1312,19 @@ We'd also need to modify the printing routines to print just `old` whenever they
 ```lisp
 (def-scheme-macro cond (&rest clauses)
   (cond ((null clauses) nil)
-          ((length=1 (first clauses))
-            '(or ,(first clauses) (cond .,(rest clauses))))
-          ((starts-with (first clauses) 'else)
-            '(begin .,(rest (first clauses))))
-          ((eq (second (first clauses)) '=>)
+        ((length=1 (first clauses))
+         `(or ,(first clauses) (cond .,(rest clauses))))
+        ((starts-with (first clauses) 'else)
+         `(begin .,(rest (first clauses))))
+        ((eq (second (first clauses)) '=>)
             (assert (= (length (first clauses)) 3))
             (let ((var (gensym)))
             '(let ((,var ,(first (first clauses))))
                 (if ,var (,(third (first clauses)) ,var)
                           (cond .,(rest clauses))))))
-          (t '(if ,(first (first clauses))
-                    (begin .,(rest (first clauses)))
-                    (cond .,(rest clauses)))))))
+        (t `(if ,(first (first clauses))
+                (begin .,(rest (first clauses)))
+                (cond .,(rest clauses))))))
 ```
 
 **Answer 22.10** It is easy to define `lambda` as a macro, eliminating the need for `#'(lambda ...)`:

@@ -32,8 +32,6 @@ The other arguments and categories will be explained in turn, but it is handy to
 *(ed: should be a markdown table)*
 
 ## 21.1 Noun Phrases
-{:#s0010}
-{:.h1hd}
 
 The simplest noun phrases are names and pronouns, such as "Kim" and "them." The rules for these cases are simple: we build up a semantic expression from a name or pronoun, and since there can be no gap, the two gap accumulator arguments are the same `(?g1)`.
 Person and number agreement is propagated in the variable `?agr`, and we also keep track of the *case* of the noun phrase.
@@ -51,45 +49,45 @@ The predicates name and `pronoun` are used to look up words in the lexicon.
 
 ```lisp
 (rule (NP ?agr (common ?) -wh ?x ?g1 ?g1 (the ?x (name ?name ?x))) ==>
-    (name ?agr ?name))
+  (name ?agr ?name))
+
 (rule (NP ?agr ?case ?wh ?x ?g1 ?g1 ?sem) ==>
-    (pronoun ?agr ?case ?wh ?x ?sem))
+  (pronoun ?agr ?case ?wh ?x ?sem))
 ```
 
 Plural nouns can stand alone as noun phrases, as in "dogs," but singular nouns need a determiner, as in "the dog" or "Kim's friend's biggest dog." Plural nouns can also take a determiner, as in "the dogs." The category Det is used for determiners, and NP2 is used for the part of a noun phrase after the determiner:
 
 ```lisp
 (rule (NP (- - - +) ?case -wh ?x ?g1 ?g2 (group ?x ?sem)) ==>
-        (:ex "dogs") ; Plural nouns don't need a determiner
-        (NP2 (- - - +) ?case ?x ?g1 ?g2 ?sem))
+  (:ex "dogs") ; Plural nouns don't need a determiner
+  (NP2 (- - - +) ?case ?x ?g1 ?g2 ?sem))
+
 (rule (NP ?agr (common ?) ?wh ?x ?g1 ?g2 ?sem) ==>
-        (:ex "Every man" "The dogs on the beach")
-        (Det ?agr ?wh ?x ?restriction ?sem)
-        (NP2 ?agr (common ?) ?x ?g1 ?g2 ?restriction))
+  (:ex "Every man" "The dogs on the beach")
+  (Det ?agr ?wh ?x ?restriction ?sem)
+  (NP2 ?agr (common ?) ?x ?g1 ?g2 ?restriction))
 ```
 
 Finally, a noun phrase may appear externally to a construction, in which case the noun phrase passed in by the first gap argument will be consumed, but no words from the input will be.
 An example is the &blank; in "Whom does Kim like &blank;?"
 
 ```lisp
-(rule (NP ? agr ?case ?wh ?x (gap (NP ?agr ?case ?x)) (gap nil) t)
-    ==>;; Gapped NP
-      )
+(rule (NP ?agr ?case ?wh ?x (gap (NP ?agr ?case ?x)) (gap nil) t)
+  ==> ;; Gapped NP
+  )
 ```
 
 Now we address the heart of the noun phrase, the `NP2` category.
 The lone rule for `NP2` says that it consists of a noun, optionally preceded and followed by modifiers:
 
 ```lisp
-(rule (NP2 ?agr (common ?) ?x ?gl ?g2 :sem) ==>
-        (modifiers pre noun ?agr () ?x (gap nil) (gap nil) ?pre)
-        (noun ?agr ?slots ?x ?noun)
-        (modifiers post noun ?agr ?slots ?x ?g1 ?g2 ?post))
+(rule (NP2 ?agr (common ?) ?x ?g1 ?g2 :sem) ==>
+  (modifiers pre noun ?agr () ?x (gap nil) (gap nil) ?pre)
+  (noun ?agr ?slots ?x ?noun)
+  (modifiers post noun ?agr ?slots ?x ?g1 ?g2 ?post))
 ```
 
 ## 21.2 Modifiers
-{:#s0015}
-{:.h1hd}
 
 Modifiers are split into type types: *Complements* are modifiers that are expected by the head category that is being modified; they cannot stand alone.
 *Adjuncts* are modifiers that are not required but bring additional information.
@@ -117,24 +115,20 @@ The following rules implement these four cases:
 
 ```lisp
 (rule (modifiers ?pre/post ?cat ?info (?slot . ?slots) ?h
-                    ?g1 ?g3 :sem) ==>
-      (complement ?cat ?info ?slot ?h ?g1 ?g2 ?mod)
-      (modifiers ?pre/post ?cat ?info ?slots ?h ?g2 ?g3 ?mods))
-```
+                 ?g1 ?g3 :sem) ==>
+  (complement ?cat ?info ?slot ?h ?g1 ?g2 ?mod)
+  (modifiers ?pre/post ?cat ?info ?slots ?h ?g2 ?g3 ?mods))
 
-`(rule (modifiers ?pre/post ?cat ?info ((?
-(?) ?) . ?slots) ?h`
+(rule (modifiers ?pre/post ?cat ?info ((? (?) ?) . ?slots) ?h
+                 ?g1 ?g2 ?mods) ==>
+  (modifiers ?pre/post ?cat ?info ?slots ?h ?g1 ?g2 ?mods))
 
-```lisp
-                    ?g1 ?g2 ?mods) ==>
-      (modifiers ?pre/post ?cat ?info ?slots ?h ?g1 ?g2 ?mods))
 (rule (modifiers ?pre/post ?cat ?info ?slots ?h ?g1 ?g3 :sem) ==>
-      (adjunct ?pre/post ?cat ?info ?h ?g1 ?g2 ?adjunct)
-      (modifiers ?pre/post ?cat ?info ?slots ?h ?g2 ?g3 ?mods))
-```
+  (adjunct ?pre/post ?cat ?info ?h ?g1 ?g2 ?adjunct)
+  (modifiers ?pre/post ?cat ?info ?slots ?h ?g2 ?g3 ?mods))
 
-`(rule (modifiers ???()?
-?g1 ?g1  t) ==> )`
+(rule (modifiers ? ? ? () ? ?g1 ?g1 t) ==> )
+```
 
 We need to say more about the list of complements, or slots, that can be associated with words in the lexcion.
 Each slot is a list of the form (*role number form),* where the role refers to some semantic relation, the number indicates the ordering of the complements, and the form is the type of constituent expected: noun phrase, verb phrase, or whatever.
@@ -149,8 +143,6 @@ The complement list for one sense of the verb "visit" is:
 This means that the first complement, the subject, is a noun phrase that fills the agent role, and the second complement is also a noun phrase that fills the object role.
 
 ## 21.3 Noun Modifiers
-{:#s0020}
-{:.h1hd}
 
 There are two main types of prenoun adjuncts.
 Most common are adjectives, as in "big slobbery dogs." Nouns can also be adjuncts, as in "water meter" or "desk lamp." Here it is clear that the second noun is the head and the first is the modifier: a desk lamp is a lamp, not a desk.
@@ -159,10 +151,11 @@ In the following rules, note that we do not need to say that more than one adjec
 
 ```lisp
 (rule (adjunct pre noun ?info ?x ?gap ?gap ?sem) ==>
-      (adj ?x ?sem))
+  (adj ?x ?sem))
+
 (rule (adjunct pre noun ?info ?h ?gap ?gap :sem) ==>
-      (:sem (noun-noun ?h ?x))
-      (noun ?agr () ?x ?sem))
+  (:sem (noun-noun ?h ?x))
+  (noun ?agr () ?x ?sem))
 ```
 
 After the noun there is a wider variety of modifiers.
@@ -171,19 +164,20 @@ Prepositional phrases can be adjuncts for nouns or verbs, as in "man in the midd
 
 ```lisp
 (rule (adjunct post ?cat ?info ?x ?g1 ?g2 ?sem) ==>
-      (PP ?prep ?prep ?wh ?np ?x ?g1 ?g2 ?sem))
+  (PP ?prep ?prep ?wh ?np ?x ?g1 ?g2 ?sem))
 ```
 
 Here are the rules for prepositional phrases, which can be either a preposition followed by a noun phrase or can be gapped, as in "to whom are you speaking &blank;?"
 The object of a preposition is always in the objective case: "with him" not "*with he."
 
 ```lisp
-(rule (PP ?prep ?role ?wh ?np ?x ?gl ?g2 :sem) ==>
-      (prep ?prep t)
-      (:sem (?role ?x ?np))
-      (NP ?agr (common obj) ?wh ?np ?gl ?g2 ?np-sem))
+(rule (PP ?prep ?role ?wh ?np ?x ?g1 ?g2 :sem) ==>
+  (prep ?prep t)
+  (:sem (?role ?x ?np))
+  (NP ?agr (common obj) ?wh ?np ?g1 ?g2 ?np-sem))
+
 (rule (PP ?prep ?role ?wh ?np ?x
-                (gap (PP ?prep ?role ?np ?x)) (gap nil) t) ==> )
+          (gap (PP ?prep ?role ?np ?x)) (gap nil) t) ==> )
 ```
 
 Nouns can be modified by present participles, past participles, and relative clauses.
@@ -193,11 +187,12 @@ The details of the `clause` will be covered later.
 
 ```lisp
 (rule (adjunct post noun ?agr ?x ?gap ?gap ?sem) ==>
-      (:ex (the man) "visiting me" (the man) "visited by me")
-      (:test (member ?infl (-  ing passive)))
-      (clause ?infl ?x ? ?v (gap (NP ?agr ? ?x)) (gap nil) ?sem))
+  (:ex (the man) "visiting me" (the man) "visited by me")
+  (:test (member ?infl (-ing passive)))
+  (clause ?infl ?x ? ?v (gap (NP ?agr ? ?x)) (gap nil) ?sem))
+
 (rule (adjunct post noun ?agr ?x ?gap ?gap ?sem) ==>
-      (rel-clause ?agr ?x ?sem))
+  (rel-clause ?agr ?x ?sem))
 ```
 
 It is possible to have a relative clause where it is an object, not the subject, that the head refers to: "the snack that the man ate." In this kind of relative clause the relative pronoun is optional: "The snack the man ate was delicious." The following rules say that if the relative pronoun is omitted then the noun that is being modified must be an object, and the relative clause should include a subject internally.
@@ -205,22 +200,22 @@ The constant `int-subj` indicates this.
 
 ```lisp
 (rule (rel-clause ?agr ?x :sem) ==>
-      (:ex (the man) "that she liked" "that liked her"
-            "that I know Lee liked")
-      (opt-rel-pronoun ?case ?x ?int-subj ?rel-sem)
-      (clause (finite ? ?) ? ?int-subj ?v
-                (gap (NP ?agr ?case ?x)) (gap nil) ?clause-sem))
+  (:ex (the man) "that she liked" "that liked her"
+       "that I know Lee liked")
+  (opt-rel-pronoun ?case ?x ?int-subj ?rel-sem)
+  (clause (finite ? ?) ? ?int-subj ?v
+          (gap (NP ?agr ?case ?x)) (gap nil) ?clause-sem))
+
 (rule (opt-rel-pronoun ?case ?x ?int-subj (?type ?x)) ==>
-      (:word ?rel-pro)
-      (:test (word ?rel-pro rel-pro ?case ?type)))
+  (:word ?rel-pro)
+  (:test (word ?rel-pro rel-pro ?case ?type)))
+
 (rule (opt-rel-pronoun (common obj) ?x int-subj t) ==> )
 ```
 
 It should be noted that it is rare but not impossible to have names and pronouns with modifiers: "John the Baptist," "lovely Rita, meter maid," "Lucy in the sky with diamonds," "Sylvia in accounting on the 42nd floor," "she who must be obeyed." Here and throughout this chapter we will raise the possibility of such rare cases, leaving them as exercises for the reader.
 
 ## 21.4 Determiners
-{:#s0025}
-{:.h1hd}
 
 We will cover three kinds of determiners.
 The simplest is the article: "a dog" or "the dogs." We also allow genitive pronouns, as in "her dog," and numbers, as in "three dogs." The semantic interpretation of a determiner-phrase is of the form (*quantifier variable restriction*).
@@ -228,16 +223,18 @@ For example, `(a ?x (dog ?x) )` or `((number 3) ?x (dog ?x))`.
 
 ```lisp
 (rule (Det ?agr ?wh ?x ?restriction (?art ?x ?restriction)) ==>
-      (:ex "the" "every")
-      (art ?agr ?art)
-      (:test (if (= ?art wh) (= ?wh +wh) (= ?wh -wh))))
-(rule (Det ?agr ?wh ?x ?r (the ?x irestriction)) ==>
-      (:ex "his" "her")
-      (pronoun ?agr gen ?wh ?y ?sem)
-      (:test (and* ((genitive ?y ?x) ?sem ?r) ?restriction)))
+  (:ex "the" "every")
+  (art ?agr ?art)
+  (:test (if (= ?art wh) (= ?wh +wh) (= ?wh -wh))))
+
+(rule (Det ?agr ?wh ?x ?r (the ?x ?restriction)) ==>
+  (:ex "his" "her")
+  (pronoun ?agr gen ?wh ?y ?sem)
+  (:test (and* ((genitive ?y ?x) ?sem ?r) ?restriction)))
+
 (rule (Det ?agr -wh ?x ?r ((number ?n) ?x ?r)) ==>
-      (:ex "three")
-      (cardinal ?n ?agr))
+  (:ex "three")
+  (cardinal ?n ?agr))
 ```
 
 These are the most important determiner types, but there are others, and there are pre- and postdeterminers that combine in restricted combinations.
@@ -246,8 +243,6 @@ Postdeterminers include every, many, several, and few.
 Thus, we can say "all her many good ideas" or "all the King's men." But we can not say "*all much ideas" or "*the our children." The details are complicated and are omitted from this grammar.
 
 ## 21.5 Verb Phrases
-{:#s0030}
-{:.h1hd}
 
 Now that we have defined `modifiers`, verb phrases are easy.
 In fact, we only need two rules.
@@ -255,11 +250,11 @@ The first says a verb phrase consists of a verb optionally preceded and followed
 
 ```lisp
 (rule (VP ?infl ?x ?subject-slot ?v ?g1 ?g2 :sem) ==>
-      (:ex "sleeps" "quickly give the dog a bone")
-      (modifiers pre verb ? () ?v (gap nil) (gap nil) ?pre-sem)
-      (:sem (?role ?v ?x)) (:test (= ?subject-slot (?role 1 ?)))
-      (verb ?verb ?infl (?subject-slot .?slots) ?v ?v-sem)
-      (modifiers post verb ? ?slots ?v ?g1 ?g2 ?mod-sem))
+  (:ex "sleeps" "quickly give the dog a bone")
+  (modifiers pre verb ? () ?v (gap nil) (gap nil) ?pre-sem)
+  (:sem (?role ?x ?v)) (:test (= ?subject-slot (?role 1 ?)))
+  (verb ?verb ?infl (?subject-slot . ?slots) ?v ?v-sem)
+  (modifiers post verb ? ?slots ?v ?g1 ?g2 ?mod-sem))
 ```
 
 The `VP` category takes seven arguments.
@@ -297,35 +292,34 @@ The word "not" can not modify a bare main verb but can follow an auxiliary verb.
 That is, we can't say "*Kim not like Lee," but we can add an auxiliary to get "Kim does not like Lee."
 
 ```lisp
-(rule (VP ?infl ?x ?subject-slot ?v ?gl ?g2 :sem) ==>
-      (:ex "is sleeping" "would have given a bone to the dog."
-                "did not sleep" "was given a bone by this old man")
-      ;; An aux verb, followed by a VP
-      (aux ? infl ?needs-infl ?v ?aux)
-      (modifiers post aux ? () ?v (gap nil) (gap nil) ?mod)
-      (VP ?needs-infl ?x ?subject-slot ?v ?g1 ?g2 ?vp))
+(rule (VP ?infl ?x ?subject-slot ?v ?g1 ?g2 :sem) ==>
+  (:ex "is sleeping" "would have given a bone to the dog."
+       "did not sleep" "was given a bone by this old man")
+  ;; An aux verb, followed by a VP
+  (aux ?infl ?needs-infl ?v ?aux)
+  (modifiers post aux ? () ?v (gap nil) (gap nil) ?mod)
+  (VP ?needs-infl ?x ?subject-slot ?v ?g1 ?g2 ?vp))
+
 (rule (adjunct post aux ? ?v ?gap ?gap (not ?v)) ==>
-      (:word not))
+  (:word not))
 ```
 
 ## 21.6 Adverbs
-{:#s0035}
-{:.h1hd}
 
 Adverbs can serve as adjuncts before or after a verb: "to boldly go," "to go boldly." There are some limitations on where they can occur, but it is difficult to come up with firm rules; here we allow any adverb anywhere.
 We define the category `advp` for adverbial phrase, but currently restrict it to a single adverb.
 
 ```lisp
 (rule (adjunct ?pre/post verb ?info ?v ?g1 ?g2 ?sem) ==>
-      (advp ?wh ?v ?g1 ?g2 ?sem))
+  (advp ?wh ?v ?g1 ?g2 ?sem))
+
 (rule (advp ?wh ?v ?gap ?gap ?sem) ==>
-      (adverb ?wh ?v ?sem))
+  (adverb ?wh ?v ?sem))
+
 (rule (advp ?wh ?v (gap (advp ?v)) (gap nil) t) ==> )
 ```
 
 ## 21.7 Clauses
-{:#s0040}
-{:.h1hd}
 
 A clause consists of a subject followed by a predicate.
 However, the subject need not be realized immediately before the predicate.
@@ -334,9 +328,9 @@ In our analysis, then, a clause is a subject followed by a verb phrase, with the
 
 ```lisp
 (rule (clause ?infl ?x ?int-subj ?v ?gap1 ?gap3 :sem) ==>
-      (subject ?agr ?x ?subj-slot ?int-subj ?gap1 ?gap2 ?subj-sem)
-      (VP ?infl ?x ?subj-slot ?v ?gap2 ?gap3 ?pred-sem)
-      (:test (subj-pred-agree ?agr ?infl)))
+  (subject ?agr ?x ?subj-slot ?int-subj ?gap1 ?gap2 ?subj-sem)
+  (VP ?infl ?x ?subj-slot ?v ?gap2 ?gap3 ?pred-sem)
+  (:test (subj-pred-agree ?agr ?infl)))
 ```
 
 There are now two possibilities for `subject`.
@@ -350,12 +344,12 @@ We will see that the code `(- - + -)` is used for this.
 
 ```lisp
 (rule (subject ?agree ?x ?subj-slot ext-subj
-                (gap ?subj) (gap nil) t) ==>
-      ;; Externally realized subject (the normal case for S)
-      (:test (slot-constituent ?subj-slot ?subj ?x ?)
-                (if (= ?subj (NP ?agr ?case ?x))
-                    (= ?agree ?agr)
-                    (= ?agree (- - + -))))) ;Non-NP subjects are 3sing
+               (gap ?subj) (gap nil) t) ==>
+  ;; Externally realized subject (the normal case for S)
+  (:test (slot-constituent ?subj-slot ?subj ?x ?)
+         (if (= ?subj (NP ?agr ?case ?x))
+             (= ?agree ?agr)
+             (= ?agree (- - + -))))) ;Non-NP subjects are 3sing
 ```
 
 In the second case we just parse a noun phrase as the subject.
@@ -365,8 +359,8 @@ In case it was not already clear, the second argument to both `clause` and `subj
 
 ```lisp
 (rule (subject ?agr ?x (?role 1 (NP ?x)) int-subj ?gap ?gap ?sem)
-      ==>
-        (NP ?agr (common nom) ?wh ?x (gap nil) (gap nil) ?sem))
+  ==>
+  (NP ?agr (common nom) ?wh ?x (gap nil) (gap nil) ?sem))
 ```
 
 Finally, the rules for subject-predicate agreement say that only finite predicates need to agree with their subject:
@@ -377,8 +371,6 @@ Finally, the rules for subject-predicate agreement say that only finite predicat
 ```
 
 ## 21.8 Sentences
-{:#s0045}
-{:.h1hd}
 
 In the previous chapter we allowed only simple declarative sentences.
 The current grammar supports commands and four kinds of questions in addition to declarative sentences.
@@ -388,10 +380,10 @@ A declarative sentence is then just an XP followed by a clause, where the subjec
 
 ```lisp
 (rule (S ?s :sem) ==>
-    (:ex "Kim likes Lee" "Lee, I like _" "In god, we trust _"
-            "Who likes Lee?" "Kim likes who?")
-    (XP ?kind ?constituent ?wh ?x (gap nil) (gap nil) ?topic-sem)
-    (clause (finite ? ?) ?x ? ?s (gap ?constituent) (gap nil) ?sem))
+  (:ex "Kim likes Lee" "Lee, I like _" "In god, we trust _"
+       "Who likes Lee?" "Kim likes who?")
+  (XP ?kind ?constituent ?wh ?x (gap nil) (gap nil) ?topic-sem)
+  (clause (finite ? ?) ?x ? ?s (gap ?constituent) (gap nil) ?sem))
 ```
 
 As it turns out, this rule also serves for two types of questions.
@@ -413,12 +405,12 @@ Note that commands are always nonfinite.
 
 ```lisp
 (rule (S ?s :sem) ==>
-      ;; Commands have implied second-person subject
-      (:ex "Give the dog a bone.")
-      (:sem (command ?s))
-      (:sem (listener ?x))
-      (clause nonfinite ?x ext-subj ?s
-                (gap (NP ? ? ?x)) (gap nil) ?sem))
+  ;; Commands have implied second-person subject
+  (:ex "Give the dog a bone.")
+  (:sem (command ?s))
+  (:sem (listener ?x))
+  (clause nonfinite ?x ext-subj ?s
+          (gap (NP ? ? ?x)) (gap nil) ?sem))
 ```
 
 Another form of command starts with "let," as in "Let me see what I can do" and "Let us all pray." The second word is better considered as the object of "let" rather than the subject of the sentence, since the subject would have to be "I" or "we." This kind of command can be handled with a lexical entry for "let" rather than with an additional rule.
@@ -429,18 +421,18 @@ The category `aux-inv-S` is used to handle this case:
 
 ```lisp
 (rule (S ?s (yes-no ?s ?sem)) ==>
-      (:ex "Does Kim like Lee?" "Is he a doctor?")
-      (aux-inv-S nil ?s ?sem))
+  (:ex "Does Kim like Lee?" "Is he a doctor?")
+  (aux-inv-S nil ?s ?sem))
 ```
 
 Questions that begin with a wh-phrase also have the auxiliary verb before the subject, as in "Who did you see?" or "Why should I have been doing this?" The first constituent can also be a prepositional phrase: "For whom am I doing this?" The following rule parses an XP that must have the  `+wh` feature and then parses an `aux-inv-S` to arrive at a question:
 
 ```lisp
 (rule (S ?s :sem) ==>
-      (:ex "Who does Kim like _?" "To whom did he give it _?"
-            "What dog does Kim like _?")
-      (XP ?slot ?constituent +wh ?x (gap nil) (gap nil) ?subj-sem)
-      (aux-inv-S iconstituent ?s ?sem))
+  (:ex "Who does Kim like _?" "To whom did he give it _?"
+       "What dog does Kim like _?")
+  (XP ?slot ?constituent +wh ?x (gap nil) (gap nil) ?subj-sem)
+  (aux-inv-S ?constituent ?s ?sem))
 ```
 
 A question can also be signaled by rising intonation in what would otherwise be a declarative statement: "You want some?" Since we don't have intonation information, we won't include this kind of question.
@@ -450,11 +442,11 @@ The implementation for `aux-inv-S` is straightforward: parse an auxiliary and th
 
 ```lisp
 (rule (aux-inv-S ?constituent ?v :sem) ==>
-      (:ex "Does Kim like Lee?" (who) "would Kim have liked")
-      (aux (finite ?agr ?tense) ?needs-infl ?v ?aux-sem)
-      (modifiers post aux ? () ?v (gap nil) (gap nil) ?mod)
-      (clause ?needs-infl ?x int-subj ?v (gap ?constituent) (gap nil)
-                ?clause-sem))
+  (:ex "Does Kim like Lee?" (who) "would Kim have liked")
+  (aux (finite ?agr ?tense) ?needs-infl ?v ?aux-sem)
+  (modifiers post aux ? () ?v (gap nil) (gap nil) ?mod)
+  (clause ?needs-infl ?x int-subj ?v (gap ?constituent) (gap nil)
+          ?clause-sem))
 ```
 
 There is one more case to consider.
@@ -469,18 +461,16 @@ The following rule parses a verb, checks to see that it is a version of "be," an
 
 ```lisp
 (rule (aux-inv-S ?ext ?v :sem) ==>
-      (:ex "Is he a doctor?")
-      (verb ?be (finite ?agr ?) ((?role ?n ?xp) . ?slots) ?v ?sem)
-      (:test (word ?be be))
-      (subject ?agr ?x (?role ?n ?xp) int-subj
-            (gap nil) (gap nil) ?subj-sem)
-      (:sem (?role ?v ?x))
-      (modifiers post verb ? ?slots ?v (gap ?ext) (gap nil) ?mod-sem))
+  (:ex "Is he a doctor?")
+  (verb ?be (finite ?agr ?) ((?role ?n ?xp) . ?slots) ?v ?sem)
+  (:test (word ?be be))
+  (subject ?agr ?x (?role ?n ?xp) int-subj
+           (gap nil) (gap nil) ?subj-sem)
+  (:sem (?role ?v ?x))
+  (modifiers post verb ? ?slots ?v (gap ?ext) (gap nil) ?mod-sem))
 ```
 
 ## 21.9 XPs
-{:#s0050}
-{:.h1hd}
 
 All that remains in our grammar is the XP category.
 XPs are used in two ways: First, a phrase can be extraposed, as in "*In god* we trust," where "in god" will be parsed as an XP and then placed on the gap list until it can be taken off as an adjunct to "trust." Second, a phrase can be a complement, as in "He wants *to be a fireman,"* where the infinitive phrase is a complement of "wants."
@@ -508,15 +498,15 @@ The *** indicates no mapping:
 
 ```lisp
 (<- (slot-constituent (?role ?n (NP ?x))
-                    (NP ?agr ?case ?x) ?x ?h))
+                      (NP ?agr ?case ?x) ?x ?h))
 (<- (slot-constituent (?role ?n (clause ?word ?infl))
-                    (clause ?word ?infl ?v) ?v ?h))
+                      (clause ?word ?infl ?v) ?v ?h))
 (<- (slot-constituent (?role ?n (PP ?prep ?np))
-                    (PP ?prep ?role ?np ?h) ?np ?h))
+                      (PP ?prep ?role ?np ?h) ?np ?h))
 (<- (slot-constituent (?role ?n it)            (it ? ? ?x) ?x ?))
-(<- (slot-constituent (manner 3 (advp ?x))            (advp ?v) ? ?v))
-(<- (slot-constituent (?role ?n (VP ?1nfl ?x)) *** ? ?))
-(<- (slot-constituent (?role ?n (Adj ?x)) *** ?x ?))
+(<- (slot-constituent (manner 3 (advp ?x))     (advp ?v) ? ?v))
+(<- (slot-constituent (?role ?n (VP ?infl ?x)) *** ? ?))
+(<- (slot-constituent (?role ?n (Adj ?x))      *** ?x ?))
 (<- (slot-constituent (?role ?n (P ?particle)) *** ? ?))
 ```
 
@@ -524,11 +514,12 @@ We are now ready to define compi ement.
 It takes a slot description, maps it into a constituent, and then calls `XP` to parse that constituent:
 
 ```lisp
-(rule (complement ?cat ?1nfo (?role ?n ?xp) ?h ?gapl ?gap2 :sem) ==>
-      ;; A complement is anything expected by a slot
-      (:sem (?role ?h ?x))
-      (:test (slot-constituent (?role ?n ?xp) iconstituent ?x ?h))
-      (XP ?xp ?constituent ?wh ?x ?gapl ?gap2 ?sem))
+(rule (complement ?cat ?info (?role ?n ?xp) ?h ?gap1 ?gap2 :sem)
+  ==>
+  ;; A complement is anything expected by a slot
+  (:sem (?role ?h ?x))
+  (:test (slot-constituent (?role ?n ?xp) ?constituent ?x ?h))
+  (XP ?xp ?constituent ?wh ?x ?gap1 ?gap2 ?sem))
 ```
 
 The category `XP` takes seven arguments.
@@ -540,19 +531,23 @@ Here are the first five XP categories:
 
 ```lisp
 (rule (XP (PP ?prep ?np) (PP ?prep ?role ?np ?h) ?wh ?np
-                ?gap1 ?gap2 ?sem) ==>
-      (PP ?prep ?role ?wh ?np ?h ?gap1 ?gap2 ?sem))
+          ?gap1 ?gap2 ?sem) ==>
+  (PP ?prep ?role ?wh ?np ?h ?gap1 ?gap2 ?sem))
+
 (rule (XP (NP ?x) (NP ?agr ?case ?x) ?wh ?x ?gap1 ?gap2 ?sem) ==>
-      (NP ?agr ?case ?wh ?x ?gap1 ?gap2 ?sem))
+  (NP ?agr ?case ?wh ?x ?gap1 ?gap2 ?sem))
+
 (rule (XP it (it ? ? ?x) -wh ?x ?gap ?gap t) ==>
-      (:word it))
+  (:word it))
+
 (rule (XP (clause ?word ?infl) (clause ?word ?infl ?v) -wh ?v
-                ?gap1 ?gap2 ?sem) ==>
-      (:ex (he thinks) "that she is tall")
-      (opt-word ?word)
-      (clause ?infl ?x int-subj ?v ?gap1 ?gap2 ?sem))
+          ?gap1 ?gap2 ?sem) ==>
+  (:ex (he thinks) "that she is tall")
+  (opt-word ?word)
+  (clause ?infl ?x int-subj ?v ?gap1 ?gap2 ?sem))
+
 (rule (XP (?role ?n (advp ?v)) (advp ?v) ?wh ?v ?gap1 ?gap2 ?sem)
-    ==>
+  ==>
   (advp ?wh ?v ?gap1 ?gap2 ?sem))
 ```
 
@@ -561,8 +556,8 @@ For example, one sense of "know" subcategorizes for a clause with an optional "t
 If the "that" had been obligatory, it would not have parentheses around it.
 
 ```lisp
-(rule (opt-word ?word) ==>(:word ?word))
-(rule (opt-word (?word)) ==>(:word ?word))
+(rule (opt-word ?word) ==> (:word ?word))
+(rule (opt-word (?word)) ==> (:word ?word))
 (rule (opt-word (?word)) ==>)
 ```
 
@@ -570,17 +565,17 @@ Finally, here are the three XPs that can not be extraposed:
 
 ```lisp
 (rule (XP (VP ?infl ?x) *** -wh ?v ?gap1 ?gap2 ?sem) ==>
-      (:ex (he promised her) "to sleep")
-      (VP ?infl ?x ?subj-slot ?v ?gap1 ?gap2 ?sem))
+  (:ex (he promised her) "to sleep")
+  (VP ?infl ?x ?subj-slot ?v ?gap1 ?gap2 ?sem))
+
 (rule (XP (Adj ?x) *** -wh ?x ?gap ?gap ?sem) ==>
-      (Adj ?x ?sem))
-(rule (XP (P iparticle) *** -wh ?x ?gap ?gap t) ==>
-      (prep ?particle t))
+  (Adj ?x ?sem))
+
+(rule (XP (P ?particle) *** -wh ?x ?gap ?gap t) ==>
+  (prep ?particle t))
 ```
 
 ## 21.10 Word Categories
-{:#s0055}
-{:.h1hd}
 
 Each word category has a rule that looks words up in the lexicon and assigns the right features.
 The relation `word` is used for all lexicon access.
@@ -607,13 +602,13 @@ The `member` relations are used to pick a sense from the list of senses and a co
 
 ```lisp
 (rule (verb ?verb ?infl ?slots ?v :sem) ==>
-      (:word ?verb)
-      (:test (word ?verb verb ?infl ?senses)
-            (member (?sem . ?subcats) ?senses)
-            (member ?slots ?subcats)
-            (tense-sem ?infl ?v ?tense-sem))
-      (:sem ?tense-sem)
-      (:sem (?sem ?v)))
+  (:word ?verb)
+  (:test (word ?verb verb ?infl ?senses)
+         (member (?sem . ?subcats) ?senses)
+         (member ?slots ?subcats)
+         (tense-sem ?infl ?v ?tense-sem))
+  (:sem ?tense-sem)
+  (:sem (?sem ?v)))
 ```
 
 It is difficulty to know how to translate tense information into a semantic interpretation.
@@ -624,7 +619,7 @@ Here is a very simple definition of `tense-sem`:
 ```lisp
 (<- (tense-sem (finite ? ?tense) ?v (?tense ?v)))
 (<- (tense-sem -ing ?v (progressive ?v)))
-(<- (tense-sem -en ?v (past-participle ?v)))
+(<- (tense-sem -en  ?v (past-participle ?v)))
 (<- (tense-sem infinitive ?v t))
 (<- (tense-sem nonfinite ?v t))
 (<- (tense-sem passive ?v (passive ?v)))
@@ -634,12 +629,13 @@ Auxiliary verbs and modal verbs are listed separately:
 
 ```lisp
 (rule (aux ?infl ?needs-infl ?v ?tense-sem) ==>
-      (:word ?aux)
-      (:test (word ?aux aux ?infl ?needs-infl)
-              (tense-sem ?infl ?v ?tense-sem)))
+  (:word ?aux)
+  (:test (word ?aux aux ?infl ?needs-infl)
+         (tense-sem ?infl ?v ?tense-sem)))
+
 (rule (aux (finite ?agr ?tense) nonfinite ?v (?sem ?v)) ==>
-      (:word ?modal)
-      (:test (word ?modal modal ?sem ?tense)))
+  (:word ?modal)
+  (:test (word ?modal modal ?sem ?tense)))
 ```
 
 Nouns, pronouns, and names are also listed separately, although they have much in common.
@@ -647,56 +643,63 @@ For pronouns we use quantifier `wh` or `pro`, depending on if it is a wh-pronoun
 
 ```lisp
 (rule (noun ?agr ?slots ?x (?sem ?x)) ==>
-      (:word ?noun)
-      (:test (word ?noun noun ?agr ?slots ?sem)))
+  (:word ?noun)
+  (:test (word ?noun noun ?agr ?slots ?sem)))
+
 (rule (pronoun ?agr ?case ?wh ?x (?quant ?x (?sem ?x))) ==>
-      (:word ?pro)
-      (:test (word ?pro pronoun ?agr ?case ?wh ?sem)
-            (if (= ?wh +wh) (= ?quant wh) (= ?quant pro))))
+  (:word ?pro)
+  (:test (word ?pro pronoun ?agr ?case ?wh ?sem)
+         (if (= ?wh +wh) (= ?quant wh) (= ?quant pro))))
+
 (rule (name ?agr ?name) ==>
-      (:word ?name)
-      (:test (word ?name name ?agr)))
+  (:word ?name)
+  (:test (word ?name name ?agr)))
 ```
 
 Here are the rules for the remaining word classes:
 
 ```lisp
 (rule (adj ?x (?sem ?x)) ==>
-      (:word ?adj)
-      (:test (word ?adj adj ?sem)))
-(rule (adj ?x ((nth ?n) ?x)) ==>(ordinal ?n))
+  (:word ?adj)
+  (:test (word ?adj adj ?sem)))
+
+(rule (adj ?x ((nth ?n) ?x)) ==> (ordinal ?n))
+
 (rule (art ?agr ?quant) ==>
-      (:word ?art)
-      (:test (word ?art art ?agr ?quant)))
+  (:word ?art)
+  (:test (word ?art art ?agr ?quant)))
+
 (rule (prep ?prep t) ==>
-      (:word ?prep)
-      (:test (word ?prep prep)))
+  (:word ?prep)
+  (:test (word ?prep prep)))
+
 (rule (adverb ?wh ?x ?sem) ==>
-      (:word ?adv)
-      (:test (word ?adv adv ?wh ?pred)
-                (if (= ?wh +wh)
-                    (= ?sem (wh ?y (?pred ?x ?y)))
-                    (= ?sem (?pred ?x)))))
+  (:word ?adv)
+  (:test (word ?adv adv ?wh ?pred)
+         (if (= ?wh +wh)
+             (= ?sem (wh ?y (?pred ?x ?y)))
+             (= ?sem (?pred ?x)))))
+
 (rule (cardinal ?n ?agr) ==>
-      (:ex "five")
-      (:word ?num)
-      (:test (word ?num cardinal ?n ?agr)))
+  (:ex "five")
+  (:word ?num)
+  (:test (word ?num cardinal ?n ?agr)))
+
 (rule (cardinal ?n ?agr) ==>
-      (:ex "5")
-      (:word ?n)
-      (:test (numberp ?n)
-            (if (= ?n 1)
-                (= ?agr (- - + -)) ;3sing
-                (= ?agr (- - + -))))) ;3plur
+  (:ex "5")
+  (:word ?n)
+  (:test (numberp ?n)
+         (if (= ?n 1)
+             (= ?agr (- - + -))    ;3sing
+             (= ?agr (- - - +))))) ;3plur
+
 (rule (ordinal ?n) ==>
-      (:ex "fifth")
-      (:word ?num)
-      (:test (word ?num ordinal ?n)))
+  (:ex "fifth")
+  (:word ?num)
+  (:test (word ?num ordinal ?n)))
 ```
 
 ## 21.11 The Lexicon
-{:#s0060}
-{:.h1hd}
 
 The lexicon itself consists of a large number of entries in the `word` relation, and it would certainly be possible to ask the lexicon writer to make a long list of `word` facts.
 But to make the lexicon easier to read and write, we adopt three useful tools.
@@ -721,42 +724,40 @@ Then "all the others" can be represented by the list that is negative in the thi
 There is no way to distinguish second-person singular from plural in this scheme, but English does not make that distinction.
 Here are the necessary abbreviations:
 
-| []()             |              |
-|------------------|--------------|
-| `(abbrev 1sing`  | `(+---))`    |
-| `(abbrev 1plur`  | `(-+--))`    |
-| `(abbrev 3sing`  | `(--+-))`    |
-| `(abbrev 3plur`  | `(- - - +))` |
-| `(abbrev 2pers`  | `(----))`    |
-| `(abbrev ~3sing` | `(??-?))`    |
+```lisp
+(abbrev 1sing       (+ - - -))
+(abbrev 1plur       (- + - -))
+(abbrev 3sing       (- - + -))
+(abbrev 3plur       (- - - +))
+(abbrev 2pers       (- - - -))
+(abbrev ~3sing      (? ? - ?))
+```
 
 The next step is to provide abbreviations for some of the common verb complement lists:
 
-| []()                  |                                                          |
-|-----------------------|----------------------------------------------------------|
-| `(abbrev v/intrans`   | `((agt 1 (NP ?))))`                                      |
-| `(abbrev v/trans`     | `((agt 1 (NP ?)) (obj 2 (NP ?))))`                       |
-| `(abbrev v/ditrans`   | `((agt 1 (NP ?)) (goal 2 (NP ?)) (obj 3 (NP ?))))`       |
-| `(abbrev v/trans2`    | `((agt 1 (NP ?)) (obj 2 (NP ?)) (goal 2 (PP to ?))))`    |
-| `(abbrev v/trans4`    | `((agt 1 (NP ?)) (obj 2 (NP ?)) (ben 2 (PP for ?))))`    |
-| `(abbrev v/it-null`   | `((nil 1 it)))`                                          |
-| `(abbrev v/opt-that`  | `((exp 1 (NP ?)) (con 2 (clause (that) (finite ? ?)))))` |
-| `(abbrev v/subj-that` | `((con 1 (clause that (finite ? ?))) (exp 2 (NP ?))))`   |
-| `(abbrev v/it-that`   | `((nil 1 it) (exp 2 (NP ?))`                             |
-|                       | `(con 3 (clause that (finite ? ?)))))`                   |
-| `(abbrev v/inf`       | `((agt 1 (NP ?x)) (con 3 (VP infinitive ?x))))`          |
-| `(abbrev v/promise`   | `((agt 1 (NP ?x)) (goal (2) (NP ?y))`                    |
-|                       | `(con 3 (VP infinitive ?x))))`                           |
-| `(abbrev v/persuade`  | `((agt 1 (NP ?x)) (goal 2 (NP ?y))`                      |
-|                       | `(con 3 (VP infinitive ?y))))`                           |
-| `(abbrev v/want`      | `((agt 1 (NP ?x)) (con 3 (VP infinitive ?x))))`          |
-| `(abbrev v/p-up`      | `((agt 1 (NP ?)) (pat 2 (NP ?)) (nil 3 (P up))))`        |
-| `(abbrev v/pp-for`    | `((agt 1 (NP ?)) (pat 2 (PP for ?))))`                   |
-| `(abbrev v/pp-after`  | `((agt 1 (NP ?)) (pat 2 (PP after ?))))`                 |
+``lisp
+(abbrev v/intrans   ((agt 1 (NP ?))))
+(abbrev v/trans     ((agt 1 (NP ?)) (obj 2 (NP ?))))
+(abbrev v/ditrans   ((agt 1 (NP ?)) (goal 2 (NP ?)) (obj 3 (NP ?))))
+(abbrev v/trans2    ((agt 1 (NP ?)) (obj 2 (NP ?)) (goal 2 (PP to ?))))
+(abbrev v/trans4    ((agt 1 (NP ?)) (obj 2 (NP ?)) (ben 2 (PP for ?))))
+(abbrev v/it-null   ((nil 1 it)))
+(abbrev v/opt-that  ((exp 1 (NP ?)) (con 2 (clause (that) (finite ? ?)))))
+(abbrev v/subj-that ((con 1 (clause that (finite ? ?))) (exp 2 (NP ?))))
+(abbrev v/it-that   ((nil 1 it) (exp 2 (NP ?))
+                     (con 3 (clause that (finite ? ?)))))
+(abbrev v/inf       ((agt 1 (NP ?x)) (con 3 (VP infinitive ?x))))
+(abbrev v/promise   ((agt 1 (NP ?x)) (goal (2) (NP ?y))
+                     (con 3 (VP infinitive ?x))))
+(abbrev v/persuade  ((agt 1 (NP ?x)) (goal 2 (NP ?y))
+                     (con 3 (VP infinitive ?y))))
+(abbrev v/want      ((agt 1 (NP ?x)) (con 3 (VP infinitive ?x))))
+(abbrev v/p-up      ((agt 1 (NP ?)) (pat 2 (NP ?)) (nil 3 (P up))))
+(abbrev v/pp-for    ((agt 1 (NP ?)) (pat 2 (PP for ?))))
+(abbrev v/pp-after  ((agt 1 (NP ?)) (pat 2 (PP after ?))))
+```
 
 ### Verbs
-{:#s0065}
-{:.h2hd}
 
 The macro `verb` allows us to list verbs in the form below, where the spellings of each tense can be omitted if the verb is regular:
 
@@ -772,22 +773,22 @@ The haphazard list includes verbs that are either useful for examples or illustr
 (verb (do did done doing does) (perform v/trans))
 (verb (eat ate eaten) (eat v/trans))
 (verb (give gave given giving) (give-1 v/trans2 v/ditrans)
-          (donate v/trans v/intrans))
+      (donate v/trans v/intrans))
 (verb (go went gone going goes))
 (verb (have had had having has) (possess v/trans))
 (verb (know knew known) (know-that v/opt-that) (know-of v/trans))
 (verb (like) (like-1 v/trans))
 (verb (look) (look-up v/p-up) (search v/pp-for)
-          (take-care v/pp-after) (look v/intrans))
+      (take-care v/pp-after) (look v/intrans))
 (verb (move moved moved moving moves)
-          (self-propel v/intrans) (transfer v/trans2))
+      (self-propel v/intrans) (transfer v/trans2))
 (verb (persuade) (persuade v/persuade))
 (verb (promise) (promise v/promise))
 (verb (put put put putting))
 (verb (rain) (rain v/it-null))
 (verb (saw) (cut-with-saw v/trans v/intrans))
 (verb (see saw seen seeing) (understand v/intrans v/opt-that)
-          (look v/trans)(dating v/trans))
+      (look v/trans) (dating v/trans))
 (verb (sleep slept) (sleep v/intrans))
 (verb (surprise) (surprise v/subj-that v/it-that))
 (verb (tell told) (tell v/persuade))
@@ -798,65 +799,64 @@ The haphazard list includes verbs that are either useful for examples or illustr
 ```
 
 ### Auxiliary Verbs
-{:#s0070}
-{:.h2hd}
 
 Auxiliary verbs are simple enough to be described directly with the word macro.
 Each entry lists the auxiliary itself, the tense it is used to construct, and the tense it must be followed by.
 The auxiliaries "have" and "do" are listed, along with "to," which is used to construct infinitive clauses and thus can be treated as if it were an auxiliary.
 
-| []()           |                                                |
-|----------------|------------------------------------------------|
-| `(word have`   | `aux nonfinite -en)`                           |
-| `(word have`   | `aux (finite ~3sing present) -en)`             |
-| `(word has`    | `aux (finite 3sing present) -en)`              |
-| `(word had`    | `aux (finite ? past) -en)`                     |
-| `(word having` | `aux -ing -en)`                                |
-| `(word do`     | `aux (finite ~3sing present) nonfinite)`       |
-| `(word does`   | `aux (finite 3sing present) nonfinite)`        |
-| `(word did`    | `aux (finite        ? past)        nonfinite)` |
-| `(word to`     | `aux infinitive nonfinite)`                    |
+```lisp
+(word have    aux nonfinite -en)
+(word have    aux (finite ~3sing present) -en)
+(word has     aux (finite 3sing present) -en)
+(word had     aux (finite ? past) -en)
+(word having  aux -ing -en)
+
+(word do      aux (finite ~3sing present) nonfinite)
+(word does    aux (finite  3sing present) nonfinite)
+(word did     aux (finite  ?     past)    nonfinite)
+
+(word to      aux infinitive nonfinite)
+```
 
 The auxiliary "be" is special: in addition to its use as both an auxiliary and main verb, it also is used in passives and as the main verb in aux-inverted sentences.
 The function `copula` is used to keep track of all these uses.
 It will be defined in the next section, but you can see it takes two arguments, a list of senses for the main verb, and a list of entries for the auxiliary verb.
 The three senses correspond to the examples "He is a fool," "He is a Republican," and "He is in Indiana," respectively.
 
-| []()      |                                                     |
-|-----------|-----------------------------------------------------|
-| `(copula` |                                                     |
-| `'((nil`  | `((nil 1 (NP ?x)) (nil 2 (Adj ?x))))`               |
-| `(is-a`   | `((exp 1 (NP ?x)) (arg2 2 (NP ?y))))`               |
-| `(is-loc` | `((exp 1 (NP ?x)) (?prep 2 (PP ?prep ?)))))`        |
-| `'((be`   | `nonfinite -ing)`                                   |
-| `(been`   | `-en -ing)`                                         |
-| `(being`  | `-ing -en)`                                         |
-| `(am`     | `(finite 1sing present) -ing)`                      |
-| `(is`     | `(finite 3sing present) -ing)`                      |
-| `(are`    | `(finite 2pers present) -ing)`                      |
-| `(were`   | `(finite (- - ? ?) past) -ing) ; 2nd sing or pl`    |
-| `(was`    | `(finite (? - ? -) past) -ing))) ; 1st or 3rd sing` |
+```lisp
+(copula
+  '((nil      ((nil 1 (NP ?x)) (nil 2 (Adj ?x))))
+    (is-a     ((exp 1 (NP ?x)) (arg2 2 (NP ?y))))
+    (is-loc   ((exp 1 (NP ?x)) (?prep 2 (PP ?prep ?)))))
+  '((be       nonfinite -ing)
+    (been     -en -ing)
+    (being    -ing -en)
+    (am       (finite 1sing present) -ing)
+    (is       (finite 3sing present) -ing)
+    (are      (finite 2pers present) -ing)
+    (were     (finite (- - ? ?) past) -ing)   ; 2nd sing or pl
+    (was      (finite (? - ? -) past) -ing))) ; 1st or 3rd sing
+```
 
 Following are the modal auxiliary verbs.
 Again, it is difficult to specify semantics for them.
 The word "not" is also listed here; it is not an auxiliary, but it does modify them.
 
-| []()             |                   |            |
-|------------------|-------------------|------------|
-| `(word can`      | `modal able`      | `past)`    |
-| `(word could`    | `modal able`      | `present)` |
-| `(word may`      | `modal possible`  | `past)`    |
-| `(word might`    | `modal possible`  | `present)` |
-| `(word shall`    | `modal mandatory` | `past)`    |
-| `(word should`   | `modal mandatory` | `present)` |
-| `(word will`     | `modal expected`  | `past)`    |
-| `(word would`    | `modal expected`  | `present)` |
-| `(word must`     | `modal necessary` | `present)` |
-| `(word not not)` |
+```lisp
+(word can    modal able      past)
+(word could  modal able      present)
+(word may    modal possible  past)
+(word might  modal possible  present)
+(word shall  modal mandatory past)
+(word should modal mandatory present)
+(word will   modal expected  past)
+(word would  modal expected  present)
+(word must   modal necessary present)
+
+(word not not)
+```
 
 ### Nouns
-{:#s0075}
-{:.h2hd}
 
 No attempt has been made to treat nouns seriously.
 We list enough nouns here to make some of the examples work.
@@ -864,7 +864,7 @@ The first noun shows a complement list that is sufficient to parse "the destruct
 
 ```lisp
 (noun destruction * destruction
-          (pat (2) (PP of ?)) (agt (2) (PP by ?)))
+      (pat (2) (PP of ?)) (agt (2) (PP by ?)))
 (noun beach)
 (noun bone)
 (noun box boxes)
@@ -884,123 +884,106 @@ The first noun shows a complement list that is sufficient to parse "the destruct
 ```
 
 ### Pronouns
-{:#s0080}
-{:.h2hd}
 
 Here we list the nominative, objective, and genitive pronouns, followed by interrogative and relative pronouns.
 The only thing missing are reflexive pronouns, such as "myself."
 
-| []()         |                                                 |
-|--------------|-------------------------------------------------|
-| `(word I`    | `pronoun 1sing (common nom) -wh speaker)`       |
-| `(word we`   | `pronoun 1plur (common nom) -wh speaker+other)` |
-| `(word you`  | `pronoun 2pers (common` ?) `-wh listener)`      |
-| `(word he`   | `pronoun 3sing (common nom) -wh male)`          |
-| `(word she`  | `pronoun 3sing (common nom) -wh female)`        |
-| `(word it`   | `pronoun 3sing (common` ?) `-wh anything)`      |
-| `(word they` | `pronoun 3plur (common nom) -wh anything)`      |
+```lisp
+(word I     pronoun 1sing (common nom) -wh speaker)
+(word we    pronoun 1plur (common nom) -wh speaker+other)
+(word you   pronoun 2pers (common   ?) -wh listener)
+(word he    pronoun 3sing (common nom) -wh male)
+(word she   pronoun 3sing (common nom) -wh female)
+(word it    pronoun 3sing (common   ?) -wh anything)
+(word they  pronoun 3plur (common nom) -wh anything)
 
-| []()         |                                                 |
-|--------------|-------------------------------------------------|
-| `(word me`   | `pronoun 1sing (common obj) -wh speaker)`       |
-| `(word us`   | `pronoun 1plur (common obj) -wh speaker+other)` |
-| `(word him`  | `pronoun 3sing (common obj) -wh male)`          |
-| `(word her`  | `pronoun 3sing (common obj) -wh female)`        |
-| `(word them` | `pronoun 3plur (common obj) -wh anything)`      |
+(word me    pronoun 1sing (common obj) -wh speaker)
+(word us    pronoun 1plur (common obj) -wh speaker+other)
+(word him   pronoun 3sing (common obj) -wh male)
+(word her   pronoun 3sing (common obj) -wh female)
+(word them  pronoun 3plur (common obj) -wh anything)
 
-| []()          |                                        |
-|---------------|----------------------------------------|
-| `(word my`    | `pronoun 1sing gen -wh speaker)`       |
-| `(word our`   | `pronoun 1plur gen -wh speaker+other)` |
-| `(word your`  | `pronoun 2pers gen -wh listener)`      |
-| `(word his`   | `pronoun 3sing gen -wh male)`          |
-| `(word her`   | `pronoun 3sing gen -wh female)`        |
-| `(word its`   | `pronoun 3sing gen -wh anything)`      |
-| `(word their` | `pronoun 3plur gen -wh anything)`      |
-| `(word whose` | `pronoun 3sing gen +wh anything)`      |
+(word my    pronoun 1sing gen -wh speaker)
+(word our   pronoun 1plur gen -wh speaker+other)
+(word your  pronoun 2pers gen -wh listener)
+(word his   pronoun 3sing gen -wh male)
+(word her   pronoun 3sing gen -wh female)
+(word its   pronoun 3sing gen -wh anything)
+(word their pronoun 3plur gen -wh anything)
+(word whose pronoun 3sing gen +wh anything)
 
-| []()          |                                      |
-|---------------|--------------------------------------|
-| `(word who`   | `pronoun ? (common ?) +wh person)`   |
-| `(word whom`  | `pronoun ? (common obj) +wh person)` |
-| `(word what`  | `pronoun ? (common ?) +wh thing)`    |
-| `(word which` | `pronoun ? (common ?) +wh thing)`    |
+(word who   pronoun ? (common ?) +wh person)
+(word whom  pronoun ? (common obj) +wh person)
+(word what  pronoun ? (common ?) +wh thing)
+(word which pronoun ? (common ?) +wh thing)
 
-| []()          |                                |
-|---------------|--------------------------------|
-| `(word who`   | `rel-pro ? person)`            |
-| `(word which` | `rel-pro ? thing)`             |
-| `(word that`  | `rel-pro ? thing)`             |
-| `(word whom`  | `rel-pro (common obj) person)` |
+(word who   rel-pro ? person)
+(word which rel-pro ? thing)
+(word that  rel-pro ? thing)
+(word whom  rel-pro (common obj) person)
+```
 
 ### Names
-{:#s0085}
-{:.h2hd}
 
 The following names were convenient for one example or another:
 
-| []()         |               |              |               |
-|--------------|---------------|--------------|---------------|
-| `(word God`  | `name 3sing)` | `(word Lynn` | `name 3sing)` |
-| `(word Jan`  | `name 3sing)` | `(word Mary` | `name 3sing)` |
-| `(word John` | `name 3sing)` | `(word NY`   | `name 3sing)` |
-| `(word Kim`  | `name 3sing)` | `(word LA`   | `name 3sing)` |
-| `(word Lee`  | `name 3sing)` | `(word SF`   | `name 3sing)` |
+```lisp
+(word God   name 3sing)  (word Lynn  name 3sing)
+(word Jan   name 3sing)  (word Mary  name 3sing)
+(word John  name 3sing)  (word NY    name 3sing)
+(word Kim   name 3sing)  (word LA    name 3sing)
+(word Lee   name 3sing)  (word SF    name 3sing)
+```
 
 ### Adjectives
-{:#s0090}
-{:.h2hd}
 
 Here are a few adjectives:
 
-| []()          |              |               |              |
-|---------------|--------------|---------------|--------------|
-| `(word big`   | `adj big)`   | `(word bad`   | `adj bad)`   |
-| `(word old`   | `adj old)`   | `(word smart` | `adj smart)` |
-| `(word green` | `adj green)` | `(word red`   | `adj red)`   |
-| `(word tall`  | `adj tall)`  | `(word fun`   | `adj fun)`   |
+```lisp
+(word big   adj big)    (word bad   adj bad)
+(word old   adj old)    (word smart adj smart)
+(word green adj green)  (word red   adj red)
+(word tall  adj tall)   (word fun   adj fun)
+```
 
 ### Adverbs
-{:#s0095}
-{:.h2hd}
 
 The adverbs covered here include interrogatives:
 
-| []()            |                    |
-|-----------------|--------------------|
-| `(word quickly` | `adv -wh quickly)` |
-| `(word slowly`  | `adv -wh slowly)`  |
-| `(word where`   | `adv +wh loc)`     |
-| `(word when`    | `adv +wh time)`    |
-| `(word why`     | `adv +wh reason)`  |
-| `(word how`     | `adv +wh manner)`  |
+```lisp
+(word quickly adv -wh quickly)
+(word slowly  adv -wh slowly)
+
+(word where   adv +wh loc)
+(word when    adv +wh time)
+(word why     adv +wh reason)
+(word how     adv +wh manner)
+```
 
 ### Articles
-{:#s0100}
-{:.h2hd}
 
 The common articles are listed here:
 
-| []()          |                    |
-|---------------|--------------------|
-| `(word the`   | `art 3sing the)`   |
-| `(word the`   | `art 3plur group)` |
-| `(word a`     | `art 3sing a)`     |
-| `(word an`    | `art 3sing a)`     |
-| `(word every` | `art 3sing every)` |
-| `(word each`  | `art 3sing each)`  |
-| `(word all`   | `art 3sing all)`   |
-| `(word some`  | `art` ? `some)`    |
-| `(word this`  | `art 3sing this)`  |
-| `(word that`  | `art 3sing that)`  |
-| `(word these` | `art 3plur this)`  |
-| `(word those` | `art 3plur that)`  |
-| `(word what`  | `art` ? `wh)`      |
-| `(word which` | `art` ? `wh)`      |
+```lisp
+(word the   art 3sing the)
+(word the   art 3plur group)
+(word a     art 3sing a)
+(word an    art 3sing a)
+(word every art 3sing every)
+(word each  art 3sing each)
+(word all   art 3sing all)
+(word some  art ?     some)
+
+(word this  art 3sing this)
+(word that  art 3sing that)
+(word these art 3plur this)
+(word those art 3plur that)
+
+(word what  art ?     wh)
+(word which art ?     wh)
+```
 
 ### Cardinal and Ordinal Numbers
-{:#s0105}
-{:.h2hd}
 
 We can take advantage of `format's` capabilities to fill up the lexicon.
 To go beyond 20, we would need a subgrammar of numbers.
@@ -1009,36 +992,33 @@ To go beyond 20, we would need a subgrammar of numbers.
 ;; This puts in numbers up to twenty, as if by
 ;; (word five cardinal 5 3plur)
 ;; (word fifth ordinal 5)
+
 (dotimes (i 21)
-      (add-word (read-from-string (format nil "~r" i))
-                    'cardinal i (if (= i 1) '3sing '3plur))
-      (add-word (read-from-string (format nil "~:r" i)) 'ordinal i))
+  (add-word (read-from-string (format nil "~r" i))
+            'cardinal i (if (= i 1) '3sing '3plur))
+  (add-word (read-from-string (format nil "~:r" i)) 'ordinal i))
 ```
 
 ### Prepositions
-{:#s0110}
-{:.h2hd}
 
 Here is a fairly complete list of prepositions:
 
-| []()                  |                       |                          |
-|-----------------------|-----------------------|--------------------------|
-| `(word above prep)`   | `(word about prep)`   | `(word around prep)`     |
-| `(word across prep)`  | `(word after prep)`   | `(word against prep)`    |
-| `(word along prep)`   | `(word at prep)`      | `(word away prep)`       |
-| `(word before prep)`  | `(word behind prep)`  | `(word below prep)`      |
-| `(word beyond prep)`  | `(word by prep)`      | `(word down prep)`       |
-| `(word for prep)`     | `(word from prep)`    | `(word in prep)`         |
-| `(word of prep)`      | `(word off prep)`     | `(word on prep)`         |
-| `(word out prep)`     | `(word over prep)`    | `(word past prep)`       |
-| `(word since prep)`   | `(word through prep)` | `(word throughout prep)` |
-| `(word till prep)`    | `(word to prep)`      | `(word under prep)`      |
-| `(word until prep)`   | `(word up prep)`      | `(word with prep)`       |
-| `(word without prep)` |                       |                          |
+```lisp
+(word above prep)  (word about prep)  (word around prep)
+(word across prep) (word after prep)  (word against prep)
+(word along prep)  (word at prep)     (word away prep)
+(word before prep) (word behind prep) (word below prep)
+(word beyond prep) (word by prep)     (word down prep)
+(word for prep)    (word from prep)   (word in prep)
+(word of prep)     (word off prep)    (word on prep)
+(word out prep)    (word over prep)   (word past prep)
+(word since prep)  (word through prep)(word throughout prep)
+(word till prep)   (word to prep)     (word under prep)
+(word until prep)  (word up prep)     (word with prep)
+(word without prep)
+```
 
 ## 21.12 Supporting the Lexicon
-{:#s0115}
-{:.h1hd}
 
 This section describes the implementation of the macros `word`, `verb, noun`, and `abbrev.` Abbreviations are stored in a hash table.
 The macro `abbr`e`v` and the functions `get-abbrev` and `clear-abbrevs` define the interface.
@@ -1046,9 +1026,11 @@ We will see how to expand abbreviations later.
 
 ```lisp
 (defvar *abbrevs* (make-hash-table))
+
 (defmacro abbrev (symbol definition)
-      "Make symbol be an abbreviation for definition."
-      '(setf (gethash ',symbol *abbrevs*) ',definition))
+  "Make symbol be an abbreviation for definition."
+  `(setf (gethash ',symbol *abbrevs*) ',definition))
+
 (defun clear-abbrevs () (clrhash *abbrevs*))
 (defun get-abbrev (symbol) (gethash symbol *abbrevs*))
 ```
@@ -1060,14 +1042,17 @@ When used as an index into the hash table, each word returns a list of entries, 
 
 ```lisp
 (defvar *words* (make-hash-table :size 500))
+
 (defmacro word (word cat &rest info)
-      "Put word, with category and subcat info, into lexicon."
-      '(add-word '.word '.cat .,(mapcar #'kwote info)))
+  "Put word, with category and subcat info, into lexicon."
+  `(add-word ',word ',cat .,(mapcar #'kwote info)))
+
 (defun add-word (word cat &rest info)
-      "Put word, with category and other info, into lexicon."
-      (push (cons cat (mapcar #'expand-abbrevs-and-variables info)) (gethash word *words*))
-            (gethash word *words*))
-      word)
+  "Put word, with category and other info, into lexicon."
+  (push (cons cat (mapcar #'expand-abbrevs-and-variables info))
+        (gethash word *words*))
+  word)
+
 (defun kwote (x) (list 'quote x))
 ```
 
@@ -1076,32 +1061,27 @@ This makes it easier to make a copy of the structure, which will be needed later
 
 ```lisp
 (defun expand-abbrevs-and-variables (exp)
-```
-
-`    "Replace all variables in exp with vars.
-and expand abbrevs."`
-
-```lisp
-    (let ((bindings nil))
-        (labels
-          ((expand (exp)
-            (cond
-                ((lookup exp bindings))
-                ((eq exp '?) (?))
-                ((variable-p exp)
-                  (let ((var (?)))
-                        (push (cons exp var) bindings)
-                        var))
-                ((consp exp)
-                  (reuse-cons (expand (first exp))
-                              (expand (rest exp))
-                              exp))
-            (t (multiple-value-bind (expansion found?)
+  "Replace all variables in exp with vars, and expand abbrevs."
+  (let ((bindings nil))
+    (labels
+      ((expand (exp)
+         (cond
+           ((lookup exp bindings))
+           ((eq exp '?) (?))
+           ((variable-p exp)
+            (let ((var (?)))
+              (push (cons exp var) bindings)
+              var))
+           ((consp exp)
+            (reuse-cons (expand (first exp))
+                        (expand (rest exp))
+                        exp))
+           (t (multiple-value-bind (expansion found?)
                   (get-abbrev exp)
                 (if found?
-                        (expand-abbrevs-and-variables expansion)
-                        exp))))))
-(expand exp))))
+                    (expand-abbrevs-and-variables expansion)
+                    exp))))))
+      (expand exp))))
 ```
 
 Now we can store words in the lexicon, but we need some way of getting them out.
@@ -1113,26 +1093,17 @@ There are three differences: `word/n` hashes, so it will be faster; it is increm
 
 ```lisp
 (defun word/n (word cat cont &rest info)
-    "Retrieve a word from the lexicon."
-    (unless (unbound-var-p (deref word))
-        (let ((old-trail (fill-pointer *trail*)))
-            (dolist (old-entry (gethash word *words*))
-                (let ((entry (deref-copy old-entry)))
-                    (when (and (consp entry)
+  "Retrieve a word from the lexicon."
+  (unless (unbound-var-p (deref word))
+    (let ((old-trail (fill-pointer *trail*)))
+      (dolist (old-entry (gethash word *words*))
+        (let ((entry (deref-copy old-entry)))
+          (when (and (consp entry)
+                     (unify! cat (first entry))
+                     (unify! info (rest entry)))
+            (funcall cont)))
+        (undo-bindings! old-trail)))))
 ```
-
-`                              (unify!
-cat (first entry))`
-
-`                              (unify!
-info (rest entry)))`
-
-```lisp
-                        (funcall cont)))
-```
-
-`                (undo-bindings!
-old-trail)))))`
 
 Note that `word/n` does not follow our convention of putting the continuation last.
 Therefore, we will need the following additional functions:
@@ -1152,20 +1123,16 @@ Mass nouns, like "furniture," have only one entry, and are marked by an asterisk
 
 ```lisp
 (defmacro noun (base &rest args)
-    "Add a noun and its plural to the lexicon."
-    '(add-noun-form ',base ,@(mapcar #'kwote args)))
+  "Add a noun and its plural to the lexicon."
+  `(add-noun-form ',base ,@(mapcar #'kwote args)))
+
 (defun add-noun-form (base &optional (plural (symbol base 's))
-                    (sem base) &rest slots)
-    (if (eq plural '*)
-```
-
-`      (add-word base 'noun '?
-slots sem)`
-
-```lisp
+                      (sem base) &rest slots)
+  (if (eq plural '*)
+      (add-word base 'noun '? slots sem)
       (progn
-          (add-word base 'noun '3sing slots sem)
-          (add-word plural 'noun '3plur slots sem))))
+        (add-word base 'noun '3sing slots sem)
+        (add-word plural 'noun '3plur slots sem))))
 ```
 
 Verbs are more complex.
@@ -1186,23 +1153,24 @@ And here is the macro definition:
 
 ```lisp
 (defmacro verb ((base &rest forms) &body senses)
-    "Enter a verb into the lexicon."
-    '(add-verb ',senses ',base ,@(mapcar #'kwote (mklist forms))))
+  "Enter a verb into the lexicon."
+  `(add-verb ',senses ',base ,@(mapcar #'kwote (mklist forms))))
+
 (defun add-verb (senses base &optional
-                (past (symbol (strip-vowel base) 'ed))
-                (past-part past)
-                (pres-part (symbol (strip-vowel base) 'ing))
-                (plural (symbol base 's)))
-    "Enter a verb into the lexicon."
-    (add-word base 'verb 'nonfinite senses)
-    (add-word base 'verb '(finite ~3sing present) senses)
-    (add-word past 'verb '(finite ? past) senses)
-    (add-word past-part 'verb '-en senses)
-    (add-word pres-part 'verb '-ing senses)
-    (add-word plural 'verb '(finite 3sing present) senses)
-    (add-word past-part 'verb 'passive
-                    (mapcar #'passivize-sense
-                        (expand-abbrevs-and-variables senses))))
+                 (past (symbol (strip-vowel base) 'ed))
+                 (past-part past)
+                 (pres-part (symbol (strip-vowel base) 'ing))
+                 (plural (symbol base 's)))
+  "Enter a verb into the lexicon."
+  (add-word base 'verb 'nonfinite senses)
+  (add-word base 'verb '(finite ~3sing present) senses)
+  (add-word past 'verb '(finite ? past) senses)
+  (add-word past-part 'verb '-en senses)
+  (add-word pres-part 'verb '-ing senses)
+  (add-word plural 'verb '(finite 3sing present) senses)
+  (add-word past-part 'verb 'passive
+            (mapcar #'passivize-sense
+                    (expand-abbrevs-and-variables senses))))
 ```
 
 This uses a few auxiliary functions.
@@ -1211,12 +1179,13 @@ The idea is that for a verb like "fire," stripping the vowel yields "fir," from 
 
 ```lisp
 (defun strip-vowel (word)
-    "Strip off a trailing vowel from a string."
-    (let* ((str (string word))
-            (end (- (length str) 1)))
+  "Strip off a trailing vowel from a string."
+  (let* ((str (string word))
+         (end (- (length str) 1)))
     (if (vowel-p (char str end))
-            (subseq str 0 end)
-            str)))
+        (subseq str 0 end)
+        str)))
+
 (defun vowel-p (char) (find char "aeiou" :test #'char-equal))
 ```
 
@@ -1225,20 +1194,22 @@ The idea is that the subject slot of the active verb becomes an optional slot ma
 
 ```lisp
 (defun passivize-sense (sense)
-    ;; The first element of sense is the semantics; rest are slots
-    (cons (first sense) (mapcan #'passivize-subcat (rest sense))))
+  ;; The first element of sense is the semantics; rest are slots
+  (cons (first sense) (mapcan #'passivize-subcat (rest sense))))
+
 (defun passivize-subcat (slots)
-    "Return a list of passivizations of this subcat frame."
-    ;; Whenever the 1 slot is of the form (?any 1 (NP ?)),
-    ;; demote the 1 to a (3), and promote any 2 to a 1.
-    (when (and (eql (slot-number (first slots)) 1)
-                (starts-with (third (first slots)) 'NP))
-      (let ((old-1 '(,(first (first slots)) (3) (PP by ?))))
-        (loop for slot in slots
+  "Return a list of passivizations of this subcat frame."
+  ;; Whenever the 1 slot is of the form (?any 1 (NP ?)),
+  ;; demote the 1 to a (3), and promote any 2 to a 1.
+  (when (and (eql (slot-number (first slots)) 1)
+             (starts-with (third (first slots)) 'NP))
+    (let ((old-1 `(,(first (first slots)) (3) (PP by ?))))
+      (loop for slot in slots
             when (eql (slot-number slot) 2)
-            collect '((,(first slot) 1 .(third slot))
+            collect `((,(first slot) 1 ,(third slot))
                       ,@(remove slot (rest slots))
                       ,old-1)))))
+
 (defun slot-number (slot) (first-or-self (second slot)))
 ```
 
@@ -1246,13 +1217,13 @@ Finally, we provide a special function just to define the copula, "be."
 
 ```lisp
 (defun copula (senses entries)
-    "Copula entries are both aux and main verb."
-    ;; They also are used in passive verb phrases and aux-inv-S
-    (dolist (entry entries)
-        (add-word (first entry) 'aux (second entry) (third entry))
-        (add-word (first entry) 'verb (second entry) senses)
-        (add-word (first entry) 'aux (second entry) 'passive)
-        (add-word (first entry) 'be)))
+  "Copula entries are both aux and main verb."
+  ;; They also are used in passive verb phrases and aux-inv-S
+  (dolist (entry entries)
+    (add-word (first entry) 'aux (second entry) (third entry))
+    (add-word (first entry) 'verb (second entry) senses)
+    (add-word (first entry) 'aux (second entry) 'passive)
+    (add-word (first entry) 'be)))
 ```
 
 The remaining functions are used for testing, debugging, and extending the grammar.
@@ -1261,11 +1232,12 @@ These functions can be placed at the top of the lexicon and grammar files, respe
 
 ```lisp
 (defun clear-lexicon ()
-    (clrhash *words*)
-    (clear-abbrevs))
+  (clrhash *words*)
+  (clear-abbrevs))
+
 (defun clear-grammar ()
-    (clear-examples)
-    (clear-db))
+  (clear-examples)
+  (clear-db))
 ```
 
 Testing could be done with `run-examples`, but it is convenient to provide another interface, the macro `try` (and its corresponding function, `try-dcg`).
@@ -1277,37 +1249,37 @@ This option is only available for categories that are listed in the definition:
 
 ```lisp
 (defmacro try (&optional cat &rest words)
-    "Tries to parse WORDS as a constituent of category CAT.
-    With no words, runs all the :ex examples for category.
-    With no cat, runs all the examples."
-    '(try-dcg ',cat ',words))
+  "Tries to parse WORDS as a constituent of category CAT.
+  With no words, runs all the :ex examples for category.
+  With no cat, runs all the examples."
+  `(try-dcg ',cat ',words))
+
 (defun try-dcg (&optional cat words)
-    "Tries to parse WORDS as a constituent of category CAT.
-    With no words, runs all the :ex examples for category.
-    With no cat, runs all the examples."
-    (if (null words)
-        (run-examples cat)
-        (let ((args '((gap nil) (gap nil) ?sem ,words ())))
-            (mapc #'test-unknown-word words)
-            (top-level-prove
-                (ecase cat
-                    (np '((np ? ? ?wh ?x ,@args)))
-                        (vp '((vp ?infl ?x ?sl ?v ,@args)))
-                        (pp '((pp ?prep ?role ?wh ?x ,@args)))
-                        (xp '((xp ?slot iconstituent ?wh ?x ,@args)))
-                        (s '((s ? ?sem ,words ())))
-                        (rel-clause '((rel-clause ? ?x ?sem ,words ())))
-                        (clause '((clause ?infl ?x ?int-subj ?v ?g1 ?g2
-                                      ?sem ,words ()))))))))
+  "Tries to parse WORDS as a constituent of category CAT.
+  With no words, runs all the :ex examples for category.
+  With no cat, runs all the examples."
+  (if (null words)
+      (run-examples cat)
+      (let ((args `((gap nil) (gap nil) ?sem ,words ())))
+        (mapc #'test-unknown-word words)
+        (top-level-prove
+          (ecase cat
+            (np `((np ? ? ?wh ?x ,@args)))
+            (vp `((vp ?infl ?x ?sl ?v ,@args)))
+            (pp `((pp ?prep ?role ?wh ?x ,@args)))
+            (xp `((xp ?slot ?constituent ?wh ?x ,@args)))
+            (s  `((s ? ?sem ,words ())))
+            (rel-clause `((rel-clause ? ?x ?sem ,words ())))
+            (clause `((clause ?infl ?x ?int-subj ?v ?g1 ?g2
+                              ?sem ,words ()))))))))
+
 (defun test-unknown-word (word)
-    "Print a warning message if this is an unknown word."
-    (unless (or (gethash word *words*) (numberp word))
-      (warn "~&Unknown word: ~a" word)))
+  "Print a warning message if this is an unknown word."
+  (unless (or (gethash word *words*) (numberp word))
+    (warn "~&Unknown word: ~a" word)))
 ```
 
 ## 21.13 Other Primitives
-{:#s0120}
-{:.h1hd}
 
 To support the : `test` predicates made in various grammar rules we need definitions of the Prolog predicates `if, member, =, numberp`, and `atom`.
 They are repeated here:
@@ -1334,8 +1306,6 @@ They are repeated here:
 ```
 
 ## 21.14 Examples
-{:#s0125}
-{:.h1hd}
 
 Here are some examples of what the parser can handle.
 I have edited the output by changing variable names like `?168` to more readable names like `?J`.
@@ -1445,8 +1415,6 @@ A disambiguation procedure should be equipped to weed out such duplicates.
 ```
 
 ## 21.15 History and References
-{:#s0130}
-{:.h1hd}
 
 [Chapter 20](B9780080571157500200.xhtml) provides some basic references on natural language.
 Here we will concentrate on references that provide:
@@ -1475,8 +1443,6 @@ Naomi [Sager (1981)](B9780080571157500285.xhtml#bb1035) presents the most comple
 The grammar is separated into a simple, neat, context-free component and a rather baroque augmentation that manipulates features.
 
 ## 21.16 Exercises
-{:#s0135}
-{:.h1hd}
 
 **Exercise  21.1 [m]** Change the grammar to account better for *mass nouns.* The current grammar treats mass nouns by making them vague between singular and plural, which is incorrect.
 They should be treated separately, since there are determiners such as "much" that work only with mass nouns, and other determiners such as "these" that work only with plural count nouns.

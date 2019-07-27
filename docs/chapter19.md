@@ -36,8 +36,6 @@ This chapter is a brief introduction to natural language processing.
 The next chapter gives a more thorough treatment from the point of view of logic grammars, and the chapter after that puts it all together into a full-fledged system.
 
 ## 19.1 Parsing with a Phrase-Structure Grammar
-{:#s0010}
-{:.h1hd}
 
 To parse a sentence means to recover the constituent structure of the sentence-to discover what sequence of generation rules could have been applied to come up with the sentence.
 In general, there may be several possible derivations, in which case we say the sentence is grammatically ambiguous.
@@ -47,7 +45,8 @@ We will attack that more difficult question later.
 We start with the grammar defined on [page 39](B9780080571157500029.xhtml#p39) for the generate program:
 
 ```lisp
-(defvar *grammar* "The grammar used by GENERATE.")
+(defvar *grammar* nil "The grammar used by GENERATE.")
+
 (defparameter *grammarl*
       '((Sentence -> (NP VP))
           (NP -> (Art Noun))
@@ -72,13 +71,14 @@ To emphasize this, I include "noun" and "verb" as nouns in the grammar `*grammar
 
 ```lisp
 (defparameter *grammar3*
-      '((Sentence -> (NP VP))
-          (NP -> (Art Noun))
-          (VP -> (Verb NP))
-          (Art -> the) (Art -> a)
-          (Noun -> man) (Noun -> ball) (Noun -> woman) (Noun -> table)
-          (Noun -> noun) (Noun -> verb)
-          (Verb -> hit) (Verb -> took) (Verb -> saw) (Verb -> liked)))
+  '((Sentence -> (NP VP))
+    (NP -> (Art Noun))
+    (VP -> (Verb NP))
+    (Art -> the) (Art -> a)
+    (Noun -> man) (Noun -> ball) (Noun -> woman) (Noun -> table)
+    (Noun -> noun) (Noun -> verb)
+    (Verb -> hit) (Verb -> took) (Verb -> saw) (Verb -> liked)))
+
 (setf *grammar* *grammar3*)
 ```
 
@@ -87,23 +87,30 @@ Rules are defined as structures of type list with three slots: the left-hand sid
 Compare this to the treatment on [page 40](B9780080571157500029.xhtml#p40).
 
 ```lisp
-(defstruct (rule (:type list)) lhs -> rhs)
+(defstruct (rule (:type list)) lhs -> rhs sem)
+
 (defstruct (parse) "A parse tree and a remainder." tree rem)
+
 ;; Trees are of the form: (lhs . rhs)
 (defun new-tree (cat rhs) (cons cat rhs))
 (defun tree-lhs (tree) (first tree))
 (defun tree-rhs (tree) (rest tree))
+
 (defun parse-lhs (parse) (tree-lhs (parse-tree parse)))
+
 (defun lexical-rules (word)
-      "Return a list of rules with word on the right-hand side."
-      (find-all word *grammar* :key #'rule-rhs :test #'equal))
+  "Return a list of rules with word on the right hand side."
+  (or (find-all word *grammar* :key #'rule-rhs :test #'equal)
+      (mapcar #'(lambda (cat) `(,cat -> ,word)) *open-categories*)))
+
 (defun rules-starting-with (cat)
-      "Return a list of rules where cat starts the rhs."
-      (find-all cat *grammar*
-                                :key #'(lambda (rule) (first-or-nil (rule-rhs rule)))))
+  "Return a list of rules where cat starts the rhs."
+  (find-all cat *grammar*
+            :key #'(lambda (rule) (first-or-nil (rule-rhs rule)))))
+
 (defun first-or-nil (x)
-      "The first element of x if it is a list; else nil."
-      (if (consp x) (first x) nil))
+  "The first element of x if it is a list; else nil."
+  (if (consp x) (first x) nil))
 ```
 
 Now we're ready to define the parser.
@@ -113,11 +120,12 @@ parser keeps only the parses with no remainder-that is, the parses that span all
 
 ```lisp
 (defun parser (words)
-      "Return all complete parses of a list of words."
-      (mapcar #'parse-tree (compiete-parses (parse words))))
-(defun compiete-parses (parses)
-      "Those parses that are complete (have no remainder)."
-      (find-all-if #'null parses :key #'parse-rem))
+  "Return all complete parses of a list of words."
+  (mapcar #'parse-tree (complete-parses (parse words))))
+
+(defun complete-parses (parses)
+  "Those parses that are complete (have no remainder)."
+  (find-all-if #'null parses :key #'parse-rem))
 ```
 
 The function parse looks at the first word and considers each category it could be.
@@ -135,44 +143,40 @@ This gets extended as a sentence with a VP needed, and eventually we get a parse
 
 ```lisp
 (defun parse (words)
-      "Bottom-up parse, returning all parses of any prefix of words."
-      (unless (null words)
-            (mapcan #'(lambda (rule)
-                                                  (extend-parse (rule-lhs rule) (list (first words))
-                                                                                              (rest words) nil))
-                                        (lexical-rules (first words)))))
+  "Bottom-up parse, returning all parses of any prefix of words."
+  (unless (null words)
+    (mapcan #'(lambda (rule)
+                (extend-parse (rule-lhs rule) (list (first words))
+                              (rest words) nil))
+            (lexical-rules (first words)))))
+
 (defun extend-parse (lhs rhs rem needed)
-      "Look for the categories needed to complete the parse."
-      (if (null needed)
-```
-
-`              ;; If nothing needed.
-return parse and upward extensions`
-
-```lisp
-              (let ((parse (make-parse :tree (new-tree lhs rhs) :rem rem)))
-                  (cons parse
-                                      (mapcan
-                                          # '(lambda (rule)
-                                                          (extend-parse (rule-lhs rule)
-                                                                                                      (list (parse-tree parse))
-                                                                                                      rem (rest (rule-rhs rule))))
-                                          (rules-starting-with lhs))))
-              ;; otherwise try to extend rightward
+  "Look for the categories needed to complete the parse."
+  (if (null needed)
+      ;; If nothing needed, return parse and upward extensions
+      (let ((parse (make-parse :tree (new-tree lhs rhs) :rem rem)))
+        (cons parse
               (mapcan
-                  #'(lambda (p)
-                          (if (eq (parse-lhs p) (first needed))
-                                              (extend-parse lhs (appendl rhs (parse-tree p))
-                                                                                            (parse-rem p) (rest needed))))
-                    (parse rem))))
+                #'(lambda (rule)
+                    (extend-parse (rule-lhs rule)
+                                  (list (parse-tree parse))
+                                  rem (rest (rule-rhs rule))))
+                (rules-starting-with lhs))))
+      ;; otherwise try to extend rightward
+      (mapcan
+        #'(lambda (p)
+            (if (eq (parse-lhs p) (first needed))
+                (extend-parse lhs (append1 rhs (parse-tree p))
+                              (parse-rem p) (rest needed))))
+        (parse rem))))
 ```
 
 This makes use of the auxiliary function append1:
 
 ```lisp
-(defun appendl (items item)
-      "Add item to end of list of items."
-      (append items (list item)))
+(defun append1 (items item)
+  "Add item to end of list of items."
+  (append items (list item)))
 ```
 
 Some examples of the parser in action are shown here:
@@ -191,8 +195,6 @@ Some examples of the parser in action are shown here:
 ```
 
 ## 19.2 Extending the Grammar and Recognizing Ambiguity
-{:#s0015}
-{:.h1hd}
 
 Overall, the parser seems to work fine, but the range of sentences we can parse is quite limited with the current grammar.
 The following grammar includes a wider variety of linguistic phenomena: adjectives, prepositional phrases, pronouns, and proper names.
@@ -217,28 +219,29 @@ Here is the grammar:
 
 ```lisp
 (defparameter *grammar4*
-      '((S -> (NP VP))
-          (NP -> (D N))
-          (NP -> (D A  + N))
-          (NP -> (NP PP))
-          (NP -> (Pro))
-          (NP -> (Name))
-          (VP -> (V NP))
-          (VP -> (V))
-          (VP -> (VP PP))
-          (PP -> (P NP))
-          (A  + -> (A))
-          (A  + -> (A A  +))
-          (Pro -> I) (Pro -> you) (Pro -> he) (Pro -> she)
-          (Pro -> it) (Pro -> me) (Pro -> him) (Pro -> her)
-          (Name -> John) (Name -> Mary)
-          (A -> big) (A -> little) (A -> old) (A -> young)
-          (A -> blue) (A -> green) (A -> orange) (A -> perspicuous)
-          (D -> the) (D -> a) (D -> an)
-          (N -> man) (N -> ball) (N -> woman) (N -> table) (N -> orange)
-          (N -> saw) (N -> saws) (N -> noun) (N -> verb)
-          (P -> with) (P -> for) (P -> at) (P -> on) (P -> by) (P -> of) (P -> in)
-          (V -> hit) (V -> took) (V -> saw) (V -> liked) (V -> saws)))
+  '((S -> (NP VP))
+    (NP -> (D N))
+    (NP -> (D A+ N))
+    (NP -> (NP PP))
+    (NP -> (Pro))
+    (NP -> (Name))
+    (VP -> (V NP))
+    (VP -> (V))
+    (VP -> (VP PP))
+    (PP -> (P NP))
+    (A+ -> (A))
+    (A+ -> (A A+))
+    (Pro -> I) (Pro -> you) (Pro -> he) (Pro -> she)
+    (Pro -> it) (Pro -> me) (Pro -> him) (Pro -> her)
+    (Name -> John) (Name -> Mary)
+    (A -> big) (A -> little) (A -> old) (A -> young)
+    (A -> blue) (A -> green) (A -> orange) (A -> perspicuous)
+    (D -> the) (D -> a) (D -> an)
+    (N -> man) (N -> ball) (N -> woman) (N -> table) (N -> orange)
+    (N -> saw) (N -> saws) (N -> noun) (N -> verb)
+    (P -> with) (P -> for) (P -> at) (P -> on) (P -> by) (P -> of) (P -> in)
+    (V -> hit) (V -> took) (V -> saw) (V -> liked) (V -> saws)))
+
 (setf *grammar* *grammar4*)
 ```
 
@@ -266,8 +269,6 @@ Here we see a phrase that is ambiguous between a sentence and a noun phrase:
 ```
 
 ## 19.3 More Efficient Parsing
-{:#s0020}
-{:.h1hd}
 
 With more complex grammars and longer sentences, the parser starts to slow down.
 The main problem is that it keeps repeating work.
@@ -294,10 +295,11 @@ Besides memoizing, the only change is to clear the memoization table within pars
 (memoize 'lexical-rules)
 (memoize 'rules-starting-with)
 (memoize 'parse :test #'eq)
+
 (defun parser (words)
-      "Return all complete parses of a list of words."
-      (clear-memoize 'parse) ;***
-      (mapcar #'parse-tree (complete-parses (parse words))))
+  "Return all complete parses of a list of words."
+  (clear-memoize 'parse) ;***
+  (mapcar #'parse-tree (complete-parses (parse words))))
 ```
 
 In normal human language use, memoization would not work very well, since the interpretation of a phrase depends on the context in which the phrase was uttered.
@@ -309,10 +311,10 @@ The function use is introduced to tell the table-lookup functions that they are 
 
 ```lisp
 (defun use (grammar)
-      "Switch to a new grammar."
-      (clear-memoize !!!(char) ߣrules-starting-with)
-      (clear-memoize !!!(char) ߣlexical-rules)
-      (length (setf *grammar* grammar)))
+  "Switch to a new grammar."
+  (clear-memoize 'rules-starting-with)
+  (clear-memoize 'lexical-rules)
+  (length (setf *grammar* grammar)))
 ```
 
 Now we run the benchmark again with the memoized version of pa rse:
@@ -346,8 +348,6 @@ The performance of the memoized version is quite acceptable; for N=5, a 20-word 
 Implement this approach and see if it entails less overhead than the more general hash table approach.
 
 ## 19.4 The Unknown-Word Problem
-{:#s0025}
-{:.h1hd}
 
 As it stands, the parser cannot deal with unknown words.
 Any sentence containing a word that is not in the grammar will be rejected, even if the program can parse all the rest of the words perfectly.
@@ -357,11 +357,12 @@ This can be programmed very simply by having `lexical-rules` return a list of th
 
 ```lisp
 (defparameter *open-categories* '(N V A Name)
-      "Categories to consider for unknown words")
+  "Categories to consider for unknown words")
+
 (defun lexical-rules (word)
-      "Return a list of rules with word on the right-hand side."
-      (or (find-all word *grammar* :key #'rule-rhs :test #'equal)
-                  (mapcar #'(lambda (cat) '(,cat -> ,word)) *open-categories*)))
+  "Return a list of rules with word on the right hand side."
+  (or (find-all word *grammar* :key #'rule-rhs :test #'equal)
+      (mapcar #'(lambda (cat) `(,cat -> ,word)) *open-categories*)))
 ```
 
 With memoization of lexical - rules, this means that the lexicon is expanded every time an unknown word is encountered.
@@ -404,8 +405,6 @@ Things are not always so straightforward, unfortunately, as the following exampl
 If the program knew morphology-that a *y* at the end of a word often signais an adjective, an *s* a plural noun, and an *ed* a past-tense verb-then it could do much better.
 
 ## 19.5 Parsing into a Semantic Representation
-{:#s0030}
-{:.h1hd}
 
 Syntactic parse trees of a sentence may be interesting, but by themselves they're not very useful.
 We use sentences to communicate ideas, not to display grammatical structures.
@@ -425,10 +424,10 @@ To maintain consistency with the old new-tree function (and to avoid having to p
 This option to `defstruct makes (new-tree a b c)` equivalent to `(make-tree :lhs a :sem b :rhs c)`.
 
 ```lisp
-(defstruct (rule (:type list))
-      lhs -> rhs sem)
-(defstruct (tree (:type list) (:include rule) (:copiernil)
-                                  (:constructor new-tree (lhs sem rhs))))
+(defstruct (rule (:type list)) lhs -> rhs sem)
+
+(defstruct (tree (:type list) (:include rule) (:copier nil)
+                 (:constructor new-tree (lhs sem rhs))))
 ```
 
 We will adopt the convention that the semantics of a word can be any Lisp object.
@@ -438,7 +437,7 @@ Thus, the grammar writer must insure that the semantic component of rules are fu
 For example, given the rule
 
 ```lisp
-      (NP -> (NP CONJ NP) infix-funcall)
+(NP -> (NP CONJ NP) infix-funcall)
 ```
 
 then the semantics of the phrase "1 to 5 without 3" could be determined by first determining the semantics of"1 to 5" tobe(l 2 3 4 5),of"without"tobe set-`difference`, and of "3" to be (3).
@@ -449,22 +448,24 @@ This may make more sense if we look at a complete grammar for the CD player prob
 
 ```lisp
 (use
-      '((NP -> (NP CONJ NP)        infix-funcall)
-        (NP -> (N)                            list)
-        (NP -> (N P N)                    infix-funcall)
-        (N -> (DIGIT)                      identity)
-        (P -> to                                integers)
-        (CONJ -> and                        union)
-        (CONJ -> without                set-difference)
-        (N -> 1 1) (N -> 2 2) (N -> 3 3) (N -> 4 4) (N -> 5 5)
-        (N -> 6 6) (N -> 7 7) (N -> 8 8) (N -> 9 9) (N -> 0 0)))
+  '((NP -> (NP CONJ NP) infix-funcall)
+    (NP -> (N)          list)
+    (NP -> (N P N)      infix-funcall)
+    (N ->  (DIGIT)      identity)
+    (P ->  to           integers)
+    (CONJ -> and        ordered-union)
+    (CONJ -> without    ordered-set-difference)
+    (N -> 1 1) (N -> 2 2) (N -> 3 3) (N -> 4 4) (N -> 5 5)
+    (N -> 6 6) (N -> 7 7) (N -> 8 8) (N -> 9 9) (N -> 0 0)))
+
 (defun integers (start end)
-      "A list of all the integers in the range [start...end] inclusive."
-      (if (> start end) nil
-              (cons start (integers (+ start 1) end))))
-(defun infix-funcal1 (argl function arg2)
-      "Apply the function to the two arguments"
-      (funcall function argl arg2))
+  "A list of all the integers in the range [start...end] inclusive."
+  (if (> start end) nil
+      (cons start (integers (+ start 1) end))))
+
+(defun infix-funcall (arg1 function arg2)
+  "Apply the function to the two arguments"
+  (funcall function arg1 arg2))
 ```
 
 Consider the first three grammar rules, which are the only nonlexical rules.
@@ -485,60 +486,58 @@ We adopt the convention that the semantic value `nil` indicates failure, and we 
 
 ```lisp
 (defun parse (words)
-      "Bottom-up parse, returning all parses of any prefix of words.
-      This version has semantics."
-      (unless (null words)
-            (mapcan #'(lambda (rule)
-                                    (extend-parse (rule-lhs rule) (rule-sem rule) ;***
-                                                                (list (first words)) (rest words) nil))
-                            (lexical-rules (first words)))))
+  "Bottom-up parse, returning all parses of any prefix of words.
+  This version has semantics."
+  (unless (null words)
+    (mapcan #'(lambda (rule)
+                (extend-parse (rule-lhs rule) (rule-sem rule) ;***
+                              (list (first words)) (rest words) nil))
+            (lexical-rules (first words)))))
+
 (defun extend-parse (lhs sem rhs rem needed) ;***
-      "Look for the categories needed to complete the parse.
-      This version has semantics."
-      (if (null needed)
-              ;; If nothing is needed, return this parse and upward extensions.
-              ;; unless the semantics fails
-              (let ((parse (make-parse :tree (new-tree lhs sem rhs) :rem rem)))
-                  (unless (null (apply-semantics (parse-tree parse))) ;***
-                      (cons parse
-                                  (mapcan
-                                        #'(lambda (rule)
-                                                  (extend-parse (rule-lhs rule) (rule-semrule) ;***
-                                                                              (list (parse-tree parse)) rem
-                                                                              (rest (rule-rhs rule))))
-                                                    (rules-starting-with lhs)))))
-              ;; otherwise try to extend rightward
-              (mapcan
-                  #'(lambda (p)
-                          (if (eq (parse-lhs p) (first needed))
-                                  (extend-parse lhs sem (appendl rhs (parse-tree p)) ;***
-                                                            (parse-rem p) (rest needed))))
-                  (parse rem))))
+  "Look for the categories needed to complete the parse.
+  This version has semantics."
+  (if (null needed)
+      ;; If nothing is needed, return this parse and upward extensions,
+      ;; unless the semantics fails
+      (let ((parse (make-parse :tree (new-tree lhs sem rhs) :rem rem)))
+        (unless (null (apply-semantics (parse-tree parse))) ;***
+          (cons parse
+                (mapcan
+                  #'(lambda (rule)
+                      (extend-parse (rule-lhs rule) (rule-sem rule) ;***
+                                    (list (parse-tree parse)) rem
+                                    (rest (rule-rhs rule))))
+                  (rules-starting-with lhs)))))
+      ;; otherwise try to extend rightward
+      (mapcan
+        #'(lambda (p)
+            (if (eq (parse-lhs p) (first needed))
+                (extend-parse lhs sem (append1 rhs (parse-tree p)) ;***
+                              (parse-rem p) (rest needed))))
+        (parse rem))))
 ```
 
 We need to add some new functions to support this:
 
 ```lisp
 (defun apply-semantics (tree)
-      "For terminal nodes, just fetch the semantics.
-      Otherwise, apply the sem function to its constituents."
-      (if (terminal-tree-p tree)
-              (tree-sem tree)
-              (setf (tree-sem tree)
-                            (apply (tree-sem tree)
-                                        (mapcar #'tree-sem (tree-rhs tree))))))
+  "For terminal nodes, just fetch the semantics.
+  Otherwise, apply the sem function to its constituents."
+  (if (terminal-tree-p tree)
+      (tree-sem tree)
+      (setf (tree-sem tree)
+            (apply (tree-sem tree)
+                   (mapcar #'tree-sem (tree-rhs tree))))))
+
 (defun terminal-tree-p (tree)
-      "Does this tree have a single word on the rhs?"
-      (and (length=l (tree-rhs tree))
-                      (atom (first (tree-rhs tree)))))
+  "Does this tree have a single word on the rhs?"
+  (and (length=1 (tree-rhs tree))
+       (atom (first (tree-rhs tree)))))
+
 (defun meanings (words)
-```
-
-`      "Return all possible meanings of a phrase.
-Throw away the syntactic part."`
-
-```lisp
-      (remove-duplicates (mapcar #'tree-sem (parser words)) :test #'equal))
+  "Return all possible meanings of a phrase.  Throw away the syntactic part."
+  (remove-duplicates (mapcar #'tree-sem (parser words)) :test #'equal))
 ```
 
 Here are some examples of the meanings that the parser can extract:
@@ -573,20 +572,21 @@ We could alternately have specified a number to be a digit followed by a number,
 
 ```lisp
 (use
-      '((NP -> (NP CONJ NP)      infix-funcall)
-      (NP -> (N)                            list)
-      (NP -> (N P N)                    infix-funcall)
-      (N -> (DIGIT)                      identity)
-      (N -> (N DIGIT)                  10*N+D)
-      (P -> to                                integers)
-      (CONJ -> and                        union*)
-      (CONJ -> without                set-diff)
-      (DIGIT -> 1 1) (DIGIT -> 2 2)      (DIGIT -> 3 3)
-      (DIGIT -> 4 4) (DIGIT -> 5 5)      (DIGIT -> 6 6)
-      (DIGIT -> 7 7) (DIGIT -> 8 8)      (DIGIT -> 9 9)
-      (DIGIT -> 0 0)))
+  '((NP -> (NP CONJ NP) infix-funcall)
+    (NP -> (N)          list)
+    (NP -> (N P N)      infix-funcall)
+    (N ->  (DIGIT)      identity)
+    (N ->  (N DIGIT)    10*N+D)
+    (P ->  to           integers)
+    (CONJ -> and        union*)
+    (CONJ -> without    set-diff)
+    (DIGIT -> 1 1) (DIGIT -> 2 2) (DIGIT -> 3 3)
+    (DIGIT -> 4 4) (DIGIT -> 5 5) (DIGIT -> 6 6)
+    (DIGIT -> 7 7) (DIGIT -> 8 8) (DIGIT -> 9 9)
+    (DIGIT -> 0 0)))
+
 (defun union* (x y) (if (null (intersection x y)) (append x y)))
-(defun set-diff (x y) (if (subsetp y x) (set-difference x y)))
+(defun set-diff (x y) (if (subsetp y x) (ordered-set-difference x y)))
 (defun 10*N+D (N D) (+ (* 10 N) D))
 ```
 
@@ -608,8 +608,6 @@ With this new grammar, we can get single interpretations out of most reasonable 
 The example "1 2 3" shows an ambiguity between the number 123 and the list (123), but all the others are unambiguous.
 
 ## 19.6 Parsing with Preferences
-{:#s0035}
-{:.h1hd}
 
 One reason we have unambiguous interpretations is that we have a very limited domain of interpretation: we are dealing with sets of numbers, not lists.
 This is perhaps typical of the requests faced by a CD player, but it does not account for all desired input.
@@ -623,11 +621,11 @@ As with the sem component, this will be used to hold first a function to compute
 
 ```lisp
 (defstruct (rule (:type list)
-                                  (:constructor
-                                  rule (lhs -> rhs &optional sem score)))
-        lhs -> rhs sem score)
-(defstruct (tree (:type list) (:include rule) (:copiernil)
-                                  (:constructor new-tree (lhs sem score rhs))))
+                 (:constructor rule (lhs -> rhs &optional sem score)))
+  lhs -> rhs sem score)
+
+(defstruct (tree (:type list) (:include rule) (:copier nil)
+                 (:constructor new-tree (lhs sem score rhs))))
 ```
 
 Note that we have added the constructor function rul e.
@@ -636,12 +634,12 @@ The user does not have to supply them, but the function use will make sure that 
 
 ```lisp
 (defun use (grammar)
-        "Switch to a new grammar."
-        (clear-memoize 'rules-starting-with)
-        (clear-memoize 'lexical-rules)
-        (length (setf *grammar*
-                                    (mapcar #'(lambda (r) (apply #'rule r))
-                                                    grammar))))
+  "Switch to a new grammar."
+  (clear-memoize 'rules-starting-with)
+  (clear-memoize 'lexical-rules)
+  (length (setf *grammar*
+                (mapcar #'(lambda (r) (apply #'rule r))
+                        grammar))))
 ```
 
 Now we modify the parser to keep track of the score.
@@ -650,41 +648,41 @@ There are two places where we put the score into trees as we create them, and on
 
 ```lisp
 (defun parse (words)
-        "Bottom-up parse, returning all parses of any prefix of words.
-        This version has semantics and preference scores."
-        (unless (null words)
-            (mapcan #'(lambda (rule)
-                                    (extend-parse
-                                          (rule-lhs rule) (rule-sem rule)
-                                          (rule-score rule) (list (first words)) ;***
-                                          (rest words) nil))
-                            (lexical-rules (first words)))))
+  "Bottom-up parse, returning all parses of any prefix of words."
+  This version has semantics and preference scores."
+  (unless (null words)
+    (mapcan #'(lambda (rule)
+                (extend-parse (rule-lhs rule) (rule-sem rule)
+                              (rule-score rule) (list (first words)) ;***
+                              (rest words) nil))
+            (lexical-rules (first words)))))
+
 (defun extend-parse (lhs sem score rhs rem needed) ;***
-        "Look for the categories needed to complete the parse.
-        This version has semantics and preference scores."
-        (if (null needed)
-                    ;; If nothing is needed, return this parse and upward extensions,
-                    ;; unless the semantics fails
-                    (let ((parse (make-parse :tree (new-tree lhs sem score rhs) ;***
-                                                                      :rem rem)))
-                          (unless (null (apply-semantics (parse-tree parse)))
-        (apply-scorer (parse-tree parse)) ;***
-        (cons parse
-                    (mapcan
-                        #'(lambda (rule)
-                                (extend-parse
-                                    (rule-lhs rule) (rule-sem rule)
-                                    (rule-score rule) (list (parse-tree parse)) ;***
-                                    rem (rest (rule-rhs rule))))
-                            (rules-starting-with lhs)))))
-        ;; otherwise try to extend rightward
-        (mapcan
-            #'(lambda (p)
-                    (if (eq (parse-lhs p) (first needed))
-                            (extend-parse lhs sem score
-                                                        (appendl rhs (parse-tree p)) ;***
-                                                        (parse-rem p) (rest needed))))
-                      (parse rem))))
+  "Look for the categories needed to complete the parse.
+  This version has semantics and preference scores."
+  (if (null needed)
+      ;; If nothing is needed, return this parse and upward extensions,
+      ;; unless the semantics fails
+      (let ((parse (make-parse :tree (new-tree lhs sem score rhs) ;***
+                               :rem rem)))
+        (unless (null (apply-semantics (parse-tree parse)))
+          (apply-scorer (parse-tree parse)) ;***
+          (cons parse
+                (mapcan
+                  #'(lambda (rule)
+                      (extend-parse
+                        (rule-lhs rule) (rule-sem rule)
+                        (rule-score rule) (list (parse-tree parse)) ;***
+                        rem (rest (rule-rhs rule))))
+                  (rules-starting-with lhs)))))
+      ;; otherwise try to extend rightward
+      (mapcan
+        #'(lambda (p)
+            (if (eq (parse-lhs p) (first needed))
+                (extend-parse lhs sem score
+                              (append1 rhs (parse-tree p)) ;***
+                              (parse-rem p) (rest needed))))
+        (parse rem))))
 ```
 
 Again we need some new functions to support this.
@@ -701,26 +699,24 @@ This will simplify the definition of some of the scoring functions.
 
 ```lisp
 (defun apply-scorer (tree)
-        "Compute the score for this tree."
-        (let ((score (or (tree-score tree) 0)))
-              (setf (tree-score tree)
-                            (if (terminal-tree-p tree)
-                                      score
-                                      ;; Add up the constituent's scores,
-                                      ;; along with the tree's score
-                                      (+ (sum (tree-rhs tree) #'tree-score-or-0)
-                                              (if (numberp score)
-                                                      score
-                                                      (or (apply score (tree-rhs tree)) 0)))))))
+  "Compute the score for this tree."
+  (let ((score (or (tree-score tree) 0)))
+    (setf (tree-score tree)
+          (if (terminal-tree-p tree)
+              score
+              ;; Add up the constituent's scores,
+              ;; along with the tree's score
+              (+ (sum (tree-rhs tree) #'tree-score-or-0)
+                 (if (numberp score)
+                     score
+                     (or (apply score (tree-rhs tree)) 0)))))))
 ```
 
 Here is an accessor function to pick out the score from a tree:
 
 ```lisp
 (defun tree-score-or-0 (tree)
-        (if (numberp (tree-score tree))
-                (tree-score tree)
-                0))
+    (if (numberp (tree-score tree)) (tree-score tree) 0))
 ```
 
 Here is the updated grammar.
@@ -729,30 +725,26 @@ I added the postnominal adjectives "shuffled," which randomly permutes the list 
 I also added the operator "repeat," as in "1 to 3 repeat 5," which repeats a list a certain number of times.
 I also added brackets to allow input that says explicitly how it should be parsed.
 
-`(use`
-
-| []()    |      |                |                  |                         |
-|---------|------|----------------|------------------|-------------------------|
-| `'((NP` | `->` | `(NP CONJ NP)` | `infix-funcal1`  | `infix-scorer)`         |
-| `(NP`   | `->` | `(N P N)`      | `infix-funcal1`  | `infix-scorer)`         |
-| `(NP`   | `->` | `(N)`          | `list)`          |                         |
-| `(NP`   | `->` | `([ NP ])`     | `arg2)`          |                         |
-| `(NP`   | `->` | `(NP ADJ)`     | `rev-funcall`    | `rev-scorer)`           |
-| `(NP`   | `->` | `(NP OP N)`    | `infix-funcall)` |                         |
-| `(N`    | `->` | `(D)`          | `identity)`      |                         |
-| `(N`    | `->` | `(N D)`        | `10*N+D)`        |                         |
-| `(P`    | `->` | `to`           | `integers`       | `prefer  <)`            |
-| `([`    | `->` | `[`            | `[)`             |                         |
-| `(]`    | `->` | `]`            | `])`             |                         |
-| `(OP`   | `->` | `repeat`       | `repeat)`        |                         |
-| `(CONJ` |      | `-> and`       | `append`         | `prefer-disjoint)`      |
-| `(CONJ` |      | `-> without`   | `set-difference` | `prefer-subset)`        |
-| `(ADJ`  |      | `-> reversed`  | `reverse`        | `inv-span)`             |
-| `(ADJ`  |      | `-> shuffled`  | `permute`        | `prefer-not-singleton)` |
-
-```
-(D -> 1 1) (D -> 2 2) (D -> 3 3) (D -> 4 4) (D -> 5 5)
-(D -> 6 6) (D -> 7 7) (D -> 8 8) (D -> 9 9) (D -> 0 0)))
+```lisp
+(use
+  '((NP -> (NP CONJ NP) infix-funcall  infix-scorer)
+    (NP -> (N P N)      infix-funcall  infix-scorer)
+    (NP -> (N)          list)
+    (NP -> ([ NP ])     arg2)
+    (NP -> (NP ADJ)     rev-funcall    rev-scorer)
+    (NP -> (NP OP N)    infix-funcall)
+    (N  -> (D)          identity)
+    (N  -> (N D)        10*N+D)
+    (P  -> to           integers       prefer<)
+    ([  -> [            [)
+    (]  -> ]            ])
+    (OP -> repeat       repeat)
+    (CONJ -> and        append         prefer-disjoint)
+    (CONJ -> without    ordered-set-difference prefer-subset)
+    (ADJ -> reversed    reverse        inv-span)
+    (ADJ -> shuffled    permute        prefer-not-singleton)
+    (D -> 1 1) (D -> 2 2) (D -> 3 3) (D -> 4 4) (D -> 5 5)
+    (D -> 6 6) (D -> 7 7) (D -> 8 8) (D -> 9 9) (D -> 0 0)))
 ```
 
 The following scoring functions take trees as inputs and compute bonuses or penalties for those trees.
@@ -765,75 +757,83 @@ If the final scores corne out as positive or as nonintegers, then this scoring c
 The "x shuffled" scorer, `prefer-not-singleton`, is similar, except that there the penalty is for shuffling a list of less than two songs.
 
 ```lisp
-(defun prefer  < (x y)
-      (if (>= (sem x) (sem y)) -1))
-(defun prefer-disjoint (x y)
-      (if (intersection (sem x) (sem y)) -1))
+(defun prefer< (x y) (if (>= (sem x) (sem y)) -1))
+(defun prefer-disjoint (x y) (if (intersection (sem x) (sem y)) -1))
 (defun prefer-subset (x y)
-      (+ (inv-span x) (if (subsetp (sem y) (sem x)) 0 -3)))
+  (+ (inv-span x) (if (subsetp (sem y) (sem x)) 0 -3)))
 (defun prefer-not-singleton (x)
-      (+ (inv-span x) (if (< (length (sem x)) 2) -4 0)))
+  (+ (inv-span x) (if (< (length (sem x)) 2) -4 0)))
 ```
 
 The `infix-scorer` and `rev-scorer` functionsdon'taddanythingnew, they justassure that the previously mentioned scoring functions will get applied in the right place.
 
 ```lisp
-(defun infix-scorer (argl scorer arg2)
-      (funcall (tree-score scorer) argl arg2))
+(defun infix-scorer (arg1 scorer arg2)
+  (funcall (tree-score scorer) arg1 arg2))
+
 (defun rev-scorer (arg scorer) (funcall (tree-score scorer) arg))
 ```
 
 Here are the functions mentioned in the grammar, along with some useful utilities:
 
 ```lisp
-(defun arg2 (al a2 &rest a-n) (declare (ignore al a-n)) a2)
+(defun arg2 (a1 a2 &rest a-n) (declare (ignore a1 a-n)) a2)
+
 (defun rev-funcall (arg function) (funcall function arg))
+
 (defun repeat (list n)
-      "Append list n times."
-      (if (= n 0)
-                nil
-                (append list (repeat list (- n 1)))))
+  "Append list n times."
+  (if (= n 0)
+      nil
+      (append list (repeat list (- n 1)))))
+
 (defun span-length (tree)
-      "How many words are in tree?"
-      (if (terminal-tree-p tree) 1
-                (sum (tree-rhs tree) #'span-length)))
+  "How many words are in tree?"
+  (if (terminal-tree-p tree) 1
+      (sum (tree-rhs tree) #'span-length)))
+
 (defun inv-span (tree) (/ 1 (span-length tree)))
+
 (defun sem (tree) (tree-sem tree))
+
 (defun integers (start end)
-      "A list of all the integers in the range [start...end] inclusive.
-      This version allows start > end."
-      (cond ((< start end) (cons start (integers (+ start 1) end)))
-                  ((> start end) (cons start (integers (- start 1) end)))
-                  (t (list start))))
+  "A list of all the integers in the range [start...end] inclusive.
+  This version allows start > end."
+  (cond ((< start end) (cons start (integers (+ start 1) end)))
+        ((> start end) (cons start (integers (- start 1) end)))
+        (t (list start))))
+
 (defun sum (numbers &optional fn)
-      "Sum the numbers, or sum (mapcar fn numbers)."
-      (if fn
-              (loop for x in numbers sum (funcall fn x))
-              (loop for x in numbers sum x)))
+  "Sum the numbers, or sum (mapcar fn numbers)."
+  (if fn
+      (loop for x in numbers sum (funcall fn x))
+      (loop for x in numbers sum x)))
+
 (defun permute (bag)
-      "Return a random permutation of the given input list."
-      (if (null bag)
-                nil
-                (let ((e (random-elt bag)))
-                    (cons e (permute (remove e bag :count 1 :test #'eq))))))
+  "Return a random permutation of the given input list."
+  (if (null bag)
+      nil
+      (let ((e (random-elt bag)))
+        (cons e (permute (remove e bag :count 1 :test #'eq))))))
 ```
 
 We will need a way to show off the preference rankings:
 
 ```lisp
 (defun all-parses (words)
-      (format t "~%Score Semantics~25T~a" words)
-      (format t "~%======= ========== ~  25T =============== ~% ")
-      (loop for tree in (sort (parser words) #'> :key #'tree-score)
-          do (format t "~5.1f ~  9a~25T~a~%" (tree-score tree) (tree-sem tree)
-                                        (bracketing tree)))
-      (values))
+  (format t "~%Score  Semantics~25T~a" words)
+  (format t "~%=====  =========~25T============================~%")
+  (loop for tree in (sort (parser words) #'> :key #'tree-score)
+    do (format t "~5,1f  ~9a~25T~a~%" (tree-score tree) (tree-sem tree)
+               (bracketing tree)))
+  (values))
+
 (defun bracketing (tree)
-      "Extract the terminais, bracketed with parens."
-      (cond ((atom tree) tree)
-                  ((length=l (tree-rhs tree))
-                    (bracketing (first (tree-rhs tree))))
-                  (t (mapcar #'bracketing (tree-rhs tree)))))
+  "Extract the terminals, bracketed with parens."
+  (cond ((atom tree) tree)
+        ((length=1 (tree-rhs tree))
+         (bracketing (first (tree-rhs tree))))
+        (t (mapcar #'bracketing (tree-rhs tree)))))
 ```
 
 Now we can try some examples:
@@ -904,36 +904,27 @@ The query-user function may be useful in many applications, but note that meani 
 
 ```lisp
 (defun meaning (words &optional (tie-breaker #'query-user))
-        "Choose the single top-ranking meaning for the words."
-        (let* ((trees (sort (parser words) #'> :key #'tree-score))
-                      (best-score (if trees (tree-score (first trees)) 0))
-                      (best-trees (delete best-score trees
-                                                              :key #'tree-score :test-not #'eql))
-                      (best-sems (delete-duplicates (mapcar #'tree-sem best-trees)
-                                                                                  :test #'equal)))
-(case (length best-sems)
-```
+  "Choose the single top-ranking meaning for the words."
+  (let* ((trees (sort (parser words) #'> :key #'tree-score))
+         (best-score (if trees (tree-score (first trees)) 0))
+         (best-trees (delete best-score trees
+                             :key #'tree-score :test-not #'eql))
+         (best-sems (delete-duplicates (mapcar #'tree-sem best-trees)
+                                       :test #'equal)))
+    (case (length best-sems)
+      (0 (format t "~&Sorry, I didn't understand that.") nil)
+      (1 (first best-sems))
+      (t (funcall tie-breaker best-sems)))))
 
-`        (0 (format t "~&Sorry.
-I didn't understand that.") nil)`
-
-```lisp
-        (1 (first best-sems))
-        (t (funcall tie-breaker best-sems)))))
 (defun query-user (choices &optional
-                                                      (header-str "~&Please pick one:")
-```
-
-`                                                      (footer-str "~&Your choice?
-"))`
-
-```lisp
-        "Ask user to make a choice."
-        (format *query-io* header-str)
-        (loop for choice in choices for i from 1 do
-                      (format *query-io* "~&~3d: ~  a" i choice))
-        (format *query-io* footer-str)
-        (nth (- (read) 1) choices))
+                           (header-str "~&Please pick one:")
+                           (footer-str "~&Your choice? "))
+  "Ask user to make a choice."
+  (format *query-io* header-str)
+  (loop for choice in choices for i from 1 do
+        (format *query-io* "~&~3d: ~a" i choice))
+  (format *query-io* footer-str)
+  (nth (- (read) 1) choices))
 ```
 
 Here we see some final examples:
@@ -992,8 +983,6 @@ Unfortunately, repeated elements are not counted in sets, so for example, the li
 However, we could change the scorer for "without" to test for `sub-bag-p` (not a built-in Common Lisp function) instead, and then "repeat" would not have to be concerned with that case.
 
 ## 19.7 The Problem with Context-Free Phrase-Structure Rules
-{:#s0040}
-{:.h1hd}
 
 The fragment of English grammar we specified in [section 19.2](#s0015) admits a variety of ungrammatical phrases.
 For example, it is equally happy with both "I liked her" and "me liked she." Only the first of these should be accepted; the second should be ruled out.
@@ -1013,8 +1002,6 @@ In this book we are more interested in natural languages, so in the next chapter
 Furthermore, *unification grammars* allow a natural way of attaching semantics to a parse.
 
 ## 19.8 History and References
-{:#s0045}
-{:.h1hd}
 
 There is a class of parsing algorithms known as *chart parsers* that explicitly cache partial parses and reuse them in constructing larger parses.
 Earley's algorithm (1970) is the first example, and Martin [Kay (1980)](B9780080571157500285.xhtml#bb0605) gives a good overview of the field and introduces a data structure, the *chart*, for storing substrings of a parse.
@@ -1026,8 +1013,6 @@ In fact, it is possible to write a top-down parser that is even more succinct.
 For a general overview of natural language processing, my preferences (in order) are [Allen 1987](B9780080571157500285.xhtml#bb0030), [Winograd 1983](B9780080571157500285.xhtml#bb1395) or [Gazdar and Mellish 1989](B9780080571157500285.xhtml#bb0445).
 
 ## 19.9 Exercises
-{:#s0050}
-{:.h1hd}
 
 **Exercise  19.2 [m-h]** Experiment with the grammar and the parser.
 Find sentences it cannot parse correctly, and try to add new syntactic rules to account for them.
@@ -1067,8 +1052,6 @@ You could also extend the grammar to accommodate an automatic timer, with phrase
 Replace it by an *O*(*n*) algorithm.
 
 ## 19.10 Answers
-{:#s0055}
-{:.h1hd}
 
 **Answer 19.1**
 

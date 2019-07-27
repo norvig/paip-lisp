@@ -545,15 +545,13 @@ We would use this facility as follows:
 > (pat-match axyd '(a b c d)) => ((?Y B C) (?X))
 ```
 
-**Exercise  6**.**1** [**m**] Go back and change the ELIZA !!!(span) {:.smallcaps} rules to use the abbreviation facility.
+**Exercise  6**.**1** [**m**] Go back and change the ELIZA rules to use the abbreviation facility.
 Does this make the rules easier to read?
 
 **Exercise  6**.**2** [**h**] In the few prior examples, every time there was a binding of pattern variables that satisfied the input, that binding was found.
 Informally, show that `pat-match` will always find such a binding, or show a counterexample where it fails to find one.
 
 ## 6.3 A Rule-Based Translator Tool
-{:#s0020}
-{:.h1hd}
 
 As we have defined it, the pattern matcher matches one input against one pattern.
 In `eliza`, we need to match each input against a number of patterns, and then return a result based on the rule that contains the first pattern that matches.
@@ -610,8 +608,6 @@ The rule-based translater tool now looks like this:
 ```
 
 ## 6.4 A Set of Searching Tools
-{:#s0025}
-{:.h1hd}
 
 The GPS program can be seen as a problem in *search*.
 In general, a search problem involves exploring from some starting state and investigating neighboring states until a solution is reached.
@@ -651,8 +647,6 @@ Here is a tree:
 ![u06-01](images/chapter6/u06-01.jpg)
 
 ### Searching Trees
-{:#s0035}
-{:.h2hd}
 
 We will call our first searching tool `tree-search`, because it is designed to search state spaces that are in the form of trees.
 It takes four arguments: (1) a list of valid starting states, (2) a predicate to decide if we have reached a goal state, (3) a function to generate the successors of a state, and (4) a function that decides in what order to search.
@@ -807,8 +801,6 @@ At most, depth-first search considers four at a time; in general it will need to
 ```
 
 ### Guiding the Search
-{:#s0040}
-{:.h2hd}
 
 While breadth-first search is more methodical, neither strategy is able to take advantage of any knowledge about the state space.
 They both search blindly.
@@ -1047,8 +1039,6 @@ Because Flagstaff is closer to the destination than Grand Junction.
 The problem is that we are minimizing the distance to the destination at each step, when we should be minimizing the sum of the distance to the destination plus the distance already traveled.
 
 ### Search Paths
-{:#s0045}
-{:.h2hd}
 
 To minimize the total distance, we need some way to talk about the *path* that leads to the goal.
 But the functions we have defined so far only deal with individual states along the way.
@@ -1214,8 +1204,6 @@ We also define `map-path` to iterate over a path, collecting values:
 ```
 
 ### Guessing versus Guaranteeing a Good Solution
-{:#s0050}
-{:.h2hd}
 
 Elementary AI textbooks place a great emphasis on search algorithms that are guaranteed to find the best solution.
 However, in practice these algorithms are hardly ever used.
@@ -1291,8 +1279,6 @@ So iterative deepening uses only slightly more time and much less space.
 We will see it again in [chapters 11](B978008057115750011X.xhtml) and [18](B9780080571157500182.xhtml).
 
 ### Searching Graphs
-{:#s0055}
-{:.h2hd}
 
 So far, `tree-search` has been the workhorse behind all the searching routines.
 This is curious, when we consider that the city problem involves a graph that is not a tree at all.
@@ -1511,8 +1497,6 @@ Here is a function that finds all solutions, using beam search:
 ```
 
 ## 6.5 GPS as Search
-{:#s0060}
-{:.h1hd}
 
 The GPS program can be seen as a problem in search.
 For example, in the three-block blocks world, there are only 13 different states.
@@ -1539,10 +1523,10 @@ The goal predicate tests if the current state satisfies every condition in the g
       #'(lambda (state) (subsetp goal state :test #'equal))
       #'gps-successors
       #'(lambda (state)
-        (+ (count-if #'action-p state)
-          (count-if #'(lambda (con)
-                    (not (member-equal con state)))
-                goal)))
+          (+ (count-if #'action-p state)
+             (count-if #'(lambda (con)
+                           (not (member-equal con state)))
+                       goal)))
       beam-width)))
 ```
 
@@ -1553,12 +1537,13 @@ Here is the successor function:
   "Return a list of states reachable from this one using ops."
   (mapcar
     #'(lambda (op)
-    (append
-      (remove-if #'(lambda (x)
-                    (member-equal x (op-del-list op)))
-                state)
-      (op-add-list op)))
+        (append
+          (remove-if #'(lambda (x)
+                         (member-equal x (op-del-list op)))
+                     state)
+          (op-add-list op)))
     (applicable-ops state)))
+
 (defun applicable-ops (state)
   "Return a list of all ops that are applicable now."
   (find-all-if
@@ -1590,8 +1575,6 @@ But we could formulate means-ends analysis as forward search simply by reversing
 This is left as an exercise.
 
 ## 6.6 History and References
-{:#s0065}
-{:.h1hd}
 
 Pattern matching is one of the most important tools for AI.
 As such, it is covered in most textbooks on Lisp.
@@ -1604,8 +1587,6 @@ They are at a lower level of abstraction than the ones in this chapter.
 Iterative deepening was first presented by [Korf (1985)](B9780080571157500285.xhtml#bb0640), and iterative broadening by [Ginsberg and Harvey (1990)](B9780080571157500285.xhtml#bb0470).
 
 ## 6.7 Exercises
-{:#s0070}
-{:.h1hd}
 
 **Exercise  6**.**3** [**m**] Write a version of `interaetive-interpreter` that is more general than the one defined in this chapter.
 Decide what features can be specified, and provide defaults for them.
@@ -1644,8 +1625,6 @@ Use these costs instead of a constant cost of 1 for each operation.
 **Exercise  6**.**15** [**d**] Write a version of GPS that uses the searching tools but does means-ends analysis.
 
 ## 6.8 Answers
-{:#s0075}
-{:.h1hd}
 
 **Answer 6**.**2** Unfortunately, `pat-match` does not always find the answer.
 The problem is that it will only rebind a segment variable based on a failure to match the rest of the pattern after the segment variable.

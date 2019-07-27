@@ -27,8 +27,6 @@ But if you would like your programs to run faster, the techniques described here
 *   Use the right data structure.
 
 ## 10.1 Use Declarations
-{:#s0010}
-{:.h1hd}
 
 On general-purpose computers running Lisp, much time is spent on type-checking.
 You can gain efficiency at the cost of robustness by declaring, or promising, that certain variables will always be of a given type.
@@ -75,9 +73,10 @@ In some cases, further optimizations are possible.
 Consider the predicate `starts-with`:
 
 ```lisp
-(defun starts-with (list x)
-  "Is this a list whose first element is x?"
-  (and (consp list) (eql (first list) x)))
+  (defun starts-with (list x)
+    "Is x a list whose first element is x?"
+    (and (consp list) (eql (first list) x)))
+  )
 ```
 
 Suppose we have a code fragment like the following:
@@ -286,8 +285,6 @@ The type `simple-string` is an abbreviation for `(simple-array string-char)`.
 This guide applies to most Common Lisp systems, but you should look in the implementation notes for your particular system for more advice on how to fine-tune your code.
 
 ## 10.2 Avoid Generic Functions
-{:#s0015}
-{:.h1hd}
 
 Common Lisp provides functions with great generality, but someone must pay the price for this generality.
 For example, if you write `(elt x 0)`, different machine instruction will be executed depending on if x is a list, string, or vector.
@@ -305,8 +302,6 @@ This example was simple, but in more complicated cases you can make your sequenc
 See the definition of `map-into` on [page 857](B9780080571157500248.xhtml#p857).
 
 ## 10.3 Avoid Complex Argument Lists
-{:#s0020}
-{:.h1hd}
 
 Functions with keyword arguments suffer a large degree of overhead.
 This may also be true for optional and rest arguments, although usually to a lesser degree.
@@ -609,8 +604,6 @@ But when maintainability is considered, keyword parameters look much better.
 When a program is being developed, and it is not clear if a function will eventually need additional arguments, keyword parameters may be the best choice.
 
 ## 10.4 Avoid Unnecessary Consing
-{:#s0025}
-{:.h1hd}
 
 The `cons` function may appear to execute quite quickly, but like all functions that allocate new storage, it has a hidden cost.
 When large amounts of storage are used, eventually the system must spend time garbage collecting.
@@ -674,7 +667,7 @@ This is to be avoided, and it may be that reverse is actually faster than nrever
 To decide what works best on your particular system, design some test cases and time them.
 
 As an example of efficient use of storage, here is a version of `pat-match` that eliminates (almost) all consing.
-The original version of `pat-match,` as used in ELIZA !!!(span) {:.smallcaps} ([page 180](B9780080571157500066.xhtml#p180)), used an association list of variable/value pairs to represent the binding list.
+The original version of `pat-match,` as used in ELIZA ([page 180](B9780080571157500066.xhtml#p180)), used an association list of variable/value pairs to represent the binding list.
 This version uses two sequences: a sequence of variables and a sequence of values.
 The sequences are implemented as vectors instead of lists.
 In general, vectors take half as much space as lists to store the same information, since half of every list is just pointing to the next element.
@@ -838,8 +831,6 @@ Here is a definition for a version of `remove` that uses `reuse-cons`:
 ```
 
 ### Avoid Consing: Unique Lists
-{:#s9000}
-{:.h2hd}
 
 Of course, `reuse-cons` only works when you have candidate cons cells around.
 That is, (`reuse-cons a b c`) only saves space when `c` is (or might be) equal to (`cons a b`).
@@ -936,8 +927,6 @@ This can lead to significant savings when the list structures are large.
 An `eq` hash table for lists is almost as good as a property list on symbols.
 
 ### Avoid Consing: Multiple Values
-{:#s9005}
-{:.h2hd}
 
 Parameters and multiple values can also be used to pass around values, rather than building up lists.
 For example, instead of :
@@ -960,8 +949,6 @@ one could use the following approach, which doesn't generate structures:
 ```
 
 ### Avoid Consing: Resources
-{:#s9010}
-{:.h2hd}
 
 Sometimes it pays to manage explicitly the storage of instances of some data type.
 A pool of these instances may be called a *resource*.
@@ -981,23 +968,24 @@ With all these warnings in mind, here is some code to manage resources:
 
 ```lisp
 (defmacro defresource (name &key constructor (initial-copies 0)
-                  (size (max initial-copies 10)))
-  (let ((resource (symbol name '-resource))
-      (deallocate (symbol 'deallocate- name))
-      (allocate (symbol 'allocate- name)))
-    '(let ((.resource (make-array ,size :fill-pointer 0)))
-      (defun ,allocate ()
-        "Get an element from the resource pool, or make one."
-        (if (= (fill-pointer ,resource) 0)
-            ,constructor
-            (vector-pop ,resource)))
-      (defun ,deallocate (.name)
-        "Place a no-longer-needed element back in the pool."
-        (vector-push-extend ,name ,resource))
-      .(if (> initial-copies 0)
-            '(mapc #',deallocate (loop repeat ,initial-copies
-                         collect (,allocate))))
-      ',name)))
+                       (size (max initial-copies 10)))
+  (let ((resource (symbol '* (symbol name '-resource*)))
+        (deallocate (symbol 'deallocate- name))
+        (allocate (symbol 'allocate- name)))
+    `(progn
+       (defparameter ,resource (make-array ,size :fill-pointer 0))
+       (defun ,allocate ()
+         "Get an element from the resource pool, or make one."
+         (if (= (fill-pointer ,resource) 0)
+             ,constructor
+             (vector-pop ,resource)))
+       (defun ,deallocate (,name)
+         "Place a no-longer-needed element back in the pool."
+         (vector-push-extend ,name ,resource))
+       ,(if (> initial-copies 0)
+            `(mapc #',deallocate (loop repeat ,initial-copies
+                                       collect (,allocate))))
+       ',name)))
 ```
 
 Let's say we had some structure called a buffer which we were constantly making instances of and then discarding.
@@ -1042,18 +1030,17 @@ Of course, if `process` stored a *copy* of `b,` then everything is alright.
 This pattern of allocation and deallocation is so common that we can provide a macro for it:
 
 ```lisp
-(defmacro with-resource ((var resource &optional protect) &rest body)
+defmacro with-resource ((var resource &optional protect) &rest body)
   "Execute body with VAR bound to an instance of RESOURCE."
   (let ((allocate (symbol 'allocate- resource))
-      (deallocate (symbol 'deallocate- resource)))
+        (deallocate (symbol 'deallocate- resource)))
     (if protect
-      '(let ((,var nil))
-        (unwind-protect
-          (progn (setf ,var (,allocate)) ,@body)
-          (unless (null ,var) (,deallocate ,var))))
-      '(let ((,var (,allocate)))
-        ,@body
-        (,deallocate ,var)))))
+        `(let ((,var nil))
+           (unwind-protect (progn (setf ,var (,allocate)) ,@body)
+             (unless (null ,var) (,deallocate ,var))))
+        `(let ((,var (,allocate)))
+           ,@body
+           (,deallocate var)))))
 ```
 
 The macro allows for an optional argument that sets up an `unwind` - protect environment, so that the buffer gets deallocated even when the body is abnormally exited.
@@ -1090,16 +1077,12 @@ A common problem is to have only a few live objects on each page, thus forcing t
 Compacting garbage collectors can collect live objects onto the same page, but using resources may interfere with this.
 
 ## 10.5 Use the Right Data Structures
-{:#s0030}
-{:.h1hd}
 
 It is important to implement key data types with the most efficient implementation.
 This can vary from machine to machine, but there are a few techniques that are universal.
 Here we consider three case studies.
 
 ### The Right Data Structure: Variables
-{:#s9015}
-{:.h2hd}
 
 As an example, consider the implementation of pattern-matching variables.
 We saw from the instrumentation of `simplify` that `variable-p` was one of the most frequently used functions.
@@ -1187,8 +1170,6 @@ Fortunately, Lisp makes it easy to switch to more efficient data structures, for
 ```
 
 ### The Right Data Structure: Queues
-{:#s9020}
-{:.h2hd}
 
 A *queue* is a data structure where one can add elements at the rear and remove them from the front.
 This is almost like a stack, except that in a stack, elements are both added and removed at the same end.
@@ -1222,33 +1203,38 @@ In the definitions below, we change the name `tconc` to the more standard `enque
 ;;; A queue is a (last . contents) pair
 (proclaim '(inline queue-contents make-queue enqueue dequeue
                 front empty-queue-p queue-nconc))
+
 (defun queue-contents (q) (cdr q))
+
 (defun make-queue ()
   "Build a new queue, with no elements."
   (let ((q (cons nil nil)))
     (setf (car q) q)))
+
 (defun enqueue (item q)
   "Insert item at the end of the queue."
   (setf (car q)
-          (setf (rest (car q))
-            (cons item nil)))
+        (setf (rest (car q))
+              (cons item nil)))
   q)
+
 (defun dequeue (q)
   "Remove an item from the front of the queue."
   (pop (cdr q))
   (if (null (cdr q)) (setf (car q) q))
   q)
+
 (defun front (q) (first (queue-contents q)))
+
 (defun empty-queue-p (q) (null (queue-contents q)))
+
 (defun queue-nconc (q list)
   "Add the elements of LIST to the end of the queue."
   (setf (car q)
-          (last (setf (rest (car q)) list))))
+        (last (setf (rest (car q)) list))))
 ```
 
 ### The Right Data Structure: Tables
-{:#s9030}
-{:.h2hd}
 
 A *table* is a data structure to which one can insert a key and associate it with a value, and later use the key to look up the value.
 Tables may have other operations, like counting the number of keys, clearing out all keys, or mapping a function over each key/value pair.
@@ -1399,8 +1385,6 @@ Quite a bit of searching is required before arriving at the complete set of matc
 We will return to the problem of discrimination nets with variables in [section 14.8](B9780080571157500145.xhtml#s0040), [page 472](B9780080571157500145.xhtml#p472).
 
 ## 10.6 Exercises
-{:#s0035}
-{:.h1hd}
 
 **Exercise  10.1 [h]** Define the macro `deftable,` such that `(deftable person assoc`) will act much like a `defstruct-`it will define a set of functions for manipulating a table of people: `get-person, put-person, clear-person,` and `map-person.` The table should be implemented as an association list.
 Later on, you can change the representation of the table simply by changing the form to (`deftable person hash` ), without having to change anything else in your code.
@@ -1444,8 +1428,6 @@ Analyze the time complexity of each implementation for each operation.
 Next, show how *sorted lists* can be used to implement sets, and compare the operations on sorted lists to their counterparts on unsorted lists.
 
 ## 10.7 Answers
-{:#s0040}
-{:.h1hd}
 
 **Answer 10.2**
 

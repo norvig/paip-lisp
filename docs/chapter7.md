@@ -1,7 +1,5 @@
 # Chapter 7
-## STUDENT
-!!!(span) {:.smallcaps}
-: Solving Algebra Word Problems
+## STUDENT: Solving Algebra Word Problems
 
 > *[This] is an example par excellence* of the power of using meaning to solve linguistic problems
 
@@ -9,27 +7,25 @@
 
 > MIT computer scientist
 
-STUDENT !!!(span) {:.smallcaps} was another early language understanding program, written by Daniel Bobrow as his Ph.D.
+STUDENT was another early language understanding program, written by Daniel Bobrow as his Ph.D.
 research project in 1964.
 It was designed to read and solve the kind of word problems found in high school algebra books.
 An example is:
 
 > If the number of customers Tom gets is twice the square of 20% of the number of advertisements he runs, and the number of advertisements is 45, then what is the number of customers Tom gets?
 
-STUDENT !!!(span) {:.smallcaps} could correctly reply that the number of customers is 162.
-To do this, STUDENT !!!(span) {:.smallcaps} must be far more sophisticated than ELIZA !!!(span) {:.smallcaps} ; it must process and "understand" a great deal of the input, rather than just concentrate on a few key words.
+STUDENT could correctly reply that the number of customers is 162.
+To do this, STUDENT must be far more sophisticated than ELIZA; it must process and "understand" a great deal of the input, rather than just concentrate on a few key words.
 And it must compute a response, rather than just fill in blanks.
-However, we shall see that the STUDENT !!!(span) {:.smallcaps} program uses little more than the pattern-matching techniques of ELIZA !!!(span) {:.smallcaps} to translate the input into a set of algebraic equations.
+However, we shall see that the STUDENT program uses little more than the pattern-matching techniques of ELIZA to translate the input into a set of algebraic equations.
 From there, it must know enough algebra to solve the equations, but that is not very difficult.
 
-The version of STUDENT !!!(span) {:.smallcaps} we develop here is nearly a full implementation of the original.
+The version of STUDENT we develop here is nearly a full implementation of the original.
 However, remember that while the original was state-of-the-art as of 1964, AI has made some progress in a quarter century, as subsequent chapters will attempt to show.
 
 ## 7.1 Translating English into Equations
-{:#s0010}
-{:.h1hd}
 
-The description of STUDENT !!!(span) {:.smallcaps} is:
+The description of STUDENT is:
 
 1.  Break the input into phrases that will represent equations.
 !!!(p) {:.numlist}
@@ -42,7 +38,7 @@ The description of STUDENT !!!(span) {:.smallcaps} is:
 !!!(p) {:.numlist}
 
 4.  Translate each English phrase into a mathematical expression.
-We use the idea of a rule-based translator as developed for ELIZA !!!(span) {:.smallcaps} .
+We use the idea of a rule-based translator as developed for ELIZA.
 !!!(p) {:.numlist}
 
 5.  Solve the resulting mathematical equations, coming up with a value for each unknown variable.
@@ -69,65 +65,60 @@ In general, the notation (`:constructor`*fn args*) creates a constructor functio
 
 ```lisp
 (defstruct (rule (:type list)) pattern response)
+
 (defstruct (exp (:type list)
-```
+                (:constructor mkexp (lhs op rhs)))
+  op lhs rhs)
 
-                        `(:constructor mkexp (lhs op rhs)))`
-
-      `op lhs rhs)`
-
-```lisp
 (defun exp-p (x) (consp x))
 (defun exp-args (x) (rest x))
 ```
 
-We ignored commas and periods in ELIZA !!!(span) {:.smallcaps} , but they are crucial for STUDENT !!!(span) {:.smallcaps} , so we must make allowances for them.
+We ignored commas and periods in ELIZA, but they are crucial for STUDENT, so we must make allowances for them.
 The problem is that a `","` in Lisp normally can be used only within a backquote construction, and a `"."` normally can be used only as a decimal point or in a dotted pair.
 The special meaning of these characters to the Lisp reader can be escaped either by preceding the character with a backslash (\,) or by surrounding the character by vertical bars (| , |).
 
 ```lisp
 (pat-match-abbrev '?x* '(?* ?x))
 (pat-match-abbrev '?y* '(?* ?y))
+
 (defparameter *student-rules* (mapcar #'expand-pat-match-abbrev
+  '(((?x* |.|)                  ?x)
+    ((?x* |.| ?y*)          (?x ?y))
+    ((if ?x* |,| then ?y*)  (?x ?y))
+    ((if ?x* then ?y*)      (?x ?y))
+    ((if ?x* |,| ?y*)       (?x ?y))
+    ((?x* |,| and ?y*)      (?x ?y))
+    ((find ?x* and ?y*)     ((= to-find-1 ?x) (= to-find-2 ?y)))
+    ((find ?x*)             (= to-find ?x))
+    ((?x* equals ?y*)       (= ?x ?y))
+    ((?x* same as ?y*)      (= ?x ?y))
+    ((?x* = ?y*)            (= ?x ?y))
+    ((?x* is equal to ?y*)  (= ?x ?y))
+    ((?x* is ?y*)           (= ?x ?y))
+    ((?x* - ?y*)            (- ?x ?y))
+    ((?x* minus ?y*)        (- ?x ?y))
+    ((difference between ?x* and ?y*)  (- ?y ?x))
+    ((difference ?x* and ?y*)          (- ?y ?x))
+    ((?x* + ?y*)            (+ ?x ?y))
+    ((?x* plus ?y*)         (+ ?x ?y))
+    ((sum ?x* and ?y*)      (+ ?x ?y))
+    ((product ?x* and ?y*)  (* ?x ?y))
+    ((?x* * ?y*)            (* ?x ?y))
+    ((?x* times ?y*)        (* ?x ?y))
+    ((?x* / ?y*)            (/ ?x ?y))
+    ((?x* per ?y*)          (/ ?x ?y))
+    ((?x* divided by ?y*)   (/ ?x ?y))
+    ((half ?x*)             (/ ?x 2))
+    ((one half ?x*)         (/ ?x 2))
+    ((twice ?x*)            (* 2 ?x))
+    ((square ?x*)           (* ?x ?x))
+    ((?x* % less than ?y*)  (* ?y (/ (- 100 ?x) 100)))
+    ((?x* % more than ?y*)  (* ?y (/ (+ 100 ?x) 100)))
+    ((?x* % ?y*)            (* (/ ?x 100) ?y)))))
 ```
 
-| []()                                |                                         |
-|-------------------------------------|-----------------------------------------|
-| `'(((?x* |.|)`                      | `        ?x)`                           |
-| `    ((?x*  |.| ?y*)`               | `(?x ?y))`                              |
-| `    ((if ?x* |,| then ?y*)`        | `(?x ?y))`                              |
-| `    ((if ?x* then ?y*)`            | `(?x ?y))`                              |
-| `    ((if ?x* |,| ?y*)`             | `(?x ?y))`                              |
-| `    ((?x* |,| and ?y*)`            | `(?x ?y))`                              |
-| `    ((find ?x* and ?y*)`           | `((= to-find-1 ?x) (= to-find-2 ?y)))`  |
-| `    ((find ?x*)`                   | `(= to-find ?x))`                       |
-| `    ((?x* equals ?y*)`             | `(= ?x ?y))`                            |
-| `    ((?x* same as ?y*)`            | `(= ?x ?y))`                            |
-| `    ((?x* = ?y*)`                  | `(= ?x ?y))`                            |
-| `    ((?x* is equal to ?y*)`        | `(= ?x ?y))`                            |
-| `    ((?x* is ?y*)`                 | `(= ?x ?y))`                            |
-| `    ((?x* - ?y*)`                  | `(- ?x ?y))`                            |
-| `    ((?x* minus ?y*)`              | `(- ?x ?y))`                            |
-| `((difference between ?x* and ?y*)` | `(- ?y ?x))`                            |
-| `((difference ?x* and ?y*)`         | `(- ?y ?x))`                            |
-| `((?x* + ?y*)`                      | `(+ ?x ?y))`                            |
-| `((?x* plus ?y*)`                   | `(+ ?x ?y))`                            |
-| `((sum ?x* and ?y*)`                | `(+ ?x ?y))`                            |
-| `((product ?x* and ?y*)`            | `(* ?x ?y))`                            |
-| `((?x* * ?y*)`                      | `(* ?x ?y))`                            |
-| `((?x* times ?y*)`                  | `(* ?x ?y))`                            |
-| `((?x* / ?y*)`                      | `(/ ?x ?y))`                            |
-| `((?x* per ?y*)`                    | `(/ ?x ?y))`                            |
-| `((?x* divided by ?y*)`             | `(/ ?x ?y))`                            |
-| `((half ?x*)`                       | `(/ ?x 2))`                             |
-| `((one half ?x*)`                   | `(/ ?x 2))`                             |
-| `((twice ?x*)`                      | `(* 2 ?x))`                             |
-| `((square ?x*)`                     | `(* ?x ?x))`                            |
-| `((?x* % less than ?y*)`            | `(* ?y (/ (- 100 ?x) 100)))`            |
-| `((?x* % more than ?y*)`            | `(* ?y (/ (+ 100 ?x) 100)))`            |
-| `((?x* % ?y*)`                      | `(* (/ ?x 100) ?y)))))`                 |
-
-The main section of STUDENT !!!(span) {:.smallcaps} will search through the list of rules for a response, just as ELIZA !!!(span) {:.smallcaps} did.
+The main section of STUDENT will search through the list of rules for a response, just as ELIZA did.
 The first point of deviation is that before we substitute the values of the `pat-match` variables into the response, we must first recursively translate the value of each variable, using the same list of pattern-response rules.
 The other difference is that once we're done, we don't just print the response; instead we have to solve the set of equations and print the answers.
 The program is summarized in [figure 7.1](#f0010).
@@ -167,15 +158,17 @@ The other complication is choosing variable names.
 Given a list of words like (`the number of customers Tom gets`), we want to choose a symbol to represent it.
 We will see below that the symbol `customers` is chosen, but that there are other possibilities.
 
-Here is the main function for STUDENT !!!(span) {:.smallcaps} . It first removes words that have no content, then translates the input to one big expression with `translate-to-expression`, and breaks that into separate equations with `create-list-of-equations`.
+Here is the main function for STUDENT.
+It first removes words that have no content, then translates the input to one big expression with `translate-to-expression`, and breaks that into separate equations with `create-list-of-equations`.
 Finally, the function `solve-equations` does the mathematics and prints the solution.
 
 ```lisp
 (defun student (words)
-    "Solve certain Algebra Word Problems."
-    (solve-equations
-        (create-list-of-equations
-            (translate-to-expression (remove-if #'noise-word-p words)))))
+  "Solve certain Algebra Word Problems."
+  (solve-equations
+    (create-list-of-equations
+      (translate-to-expression (remove-if #'noise-word-p words)))))
+
 ```
 
 The function `translate-to-expression` is a rule-based translator.
@@ -184,29 +177,30 @@ The function `translate-pair` takes a variable/value binding pair and translates
 
 ```lisp
 (defun translate-to-expression (words)
-    "Translate an English phrase into an equation or expression."
-    (or (rule-based-translator
-            words *student-rules*
-            :rule-if #'rule-pattern :rule-then #'rule-response
-            :action #'(lambda (bindings response)
-                              (sublis (mapcar #'translate-pair bindings)
-                                              response)))
-          (make-variable words)))
+  "Translate an English phrase into an equation or expression."
+  (or (rule-based-translator
+        words *student-rules*
+        :rule-if #'rule-pattern :rule-then #'rule-response
+        :action #'(lambda (bindings response)
+                    (sublis (mapcar #'translate-pair bindings)
+                              response)))
+      (make-variable words)))
+
 (defun translate-pair (pair)
-    "Translate the value part of the pair into an equation or expression."
-    (cons (binding-var pair)
-            (translate-to-expression (binding-val pair))))
+  "Translate the value part of the pair into an equation or expression."
+  (cons (binding-var pair)
+        (translate-to-expression (binding-val pair))))
 ```
 
 The function `create-list-of-equations` takes a single expression containing embedded equations and separates them into a list of equations:
 
 ```lisp
 (defun create-list-of-equations (exp)
-    "Separate out equations embedded in nested parens."
-    (cond ((null exp) nil)
-            ((atom (first exp)) (list exp))
-            (t (append (create-list-of-equations (first exp))
-                            (create-list-of-equations (rest exp))))))
+  "Separate out equations embedded in nested parens."
+  (cond ((null exp) nil)
+        ((atom (first exp)) (list exp))
+        (t (append (create-list-of-equations (first exp))
+                   (create-list-of-equations (rest exp))))))
 ```
 
 Finally, the function `make-variable` creates a variable to represent a list of words.
@@ -219,28 +213,28 @@ For now, we will accept the first-non-noise-word solution, but note that exercis
 
 ```lisp
 (defun make-variable (words)
-    "Create a variable name based on the given list of words"
+  "Create a variable name based on the given list of words"
     ;; The list of words will already have noise words removed
-    (first words))
+  (first words))
+
 (defun noise-word-p (word)
-    "Is this a low-content word that can be safely ignored?"
-    (member word '(a an the this number of $)))
+  "Is this a low-content word which can be safely ignored?"
+  (member word '(a an the this number of $)))
 ```
 
 ## 7.2 Solving Algebraic Equations
-{:#s0015}
-{:.h1hd}
 
-The next step is to write the equation-solving section of STUDENT !!!(span) {:.smallcaps} . This is more an exercise in elementary algebra than in AI, but it is a good example of a symbol-manipulation task, and thus an interesting programming problem.
+The next step is to write the equation-solving section of STUDENT.
+This is more an exercise in elementary algebra than in AI, but it is a good example of a symbol-manipulation task, and thus an interesting programming problem.
 
-The STUDENT !!!(span) {:.smallcaps} program mentioned the function `solve-equations`, passing it one argument, a list of equations to be solved.
+The STUDENT program mentioned the function `solve-equations`, passing it one argument, a list of equations to be solved.
 `solve-equations` prints the list of equations, attempts to solve them using `solve`, and prints the result.
 
 ```lisp
 (defun solve-equations (equations)
-    "Print the equations and their solution"
-    (print-equations "The equations to be solved are:" equations)
-    (print-equations "The solution is:" (solve equations nil)))
+  "Print the equations and their solution"
+  (print-equations "The equations to be solved are:" equations)
+  (print-equations "The solution is:" (solve equations nil)))
 ```
 
 The real work is done by solve, which has the following specification: (1) Find an equation with exactly one occurrence of an unknown in it.
@@ -261,24 +255,19 @@ Since the list of equations is always growing shorter, `solve` must eventually t
 
 ```lisp
 (defun solve (equations known)
-    "Solve a system of equations by constraint propagation."
-    ;; Try to solve for one equation, and substitute its value into
-```
-
-`    ;; the others.
-If that doesn't work, return what is known.`
-
-```lisp
-    (or (some #'(lambda (equation)
+  "Solve a system of equations by constraint propagation."
+  ;; Try to solve for one equation, and substitute its value into
+  ;; the others. If that doesn't work, return what is known.
+  (or (some #'(lambda (equation)
                 (let ((x (one-unknown equation)))
-                    (when x
-                        (let ((answer (solve-arithmetic
-                                            (isolate equation x))))
-                            (solve (subst (exp-rhs answer) (exp-lhs answer)
-                                            (remove equation equations))
-                                (cons answer known))))))
-              equations)
-        known))
+                  (when x
+                    (let ((answer (solve-arithmetic
+           (isolate equation x))))
+                      (solve (subst (exp-rhs answer) (exp-lhs answer)
+                                    (remove equation equations))
+                             (cons answer known))))))
+            equations)
+      known))
 ```
 
 `isolate` is passed an equation guaranteed to have one unknown.
@@ -305,32 +294,32 @@ The reader should try to verify that transformations (1) to (8) are valid, and t
 
 ```lisp
 (defun isolate (e x)
-    "Isolate the lone x in e on the left-hand side of e."
-    ;; This assumes there is exactly one x in e,
-    ;; and that e is an equation.
-    (cond ((eq (exp-lhs e) x)
-            ;; Case I: X = A -> X = n
-            e)
-          ((in-exp x (exp-rhs e))
-            ;; Case II: A = f(X) -> f(X) = A
-            (isolate (mkexp (exp-rhs e) '= (exp-lhs e)) x))
-          ((in-exp x (exp-lhs (exp-lhs e)))
-            ;; Case III: f(X)*A = B -> f(X) = B/A
-            (isolate (mkexp (exp-lhs (exp-lhs e)) '=
-                        (mkexp (exp-rhs e)
-                              (inverse-op (exp-op (exp-lhs e)))
-                              (exp-rhs (exp-lhs e)))) x))
-          ((commutative-p (exp-op (exp-lhs e)))
-            ;; Case IV: A*f(X) = B -> f(X) = B/A
-            (isolate (mkexp (exp-rhs (exp-lhs e)) '=
-                        (mkexp (exp-rhs e)
-                              (inverse-op (exp-op (exp-lhs e)))
-                              (exp-lhs (exp-lhs e)))) x))
-          (t ;; Case V: A/f(X) = B -> f(X) = A/B
-            (isolate (mkexp (exp-rhs (exp-lhs e)) '=
-                        (mkexp (exp-lhs (exp-lhs e))
-                              (exp-op (exp-lhs e))
-                              (exp-rhs e))) x))))
+  "Isolate the lone x in e on the left hand side of e."
+  ;; This assumes there is exactly one x in e,
+  ;; and that e is an equation.
+  (cond ((eq (exp-lhs e) x)
+         ;; Case I: X = A -> X = n
+         e)
+        ((in-exp x (exp-rhs e))
+         ;; Case II: A = f(X) -> f(X) = A
+         (isolate (mkexp (exp-rhs e) '= (exp-lhs e)) x))
+        ((in-exp x (exp-lhs (exp-lhs e)))
+         ;; Case III: f(X)*A = B -> f(X) = B/A
+         (isolate (mkexp (exp-lhs (exp-lhs e)) '=
+                         (mkexp (exp-rhs e)
+                                (inverse-op (exp-op (exp-lhs e)))
+                                (exp-rhs (exp-lhs e)))) x))
+        ((commutative-p (exp-op (exp-lhs e)))
+         ;; Case IV: A*f(X) = B -> f(X) = B/A
+         (isolate (mkexp (exp-rhs (exp-lhs e)) '=
+                         (mkexp (exp-rhs e)
+                                (inverse-op (exp-op (exp-lhs e)))
+                                (exp-lhs (exp-lhs e)))) x))
+        (t ;; Case V: A/f(X) = B -> f(X) = A/B
+         (isolate (mkexp (exp-rhs (exp-lhs e)) '=
+                         (mkexp (exp-lhs (exp-lhs e))
+                                (exp-op (exp-lhs e))
+                                (exp-rhs e))) x))))
 ```
 
 Recall that to prove a function is correct, we have to prove both that it gives the correct answer when it terminates and that it will eventually terminate.
@@ -362,49 +351,59 @@ Unlike `isolate`, it assumes the expressions will be implemented as lists.
 
 ```lisp
 (defun print-equations (header equations)
-    "Print a list of equations."
-    (format t "~%~a~{~% ~  a  ~}~}~%" header
-            (mapcar #'prefix->infix equations)))
+  "Print a list of equations."
+  (format t "~%~a~{~%  ~{ ~a~}~}~%" header
+          (mapcar #'prefix->infix equations)))
+
 (defconstant operators-and-inverses
-    '((+ -) (- +) (* /) (/ *) (= =)))
+  '((+ -) (- +) (* /) (/ *) (= =)))
+
 (defun inverse-op (op)
-    (second (assoc op operators-and-inverses)))
+  (second (assoc op operators-and-inverses)))
+
 (defun unknown-p (exp)
-    (symbolp exp))
+  (symbolp exp))
+
 (defun in-exp (x exp)
-    "True if x appears anywhere in exp"
-    (or (eq x exp)
-            (and (exp-p exp)
-                    (or (in-exp x (exp-lhs exp)) (in-exp x (exp-rhs exp))))))
+  "True if x appears anywhere in exp"
+  (or (eq x exp)
+      (and (listp exp)
+           (or (in-exp x (exp-lhs exp)) (in-exp x (exp-rhs exp))))))
+
 (defun no-unknown (exp)
-    "Returns true if there are no unknowns in exp."
-    (cond ((unknown-p exp) nil)
-              ((atom exp) t)
-              ((no-unknown (exp-lhs exp)) (no-unknown (exp-rhs exp)))
-              (t nil)))
+  "Returns true if there are no unknowns in exp."
+  (cond ((unknown-p exp) nil)
+        ((atom exp) t)
+        ((no-unknown (exp-lhs exp)) (no-unknown (exp-rhs exp)))
+        (t nil)))
+
 (defun one-unknown (exp)
-    "Returns the single unknown in exp, if there is exactly one."
-    (cond ((unknown-p exp) exp)
-              ((atom exp) nil)
-              ((no-unknown (exp-lhs exp)) (one-unknown (exp-rhs exp)))
-              ((no-unknown (exp-rhs exp)) (one-unknown (exp-lhs exp)))
-              (t nil)))
+  "Returns the single unknown in exp, if there is exactly one."
+  (cond ((unknown-p exp) exp)
+        ((atom exp) nil)
+        ((no-unknown (exp-lhs exp)) (one-unknown (exp-rhs exp)))
+        ((no-unknown (exp-rhs exp)) (one-unknown (exp-lhs exp)))
+        (t nil)))
+
 (defun commutative-p (op)
-    "Is operator commutative?"
-    (member op '(+*=)))
+  "Is operator commutative?"
+  (member op '(+ * =)))
+
 (defun solve-arithmetic (equation)
-    "Do the arithmetic for the right-hand side."
-    ;; This assumes that the right-hand side is in the right form.
-    (mkexp (exp-lhs equation) '= (eval (exp-rhs equation))))
+  "Do the arithmetic for the right hand side."
+  ;; This assumes that the right hand side is in the right form.
+  (mkexp (exp-lhs equation) '= (eval (exp-rhs equation))))
+
 (defun binary-exp-p (x)
-    (and (exp-p x) (= (length (exp-args x)) 2)))
+  (and (exp-p x) (= (length (exp-args x)) 2)))
+
 (defun prefix->infix (exp)
-    "Translate prefix to infix expressions."
-    (if (atom exp) exp
-          (mapcar #'prefix->infix
-                      (if (binary-exp-p exp)
-                              (list (exp-lhs exp) (exp-op exp) (exp-rhs exp))
-                              exp))))
+  "Translate prefix to infix expressions."
+  (if (atom exp) exp
+      (mapcar #'prefix->infix
+              (if (binary-exp-p exp)
+                  (list (exp-lhs exp) (exp-op exp) (exp-rhs exp))
+                  exp))))
 ```
 
 Here's an example of `solve-equations` in action, with a system of two equations.
@@ -473,8 +472,6 @@ In that case, a newline-before is needed, lest the output appear on the same lin
 **Exercise  7.1 [m]** Implement `print-equations` using only primitive printing functions such as `terpri` and `princ`, along with explicit loops.
 
 ## 7.3 Examples
-{:#s0020}
-{:.h1hd}
 
 Now we move on to examples, taken from Bobrow's thesis.
 In the first example, it is necessary to insert a "then" before the word "what" to get the right answer:
@@ -599,18 +596,18 @@ The equations to be solved are:
 
 However, one could claim that nasty examples with division by zero don't show up in algebra texts.
 
-In summary, STUDENT !!!(span) {:.smallcaps} behaves reasonably well, doing far more than the toy program ELIZA !!!(span) {:.smallcaps} . STUDENT !!!(span) {:.smallcaps} is also quite efficient; on my machine it takes less than one second for each of the prior examples.
+In summary, STUDENT behaves reasonably well, doing far more than the toy program ELIZA.
+STUDENT is also quite efficient; on my machine it takes less than one second for each of the prior examples.
 However, it could still be extended to have more powerful equation-solving capabilities.
 Its linguistic coverage is another matter.
 While one could add new patterns, such patterns are really just tricks, and don't capture the underlying structure of English sentences.
-That is why the STUDENT !!!(span) {:.smallcaps} approach was abandoned as a research topic.
+That is why the STUDENT approach was abandoned as a research topic.
 
 ## 7.4 History and References
-{:#s0025}
-{:.h1hd}
 
 Bobrow's Ph.D.
-thesis contains a complete description of STUDENT !!!(span) {:.smallcaps} . It is reprinted in [Minsky 1968](B9780080571157500285.xhtml#bb0845).
+thesis contains a complete description of STUDENT.
+It is reprinted in [Minsky 1968](B9780080571157500285.xhtml#bb0845).
 Since then, there have been several systems that address the same task, with increased sophistication in both their mathematical and linguistic ability.
 [Wong (1981)](B9780080571157500285.xhtml#bb1420) describes a system that uses its understanding of the problem to get a better linguistic analysis.
 [Sterling et al.
@@ -619,8 +616,6 @@ Certainly Bobrow's language analysis techniques were not very sophisticated by t
 But that was largely the point: if you know that the language is describing an algebraic problem of a certain type, then you don't need to know very much linguistics to get the right answer most of the time.
 
 ## 7.5 Exercises
-{:#s0030}
-{:.h1hd}
 
 **Exercise  7.2 [h]** We said earlier that our program was unable to solve pairs of linear equations, such as:
 
@@ -629,7 +624,7 @@ But that was largely the point: if you know that the language is describing an a
 OVERHEAD = (10 * RUNNING)
 ```
 
-The original STUDENT !!!(span) {:.smallcaps} could solve these equations.
+The original STUDENT could solve these equations.
 Write a routine to do so.
 You may assume there will be only two equations in two unknowns if you wish, or if you are more ambitious, you could solve a system of *n* linear equations with *n* unknowns.
 
@@ -641,7 +636,7 @@ For example, an input that contains the phrases "the rectangle's width" and "the
 If an attempt to solve the problem yields no solutions, the program should realize that `v1` and `v2` have the words "rectangle" and "width" in common, and add the equation (`= v1 v2`) and try again.
 Since the variables are arbitrary symbols, the printing routine should probably print the phrases associated with each variable rather than the variable itself.
 
-**Exercise  7.4 [h]** The original STUDENT !!!(span) {:.smallcaps} also had a set of "common knowledge" equations that it could use when necessary.
+**Exercise  7.4 [h]** The original STUDENT also had a set of "common knowledge" equations that it could use when necessary.
 These were mostly facts about conversion factors, such as (`1 inch = 2.54  cm`).
 Also included were equations like (`distance equal s rate times time`), which could be used to solve problems like "If the distance from Anabru to Champaign is 10 miles and the time it takes Sandy to travel this distance is 2 hours, what is Sandy's rate of speed?" Make changes to incorporate this facility.
 It probably only helps in conjunction with a solution to the previous exercise.
@@ -651,7 +646,7 @@ That is, given the problem "X is 3.
 Y is 4.
 How much is X  +  Y ?" it should not print values for X and Y.
 
-**Exercise  7.6 [m]** Try STUDENT !!!(span) {:.smallcaps} on the following examples.
+**Exercise  7.6 [m]** Try STUDENT on the following examples.
 Make sure you handle special characters properly:
 
 (a)  The price of a radio is 69.70 dollars.
@@ -688,18 +683,16 @@ b  =  5.*
 For example, (`12 - 6 - 3`) translates to (`- 12 (- 6 3)`) or `9`, when the usual convention is to interpret this as (`- (- 12 6) 3`) or `3`.
 Fix student to handle this convention.
 
-**Exercise  7.8 [d]** Find a mathematically oriented domain that is sufficiently limited so that STUDENT !!!(span) {:.smallcaps} can solve problems in it.
+**Exercise  7.8 [d]** Find a mathematically oriented domain that is sufficiently limited so that STUDENT can solve problems in it.
 The chemistry of solutions (calculating pH concentrations) might be an example.
 Write the necessary `*student-rules*`, and test the resulting program.
 
 **Exercise  7.9 [m]** Analyze the complexity of `one-unknown` and implement a more efficient version.
 
-**Exercise  7.10 [h]** Bobrow's paper on STUDENT !!!(span) {:.smallcaps} (1968) includes an appendix that abstractly characterizes all the problems that his system can solve.
+**Exercise  7.10 [h]** Bobrow's paper on STUDENT (1968) includes an appendix that abstractly characterizes all the problems that his system can solve.
 Generate a similar characterization for this version of the program.
 
 ## 7.6 Answers
-{:#s0035}
-{:.h1hd}
 
 **Answer 7.1**
 
