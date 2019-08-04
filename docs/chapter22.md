@@ -139,12 +139,36 @@ After developing a simple interpreter, we will add support for macros, then deve
 (These terms will be defined when the time comes.).
 The glossary for `interp` is in [figure 22.1](#f0010).
 
-| []() |
-|---|
-| ![f22-01](images/chapter22/f22-01.jpg) |
-| Figure 22.1: Glossary for the Scheme Interpreter |
-
-*(ed: should be a markdown table)*
+| | **Top-Level Functions** |
+|---|---|
+| `scheme` | A Scheme read-interp-print loop |
+| `interp` | Interpret (evaluate) an expression in an environment. |
+| `def-scheme-macro` | Define a Scheme macro. |
+| | **Special Variables** |
+| `*scheme-procs*` | Some procedures to store in the global environment. |
+| | **Auxiliary Functions** |
+| `set-var!` | Set a variable to a value |
+| `get-var` | Get the value of a variable in an environment. |
+| `set-global-var!` | Set a global variable to a value. |
+| `get-global-var` | Get the value of a variable from the global environment. |
+| `extend-env` | Add some variables and values to an environment. |
+| `init-scheme-iterp` | Initialize some global variables. |
+| `init-scheme-proc` | Define a primitive Scheme procedure. |
+| `scheme-macro` | Retrieve the Scheme macro for a symbol. |
+| `scheme-macro-expand` | Macro-expand a Scheme expression. |
+| `maybe-add` | Add an element to the front of a non-singleton list. |
+| `print-proc` | Print a procedure. |
+| | **Data Type (tail-recursive version only)** |
+| `proc` | A Scheme procedure. |
+| | **Functions (continuation version only)** |
+| `interp-begin` | Interpret a `begin` expression. |
+| `interp-call` | Interpret a function application. |
+| `map-interp` | Map `interp` over a list. |
+| `call/cc` | call with current continuation. |
+| | **Previously Defined Functions** |
+| `lastl` | Select the last element of a list. |
+| `length=1` | Is this a list of length 1? |
+| Table 22.1: Glossary for the Scheme Interpreter |
 
 The simple interpreter has eight cases to worry about: (1) If the expression is a symbol, look up its value in the environment.
 (2) If it is an atom that is not a symbol (such as a number), just return it.
