@@ -878,15 +878,15 @@ Note that at the end of a list, `",@"` has the same effect as `"."` followed by 
 In the middle of a list, only `",@"`is a possibility.
 
 ```lisp
-> (setf testl '(a test)) => (A TEST)
+> (setf test1 '(a test)) => (A TEST)
 
-> '(this is ,test1) => (THIS IS (A TEST))
+> `(this is ,test1) => (THIS IS (A TEST))
 
-> '(this is ,@test1) => (THIS IS A TEST)
+> `(this is ,@test1) => (THIS IS A TEST)
 
-> '(this is . ,test1) => (THIS IS A TEST)
+> `(this is . ,test1) => (THIS IS A TEST)
 
-> '(this is ,@test1 -- this is only ,@testl) =>
+> `(this is ,@test1 -- this is only ,@test1) =>
 (THIS IS A TEST -- THIS IS ONLY A TEST)
 ```
 
