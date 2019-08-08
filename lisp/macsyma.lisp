@@ -112,7 +112,7 @@
   "Transform a rule into proper format."
   (let ((exp (infix->prefix rule)))
     (mkexp (expand-pat-match-abbrev (exp-lhs exp))
-	   (exp-op exp) (exp-rhs exp))))
+           (exp-op exp) (exp-rhs exp))))
 
 (defun simp-fn (op) (get op 'simp-fn))
 (defun set-simp-fn (op fn) (setf (get op 'simp-fn) fn))
@@ -276,6 +276,6 @@
     (subst arg (exp-lhs (exp-lhs (exp-lhs rule))) (exp-rhs rule))))
 
 (set-simp-fn 'Int #'(lambda (exp)
-		      (unfactorize
-		       (factorize
-			(integrate (exp-lhs exp) (exp-rhs exp))))))
+                      (unfactorize
+                        (factorize
+                          (integrate (exp-lhs exp) (exp-rhs exp))))))
