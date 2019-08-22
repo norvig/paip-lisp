@@ -46,6 +46,8 @@ To summarize, the five stages of an AI programming project are:
 
 4.  **Test** the program on representative examples
 
+5.  **Debug** and **Analyze** the resulting program, and repeat the process
+
 
 ## 4.1 Stage 1: Description
 
