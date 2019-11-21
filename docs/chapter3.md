@@ -381,7 +381,7 @@ The expansion of the `incf` form binds a temporary variable so that the sort is 
   "Increment the WINS for the player with highest score."
   (incf (player-wins (first (sort players #'>
                                   :key #'player-score)))))
-=
+
 (defun determine-winner (players)
    "Increment the WINS for the player with highest score."
    (let ((temp (first (sort players #'> :key #'player-score))))
