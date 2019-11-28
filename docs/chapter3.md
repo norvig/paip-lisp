@@ -612,7 +612,7 @@ The second table lists functions that have `-if` and `-if-not` versions and also
 | `(find 2 y)`         | => `2`       | find first element that matches       |
 | `(position 'a x)`    | => 0         | find index of element in sequence     |
 | `(reduce #'+ y)`     | => `6`       | apply function to successive elements |
-| `(remove 2 y)`       | => (1 `3)`   | like `delete`, but makes a new copy   |
+| `(remove 2 y)`       | => `(1 3)`   | like `delete`, but makes a new copy   |
 | `(substitute 4 2 y)` | => `(1 4 3)` | replace elements with new ones        |
 
 ### Repetition through Recursion
@@ -908,7 +908,7 @@ The more complicated ones are explained more thoroughly when they are used.
 | []()             |                        |                                                |
 |------------------|------------------------|------------------------------------------------|
 | `(first x)`      | => `a`                 | first element of a list                        |
-| `(second x)`     | `=> b`                 | second element of a list                       |
+| `(second x)`     | => `b`                 | second element of a list                       |
 | `(third x)`      | => `c`                 | third element of a list                        |
 | `(nth 0 x)`      | => `a`                 | nth element of a list, `0`-based               |
 | `(rest x)`       | => `(b c)`             | all but the first element                      |
@@ -920,7 +920,7 @@ The more complicated ones are explained more thoroughly when they are used.
 | `(cons 0 y)`     | => `(0 1 2 3)`         | add to front of list                           |
 | `(append x y)`   | => `(a b c 1 2 3)`     | append together elements                       |
 | `(list x y)`     | => `((a b c) (1 2 3))` | make a new list                                |
-| `(list* 1 2 x)`  | => `(1 2 a b` c)       | append last argument to others                 |
+| `(list* 1 2 x)`  | => `(1 2 a b c)`       | append last argument to others                 |
 | `(null nil)`     | => `T`                 | predicate is true of the empty list            |
 | `(null x)`       | => `nil`               | ... and false for everything else              |
 | `(listp x)`      | => `T`                 | predicate is true of any list, including `nil` |
@@ -928,7 +928,7 @@ The more complicated ones are explained more thoroughly when they are used.
 | `(consp x)`      | => `t`                 | predicate is true of non-nil lists             |
 | `(consp nil)`    | => `nil`               | ... and false for atoms, including `nil`       |
 | `(equal x x)`    | => `t`                 | true for lists that look the same              |
-| `(equal x y)`    | `nil`                  | ... and false for lists that look different    |
+| `(equal x y)`    | => `nil`                  | ... and false for lists that look different    |
 | `(sort y #'>)`   | => `(3 2 1)`           | sort a list according to a comparison function |
 | `(subseq x 1 2)` | => `(B)`               | subsequence with given start and end points    |
 
@@ -1183,11 +1183,11 @@ Note that the order of old and new in the a-list for `sublis` is reversed from t
 The name `sublis` is uncharacteristically short and confusing; a better name would be `subst-list`.
 
 ```lisp
-> (subst 'new 'old '(old ((very old))) (NEW ((VERY NEW)))
+> (subst 'new 'old '(old ((very old)))) => (NEW ((VERY NEW)))
 
-> (sublis '((old . new)) '(old ((very old))))` => `(NEW ((VERY NEW)))
+> (sublis '((old . new)) '(old ((very old)))) => (NEW ((VERY NEW)))
 
-> (subst 'new 'old 'old) => 'NEW`
+> (subst 'new 'old 'old) => NEW
 
 (defun english->french (words)
   (sublis '((are . va) (book . libre) (friend . ami)
