@@ -199,7 +199,7 @@ For example, given the code:
 
 the innermost environment is `((e f) (c d) (a b))`.
 The function `in-env-p` tests if a variable appears in an environment.
-If this environment were called `env`, then `(in-env-p 'f env)` would return `(2 1)` and `(in-env-p 'x env)` would return `nil`.
+If this environment were called `env`, then `(in-env-p 'f env)` would return `(0 1)` and `(in-env-p 'x env)` would return `nil`.
 
 ```lisp
 (defun gen-var (var env)
