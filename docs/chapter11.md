@@ -187,12 +187,7 @@ Before developing the code for `unify`, we repeat here the code taken from the p
                       nil
                       bindings)))
 (defun match-variable (var input bindings)
-```
-
-`  "Does VAR match input?
-Uses (or updates) and returns bindings."`
-
-```lisp
+  "Does VAR match input? Uses (or updates) and returns bindings."
   (let ((binding (get-binding var bindings)))
   (cond ((not binding) (extend-bindings var input bindings))
               ((equal input (binding-val binding)) bindings)
