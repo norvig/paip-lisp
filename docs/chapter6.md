@@ -1779,7 +1779,7 @@ Start with states,`
 !!!(p) {:.ftnote1}
 
 [2](#xfn0020) An alternative would be to reserve the question mark for variables only and use another notation for these match operators.
-Keywords would be a good choice, such as : `and, : or,``: is`, etc.
+Keywords would be a good choice, such as :and, :or, :is, etc.
 !!!(p) {:.ftnote1}
 
 [3](#xfn0025) The built-in constant `most-positive-fixnum` is a large integer, the largest that can be expressed without using bignums.
