@@ -449,7 +449,7 @@ That fails too, but finally the match succeeds with `?x` matching the two-elemen
 Given `segment-match`, it is easy to define the function to match one-or-more elements and the function to match zero-or-one element:
 
 ```lisp
-(defun segment-match  + (pattern input bindings)
+(defun segment-match+ (pattern input bindings)
   "Match one or more elements of input."
   (segment-match pattern input bindings 1))
 
