@@ -1503,7 +1503,7 @@ There are 26 different format directives.
 Here's a more complex example:
 
 ```lisp
-> (let ((numbers '(1234 5)))
+> (let ((numbers '(1 2 3 4 5)))
     (format t "~&~{~r~^ plus ~} is ~@r"
             numbers (apply #'+ numbers)))
 one plus two plus three plus four plus five is XV
