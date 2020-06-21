@@ -164,7 +164,7 @@ This would look like:
 ```
 
 Since patterns are like boolean expressions, it makes sense to allow boolean operators on them.
-Following the question-mark convention, we will use `?and, ?or` and `?not` for the operators.[2](#fn0020) Here is a pattern to match a relational expression with one of three relations.
+Following the question-mark convention, we will use `?and`, `?or` and `?not` for the operators.[2](#fn0020) Here is a pattern to match a relational expression with one of three relations.
 It succeeds because the < matches one of the three possibilities specified by `(?or < = >).`
 
 ```lisp
@@ -292,7 +292,7 @@ If you want to use both, then neither version of `segment-matcher` (or `segment-
 You'll have to edit the functions again, just to merge the two extensions.
 
 The solution to this dilemma is to write one version of `segment-pattern-p` and `segment-matcher`, once and for all, but to have these functions refer to a table of pattern/action pairs.
-The table would say "if you see ?* in the pattern, then use the function `segment-match`," and so on.
+The table would say "if you see `?*` in the pattern, then use the function `segment-match`," and so on.
 Then programmers who want to extend the matcher just add entries to the table, and it is trivial to merge different extensions (unless of course two programmers have chosen the same symbol to mark different actions).
 
 This style of programming, where pattern/action pairs are stored in a table, is called *data*-*driven programming*.
@@ -443,23 +443,17 @@ The first successful match is achieved with the first variable, `?x`, matching t
 In the next example, `?x` is first matched against nil and `?y` against (`b c d` ), but that fails, so we try matching `?x` against a segment of length one.
 That fails too, but finally the match succeeds with `?x` matching the two-element segment (`b c`), and `?y` matching (`d`).
 
-| []()           |                                              |
-| ---            | ---                                          |
-| `> (pat-match` | `'(a (?* ?x) (?* ?y) ?x ?y)`                 |
-|                | `'(a b c d (b c) (d))) => ((?Y D) (?X B C))` |
-
+```lisp
+ > (pat-match  '(a (?* ?x) (?* ?y) ?x ?y)  '(a b c d (b c) (d))) => ((?Y D) (?X B C))
+```
 Given `segment-match`, it is easy to define the function to match one-or-more elements and the function to match zero-or-one element:
 
 ```lisp
 (defun segment-match  + (pattern input bindings)
   "Match one or more elements of input."
   (segment-match pattern input bindings 1))
-```
 
-`(defun segment-match?
-(pattern input bindings)`
-
-```lisp
+(defun segment-match? (pattern input bindings)
   "Match zero or one element of input."
   (let ((var (second (first pattern)))
       (pat (rest pattern)))
@@ -484,20 +478,10 @@ This is one of the few cases where it is appropriate to call `eval`: when we wan
 Here are two examples using `?if`.
 The first succeeds because `(+  3 4)` is indeed `7`, and the second fails because `(>  3 4)` is false.
 
-| []()           |                                                 |
-|----------------|-------------------------------------------------|
-| `> (pat-match` | `'(?x ?op ?y is ?z (?if (eq1 (?op ?x ?y) ?z)))` |
-|                | `'(3 + 4 is 7))`                                |
-
+```lisp
+> (pat-match  '(?x ?op ?y is ?z (?if (eql (?op ?x ?y) ?z))) '(3 + 4 is 7)) => ((?Z . 7) (?Y . 4) (?OP . +) (?X . 3))
+> (pat-match  '(?x ?op ?y (?if (?op ?x ?y))) '(3 > 4)) => NIL
 ```
-((?Z . 7) (?Y . 4) (?0P . +) (?X . 3))
-```
-
-| []()           |                                  |
-|----------------|----------------------------------|
-| `> (pat-match` | `'(?x ?op ?y (?if (?op ?x ?y)))` |
-|                | `'(3 > 4))`                      |
-| `NIL`          |                                  |
 
 The syntax we have defined for patterns has two virtues: first, the syntax is very general, so it is easy to extend.
 Second, the syntax can be easily manipulated by `pat-match`.
@@ -510,7 +494,7 @@ Compare the following two patterns:
 ```
 
 Many readers find the second pattern easier to understand at a glance.
-We could change `pat-match` to allow for patterns of the form ?`x*`, but that would mean `pat-match` would have a lot more work to do on every match.
+We could change `pat-match` to allow for patterns of the form `?x*`, but that would mean `pat-match` would have a lot more work to do on every match.
 An alternative is to leave `pat-match` as is, but define another level of syntax for use by human readers only.
 That is, a programmer could type the second expression above, and have it translated into the first, which would then be processed by `pat-match.`
 
@@ -527,6 +511,7 @@ We will only allow symbols to be macros, so it is reasonable to store the expans
   "Define symbol as a macro standing for a pat-match pattern."
   (setf (get symbol 'expand-pat-match-abbrev)
     (expand-pat-match-abbrev expansion))
+    
 (defun expand-pat-match-abbrev (pat)
   "Expand out all pattern matching abbreviations in pat."
   (cond ((and (symbolp pat) (get pat 'expand-pat-match-abbrev)))
@@ -540,8 +525,7 @@ We would use this facility as follows:
 ```lisp
 > (pat-match-abbrev '?x* '(?* ?x)) => (?* ?X)
 > (pat-match-abbrev '?y* '(?* ?y)) => (?* ?Y)
-> (setf axyd (expand-pat-match-abbrev '(a ?x* ?y* d))) =>
-(A (?* ?X) (?* ?Y) D)
+> (setf axyd (expand-pat-match-abbrev '(a ?x* ?y* d))) => (A (?* ?X) (?* ?Y) D)
 > (pat-match axyd '(a b c d)) => ((?Y B C) (?X))
 ```
 
@@ -599,6 +583,7 @@ The rule-based translater tool now looks like this:
         (if (not (eq result fail))
           (funcall action result (funcall rule-then rule)))))
     rules))
+    
 (defun use-eliza-rules (input)
   "Find some rule with which to transform the input."
   (rule-based-translator input *eliza-rules*
@@ -661,13 +646,8 @@ Note that `tree-search` itself does not specify any particular searching strateg
 
 ```lisp
 (defun tree-search (states goal-p successors combiner)
-```
-
-`  "Find a state that satisfies goal-p.
-Start with states,`
-
-```lisp
-  and search according to successors and combiner."
+  "Find a state that satisfies goal-p.
+   Start with states,and search according to successors and combiner."
   (dbg :search "~&; ; Search: ~  a" states)
   (cond ((null states) fail)
       ((funcall goal-p (first states)) (first states))
@@ -678,7 +658,7 @@ Start with states,`
           goal-p successors combiner))))
 ```
 
-The first strategy we will consider is called *depth*-*first search*.
+The first strategy we will consider is called *depth-first search*.
 In depth-first search, the longest paths are considered first.
 In other words, we generate the successors of a state, and then work on the first successor first.
 We only return to one of the subsequent successors if we arrive at a state that has no successors at all.
@@ -707,7 +687,7 @@ Note that is does not do the test itself.
 Rather, it returns a function that can be called to perform tests:
 
 ```lisp
-(defun is (value) #'(lambda (x) (eq1 x value)))
+(defun is (value) #'(lambda (x) (eql x value)))
 ```
 
 Now we can turn on the debugging output and search through the binary tree, starting at 1, and looking for, say, 12, as the goal state.
@@ -734,11 +714,12 @@ Each line of debugging output shows the list of states that have been generated 
 The problem is that we are searching an infinite tree, and the depth-first search strategy just dives down the left-hand branch at every step.
 The only way to stop the doomed search is to type an interrupt character.
 
-An alternative strategy is *breadth*-*first search*, where the shortest path is extended first at each step.
+An alternative strategy is *breadth-first search*, where the shortest path is extended first at each step.
 It can be implemented simply by appending the new successor states to the end of the existing states:
 
 ```lisp
 (defun prepend (x y) "Prepend y to start of x" (append y x))
+
 (defun breadth-first-search (start goal-p successors)
   "Search old states first until goal is reached."
   (tree-search (list start) goal-p successors #'prepend))
@@ -758,7 +739,7 @@ Here we see `breadth-first-search` in action:
 ;; Search: (7 8 9 10 11 12 13)
 ;; Search: (8 9 10 11 12 13 14 15)
 ;; Search: (9 10 11 12 13 14 15 16 17)
-Search: (10 11 12 13 14 15 16 17 18 19)
+;; Search: (10 11 12 13 14 15 16 17 18 19)
 ;; Search: (11 12 13 14 15 16 17 18 19 20 21)
 ;; Search: (12 13 14 15 16 17 18 19 20 21 22 23)
 12
@@ -766,7 +747,7 @@ Search: (10 11 12 13 14 15 16 17 18 19)
 
 Breadth-first search ends up searching each node in numerical order, and so it will eventually find any goal.
 It is methodical, but therefore plodding.
-Depth-first search will be much faster-if it happens to find the goal at all.
+Depth-first search will be much faster - if it happens to find the goal at all.
 For example, if we were looking for 2048, depth-first search would find it in 12 steps, while breadth-first would take 2048 steps.
 Breadth-first search also requires more storage, because it saves more intermediate states.
 
@@ -776,7 +757,7 @@ We will now show a depth-first search of the 15-node binary tree diagrammed prev
 It takes about the same amount of time to find the goal (12) as it did with breadth-first search.
 It would have taken more time to find 15; less to find 8.
 The big difference is in the number of states considered at one time.
-At most, depth-first search considers four at a time; in general it will need to store only log2*n* states to search a *n*-node tree, while breadth-first search needs to store *n*/2 states.
+At most, depth-first search considers four at a time; in general it will need to store only *log2n* states to search a *n-node* tree, while breadth-first search needs to store *n/2* states.
 
 ```lisp
 (defun finite-binary-tree (n)
@@ -785,7 +766,11 @@ At most, depth-first search considers four at a time; in general it will need to
   #'(lambda (x)
           (remove-if #'(lambda (child) (> child n))
                 (binary-tree x))))
-(depth-first-search 1 (is 12) (finite-binary-tree 15))
+		
+```
+
+```lisp		
+> (depth-first-search 1 (is 12) (finite-binary-tree 15))
 ;; Search: (1)
 ;; Search: (2 3)
 ;; Search: (4 5 3)
@@ -805,7 +790,7 @@ At most, depth-first search considers four at a time; in general it will need to
 While breadth-first search is more methodical, neither strategy is able to take advantage of any knowledge about the state space.
 They both search blindly.
 In most real applications we will have some estimate of how far a state is from the solution.
-In such cases, we can implement a *best*-*first search*.
+In such cases, we can implement a *best-first search*.
 The name is not quite accurate; if we could really search best first, that would not be a search at all.
 The name refers to the fact that the state that *appears* to be best is searched first.
 
@@ -817,17 +802,19 @@ The higher-order function `diff`, shown in the following, returns a cost functio
 The higher-order function sorter takes a cost function as an argument and returns a combiner function that takes the lists of old and new states, appends them together, and sorts the result based on the cost function, lowest cost first.
 (The built-in function `sort` sorts a list according to a comparison function.
 In this case the smaller numbers come first.
-`sort` takes an optional : `key` argument that says how to compute the score for each element.
-Be careful-`sort` is a destructive function.)
+`sort` takes an optional `:key` argument that says how to compute the score for each element.
+Be careful - `sort` is a destructive function.)
 
 ```lisp
 (defun diff (num)
   "Return the function that finds the difference from num."
   #'(lambda (x) (abs (- x num))))
+  
 (defun sorter (cost-fn)
   "Return a combiner function that sorts according to cost-fn."
   #'(lambda (new old)
       (sort (append new old) #'< :key cost-fn)))
+      
 (defun best-first-search (start goal-p successors cost-fn)
   "Search lowest cost states first until goal is reached."
   (tree-search (list start) goal-p successors (sorter cost-fn)))
@@ -849,7 +836,7 @@ Now, using the difference from the goal as the cost function, we can search usin
 
 The more we know about the state space, the better we can search.
 For example, if we know that all successors are greater than the states they come from, then we can use a cost function that gives a very high cost for numbers above the goal.
-The function `price- is - right` is like `diff`, except that it gives a high penalty for going over the goal.[3](#fn0025) Using this cost function leads to a near-optimal search on this example.
+The function `price-is-right` is like `diff`, except that it gives a high penalty for going over the goal.[3](#fn0025) Using this cost function leads to a near-optimal search on this example.
 It makes the "mistake" of searching 7 before 6 (because 7 is closer to 12), but does not waste time searching 14 and 15:
 
 ```lisp
@@ -859,6 +846,7 @@ It makes the "mistake" of searching 7 before 6 (because 7 is closer to 12), but 
   #'(lambda (x) (if (> x price)
               most-positive-fixnum
               (- price x))))
+	      
 > (best-first-search 1 (is 12) #'binary-tree (price-is-right 12)) ;; Search: (1)
 ;; Search: (3 2)
 ;; Search: (7 6 2)
@@ -879,7 +867,7 @@ Beam search is a variant of best-first search, but it is also similar to depth-f
 The difference is that beam search looks down several paths at once, instead of just one, and chooses the best one to look at next.
 But it gives up the ability to backtrack indefinitely.
 The function `beam-search` is just like `best-first-search`, except that after we sort the states, we then take only the first `beam-width` states.
-This is done with `subseq`; (`subseq`*list start end*) returns the sublist that starts at position *start* and ends just before position *end*.
+This is done with `subseq`; `(subseq list start end)` returns the sublist that starts at position *start* and ends just before position *end*.
 
 ```lisp
 (defun beam-search (start goal-p successors cost-fn beam-width)
@@ -890,7 +878,7 @@ This is done with `subseq`; (`subseq`*list start end*) returns the sublist that 
           (let ((sorted (funcall (sorter cost-fn) old new)))
             (if (> beam-width (length sorted))
               sorted
-              (subseq sorted0 beam-width))))))
+              (subseq sorted 0 beam-width))))))
 ```
 
 We can successfully search for 12 in the binary tree using a beam width of only 2:
@@ -930,7 +918,7 @@ That means having a better ordering function.
 
 Notice that with a beam width of infinity we get best-first search.
 With a beam width of 1, we get depth-first search with no backup.
-This could be called "depth-only search," but it is more commonly known as *hill*-*climbing*.
+This could be called "depth-only search," but it is more commonly known as *hill-climbing*.
 Think of a mountaineer trying to reach a peak in a heavy fog.
 One strategy would be for the mountaineer to look at adjacent locations, climb to the highest one, and look again.
 This strategy may eventually hit the peak, but it may also get stuck at the top of a foothill, or *local maximum*.
@@ -939,38 +927,36 @@ Another strategy would be for the mountaineer to turn back and try again when th
 As a concrete example of a problem that can be solved by search, consider the task of planning a flight across the North American continent in a small airplane, one whose range is limited to 1000 kilometers.
 Suppose we have a list of selected cities with airports, along with their position in longitude and latitude:
 
-```
+```lisp
 (defstruct (city (:type list)) name long lat)
-(defparameter *cities*
-```
 
-| []()            |                 |                  |                  |
-|-----------------|-----------------|------------------|------------------|
-| `'((Atlanta`    | `84.23 33.45)`  | `(Los-Angeles`   | `118.15 34.03`   |
-| `(Boston`       | `71.05 42.21)`  | `(Memphis`       | `90.03 35.09)`   |
-| `(Chicago`      | `87.37 41.50)`  | `(New-York`      | `73.58 40.47)`   |
-| `(Denver`       | `105.00 39.45)` | `(Oklahoma-City` | `97.28 35.26)`   |
-| `(Eugene`       | `123.05 44.03)` | `(Pittsburgh`    | `79.57 40.27)`   |
-| `(Flagstaff`    | `111.41 35.13)` | `(Quebec`        | `71.11 46.49)`   |
-| `(Grand-Jet`    | `108.37 39.05)` | `(Reno`          | `119.49 39.30)`  |
-| `(Houston`      | `105.00 34.00)` | `(San-Francisco` | `122.26 37.47)`  |
-| `(Indianapolis` | `86.10 39.46)`  | `(Tampa`         | `82.27 27.57)`   |
-| `(Jacksonville` | `81.40 30.22)`  | `(Victoria`      | `123.21 48.25)`  |
-| `(Kansas-City`  | `94.35 39.06)`  | `(Wilmington`    | `77.57 34.14)))` |
+(defparameter *cities*
+   '((Atlanta        84.23 33.45)      (Los Angeles       118.15 34.03)     
+   (Boston           71.05 42.21)      (Memphis           90.03 35.09)     
+   (Chicago          87.37 41.50)      (New York          73.58 40.47)     
+   (Denver           105.00 39.45)     (Oklahoma City     97.28 35.26)     
+   (Eugene           123.05 44.03)     (Pittsburgh        79.57 40.27)     
+   (Flagstaff        111.41 35.13)     (Quebec            71.11 46.49)     
+   (Grand Jet        108.37 39.05)     (Reno              119.49 39.30)    
+   (Houston          105.00 34.00)     (San Francisco     122.26 37.47)    
+   (Indianapolis     86.10 39.46)      (Tampa             82.27 27.57)     
+   (Jacksonville     81.40 30.22)      (Victoria          123.21 48.25)    
+   (Kansas City      94.35 39.06)      (Wilmington        77.57 34.14)))   
+```
 
 This example introduces a new option to `defstruct`.
 Instead of just giving the name of the structure, it is also possible to use:
 
 ```lisp
-(defstruct *(structure*-*name (option value*)...) *"optional doc" slot*...)
+(defstruct (structure-name (option value)...) "optional doc" slot...)
 ```
 
-For city, the option : type is specified as `list`.
+For city, the option :type is specified as `list`.
 This means that cities will be implemented as lists of three elements, as they are in the initial value for `*cities*`.
 
 The cities are shown on the map in [figure  6.1](#f0010), which has connections between all cities within the 1000 kilometer range of each other.[5](#fn0035) This map was drawn with the help of `air-distance`, a function that returns the distance in kilometers between two cities "as the crow flies." It will be defined later.
 Two other useful functions are `neighbors`, which finds all the cities within 1000 kilometers, and `city`, which maps from a name to a city.
-The former uses `find-a11-if`, which was defined on [page 101](B9780080571157500030.xhtml#p101) as a synonym for `remove-if-not`.
+The former uses `find-all-if`, which was defined on [page 101](B9780080571157500030.xhtml#p101) as a synonym for `remove-if-not`.
 
 
 | []()                                  |
@@ -985,6 +971,7 @@ The former uses `find-a11-if`, which was defined on [page 101](B9780080571157500
           (and (not (eq c city))
               (< (air-distance c city) 1000.0)))
         *cities*))
+	
 (defun city (name)
   "Find the city with this name."
   (assoc name *cities*))
@@ -1006,7 +993,7 @@ Here we plan a trip from San Francisco to Boston.
 The result seems to be the best possible path:
 
 ```lisp
-> (trip (city ' san-francisco) (city 'boston))
+> (trip (city 'san-francisco) (city 'boston))
 ;; Search: ((SAN-FRANCISCO 122.26 37.47))
 ;; Search: ((RENO 119.49 39.3))
 ;; Search: ((GRAND-JCT 108.37 39.05))
@@ -1049,7 +1036,7 @@ So there is no way to determine what `trip` has done, except by reading the debu
 The data structure path is designed to solve both these problems.
 A path has four fields: the current state, the previous partial path that this path is extending, the cost of the path so far, and an estimate of the total cost to reach the goal.
 Here is the structure definition for path.
-It uses the : `print-function` option to say that all paths are to be printed with the function `print-path`, which will be defined below.
+It uses the `:print-function` option to say that all paths are to be printed with the function `print-path`, which will be defined below.
 
 ```lisp
 (defstruct (path (:print-function print-path))
@@ -1076,7 +1063,7 @@ Finally, the cost function we are trying to minimize is `path-total-cost`, and w
     (make-path :state start)
     (is dest :key #'path-state)
     (path-saver #'neighbors #'air-distance
-          #,(lambda (c) (air-distance c dest)))
+          #'(lambda (c) (air-distance c dest)))
 #'path-total-cost
 beam-width))
 ```
@@ -1093,6 +1080,7 @@ Since this is a problem in solid geometry, not AI, the code is presented without
     ;; d is the straight-line chord between the two cities,
     ;; The length of the subtending arc is given by:
     (* earth-diameter (asin (/ d 2)))))
+    
 (defun xyz-coords (city)
   "Returns the x,y,z coordinates of a point on a sphere.
   The center is (0 0 0) and the north pole is (0 0 1)."
@@ -1101,11 +1089,13 @@ Since this is a problem in solid geometry, not AI, the code is presented without
       (list (* (cos psi) (cos phi))
             (* (cos psi) (sin phi))
             (sin psi))))
+	    
 (defun distance (point1 point2)
   "The Euclidean distance between two points.
   The points are coordinates in n-dimensional space."
   (sqrt (reduce #'+ (mapcar #'(lambda (a b) (expt (- a b) 2))
                 point1 point2))))
+		
 (defun deg->radians (deg)
   "Convert degrees and minutes to radians."
   (* (+ (truncate deg) (* (rem  deg 1) 100/60)) pi 1/180))
@@ -1147,10 +1137,10 @@ But with a beam width of 2, the path from Tampa to Atlanta is not discarded, and
 So the capability to back up is essential in avoiding dead ends.
 
 Now for the implementation details.
-The function `is` still returns a predicate that tests for a value, but now it accepts : `key` and : `test` keywords:
+The function `is` still returns a predicate that tests for a value, but now it accepts `:key` and `:test` keywords:
 
 ```lisp
-(defun is (value &key (key #'identity) (test #'eq1))
+(defun is (value &key (key #'identity) (test #'eql))
   "Returns a predicate that tests for a given value."
   #'(lambda (path) (funcall test value (funcall key path))))
 ```
@@ -1189,12 +1179,14 @@ We also define `map-path` to iterate over a path, collecting values:
   (declare (ignore depth))
   (format stream "#<Path to ~a cost ~,lf>"
         (path-state path) (path-total-cost path)))
+	
 (defun show-city-path (path &optional (stream t))
   "Show the length of a path, and the cities along it."
   (format stream "#<Path ~,lf km: ~{~:(~a~)~^- ~}>"
         (path-total-cost path)
         (reverse (map-path #'city-name path)))
   (values))
+  
 (defun map-path (fn path)
   "Call fn on each state in the path, collecting results."
   (if (null path)
@@ -1210,7 +1202,7 @@ However, in practice these algorithms are hardly ever used.
 The problem is that guaranteeing the best solution requires looking at a lot of other solutions in order to rule them out.
 For problems with large search spaces, this usually takes too much time.
 The alternative is to use an algorithm that will probably return a solution that is close to the best solution, but gives no guarantee.
-Such algorithms, traditionally known as *non*-*admissible heuristic search* algorithms, can be much faster.
+Such algorithms, traditionally known as *non-admissible heuristic search* algorithms, can be much faster.
 
 Of the algorithms we have seen so far, best-first search almost, but not quite, guarantees the best solution.
 The problem is that it terminates a little too early.
@@ -1284,7 +1276,7 @@ So far, `tree-search` has been the workhorse behind all the searching routines.
 This is curious, when we consider that the city problem involves a graph that is not a tree at all.
 The reason `tree-search` works is that any graph can be treated as a tree, if we ignore the fact that certain nodes are identical.
 For example, the graph in [figure 6.3](#f0020) can be rendered as a tree.
-[Figure 6.4](#f0025) shows only the top four levels of the tree; each of the bottom nodes (except the 6  s) needs to be expanded further.
+[Figure 6.4](#f0025) shows only the top four levels of the tree; each of the bottom nodes (except the 6s) needs to be expanded further.
 
 | []()                                  |
 |---------------------------------------|
@@ -1308,15 +1300,8 @@ It is similar to `tree-search`, but accepts two additional arguments: a comparis
 The difference between `graph-search` and `tree-search` is in the call to `new-states`, which generates successors but eliminates states that are in either the list of states currently being considered or the list of old states considered in the past.
 
 ```lisp
-(defun graph-search (states goal-p successors combiner
-                &optional (state  = #'eq1) old-states)
-```
-
-`  "Find a state that satisfies goal-p.
-Start with states,`
-
-```lisp
-  and search according to successors and combiner.
+(defun graph-search (states goal-p successors combiner &optional (state= #'eql) old-states)
+ "Find a state that satisfies goal-p. Start with states,and search according to successors and combiner.
   Don't try the same state twice."
   (dbg :search "~&;; Search: ~a" states)
   (cond ((null states) fail)
@@ -1324,17 +1309,18 @@ Start with states,`
         (t (graph-search
             (funcall
               combiner
-              (new-states states successors state  = old-states)
+              (new-states states successors state= old-states)
               (rest states))
-            goal-p successors combiner state  =
+            goal-p successors combiner state=
             (adjoin (first states) old-states
-                      :test state  =)))))
-(defun new-states (states successors state  = old-states)
+                      :test state=)))))
+		      
+(defun new-states (states successors state= old-states)
   "Generate successor states that have not been seen before."
   (remove-if
     #'(lambda (state)
-      (or (member state states :test state  =)
-        (member state old-states :test state  =)))
+      (or (member state states :test state=)
+        (member state old-states :test state=)))
       (funcall successors (first states))))
 ```
 
@@ -1344,6 +1330,7 @@ Of course, there is additional overhead to test for identical states, but on gra
 
 ```lisp
 (defun next2 (x) (list (+ x 1) (+ x 2)))
+
 > (tree-search '(1) (is 6) #'next2 #'prepend)
 ;; Search: (1)
 ;; Search: (2 3)
@@ -1370,13 +1357,13 @@ Of course, there is additional overhead to test for identical states, but on gra
 The next step is to extend the `graph-search` algorithm to handle paths.
 The complication is in deciding which path to keep when two paths reach the same state.
 If we have a cost function, then the answer is easy: keep the path with the cheaper cost.
-Best-first search of a graph removing duplicate states is called *A* * *search*.
+Best-first search of a graph removing duplicate states is called A* search.
 
 A* search is more complicated than `graph-search` because of the need both to add and to delete paths to the lists of current and old paths.
 For each new successor state, there are three possibilites.
 The new state may be in the list of current paths, in the list of old paths, or in neither.
 Within the first two cases, there are two subcases.
-If the new path is more expensive than the old one, then ignore the new path-it can not lead to a better solution.
+If the new path is more expensive than the old one, then ignore the new path - it can not lead to a better solution.
 If the new path is cheaper than a corresponding path in the list of current paths, then replace it with the new path.
 If it is cheaper than a corresponding path in the list of the old paths, then remove that old path, and put the new path in the list of current paths.
 
@@ -1385,13 +1372,8 @@ Two more functions, `better-path` and `find-path`, are used to compare paths and
 
 ```lisp
 (defun a*-search (paths goal-p successors cost-fn cost-left-fn
-            &optional (state  = #'eq1) old-paths)
-```
-
-`  "Find a path whose state satisfies goal-p.
-Start with paths,`
-
-```lisp
+                  &optional (state= #'eql) old-paths)
+  "Find a path whose state satisfies goal-p.  Start with paths,
   and expand successors, exploring least cost first.
   When there are duplicate states, keep the one with the
   lower cost and discard the other."
@@ -1399,50 +1381,53 @@ Start with paths,`
   (cond
     ((null paths) fail)
     ((funcall goal-p (path-state (first paths)))
-      (values (first paths) paths))
+     (values (first paths) paths))
     (t (let* ((path (pop paths))
-          (state (path-state path)))
-        ;; Update PATHS and OLD-PATHS to reflect
-        ;; the new successors of STATE:
-        (setf old-paths (insert-path path old-paths))
-        (dolist (state2 (funcall successors state))
-          (let* ((cost (+ (path-cost-so-far path)
-                        (funcall cost-fn state state2)))
-              (cost2 (funcall cost-left-fn state2))
-              (path2 (make-path
-                        :state state2 :previous path
-                        :cost-so-far cost
-                        :total-cost (+ cost cost2)))
-              (old nil)
-            ;; Place the new path, path2, in the right list:
-            (cond
-              ((setf old (find-path state2 paths state  =))
-              (when (better-path path2 old)
-                (setf paths (insert-path
-                          path2 (delete old paths)))))
-              ((setf old (find-path state2 old-paths state  =))
-              (when (better-path path2 old)
-                (setf paths (insert-path path2 paths))
-                (setf old-paths (delete old old-paths))))
-              (t (setf paths (insert-path path2 paths))))))
-          ;; Finally, call A* again with the updated path lists:
-          (a*-search paths goal-p successors cost-fn cost-left-fn
-          state  = old-paths)))))
+              (state (path-state path)))
+         ;; Update PATHS and OLD-PATHS to reflect
+         ;; the new successors of STATE:
+         (setf old-paths (insert-path path old-paths))
+         (dolist (state2 (funcall successors state))
+           (let* ((cost (+ (path-cost-so-far path)
+                           (funcall cost-fn state state2)))
+                  (cost2 (funcall cost-left-fn state2))
+                  (path2 (make-path
+                           :state state2 :previous path
+                           :cost-so-far cost
+                           :total-cost (+ cost cost2)))
+                  (old nil))
+             ;; Place the new path, path2, in the right list:
+             (cond
+               ((setf old (find-path state2 paths state=))
+                (when (better-path path2 old)
+                  (setf paths (insert-path
+                                path2 (delete old paths)))))
+               ((setf old (find-path state2 old-paths state=))
+                (when (better-path path2 old)
+                  (setf paths (insert-path path2 paths))
+                  (setf old-paths (delete old old-paths))))
+               (t (setf paths (insert-path path2 paths))))))
+         ;; Finally, call A* again with the updated path lists:
+         (a*-search paths goal-p successors cost-fn cost-left-fn
+                    state= old-paths)))))
 ```
 
 Here are the three auxiliary functions:
 
 ```lisp
-(defun find-path (state paths state  =)
+(defun find-path (state paths state=)
   "Find the path with this state among a list of paths."
-  (find state paths :key #'path-state :test state  =))
+  (find state paths :key #'path-state :test state=))
+  
 (defun better-path (pathl path2)
   "Is path1 cheaper than path2?"
   (< (path-total-cost path1) (path-total-cost path2)))
+  
 (defun insert-path (path paths)
   "Put path into the right position, sorted by total cost."
   ;; MERGE is a built-in function
   (merge 'list (list path) paths #'< :key #'path-total-cost))
+  
 (defun path-states (path)
   "Collect the states along this path."
   (if (null path)
@@ -1631,10 +1616,9 @@ The problem is that it will only rebind a segment variable based on a failure to
 In all the examples above, the "rest of the pattern after the segment variable" was the whole pattern, so `pat-match` always worked properly.
 But if a segment variable appears nested inside a list, then the rest of the segment variable's sublist is only a part of the rest of the whole pattern, as the following example shows:
 
-| []()           |                                      |
-| ---            | ---                                  |
-| `> (pat-match` | `'(((?* ?x) (?* ?y)) ?x ?y)`         |
-|                | `'((a b c d ) (a b) (c d)))`=> `NIL` |
+```lisp
+> (pat-match '(((?* ?x) (?* ?y)) ?x ?y) '((a b c d ) (a b) (c d))) => NIL
+```
 
 The correct answer with `?x` bound to `(a b)` and `?y` bound to `(c d)` is not found because the inner segment match succeeds with `?x` bound to `( )` and `?y` bound to `(a b c d)`, and once we leave the inner match and return to the top level, there is no going back for alternative bindings.
 
@@ -1661,7 +1645,7 @@ Here is another version that does all of the above and also handles multiple val
       (prompt "> ") (input t) (output t))
   "Read an expression, evaluate it, and print the result(s).
   Does multiple values and binds: * ** ***-+ ++ +++/ // ///"
-  (let (* ** ***-+ ++ +++/ // /// vais)
+  (let (* ** *** - + ++ +++ / // /// vals)
     ;; The above variables are all special, except VALS
     ;; The variable - holds the current input
     ;; * *** *** are the 3 most recent values
@@ -1674,17 +1658,11 @@ Here is another version that does all of the above and also handles multiple val
       (setf - (funcall read input)
           vals (multiple-value-list (funcall eval -)))
       ;; Now update the history variables
-```
-
-| []()           |          |                   |
-| ---            | ---      | ---               |
-| `(setf +++ ++` | `/// //` | `*** (first ///)` |
-| `++ +`         | `// /`   | `** (first //)`   |
-| `+ -`          | `/ vais` | `* (first /))`    |
-
-```lisp
+   (setf +++ ++     /// //     *** (first ///)   
+         ++ +       // /       ** (first //)     
+         + -        / vals     * (first /)) 
       ;; Finally print the computed value(s)
-      (dolist (value vais)
+      (dolist (value vals)
         (funcall print value output)))))
 ```
 
@@ -1692,28 +1670,18 @@ Here is another version that does all of the above and also handles multiple val
 
 ```lisp
 (defun compose (&rest functions)
-  "Return the function that is the composition of all the args.
-```
-
-`  i.e.
-(compose f g h) = (lambda (x) (f (g (h x)))).`
-
-```lisp
-  " #'(lambda (x)
-      (reduce #'funcall functions :from-end t .-initial-value x)))
+  "Return the function that is the composition of all the args. i.e.
+(compose f g h) = (lambda (x) (f (g (h x))))." 
+#'(lambda (x)
+      (reduce #'funcall functions :from-end t :initial-value x)))
 ```
 
 **Answer 6**.**5**
 
 ```lisp
 (defun compose (&rest functions)
-  "Return the function that is the composition of all the args.
-```
-
-`  i.e.
-(compose f g h) = (lambda (x) (f (g (h x))))."`
-
-```lisp
+  "Return the function that is the composition of all the args. i.e.
+(compose f g h) = (lambda (x) (f (g (h x))))."
   (case (length functions)
     (0 #'identity)
     (1 (first functions))
@@ -1729,13 +1697,8 @@ Here is another version that does all of the above and also handles multiple val
 
 ```lisp
 (defun tree-search (states goal-p successors combiner)
-```
-
-`  "Find a state that satisfies goal-p.
-Start with states,`
-
-```lisp
-  and search according to successors and combiner."
+"Find a state that satisfies goal-p.
+Start with states, and search according to successors and combiner."
   (loop
     (cond ((null states) (RETURN fail))
           ((funcall goal-p (first states))
@@ -1776,20 +1739,16 @@ Start with states,`
 ----------------------
 
 [1](#xfn0015) The macro `handler-case` is only in ANSI Common Lisp.
-!!!(p) {:.ftnote1}
+
 
 [2](#xfn0020) An alternative would be to reserve the question mark for variables only and use another notation for these match operators.
-Keywords would be a good choice, such as :and, :or, :is, etc.
-!!!(p) {:.ftnote1}
+Keywords would be a good choice, such as `:and`, `:or`, `:is`, etc.
 
 [3](#xfn0025) The built-in constant `most-positive-fixnum` is a large integer, the largest that can be expressed without using bignums.
 Its value depends on the implementation, but in most Lisps it is over 16 million.
-!!!(p) {:.ftnote1}
 
 [4](#xfn0030) In [chapter 8](B978008057115750008X.xhtml) we will see an example where the fog did lift: symbolic integration was once handled as a problem in search, but new mathematical results now make it possible to solve the same class of integration problems without search.
-!!!(p) {:.ftnote1}
+
 
 [5](#xfn0035) The astute reader will recognize that this graph is not a tree.
 The difference between trees and graphs and the implications for searching will be covered later.
-!!!(p) {:.ftnote1}
-
