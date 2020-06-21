@@ -70,7 +70,7 @@
       ;; No keywords implies simple loop:
       `(block nil (tagbody loop ,@exps (go loop)))
       ;; otherwise process loop keywords:
-      (let ((l (make-loop)))    
+      (let ((l (make-loop)))
         (parse-loop-body l exps)
         (fill-loop-template l))))
 
@@ -100,7 +100,7 @@
   "Add a variable, maybe including an update step."
   (unless (assoc var (loop-vars l))
     (push (list var init) (loop-vars l)))
-  (when update? 
+  (when update?
     (push `(setq ,var ,update) (loop-steps l))))
 
 ;;; ==============================
@@ -109,7 +109,7 @@
   "Parse the exps based on the first exp being a keyword.
   Continue until all the exps are parsed."
   (unless (null exps)
-    (parse-loop-body 
+    (parse-loop-body
       l (call-loop-fn l (first exps) (rest exps)))))
 
 (defun call-loop-fn (l key exps)
@@ -133,7 +133,7 @@
 ;;; ==============================
 
 (defloop repeat (l times)
-  "(LOOP REPEAT n ...) does loop body n times" 
+  "(LOOP REPEAT n ...) does loop body n times"
   (let ((i (gensym "REPEAT")))
     (add-var l i times `(- ,i 1))
     (add-test l `(<= ,i 0))))
@@ -302,7 +302,7 @@
 
 ;;; ==============================
 
-(defloop when (l test exps) 
+(defloop when (l test exps)
   (loop-unless l `(not ,(maybe-set-it test exps)) exps))
 
 (defloop unless (l test exps)

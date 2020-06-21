@@ -156,12 +156,14 @@ For example:
 ```lisp
 (defun Adj* ()
   (if (= (random 2) 0)
-  nil
-  (append (Adj) (Adj*))))
+      nil
+      (append (Adj) (Adj*))))
+
 (defun PP* ()
   (if (random-elt '(t nil))
-  (append (PP) (PP*))
-  nil))
+      (append (PP) (PP*))
+      nil))
+
 (defun noun-phrase () (append (Article) (Adj*) (Noun) (PP*)))
 (defun PP () (append (Prep) (noun-phrase)))
 (defun Adj () (one-of '(big little blue green adiabatic)))
@@ -214,7 +216,7 @@ The list of rules can then be represented as follows:
   "A grammar for a trivial subset of English.")
 
 (defvar *grammar* *simple-grammar*
-  "The grammar used by generate. Initially, this is
+  "The grammar used by generate.  Initially, this is
   *simple-grammar*, but we can switch to other grammars.")
 ```
 
@@ -240,11 +242,11 @@ We will need three functions: one to get the right-hand side of a rule, one for 
 
 ```lisp
 (defun rule-lhs (rule)
-  "The left-hand side of a rule."
+  "The left hand side of a rule."
   (first rule))
 
 (defun rule-rhs (rule)
-  "The right-hand side of a rule."
+  "The right hand side of a rule."
   (rest (rest rule)))
 
 (defun rewrites (category)
@@ -460,7 +462,7 @@ Still, the complete program is quite simple:
   E.g., (combine-all '((a) (b)) '((1) (2)))
   -> ((A 1) (B 1) (A 2) (B 2))."
   (mappend #'(lambda (y)
-               (mapcar #'(lambda (x) (append . y)) xlist))
+               (mapcar #'(lambda (x) (append x y)) xlist))
            ylist))
 ```
 

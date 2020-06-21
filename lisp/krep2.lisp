@@ -52,7 +52,7 @@
 
 (defparameter *depth-start* 5
   "The depth of the first round of iterative search.")
-(defparameter *depth-incr* 5 
+(defparameter *depth-incr* 5
   "Increase each iteration of the search by this amount.")
 (defparameter *depth-max* most-positive-fixnum
   "The deepest we will ever search.")

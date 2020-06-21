@@ -74,7 +74,7 @@
 (rule (rel-clause ?agr ?x :sem) ==>
   (:ex (the man) "that she liked" "that liked her"
        "that I know Lee liked")
-  (opt-rel-pronoun ?case ?x ?int-subj ?rel-sem) 
+  (opt-rel-pronoun ?case ?x ?int-subj ?rel-sem)
   (clause (finite ? ?) ? ?int-subj ?v
           (gap (NP ?agr ?case ?x)) (gap nil) ?clause-sem))
 
@@ -102,7 +102,7 @@
   (:ex "sleeps" "quickly give the dog a bone")
   (modifiers pre verb ? () ?v (gap nil) (gap nil) ?pre-sem)
   (:sem (?role ?x ?v)) (:test (= ?subject-slot (?role 1 ?)))
-  (verb ?verb ?infl (?subject-slot . ?slots) ?v ?v-sem) 
+  (verb ?verb ?infl (?subject-slot . ?slots) ?v ?v-sem)
   (modifiers post verb ? ?slots ?v ?g1 ?g2 ?mod-sem))
 
 (rule (VP ?infl ?x ?subject-slot ?v ?g1 ?g2 :sem) ==>
@@ -138,7 +138,7 @@
              (= ?agree (- - + -))))) ;Non-NP subjects are 3sing
 
 (rule (subject ?agr ?x (?role 1 (NP ?x)) int-subj ?gap ?gap ?sem)
-  ==> 
+  ==>
   (NP ?agr (common nom) ?wh ?x (gap nil) (gap nil) ?sem))
 
 (<- (subj-pred-agree ?agr (finite ?agr ?)))
@@ -176,7 +176,7 @@
           ?clause-sem))
 
 (rule (aux-inv-S ?ext ?v :sem) ==>
-  (:ex "Is he a doctor?") 
+  (:ex "Is he a doctor?")
   (verb ?be (finite ?agr ?) ((?role ?n ?xp) . ?slots) ?v ?sem)
   (:test (word ?be be))
   (subject ?agr ?x (?role ?n ?xp) int-subj
@@ -196,7 +196,7 @@
 (<- (slot-constituent (?role ?n (Adj ?x))      *** ?x ?))
 (<- (slot-constituent (?role ?n (P ?particle)) *** ? ?))
 
-(rule (complement ?cat ?info (?role ?n ?xp) ?h ?gap1 ?gap2 :sem) 
+(rule (complement ?cat ?info (?role ?n ?xp) ?h ?gap1 ?gap2 :sem)
   ==>
   ;; A complement is anything expected by a slot
   (:sem (?role ?h ?x))
@@ -219,7 +219,7 @@
   (opt-word ?word)
   (clause ?infl ?x int-subj ?v ?gap1 ?gap2 ?sem))
 
-(rule (XP (?role ?n (advp ?v)) (advp ?v) ?wh ?v ?gap1 ?gap2 ?sem) 
+(rule (XP (?role ?n (advp ?v)) (advp ?v) ?wh ?v ?gap1 ?gap2 ?sem)
   ==>
   (advp ?wh ?v ?gap1 ?gap2 ?sem))
 
@@ -407,7 +407,7 @@
 
 (word not not)
 
-(noun destruction * destruction 
+(noun destruction * destruction
       (pat (2) (PP of ?)) (agt (2) (PP by ?)))
 (noun beach)
 (noun bone)
@@ -429,7 +429,7 @@
 (word I     pronoun 1sing (common nom) -wh speaker)
 (word we    pronoun 1plur (common nom) -wh speaker+other)
 (word you   pronoun 2pers (common   ?) -wh listener)
-(word he    pronoun 3sing (common nom) -wh male)   
+(word he    pronoun 3sing (common nom) -wh male)
 (word she   pronoun 3sing (common nom) -wh female)
 (word it    pronoun 3sing (common   ?) -wh anything)
 (word they  pronoun 3plur (common nom) -wh anything)

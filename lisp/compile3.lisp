@@ -58,7 +58,7 @@
 
 (defun show-fn (fn &optional (stream *standard-output*) (indent 2))
   "Print all the instructions in a function.
-  If the argument is not a function, just princ it, 
+  If the argument is not a function, just princ it,
   but in a column at least 8 spaces wide."
   ;; This version handles code that has been assembled into a vector
   (if (not (fn-p fn))
@@ -81,7 +81,7 @@
 
 (defun is (instr op)
   "True if instr's opcode is OP, or one of OP when OP is a list."
-  (if (listp op) 
+  (if (listp op)
       (member (opcode instr) op)
       (eq (opcode instr) op)))
 
@@ -99,7 +99,7 @@
        (setf instr (elt code pc))
        (incf pc)
        (case (opcode instr)
-         
+
          ;; Variable/stack manipulation instructions:
          (LVAR   (push (elt (elt env (arg1 instr)) (arg2 instr))
                        stack))
@@ -109,12 +109,12 @@
          (GSET   (setf (get (arg1 instr) 'global-val) (top stack)))
          (POP    (pop stack))
          (CONST  (push (arg1 instr) stack))
-         
+
          ;; Branching instructions:
          (JUMP   (setf pc (arg1 instr)))
          (FJUMP  (if (null (pop stack)) (setf pc (arg1 instr))))
          (TJUMP  (if (pop stack) (setf pc (arg1 instr))))
-         
+
          ;; Function call/return instructions:
          (SAVE   (push (make-ret-addr :pc (arg1 instr)
                                       :fn f :env env)
@@ -155,7 +155,7 @@
                                     do (push (pop stack) args)
                                     finally (return args)))
                        stack))
-         
+
          ;; Continuation instructions:
          (SET-CC (setf stack (top stack)))
          (CC     (push (make-fn
@@ -163,38 +163,38 @@
                          :code '((ARGS 1) (LVAR 1 0 ";" stack) (SET-CC)
                                  (LVAR 0 0) (RETURN)))
                        stack))
-         
+
          ;; Nullary operations:
          ((SCHEME-READ NEWLINE) ; *** fix, gat, 11/9/92
           (push (funcall (opcode instr)) stack))
-         
+
          ;; Unary operations:
-         ((CAR CDR CADR NOT LIST1 COMPILER DISPLAY WRITE RANDOM) 
+         ((CAR CDR CADR NOT LIST1 COMPILER DISPLAY WRITE RANDOM)
           (push (funcall (opcode instr) (pop stack)) stack))
-         
+
          ;; Binary operations:
          ((+ - * / < > <= >= /= = CONS LIST2 NAME! EQ EQUAL EQL)
           (setf stack (cons (funcall (opcode instr) (second stack)
                                      (first stack))
                             (rest2 stack))))
-         
+
          ;; Ternary operations:
          (LIST3
           (setf stack (cons (funcall (opcode instr) (third stack)
                                      (second stack) (first stack))
                             (rest3 stack))))
-         
+
          ;; Constants:
          ((T NIL -1 0 1 2)
           (push (opcode instr) stack))
-         
+
          ;; Other:
          ((HALT) (RETURN (top stack)))
          (otherwise (error "Unknown opcode: ~a" instr))))))
 
 (defun init-scheme-comp ()
   "Initialize values (including call/cc) for the Scheme compiler."
-  (set-global-var! 'exit 
+  (set-global-var! 'exit
     (new-fn :name 'exit :args '(val) :code '((HALT))))
   (set-global-var! 'call/cc
     (new-fn :name 'call/cc :args '(f)
@@ -233,7 +233,7 @@
 (defun optimize (code)
   "Perform peephole optimization on assembly code."
   (let ((any-change nil))
-    ;; Optimize each tail  
+    ;; Optimize each tail
     (loop for code-tail on code do
           (setf any-change (or (optimize-1 code-tail code)
                                any-change)))
@@ -293,11 +293,11 @@
 
 ;;; ==============================
 
-(set-dispatch-macro-character #\# #\t 
+(set-dispatch-macro-character #\# #\t
   #'(lambda (&rest ignore) t)
   *scheme-readtable*)
 
-(set-dispatch-macro-character #\# #\f 
+(set-dispatch-macro-character #\# #\f
   #'(lambda (&rest ignore) nil)
   *scheme-readtable*)
 
@@ -306,15 +306,15 @@
   ;; #x, #o and #b are hexidecimal, octal, and binary,
   ;; e.g. #xff = #o377 = #b11111111 = 255
   ;; In Scheme only, #d255 is decimal 255.
-  #'(lambda (stream &rest ignore) 
+  #'(lambda (stream &rest ignore)
       (let ((*read-base* 10)) (scheme-read stream)))
   *scheme-readtable*)
 
-(set-macro-character #\` 
-  #'(lambda (s ignore) (list 'quasiquote (scheme-read s))) 
+(set-macro-character #\`
+  #'(lambda (s ignore) (list 'quasiquote (scheme-read s)))
   nil *scheme-readtable*)
 
-(set-macro-character #\, 
+(set-macro-character #\,
    #'(lambda (stream ignore)
        (let ((ch (read-char stream)))
          (if (char= ch #\@)
@@ -334,7 +334,7 @@
     (list 1 list1 true) (list 2 list2 true) (list 3 list3 true)
     (read 0 scheme-read nil t) (eof-object? 1 eof-object?) ;***
     (write 1 write nil t) (display 1 display nil t)
-    (newline 0 newline nil t) (compiler 1 compiler t) 
+    (newline 0 newline nil t) (compiler 1 compiler t)
     (name! 2 name! true t) (random 1 random true nil)))
 
 
@@ -349,7 +349,7 @@
      (list 'apply 'vector (quasi-q (coerce x 'list))))
     ((atom x)
      (if (constantp x) x (list 'quote x)))
-    ((starts-with x 'unquote)      
+    ((starts-with x 'unquote)
      (assert (and (rest x) (null (rest2 x))))
      (second x))
     ((starts-with x 'quasiquote)

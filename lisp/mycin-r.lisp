@@ -31,7 +31,7 @@
 (defparm morphology organism (member rod coccus)
   "Is ~a a rod or coccus (etc.):")
 (defparm aerobicity organism (member aerobic anaerobic))
-(defparm growth-conformation organism 
+(defparm growth-conformation organism
   (member chains pairs clumps))
 
 (clear-rules)

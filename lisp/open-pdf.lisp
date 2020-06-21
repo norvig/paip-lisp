@@ -1,5 +1,5 @@
 (defvar *paip-pdf-uri* "https://github.com/norvig/paip-lisp/raw/master/")
-                        
+
 (defun open-pdf (&optional (part 1))
   (let* ((name (format nil "PAIP-part~A.pdf" part))
          (path (namestring

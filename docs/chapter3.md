@@ -68,7 +68,7 @@ But the second is more specific, as it uses the `acons` function, which is desig
 The decision between them probably hinges on obscurity: those who find `acons` to be a familiar function would prefer the second, and those who find it obscure would prefer the first.
 
 A similar choice arises in the question of setting a variable to a value.
-Some prefer `(setq x val)` because it is most specific; others use `(setq x val)`, feeling that it is more consistent to use a single form, `setf`, for all updating.
+Some prefer `(setq x val)` because it is most specific; others use `(setf x val)`, feeling that it is more consistent to use a single form, `setf`, for all updating.
 Whichever choice you make on such issues, remember the sixth maxim: be consistent.
 
 ## 3.2 Special Forms
@@ -381,7 +381,7 @@ The expansion of the `incf` form binds a temporary variable so that the sort is 
   "Increment the WINS for the player with highest score."
   (incf (player-wins (first (sort players #'>
                                   :key #'player-score)))))
-=
+
 (defun determine-winner (players)
    "Increment the WINS for the player with highest score."
    (let ((temp (first (sort players #'> :key #'player-score))))
@@ -612,7 +612,7 @@ The second table lists functions that have `-if` and `-if-not` versions and also
 | `(find 2 y)`         | => `2`       | find first element that matches       |
 | `(position 'a x)`    | => 0         | find index of element in sequence     |
 | `(reduce #'+ y)`     | => `6`       | apply function to successive elements |
-| `(remove 2 y)`       | => (1 `3)`   | like `delete`, but makes a new copy   |
+| `(remove 2 y)`       | => `(1 3)`   | like `delete`, but makes a new copy   |
 | `(substitute 4 2 y)` | => `(1 4 3)` | replace elements with new ones        |
 
 ### Repetition through Recursion
@@ -878,15 +878,15 @@ Note that at the end of a list, `",@"` has the same effect as `"."` followed by 
 In the middle of a list, only `",@"`is a possibility.
 
 ```lisp
-> (setf testl '(a test)) => (A TEST)
+> (setf test1 '(a test)) => (A TEST)
 
-> '(this is ,test1) => (THIS IS (A TEST))
+> `(this is ,test1) => (THIS IS (A TEST))
 
-> '(this is ,@test1) => (THIS IS A TEST)
+> `(this is ,@test1) => (THIS IS A TEST)
 
-> '(this is . ,test1) => (THIS IS A TEST)
+> `(this is . ,test1) => (THIS IS A TEST)
 
-> '(this is ,@test1 -- this is only ,@testl) =>
+> `(this is ,@test1 -- this is only ,@test1) =>
 (THIS IS A TEST -- THIS IS ONLY A TEST)
 ```
 
@@ -908,7 +908,7 @@ The more complicated ones are explained more thoroughly when they are used.
 | []()             |                        |                                                |
 |------------------|------------------------|------------------------------------------------|
 | `(first x)`      | => `a`                 | first element of a list                        |
-| `(second x)`     | `=> b`                 | second element of a list                       |
+| `(second x)`     | => `b`                 | second element of a list                       |
 | `(third x)`      | => `c`                 | third element of a list                        |
 | `(nth 0 x)`      | => `a`                 | nth element of a list, `0`-based               |
 | `(rest x)`       | => `(b c)`             | all but the first element                      |
@@ -920,7 +920,7 @@ The more complicated ones are explained more thoroughly when they are used.
 | `(cons 0 y)`     | => `(0 1 2 3)`         | add to front of list                           |
 | `(append x y)`   | => `(a b c 1 2 3)`     | append together elements                       |
 | `(list x y)`     | => `((a b c) (1 2 3))` | make a new list                                |
-| `(list* 1 2 x)`  | => `(1 2 a b` c)       | append last argument to others                 |
+| `(list* 1 2 x)`  | => `(1 2 a b c)`       | append last argument to others                 |
 | `(null nil)`     | => `T`                 | predicate is true of the empty list            |
 | `(null x)`       | => `nil`               | ... and false for everything else              |
 | `(listp x)`      | => `T`                 | predicate is true of any list, including `nil` |
@@ -928,7 +928,7 @@ The more complicated ones are explained more thoroughly when they are used.
 | `(consp x)`      | => `t`                 | predicate is true of non-nil lists             |
 | `(consp nil)`    | => `nil`               | ... and false for atoms, including `nil`       |
 | `(equal x x)`    | => `t`                 | true for lists that look the same              |
-| `(equal x y)`    | `nil`                  | ... and false for lists that look different    |
+| `(equal x y)`    | => `nil`                  | ... and false for lists that look different    |
 | `(sort y #'>)`   | => `(3 2 1)`           | sort a list according to a comparison function |
 | `(subseq x 1 2)` | => `(B)`               | subsequence with given start and end points    |
 
@@ -969,7 +969,7 @@ The Lisp system maintains a symbol table that the function read uses to map betw
 But when a list is read (or built) in two different places, the results are *not* identically the same, even though the corresponding elements may be.
 This is because `read` calls `cons` to build up the list, and each call to `cons` returns a new cons cell.
 [Figure 3.2](#f0015) shows two lists, `x` and `Y`, which are both equal to (`one two`), but which are composed of different cons cells, and hence are not identical.
-[Figure 3.3](#f0020) shows that the expression (`rest x`) does not generate new cons cells, but rather shares structure with `x`, and that the expression (`cons ' zero x`) generates exactly one new cons cell, whose rest is `x`.
+[Figure 3.3](#f0020) shows that the expression (`rest x`) does not generate new cons cells, but rather shares structure with `x`, and that the expression (`cons 'zero x`) generates exactly one new cons cell, whose rest is `x`.
 
 ![Figure 3.2: Equal But Nonidentical Lists](images/chapter3/f03-02.jpg)
 **Figure 3.2: Equal But Nonidentical Lists**
@@ -1183,11 +1183,11 @@ Note that the order of old and new in the a-list for `sublis` is reversed from t
 The name `sublis` is uncharacteristically short and confusing; a better name would be `subst-list`.
 
 ```lisp
-> (subst 'new 'old '(old ((very old))) (NEW ((VERY NEW)))
+> (subst 'new 'old '(old ((very old)))) => (NEW ((VERY NEW)))
 
-> (sublis '((old . new)) '(old ((very old))))` => `(NEW ((VERY NEW)))
+> (sublis '((old . new)) '(old ((very old)))) => (NEW ((VERY NEW)))
 
-> (subst 'new 'old 'old) => 'NEW`
+> (subst 'new 'old 'old) => NEW
 
 (defun english->french (words)
   (sublis '((are . va) (book . libre) (friend . ami)
@@ -1504,7 +1504,7 @@ Here's a more complex example:
 
 ```lisp
 > (let ((numbers '(1234 5)))
-    (format t "~&~{~ r~^ plus ~} is ~@r"
+    (format t "~&~{~r~^ plus ~} is ~@r"
             numbers (apply #'+ numbers)))
 one plus two plus three plus four plus five is XV
 NIL

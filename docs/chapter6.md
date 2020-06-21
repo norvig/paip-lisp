@@ -944,8 +944,6 @@ Suppose we have a list of selected cities with airports, along with their positi
    (Kansas City      94.35 39.06)      (Wilmington        77.57 34.14)))   
 ```
 
-![t0030](images/B9780080571157500066/t0030.png)
-
 This example introduces a new option to `defstruct`.
 Instead of just giving the name of the structure, it is also possible to use:
 
@@ -1510,10 +1508,10 @@ The goal predicate tests if the current state satisfies every condition in the g
       #'(lambda (state) (subsetp goal state :test #'equal))
       #'gps-successors
       #'(lambda (state)
-        (+ (count-if #'action-p state)
-          (count-if #'(lambda (con)
-                    (not (member-equal con state)))
-                goal)))
+          (+ (count-if #'action-p state)
+             (count-if #'(lambda (con)
+                           (not (member-equal con state)))
+                       goal)))
       beam-width)))
 ```
 
@@ -1524,13 +1522,13 @@ Here is the successor function:
   "Return a list of states reachable from this one using ops."
   (mapcar
     #'(lambda (op)
-    (append
-      (remove-if #'(lambda (x)
-                    (member-equal x (op-del-list op)))
-                state)
-      (op-add-list op)))
+        (append
+          (remove-if #'(lambda (x)
+                         (member-equal x (op-del-list op)))
+                     state)
+          (op-add-list op)))
     (applicable-ops state)))
-    
+
 (defun applicable-ops (state)
   "Return a list of all ops that are applicable now."
   (find-all-if
@@ -1745,7 +1743,6 @@ Start with states, and search according to successors and combiner."
 
 [2](#xfn0020) An alternative would be to reserve the question mark for variables only and use another notation for these match operators.
 Keywords would be a good choice, such as `:and`, `:or`, `:is`, etc.
-
 
 [3](#xfn0025) The built-in constant `most-positive-fixnum` is a large integer, the largest that can be expressed without using bignums.
 Its value depends on the implementation, but in most Lisps it is over 16 million.

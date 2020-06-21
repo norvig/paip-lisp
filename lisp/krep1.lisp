@@ -9,7 +9,7 @@
 ;;; ==============================
 
 ;; An nlist is implemented as a (count . elements) pair:
-(defun make-empty-nlist () 
+(defun make-empty-nlist ()
   "Create a new, empty nlist."
   (cons 0 nil))
 
@@ -82,7 +82,7 @@
                  (p b (f c)) (p a (f . ?x)))))
     (clear-dtrees)
     (mapc #'index props)
-    (write (list props (get-dtree 'p)) 
+    (write (list props (get-dtree 'p))
            :circle t :array t :pretty t)
     (values)))
 

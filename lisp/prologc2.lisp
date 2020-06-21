@@ -2,7 +2,7 @@
 ;;;; Code from Paradigms of AI Programming
 ;;;; Copyright (c) 1991 Peter Norvig
 
-;;;; File prologc2.lisp: Version 2 of the prolog compiler, 
+;;;; File prologc2.lisp: Version 2 of the prolog compiler,
 ;;;; fixing the first set of bugs.
 
 (requires "prolog")

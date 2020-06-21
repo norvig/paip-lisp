@@ -12,8 +12,6 @@ The amazing thing is that the clauses can be defined in a way that leads to a ve
 Furthermore, the same grammar can be used for both parsing and generation (at least in some cases).
 
 ## 20.1 Parsing as Deduction
-{:#s0010}
-{:.h1hd}
 
 Here's how we could express the grammar rule "A sentence can be composed of a noun phrase followed by a verb phrase" in Prolog:
 
@@ -291,8 +289,6 @@ No.
 ```
 
 ## 20.2 Definite Clause Grammars
-{:#s0015}
-{:.h1hd}
 
 We now have a powerful and efficient tool for parsing sentences.
 However, it is getting to be a very messy tool-there are too many arguments to each goal, and it is hard to tell which arguments represent syntax, which represent semantics, which represent in/out strings, and which represent other features, like agreement.
@@ -328,22 +324,18 @@ Here's the `rule` macro:
 
 ```lisp
 (defmacro rule (head &optional (arrow ':-) &body body)
+  "Expand one of several types of logic rules into pure Prolog."
+  ;; This is data-driven, dispatching on the arrow
+  (funcall (get arrow 'rule-function) head body))
 ```
-
-      `"Expand one of several types of logic rules into pure Prolog."`
-
-      `;; This is data-driven, dispatching on the arrow`
-
-      `(funcall (get arrow 'rule-function) head body))`
 
 As an example of a rule function, the arrow : - will be used to represent normal Prolog clauses.
 That is, the form (`rule`*head : - body*) will be equivalent to (<- *head body).*
 
 ```lisp
 (setf (get ':- 'rule-function)
+      #'(lambda (head body) `(<- ,head .,body)))
 ```
-
-                    `#'(lambda (head body) '(<- ,head .,body)))`
 
 Before writing the rule function for DCG rules, there are two further features of the DCG formalism to consider.
 First, some goals in the body of a rule may be normal Prolog goals, and thus do not require the extra pair of arguments.
@@ -384,6 +376,7 @@ Note that the cut is also allowed as a normal goal.
 
 ```lisp
 (defun dcg-normal-goal-p (x) (or (starts-with x :test) (eq x '!)))
+
 (defun dcg-word-list-p (x) (starts-with x ':word))
 ```
 
@@ -391,72 +384,43 @@ At last we are in a position to present the rule function for DCG rules.
 The function `make-dcg` inserts variables to keep track of the strings that are being parsed.
 
 ```lisp
-(setf (get '-->'rule-function) 'make-dcg)
+(setf (get '--> 'rule-function) 'make-dcg)
+
 (defun make-dcg (head body)
-```
+  (let ((n (count-if (complement #'dcg-normal-goal-p) body)))
+    `(<- (,@head ?s0 ,(symbol '?s n))
+         .,(make-dcg-body body 0))))
 
-    `(let ((n (count-if (complement #'dcg-normal-goal-p) body)))`
-
-        `'(<- (,@head ?sO .(symbol '?s n))`
-
-                        `.,(make-deg-body body 0))))`
-
-```lisp
 (defun make-dcg-body (body n)
+  "Make the body of a Definite Clause Grammar (DCG) clause.
+  Add ?string-in and -out variables to each constituent.
+  Goals like (:test goal) are ordinary Prolog goals,
+  and goals like (:word hello) are literal words to be parsed."
+  (if (null body)
+      nil
+      (let ((goal (first body)))
+        (cond
+          ((eq goal '!) (cons '! (make-dcg-body (rest body) n)))
+          ((dcg-normal-goal-p goal)
+           (append (rest goal)
+                   (make-dcg-body (rest body) n)))
+          ((dcg-word-list-p goal)
+           (cons
+             `(= ,(symbol '?s n)
+                 (,@(rest goal) .,(symbol '?s (+ n 1))))
+             (make-dcg-body (rest body) (+ n 1))))
+          (t (cons
+               (append goal
+                       (list (symbol '?s n)
+                             (symbol '?s (+ n 1))))
+               (make-dcg-body (rest body) (+ n 1))))))))
 ```
-
-    `"Make the body of a Definite Clause Grammar (DCG) clause.`
-
-    `Add ?string-in and -out variables to each constituent.`
-
-    `Goals like (:test goal) are ordinary Prolog goals,`
-
-    `and goals like (:word hello) are literal words to be parsed."`
-
-    `(if (null body)`
-
-                    `nil`
-
-                    `(let ((goal (first body)))`
-
-                        `(cond`
-
-                              `((eq goal '!) (cons '!
-(make-dcg-body (rest body) n)))`
-
-                              `((dcg-normal-goal-p goal)`
-
-                                  `(append (rest goal)`
-
-                                                              `(make-dcg-body (rest body) n)))`
-
-                              `((dcg-word-list-p goal)`
-
-                                  `(cons`
-
-                                        `'(= ,(symbol '?s n)`
-
-                                                    `(,@(rest goal) .,(symbol '?s (+ n 1))))`
-
-                                      `(make-dcg-body (rest body) (+ n 1))))`
-
-                  `(t (cons`
-
-                              `(append goal`
-
-                                                        `(list (symbol '?s n)`
-
-                                                                            `(symbol '?s (+ n 1))))`
-
-                                `(make-dcg-body (rest body) (+ n 1))))))))`
 
 **Exercise  20.1 [m]**`make-dcg` violates one of the cardinal rules of macros.
 What does it do wrong?
 How would you fix it?
 
 ## 20.3 A Simple Grammar in DCG Format
-{:#s0020}
-{:.h1hd}
 
 Here is the trivial grammar from [page 688](chapter20.xhtml#p688) in DCG format.
 
@@ -658,8 +622,6 @@ On the other hand, it would be wrong to choose one of the representations arbitr
 Maintaining ambiguity in a concise form is useful, as long as there is some way eventually to recover the proper meaning.
 
 ## 20.4 A DCG Grammar with Quantifiers
-{:#s0025}
-{:.h1hd}
 
 The problem in the representation we have been using becomes more acute when we consider other determiners, such as "every." Consider the sentence "Every picture paints a story." The preceding DCG, if given the right vocabulary, would produce the interpretation:
 
@@ -875,8 +837,6 @@ paints a picture that stinks.
                                                                                                     `(PAINT ?3 ?39)))))`
 
 ## 20.5 Preserving Quantifier Scope Ambiguity
-{:#s0030}
-{:.h1hd}
 
 Consider the simple sentence "Every man loves a woman." This sentence is ambiguous between the following two interpretations:
 
@@ -994,8 +954,6 @@ From there, we could use what we know about syntax, in addition to what we know 
 This will be covered in the next chapter.
 
 ## 20.6 Long-Distance Dependencies
-{:#s0035}
-{:.h1hd}
 
 So far, every syntactic phenomena we have considered has been expressible in a rule that imposes constraints only at a single level.
 For example, we had to impose the constraint that a subject agree with its verb, but this constraint involved two immediate constituents of a sentence, the noun phrase and verb phrase.
@@ -1132,8 +1090,6 @@ In particular, it is rare to have a gap in the subject of a sentence, except in 
 In the next chapter, we will see how to impose additional constraints on gaps.
 
 ## 20.7 Augmenting DCG Rules
-{:#s0040}
-{:.h1hd}
 
 In the previous section, we saw how to build up a semantic representation of a sentence by conjoining the semantics of the components.
 One problem with this approach is that the semantic interpretation is often something of the form `(and (and t *a) b),*` when we would prefer `(and *a b)*`.
@@ -1264,51 +1220,28 @@ We are now ready to implement the extended DCG rule formalism that handles `:sem
 The function `make-augmented-dcg,` stored under the arrow `==>`, will be used to implement the formalism:
 
 ```lisp
-(setf (get '==>'rule-function) 'make-augmented-dcg)
+(setf (get '==> 'rule-function) 'make-augmented-dcg)
+
 (defun make-augmented-dcg (head body)
+  "Build an augmented DCG rule that handles :sem, :ex,
+  and automatic conjunctiontive constituents."
+  (if (eq (last1 head) :sem)
+      ;; Handle :sem
+      (let* ((?sem (gensym "?SEM")))
+        (make-augmented-dcg
+          `(,@(butlast head) ,?sem)
+          `(,@(remove :sem body :key #'first-or-nil)
+            (:test ,(collect-sems body ?sem)))))
+      ;; Separate out examples from body
+      (multiple-value-bind (exs new-body)
+          (partition-if #'(lambda (x) (starts-with x :ex)) body)
+        ;; Handle conjunctions
+        (let ((rule `(rule ,(handle-conj head) --> ,@new-body)))
+          (if (null exs)
+              rule
+              `(progn (:ex ,head .,(mappend #'rest exs))
+                      ,rule))))))
 ```
-
-      `"Build an augmented DCG rule that handles :sem, :ex,`
-
-      `and automatie conjunctiontive constituents."`
-
-      `(if (eq (lastl head) :sem)`
-
-                      `;; Handle :sem`
-
-                      `(let* ((?sem (gensym "?SEM")))`
-
-                          `(make-augmented-dcg`
-
-                              `'(.@(butlast head) ,?sem)`
-
-                              `'(,@(remove :sem body :key #'first-or-nil)`
-
-                                    `(:test ,(collect-sems body ?sem)))))`
-
-```lisp
-            ;; Separate out examples from body
-```
-
-                  `(multiple-value-bind (exs new-body)`
-
-```lisp
-                  (partition-if #'(lambda (x) (starts-with x :ex)) body)
-```
-
-                `;; Handle conjunctions`
-
-```lisp
-        (let ((rule '(rule ,(handle-conj head) --> ,@new-body)))
-```
-
-                  `(if (null exs) rule`
-
-                                `rule`
-
-                            `'(progn (:ex ,head ..(mappend #'rest exs))`
-
-                                                        `,rule))))))`
 
 First we show the code that collects together the semantics of each constituent and conjoins them when `:sem` is specified.
 The function `collect-sems` picks out the semantics and handles the trivial cases where there are zero or one constituents on the right-hand side.
@@ -1316,69 +1249,41 @@ If there are more than one, it inserts a call to the predicate `and*`.
 
 ```lisp
 (defun collect-sems (body ?sem)
+  "Get the semantics out of each constituent in body,
+  and combine them together into ?sem."
+  (let ((sems (loop for goal in body
+                    unless (or (dcg-normal-goal-p goal)
+                               (dcg-word-list-p goal)
+                               (starts-with goal :ex)
+                               (atom goal))
+                    collect (last1 goal))))
+    (case (length sems)
+      (0 `(= ,?sem t))
+      (1 `(= ,?sem ,(first sems)))
+      (t `(and* ,sems ,?sem)))))
 ```
-
-      `"Get the semantics out of each constituent in body,`
-
-      `and combine them together into ?sem."`
-
-      `(let ((sems (loop for goal in body`
-
-          `unless (or (dcg-normal-goal-p goal)`
-
-                `(dcg-word-list-p goal)`
-
-                `(starts-with goal :ex)`
-
-                `(atom goal))`
-
-          `collect (lastl goal))))`
-
-      `(case (length sems)`
-
-        `(0 '(= ,?sem t))`
-
-        `(1 '(= ,?sem .(first sems)))`
-
-        `(t '(and* ,sems ,?sem)))))`
 
 We could have implemented `and*` with Prolog clauses, but it is slightly more efficient to do it directly in Lisp.
 A call to `conjuncts` collects all the conjuncts, and we then add an and if necessary:
 
 ```lisp
 (defun and*/2 (in out cont)
-```
+  "IN is a list of conjuncts that are conjoined into OUT."
+  ;; E.g.: (and* (t (and a b) t (and c d) t) ?x) ==>
+  ;;        ?x = (and a b c d)
+  (if (unify! out (maybe-add 'and (conjuncts (cons 'and in)) t))
+      (funcall cont)))
 
-      `"IN is a list of conjuncts that are conjoined into OUT."`
-
-      `;; E.g.: (and* (t (and a b) t (and c d) t) ?x) ==>`
-
-      `;; ?x = (and a b c d)`
-
-      `(if (unify!
-out (maybe-add 'and (conjuncts (cons 'and in)) t))`
-
-                    `(funcall cont)))`
-
-```lisp
 (defun conjuncts (exp)
+  "Get all the conjuncts from an expression."
+  (deref exp)
+  (cond ((eq exp t) nil)
+        ((atom exp) (list exp))
+        ((eq (deref (first exp)) 'nil) nil)
+        ((eq (first exp) 'and)
+         (mappend #'conjuncts (rest exp)))
+        (t (list exp))))
 ```
-
-      `"Get all the conjuncts from an expression."`
-
-      `(deref exp)`
-
-      `(cond ((eq exp t) nil)`
-
-                          `((atom exp) (list exp))`
-
-                            `((eq (deref (first exp)) 'nil) nil)`
-
-                            `((eq (first exp) 'and)`
-
-                              `(mappend #'conjuncts (rest exp)))`
-
-                            `(t (list exp))))`
 
 The next step is handling example phrases.
 The code in `make-augmented-dcg` turns examples into expressions of the form:
@@ -1391,11 +1296,9 @@ To make this work, :ex will have to be a macro:
 
 ```lisp
 (defmacro :ex ((category . args) &body examples)
+  "Add some example phrases, indexed under the category."
+  `(add-examples ',category ',args ',examples))
 ```
-
-      `"Add some example phrases, indexed under the category."`
-
-      `'(add-examples '.category '.args '.examples))`
 
 `:ex calls add-examples` to do all the work.
 Each example is stored in a hash table indexed under the the category.
@@ -1407,79 +1310,44 @@ The auxiliary functions `get-examples` and `clear-exampl` es are provided to man
 (defvar *examples* (make-hash-table :test #'eq))
 (defun get-exampl es (category) (gethash category *examples*))
 (defun clear-examples () (clrhash *examples*))
+
 (defun add-examples (category args examples)
-```
+  "Add these example strings to this category,
+  and when it comes time to run them, use the args."
+  (dolist (example examples)
+    (when (stringp example)
+      (let ((ex `(,example
+                  (,category ,@args
+                   ,(string->list
+                      (remove-punctuation example)) ()))))
+        (unless (member ex (get-examples category)
+                        :test #'equal)
+          (setf (gethash category *examples*)
+                (nconc (get-examples category) (list ex))))))))
 
-      `"Add these example strings to this category,`
-
-      `and when it comes time to run them, use the args."`
-
-      `(dolist (example examples)`
-
-          `(when (stringp example)`
-
-                `(let ((ex '(,example`
-
-                                              `(,category ,@args`
-
-                                                `,(string->list`
-
-                                                      `(remove-punctuation example)) ()))))`
-
-            `(unless (member ex (get-examples category)`
-
-                                                            `:test #'equal )`
-
-              `(setf (gethash category *examples*)`
-
-                        `(nconc (get-examples category) (list ex))))))))`
-
-```lisp
 (defun run-examples (&optional category)
-```
+  "Run all the example phrases stored under a category.
+  With no category, run ALL the examples."
+  (prolog-compile-symbols)
+  (if (null category)
+      (maphash #'(lambda (cat val)
+                   (declare (ignore val))
+                   (format t "~2&Examples of ~a:~&" cat)
+                   (run-examples cat))
+               *examples*)
+      (dolist (example (get-examples category))
+        (format t "~2&EXAMPLE: ~{~a~&~9T~a~}" example)
+        (top-level-prove (cdr example)))))
 
-      `"Run all the example phrases stored under a category.`
-
-      `With no category, run ALL the examples."`
-
-      `(prolog-compile-symbols)`
-
-      `(if (null category)`
-
-            `(maphash #'(lambda (cat val)`
-
-                        `(declare (ignore val ))`
-
-                        `(format t ""2&Examples of "a:"&" cat)`
-
-                        `(run-examples cat))`
-
-              `*examples*)`
-
-      `(dolist (example (get-examples category))`
-
-              `(format t ""2&EXAMPLE: "{"a"&"9T"a"}" example)`
-
-              `(top-level-prove (cdr example)))))`
-
-```lisp
 (defun remove-punctuation (string)
-```
+  "Replace punctuation with spaces in string."
+  (substitute-if #\space #'punctuation-p string))
 
-      `"Replace punctuation with spaces in string."`
-
-      `(substitute-if #\space #'punctuation-p string))`
-
-```lisp
 (defun string->list (string)
-```
+  "Convert a string to a list of words."
+  (read-from-string (concatenate 'string "(" string ")")))
 
-      `"Convert a string to a list of words."`
-
-      `(read-from-string(concatenate 'string "("string ")")))`
-
-```lisp
-(defun punctuation-p (char) (find char "*_..,;:'!?#-()\\\""))
+(defun punctuation-p (char) (find char "*_.,;:`!?#-()\\\""))
 ```
 
 The final part of our augmented DCG formalism is handling conjunctive constituents automatically.
@@ -1547,57 +1415,36 @@ Here is the macro definition:
 
 ```lisp
 (defmacro conj-rule ((conj-cat sem1 combined-sem) ==>
+                     conj (cat . args))
+  "Define this category as an automatic conjunction."
+  (assert (eq ==> '==>))
+  `(progn
+     (setf (get ',cat 'conj-cat) ',(symbol cat '_))
+     (rule (,cat ,@(butlast args) ?combined-sem) ==>
+       (,(symbol cat '_) ,@(butlast args) ,sem1)
+       (,conj-cat ,sem1 ?combined-sem))
+     (rule (,conj-cat ,sem1 ,combined-sem) ==>
+       ,conj
+       (,cat ,@args))
+     (rule (,conj-cat ?sem1 ?sem1) ==>)))
 ```
-
-                    `conj (cat . args))`
-
-      `"Define this category as an automatic conjunction."`
-
-      `'(progn`
-
-      `(setf (get ',cat 'conj-cat) ',(symbol cat '_))`
-
-      `(rule (.cat ,@(butlast args) ?combined-sem) ==>`
-
-            `(,(symbol cat '_) ,@(butlast args) .sem1)`
-
-            `(,conj-cat ,seml ?combined-sem))`
-
-      `(rule (,conj-cat ,sem1 ,combined-sem) ==>`
-
-            `,conj`
-
-          `(,cat .@args))`
-
-      `(rule (,conj-cat ?seml ?seml) ==>)))`
 
 and here we define `handle-conj` to substitute `S-` for `S` in the left-hand side of rules:
 
 ```lisp
 (defun handle-conj (head)
-```
+  "Replace (Cat ...) with (Cat_ ...) if Cat is declared
+  as a conjunctive category."
+  (if (and (listp head) (conj-category (predicate head)))
+      (cons (conj-category (predicate head)) (args head))
+      head))
 
-      `"Replace (Cat ...) with (Cat-...) if Cat is declared`
-
-      `as a conjunctive category."`
-
-      `(if (and (listp head) (conj-category (predicate head)))`
-
-      `(cons (conj-category (predicate head)) (args head))`
-
-      `head))`
-
-```lisp
 (defun conj-category (predicate)
+  "If this is a conjunctive predicate, return the Cat_ symbol."
+  (get predicate 'conj-category))
 ```
-
-      `"If this is a conjunctive predicate, return the Cat- symbol."`
-
-      `(get predicate 'conj-category))`
 
 ## 20.8 History and References
-{:#s0045}
-{:.h1hd}
 
 As we have mentioned, Alain Colmerauer invented Prolog to use in his grammar of French (1973).
 His *metamorphosis grammar* formalism was more expressive but much less efficient than the standard DCG formalism.
@@ -1628,8 +1475,6 @@ Comparing [Woods's (1970)](B9780080571157500285.xhtml#bb1425) ATN grammar to [Pe
 The analysis is more important than the notation, as it should be.
 
 ## 20.9 Exercises
-{:#s0050}
-{:.h1hd}
 
 **Exercise  20.2 [m]** Modify the grammar (from [section 20.4](#s0025), [20.5](#s0030), [or 20.6](#s0035)) to allow for adjectives before a noun.
 
@@ -1687,16 +1532,12 @@ should compile into the equivalent of :
       `(F ?S3 ?S4))`
 
 ## 20.10 Answers
-{:#s0055}
-{:.h1hd}
 
 **Answer 20.1** It uses local variables `(?s0, ?sl ...)` that are not guaranteed to be unique.
 This is a problem if the grammar writer wants to use these symbols anywhere in his or her rules.
 The fix is to `gensym` symbols that are guaranteed to be unique.
 
 ### Answer 20.5
-{:#s0060}
-{:.h2hd}
 
 `(defun setup-braces Uoptional (on?
 t) (readtable *readtable*))`

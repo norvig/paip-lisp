@@ -23,7 +23,7 @@ However, some applications are more naturally seen as taking action rather than 
 Examples of functional languages are FP and Lisp without `setf`.
 
 In contrast to imperative languages are *declarative* languages, which attempt to express "what to do" rather than "how to do it." One type of declarative programming is *rule-based* programming, where a set of rules states how to transform a problem into a solution.
-Examples of rule-based systems are ELIZA !!!(span) {:.smallcaps} and STUDENT !!!(span) {:.smallcaps} .
+Examples of rule-based systems are ELIZA and STUDENT.
 
 An important kind of declarative programming is *logic programming*, where axioms are used to describe constraints, and computation is done by a constructive proof of a goal.
 An example of logic language is Prolog.
@@ -33,8 +33,6 @@ Instead of prohibiting global state (as functional programming does), object-ori
 This chapter covers the object-oriented approach.
 
 ## 13.1 Object-Oriented Programming
-{:#s0010}
-{:.h1hd}
 
 Object-oriented programming turns the world of computing on its side: instead of viewing a program primarily as a set of actions which manipulate objects, it is viewed as a set of objects that are manipulated by actions.
 The state of each object and the actions that manipulate that state are defined once and for all when the object is created.
@@ -84,8 +82,6 @@ Equivalent to generic function.
 *object:* An encapsulation of local state and behavior.
 
 ## 13.2 Objects
-{:#s0015}
-{:.h1hd}
 
 Object-oriented programming, by definition, is concerned with *objects*.
 Any datum that can be stored in computer memory can be thought of as an object.
@@ -101,41 +97,24 @@ First, the program is written in traditional procedural style:
 
 ```lisp
 (defstruct account
-```
+  (name "") (balance 0.00) (interest-rate .06))
 
-  `(name "") (balance 0.00) (interest-rate .06))`
-
-```lisp
 (defun account-withdraw (account amt)
-```
+  "Make a withdrawal from this account."
+  (if (<= amt (account-balance account))
+      (decf (account-balance account) amt)
+      'insufficient-funds))
 
-  `"Make a withdrawal from this account."`
-
-  `(if (<= amt (account-balance account))`
-
-        `(decf (account-balance account) amt)`
-
-        `'insufficient-funds))`
-
-```lisp
 (defun account-deposit (account amt)
-```
+  "Make a deposit to this account."
+  (incf (account-balance account) amt))
 
-  `"Make a deposit to this account."`
-
-  `(incf (account-balance account) amt))`
-
-```lisp
 (defun account-interest (account)
+  "Accumulate interest in this account."
+  (incf (account-balance account)
+        (* (account-interest-rate account)
+           (account-balance account))))
 ```
-
-  `"Accumulate interest in this account."`
-
-  `(incf (account-balance account)`
-
-        `(* (account-interest-rate account)`
-
-  `(account-balance account))))`
 
 We can create new bank accounts with `make-account` and modify them with `account-withdraw, account-deposit,` and `account-interest.` This is a simple problem, and this simple solution suffices.
 Problems appear when we change the specification of the problem, or when we envision ways that this implementation could be inadvertently used in error.
@@ -150,35 +129,21 @@ Here is the same program written in object-oriented style (using plain Lisp):
 
 ```lisp
 (defun new-account (name &optional (balance 0.00)
+                    (interest-rate .06))
+  "Create a new account that knows the following messages:"
+  #'(lambda (message)
+      (case message
+        (withdraw #'(lambda (amt)
+                      (if (<= amt balance)
+                          (decf balance amt)
+                          'insufficient-funds)))
+        (deposit  #'(lambda (amt) (incf balance amt)))
+        (balance  #'(lambda () balance))
+        (name     #'(lambda () name))
+        (interest #'(lambda ()
+                      (incf balance
+                            (* interest-rate balance)))))))
 ```
-
-                          `(interest-rate .06))`
-
-  `"Create a new account that knows the following messages:"`
-
-  `#'(lambda (message)`
-
-      `(case message`
-
-        `(withdraw #'(lambda (amt)`
-
-                            `(if (<= amt balance)`
-
-                                `(decf balance amt)`
-
-                                `'insufficient-funds)))`
-
-        `(deposit #'(lambda (amt) (incf balance amt)))`
-
-        `(balance #'(lambda () balance))`
-
-        `(name #'(lambda () name))`
-
-        `(interest #'(lambda ()`
-
-                            `(incf balance`
-
-                                `(* interest-rate balance)))))))`
 
 The function `new-account` creates account objects, which are implemented as closures that encapsulate three variables: the name, balance, and interest rate of the account.
 An account object also encapsulates functions to handle the five messages to which the object can respond.
@@ -194,21 +159,14 @@ The name send comes from the Flavors object-oriented system, which is discussed 
 
 ```lisp
 (defun get-method (object message)
-```
+  "Return the method that implements message for this object."
+  (funcall object message))
 
-  `"Return the method that implements message for this object."`
-
-  `(funcall object message))`
-
-```lisp
 (defun send (object message &rest args)
+  "Get the function to implement the message,
+  and apply the function to the args."
+  (apply (get-method object message) args))
 ```
-
-  `"Get the function to implement the message,`
-
-  `and apply the function to the args."`
-
-  `(apply (get-method object message) args))`
 
 Here is an example of the use of `new-account` and `send`:
 
@@ -229,8 +187,6 @@ Random Customer"`
 ```
 
 ## 13.3 Generic Functions
-{:#s0020}
-{:.h1hd}
 
 The send syntax is awkward, as it is different from the normal Lisp function-calling syntax, and it doesn't fit in with the other Lisp tools.
 For example, we might like to say (`mapcar 'balance accounts`), but with messages we would have to write that as:
@@ -244,11 +200,9 @@ For example, we could define:
 
 ```lisp
 (defun withdraw (object &rest args)
+  "Define withdraw as a generic function on objects."
+  (apply (get-method object 'withdraw) args))
 ```
-
-  `"Define withdraw as a generic function on objects."`
-
-  `(apply (get-method object 'withdraw) args))`
 
 and then write `(withdraw acct x)` instead of `(send acct 'withdraw x)`.
 The function `withdraw` is generic because it not only works on account objects but also works on any other class of object that handles the `withdraw` message.
@@ -262,8 +216,6 @@ The sequence functions (like `find` or `delete`) operate on lists, vectors, or s
 These functions are not implemented like `withdraw,` but they still act like generic functions.[2](#fn0020)
 
 ## 13.4 Classes
-{:#s0025}
-{:.h1hd}
 
 It is possible to write macros to make the object-oriented style easier to read and write.
 The macro `define-class` defines a class with its associated message-handling methods.
@@ -273,59 +225,33 @@ For example, you might want to have all instances of the class `account` share t
 
 ```lisp
 (defmacro define-class (class inst-vars class-vars &body methods)
-```
+  "Define a class for object-oriented programming."
+  ;; Define constructor and generic functions for methods
+  `(let ,class-vars
+     (mapcar #'ensure-generic-fn ',(mapcar #'first methods))
+     (defun ,class ,inst-vars
+       #'(lambda (message)
+           (case message
+             ,@(mapcar #'make-clause methods))))))
 
-  `"Define a class for object-oriented programming."`
-
-  `;; Define constructor and generic functions for methods`
-
-  `'(let ,class-vars`
-
-        `(mapcar #'ensure-generic-fn ',(mapcar #'first methods))`
-
-        `(defun .class ,inst-vars`
-
-  `#'(lambda (message)`
-
-                `(case message`
-
-  `                  ,@(mapcar #'make-clause methods))))))`
-
-```lisp
 (defun make-clause (clause)
-```
+  "Translate a message from define-class into a case clause."
+  `(,(first clause) #'(lambda ,(second clause) .,(rest2 clause))))
 
-  `"Translate a message from define-class into a case clause."`
-
-  `'(,(first clause) #'(lambda ,(second clause) .,(rest2 clause))))`
-
-```lisp
 (defun ensure-generic-fn (message)
-```
+  "Define an object-oriented dispatch function for a message,
+  unless it has already been defined as one."
+  (unless (generic-fn-p message)
+    (let ((fn #'(lambda (object &rest args)
+                  (apply (get-method object message) args))))
+      (setf (symbol-function message) fn)
+      (setf (get message 'generic-fn) fn))))
 
-  `"Define an object-oriented dispatch function for a message,`
-
-  `unless it has already been defined as one."`
-
-  `(unless (generic-fn-p message)`
-
-      `(let ((fn #'(lambda (object &rest args)`
-
-                    `(apply (get-method object message) args))))`
-
-        `(setf (symbol-function message) fn)`
-
-        `(setf (get message 'generic-fn) fn))))`
-
-```lisp
 (defun generic-fn-p (fn-name)
+  "Is this a generic function?"
+  (and (fboundp fn-name)
+       (eq (get fn-name 'generic-fn) (symbol-function fn-name))))
 ```
-
-  `"Is this a generic function?"`
-
-  `(and (fboundp fn-name)`
-
-        `(eq (get fn-name 'generic-fn) (symbol-function fn-name))))`
 
 Now we define the class account with this macro.
 We make `interest-rate` a class variable, one that is shared by all accounts:
@@ -365,8 +291,6 @@ User" 2000.00)) => #<CLOSURE 24003064>`
 In this last line, the generic function `balance` is applied to `acct,` an object that was created before we even defined the account class and the function `balance.` But `balance` still works properly on this object, because it obeys the message-passing protocol.
 
 ## 13.5 Delegation
-{:#s0030}
-{:.h1hd}
 
 Suppose we want to create a new kind of account, one that requires a password for each action.
 We can define a new class, `password-account,` that has two message clauses.
@@ -481,8 +405,6 @@ The problem is that when the bank decides to offer a new kind of account, we wil
 The "definition" of the new account is scattered rather than localized, and altering a bunch of existing functions is usually more error prone than writing a new class definition.
 
 ## 13.6 Inheritance
-{:#s0035}
-{:.h1hd}
 
 In the following table, data types (classes) are listed across the horizontal axis, and functions (messages) are listed up and down the vertical axis.
 A complete program needs to fill in all the boxes, but the question is how to organize the process of filling them in.
@@ -547,8 +469,6 @@ All it does is combine the functionality of two parent classes into one.
 **Exercise  13.2 [d]** Define a version of `define-class` that handles multiple inheritance.
 
 ## 13.7 CLOS: The Common Lisp Object System
-{:#s0040}
-{:.h1hd}
 
 So far, we have developed an object-oriented programming system using a macro, `define-class`, and a protocol for implementing objects as closures.
 There have been many proposals for adding object-oriented features to Lisp, some similar to our approach, some quite different.
@@ -731,8 +651,6 @@ We would like to encapsulate the writer function for `audit-trail` so that it ca
 But once the writer function is defined it can be used anywhere, so an unscrupulous outsider can destroy the audit trail, setting it to nil or anything else.
 
 ## 13.8 A CLOS Example: Searching Tools
-{:#s0045}
-{:.h1hd}
 
 CLOS is most appropriate whenever there are several types that share related behavior.
 A good example of an application that fits this description is the set of searching tools defined in [section 6.4](B9780080571157500066.xhtml#s0025).
@@ -921,8 +839,6 @@ Simply create a class that mixes in `binary-tree-problem, eql-problem` and `bfs-
 ```
 
 ### Best-First Search
-{:#s0050}
-{:.h2hd}
 
 It should be clear how to proceed to define best-first search: define a class to represent best-first search problems, and then define the necessary methods for that class.
 Since the search strategy only affects the order in which states are explored, the only method necessary will be for `problem-combiner`.
@@ -1060,8 +976,6 @@ With the definitions in place, it is easy to use the searching tool:
 ```
 
 ## 13.9 Is CLOS Object-Oriented?
-{:#s0060}
-{:.h1hd}
 
 There is some argument whether CLOS is really object-oriented at all.
 The arguments are:
@@ -1133,8 +1047,6 @@ len(L.N). NI is N+1.
 ```
 
 ## 13.10 Advantages of Object-Oriented Programming
-{:#s0065}
-{:.h1hd}
 
 Bertrand Meyer, in his book on the object-oriented language Eiffel (1988), lists five qualities that contribute to software quality:
 
@@ -1180,8 +1092,6 @@ The more programs use standard components, the more they will be able to communi
 Thus, an object-oriented program will probably be compatible with other programs developed from the same library of classes.
 
 ## 13.11 History and References
-{:#s0070}
-{:.h1hd}
 
 The first object-oriented language was Simula, which was designed by Ole-Johan Dahl and Krysten Nygaard ([1966](B9780080571157500285.xhtml#bb0265), [Nygaard and Dahl 1981](B9780080571157500285.xhtml#bb0920)) as an extension of Algol 60.
 It is still in use today, mostly in Norway and Sweden.
@@ -1269,8 +1179,6 @@ So-called modern languages like Ada and Modula support information-hiding throug
 Despite these other languages, the Lisp-based object-oriented systems are the only ones since Smalltalk to introduce important new concepts: multiple inheritance and method combination from Flavors, and multimethods from CommonLoops.
 
 ## 13.12 Exercises
-{:#s0075}
-{:.h1hd}
 
 **Exercise  13.3 [m]** Implement `deposit` and `interest` methods for the `account` class using CLOS.
 

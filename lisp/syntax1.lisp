@@ -31,7 +31,7 @@
 
 (defun rules-starting-with (cat)
   "Return a list of rules where cat starts the rhs."
-  (find-all cat *grammar* 
+  (find-all cat *grammar*
             :key #'(lambda (rule) (first-or-nil (rule-rhs rule)))))
 
 (defun complete-parses (parses)

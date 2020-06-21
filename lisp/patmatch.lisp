@@ -18,13 +18,13 @@
         ((variable-p pattern)
          (match-variable pattern input bindings))
         ((eql pattern input) bindings)
-        ((segment-pattern-p pattern)                
-         (segment-matcher pattern input bindings))  
+        ((segment-pattern-p pattern)
+         (segment-matcher pattern input bindings))
         ((single-pattern-p pattern)                 ; ***
          (single-matcher pattern input bindings))   ; ***
-        ((and (consp pattern) (consp input)) 
+        ((and (consp pattern) (consp input))
          (pat-match (rest pattern) (rest input)
-                    (pat-match (first pattern) (first input) 
+                    (pat-match (first pattern) (first input)
                                bindings)))
         (t fail)))
 
@@ -41,7 +41,7 @@
 
 (defun segment-pattern-p (pattern)
   "Is this a segment-matching pattern like ((?* var) . pat)?"
-  (and (consp pattern) (consp (first pattern)) 
+  (and (consp pattern) (consp (first pattern))
        (symbolp (first (first pattern)))
        (segment-match-fn (first (first pattern)))))
 
@@ -62,12 +62,12 @@
            (rest pattern) input bindings))
 
 (defun segment-match-fn (x)
-  "Get the segment-match function for x, 
+  "Get the segment-match function for x,
   if it is a symbol that has one."
   (when (symbolp x) (get x 'segment-match)))
 
 (defun single-match-fn (x)
-  "Get the single-match function for x, 
+  "Get the single-match function for x,
   if it is a symbol that has one."
   (when (symbolp x) (get x 'single-match)))
 
@@ -94,7 +94,7 @@
   "Succeed if any one of the patterns match the input."
   (if (null patterns)
       fail
-      (let ((new-bindings (pat-match (first patterns) 
+      (let ((new-bindings (pat-match (first patterns)
                                      input bindings)))
         (if (eq new-bindings fail)
             (match-or (rest patterns) input bindings)
@@ -152,11 +152,11 @@
   (and (progv (mapcar #'car bindings)
               (mapcar #'cdr bindings)
           (eval (second (first pattern))))
-       (pat-match (rest pattern) input bindings)))  
+       (pat-match (rest pattern) input bindings)))
 
 (defun pat-match-abbrev (symbol expansion)
   "Define symbol as a macro standing for a pat-match pattern."
-  (setf (get symbol 'expand-pat-match-abbrev) 
+  (setf (get symbol 'expand-pat-match-abbrev)
     (expand-pat-match-abbrev expansion)))
 
 (defun expand-pat-match-abbrev (pat)
@@ -166,14 +166,14 @@
         (t (cons (expand-pat-match-abbrev (first pat))
                  (expand-pat-match-abbrev (rest pat))))))
 
-(defun rule-based-translator 
-       (input rules &key (matcher 'pat-match) 
+(defun rule-based-translator
+       (input rules &key (matcher 'pat-match)
         (rule-if #'first) (rule-then #'rest) (action #'sublis))
   "Find the first rule in rules that matches input,
   and apply the action to that rule."
-  (some 
+  (some
     #'(lambda (rule)
-        (let ((result (funcall matcher (funcall rule-if rule) 
+        (let ((result (funcall matcher (funcall rule-if rule)
                                input)))
           (if (not (eq result fail))
               (funcall action result (funcall rule-then rule)))))
