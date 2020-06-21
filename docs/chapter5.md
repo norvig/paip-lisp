@@ -822,7 +822,7 @@ Among other things, a recursive transformation system could be used to handle ab
 That is, a form like "don't" could be transformed into "do not" and then processed again.
 That way, the other rules need only work on inputs matching "do not."
 
-### Answer 5.19
+### Answer 5.18
 The following includes most of Weizenbaum's rules:
 
 ```lisp
