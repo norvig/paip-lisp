@@ -10,9 +10,9 @@ Intelligence Programming: Case Studies in Common Lisp* by Peter Norvig (1992), a
 
 The book is available in these formats:
 
-* pdf: [PAIP-part1.pdf](https://github.com/norvig/paip-lisp/blob/master/PAIP-part1.pdf) (Chapters 1-14) and [PAIP-part2.pdf](https://github.com/norvig/paip-lisp/blob/master/PAIP-part2.pdf) (15-25)
-* text: [PAIP.txt](https://github.com/norvig/paip-lisp/blob/master/PAIP.txt) (containing many errors)
-* epub: [PAIP-safari.epub](https://github.com/norvig/paip-lisp/blob/master/PAIP-safari.epub) (much cleaner)
+* pdf: [see releases](https://github.com/norvig/paip-lisp/releases/tag/v1.0) for a scanned version
+* text: [PAIP.txt](https://github.com/norvig/paip-lisp/blob/master/PAIP.txt) (from OCR'ing the scanned pdf, containing many errors)
+* epub: [see releases](https://github.com/norvig/paip-lisp/releases/tag/1.1) for a cleaned up version downloaded from Safari (much cleaner than the scanned versions)
 * and `chapter?.md` markdown files:
 
 # Table of Contents
