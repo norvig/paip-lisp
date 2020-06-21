@@ -506,7 +506,7 @@ The matching rule with the highest priority was chosen.
 Note that putting the rules in order achieves the same effect as having a priority number on each rule: the first rule implicitly has the highest priority, the second rule is next highest, and so on.
 
 Here is a short list of rules, selected from Weizenbaum's original article, but with the form of the rules updated to the form we are using.
-The answer to exercise 5.19 contains a longer list of rules.
+The answer to exercise 5.18 contains a longer list of rules.
 
 ```lisp
 (defparameter *eliza-rules*
