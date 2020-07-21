@@ -112,7 +112,7 @@
   "Transform a rule into proper format."
   (let ((exp (infix->prefix rule)))
     (mkexp (expand-pat-match-abbrev (exp-lhs exp))
-	   (exp-op exp) (exp-rhs exp))))
+           (exp-op exp) (exp-rhs exp))))
 
 (defun simp-fn (op) (get op 'simp-fn))
 (defun set-simp-fn (op fn) (setf (get op 'simp-fn) fn))
@@ -202,14 +202,14 @@
 (defun integrate (exp x)
   ;; First try some trivial cases
   (cond
-    ((free-of exp x) `(* ,exp x))          ; Int c dx = c*x
+    ((free-of exp x) `(* ,exp ,x))         ; Int c dx = c*x
     ((starts-with exp '+)                  ; Int f + g  =
      `(+ ,(integrate (exp-lhs exp) x)      ;   Int f + Int g
          ,(integrate (exp-rhs exp) x)))
     ((starts-with exp '-)
      (ecase (length (exp-args exp))
-       (1 (integrate (exp-lhs exp) x))     ; Int - f = - Int f
-       (2 `(- ,(integrate (exp-lhs exp) x) ; Int f - g  =
+       (1 `(- ,(integrate (exp-lhs exp) x))) ; Int - f = - Int f
+       (2 `(- ,(integrate (exp-lhs exp) x)   ; Int f - g  =
               ,(integrate (exp-rhs exp) x)))))  ; Int f - Int g
     ;; Now move the constant factors to the left of the integral
     ((multiple-value-bind (const-factors x-factors)
@@ -276,6 +276,6 @@
     (subst arg (exp-lhs (exp-lhs (exp-lhs rule))) (exp-rhs rule))))
 
 (set-simp-fn 'Int #'(lambda (exp)
-		      (unfactorize
-		       (factorize
-			(integrate (exp-lhs exp) (exp-rhs exp))))))
+                      (unfactorize
+                        (factorize
+                          (integrate (exp-lhs exp) (exp-rhs exp))))))

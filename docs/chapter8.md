@@ -728,14 +728,14 @@ If none of them work, we return an expression indicating that the integral is un
 (defun integrate (exp x)
   ;; First try some trivial cases
   (cond
-    ((free-of exp x) `(* ,exp x))          ; Int c dx = c*x
+    ((free-of exp x) `(* ,exp ,x))         ; Int c dx = c*x
     ((starts-with exp '+)                  ; Int f + g  =
      `(+ ,(integrate (exp-lhs exp) x)      ;   Int f + Int g
          ,(integrate (exp-rhs exp) x)))
     ((starts-with exp '-)
      (ecase (length (exp-args exp))
-       (1 (integrate (exp-lhs exp) x))     ; Int - f = - Int f
-       (2 `(- ,(integrate (exp-lhs exp) x) ; Int f - g  =
+       (1 `(- ,(integrate (exp-lhs exp) x))) ; Int - f = - Int f
+       (2 `(- ,(integrate (exp-lhs exp) x)   ; Int f - g  =
               ,(integrate (exp-rhs exp) x)))))  ; Int f - Int g
     ;; Now move the constant factors to the left of the integral
     ((multiple-value-bind (const-factors x-factors)
