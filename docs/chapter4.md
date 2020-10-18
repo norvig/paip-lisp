@@ -707,7 +707,7 @@ Otherwise, `achieve` looks through the list of operators, trying to find one app
 (defun achieve (state goal goal-stack)
   "A goal is achieved if it already holds,
   or if there is an appropriate op for it that is applicable."
-  (dbg-indent :gps (length goal-stack) "Goal: "a" goal)
+  (dbg-indent :gps (length goal-stack) "Goal: ~a" goal)
   (cond ((member-equal goal state) state)
       ((member-equal goal goal-stack) nil)
       (t (some #'(lambda (op) (apply-op state goal op goal-stack))
