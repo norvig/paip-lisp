@@ -7,16 +7,21 @@ debug = false
 
 def code?(str)
   return false unless str =~ /`/
-  return false unless str[0] == '`' && str[-1] == '`'
+
+  # allow leading spaces
+  return false unless str.match('^( | )*`.*`$')
 
   # let's make sure there aren't more ` in the middle
-  return false if str[1 .. -2] =~ /`/
+  # return false if str[1 .. -2] =~ /`/
 
   true
 end
 
 def convert_code_line(str)
-  str.gsub(/^`/, '').gsub(/`$/, '')
+  # only doing first and last
+  # `first segment` something `second segment` gets highlighted
+  # won't eat ` within code fragment
+  str.sub(/`/, '').gsub(/`$/, '')
 end
 
 def convert_code_block(arr)
