@@ -761,16 +761,12 @@ At most, depth-first search considers four at a time; in general it will need to
 
 ```lisp
 (defun finite-binary-tree (n)
-  "Return a successor function that generates a binary tree
-  with n nodes."
-  #'(lambda (x)
-          (remove-if #'(lambda (child) (> child n))
-                (binary-tree x))))
-		
-```
-
-```lisp		
-> (depth-first-search 1 (is 12) (finite-binary-tree 15))
+ "Return a successor function that generates a binary tree
+ with n nodes."
+ #'(lambda (x)
+     (remove-if #'(lambda (child) (> child n))
+        (binary-tree x))))
+(depth-first-search 1 (is 12) (finite-binary-tree 15))
 ;; Search: (1)
 ;; Search: (2 3)
 ;; Search: (4 5 3)
