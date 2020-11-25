@@ -134,13 +134,10 @@ The most straightforward function to compute the nth number in this sequence is 
 
 ```lisp
 (defun fib (n)
+  "Compute the nth number in the Fibonacci sequence."
+ (if (<= n 1) 1
+   (+ (fib (- n 1)) (fib (- n 2)))))
 ```
-
-    `"Compute the nth number in the Fibonacci sequence."`
-
-  `(if (<= n 1) 1`
-
-      `(+ (fib (- n 1)) (fib (- n 2)))))`
 
 The problem with this function is that it computes the same thing over and over again.
 To compute (`fib 5`) means computing (`fib 4`) and (`fib 3`), but (`fib 4`) also requires (`fib 3`), they both require (`fib 2`), and so on.
@@ -170,28 +167,17 @@ With `fib` traced, it would look like this:
 > (setf memo-fib (memo #'fib)) => #  <  CLOSURE -  67300731  >
 > (funcall memo-fib 3) =>
 (1 ENTER FIB: 3)
-```
-
-    `(2 ENTER FIB: 2)`
-
-          `(3 ENTER FIB: 1)`
-
-          `(3 EXIT FIB: 1)`
-
-          `(3 ENTER FIB: 0)`
-
-          `(3 EXIT FIB: 1)`
-
-    `(2 EXIT FIB: 2)`
-
-    `(2 ENTER FIB: 1)`
-
-    `(2 EXIT FIB: 1)`
-
-```lisp
+  (2 ENTER FIB: 2)
+     (3 ENTER FIB: 1)
+     (3 EXIT FIB: 1)
+     (3 ENTER FIB: 0)
+     (3 EXIT FIB: 1)
+  (2 EXIT FIB: 2)
+  (2 ENTER FIB: 1)
+  (2 EXIT FIB: 1)
 (1 EXIT FIB: 3)
 3
-> (funcall memo-fib 3) =  >  3
+> (funcall memo-fib 3) = > 3
 ```
 
 The second time we call `memo-fib` with 3 as the argument, the answer is just retrieved rather than recomputed.
@@ -214,65 +200,34 @@ First, a call to (`fib 5`) with `fib` traced:
 ```lisp
 > (fib 5) =>
 (1 ENTER FIB: 5)
-```
-
-      `(2 ENTER FIB: 4)`
-
-            `(3 ENTER FIB: 3)`
-
-                  `(4 ENTER FIB: 2)`
-
-                          `(5 ENTER FIB: 1)`
-
-                          `(5 EXIT FIB: 1)`
-
-                          `(5 ENTER FIB: 0)`
-
-                          `(5 EXIT FIB: 1)`
-
-                  `(4 EXIT FIB: 2)`
-
-                  `(4 ENTER FIB: 1)`
-
-                  `(4 EXIT FIB: 1)`
-
-            `(3 EXIT FIB: 3)`
-
-            `(3 ENTER FIB: 2)`
-
-                  `(4 ENTER FIB: 1)`
-
-                  `(4 EXIT FIB: 1)`
-
-                  `(4 ENTER FIB: 0)`
-
-                  `(4 EXIT FIB: 1)`
-
-            `(3 EXIT FIB: 2)`
-
-      `(2 EXIT FIB: 5)`
-
-      `(2 ENTER FIB: 3)`
-
-            `(3 ENTER FIB: 2)`
-
-                  `(4 ENTER FIB: 1)`
-
-                  `(4 EXIT FIB: 1)`
-
-                  `(4 ENTER FIB: 0)`
-
-                  `(4 EXIT FIB: 1)`
-
-            `(3 EXIT FIB: 2)`
-
-            `(3 ENTER FIB: 1)`
-
-            `(3 EXIT FIB: 1)`
-
-      `(2 EXIT FIB: 3)`
-
-```lisp
+   (2 ENTER FIB: 4)
+      (3 ENTER FIB: 3)
+         (4 ENTER FIB: 2)
+             (5 ENTER FIB: 1)
+             (5 EXIT FIB: 1)
+             (5 ENTER FIB: 0)
+             (5 EXIT FIB: 1)
+         (4 EXIT FIB: 2)
+         (4 ENTER FIB: 1)
+         (4 EXIT FIB: 1)
+      (3 EXIT FIB: 3)
+      (3 ENTER FIB: 2)
+         (4 ENTER FIB: 1)
+         (4 EXIT FIB: 1)
+         (4 ENTER FIB: 0)
+         (4 EXIT FIB: 1)
+      (3 EXIT FIB: 2)
+   (2 EXIT FIB: 5)
+   (2 ENTER FIB: 3)
+      (3 ENTER FIB: 2)
+         (4 ENTER FIB: 1)
+         (4 EXIT FIB: 1)
+         (4 ENTER FIB: 0)
+         (4 EXIT FIB: 1)
+      (3 EXIT FIB: 2)
+      (3 ENTER FIB: 1)
+      (3 EXIT FIB: 1)
+   (2 EXIT FIB: 3)
 (1 EXIT FIB: 8)
 8
 ```
@@ -286,29 +241,16 @@ Furthermore, when the computation of (`fib 5`) is repeated, the answer is return
 > (memoize 'fib) => #  <  CLOSURE 76626607  >
 > (fib 5) =>
 (1 ENTER FIB: 5)
-```
-
-    `(2 ENTER FIB: 4)`
-
-          `(3 ENTER FIB: 3)`
-
-                `(4 ENTER FIB: 2)`
-
-                      `(5 ENTER FIB: 1)`
-
-                      `(5 EXIT FIB: 1)`
-
-                      `(5 ENTER FIB: 0)`
-
-                      `(5 EXIT FIB: 1)`
-
-                `(4 EXIT FIB: 2)`
-
-          `(3 EXIT FIB: 3)`
-
-    `(2 EXIT FIB: 5)`
-
-```lisp
+  (2 ENTER FIB: 4)
+     (3 ENTER FIB: 3)
+        (4 ENTER FIB: 2)
+           (5 ENTER FIB: 1)
+           (5 EXIT FIB: 1)
+           (5 ENTER FIB: 0)
+           (5 EXIT FIB: 1)
+        (4 EXIT FIB: 2)
+     (3 EXIT FIB: 3)
+  (2 EXIT FIB: 5)
 (1 EXIT FIB: 8)
 8
 > (fib 5)   =>  8
@@ -334,11 +276,9 @@ In developing your program, rather than saying `(memoize 'f)`, it might be easie
 
 ```lisp
 (memoize
+  (defun f (x) ...)
+  )
 ```
-
-    `(defun f (x) ...)`
-
-    `)`
 
 Or define a macro that combines `defun` and `memoize`:
 
@@ -453,29 +393,17 @@ It makes use of the auxiliary functions `one-of` and `rule-lhs` and `rule-rhs` f
 
 ```lisp
 (defun rule-lhs (rule)
-```
+  "The left-hand side of a rule."
+  (first rule))
 
-  `"The left-hand side of a rule."`
-
-  `(first rule))`
-
-```lisp
 (defun rule-rhs (rule)
-```
+  "The right-hand side of a rule."
+  (rest (rest rule)))
 
-  `"The right-hand side of a rule."`
-
-  `(rest (rest rule)))`
-
-```lisp
 (defun one-of (set)
-```
+  "Pick one element of set, and make a list of it."
+  (list (random-elt set)))
 
-  `"Pick one element of set, and make a list of it."`
-
-  `(list (random-elt set)))`
-
-```lisp
 (defun random-elt (seq)
   "Pick a random element out of a sequence."
   (elt seq (random (length seq))))
@@ -490,51 +418,27 @@ Finally, if there are several elements in the right-hand side, they are each tur
 
 ```lisp
 (defun compile-rule (rule)
-```
+ "Translate a grammar rule into a LISP function definition."
+ (let ((rhs (rule-rhs rule)))
+   '(defun ,(rule-lhs rule) ()
+    ,(cond ((every #'atom rhs) '(one-of ',rhs))
+       ((length =l rhs) (build-code (first rhs)))
+       (t '(case (random .(length rhs))
+         ,@(build-cases 0 rhs)))))))
 
-  `"Translate a grammar rule into a LISP function definition."`
-
-  `(let ((rhs (rule-rhs rule)))`
-
-      `'(defun ,(rule-lhs rule) ()`
-
-```lisp
-        ,(cond ((every #'atom rhs) '(one-of ',rhs))
-```
-
-              `((length  =l rhs) (build-code (first rhs)))`
-
-              `(t '(case (random .(length rhs))`
-
-                  `,@(build-cases 0 rhs)))))))`
-
-```lisp
 (defun build-cases (number choices)
-```
+ "Return a list of case-clauses"
+ (when choices
+   (cons (list number (build-code (first choices)))
+       (build-cases (+ number 1) (rest choices)))))
 
-  `"Return a list of case-clauses"`
-
-  `(when choices`
-
-      `(cons (list number (build-code (first choices)))`
-
-              `(build-cases (+ number 1) (rest choices)))))`
-
-```lisp
 (defun build-code (choice)
-```
+ "Append together multiple constituents"
+ (cond ((null choice) nil)
+       ((atom choice) (list choice))
+       ((length=1 choice) choice)
+       (t '(append ,@(mapcar #'build-code choice)))))
 
-  `"Append together multiple constituents"`
-
-  `(cond ((null choice) nil)`
-
-              `((atom choice) (list choice))`
-
-              `((length=1 choice) choice)`
-
-              `(t '(append ,@(mapcar #'build-code choice)))))`
-
-```lisp
 (defun length=1 (x)
   "Is x a list of length 1?"
   (and (consp x) (null (cdr x))))
@@ -555,13 +459,8 @@ We might implement this as follows:
 
 ```lisp
 (defmacro defrule (&rest rule)
-```
-
-    `"Define a grammar rule"`
-
-    `(compile-rule rule))`
-
-```lisp
+  "Define a grammar rule"
+  (compile-rule rule))
 (defrule Sentence -> (NP VP))
 (defrule NP -> (Art Noun))
 (defrule VP -> (Verb NP))
@@ -580,16 +479,11 @@ We can see the Lisp code generated by `compile-rule` in two ways: by passing it 
 ```lisp
 > (compile-rule '(Sentence -> (NP VP)))
 (DEFUN SENTENCE ()
-```
-
-      `(APPEND (NP) (VP)))`
-
-```lisp
+   (APPEND (NP) (VP)))
 > (compile-rule '(Noun -> man bail woman table))
 (DEFUN NOUN ()
+   (ONE-OF '(MAN BALL WOMAN TABLE)))
 ```
-
-      `(ONE-OF '(MAN BALL WOMAN TABLE)))`
 
 or by macroexpanding a `defrule` expression.
 The compiler was designed to produce the same code we were writing in our first approach to the generation problem (see [Page 35](B9780080571157500029.xhtml#p35)).
@@ -597,15 +491,11 @@ The compiler was designed to produce the same code we were writing in our first 
 ```lisp
 > (macroexpand '(defrule Adj* -> () Adj (Adj Adj*)))
 (DEFUN ADJ* ()
+ (CASE (RANDOM 3)
+   (0 NIL)
+   (1 (ADJ))
+   (2 (APPEND (ADJ) (ADJ*)))))
 ```
-
-  `(CASE (RANDOM 3)`
-
-      `(0 NIL)`
-
-      `(1 (ADJ))`
-
-      `(2 (APPEND (ADJ) (ADJ*)))))`
 
 Interpreters are usually easier to write than compilers, although in this case, even the compiler was not too difficult.
 Interpreters are also inherently more flexible than compilers, because they put off making decisions until the last possible moment.
@@ -621,18 +511,13 @@ The rule would expand into the following code:
 
 ```lisp
 (DEFUN NOUN ()
-  (CASE (RANDOM 5)
+ (CASE (RANDOM 5)
+   (0 (MAN))
+   (1 (BALL))
+   (2 (WOMAN))
+   (3 (TABLE))
+   (4 (APPEND (CHOW) (CHOW)))))
 ```
-
-      `(0 (MAN))`
-
-      `(1 (BALL))`
-
-      `(2 (WOMAN))`
-
-      `(3 (TABLE))`
-
-      `(4 (APPEND (CHOW) (CHOW)))))`
 
 The problem is that `man` and `ball` and all the others are suddenly treated as functions, not as literal words.
 So we would get a run-time error notifying us of undefined functions.
@@ -649,19 +534,11 @@ For example, it turns out that on the Common Lisp system I am currently using, I
 ```lisp
 > (defrule Noun -> man bail woman table (chow chow))
 The following functions were referenced but don't seem defined:
-```
-
-  `CHOW referenced by NOUN`
-
-  `TABLE referenced by NOUN`
-
-  `WOMAN referenced by NOUN`
-
-  `BALL referenced by NOUN`
-
-  `MAN referenced by NOUN`
-
-```lisp
+ CHOW referenced by NOUN
+ TABLE referenced by NOUN
+ WOMAN referenced by NOUN
+ BALL referenced by NOUN
+ MAN referenced by NOUN
 NOUN
 ```
 
@@ -684,15 +561,10 @@ For example, consider the following code:
 
 ```lisp
 (defun f1 (n l)
-      (let ((l1 (first l))
-                  (l2 (second l)))
-```
-
-                `(expt (* 1 (+ n 0))`
-
-              `(- 4 (length (list l1 l2))))))`
-
-```lisp
+   (let ((l1 (first l))
+         (l2 (second l)))
+        (expt (* 1 (+ n 0))
+       (- 4 (length (list l1 l2))))))
 F1
 > (defun f2 (n l) (* n n)) =>F2
 > (disassemble 'fl)
@@ -758,25 +630,15 @@ If `force` is passed an argument that is not a delay, it just returns the argume
 
 ```lisp
 (defun force (x)
-```
-
-  `"Find the value of x, by computing if it is a delay."`
-
-  `(if (not (delay-p x))`
-
-            `x`
-
-            `(progn`
-
-            `(when (delay-function x)`
-
-                  `(setf (delay-value x)`
-
-                          `(funcall (delay-function x)))`
-
-                  `(setf (delay-function x) nil))`
-
-            `(delay-value x))))`
+ "Find the value of x, by computing if it is a delay."
+ (if (not (delay-p x))
+      x
+      (progn
+      (when (delay-function x)
+         (setf (delay-value x)
+             (funcall (delay-function x)))
+         (setf (delay-function x) nil))
+      (delay-value x))))
 ```
 
 Here's an example of the use of `delay`.
@@ -813,42 +675,28 @@ Note that `make-pipe` is a macro that delays evaluation of the tail.
 
 ```lisp
 (defmacro make-pipe (head tail)
-```
-
-  `"Create a pipe by evaluating head and delaying tail."`
-
-  `'(cons ,head (delay ,tail)))`
-
-```lisp
+ "Create a pipe by evaluating head and delaying tail."
+ '(cons ,head (delay ,tail)))
 (defconstant empty-pipe nil)
 (defun head (pipe) (first pipe))
 (defun tail (pipe)(force (rest pipe)))
 (defun pipe-elt (pipe i)
+ "The i-th element of a pipe, 0-based"
+ (if (= i 0)
+   (head pipe)
+   (pipe-elt (tail pipe) (- i 1))))
 ```
-
-  `"The i-th element of a pipe, 0-based"`
-
-  `(if (= i 0)`
-
-      `(head pipe)`
-
-      `(pipe-elt (tail pipe) (- i 1))))`
 
 Here's a function that can be used to make a large or infinite sequence of integers with delayed evaluation:
 
 ```lisp
 (defun integers (&optional (start 0) end)
+ "A pipe of integers from START to END.
+ If END is nil, this is an infinite pipe."
+ (if (or (null end) (<= start end))
+   (make-pipe start (integers (+ start 1) end))
+   nil))
 ```
-
-  `"A pipe of integers from START to END.`
-
-  `If END is nil, this is an infinite pipe."`
-
-  `(if (or (null end) (<= start end))`
-
-      `(make-pipe start (integers (+ start 1) end))`
-
-      `nil))`
 
 And here is an example of its use.
 The pipe `c` represents the numbers from 0 to infinity.
@@ -868,23 +716,15 @@ Another call to `pipe-elt` with a larger index would force them by evaluating th
 > (pipe-elt c 3) => 3
 c =>
 (0 . #S(DELAY
+        : VALUE
+        (1 . #S(DELAY
+                  : VALUE
+                  (2 . #S(DELAY
+                          : VALUE
+                          (3 . #S(DELAY
+                                   :FUNCTION
+                                   # < CLOSURE - 77432724 >))))))))
 ```
-
-                `: VALUE`
-
-                `(1 . #S(DELAY`
-
-                                    `: VALUE`
-
-                                    `(2 . #S(DELAY`
-
-                                                    `: VALUE`
-
-                                                    `(3 . #S(DELAY`
-
-                                                                      `:FUNCTION`
-
-                                                                      `#  <  CLOSURE -  77432724  >))))))))`
 
 While this seems to work fine, there is a heavy price to pay.
 Every delayed value must be stored in a two-element structure, where one of the elements is a closure.
@@ -907,26 +747,16 @@ If we consistently use compiled functions, then we could eliminate the problem b
 The following definitions do not make this assumption:
 
 ```lisp
-(defmacro make-pipe (head tail)
-```
-
-  `"Create a pipe by evaluating head and delaying tail."`
-
-  `'(cons ,head #'(lambda () ,tail)))`
-
-```lisp
+(defmacro make-pipe (head tai1)
+ "Create a pipe by evaluating head and delaying tail."
+ '(cons ,head #'(lambda () ,tail)))
 (defun tail (pipe)
+ "Return tail of pipe or list, and destructively update
+ the tail if it is a function."
+ (if (functionp (rest pipe))
+   (setf (rest pipe) (funcall (rest pipe)))
+   (rest pipe)))
 ```
-
-  `"Return tail of pipe or list, and destructively update`
-
-  `the tail if it is a function."`
-
-  `(if (functionp (rest pipe))`
-
-      `(setf (rest pipe) (funcall (rest pipe)))`
-
-      `(rest pipe)))`
 
 Everything else remains the same.
 If we recompile `integers` (because it uses the `macro make-pipe`), we see the following behavior.
@@ -964,54 +794,30 @@ Here are some more utility functions on pipes:
 
 ```lisp
 (defun enumerate (pipe &key count key (result pipe))
-```
-
-  `"Go through all (or count) elements of pipe,`
-
-  `possibly applying the KEY function.
-(Try PRINT.)"`
-
-  `;; Returns RESULT, which defaults to the pipe itself.`
-
-  `(if (or (eq pipe empty-pipe) (eql count 0))`
-
-              `result`
-
-              `(progn`
-
-              `(unless (null key) (funcall key (head pipe)))`
-
-              `(enumerate (tail pipe) :count (if count (- count 1))`
-
-                                                `: key key : result result))))`
-
-```lisp
+ "Go through all (or count) elements of pipe,
+ possibly applying the KEY function. (Try PRINT.)"
+ ;; Returns RESULT, which defaults to the pipe itself.
+ (if (or (eq pipe empty-pipe) (eql count 0))
+       result
+       (progn
+       (unless (null key) (funcall key (head pipe)))
+       (enumerate (tail pipe) :count (if count (- count 1))
+                        : key key : result result))))
 (defun filter (pred pipe)
+ "Keep only items in pipe satisfying pred."
+ (if (funcall pred (head pipe))
+   (make-pipe (head pipe)
+                     (filter pred (tail pipe)))
+   (filter pred (tail pipe))))
 ```
-
-  `"Keep only items in pipe satisfying pred."`
-
-  `(if (funcall pred (head pipe))`
-
-      `(make-pipe (head pipe)`
-
-                                          `(filter pred (tail pipe)))`
-
-      `(filter pred (tail pipe))))`
 
 And here's an application of pipes: generating prime numbers using the sieve of Eratosthenes algorithm:
 
 ```lisp
 (defun sieve (pipe)
-```
-
-  `(make-pipe (head pipe)`
-
-              `(filter #'(lambda (x) (/= (mod x (head pipe)) 0))`
-
-                                `(sieve (tail pipe)))))`
-
-```lisp
+ (make-pipe (head pipe)
+       (filter #'(lambda (x) (/= (mod x (head pipe)) 0))
+                (sieve (tail pipe)))))
 (defvar *primes* (sieve (integers 2)))
 > *primes* => (2 . #  <  CLOSURE 3075345  >)
 > (enumerate *primes* :count 10) =>
@@ -1023,51 +829,27 @@ First we're going to need some more utility functions:
 
 ```lisp
 (defun map-pipe (fn pipe)
-```
-
-  `"Map fn over pipe, delaying all but the first fn call."`
-
-  `(if (eq pipe empty-pipe)`
-
-            `empty-pipe`
-
-            `(make-pipe (funcall fn (head pipe))`
-
-                            `(map-pipe fn (tail pipe)))))`
-
-```lisp
+ "Map fn over pipe, delaying all but the first fn call."
+ (if (eq pipe empty-pipe)
+      empty-pipe
+      (make-pipe (funcall fn (head pipe))
+              (map-pipe fn (tail pipe)))))
 (defun append-pipes (x y)
-```
-
-  `"Return a pipe that appends the elements of x and y."`
-
-  `(if (eq x empty-pipe)`
-
-              `y`
-
-              `(make-pipe (head x)`
-
-                                    `(append-pipes (tail x) y))))`
-
-```lisp
+ "Return a pipe that appends the elements of x and y."
+ (if (eq x empty-pipe)
+       y
+       (make-pipe (head x)
+                  (append-pipes (tail x) y))))
 (defun mappend-pipe (fn pipe)
+ "Lazily map fn over pipe, appending results."
+ (if (eq pipe empty-pipe)
+          empty-pipe
+          (let ((x (funcall fn (head pipe))))
+            (make-pipe (head x)
+                    (append-pipes (tail x)
+                                (mappend-pipe
+                                            fn (tail pipe)))))))
 ```
-
-  `"Lazily map fn over pipe, appending results."`
-
-  `(if (eq pipe empty-pipe)`
-
-                    `empty-pipe`
-
-                    `(let ((x (funcall fn (head pipe))))`
-
-                        `(make-pipe (head x)`
-
-                                        `(append-pipes (tail x)`
-
-                                                                `(mappend-pipe`
-
-                                                                                        `fn (tail pipe)))))))`
 
 Now we can rewrite `generate-all` and `combine-all` to use pipes instead of lists.
 
@@ -1075,47 +857,26 @@ Everything else is the same as on [Page 45](B9780080571157500029.xhtml#p45).
 
 ```lisp
 (defun generate-all (phrase)
-```
-
-  `"Generate a random sentence or phrase"`
-
-  `(if (listp phrase)`
-
-      `(if (null phrase)`
-
-              `(list nil)`
-
-              `(combine-all-pipes`
-
-                    `(generate-all (first phrase))`
-
-                    `(generate-all (rest phrase))))`
-
-      `(let ((choices (rule-rhs (assoc phrase *grammar*))))`
-
-        `(if choices`
-
-                    `(mappend-pipe #'generate-all choices)`
-
-                    `(list (list phrase))))))`
-
-```lisp
+ "Generate a random sentence or phrase"
+ (if (listp phrase)
+   (if (null phrase)
+       (list nil)
+       (combine-all-pipes
+          (generate-all (first phrase))
+          (generate-all (rest phrase))))
+   (let ((choices (rule-rhs (assoc phrase *grammar*))))
+    (if choices
+          (mappend-pipe #'generate-all choices)
+          (list (list phrase))))))
 (defun combine-all-pipes (xpipe ypipe)
+ "Return a pipe of pipes formed by appending a y to an x"
+ ;; In other words, form the cartesian product.
+ (mappend-pipe
+   #'(lambda (y)
+         (map-pipe #'(lambda (x) (append-pipes x y))
+                          xpipe))
+   ypipe))
 ```
-
-  `"Return a pipe of pipes formed by appending a y to an x"`
-
-  `;; In other words, form the cartesian product.`
-
-  `(mappend-pipe`
-
-      `#'(lambda (y)`
-
-                  `(map-pipe #'(lambda (x) (append-pipes x y))`
-
-                                                    `xpipe))`
-
-      `ypipe))`
 
 With these definitions, here's the pipe of all sentences from `*grammar2*` (from [Page 43](B9780080571157500029.xhtml#p43)):
 
@@ -1151,7 +912,7 @@ It should be mentioned that the language Prolog has a different solution to the 
 As we shall see in [chapter 11](B978008057115750011X.xhtml), Prolog generates solutions one at a time, automatically keeping track of possible backtrack points.
 Where pipes allow us to represent an infinite number of alternatives in the data, Prolog allows us to represent those alternatives in the program itself.
 
-**Exercise  9.1 [h]** When given a function `f` and a pipe `p`, `mappend-pipe` returns a new pipe that will eventually enumerate all of `(f (first p))`, then all of `(f (second p))`, and so on.
+**Exercise 9.1 [h]** When given a function `f` and a pipe `p`, `mappend-pipe` returns a new pipe that will eventually enumerate all of `(f (first p))`, then all of `(f (second p))`, and so on.
 This is deemed "unfair" if `(f (first p))` has an infinite number of elements.
 Define a function that will fairly interleave elements, so that all of them are eventually enumerated.
 Show that the function works by changing `generate-all` to work with it.
@@ -1188,62 +949,30 @@ For each profiled function, it keeps a count of the number of times it is called
 
 ```lisp
 (defun profile1 (fn-name)
-```
-
-  `"Make the function count how often it is called"`
-
-  `;; First save away the old, unprofiled function`
-
-  `;; Then make the name be a new function that increments`
-
-  `;; a counter and then calls the original function`
-
-    `(let ((fn (symbol-function fn-name)))`
-
-          `(setf (get fn-name 'unprofiled-fn) fn)`
-
-      `(setf (get fn-name 'profile-count) 0)`
-
-      `(setf (symbol-function fn-name)`
-
-                `(profiled-fn fn-name fn))`
-
-      `fn-name))`
-
-```lisp
+ "Make the function count how often it is called"
+ ;; First save away the old, unprofiled function
+ ;; Then make the name be a new function that increments
+ ;; a counter and then calls the original function
+  (let ((fn (symbol-function fn-name)))
+     (setf (get fn-name 'unprofiled-fn) fn)
+   (setf (get fn-name 'profile-count) 0)
+   (setf (symbol-function fn-name)
+        (profiled-fn fn-name fn))
+   fn-name))
 (defun unprofile1 (fn-name)
-```
-
-  `"Make the function stop counting how often it is called."`
-
-  `(setf (symbol-function fn-name) (get fn-name 'unprofiled-fn))`
-
-  `fn-name)`
-
-```lisp
+ "Make the function stop counting how often it is called."
+ (setf (symbol-function fn-name) (get fn-name 'unprofiled-fn))
+ fn-name)
 (defun profiled-fn (fn-name fn)
-```
-
-  `"Return a function that increments the count."`
-
-  `#'(lambda (&rest args)`
-
-      `(incf (get fn-name 'profile-count))`
-
-      `(apply fn args)))`
-
-```lisp
+ "Return a function that increments the count."
+ #'(lambda (&rest args)
+   (incf (get fn-name 'profile-count))
+   (apply fn args)))
 (defun profile-count (fn-name) (get fn-name 'profile-count))
-```
-
-  `(defun profile-report (fn-names &optional (key #'profile-count))`
-
-  `"Report profiling statistics on given functions."`
-
-              `(loop for name in (sort fn-names #'> :key key) do`
-
-```lisp
-                    (format t "~&  ~  7D  ~  A" (profile-count name) name)))
+ (defun profile-report (fn-names &optional (key #'profile-count))
+ "Report profiling statistics on given functions."
+       (loop for name in (sort fn-names #'> :key key) do
+          (format t "~& ~ 7D ~ A" (profile-count name) name)))
 ```
 
 That's all we need for the bare-bones functionality.
@@ -1264,19 +993,13 @@ Then the definition of `f` would be roughly:
 
 ```lisp
 (lambda (&rest args)
+   (incf (get 'f 'profile-count))
+   (apply #'(lambda (&rest args)
+      (incf (get 'f 'profile-count))
+      (apply #'(lambda (x) (g x))
+            args))
+        args))
 ```
-
-      `(incf (get 'f 'profile-count))`
-
-      `(apply #'(lambda (&rest args)`
-
-            `(incf (get 'f 'profile-count))`
-
-            `(apply #'(lambda (x) (g x))`
-
-                        `args))`
-
-                `args))`
 
 The result is that any call to `f` will eventually call the original `f`, but only after incrementing the count twice.
 
@@ -1298,45 +1021,23 @@ Here is the basic code for `profile` and `unprofile:`
 
 ```lisp
 (defvar *profiled-functions* nil
-```
-
-  `"Function names that are currently profiled")`
-
-```lisp
+ "Function names that are currently profiled")
 (defmacro profile (&rest fn-names)
-```
-
-  `"Profile fn-names.
-With no args, list profiled functions."`
-
-  `'(mapcar #'profile1`
-
-              `(setf *profiled-functions*`
-
-            `(union *profiled-functions* fn-names))))`
-
-```lisp
+ "Profile fn-names. With no args, list profiled functions."
+ '(mapcar #'profile1
+       (setf *profiled-functions*
+      (union *profiled-functions* fn-names))))
 (defmacro unprofile (&rest fn-names)
+ "Stop profiling fn-names. With no args, stop all profiling."
+ '(progn
+   (mapcar #'unprofile1
+         ,(if fn-names fn-names '*profiled-functions*))
+   (setf *profiled-functions*
+         ,(if (null fn-names)
+      nil
+         '(set-difference *profiled-functions*
+            ',fn-names)))))
 ```
-
-  `"Stop profiling fn-names.
-With no args, stop all profiling."`
-
-  `'(progn`
-
-      `(mapcar #'unprofile1`
-
-                  `,(if fn-names fn-names '*profiled-functions*))`
-
-      `(setf *profiled-functions*`
-
-                  `,(if (null fn-names)`
-
-            `nil`
-
-                  `'(set-difference *profiled-functions*`
-
-                        `',fn-names)))))`
 
 The idiom ' ',`fn-names` deserves comment, since it is common but can be confusing at first.
 It may be easier to understand when written in the equivalent form '`(quote , fn-names)`.
@@ -1354,53 +1055,29 @@ Otherwise, we create the profiled function, store it as the current definition o
 
 ```lisp
 (defun profile1 (fn-name)
-```
-
-  `"Make the function count how often it is called"`
-
-  `;; First save away the old, unprofiled function`
-
-  `;; Then make the name be a new function that increments`
-
-  `;; a counter and then calls the original function`
-
-  `(let ((fn (symbol-function fn-name)))`
-
-      `(unless (eq fn (get fn-name 'profiled-fn))`
-
-              `(let ((new-fn (profiled-fn fn-name fn)))`
-
-                  `(setf (symbol-function fn-name) new-fn`
-
-                              `(get fn-name 'profiled-fn) new-fn`
-
-                              `(get fn-name 'unprofiled-fn) fn`
-
-                              `(get fn-name 'profile-time) 0`
-
-                              `(get fn-name 'profile-count) 0))))`
-
-        `fn-name)`
-
-```lisp
+ "Make the function count how often it is called"
+ ;; First save away the old, unprofiled function
+ ;; Then make the name be a new function that increments
+ ;; a counter and then calls the original function
+ (let ((fn (symbol-function fn-name)))
+   (unless (eq fn (get fn-name 'profiled-fn))
+       (let ((new-fn (profiled-fn fn-name fn)))
+         (setf (symbol-function fn-name) new-fn
+               (get fn-name 'profiled-fn) new-fn
+               (get fn-name 'unprofiled-fn) fn
+               (get fn-name 'profile-time) 0
+               (get fn-name 'profile-count) 0))))
+    fn-name)
 (defun unprofile1 (fn-name)
+ "Make the function stop counting how often it is called."
+ (setf (get fn-name 'profile-time) 0)
+ (setf (get fn-name 'profile-count) 0)
+ (when (eq (symbol-function fn-name) (get fn-name 'profiled-fn))
+   ;; normal case: restore unprofiled version
+   (setf (symbol-function fn-name)
+        (get fn-name 'unprofiled-fn)))
+ fn-name)
 ```
-
-  `"Make the function stop counting how often it is called."`
-
-  `(setf (get fn-name 'profile-time) 0)`
-
-  `(setf (get fn-name 'profile-count) 0)`
-
-  `(when (eq (symbol-function fn-name) (get fn-name 'profiled-fn))`
-
-      `;; normal case: restore unprofiled version`
-
-      `(setf (symbol-function fn-name)`
-
-                `(get fn-name 'unprofiled-fn)))`
-
-  `fn-name)`
 
 Now we look into the question of timing.
 There is a built-in Common Lisp function, `get-internal-real-time`, that returns the elapsed time since the Lisp session started.
@@ -1423,36 +1100,19 @@ The conditional read macro characters are used in the following definitions:
 
 ```lisp
 (defun get-fast-time ()
-```
-
-  `"Return the elapsed time.
-This may wrap around;`
-
-  `use FAST-TIME-DIFFERENCE to compare."`
-
-  `#+Explorer (time:microsecond-time) ; do this on an Explorer`
-
-  `#-Explorer (get-internal-real-time)) ; do this on a non-Explorer`
-
-```lisp
+ "Return the elapsed time. This may wrap around;
+ use FAST-TIME-DIFFERENCE to compare."
+ #+Explorer (time:microsecond-time) ; do this on an Explorer
+ #-Explorer (get-internal-real-time)) ; do this on a non-Explorer
 (defun fast-time-difference (end start)
-```
-
-  `"Subtract two time points."`
-
-  `#+Explorer (time:microsecond-time-difference end start)`
-
-  `#-Explorer (- end start))`
-
-```lisp
+ "Subtract two time points."
+ #+Explorer (time:microsecond-time-difference end start)
+ #-Explorer (- end start))
 (defun fast-time->seconds (time)
+ "Convert a fast-time interval into seconds."
+ #+Explorer (/ time 1000000.0)
+ #-Explorer (/ time internal-time-units-per-second))
 ```
-
-  `"Convert a fast-time interval into seconds."`
-
-  `#+Explorer (/ time 1000000.0)`
-
-  `#-Explorer (/ time internal-time-units-per-second))`
 
 The next step is to update `profiled-fn` to keep track of the timing data.
 The simplest way to do this would be to set a variable, say `start`, to the time when a function is entered, run the function, and then increment the function's time by the difference between the current time and `start`.
@@ -1476,66 +1136,34 @@ Inline declarations are discussed in more depth on [Page 317](B97800805711575001
 ```lisp
 (proclaim '(inline profile-enter profile-exit inc-profile-time))
 (defun profiled-fn (fn-name fn)
-```
-
-  `"Return a function that increments the count, and times."`
-
-  `#'(lambda (&rest args)`
-
-          `(profile-enter fn-name)`
-
-          `(multiple-value-progl`
-
-                `(apply fn args)`
-
-                `(profile-exit fn-name))))`
-
-```lisp
+ "Return a function that increments the count, and times."
+ #'(lambda (&rest args)
+     (profile-enter fn-name)
+     (multiple-value-progl
+        (apply fn args)
+        (profile-exit fn-name))))
 (defvar *profile-call-stack* nil)
 (defun profile-enter (fn-name)
-```
-
-  `(incf (get fn-name 'profile-count))`
-
-  `(unless (null *profile-call-stack*)`
-
-      `;; Time charged against the calling function:`
-
-      `(inc-profile-time (first *profile-call-stack*)`
-
-                              `(car (first *profile-call-stack*))))`
-
-  `;; Put a new entry on the stack`
-
-  `(push (cons fn-name (get-fast-time))`
-
-              `*profile-call-stack*))`
-
-```lisp
+ (incf (get fn-name 'profile-count))
+ (unless (null *profile-call-stack*)
+   ;; Time charged against the calling function:
+   (inc-profile-time (first *profile-call-stack*)
+               (car (first *profile-call-stack*))))
+ ;; Put a new entry on the stack
+ (push (cons fn-name (get-fast-time))
+       *profile-call-stack*))
 (defun profile-exit (fn-name)
-```
-
-  `;; Time charged against the current function:`
-
-  `(inc-profile-time (pop *profile-call-stack*)`
-
-                                          `fn-name)`
-
-  `;; Change the top entry to reflect current time`
-
-  `(unless (null *profile-call-stack*)`
-
-      `(setf (cdr (first *profile-call-stack*))`
-
-              `(get-fast-time))))`
-
-```lisp
+ ;; Time charged against the current function:
+ (inc-profile-time (pop *profile-call-stack*)
+                     fn-name)
+ ;; Change the top entry to reflect current time
+ (unless (null *profile-call-stack*)
+   (setf (cdr (first *profile-call-stack*))
+       (get-fast-time))))
 (defun inc-profile-time (entry fn-name)
+ (incf (get fn-name 'profile-time)
+            (fast-time-difference (get-fast-time) (cdr entry))))
 ```
-
-  `(incf (get fn-name 'profile-time)`
-
-                        `(fast-time-difference (get-fast-time) (cdr entry))))`
 
 Finally, we need to update `profile-report` to print the timing data as well as the counts.
 Note that the default `fn-names` is a copy of the global list.
@@ -1544,21 +1172,21 @@ We don't want the global list to be modified as a result of this sort.
 
 ```lisp
 (defun profile-report (&optional
-                                            (fn-names (copy-list *profiled-functions*))
-                                            (key #'profile-count))
-    "Report profiling statistics on given functions."
-    (let ((total-time (reduce #'  +  (mapcar #'profile-time fn-names))))
-        (unless (null key)
-            (setf fn-names (sort fn-names #'> :key key)))
-        (format t "~&Total elapsed time: ~d seconds."
-                        (fast-time-> seconds total-time))
-        (format t Count Secs Time% Name")
-        (loop for name in fn-names do
-                  (format t "~&~7D ~6,2F ~3d% ~A"
-                                (profile-count name)
-                                (fast-time-> seconds (profile-time name))
-                                (round (/ (profile-time name) total-time) .01)
-                                name))))
+                      (fn-names (copy-list *profiled-functions*))
+                      (key #'profile-count))
+  "Report profiling statistics on given functions."
+  (let ((total-time (reduce #' + (mapcar #'profile-time fn-names))))
+    (unless (null key)
+      (setf fn-names (sort fn-names #'> :key key)))
+    (format t "~&Total elapsed time: ~d seconds."
+            (fast-time-> seconds total-time))
+    (format t Count Secs Time% Name")
+    (loop for name in fn-names do
+         (format t "~&~7D ~6,2F ~3d% ~A"
+                (profile-count name)
+                (fast-time-> seconds (profile-time name))
+                (round (/ (profile-time name) total-time) .01)
+                name))))
 (defun profile-time (fn-name) (get fn-name 'profile-time))
 ```
 
@@ -1605,20 +1233,15 @@ The function `test-it` runs through the test data, making sure that each answer 
 
 ```lisp
 (defun test-it (&optional (with-profiling t))
-```
-
-`    "Time a test run.
-and make sure the answers are correct."`
-
-```lisp
-    (let ((answers
-                  (if with-profiling
-                          (with-profiling (simplify simplify-exp pat-match
-                                                            match-variable variable-p)
-                              (mapcar #'simplify *test-data*))
-                          (time (mapcar #'simplify *test-data*)))))
-        (mapc #'assert-equal answers *answers*)
-        t))
+  "Time a test run. and make sure the answers are correct."
+  (let ((answers
+         (if with-profiling
+             (with-profiling (simplify simplify-exp pat-match
+                              match-variable variable-p)
+               (mapcar #'simplify *test-data*))
+             (time (mapcar #'simplify *test-data*)))))
+    (mapc #'assert-equal answers *answers*)
+    t))
 (defun assert-equal (x y)
     "If x is not equal to y, complain."
     (assert (equal x y) (x y)
@@ -1629,9 +1252,9 @@ Here are the results of (`test-it`) with and without profiling:
 
 ```lisp
 > (test-it nil)
-Evaluation of (MAPCAR #'SIMPLIFY *TEST-DATA*) took 6.612  seconds.
+Evaluation of (MAPCAR #'SIMPLIFY *TEST-DATA*) took 6.612 seconds.
 > (test-it t)
-Total elapsed time: 22.819614  seconds
+Total elapsed time: 22.819614 seconds
 ```
 
 | []()    |         |         |                  |
@@ -1643,13 +1266,13 @@ Total elapsed time: 22.819614  seconds
 | `906`   | `0.20`  | `1%`    | `SIMPLIFY`       |
 | `274`   | `1.98`  | `9%`    | `SIMPLIFY-EXP`   |
 
-Running the test takes 6.6  seconds normally, although the time triples when the profiling overhead is added in.
+Running the test takes 6.6 seconds normally, although the time triples when the profiling overhead is added in.
 It should be clear that to speed things up, we have to either speed up or cut down on the number of calls to `pat-match` or `variable-p`, since together they account for 89% of the calls (and 89% of the time as well).
 We will look at three methods for achieving both those goals.
 
 #### Memoization
 
-Consider the rule that transforms (`x  +  x`) into (`2 * x`).
+Consider the rule that transforms (`x + x`) into (`2 * x`).
 Once this is done, we have to simplify the result, which involves resimplifying the components.
 If `x` were some complex expression, this could be time-consuming, and it will certainly be wasteful, because `x` is already simplified and cannot change.
 We have seen this type of problem before, and the solution is memoization: make `simplify` remember the work it has done, rather than repeating the work.
@@ -1694,21 +1317,16 @@ Here's how:
 
 ```lisp
 (defun simplify-exp (exp)
-```
-
-`    "Simplify using a rule.
-or by doing arithmetic.`
-
-```lisp
-    or by using the simp function supplied for this operator.
-    This version indexes simplification rules under the operator."
-    (cond ((simplify-by-fn exp))
-                ((rule-based-translator exp (rules-for (exp-op exp)) ;***
-                      :rule-if #'exp-lhs :rule-then #'exp-rhs
-                      :action #'(lambda (bindings response)
-                                            (simplify (sublis bindings response)))))
-                ((evaluable exp) (eval exp))
-                (t exp)))
+  "Simplify using a rule. or by doing arithmetic.
+  or by using the simp function supplied for this operator.
+  This version indexes simplification rules under the operator."
+  (cond ((simplify-by-fn exp))
+        ((rule-based-translator exp (rules-for (exp-op exp)) ;***
+           :rule-if #'exp-lhs :rule-then #'exp-rhs
+           :action #'(lambda (bindings response)
+                      (simplify (sublis bindings response)))))
+        ((evaluable exp) (eval exp))
+        (t exp)))
 (defvar *rules-for* (make-hash-table :test #'eq))
 (defun main-op (rule) (exp-op (exp-lhs rule)))
 (defun index-rules (rules)
@@ -1723,11 +1341,11 @@ or by doing arithmetic.`
 (index-rules *simplification-rules*)
 ```
 
-Timing the memoized, indexed version gets us to .98  seconds, down from 6.6  seconds for the original code and 3 seconds for the memoized code.
+Timing the memoized, indexed version gets us to .98 seconds, down from 6.6 seconds for the original code and 3 seconds for the memoized code.
 If this hadn't helped, we could have considered more sophisticated indexing schemes.
 Instead, we move on to consider other means of gaining efficiency.
 
-**Exercise  9.2 [m]** The list of rules for each operator is stored in a hash table with the operator as key.
+**Exercise 9.2 [m]** The list of rules for each operator is stored in a hash table with the operator as key.
 An alternative would be to store the rules on the property list of each operator, assuming operators must be symbols.
 Implement this alternative, and time it against the hash table approach.
 Remember that you need some way of clearing the old rules-trivial with a hash table, but not automatic with property lists.
@@ -1736,7 +1354,7 @@ Remember that you need some way of clearing the old rules-trivial with a hash ta
 
 You can look at `simplify-exp` as an interpreter for the simplification rule language.
 One proven technique for improving efficiency is to replace the interpreter with a compiler.
-For example, the rule `(x  +  x  =  2 * x)` could be compiled into something like:
+For example, the rule `(x + x = 2 * x)` could be compiled into something like:
 
 ```lisp
 (lambda (exp)
@@ -1799,16 +1417,11 @@ The single-rule compiler works like this:
 ```lisp
 > (compile-rule '(= (+ x x) (* 2 x)))
 (LAMBDA (X)
-```
-
-`    (IF (OP?
-X '+)`
-
-```lisp
-        (LET ((XL (EXP-LHS X))
-                    (XR (EXP-RHS X)))
-          (IF (EQUAL XR XL)
-                  (SIMPLIFY-EXP (LIST '* '2 XL))))))
+  (IF (OP? X '+)
+    (LET ((XL (EXP-LHS X))
+          (XR (EXP-RHS X)))
+     (IF (EQUAL XR XL)
+         (SIMPLIFY-EXP (LIST '* '2 XL))))))
 ```
 
 Given a rule, it generates code that first tests the pattern and then builds the right- hand side of the rule if the pattern matches.
@@ -1831,14 +1444,14 @@ It takes a rule as an argument and returns a lambda expression that implements t
 
 ```lisp
 (defvar *bindings* nil
-    "A list of bindings used by the rule compiler.")
+  "A list of bindings used by the rule compiler.")
 (defun compile-rule (rule)
-    "Compile a single rule."
-    (let ((*bindings* nil))
-        '(lambda (x)
-            ,(compile-exp 'x (exp-lhs rule) ; x is the lambda parameter
-                                        (delay (build-exp (exp-rhs rule)
-                                                                                              *bindings*))))))
+  "Compile a single rule."
+  (let ((*bindings* nil))
+    '(lambda (x)
+      ,(compile-exp 'x (exp-lhs rule) ; x is the lambda parameter
+                    (delay (build-exp (exp-rhs rule)
+                                               *bindings*))))))
 ```
 
 All the work is done by `compile-exp`, which takes three arguments: a variable that will represent the input in the generated code, a pattern that the input should be matched against, and a continuation for generating the code if the test passes.
@@ -1851,50 +1464,31 @@ Finally, (5) if the pattern is a list, we check that it has the right operator a
 
 ```lisp
 (defun compile-exp (var pattern consequent)
-    "Compile code that tests the expression, and does consequent
-```
-
-`    if it matches.
-Assumes bindings in *bindings*."`
-
-```lisp
-    (cond ((get-binding pattern *bindings*)
-                  ;; Test a previously bound variable
-                  '(if (equal .var .(lookup pattern *bindings*))
-```
-
-  `                          ,(force consequent)))`
-
-```lisp
-                ((variable-p pattern)
-                  ;; Add a new bindings; do type checking if needed.
-                  (push (cons pattern var) *bindings*)
-                  (force consequent))
-                ((atom pattern)
-                  ;; Match a literal atom
-                  '(if (eql ,var '.pattern)
-                            ,(force consequent)))
-                ((starts-with pattern '?is)
-                  (push (cons (second pattern) var) *bindings*)
-                  '(if (,(third pattern) ,var)
-                            ,(force consequent)))
-```
-
-`                  ;; So.
-far, only the ?is pattern is covered, because`
-
-```lisp
-                  ;; it is the only one used in simplification rules.
-                  ;; Other patterns could be compiled by adding code here.
-                  ;; Or we could switch to a data-driven approach.
-                  (t ;; Check the operator and arguments
-```
-
-`                    '(if (op?
-,var ',(exp-op pattern))`
-
-```lisp
-                            ,(compile-args var pattern consequent)))))
+  "Compile code that tests the expression, and does consequent
+  if it matches. Assumes bindings in *bindings*."
+  (cond ((get-binding pattern *bindings*)
+         ;; Test a previously bound variable
+         '(if (equal .var .(lookup pattern *bindings*))
+              ,(force consequent)))
+        ((variable-p pattern)
+         ;; Add a new bindings; do type checking if needed.
+         (push (cons pattern var) *bindings*)
+         (force consequent))
+        ((atom pattern)
+         ;; Match a literal atom
+         '(if (eql ,var '.pattern)
+              ,(force consequent)))
+        ((starts-with pattern '?is)
+         (push (cons (second pattern) var) *bindings*)
+         '(if (,(third pattern) ,var)
+              ,(force consequent)))
+         ;; So. far, only the ?is pattern is covered, because
+         ;; it is the only one used in simplification rules.
+         ;; Other patterns could be compiled by adding code here.
+         ;; Or we could switch to a data-driven approach.
+         (t ;; Check the operator and arguments
+          '(if (op? ,var ',(exp-op pattern))
+              ,(compile-args var pattern consequent)))))
 ```
 
 The function `compile-args` is used to check the arguments to a pattern.
@@ -1903,22 +1497,22 @@ It just passes along the continuation, `consequent`, to `compile-exp`.
 
 ```lisp
 (defun compile-args (var pattern consequent)
-    "Compile code that checks the arg or args, and does consequent
-    if the arg(s) match."
-    ;; First make up variable names for the arg(s).
-    (let ((L (symbol var 'L))
-                (R (symbol var 'R)))
-        (if (exp-rhs pattern)
-                ;; two arg case
-                '(let ((,L (exp-lhs ,var))
-                              (,R (exp-rhs ,var)))
-                      ,(compile-exp L (exp-lhs pattern)
-                                                  (delay
-                                                      (compile-exp R (exp-rhs pattern)
-                                                                                consequent))))
-                ;; one arg case
-                '(let ((,L (exp-lhs ,var)))
-                      ,(compile-exp L (exp-lhs pattern) consequent)))))
+  "Compile code that checks the arg or args, and does consequent
+  if the arg(s) match."
+  ;; First make up variable names for the arg(s).
+  (let ((L (symbol var 'L))
+        (R (symbol var 'R)))
+    (if (exp-rhs pattern)
+        ;; two arg case
+        '(let ((,L (exp-lhs ,var))
+               (,R (exp-rhs ,var)))
+           ,(compile-exp L (exp-lhs pattern)
+                         (delay
+                           (compile-exp R (exp-rhs pattern)
+                                        consequent))))
+        ;; one arg case
+        '(let ((,L (exp-lhs ,var)))
+           ,(compile-exp L (exp-lhs pattern) consequent)))))
 ```
 
 The remaining functions are simpler.
@@ -1927,30 +1521,25 @@ Also given is `new-symbol`, although it is not used in this program.
 
 ```lisp
 (defun build-exp (exp bindings)
-    "Compile code that will build the exp, given the bindings."
-    (cond ((assoc exp bindings) (rest (assoc exp bindings)))
-                ((variable-p exp)
-                  (error "Variable  ~  a occurred on right-hand side,~
-                                but not left." exp))
-                ((atom exp) ",exp)
-                (t (let ((new-exp (mapcar #'(lambda (x)
-                                                                          (build-exp x bindings))
-                                                                      exp)))
-                          '(simplify-exp (list .,new-exp))))))
-```
-
-`(defun op?
-(exp op)`
-
-```lisp
-    "Does the exp have the given op as its operator?"
-    (and (exp-p exp) (eq (exp-op exp) op)))
+  "Compile code that will build the exp, given the bindings."
+  (cond ((assoc exp bindings) (rest (assoc exp bindings)))
+        ((variable-p exp)
+         (error "Variable ~ a occurred on right-hand side,~
+                but not left." exp))
+        ((atom exp) ",exp)
+        (t (let ((new-exp (mapcar #'(lambda (x)
+                                     (build-exp x bindings))
+                                   exp)))
+             '(simplify-exp (list .,new-exp))))))
+(defun op? (exp op)
+  "Does the exp have the given op as its operator?"
+  (and (exp-p exp) (eq (exp-op exp) op)))
 (defun symbol (&rest args)
-    "Concatenate symbols or strings to form an interned symbol"
-    (intern (format nil "~{~a~}" args)))
+  "Concatenate symbols or strings to form an interned symbol"
+  (intern (format nil "~{~a~}" args)))
 (defun new-symbol (&rest args)
-    "Concatenate symbols or strings to form an uninterned symbol"
-    (make-symbol (format nil "~{~a~}" args)))
+  "Concatenate symbols or strings to form an uninterned symbol"
+  (make-symbol (format nil "~{~a~}" args)))
 ```
 
 Here are some examples of the compiler:
@@ -1958,47 +1547,27 @@ Here are some examples of the compiler:
 ```lisp
 > (compile-rule '(= (log (^ e x)) x))
 (LAMBDA (X)
-```
-
-`    (IF (OP?
-X 'LOG)`
-
-```lisp
-        (LET ((XL (EXP-LHS X)))
-```
-
-`            (IF (OP?
-XL '^`
-
-```lisp
-                    (LET ((XLL (EXP-LHS XL))
-                                (XLR (EXP-RHS XL)))
-                      (IF (EQL XLL 'E)
-                                XLR))))))
-> (compile-rule (simp-rule '(n * (m * x)  =  (n * m) * x)))
+  (IF (OP? X 'LOG)
+    (LET ((XL (EXP-LHS X)))
+      (IF (OP? XL '^
+          (LET ((XLL (EXP-LHS XL))
+                (XLR (EXP-RHS XL)))
+           (IF (EQL XLL 'E)
+                XLR))))))
+> (compile-rule (simp-rule '(n * (m * x) = (n * m) * x)))
 (LAMBDA (X)
-```
-
-`    (IF (OP?
-X '*)`
-
-```lisp
-        (LET ((XL (EXP-LHS X))
-                    (XR (EXP-RHS X)))
-            (IF (NUMBERP XL)
-```
-
-`                    (IF (OP?
-XR '*)`
-
-```lisp
-                        (LET ((XRL (EXP-LHS XR))
-                                    (XRR (EXP-RHS XR)))
-                            (IF (NUMBERP XRL)
-                                (SIMPLIFY-EXP
-                                    (LIST '*
-                                                (SIMPLIFY-EXP (LIST '* XL XRL))
-                                                XRR)))))))))
+  (IF (OP? X '*)
+    (LET ((XL (EXP-LHS X))
+          (XR (EXP-RHS X)))
+      (IF (NUMBERP XL)
+          (IF (OP? XR '*)
+            (LET ((XRL (EXP-LHS XR))
+                  (XRR (EXP-RHS XR)))
+              (IF (NUMBERP XRL)
+                (SIMPLIFY-EXP
+                  (LIST '*
+                        (SIMPLIFY-EXP (LIST '* XL XRL))
+                        XRR)))))))))
 ```
 
 #### The Rule-Set Compiler
@@ -2014,42 +1583,37 @@ The result is wrapped in a `lambda` expression and compiled as the final simplif
 
 ```lisp
 (defun compile-rule-set (op)
-    "Compile all rules indexed under a given main op,
-    and make them into the simp-fn for that op."
-    (set-simp-fn op
-        (compile nil
-            '(lambda (x)
-                ,(reduce #'combine-rules
-                                  (mapcar #'compile-indexed-rule
-                                                (rules-for op)))))))
+  "Compile all rules indexed under a given main op,
+  and make them into the simp-fn for that op."
+  (set-simp-fn op
+    (compile nil
+      '(lambda (x)
+        ,(reduce #'combine-rules
+                 (mapcar #'compile-indexed-rule
+                        (rules-for op)))))))
 (defun compile-indexed-rule (rule) .
-    "Compile one rule into lambda-less code,
-    assuming indexing of main op."
-    (let ((*bindings* nil))
-        (compile-args
-            'x (exp-lhs rule)
-            (delay (build-exp (exp-rhs rule) *bindings*)))))
+  "Compile one rule into lambda-less code,
+  assuming indexing of main op."
+  (let ((*bindings* nil))
+    (compile-args
+      'x (exp-lhs rule)
+      (delay (build-exp (exp-rhs rule) *bindings*)))))
 ```
 
 Here are two examples of what `compile-indexed-rule` generates:
 
 ```lisp
 > (compile-indexed-rule '(= (log 1) 0))
-  (LET ((XL (EXP-LHS X)))
-    (IF (EQL XL '1)
-            '0))
+ (LET ((XL (EXP-LHS X)))
+  (IF (EQL XL '1)
+      '0))
 > (compile-indexed-rule '(= (log (^ e x)) x))
-  (LET ((XL (EXP-LHS X)))
-```
-
-`    (IF (OP?
-XL '^)`
-
-```lisp
-            (LET ((XLL (EXP-LHS XL))
-                        (XLR (EXP-RHS XL)))
-                (IF (EQL XLL 'E)
-                          XLR))))
+ (LET ((XL (EXP-LHS X)))
+  (IF (OP? XL '^)
+      (LET ((XLL (EXP-LHS XL))
+            (XLR (EXP-RHS XL)))
+        (IF (EQL XLL 'E)
+             XLR))))
 ```
 
 The next step is to combine several of these rules into one.
@@ -2057,73 +1621,58 @@ The function `combine-rules` takes two rules and merges them together as much as
 
 ```lisp
 (defun combine-rules (a b)
-    "Combine the code for two rules into one, maintaining order."
-    ;; In the default case, we generate the code (or a b),
-    ;; but we try to be cleverer and share common code,
-    ;; on the assumption that there are no side-effects.
-    (cond ((and (listp a) (listp b)
-                            (= (length a) (length b) 3)
-                            (equal (first a) (first b))
-                            (equal (second a) (second b)))
-                ;; a  =  (f x y), b  =  (f x z) =>  (f x (combine-rules y z))
-                ;; This can apply when f=IF or f=LET
-                (list (first a) (second a)
-                            (combine-rules (third a) (third b))))
-              ((matching-ifs a b)
-                (if ,(second a)
-                        ,(combine-rules (third a) (third b))
-                        ,(combine-rules (fourth a) (fourth b))))
-              ((starts-with a 'or)
-                ;;    a  =  (or ... (if p y)), b  =  (if p z) =>
-                ;;              (or ... (if p (combine-rules y z)))
-                ;; else
-                ;;    a  =  (or ...) b =  >  (or ... b)
-                (if (matching-ifs (lastl a) b)
-                        (append (butlast a)
-                                        (list (combine-rules (lastl a) b)))
-                        (append a (list b))))
-```
-
-`                (t ; ; a.
-b =  >  (or a b)`
-
-```lisp
-                    '(or ,a ,b))))
+  "Combine the code for two rules into one, maintaining order."
+  ;; In the default case, we generate the code (or a b),
+  ;; but we try to be cleverer and share common code,
+  ;; on the assumption that there are no side-effects.
+  (cond ((and (listp a) (listp b)
+              (= (length a) (length b) 3)
+              (equal (first a) (first b))
+              (equal (second a) (second b)))
+        ;; a = (f x y), b = (f x z) => (f x (combine-rules y z))
+        ;; This can apply when f=IF or f=LET
+        (list (first a) (second a)
+              (combine-rules (third a) (third b))))
+       ((matching-ifs a b)
+        (if ,(second a)
+            ,(combine-rules (third a) (third b))
+            ,(combine-rules (fourth a) (fourth b))))
+       ((starts-with a 'or)
+        ;;  a = (or ... (if p y)), b = (if p z) =>
+        ;;       (or ... (if p (combine-rules y z)))
+        ;; else
+        ;;  a = (or ...) b = > (or ... b)
+        (if (matching-ifs (lastl a) b)
+            (append (butlast a)
+                    (list (combine-rules (lastl a) b)))
+            (append a (list b))))
+        (t ; ; a. b = > (or a b)
+          '(or ,a ,b))))
 (defun matching-ifs (a b)
-    "Are a and b if statements with the same predicate?"
-    (and (starts-with a 'if) (starts-with b 'if)
-              (equal (second a) (second b))))
+  "Are a and b if statements with the same predicate?"
+  (and (starts-with a 'if) (starts-with b 'if)
+       (equal (second a) (second b))))
 (defun lastl (list)
-    "Return the last element (not last cons cell) of list"
-    (first (last list)))
+  "Return the last element (not last cons cell) of list"
+  (first (last list)))
 ```
 
 Here is what `combine-rules` does with the two rules generated above:
 
 ```lisp
 > (combine-rules
-        '(let ((xl (exp-lhs x))) (if (eql xl '1) '0))
-        '(let ((xl (exp-lhs x)))
-```
-
-`              (if (op?
-xl '^)`
-
-```lisp
-                      (let ((xl1 (exp-lhs xl))
-                                (xlr (exp-rhs xl)))
-                          (if (eql xll 'e) xlr)))))
+    '(let ((xl (exp-lhs x))) (if (eql xl '1) '0))
+    '(let ((xl (exp-lhs x)))
+       (if (op? xl '^)
+           (let ((xl1 (exp-lhs xl))
+                (xlr (exp-rhs xl)))
+             (if (eql xll 'e) xlr)))))
 (LET ((XL (EXP-LHS X)))
-    (OR (IF (EQL XL '1) '0)
-```
-
-`            (IF (OP?
-XL '^)`
-
-```lisp
-                    (LET ((XLL (EXP-LHS XL))
-                                (XLR (EXP-RHS XL)))
-                        (IF (EQL XLL 'E) XLR)))))
+  (OR (IF (EQL XL '1) '0)
+      (IF (OP? XL '^)
+          (LET ((XLL (EXP-LHS XL))
+                (XLR (EXP-RHS XL)))
+            (IF (EQL XLL 'E) XLR)))))
 ```
 
 Now we run the compiler by calling `compile-all-rules-indexed` and show the combined compiled simplification function for log.
@@ -2131,51 +1680,41 @@ The comments were entered by hand to show what simplification rules are compiled
 
 ```lisp
 (defun compile-all-rules-indexed (rules)
-    "Compile a separate fn for each operator, and store it
-    as the simp-fn of the operator."
-    (index-rules rules)
-    (let ((all-ops (delete-duplicates (mapcar #'main-op rules))))
-        (mapc #'compile-rule-set ail-ops)))
+  "Compile a separate fn for each operator, and store it
+  as the simp-fn of the operator."
+  (index-rules rules)
+  (let ((all-ops (delete-duplicates (mapcar #'main-op rules))))
+    (mapc #'compile-rule-set ail-ops)))
 > (compile-all-rules-indexed *simplification-rules*)
-(SIN COS LOG  ^  * / -  +  D)
+(SIN COS LOG ^ * / - + D)
 > (simp-fn 'log)
 (LAMBDA (X)
-    (LET ((XL (EXP-LHS X)))
-        (OR (IF (EQL XL '1)
-                        '0)                                        ;*log 1  =  0*
-                (IF (EQL XL '0)
-                        'UNDEFINED)                        ;*log 0  =  undefined*
-                (IF (EQL XL 'E)
-                        '1)                                        ;*log e  =  1*
-```
-
-`                (IF (OP?
-XL '^)`
-
-```lisp
-                        (LET ((XLL (EXP-LHS XL))
-                                    (XLR (EXP-RHS XL)))
-                          (IF (EQL XLL 'E)
-                                    XLR))))))              ;*log ex  =  x*
+  (LET ((XL (EXP-LHS X)))
+    (OR (IF (EQL XL '1)
+            '0)                    ;*log 1 = 0*
+        (IF (EQL XL '0)
+            'UNDEFINED)            ;*log 0 = undefined*
+        (IF (EQL XL 'E)
+            '1)                    ;*log e = 1*
+        (IF (OP? XL '^)
+            (LET ((XLL (EXP-LHS XL))
+                  (XLR (EXP-RHS XL)))
+             (IF (EQL XLL 'E)
+                  XLR))))))       ;*log ex = x*
 ```
 
 If we want to bypass the rule-based simplifier altogether, we can change `simplify-exp` once again to eliminate the check for rules:
 
 ```lisp
 (defun simplify-exp (exp)
-    "Simplify by doing arithmetic, or by using the simp function
+  "Simplify by doing arithmetic, or by using the simp function
+  supplied for this operator. Do not use rules of any kind."
+  (cond ((simplify-by-fn exp))
+        ((evaluable exp) (eval exp))
+        (t exp)))
 ```
 
-`    supplied for this operator.
-Do not use rules of any kind."`
-
-```lisp
-    (cond ((simplify-by-fn exp))
-                ((evaluable exp) (eval exp))
-                (t exp)))
-```
-
-At last, we are in a position to run the benchmark test on the new compiled code; the function `test-it` runs in about .15  seconds with memoization and .05 without.
+At last, we are in a position to run the benchmark test on the new compiled code; the function `test-it` runs in about .15 seconds with memoization and .05 without.
 Why would memoization, which helped before, now hurt us?
 Probably because there is a lot of overhead in accessing the hash table, and that overhead is only worth it when there is a lot of other computation to do.
 
@@ -2219,7 +1758,7 @@ See [Hughes 1985](B9780080571157500285.xhtml#bb0565) or [Field and Harrison 1988
 
 ## 9.8 Exercises
 
-**Exercise  9.3 [d]** In this chapter we presented a compiler for `simplify`.
+**Exercise 9.3 [d]** In this chapter we presented a compiler for `simplify`.
 It is not too much harder to extend this compiler to handle the full power of `pat-match`.
 Instead of looking at expressions only, allow trees with variables in any position.
 Extend and generalize the definitions of `compile-rule` and `compile-rule-set` so that they can be used as a general tool for any application program that uses `pat-match` and/or `rule-based-translator`.
@@ -2227,23 +1766,23 @@ Make sure that the compiler is data-driven, so that the programmer who adds a ne
 One hard part will be accounting for segment variables.
 It is worth spending a considerable amount of effort at compile time to make this efficient at run time.
 
-**Exercise  9.4 [m]** Define the time to compute (fib n) without memoization as *Tn*.
+**Exercise 9.4 [m]** Define the time to compute (fib n) without memoization as *Tn*.
 Write a formula to express *Tn*.
-Given that *T*25  &asymp;  1.1  seconds, predict *T*100.
+Given that *T*25 &asymp; 1.1 seconds, predict *T*100.
 
-**Exercise  9.5 [m]** Consider a version of the game of Nim played as follows: there is a pile of *n* tokens.
+**Exercise 9.5 [m]** Consider a version of the game of Nim played as follows: there is a pile of *n* tokens.
 Two players alternate removing tokens from the pile; on each turn a player must take either one, two, or three tokens.
 Whoever takes the last token wins.
 Write a program that, given *n*, returns the number of tokens to take to insure a win, if possible.
 Analyze the execution times for your program, with and without memoization.
 
-**Exercise  9.6 [m]** A more complicated Nim-like game is known as Grundy's game.
+**Exercise 9.6 [m]** A more complicated Nim-like game is known as Grundy's game.
 The game starts with a single pile of *n* tokens.
 Each player must choose one pile and split it into two uneven piles.
 The first player to be unable to move loses.
 Write a program to play Grundy's game, and see how memoization helps.
 
-**Exercise  9.7 [h]** This exercise describes a more challenging one-person game.
+**Exercise 9.7 [h]** This exercise describes a more challenging one-person game.
 In this game the player rolls a six-sided die eight times.
 The player forms four two-digit decimal numbers such that the total of the four numbers is as high as possible, but not higher than 170.
 A total of 171 or more gets scored as zero.
@@ -2267,21 +1806,21 @@ Since this is over the limit of 170, the player's final score is 0.
 Write a function that allows you to play a game or a series of games.
 The function should take as argument a function representing a strategy for playing the game.
 
-**Exercise  9.8 [h]** Define a good strategy for the dice game described above.
+**Exercise 9.8 [h]** Define a good strategy for the dice game described above.
 (Hint: my strategy scores an average of 143.7.)
 
-**Exercise  9.9 [m]** One problem with playing games involving random numbers is the possibility that a player can cheat by figuring out what `random` is going to do next.
+**Exercise 9.9 [m]** One problem with playing games involving random numbers is the possibility that a player can cheat by figuring out what `random` is going to do next.
 Read the definition of the function `random` and describe how a player could cheat.
 Then describe a countermeasure.
 
-**Exercise  9.10 [m]** On [Page 292](B9780080571157500091.xhtml#p292) we saw the use of the read-time conditionals, #+and #-, where #+is the read-time equivalent of when, and #- is the read-time equivalent of unless.
+**Exercise 9.10 [m]** On [Page 292](B9780080571157500091.xhtml#p292) we saw the use of the read-time conditionals, #+and #-, where #+is the read-time equivalent of when, and #- is the read-time equivalent of unless.
 Unfortunately, there is no read-time equivalent of case.
 Implement one.
 
-**Exercise  9.11 [h]** Write a compiler for ELIZA that compiles all the rules at once into a single function.
+**Exercise 9.11 [h]** Write a compiler for ELIZA that compiles all the rules at once into a single function.
 How much more efficient is the compiled version?
 
-**Exercise  9.12 [d]** Write some rules to simplify Lisp code.
+**Exercise 9.12 [d]** Write some rules to simplify Lisp code.
 Some of the algebraic simplification rules will still be valid, but new ones will be needed to simplify nonalgebraic functions and special forms.
 (Since `nil` is a valid expression in this domain, you will have to deal with the semipredicate problem.) Here are some example rules (using prefix notation):
 
@@ -2296,26 +1835,26 @@ Some of the algebraic simplification rules will still be valid, but new ones wil
 (= (expt y (?if x numberp)) (expt (expt y (/ x 2)) 2))
 ```
 
-**Exercise  9.13 [m]** Consider the following two versions of the sieve of Eratosthenes algorithm.
+**Exercise 9.13 [m]** Consider the following two versions of the sieve of Eratosthenes algorithm.
 The second explicitly binds a local variable.
 Is this worth it?
 
 ```lisp
 (defun sieve (pipe)
-    (make-pipe (head pipe)
-                          (filter #'(lambda (x)(/= (mod x (headpipe)) 0))
-                                        (sieve (tail pipe)))))
+  (make-pipe (head pipe)
+             (filter #'(lambda (x)(/= (mod x (headpipe)) 0))
+                    (sieve (tail pipe)))))
 (defun sieve (pipe)
-    (let ((first-num (head pipe)))
-        (make-pipe first-num
-                              (filter #'(lambda (x) (/= (mod x first-num) 0))
-                                            (sieve (tail pipe))))))
+  (let ((first-num (head pipe)))
+    (make-pipe first-num
+               (filter #'(lambda (x) (/= (mod x first-num) 0))
+                      (sieve (tail pipe))))))
 ```
 
 ## 9.9 Answers
 
 **Answer 9.4** Let *Fn* denote (`fib n`).
-Then the time to compute *Fn*, *Tn*, is a small constant for *n*  &le;  1, and is roughly equal to *Tn-1* plus *Tn-2* for larger *n*.
+Then the time to compute *Fn*, *Tn*, is a small constant for *n* &le; 1, and is roughly equal to *Tn-1* plus *Tn-2* for larger *n*.
 Thus, *Tn* is roughly proportional to *Fn*:
 
 Tn=FnTiFi
@@ -2329,14 +1868,14 @@ Fn&alpha;&Phi;n
 
 ![si2_e](images/chapter9/si2_e.gif)
 
-Where &phi;  =  (1  +  &radic;(5))/2  &asymp;  1.618.
+Where &phi; = (1 + &radic;(5))/2 &asymp; 1.618.
 This equation was derived by de Moivre in 1718 (see Knuth, Donald E.
 *Fundamental Algorithms*, pp.
 78-83), but the number *&phi;* has a long interesting history.
-Euclid called it the "extreme and mean ratio," because the ratio of *A* to *B* is the ratio of *A*  +  *B* to *A* if *A*/*B* is *&phi;*.
+Euclid called it the "extreme and mean ratio," because the ratio of *A* to *B* is the ratio of *A* + *B* to *A* if *A*/*B* is *&phi;*.
 In the Renaissance it was called the "divine proportion," and in the last century it has been known as the "golden ratio," because a rectangle with sides in this ratio can be divided into two smaller rectangles that both have the same ratio between sides.
 It is said to be a pleasing proportion when employed in paintings and architecture.
-Putting history aside, given *T*25  &asymp;  1.1  *sec* we can now calculate:
+Putting history aside, given *T*25 &asymp; 1.1 *sec* we can now calculate:
 
 T100&asymp;&Phi;1001.1sec&Phi;25&asymp;5x1015sec
 
@@ -2357,19 +1896,19 @@ This strategy is embodied in the function `nim` below.
 
 ```lisp
 (defun win (n)
-    "Is a pile of n tokens a win for the player to move?"
-    (or (<= n 3)
-            (loss (- n 1))
-            (loss (- n 2))
-            (loss (- n 3))))
+  "Is a pile of n tokens a win for the player to move?"
+  (or (<= n 3)
+      (loss (- n 1))
+      (loss (- n 2))
+      (loss (- n 3))))
 (defun loss (n) (not (win n)))
 (defun nim (n)
-    "Play Nim: a player must take 1-3; taking the last one wins.
-    (con ((<= n 3) n); an immediate win
-            ((loss (- n 3)) 3); an eventual win
-            ((loss (- n 2)) 2); an eventual win
-            ((loss (- n 1)) 1); an eventual win
-            (t 1))); a loss; the 1 is arbitrary
+  "Play Nim: a player must take 1-3; taking the last one wins.
+  (con ((<= n 3) n); an immediate win
+      ((loss (- n 3)) 3); an eventual win
+      ((loss (- n 2)) 2); an eventual win
+      ((loss (- n 1)) 1); an eventual win
+      (t 1))); a loss; the 1 is arbitrary
 (memoize 'loss)
 ```
 
@@ -2385,17 +1924,17 @@ We take care to elimina te duplicate positions by sorting each set of piles, and
 
 ```lisp
 (defun moves (s)
-    "Return a list of all possible moves in Grundy's game"
-    ;; S is a list of integers giving the sizes of the piles
-    (remove-duplicates
-        (loop for n in s append (make-moves n s))
-        :test #'equal))
+  "Return a list of all possible moves in Grundy's game"
+  ;; S is a list of integers giving the sizes of the piles
+  (remove-duplicates
+    (loop for n in s append (make-moves n s))
+    :test #'equal))
 (defun make-moves (n s)
-    (when (>  =  n 2)
-        (let ((s/n (remove n s :count 1)))
-            (loop for i from 1 to (- (ceiling n 2) 1)
-                        collect (sort* (list* i (-  ni) s/n)
-                                                      #'>>))))
+  (when (> = n 2)
+    (let ((s/n (remove n s :count 1)))
+      (loop for i from 1 to (- (ceiling n 2) 1)
+            collect (sort* (list* i (- ni) s/n)
+                           #'>>))))
 (defun sort* (seq pred &key key)
   "Sort without altering the sequence"
   (sort (copy-seq seq) pred :key key))
@@ -2406,14 +1945,14 @@ A winning position is one that is not a loss, and the strategy is to pick a move
 
 ```lisp
 (defun loss (s)
-    (let ((choices (moves s)))
-        (or (null choices)
-                (every #'win choices))))
+  (let ((choices (moves s)))
+    (or (null choices)
+        (every #'win choices))))
 (defun win (s) (not (loss s)))
 (defun grundy (s)
-    (let ((choices (moves s)))
-        (or (find-if #'loss choices)
-                (first choices))))
+  (let ((choices (moves s)))
+    (or (find-if #'loss choices)
+        (first choices))))
 ```
 
 **Answer 9.7** The answer assumes that a strategy function takes four arguments: the current die roll, the score so far, the number of remaining positions in the tens column, and the number of remaining positions in the ones column.
@@ -2421,38 +1960,26 @@ The strategy function should return 1 or 10.
 
 ```lisp
 (defun play-games (&optional (n-games 10) (player 'make-move))
-```
-
-`    "A driver for a simple dice game.
-In this game the player`
-
-`    rolls a six-sided die eight times.
-The player forms four`
-
-```lisp
-    two-digit decimal numbers such that the total of the four
-    numbers is as high as possible, but not higher than 170.
-```
-
-`    A total of 171 or more gets scored as zero.
-After each die`
-
-```lisp
-    is rolled, the player must decide where to put it.
-    This function returns the player's average score."
-    (/ (loop repeat n-games summing (play-game player 0 4 4))
-          (float n-games)))
+  "A driver for a simple dice game. In this game the player
+  rolls a six-sided die eight times. The player forms four
+  two-digit decimal numbers such that the total of the four
+  numbers is as high as possible, but not higher than 170.
+  A total of 171 or more gets scored as zero. After each die
+  is rolled, the player must decide where to put it.
+  This function returns the player's average score."
+  (/ (loop repeat n-games summing (play-game player 0 4 4))
+     (float n-games)))
 (defun play-game (player &optional (total 0) (tens 4) (ones 4))
-    (cond ((or (> total 170) (< tens 0) (< ones 0)) 0)
-                ((and (= tens 0) (= ones 0)) total)
-                (t (let ((die (roll-die)))
-                        (case (funcall player die total tens ones)
-                          (1 (play-game player (+ total die)
-                                                      tens (- ones 1)))
-                          (10 (play-game player (+ total (* 10 die))
-                                                      (- tens 1) ones))
-                          (t 0))))))
-(defun roll-die () (+  1 (random 6)))
+  (cond ((or (> total 170) (< tens 0) (< ones 0)) 0)
+        ((and (= tens 0) (= ones 0)) total)
+        (t (let ((die (roll-die)))
+            (case (funcall player die total tens ones)
+             (1 (play-game player (+ total die)
+                           tens (- ones 1)))
+             (10 (play-game player (+ total (* 10 die))
+                           (- tens 1) ones))
+             (t 0))))))
+(defun roll-die () (+ 1 (random 6)))
 ```
 
 So, the expression `(play-games 5 #'make-move)` would play five games with a strategy called `make-move`.
@@ -2460,13 +1987,13 @@ This returns only the average score of the games; if you want to see each move a
 
 ```lisp
 (defun show (player)
-    "Return a player that prints out each move it makes."
-    #'(lambda (die total tens ones)
-            (when (= total 0) (fresh-line))
-            (let ((move (funcall player die total tens ones)))
-                (incf total (* die move))
-                (format t "~2d-> ~  3d |  ~  @[*~]" (* move die) total (> total 170))
-                  move)))
+  "Return a player that prints out each move it makes."
+  #'(lambda (die total tens ones)
+      (when (= total 0) (fresh-line))
+      (let ((move (funcall player die total tens ones)))
+        (incf total (* die move))
+        (format t "~2d-> ~ 3d | ~ @[*~]" (* move die) total (> total 170))
+         move)))
 ```
 
 and call `(play-games 5 (show #'make-moves))`.
@@ -2476,7 +2003,7 @@ To guard against this, we can make `roll-die` use a random state that is not acc
 
 ```lisp
 (let ((state (make-random-state t)))
-    (defun roll-die () (+  1 (random 6 state))))
+  (defun roll-die () (+ 1 (random 6 state))))
 ```
 
 **Answer 9.10** Because this has to do with read-time evaluation, it must be implemented as a macro or read macro.
