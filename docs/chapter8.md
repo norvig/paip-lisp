@@ -78,11 +78,10 @@ The intent of your code will be clearer:
 
 ```lisp
 (defun infix->prefix (infix-exp)
-  "Convert fully parenthesized infix-exp to a prefix expression"
-  ;; Don't use this version for non-fully parenthesized exps!
+ "Convert fully parenthesized infix-exp to a prefix expression"
+ ;; Don't use this version for non-fully parenthesized exps!
+ (prefix->infix infix-exp))
 ```
-
-  `(prefix->infix infix-exp))`
 
 As we saw above, fully parenthesized infix can be quite ugly, with all those extra parentheses, so instead we will use operator precedence.
 There are a number of ways of doing this, but the easiest way for us to proceed is to use our previously defined tool `rule-based-translator` and its subtool, `pat-match.` Note that the third clause of `infix->prefix`, the one that calls `rule-based-translator` is unusual in that it consists of a single expression.
@@ -263,7 +262,7 @@ If we did the numeric evaluation first, these expressions would yield an error w
 Because Common Lisp supports arbitrary precision rational numbers (fractions), we are guaranteed there will be no round-off error, unless the input explicitly includes inexact (floating-point) numbers.
 Notice that we allow computations involving the four arithmetic operators, but exponentiation is only allowed if the exponent is an integer.
 That is because expressions like (^ 4 1/2) are not guaranteed to return 2 (the exact square root of 4); the answer might be 2.0 (an inexact number).
-Another problem is that -  2 is also a square root of 4, and in some contexts it is the correct one to use.
+Another problem is that -2 is also a square root of 4, and in some contexts it is the correct one to use.
 
 The following trace shows some examples of the simplifier in action.
 First we show that it can be used as a calculator; then we show more advanced problems.
@@ -368,7 +367,7 @@ SIMPLIFIER  > (3 * x + 4 * x)
 
 We will return to these problems in [section 8.5](#s0030).
 
-**Exercise  8.1** Verify that the set of rules just prior does indeed implement the desired conventions, and that the conventions have the proper effect, and always terminate.
+**Exercise 8.1** Verify that the set of rules just prior does indeed implement the desired conventions, and that the conventions have the proper effect, and always terminate.
 As an example of a potential problem, what would happen if we used the rule `(x * n = n * x)` instead of the rule `(s * n = n * s)?`
 
 ## 8.4 Logs, Trig, and Differentiation
@@ -506,7 +505,9 @@ The program handles differentiation problems well and is seemingly clever in its
 In this section we return to some examples that pose problems for the simplifier.
 Here is a simple one:
 
-`SIMPLIFIER  > (x + y + y + x)`=> `(X + (Y + (Y + X)))`
+```lisp
+SIMPLIFIER > (x + y + y + x) => (X + (Y + (Y + X)))
+```
 
 We would prefer `2 * (x + y)`.
 The problem is that, although we went to great trouble to group numbers together, there was no effort to group non-numbers.
@@ -750,9 +751,7 @@ If none of them work, we return an expression indicating that the integral is un
                            x-factors))
                     ;; <other methods here>
                     (t `(int? ,(unfactorize x-factors) ,x)))))))))
-```
 
-```lisp
 (defun partition-if (pred list)
   "Return 2 values: elements of list that satisfy pred,
   and elements that don't."
@@ -911,19 +910,19 @@ In this book, techniques for improving the efficiency of algebraic manipulation 
 
 ## 8.8 Exercises
 
-**Exercise  8.2 [s]** Some notations use the operator ** instead of ^ to indicate exponentiation.
+**Exercise 8.2 [s]** Some notations use the operator ** instead of ^ to indicate exponentiation.
 `Fix infix->prefix` so that either notation is allowed.
 
-**Exercise  8.3 [m]** Can the system as is deal with imaginary numbers?
+**Exercise 8.3 [m]** Can the system as is deal with imaginary numbers?
 What are some of the difficulties?
 
-**Exercise  8.4 [h]** There are some simple expressions involving sums that are not handled by the `integrate` function.
+**Exercise 8.4 [h]** There are some simple expressions involving sums that are not handled by the `integrate` function.
 The function can integrate *a*x *x*2 + *b*x *x* + *c* but not 5 x (*a*x *x*2 + *b*x *x* + *c*).
 Similarly, it can integrate *x*4 + 2 x *x*3 + *x*2 but not (*x*2 + *x*)2, and it can do *x*3 + *x*2 + *x* + 1 but not (*x*2 + 1) x (*x* + 1).
 Modify `integrate` so that it expands out products (or small exponents) of sums.
 You will probably want to try the usual techniques first, and do the expansion only when that fails.
 
-**Exercise  8.5 [d]** Another very general integration technique is called integration by parts.
+**Exercise 8.5 [d]** Another very general integration technique is called integration by parts.
 It is based on the rule:
 
 &int;udv=uv-&int;vdu
@@ -949,13 +948,13 @@ Integration by parts involves a recursive call to `integrate`, and of all the po
 One simple control rule is to allow integration by parts only at the top level, not at the recursive level.
 Implement this approach.
 
-**Exercise  8.6 [d]** A more complicated approach is to try to decide which ways of breaking up the original expression are promising and which are not.
+**Exercise 8.6 [d]** A more complicated approach is to try to decide which ways of breaking up the original expression are promising and which are not.
 Derive some heuristics for making this division, and reimplement `integrate` to include a search component, using the search tools of [chapter 6](B9780080571157500066.xhtml).
 
 Look in a calculus textbook to see how *&int;* sin2*xdx* is evaluated by two integrations by parts and a division.
 Implement this technique as well.
 
-**Exercise  8.7 [m]** Write simplification rules for predicate calculus expressions.
+**Exercise 8.7 [m]** Write simplification rules for predicate calculus expressions.
 For example,
 
 ```lisp
@@ -965,11 +964,11 @@ For example,
 (false or x = false)
 ```
 
-**Exercise  8.8 [m]** The simplification rule `(x / 0 = undefined)` is necessary to avoid problems with division by zero, but the treatment of `undefined` is inadequate.
+**Exercise 8.8 [m]** The simplification rule `(x / 0 = undefined)` is necessary to avoid problems with division by zero, but the treatment of `undefined` is inadequate.
 For example, the expression `((0 / 0) - (0 / 0))` will simplify to zero, when it should simplify to `undefined`.
 Add rules to propagate `undefined` values and prevent them from being simplified away.
 
-**Exercise  8.9 [d]** Extend the method used to handle `undefined` to handle `+  infinity` and `-infinity` as well.
+**Exercise 8.9 [d]** Extend the method used to handle `undefined` to handle `+ infinity` and `-infinity` as well.
 
 ----------------------
 
