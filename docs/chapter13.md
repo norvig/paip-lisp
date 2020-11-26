@@ -258,30 +258,20 @@ We make `interest-rate` a class variable, one that is shared by all accounts:
 
 ```lisp
 (define-class account (name &optional (balance 0.00))
+        ((interest-rate .06))
+ (withdraw (amt) (if (<= amt balance)
+            (decf balance amt)
+            'insufficient-funds))
+ (deposit (amt) (incf balance amt))
+ (balance () balance)
+ (name () name)
+ (interest () (incf balance (* interest-rate balance))))
 ```
-
-                `((interest-rate .06))`
-
-  `(withdraw (amt) (if (<= amt balance)`
-
-                        `(decf balance amt)`
-
-                        `'insufficient-funds))`
-
-  `(deposit (amt) (incf balance amt))`
-
-  `(balance () balance)`
-
-  `(name () name)`
-
-  `(interest () (incf balance (* interest-rate balance))))`
 
 Here we use the generic functions defined by this macro:
 
-`> (setf acct2 (account "A.
-User" 2000.00)) => #<CLOSURE 24003064>`
-
 ```lisp
+> (setf acct2 (account "A. User" 2000.00)) => #<CLOSURE 24003064>
 > (deposit acct2 42.00) => 2042.0
 > (interest acct2) => 2164.52
 > (balance acct2) => 2164.52
@@ -301,23 +291,15 @@ But for now, this simple approach works:
 
 ```lisp
 (define-class password-account (password acct) ()
+ (change-password (pass new-pass)
+       (if (equal pass password)
+        (setf password new-pass)
+        'wrong-password))
+ (otherwise (pass &rest args)
+       (if (equal pass password)
+        (apply message acct args)
+        'wrong-password)))
 ```
-
-  `(change-password (pass new-pass)`
-
-              `(if (equal pass password)`
-
-                `(setf password new-pass)`
-
-                `'wrong-password))`
-
-  `(otherwise (pass &rest args)`
-
-              `(if (equal pass password)`
-
-                `(apply message acct args)`
-
-                `'wrong-password)))`
 
 Now we see how the class `password-account` can be used to provide protection for an existing account:
 
@@ -334,33 +316,21 @@ We could define the class `limited-account`:
 
 ```lisp
 (define-class limited-account (limit acct) ()
+ (withdraw (amt)
+       (if (> amt limit)
+          'over-limit
+          (withdraw acct amt)))
+ (otherwise (&rest args)
+       (apply message acct args)))
 ```
-
-  `(withdraw (amt)`
-
-              `(if (> amt limit)`
-
-                    `'over-limit`
-
-                    `(withdraw acct amt)))`
-
-  `(otherwise (&rest args)`
-
-              `(apply message acct args)))`
 
 This definition redefines the `withdraw` message to check if the limit is exceeded before passing on the message, and it uses the `otherwise` clause simply to pass on all other messages unchanged.
 In the following example, we set up an account with both a password and a limit:
 
 ```lisp
 > (setf acct4 (password-account "pass"
-```
-
-              `(limited-account 100.00`
-
-                `(account "A.
-Thrifty Spender" 500.00))))`=>
-
-```lisp
+       (limited-account 100.00
+        (account "A. Thrifty Spender" 500.00)))) =>
 #<CLOSURE 34136775>
 > (withdraw acct4 "pass" 200.00) => OVER-LIMIT
 > (withdraw acct4 "pass" 20.00) => 480.0
@@ -380,25 +350,16 @@ If we had written this in traditional procedural style, we would end up with fun
 
 ```lisp
 (defun withdraw (acct amt &optional pass)
+ (cond ((and (typep acct 'password-account)
+        (not (equal pass (account-password acct))))
+      'wrong-password)
+      ((and (typep acct 'limited-account)
+        (> amt (account-limit account)))
+      'over-limit)
+      ((> amt balance)
+      'insufficient-funds)
+      (t (decf balance amt))))
 ```
-
-  `(cond ((and (typep acct 'password-account)`
-
-                `(not (equal pass (account-password acct))))`
-
-            `'wrong-password)`
-
-            `((and (typep acct 'limited-account)`
-
-                `(> amt (account-limit account)))`
-
-            `'over-limit)`
-
-            `((> amt balance)`
-
-            `'insufficient-funds)`
-
-            `(t (decf balance amt))))`
 
 There is nothing wrong with this, as an individual function.
 The problem is that when the bank decides to offer a new kind of account, we will have to change this function, along with all the other functions that implement actions.
@@ -442,24 +403,19 @@ If the amount is acceptable, then it uses the function `call-next-method` (not y
 
 ```lisp
 (define-class limited-account account (limit) ()
+ (withdraw (amt)
+        (if (> amt limit)
+          'over-limit
+          (call-next-method))))
 ```
-
-  `(withdraw (amt)`
-
-                `(if (> amt limit)`
-
-                    `'over-limit`
-
-                    `(call-next-method))))`
 
 If inheritance is a good thing, then multiple inheritance is an even better thing.
 For example, assuming we have defined the classes `limited-account` and `password-account`, it is very convenient to define the following class, which inherits from both of them:
 
 ```lisp
 (define-class limited-account-with-password
+           (password-account limited-account))
 ```
-
-                      `(password-account limited-account))`
 
 Notice that this new class adds no new variables or methods.
 All it does is combine the functionality of two parent classes into one.
@@ -494,15 +450,11 @@ The class-options are rarely used.
 
 ```lisp
 (defclass account ()
+ ((name :initarg :name ireader name)
+   (balance :initarg :balance :initform 0.00 :accessor balance)
+   (interest-rate :allocation :class :initform .06
+        :reader interest-rate)))
 ```
-
-  `((name :initarg :name ireader name)`
-
-      `(balance :initarg :balance :initform 0.00 :accessor balance)`
-
-      `(interest-rate :allocation :class :initform .06`
-
-                `:reader interest-rate)))`
 
 In the definition of account, we see that the list of superclasses is empty, because account does not inherit from any classes.
 There are three slot specifiers, for the `name`, `balance`, and `interest-rate` slots.
@@ -518,11 +470,7 @@ Here we see the creation of an object, and the application of the automatically 
 
 ```lisp
 > (setf al (make-instance 'account :balance 5000.00
-```
-
-                          `:name "Fred")) => #<ACCOUNT 26726272>`
-
-```lisp
+             :name "Fred")) => #<ACCOUNT 26726272>
 > (name al) => "Fred"
 > (balance al) => 5000.0
 > (interest-rate al) => 0.06
@@ -541,52 +489,31 @@ So we have to use the method (`balance acct`) rather than the instance variable 
 
 ```lisp
 (defmethod withdraw ((acct account) amt)
+ (if (< amt (balance acct))
+  (decf (balance acct) amt)
+  'insufficient-funds))
 ```
-
-  `(if (< amt (balance acct))`
-
-    `(decf (balance acct) amt)`
-
-    `'insufficient-funds))`
 
 With CLOS it is easy to define a `limited-account` as a subclass of `account`, and to define the `withdraw` method for `limited-accounts`:
 
 ```lisp
 (defclass limited-account (account)
-```
-
-  `((limit :initarg :limit :reader limit)))`
-
-```lisp
+ ((limit :initarg :limit :reader limit)))
 (defmethod withdraw ((acct limited-account) amt)
+ (if (> amt (limit acct))
+     'over-limit
+     (call-next-method)))
 ```
-
-  `(if (> amt (limit acct))`
-
-          `'over-limit`
-
-          `(call-next-method)))`
 
 Note the use of `call-next-method` to invoke the `withdraw` method for the `account` class.
 Also note that all the other methods for accounts automatically work on instances of the class limited-account, because it is defined to inherit from `account.` In the following example, we show that the `name` method is inherited, that the `withdraw` method for `limited-account` is invoked first, and that the `withdraw` method for `account` is invoked by the `call-next-method` function:
 
 ```lisp
 > (setf a2 (make-instance 'limited-account
-```
-
-                        `:name "A.
-Thrifty Spender"`
-
-                        `:balance 500.00 :limit 100.00))`=>
-
-```lisp
+            :name "A. Thrifty Spender"
+            :balance 500.00 :limit 100.00)) =>
 #<LIMITED-ACCOUNT 24155343>
-```
-
-`> (name a2) => "A.
-Thrifty Spender"`
-
-```lisp
+> (name a2) => "A. Thrifty Spender"
 > (withdraw a2 200.00) => OVER-LIMIT
 > (withdraw a2 20.00) => 480.0
 ```
@@ -602,25 +529,14 @@ It could be defined as follows using a new feature of CLOS, `:before` and `:afte
 
 ```lisp
 (defclass audited-account (account)
-```
-
-  `((audit-trail :initform nil :accessor audit-trail)))`
-
-```lisp
+ ((audit-trail :initform nil :accessor audit-trail)))
 (defmethod withdraw :before ((acct audited-account) amt)
-```
-
-  `(push (print '(withdrawing ,amt))`
-
-    `(audit-trail acct)))`
-
-```lisp
+ (push (print '(withdrawing ,amt))
+  (audit-trail acct)))
 (defmethod withdraw :after ((acct audited-account) amt)
+ (push (print '(withdrawal (,amt) done))
+  (audit-trail acct)))
 ```
-
-  `(push (print '(withdrawal (,amt) done))`
-
-    `(audit-trail acct)))`
 
 Now a call to `withdraw` with a `audited-account` as the first argument yields three applicable methods: the primary method from `account` and the :`before` and :`after` methods.
 In general, there might be several of each kind of method.
@@ -669,63 +585,40 @@ The basic class, `problem`, contains a single-instance variable to hold the unex
 
 ```lisp
 (defclass problem ()
+ ((states :initarg :states :accessor problem-states)))
 ```
-
-  `((states :initarg :states :accessor problem-states)))`
 
 The function searcher is similar to the function `tree-search` of [section 6.4](B9780080571157500066.xhtml#s0025).
 The main difference is that searcher uses generic functions instead of passing around functional arguments.
 
 ```lisp
 (defmethod searcher ((prob problem))
+ "Find a state that solves the search problem."
+ (cond ((no-states-p prob) fail)
+  ((goal-p prob) (current-state prob))
+  (t (let ((current (pop-state prob)))
+       (setf (problem-states prob)
+         (problem-combiner
+          prob
+          (problem-successors prob current)
+          (problem-states prob))))
+      (searcher prob))))
 ```
-
-  `"Find a state that solves the search problem."`
-
-  `(cond ((no-states-p prob) fail)`
-
-    `((goal-p prob) (current-state prob))`
-
-    `(t (let ((current (pop-state prob)))`
-
-              `(setf (problem-states prob)`
-
-                  `(problem-combiner`
-
-                    `prob`
-
-                    `(problem-successors prob current)`
-
-                    `(problem-states prob))))`
-
-            `(searcher prob))))`
 
 searcher does not assume that the problem states are organized in a list; rather, it uses the generic function `no-states-p` to test if there are any states, `pop-state` to remove and return the first state, and `current-state` to access the first state.
 For the basic `problem` class, we will in fact implement the states as a list, but another class of problem is free to use another representation.
 
 ```lisp
 (defmethod current-state ((prob problem))
-```
-
-  `"The current state is the first of the possible states."`
-
-  `(first (problem-states prob)))`
-
-```lisp
+ "The current state is the first of the possible states."
+ (first (problem-states prob)))
 (defmethod pop-state ((prob problem))
-```
-
-  `"Remove and return the current state."`
-
-  `(pop (problem-states prob)))`
-
-```lisp
+ "Remove and return the current state."
+ (pop (problem-states prob)))
 (defmethod no-states-p ((prob problem))
+ "Are there any more unexplored states?"
+ (null (problem-states prob)))
 ```
-
-  `"Are there any more unexplored states?"`
-
-  `(null (problem-states prob)))`
 
 In `tree-search`, we included a statement to print debugging information.
 We can do that here, too, but we can hide it in a separate method so as not to clutter up the main definition of `searcher`.
@@ -733,9 +626,8 @@ It is a `:before` method because we want to see the output before carrying out t
 
 ```lisp
 (defmethod searcher :before ((prob problem))
+ (dbg 'search ";; Search: ~a" (problem-states prob)))
 ```
-
-  `(dbg 'search ";; Search: ~a" (problem-states prob)))`
 
 The generic functions that remain to be defined are `goal-p, probl em-combiner,` and `problem-successors`.
 We will address `goal-p` first, by recognizing that for many problems we will be searching for a state that is `eql` to a specified goal state.
@@ -744,46 +636,26 @@ Note that we make it possible to specify the goal when a problem is created, but
 
 ```lisp
 (defclass eql-problem (problem)
-```
-
-  `((goal rinitarg :goal :reader problem-goal)))`
-
-```lisp
+ ((goal rinitarg :goal :reader problem-goal)))
 (defmethod goal-p ((prob eql-problem))
+ (eql (current-state prob) (problem-goal prob)))
 ```
-
-  `(eql (current-state prob) (problem-goal prob)))`
 
 Now we are ready to specify two search strategies: depth-first search and breadth-first search.
 We define problem classes for each strategy and specify the `problem-combiner` function:
 
 ```lisp
 (defclass dfs-problem (problem) ()
-```
-
-  `(:documentation "Depth-first search problem."))`
-
-```lisp
+ (:documentation "Depth-first search problem."))
 (defclass bfs-problem (problem) ()
-```
-
-  `(:documentation "Breadth-first search problem."))`
-
-```lisp
+ (:documentation "Breadth-first search problem."))
 (defmethod problem-combiner ((prob dfs-problem) new old)
-```
-
-  `"Depth-first search looks at new states first."`
-
-  `(append new old))`
-
-```lisp
+ "Depth-first search looks at new states first."
+ (append new old))
 (defmethod problem-combiner ((prob bfs-problem) new old)
+ "Depth-first search looks at old states first."
+ (append old new))
 ```
-
-  `"Depth-first search looks at old states first."`
-
-  `(append old new))`
 
 While this code will be sufficient for our purposes, it is less than ideal, because it breaks an information-hiding barrier.
 It treats the set of old states as a list, which is the default for the `problem` class but is not necessarily the implementation that every class will use.
@@ -799,28 +671,18 @@ Naturally, this gets represented as a class:
 ```lisp
 (defclass binary-tree-problem (problem) ())
 (defmethod problem-successors ((prob binary-tree-problem) state)
+ (let ((n (* 2 state)))
+   (list n (+ n 1))))
 ```
-
-  `(let ((n (* 2 state)))`
-
-      `(list n (+ n 1))))`
 
 Now suppose we want to solve a binary-tree problem with breadth-first search, searching for a particular goal.
 Simply create a class that mixes in `binary-tree-problem, eql-problem` and `bfs-problem,` create an instance of that class, and call `searcher` on that instance:
 
 ```lisp
 (defclass binary-tree-eql-bfs-problem
-```
-
-            `(binary-tree-problem eql-problem bfs-problem) ())`
-
-```lisp
+      (binary-tree-problem eql-problem bfs-problem) ())
 > (setf pl (make-instance 'binary-tree-eql-bfs-problem
-```
-
-                          `:states '(1) :goal 12))`
-
-```lisp
+             :states '(1) :goal 12))
 #<BINARY-TREE-EQL-BFS-PROBLEM 26725536>
 > (searcher pl)
 ;; Search: (1)
@@ -845,28 +707,20 @@ Since the search strategy only affects the order in which states are explored, t
 
 ```lisp
 (defclass best-problem (problem) ()
-```
-
-  `(:documentation "A Best-first search problem."))`
-
-```lisp
+ (:documentation "A Best-first search problem."))
 (defmethod problem-combiner ((prob best-problem) new old)
+ "Best-first search sorts new and old according to cost-fn."
+ (sort (append new old) #'<
+      :key #'(lambda (state) (cost-fn prob state))))
 ```
-
-  `"Best-first search sorts new and old according to cost-fn."`
-
-  `(sort (append new old) #'<`
-
-            `:key #'(lambda (state) (cost-fn prob state))))`
 
 This introduces the new function `cost-fn`; naturally it will be a generic function.
 The following is a `cost-fn` that is reasonable for any `eql-problem` dealing with numbers, but it is expected that most domains will specialize this function.
 
 ```lisp
 (defmethod cost-fn ((prob eql-problem) state)
+ (abs (- state (problem-goal prob))))
 ```
-
-  `(abs (- state (problem-goal prob))))`
 
 Beam search is a modification of best-first search where all but the best *b* states are thrown away on each iteration.
 A beam search problem is represented by a class where the instance variable `beam-width` holds the parameter *b*.
@@ -876,40 +730,23 @@ It calls the next method to get the list of states produced by best-first search
 
 ```lisp
 (defclass beam-problem (problem)
-```
-
-  `((beam-width :initarg :beam-width :initform nil`
-
-                  `:reader problem-beam-width)))`
-
-```lisp
+ ((beam-width :initarg :beam-width :initform nil
+         :reader problem-beam-width)))
 (defmethod problem-combiner :around ((prob beam-problem) new old)
+ (let ((combined (call-next-method)))
+   (subseq combined 0 (min (problem-beam-width prob)
+             (length combined)))))
 ```
-
-  `(let ((combined (call-next-method)))`
-
-      `(subseq combined 0 (min (problem-beam-width prob)`
-
-                          `(length combined)))))`
 
 Now we apply beam search to the binary-tree problem.
 As usual, we have to make up another class to represent this type of problem:
 
 ```lisp
 (defclass binary-tree-eql-best-beam-problem
-```
-
-  `(binary-tree-problem eql-problem best-problem beam-problem)`
-
-  `())`
-
-```lisp
+ (binary-tree-problem eql-problem best-problem beam-problem)
+ ())
 > (setf p3 (make-instance 'binary-tree-eql-best-beam-problem
-```
-
-                          `:states '(1) :goal 12 :beam-width 3))`
-
-```lisp
+             :states '(1) :goal 12 :beam-width 3))
 #<BINARY-TREE-EQL-BEST-BEAM-PROBLEM 27523251>
 > (searcher p3)
 ;; Search: (1)
@@ -935,33 +772,19 @@ The latter is a little more succint, but the former may be more clear, especiall
 
 ```lisp
 (defclass trip-problem (binary-tree-eql-best-beam-problem)
-```
-
-  `((beam-width :initform 1)))`
-
-```lisp
+ ((beam-width :initform 1)))
 (defmethod cost-fn ((prob trip-problem) city)
-```
-
-  `(air-distance (problem-goal prob) city))`
-
-```lisp
+ (air-distance (problem-goal prob) city))
 (defmethod problem-successors ((prob trip-problem) city)
+ (neighbors city))
 ```
-
-  `(neighbors city))`
 
 With the definitions in place, it is easy to use the searching tool:
 
 ```lisp
 > (setf p4 (make-instance 'trip-problem
-```
-
-                        `:states (list (city 'new-york))`
-
-                        `:goal (city 'san-francisco)))`
-
-```lisp
+            :states (list (city 'new-york))
+            :goal (city 'san-francisco)))
 #<TRIP-PROBLEM 31572426>
 > (searcher p4)
 ;; Search: ((NEW-YORK 73.58 40.47))
@@ -1002,19 +825,12 @@ Notice that if one of the arguments is nil there will be two applicable methods,
 (defmethod conc ((x null) y) y)
 (defmethod conc (x (y null)) x)
 (defmethod conc ((x list) (y list))
-```
-
-  `(cons (first x) (conc (rest x) y)))`
-
-```lisp
+ (cons (first x) (conc (rest x) y)))
 (defmethod conc ((x vector) (y vector))
+ (let ((vect (make-array (+ (length x) (length y)))))
+   (replace vect x)
+   (replace vect y :startl (length x))))
 ```
-
-  `(let ((vect (make-array (+ (length x) (length y)))))`
-
-      `(replace vect x)`
-
-      `(replace vect y :startl (length x))))`
 
 Here we see that this definition works:
 
@@ -1022,9 +838,8 @@ Here we see that this definition works:
 > (conc nil '(a b c)) => (A B C)
 > (conc '(a b c) nil) => (A B C)
 > (conc '(a b c) '(d e f)) => (A B C D E F)
+> (conc '#(a b c) '#(d e f)) => #(A B C D E F)
 ```
-
-`> (conc '#(a b c) '#(d e f))`=> `#(A B C D E F)`
 
 It works, but one might well ask: where are the objects?
 The metaphor of passing a message to an object does not apply here, unless we consider the object to be the list of arguments, rather than a single privileged argument.
