@@ -12,18 +12,20 @@ The tension between the "programming" and "logic" will be covered in [chapter 14
 Prolog has arrived at a comfortable niche between a traditional programming language and a logical specification language.
 It relies on three important ideas:
 
-*   Prolog encourages the use of a single *uniform data base.* Good compilers provide efficient access to this data base, reducing the need for vectors, hash tables, property lists, and other data structures that the Lisp programmer must deal with in detail.
+* Prolog encourages the use of a single *uniform data base.*
+Good compilers provide efficient access to this data base, reducing the need for vectors, hash tables, property lists, and other data structures that the Lisp programmer must deal with in detail.
 Because it is based on the idea of a data base, Prolog is *relational,* while Lisp (and most languages) are *functional.* In Prolog we would represent a fact like "the population of San Francisco is 750,000" as a relation.
 In Lisp, we would be inclined to write a function, `population,` which takes a city as input and returns a number.
 Relations are more flexible; they can be used not only to find the population of San Francisco but also, say, to find the cities with populations over 500,000.
 
-*   Prolog provides *logic variables* instead of "normal" variables.
+* Prolog provides *logic variables* instead of "normal" variables.
 A logic variable is bound by *unification* rather than by assignment.
 Once bound, a logic variable can never change.
 Thus, they are more like the variables of mathematics.
 The existence of logic variables and unification allow the logic programmer to state equations that constrain the problem (as in mathematics), without having to state an order of evaluation (as with assignment statements).
 
-*   Prolog provides *automatic backtracking.* In Lisp each function call returns a single value (unless the programmer makes special arrangements to have it return multiple values, or a list of values).
+* Prolog provides *automatic backtracking.*
+In Lisp each function call returns a single value (unless the programmer makes special arrangements to have it return multiple values, or a list of values).
 In Prolog, each query leads to a search for relations in the data base that satisfy the query.
 If there are several, they are considered one at a time.
 If a query involves multiple relations, as in "what city has a population over 500,000 and is a state capital?," Prolog will go through the population relation to find a city with a population over 500,000.
@@ -123,9 +125,10 @@ The pattern-matching functions we have seen so far have always matched a pattern
 In unification, two patterns, each of which can contain variables, are matched against each other.
 Here's an example of the difference between pattern matching and unification:
 
-`> (pat-match '(?x + ?y) '(2 + 1))`=> `((?Y . 1) (?X . 2))`
-
-`> (unify '(?x + 1) '(2 + ?y))`=> `((?Y . 1) (?X . 2))`
+```lisp
+> (pat-match '(?x + ?y) '(2 + 1)) => ((?Y . 1) (?X . 2))
+> (unify '(?x + 1) '(2 + ?y)) => ((?Y . 1) (?X . 2))
+```
 
 Within the unification framework, variables (such as `?x` and `?y` above) are called *logic variables.* Like normal variables, a logic variable can be assigned a value, or it can be unbound.
 The difference is that a logic variable can never be altered.
@@ -138,7 +141,9 @@ The two variables remain unbound, but they become equivalent.
 If either variable is subsequently bound to a value, then both variables adopt that value.
 The following example equates the variables `?x` and `?y` by binding `?x` to `?y`:
 
-`> (unify '(f ?x) '(f ?y))`=> `((?X . ?Y))`
+```lisp
+> (unify '(f ?x) '(f ?y)) => ((?X . ?Y))
+```
 
 Unification can be used to do some sophisticated reasoning.
 For example, if we have two equations, *a* + *a* = 0 and *x* + *y* = *y,* and if we know that these two equations unify, then we can conclude that *a*, *x,* and *y* are all 0.
@@ -149,49 +154,50 @@ We will also define the function `unifier`, which shows the structure that resul
 
 ```lisp
 ((?Y . 0) (?X . ?Y) (?A . ?X))
+> (unifier '(?a + ?a = 0) '(?x + ?y = ?y)) => (0 + 0 = 0)
 ```
-
-`> (unifier '(?a + ?a = 0) '(?x + ?y = ?y))`=> `(0 + 0 = 0)`
 
 To avoid getting carried away by the power of unification, it is a good idea to take stock of exactly what unification provides.
 It *does* provide a way of stating that variables are equal to other variables or expressions.
 It does *not* provide a way of automatically solving equations or applying constraints other than equality.
 The following example makes it clear that unification treats the symbol + only as an uninterpreted atom, not as the addition operator:
 
-`> (unifier '(?a + ?a = 2) '(?x + ?y = ?y))`=> `(2 + 2 = 2)`
+```lisp
+> (unifier '(?a + ?a = 2) '(?x + ?y = ?y)) => (2 + 2 = 2)
+```
 
 Before developing the code for `unify`, we repeat here the code taken from the pattern-matching utility ([chapter 6](B9780080571157500066.xhtml)):
 
 ```lisp
 (defconstant fail nil "Indicates pat-match failure")
 (defconstant no-bindings '((t . t))
-  "Indicates pat-match success, with no variables.")
+ "Indicates pat-match success, with no variables.")
 (defun variable-p (x)
-  "Is x a variable (a symbol beginning with '?')?"
-  (and (symbolp x) (equal (char (symbol-name x) 0) #\?)))
+ "Is x a variable (a symbol beginning with '?')?"
+ (and (symbolp x) (equal (char (symbol-name x) 0) #\?)))
 (defun get-binding (var bindings)
-  "Find a (variable . value) pair in a binding list."
-  (assoc var bindings))
+ "Find a (variable . value) pair in a binding list."
+ (assoc var bindings))
 (defun binding-val (binding)
-  "Get the value part of a single binding."
-  (cdr binding))
+ "Get the value part of a single binding."
+ (cdr binding))
 (defun lookup (var bindings)
-  "Get the value part (for var) from a binding list."
-  (binding-val (get-binding var bindings)))
+ "Get the value part (for var) from a binding list."
+ (binding-val (get-binding var bindings)))
 (defun extend-bindings (var val bindings)
-  "Add a (var . value) pair to a binding list."
-  (cons (cons var val)
-              ;; Once we add a "real" binding,
-              ;; we can get rid of the dummy no-bindings
-              (if (and (eq bindings no-bindings))
-                      nil
-                      bindings)))
+ "Add a (var . value) pair to a binding list."
+ (cons (cons var val)
+       ;; Once we add a "real" binding,
+       ;; we can get rid of the dummy no-bindings
+       (if (and (eq bindings no-bindings))
+           nil
+           bindings)))
 (defun match-variable (var input bindings)
-  "Does VAR match input? Uses (or updates) and returns bindings."
-  (let ((binding (get-binding var bindings)))
-  (cond ((not binding) (extend-bindings var input bindings))
-              ((equal input (binding-val binding)) bindings)
-              (t fail))))
+ "Does VAR match input? Uses (or updates) and returns bindings."
+ (let ((binding (get-binding var bindings)))
+ (cond ((not binding) (extend-bindings var input bindings))
+       ((equal input (binding-val binding)) bindings)
+       (t fail))))
 ```
 
 The `unify` function follows; it is identical to `pat-match` (as defined on page 180) except for the addition of the line marked `***`.
@@ -199,31 +205,31 @@ The function `unify-variable` also follows `match-variable` closely:
 
 ```lisp
 (defun unify (x y &optional (bindings no-bindings))
-  "See if x and y match with given bindings."
-  (cond ((eq bindings fail) fail)
-              ((variable-p x) (unify-variable x y bindings))
-              ((variable-p y) (unify-variable y x bindings)) ;***
-              ((eql x y) bindings)
-              ((and (consp x) (consp y))
-                (unify (rest x) (rest y)
-                              (unify (first x) (first y) bindings)))
-              (t fail)))
+ "See if x and y match with given bindings."
+ (cond ((eq bindings fail) fail)
+       ((variable-p x) (unify-variable x y bindings))
+       ((variable-p y) (unify-variable y x bindings)) ;***
+       ((eql x y) bindings)
+       ((and (consp x) (consp y))
+        (unify (rest x) (rest y)
+               (unify (first x) (first y) bindings)))
+       (t fail)))
 (defun unify-variable (var x bindings)
-  "Unify var with x, using (and maybe extending) bindings."
-  ;; Warning - buggy version
-  (if (get-binding var bindings)
-    (unify (lookup var bindings) x bindings)
-    (extend-bindings var x bindings)))
+ "Unify var with x, using (and maybe extending) bindings."
+ ;; Warning - buggy version
+ (if (get-binding var bindings)
+  (unify (lookup var bindings) x bindings)
+  (extend-bindings var x bindings)))
 ```
 
 Unfortunately, this definition is not quite right.
 It handles simple examples:
 
-`> (unify '(?x + 1) '(2 + ?y))`=> `((?Y . 1) (?X . 2))`
-
-`> (unify '?x '?y)`=> `((?X . ?Y))`
-
-`> (unify '(?x ?x) '(?y ?y))`=> `((?Y . ?Y) (?X . ?Y))`
+```lisp
+> (unify '(?x + 1) '(2 + ?y)) => ((?Y . 1) (?X . 2))
+> (unify '?x '?y) => ((?X . ?Y))
+> (unify '(?x ?x) '(?y ?y)) => ((?Y . ?Y) (?X . ?Y))
+```
 
 but there are several pathological cases that it can't contend with:
 
@@ -231,9 +237,8 @@ but there are several pathological cases that it can't contend with:
 > (unify '(?x ?x ?x) '(?y ?y ?y))
 >>Trap #043622 (PDL-OVERFLOW REGULAR)
 The regular push-down list has overflowed.
+While in the function GET-BINDING <= UNIFY-VARIABLE <= UNIFY
 ```
-
-`While in the function GET-BINDING`<= `UNIFY-VARIABLE`<= `UNIFY`
 
 The problem here is that once `?y` gets bound to itself, the call to `unify` inside `unify-variable` leads to an infinite loop.
 But matching `?y` against itself must always succeed, so we can move the equality test in `unify` before the variable test.
@@ -241,32 +246,28 @@ This assumes that equal variables are `eql`, a valid assumption for variables im
 
 ```lisp
 (defun unify (x y &optional (bindings no-bindings))
-  "See if x and y match with given bindings."
-  (cond ((eq bindings fail) fail)
-    ((eql x y) bindings) ;*** moved this line
-    ((variable-p x) (unify-variable x y bindings))
-    ((variable-p y) (unify-variable y x bindings))
-    ((and (consp x) (consp y))
-    (unify (rest x) (rest y)
-            (unify (first x) (first y) bindings)))
-      (t fail)))
+ "See if x and y match with given bindings."
+ (cond ((eq bindings fail) fail)
+  ((eql x y) bindings) ;*** moved this line
+  ((variable-p x) (unify-variable x y bindings))
+  ((variable-p y) (unify-variable y x bindings))
+  ((and (consp x) (consp y))
+  (unify (rest x) (rest y)
+      (unify (first x) (first y) bindings)))
+   (t fail)))
 ```
 
 Here are some test cases:
 
-`> (unify '(?x ?x) '(?y ?y))`=> `((?X . ?Y))`
-
-`> (unify '(?x ?x ?x) '(?y ?y ?y))`=> `((?X . ?Y))`
-
-`> (unify '(?x ?y) '(?y ?x))`=> `((?Y . ?X) (?X . ?Y))`
-
 ```lisp
+> (unify '(?x ?x) '(?y ?y)) => ((?X . ?Y))
+> (unify '(?x ?x ?x) '(?y ?y ?y)) => ((?X . ?Y))
+> (unify '(?x ?y) '(?y ?x)) => ((?Y . ?X) (?X . ?Y))
 > (unify '(?x ?y a) '(?y ?x ?x))
 >>Trap #043622 (PDL-OVERFLOW REGULAR)
 The regular push-down list has overflowed.
+While in the function GET-BINDING <= UNIFY-VARIABLE <= UNIFY
 ```
-
-`While in the function GET-BINDING`<= `UNIFY-VARIABLE`<= `UNIFY`
 
 We have pushed off the problem but not solved it.
 Allowing both `(?Y . ?X`) and (`?X . ?Y`) in the same binding list is as bad as allowing (`?Y . ?Y`).
@@ -276,24 +277,27 @@ It does have a check that gets the binding for var when it is a bound variable, 
 
 ```lisp
 (defun unify-variable (var x bindings)
-  "Unify var with x, using (and maybe extending) bindings."
-  (cond ((get-binding var bindings)
-      (unify (lookup var bindings) x bindings))
-    ((and (variable-p x) (get-binding x bindings)) ;***
-      (unify var (lookup x bindings) bindings)) ;***
-    (t (extend-bindings var x bindings))))
+ "Unify var with x, using (and maybe extending) bindings."
+ (cond ((get-binding var bindings)
+   (unify (lookup var bindings) x bindings))
+  ((and (variable-p x) (get-binding x bindings)) ;***
+   (unify var (lookup x bindings) bindings)) ;***
+  (t (extend-bindings var x bindings))))
 ```
 
 Here are some more test cases:
 
-`> (unify '(?x ?y) '(?y ?x))`=> `((?X . ?Y))`
-
-`> (unify '(?x ?y a) '(?y ?x ?x))`=> `((?Y . A) (?X . ?Y))`
+```lisp
+> (unify '(?x ?y) '(?y ?x)) => ((?X . ?Y))
+> (unify '(?x ?y a) '(?y ?x ?x)) => ((?Y . A) (?X . ?Y))
+```
 
 It seems the problem is solved.
 Now let's try a new problem:
 
-`> (unify '?x '(f ?x))`=> `((?X F ?X))`
+```lisp
+> (unify '?x '(f ?x)) => ((?X F ?X))
+```
 
 Here `((?X F ?X))` really means `((?X . ((F ?X))))`, so `?X` is bound to (`F ?X`).
 This represents a circular, infinite unification.
@@ -310,34 +314,33 @@ In the final version of `unify` following, a variable is provided to allow the u
 (defparameter *occurs-check* t "Should we do the occurs check?")
 
 (defun unify (x y &optional (bindings no-bindings))
-  "See if x and y match with given bindings."
-  (cond ((eq bindings fail) fail)
-        ((eql x y) bindings)
-        ((variable-p x) (unify-variable x y bindings))
-        ((variable-p y) (unify-variable y x bindings))
-        ((and (consp x) (consp y))
-         (unify (rest x) (rest y)
-                (unify (first x) (first y) bindings)))
-        (t fail)))
+ "See if x and y match with given bindings."
+ (cond ((eq bindings fail) fail)
+       ((eql x y) bindings)
+       ((variable-p x) (unify-variable x y bindings))
+       ((variable-p y) (unify-variable y x bindings))
+       ((and (consp x) (consp y))
+        (unify (rest x) (rest y)
+               (unify (first x) (first y) bindings)))
+       (t fail)))
 
 (defun unify-variable (var x bindings)
-  "Unify var with x, using (and maybe extending) bindings."
-  (cond ((get-binding var bindings)
-         (unify (lookup var bindings) x bindings))
-        ((and (variable-p x) (get-binding x bindings))
-         (unify var (lookup x bindings) bindings))
-        ((and *occurs-check* (occurs-check var x bindings))
-         fail)
-        (t (extend-bindings var x bindings))))
+ "Unify var with x, using (and maybe extending) bindings."
+ (cond ((get-binding var bindings)
+     (unify (lookup var bindings) x bindings))
+     ((and (variable-p x) (get-binding x bindings))
+     (unify var (lookup x bindings) bindings))
+     ((and *occurs-check* (occurs-check var x bindings)) fail)
+     (t (extend-bindings var x bindings))))
 
 (defun occurs-check (var x bindings)
-  "Does var occur anywhere inside x?"
-  (cond ((eq var x) t)
-        ((and (variable-p x) (get-binding x bindings))
-         (occurs-check var (lookup x bindings) bindings))
-        ((consp x) (or (occurs-check var (first x) bindings)
-                       (occurs-check var (rest x) bindings)))
-        (t nil)))
+ "Does var occur anywhere inside x?"
+ (cond ((eq var x) t)
+     ((and (variable-p x) (get-binding x bindings))
+     (occurs-check var (lookup x bindings) bindings))
+     ((consp x) (or (occurs-check var (first x) bindings)
+         (occurs-check var (rest x) bindings)))
+     (t nil)))
 ```
 
 Now we consider how `unify` will be used.
@@ -348,29 +351,27 @@ The `function subst-bindings` acts like `sublis`, except that it substitutes rec
 
 ```lisp
 (defun subst-bindings (bindings x)
-  "Substitute the value of variables in bindings into x,
-  taking recursively bound variables into account."
-  (cond ((eq bindings fail) fail)
-        ((eq bindings no-bindings) x)
-        ((and (variable-p x) (get-binding x bindings))
-         (subst-bindings bindings (lookup x bindings)))
-        ((atom x) x)
-        (t (reuse-cons (subst-bindings bindings (car x))
-                       (subst-bindings bindings (cdr x))
-                       x))))
+ "Substitute the value of variables in bindings into x,
+ taking recursively bound variables into account."
+ (cond ((eq bindings fail) fail)
+     ((eq bindings no-bindings) x)
+     ((and (variable-p x) (get-binding x bindings))
+     (subst-bindings bindings (lookup x bindings)))
+     ((atom x) x)
+     (t (reuse-cons (subst-bindings bindings (car x))
+            (subst-bindings bindings (cdr x))
+            x))))
 ```
 
 Now let's try `unify` on some examples:
 
-`> (unify '(?x ?y a) '(?y ?x ?x))`=> `((?Y . A) (?X . ?Y))`
-
-`> (unify '?x '(f ?x))`=> `NIL`
-
-`> (unify '(?x ?y) '((f ?y) (f ?x)))`=> `NIL`
-
-`> (unify '(?x ?y ?z) '((?y ?z) (?x ?z) (?x ?y)))`=> `NIL`
-
-`> (unify 'a 'a)`=> `((T . T))`
+```lisp
+> (unify '(?x ?y a) '(?y ?x ?x)) => ((?Y . A) (?X . ?Y))
+> (unify '?x '(f ?x)) => NIL
+> (unify '(?x ?y) '((f ?y) (f ?x))) => NIL
+> (unify '(?x ?y ?z) '((?y ?z) (?x ?z) (?x ?y))) => NIL
+> (unify 'a 'a) => ((T . T))
+```
 
 Finally, the function `unifier` calls `unify` and substitutes the resulting binding list into one of the arguments.
 The choice of `x` is arbitrary; an equal result would come from substituting the binding list into `y`.
@@ -383,26 +384,19 @@ The choice of `x` is arbitrary; an equal result would come from substituting the
 
 Here are some examples of `unifier`:
 
-`> (unifier '(?x ?y a) '(?y ?x ?x))`=> `(A A A)`
-
 ```lisp
+> (unifier '(?x ?y a) '(?y ?x ?x)) => (A A A)
 > (unifier '((?a * ?x ^ 2) + (?b * ?x) + ?c)
-```
-
-`                '(?z + (4 * 5) + 3))`=>
-
-```lisp
+        '(?z + (4 * 5) + 3)) =>
 ((?A * 5 ^ 2) + (4 * 5) + 3)
 ```
 
 When *`occurs-check`* is false, we get the following answers:
 
-`> (unify '?x '(f ?x))`=> `((?X F ?X))`
-
-`> (unify '(?x ?y) '((f ?y) (f ?x)))`=> `((?Y F ?X) (?X F ?Y))`
-
 ```lisp
-> (unify '(?x ?y ?z) '((?y ?z) (?x ?z) (?x ?y))) => ((?Z ?X ?Y) (?Y ?X ?Z) (?X ?Y  ?Z))
+> (unify '?x '(f ?x)) => ((?X F ?X))
+> (unify '(?x ?y) '((f ?y) (f ?x))) => ((?Y F ?X) (?X F ?Y))
+> (unify '(?x ?y ?z) '((?y ?z) (?x ?z) (?x ?y))) => ((?Z ?X ?Y) (?Y ?X ?Z) (?X ?Y ?Z))
 ```
 
 ### Programming with Prolog
@@ -517,8 +511,8 @@ This language has only two syntactic constructs: the <- macro to add clauses, an
 
 ```lisp
 (defmacro <- (&rest clause)
-  "Add a clause to the data base."
-  `(add-clause ',clause))
+ "Add a clause to the data base."
+ '(add-clause '.clause))
 
 (defun add-clause (clause)
   "Add a clause to the data base, indexed by head's predicate."
@@ -866,19 +860,14 @@ Finally, the Lisp predicate `continue-p` asks the user if he or she wants to see
 
 ```lisp
 (defun continue-p ()
-  "Ask user if we should continue looking for solutions."
-  (case (read-char)
-    (#\; t)
-```
-
-`    (#\.
-nil)`
-
-```lisp
-    (#\newline (continue-p))
-    (otherwise
-      (format t " Type ; to see more or . to stop")
-      (continue-p))))
+ "Ask user if we should continue looking for solutions."
+ (case (read-char)
+  (#\; t)
+  (#\. nil)
+  (#\newline (continue-p))
+  (otherwise
+   (format t " Type ; to see more or . to stop")
+   (continue-p))))
 ```
 
 This version works just as well as the previous version on finite problems.
@@ -919,25 +908,25 @@ Now let's add the definition of the relation length:
 
 ```lisp
 (<- (length () 0))
-(<- (length (?x . ?y) (1  + ?n)) (length ?y ?n))
+(<- (length (?x . ?y) (1 + ?n)) (length ?y ?n))
 ```
 
 Here are some queries showing that length can be used to find the second argument, the first, or both:
 
 ```lisp
 > (?- (length (a b c d) ?n))
-?N = (1  + (1  + (1  + (1  + 0))));
+?N = (1 + (1 + (1 + (1 + 0))));
 No.
-> (?- (length ?list (1  + (1  + 0))))
+> (?- (length ?list (1 + (1 + 0))))
 ?LIST = (?X3869 ?X3872);
 No.
 > (?- (length ?list ?n))
 ?LIST = NIL
 ?N = 0;
 ?LIST = (?X3918)
-?N = (1  + 0);
+?N = (1 + 0);
 ?LIST = (?X3918 ?X3921)
-?N = (1  + (1  + 0)).
+?N = (1 + (1 + 0)).
 No.
 ```
 
@@ -946,11 +935,11 @@ Both queries give the correct answer, a two-element list that either starts or e
 However, the behavior after generating these two solutions is quite different.
 
 ```lisp
-> (?- (length ?l (1  + (1  + 0))) (member a ?l))
+> (?- (length ?l (1 + (1 + 0))) (member a ?l))
 ?L = (A ?X4057);
 ?L = (?Y4061 A);
 No.
-> (?- (member a ?l) (length ?l (1  + (1  + 0))))
+> (?- (member a ?l) (length ?l (1 + (1 + 0))))
 ?L = (A ?X4081);
 ?L = (?Y4085 A);[Abort]
 ```
@@ -977,22 +966,22 @@ In other words, `f` is nondeterministic.
 What are your alternatives as a programmer?
 Five possibilities can be identified:
 
-*   Guess.
+* Guess.
 Choose one possibility and discard the others.
 This requires a means of making the right guesses, or recovering from wrong guesses.
 
-*   Know.
+* Know.
 Sometimes you can provide additional information that is enough to decide what the right choice is.
 This means changing the calling function(s) to provide the additional information.
 
-*   Return a list.
+* Return a list.
 This means that the calling function(s) must be changed to expect a list of replies.
 
-*   Return a *pipe,* as defined in [section 9.3](B9780080571157500091.xhtml#s0020).
+* Return a *pipe,* as defined in [section 9.3](B9780080571157500091.xhtml#s0020).
 Again, the calling function(s) must be changed to expect a pipe.
 
-*   Guess and save.
-Choose one possibility and return it, but record enough information to allow computing the other possibilities later.
+* Guess and save.
+Choose one possibility and return it, but record enough information to allow Computing the other possibilities later.
 This requires saving the current state of the computation as well as some information on the remaining possibilities.
 
 The last alternative is the most desirable.
@@ -1013,10 +1002,8 @@ The definition of `member` that follows uses anonymous variables for positions w
 
 ```lisp
 (<- (member ?item (?item . ?)))
+(<- (member ?item (? . ?rest)) (member ?item ?rest))
 ```
-
-`(<- (member ?item (?
-. ?rest)) (member ?item ?rest))`
 
 However, we also want to allow several anonymous variables in a clause but still be able to keep each anonymous variable distinct from all other variables.
 One way to do that is to replace each anonymous variable with a unique variable.
@@ -1256,43 +1243,20 @@ Therefore, to make the generated code look neater, I have allowed myself the lux
 The function `unify!` below is the destructive version of `unify`.
 It is a predicate that returns true for success and false for failure, and has the side effect of altering variable bindings.
 
-`(defun unify!
-(x y)`
-
 ```lisp
-  "Destructively unify two expressions"
-  (cond ((eql (deref x) (deref y)) t)
-```
-
-`              ((var-p x) (set-binding!
-x y))`
-
-`              ((var-p y) (set-binding!
-y x))`
-
-```lisp
-              ((and (consp x) (consp y))
-```
-
-`              (and (unify!
-(first x) (first y))`
-
-`                        (unify!
-(rest x) (rest y))))`
-
-```lisp
-              (t nil)))
-```
-
-`(defun set-binding!
-(var value)`
-
-`  "Set var's binding to value.
-Always succeeds (returns t)."`
-
-```lisp
-  (setf (var-binding var) value)
-  t)
+(defun unify! (x y)
+ "Destructively unify two expressions"
+ (cond ((eql (deref x) (deref y)) t)
+       ((var-p x) (set-binding! x y))
+       ((var-p y) (set-binding! y x))
+       ((and (consp x) (consp y))
+       (and (unify! (first x) (first y))
+            (unify! (rest x) (rest y))))
+       (t nil)))
+(defun set-binding! (var value)
+ "Set var's binding to value. Always succeeds (returns t)."
+ (setf (var-binding var) value)
+ t)
 ```
 
 To make `vars` easier to read, we can install a :`print-function`:
@@ -1321,32 +1285,17 @@ Now, for backtracking purposes, we want to make `set-binding!` keep track of the
 
 ```lisp
 (defvar *trall* (make-array 200 :fill-pointer 0 :adjustable t))
-```
-
-`(defun set-binding!
-(var value)`
-
-```lisp
-  "Set var's binding to value, after saving the variable
-```
-
-`  in the trail.
-Always returns t."`
-
-```lisp
-  (unless (eq var value)
-      (vector-push-extend var *trail*)
-      (setf (var-binding var) value))
-  t)
-```
-
-`(defun undo-bindings!
-(old-trail)`
-
-```lisp
-  "Undo all bindings back to a given point in the trail."
-  (loop until (= (fill-pointer *trail*) old-trail)
-      do (setf (var-binding (vector-pop *trail*)) unbound)))
+(defun set-binding! (var value)
+ "Set var's binding to value, after saving the variable
+ in the trail. Always returns t."
+ (unless (eq var value)
+   (vector-push-extend var *trail*)
+   (setf (var-binding var) value))
+ t)
+(defun undo-bindings! (old-trail)
+ "Undo all bindings back to a given point in the trail."
+ (loop until (= (fill-pointer *trail*) old-trail)
+   do (setf (var-binding (vector-pop *trail*)) unbound)))
 ```
 
 Now we need a way of making new variables, where each one is distinct.
@@ -1390,10 +1339,8 @@ Now we add two clauses to the data base to define the member relation:
 
 ```lisp
 (<- (clause (<- (mem ?x (?x . ?y)))))
+(<- (clause (<- (mem ?x (? . ?z)) (mem ?x ?z))))
 ```
-
-`(<- (clause (<- (mem ?x (?
-. ?z)) (mem ?x ?z))))`
 
 Finally, we can prove a goal using our interpreter:
 
@@ -1589,10 +1536,9 @@ Represent this situation using the predicates defined in the previous exercise, 
 
 **Exercise 11.11 [d]** Recall the example:
 
-`> (?- (length (a b` c `d) ?n))`
-
 ```lisp
-?N = (1  + (1  + (1  + (1  + 0))));
+> (?- (length (a b` c `d) ?n))
+?N = (1 + (1 + (1 + (1 + 0))));
 ```
 
 It is possible to produce 4 instead of `(1+ (1+ (1+ (1+ 0))))` by extending the notion of unification.
