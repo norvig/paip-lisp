@@ -646,13 +646,8 @@ I show only the final result, which demonstrates that it is indeed an advantage 
 > (othello (minimax-searcher 3 #'count-difference)
                   (maximizer #'count-difference))
 ...
-```
-
-`The game is over.
-Final result:`
-
-```lisp
-      1 2 3 4 5 6 7 8      [@=53 0=0 (+53)]
+The game is over. Final result:
+   1 2 3 4 5 6 7 8   [@=53 0=0 (+53)]
 10 @ @ @ @ @ @ @ @
 20 @ @ @ @ @ @ @ @
 30 @ @ @ @ @ @ @ @
@@ -831,21 +826,16 @@ After some give-and-take, white gains the advantage for good by capturing eight 
     70 0 @ @ 0 @ @ 0 0
     80 0 0 0 0 0 @ . 0
 0 moves to 87.
-```
-
-`The game is over.
-Final result:`
-
-```lisp
-          1 2 3 4 5 6 7 8    [@=24 0=40 (-16)]
-    10 0 0 0 0 @ @ 0 0
-    20 @ @ 0 0 @ @ @ 0
-    30 @ @ 0 0 0 @ @ 0
-    40 0 @ 0 0 0 @ @ 0
-    50 0 @ 0 @ 0 @ @ 0
-    60 0 @ 0 @ 0 @ 0 0
-    70 0 @ @ 0 @ 0 0 0
-    80 0 0 0 0 0 0 0 0
+The game is over. Final result:
+     1 2 3 4 5 6 7 8  [@=24 0=40 (-16)]
+  10 0 0 0 0 @ @ 0 0
+  20 @ @ 0 0 @ @ @ 0
+  30 @ @ 0 0 0 @ @ 0
+  40 0 @ 0 0 0 @ @ 0
+  50 0 @ 0 @ 0 @ @ 0
+  60 0 @ 0 @ 0 @ 0 0
+  70 0 @ @ 0 @ 0 0 0
+  80 0 0 0 0 0 0 0 0
 -16
 ```
 
