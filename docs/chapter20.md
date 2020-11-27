@@ -17,13 +17,10 @@ Here's how we could express the grammar rule "A sentence can be composed of a no
 
 ```lisp
 (<- (S ?s)
+   (NP ?np)
+   (VP ?vp)
+   (concat ?np ?vp ?s))
 ```
-
-      `(NP ?np)`
-
-      `(VP ?vp)`
-
-      `(concat ?np ?vp ?s))`
 
 The variables represent strings of words.
 As usual, they will be implemented as lists of symbols.
@@ -36,13 +33,10 @@ Thus, a better order of evaluation for parsing is:
 
 ```lisp
 (<- (S ?s)
+   (concat ?np ?vp ?s)
+   (NP ?np)
+   (VP ?vp))
 ```
-
-      `(concat ?np ?vp ?s)`
-
-      `(NP ?np)`
-
-      `(VP ?vp))`
 
 The first version had `NP` and `VP` guessing strings to be verified by `concat`.
 In most grammars, there will be a very large or infinite number of `NPs` and `VPs`.
@@ -61,11 +55,9 @@ In this approach, no calls to concat are necessary, no wild guesses are made, an
 
 ```lisp
 (<- (S ?s0 ?s2)
+       (NP ?s0 ?sl)
+       (VP ?sl ?s2))
 ```
-
-              `(NP ?s0 ?sl)`
-
-              `(VP ?sl ?s2))`
 
 This rule can be read as "The string from `*s*0` to `*s*2` is a sentence if there is an `*s*1` such that the string from `s0` to `*s*1` is a noun phrase and the string from `*s*1` to `*s*2` is a verb phrase."
 
@@ -73,8 +65,8 @@ A sample query would be `(?- (S (The boy ate the apple) ())).` With suitable def
 
 ```lisp
 ?s0 = (The boy ate the apple)
-?sl =                 (ate the apple)
-?s2 =                                           ()
+?sl =         (ate the apple)
+?s2 =                      ()
 ```
 
 Another way of reading the goal `(NP ?s0 ?sl)`, for example, is as "`IS` the list `?s0` minus the list `?sl` a noun phrase?" In this case, `?s0` minus `?sl` is the list `(The boy)`.
@@ -86,15 +78,9 @@ If we prefer, we could define a version of `concat` for difference lists and cal
 
 ```lisp
 (<- (S ?s-in ?s-rem)
-```
-
-              `(NP ?np-in ?np-rem)`
-
-              `(VP ?vp-in ?vp-rem)`
-
-              `(concat ?np-in ?np-rem ?vp-in ?vp-rem ?s-in ?s-rem))`
-
-```lisp
+       (NP ?np-in ?np-rem)
+       (VP ?vp-in ?vp-rem)
+       (concat ?np-in ?np-rem ?vp-in ?vp-rem ?s-in ?s-rem))
 (<- (concat ?a ?b ?b ?c ?a ?c))
 ```
 
@@ -112,28 +98,18 @@ For all verbs except *be,* the difference only shows up in the third-person sing
 | second person | you      | sleep  | you    | sleep |
 | third person  | he/she   | sleeps | they   | sleep |
 
-Thus, the agreement argument will take on one of the two values `3sg` or `"3sg` to indicate third-person-singular or not-third-person-singular.
+Thus, the agreement argument will take on one of the two values `3sg` or `~3sg` to indicate third-person-singular or not-third-person-singular.
 We could write:
 
 ```lisp
 (<- (S ?s0 ?s2)
-```
-
-              `(NP ?agr ?s0 ?sl)`
-
-              `(VP ?agr ?sl ?s2))`
-
-```lisp
+       (NP ?agr ?s0 ?sl)
+       (VP ?agr ?sl ?s2))
 (<- (NP 3sg (he . ?s) ?s))
-```
-
-`(<- (NP`"`3sg (they . ?s) ?s))`
-
-```lisp
+(<- (NP ~3sg (they . ?s) ?s))
 (<- (VP 3sg (sleeps . ?s) ?s))
+(<- (VP ~3sg (sleep . ?s) ?s))
 ```
-
-`(<- (VP`"`3sg (sleep . ?s) ?s))`
 
 This grammar parses just the right sentences:
 
@@ -148,13 +124,8 @@ Let's extend the grammar to allow common nouns as well as pronouns:
 
 ```lisp
 (<- (NP ?agr ?s0 ?s2)
-```
-
-              `(Det ?agr ?s0 ?sl)`
-
-              `(N ?agr ?sl ?s2))`
-
-```lisp
+       (Det ?agr ?s0 ?sl)
+       (N ?agr ?sl ?s2))
 (<- (Det ?any (the . ?s) ?s))
 (<- (N 3sg (boy . ?s) ?s))
 (<- (N 3sg (girl . ?s) ?s))
@@ -178,33 +149,15 @@ The result is not just a recognizer but a true parser:
 
 ```lisp
 (<- (S (?pred ?subj) ?s0 ?s2)
-```
-
-              `(NP ?agr ?subj ?s0 ?sl)`
-
-                `(VP ?agr ?pred ?sl ?s2))`
-
-```lisp
+       (NP ?agr ?subj ?s0 ?sl)
+        (VP ?agr ?pred ?sl ?s2))
 (<- (NP 3sg (the male) (he . ?s) ?s))
-```
-
-`(<- (NP`"`3sg (some objects) (they . ?s) ?s))`
-
-```lisp
+(<- (NP ~3sg (some objects) (they . ?s) ?s))
 (<- (NP ?agr (?det ?n) ?s0 ?s2)
-```
-
-                `(Det ?agr ?det ?s0 ?sl)`
-
-                `(N ?agr ?n ?sl ?s2))`
-
-```lisp
+        (Det ?agr ?det ?s0 ?sl)
+        (N ?agr ?n ?sl ?s2))
 (<- (VP 3sg sleep (sleeps . ?s) ?s))
-```
-
-`(<- (VP`"`3sg sleep (sleep . ?s) ?s))`
-
-```lisp
+(<- (VP ~3sg sleep (sleep . ?s) ?s))
 (<- (Det ?any the (the . ?s) ?s))
 (<- (N 3sg (young male human) (boy . ?s) ?s))
 (<- (N 3sg (young female human) (girl . ?s) ?s))
@@ -229,33 +182,15 @@ If we want to make this explicit, we can provide yet another argument to each no
 
 ```lisp
 (<- (S (?pred ?subj) (s ?np ?vp) ?s0 ?s2)
-```
-
-              `(NP ?agr ?subj ?np ?s0 ?sl)`
-
-                `(VP ?agr ?pred ?vp ?sl ?s2))`
-
-```lisp
+       (NP ?agr ?subj ?np ?s0 ?sl)
+        (VP ?agr ?pred ?vp ?sl ?s2))
 (<- (NP 3sg (the male) (np he) (he . ?s) ?s))
-```
-
-`(<- (NP`"`3sg (some objects) (np they) (they . ?s) ?s))`
-
-```lisp
+(<- (NP ~3sg (some objects) (np they) (they . ?s) ?s))
 (<- (NP ?agr (?det ?n) (np ?det-syn ?n-syn)?s0 ?s2)
-```
-
-                `(Det ?agr ?det ?det-syn ?s0 ?sl)`
-
-                `(N ?agr ?n ?n-syn ?sl ?s2))`
-
-```lisp
+        (Det ?agr ?det ?det-syn ?s0 ?sl)
+        (N ?agr ?n ?n-syn ?sl ?s2))
 (<- (VP 3sg sleep (vp sleeps)(sleeps . ?s) ?s))
-```
-
-`(<- (VP`"`3sg sleep (vp sleep) (sleep . ?s) ?s))`
-
-```lisp
+(<- (VP ~3sg sleep (vp sleep) (sleep . ?s) ?s))
 (<- (Det ?any the (det the) (the . ?s) ?s))
 (<- (N 3sg (young male human) (n boy) (boy . ?s) ?s))
 (<- (N 3sg (young female human) (n girl) (girl . ?s) ?s))
@@ -313,11 +248,9 @@ to expand into the clause:
 
 ```lisp
 (<- (S ?s0 ?s2)
+       (NP ?s0 ?sl)
+       (VP ?sl ?s2))
 ```
-
-              `(NP ?s0 ?sl)`
-
-              `(VP ?sl ?s2))`
 
 While we're at it, we may as well give `rule` the ability to deal with different types of rules, each one represented by a different type of arrow.
 Here's the `rule` macro:
@@ -344,18 +277,16 @@ One would write:
 
 ```lisp
 s(Sem) --> np(Subj), vp(Pred),
+                  {combi ne(Subj,Pred,Sem)}.
 ```
-
-                                    `{combi ne(Subj,Pred,Sem)}.`
 
 where the idea is that `combine` is not a grammatical constituent, but rather a Prolog predicate that could do some calculations on `Subj` and `Pred` to arrive at the proper semantics, `Sem`.
 We will mark such a test predicate not by brackets but by a list headed by the keyword `:test`, as in:
 
 ```lisp
 (rule (S ?sem) --> (NP ?subj) (VP ?pred)
+   (:test (combine ?subj ?pred ?sem)))
 ```
-
-      `(:test (combine ?subj ?pred ?sem)))`
 
 Second, we need some way of introducing individual words on the right-hand side, as opposed to categories of words.
 In Prolog, brackets are used to represent a word or list of words on the right-hand side:
@@ -426,35 +357,17 @@ Here is the trivial grammar from [page 688](chapter20.xhtml#p688) in DCG format.
 
 ```lisp
 (rule (S (?pred ?subj)) -->
-```
-
-      `(NP ?agr ?subj)`
-
-      `(VP ?agr ?pred))`
-
-```lisp
+   (NP ?agr ?subj)
+   (VP ?agr ?pred))
 (rule (NP ?agr (?det ?n)) -->
-```
-
-      `(Det ?agr ?det)`
-
-      `(N ?agr ?n))`
-
-```lisp
-(rule (NP 3sg (the male))                   --> (:word he))
-```
-
-`(rule (NP`"`3sg (some objects))           --> (:word they))`
-
-```lisp
-(rule (VP 3sg sleep)                             --> (:word sleeps))
-```
-
-`(rule (VP`"`3sg sleep)                             --> (:word sleep))`
-
-```lisp
-(rule (Det ?any the)                             --> (:word the))
-(rule (N 3sg (young male human))     --> (:word boy))
+   (Det ?agr ?det)
+   (N ?agr ?n))
+(rule (NP 3sg (the male))          --> (:word he))
+(rule (NP ~3sg (some objects))      --> (:word they))
+(rule (VP 3sg sleep)               --> (:word sleeps))
+(rule (VP ~3sg sleep)               --> (:word sleep))
+(rule (Det ?any the)               --> (:word the))
+(rule (N 3sg (young male human))   --> (:word boy))
 (rule (N 3sg (young female human)) --> (:word girl))
 ```
 
@@ -467,7 +380,9 @@ The interpretation of the noun phrase "Terry" is just `Terry`, but then what sho
 To fit our predicate application model, it must be something equivalent to `(lambda (x) (kiss x Jean))`.
 When applied to the subject, we want to get the simplification:
 
-`((lambda (x) (kiss x Jean)) Terry)`=> `(kiss Terry Jean)`
+```lisp
+((lambda (x) (kiss x Jean)) Terry) => (kiss Terry Jean)
+```
 
 Such simplification is not done automatically by Prolog, but we can write a predicate to do it.
 We will call it `funcall`, because it is similar to the Lisp function of that name, although it only handles replacement of the argument, not full evaluation of the body.
@@ -481,13 +396,10 @@ With this we could write our rule for sentences as:
 
 ```lisp
 (rule (S ?sem) -->
+   (NP ?agr ?subj)
+   (VP ?agr ?pred)
+   (:test (funcall ?pred ?subj ?sem)))
 ```
-
-      `(NP ?agr ?subj)`
-
-      `(VP ?agr ?pred)`
-
-      `(:test (funcall ?pred ?subj ?sem)))`
 
 An alternative is to, in effect, compile away the call to `funcall`.
 Instead of having the semantic representation of `VP` be a single lambda expression, we can represent it as two arguments: an input argument, `?subj`, which acts as a parameter to the output argument, `?pred`, which takes the place of the body of the lambda expression.
@@ -496,11 +408,9 @@ The trick is to make the parameter and the subject one and the same:
 
 ```lisp
 (rule (S ?pred) -->
+   (NP ?agr ?subj)
+   (VP ?agr ?subj ?pred))
 ```
-
-      `(NP ?agr ?subj)`
-
-      `(VP ?agr ?subj ?pred))`
 
 One way of reading this rule is "To parse a sentence, parse a noun phrase followed by a verb phrase.
 If they have different agreement features then fail, but otherwise insert the interpretation of the noun phrase, `?subj`, into the proper spot in the interpretation of the verb phrase, `?pred`, and return `?pred` as the final interpretation of the sentence."
@@ -511,28 +421,14 @@ The semantics of tenses (past and present) has been ignored.
 
 ```lisp
 (rule (VP ?agr ?subj ?pred) -->
-```
-
-      `(Verb/tr ?agr ?subj ?pred ?obj)`
-
-      `(NP ?any-agr ?obj))`
-
-```lisp
+   (Verb/tr ?agr ?subj ?pred ?obj)
+   (NP ?any-agr ?obj))
 (rule (VP ?agr ?subj ?pred) -->
-```
-
-      `(Verb/intr ?agr ?subj ?pred))`
-
-`(rule (Verb/tr`"`3sg ?x (kiss ?x ?y) ?y) --> (:word kiss))`
-
-```lisp
+   (Verb/intr ?agr ?subj ?pred))
+(rule (Verb/tr ~3sg ?x (kiss ?x ?y) ?y) --> (:word kiss))
 (rule (Verb/tr 3sg ?x (kiss ?x ?y) ?y) --> (:word kisses))
 (rule (Verb/tr ?any ?x (kiss ?x ?y) ?y) --> (:word kissed))
-```
-
-`(rule (Verb/intr`"`3sg ?x (sleep ?x)) --> (:word sleep))`
-
-```lisp
+(rule (Verb/intr ~3sg ?x (sleep ?x)) --> (:word sleep))
 (rule (Verb/intr 3sg ?x (sleep ?x)) --> (:word sleeps))
 (rule (Verb/intr ?any ?x (sleep ?x)) --> (:word slept))
 ```
@@ -541,30 +437,16 @@ Here are the rules for noun phrases and nouns:
 
 ```lisp
 (rule (NP ?agr ?sem) -->
-```
-
-      `(Name ?agr ?sem))`
-
-```lisp
+   (Name ?agr ?sem))
 (rule (NP ?agr (?det-sem ?noun-sem)) -->
-```
-
-      `(Det ?agr ?det-sem)`
-
-      `(Noun ?agr ?noun-sem))`
-
-```lisp
+   (Det ?agr ?det-sem)
+   (Noun ?agr ?noun-sem))
 (rule (Name 3sg Terry) --> (:word Terry))
 (rule (Name 3sg Jean) --> (:word Jean))
 (rule (Noun 3sg (young male human)) --> (:word boy))
 (rule (Noun 3sg (young female human)) --> (:word girl))
-```
-
-`(rule (Noun`"`3sg (group (young male human))) --> (:word boys))`
-
-`(rule (Noun`"`3sg (group (young female human))) --> (:word girls))`
-
-```lisp
+(rule (Noun ~3sg (group (young male human))) --> (:word boys))
+(rule (Noun ~3sg (group (young female human))) --> (:word girls))
 (rule (Det ?any the) --> (:word the))
 (rule (Det 3sg a) --> (:word a))
 ```
@@ -575,18 +457,10 @@ Here are some examples:
 ```lisp
 > (?- (S ?sem (The boys kiss a girl) ()))
 ?SEM = (KISS (THE (GROUP (YOUNG MALE HUMAN)))
-```
-
-                                              `(A (YOUNG FEMALE HUMAN))).`
-
-```lisp
+                       (A (YOUNG FEMALE HUMAN))).
 > (?- (S ?sem (The girls kissed the girls) ()))
 ?SEM = (KISS (THE (GROUP (YOUNG FEMALE HUMAN)))
-```
-
-                                              `(THE (GROUP (YOUNG FEMALE HUMAN)))).`
-
-```lisp
+                       (THE (GROUP (YOUNG FEMALE HUMAN)))).
 > (?- (S ?sem (Terry kissed the girl) ()))
 ?SEM = (KISS TERRY (THE (YOUNG FEMALE HUMAN))).
 > (?- (S ?sem (The girls kisses the boys) ()))
@@ -679,13 +553,13 @@ It just happens that Prolog variables can be used to implement these metavariabl
 Here are the interpretations for each word in our target sentence and for each intermediate constituent:
 
 ```lisp
-Every                   = (all ?x (-> ?pl ?ql))
-picture               = (picture ?x)
-paints                 = (paint ?x ?y)
-a                           = (exists ?y (and ?p2 ?q2))
-story                   = (story ?y)
-Every picture   = (all ?x (-> (picture ?x) ?ql))
-a story               = (exists ?y (and (story ?y) ?q2))
+Every          = (all ?x (-> ?pl ?ql))
+picture        = (picture ?x)
+paints         = (paint ?x ?y)
+a              = (exists ?y (and ?p2 ?q2))
+story          = (story ?y)
+Every picture  = (all ?x (-> (picture ?x) ?ql))
+a story        = (exists ?y (and (story ?y) ?q2))
 paints a story = (exists ?y (and (story ?y) (paint ?x ?y)))
 ```
 
@@ -696,9 +570,8 @@ The three arguments to the Noun predicate are the agreement, the metavariable `?
 (rule (Noun 3sg ?x (picture ?x)) --> (:word picture))
 (rule (Noun 3sg ?x (story ?x)) --> (:word story))
 (rule (Noun 3sg ?x (and (young ?x) (male ?x) (human ?x))) -->
+   (:word boy))
 ```
-
-      `(:word boy))`
 
 The NP predicate is changed to take four arguments.
 First is the agreement, then the metavariable `?x`.
@@ -708,11 +581,7 @@ As we have stated, this comes from the determiner:
 
 ```lisp
 (rule (NP ?agr ?x ?pred ?pred) -->
-```
-
-      `(Name ?agr ?name))`
-
-```lisp
+   (Name ?agr ?name))
 ;(rule (NP ?agr ?x ?pred ?np) -->
 ; (Det ?agr ?x ?noun ?pred ?np)
 ; (Noun ?agr ?x ?noun))
@@ -723,22 +592,14 @@ The new rule accounts for certain relative clauses, such as "the boy that paints
 
 ```lisp
 (rule (NP ?agr ?x ?pred ?np) -->
-```
-
-      `(Det ?agr ?x ?noun&rel ?pred ?np)`
-
-      `(Noun ?agr ?x ?noun)`
-
-      `(rel-clause ?agr ?x ?noun ?noun&rel))`
-
-```lisp
+   (Det ?agr ?x ?noun&rel ?pred ?np)
+   (Noun ?agr ?x ?noun)
+   (rel-clause ?agr ?x ?noun ?noun&rel))
 (rule (rel-clause ?agr ?x ?np ?np) --> )
 (rule (rel-clause ?agr ?x ?np (and ?np ?rel)) -->
+   (:word that)
+   (VP ?agr ?x ?rel))
 ```
-
-      `(:word that)`
-
-      `(VP ?agr ?x ?rel))`
 
 The new rule does not account for relative clauses where the object is missing, such as "the picture that the boy paints." Nevertheless, the addition of relative clauses means we can now generate an infinite language, since we can always introduce a relative clause, which introduces a new noun phrase, which in turn can introduce yet another relative clause.
 
@@ -752,16 +613,11 @@ Verbs apply to either one or two metavariables, just as they did before.
 So we can use the definitions of `Verb/tr` and `Verb/intr` unchanged.
 For variety, I've added a few more verbs:
 
-`(rule (Verb/tr`"`3sg ?x ?y (paint ?x ?y)) --> (:word paint))`
-
 ```lisp
+(rule (Verb/tr ~3sg ?x ?y (paint ?x ?y)) --> (:word paint))
 (rule (Verb/tr 3sg ?x ?y (paint ?x ?y)) --> (:word paints))
 (rule (Verb/tr ?any ?x ?y (paint ?x ?y)) --> (:word painted))
-```
-
-`(rule (Verb/intr`"`3sg ?x (sleep ?x)) --> (:word sleep))`
-
-```lisp
+(rule (Verb/intr ~3sg ?x (sleep ?x)) --> (:word sleep))
 (rule (Verb/intr 3sg ?x (sleep ?x)) --> (:word sleeps))
 (rule (Verb/intr ?any ?x (sleep ?x)) --> (:word slept))
 (rule (Verb/intr 3sg ?x (sells ?x)) --> (:word sells))
@@ -773,68 +629,38 @@ The only difference is in the call to `NP`, which now has extra arguments:
 
 ```lisp
 (rule (VP ?agr ?x ?vp) -->
-```
-
-      `(Verb/tr ?agr ?x ?obj ?verb)`
-
-      `(NP ?any-agr ?obj ?verb ?vp))`
-
-```lisp
+   (Verb/tr ?agr ?x ?obj ?verb)
+   (NP ?any-agr ?obj ?verb ?vp))
 (rule (VP ?agr ?x ?vp) -->
-```
-
-      `(Verb/intr ?agr ?x ?vp))`
-
-```lisp
+   (Verb/intr ?agr ?x ?vp))
 (rule (S ?np) -->
+   (NP ?agr ?x ?vp ?np)
+   (VP ?agr ?x ?vp))
 ```
-
-      `(NP ?agr ?x ?vp ?np)`
-
-      `(VP ?agr ?x ?vp))`
 
 With this grammar, we get the following correspondence between sentences and logical forms:
 
 ```lisp
 Every picture paints a story.
 (ALL ?3 (-> (PICTURE ?3)
-```
-
-                                          `(EXISTS ?14 (AND (STORY ?14) (PAINT ?3 ?14)))))`
-
-```lisp
+                     (EXISTS ?14 (AND (STORY ?14) (PAINT ?3 ?14)))))
 Every boy that paints a picture sleeps.
 (ALL ?3 (-> (AND (AND (YOUNG ?3) (MALE ?3) (HUMAN ?3))
-```
-
-                                                            `(EXISTS ?19 (AND (PICTURE ?19)`
-
-                                                                                                                        `(PAINT ?3 ?19))))`
-
-                                    `(SLEEP ?3)))`
-
-```lisp
+                              (EXISTS ?19 (AND (PICTURE ?19)
+                                                            (PAINT ?3 ?19))))
+                  (SLEEP ?3)))
 Every boy that sleeps paints a picture.
 (ALL ?3 (-> (AND (AND (YOUNG ?3) (MALE ?3) (HUMAN ?3))
-```
-
-                                                                `(SLEEP ?3))`
-
-                                        `(EXISTS ?22 (AND (PICTURE ?22) (PAINT ?3 ?22)))))`
-
-```lisp
+                                (SLEEP ?3))
+                    (EXISTS ?22 (AND (PICTURE ?22) (PAINT ?3 ?22)))))
 Every boy that paints a picture that sells
 paints a picture that stinks.
 (ALL ?3 (-> (AND (AND (YOUNG ?3) (MALE ?3) (HUMAN ?3))
+                              (EXISTS ?19 (AND (AND (PICTURE ?19) (SELLS ?19))
+                                                    (PAINT ?3 ?19))))
+                    (EXISTS ?39 (AND (AND (PICTURE ?39) (STINKS ?39))
+                                                  (PAINT ?3 ?39)))))
 ```
-
-                                                            `(EXISTS ?19 (AND (AND (PICTURE ?19) (SELLS ?19))`
-
-                                                                                                        `(PAINT ?3 ?19))))`
-
-                                        `(EXISTS ?39 (AND (AND (PICTURE ?39) (STINKS ?39))`
-
-                                                                                                    `(PAINT ?3 ?39)))))`
 
 ## 20.5 Preserving Quantifier Scope Ambiguity
 
@@ -864,11 +690,9 @@ We will change the grammar to produce instead the intermediate form:
 
 ```lisp
 (and (all ?m (man ?m))
+         (exists ?w (wowan ?w))
+         (loves ?m ?w))
 ```
-
-                  `(exists ?w (wowan ?w))`
-
-                  `(loves ?m ?w))`
 
 The difference is that logical components are produced in smaller chunks, with unscoped quantifiers.
 The typical grammar rule will build up an interpretation by conjoining constituents with `and`, rather than by fitting pieces into holes in other pieces.
@@ -876,79 +700,47 @@ Here is the complete grammar and a just-large-enough lexicon in the new format:
 
 ```lisp
 (rule (S (and ?np ?vp)) -->
-```
-
-      `(NP ?agr ?x ?np)`
-
-      `(VP ?agr ?x ?vp))`
-
-```lisp
+   (NP ?agr ?x ?np)
+   (VP ?agr ?x ?vp))
 (rule (VP ?agr ?x (and ?verb ?obj)) -->
-```
-
-      `(Verb/tr ?agr ?x ?o ?verb)`
-
-      `(NP ?any-agr ?o ?obj))`
-
-```lisp
+   (Verb/tr ?agr ?x ?o ?verb)
+   (NP ?any-agr ?o ?obj))
 (rule (VP ?agr ?x ?verb) -->
-```
-
-      `(Verb/intr ?agr ?x ?verb))`
-
-```lisp
+   (Verb/intr ?agr ?x ?verb))
 (rule (NP ?agr ?name t) -->
-```
-
-      `(Name ?agr ?name))`
-
-```lisp
+   (Name ?agr ?name))
 (rule (NP ?agr ?x ?det) -->
-```
-
-      `(Det ?agr ?x (and ?noun ?rel) ?det)`
-
-      `(Noun ?agr ?x ?noun)`
-
-      `(rel-clause ?agr ?x ?rel))`
-
-```lisp
+   (Det ?agr ?x (and ?noun ?rel) ?det)
+   (Noun ?agr ?x ?noun)
+   (rel-clause ?agr ?x ?rel))
 (rule (rel-clause ?agr ?x t) --> )
 (rule (rel-clause ?agr ?x ?rel) -->
-```
-
-      `(:word that)`
-
-      `(VP ?agr ?x ?rel))`
-
-```lisp
-(rule (Name 3sg Terry)                                       --> (:word Terry))
-(rule (Name 3sg Jean)                                         --> (:word Jean))
+   (:word that)
+   (VP ?agr ?x ?rel))
+(rule (Name 3sg Terry)                    --> (:word Terry))
+(rule (Name 3sg Jean)                     --> (:word Jean))
 (rule (Det 3sg ?x ?restr (all ?x ?restr)) --> (:word every))
-(rule (Noun 3sg ?x (man ?x))                           --> (:word man))
-(rule (Verb/tr 3sg ?x ?y (love ?x ?y))       --> (:word loves))
-(rule (Verb/intr 3sg ?x (lives ?x))             --> (:word lives))
-(rule (Det 3sg ?x ?res (exists ?x ?res))   --> (:word a))
-(rule (Noun 3sg ?x (woman ?x))                       --> (:word woman))
+(rule (Noun 3sg ?x (man ?x))              --> (:word man))
+(rule (Verb/tr 3sg ?x ?y (love ?x ?y))    --> (:word loves))
+(rule (Verb/intr 3sg ?x (lives ?x))       --> (:word lives))
+(rule (Det 3sg ?x ?res (exists ?x ?res))  --> (:word a))
+(rule (Noun 3sg ?x (woman ?x))            --> (:word woman))
 ```
 
 This gives us the following parse for "Every man loves a woman":
 
 ```lisp
 (and (all ?4 (and (man ?4) t))
+        (and (love ?4 ?12) (exists ?12 (and (woman ?12) t))))
 ```
-
-                `(and (love ?4 ?12) (exists ?12 (and (woman ?12) t))))`
 
 If we simplified this, eliminating the ts and joining ands, we would get the desired representation:
 
 ```lisp
 (and (all ?m (man ?m))
+        (exists ?w (wowan ?w))
+        (loves ?m ?w))
 ```
-
-                `(exists ?w (wowan ?w))`
-
-                `(loves ?m ?w))`
 
 From there, we could use what we know about syntax, in addition to what we know about men, woman, and loving, to determine the most likely final interpretation.
 This will be covered in the next chapter.
@@ -995,51 +787,25 @@ Here's the complete grammar:
 
 ```lisp
 (rule (S ?g0 ?g2 (and ?np ?vp)) -->
-```
-
-      `(NP ?g0 ?gl ?agr ?x ?np)`
-
-      `(VP ?gl ?g2 ?agr ?x ?vp))`
-
-```lisp
+   (NP ?g0 ?gl ?agr ?x ?np)
+   (VP ?gl ?g2 ?agr ?x ?vp))
 (rule (VP ?g0 ?gl ?agr ?x (and ?obj ?verb)) -->
-```
-
-      `(Verb/tr ?agr ?x ?o ?verb)`
-
-      `(NP ?g0 ?gl ?any-agr ?o ?obj))`
-
-```lisp
+   (Verb/tr ?agr ?x ?o ?verb)
+   (NP ?g0 ?gl ?any-agr ?o ?obj))
 (rule (VP ?g0 ?g0 ?agr ?x ?verb) -->
-```
-
-      `(Verb/intr ?agr ?x ?verb))`
-
-```lisp
+   (Verb/intr ?agr ?x ?verb))
 (rule (NP ?g0 ?g0 ?agr ?name t) -->
-```
-
-      `(Name ?agr ?name))`
-
-```lisp
+   (Name ?agr ?name))
 (rule (NP ?g0 ?g0 ?agr ?x ?det) -->
-```
-
-      `(Det ?agr ?x (and ?noun ?rel) ?det)`
-
-      `(Noun ?agr ?x ?noun)`
-
-      `(rel-clause ?agr ?x ?rel))`
-
-```lisp
+   (Det ?agr ?x (and ?noun ?rel) ?det)
+   (Noun ?agr ?x ?noun)
+   (rel-clause ?agr ?x ?rel))
 (rule (NP (gap NP ?agr ?x) nogap ?agr ?x t) --> )
 (rule (rel-clause ?agr ?x t) --> )
 (rule (rel-clause ?agr ?x ?rel) -->
+   (:word that)
+   (S (gap NP ?agr ?x) nogap ?rel))
 ```
-
-      `(:word that)`
-
-      `(S (gap NP ?agr ?x) nogap ?rel))`
 
 Here are some sentence/parse pairs covered by this grammar:
 
@@ -1047,43 +813,31 @@ Here are some sentence/parse pairs covered by this grammar:
 
 ```lisp
 (AND (ALL ?28 (AND (MAN ?28)
+      (AND T (AND (LOVE ?28 ?30)
+         (EXISTS ?30 (AND (WOMAN ?30)
+               T))))))
+   (AND (EXISTS ?39 (AND (PERSON ?39) T)) (LIKE ?28 ?39)))
 ```
-
-            `(AND T (AND (LOVE ?28 ?30)`
-
-                  `(EXISTS ?30 (AND (WOMAN ?30)`
-
-                              `T))))))`
-
-      `(AND (EXISTS ?39 (AND (PERSON ?39) T)) (LIKE ?28 ?39)))`
 
 `Every man that a woman loves` &blank; `likes a person.`
 
 ```lisp
 (AND (ALL ?37 (AND (MAN ?37)
+      (AND (EXISTS ?20 (AND (WOMAN ?20) T))
+        (AND T (LOVE ?20 ?37)))))
+   (AND (EXISTS ?39 (AND (PERSON ?39) T)) (LIKE ?37 ?39)))
 ```
-
-            `(AND (EXISTS ?20 (AND (WOMAN ?20) T))`
-
-                `(AND T (LOVE ?20 ?37)))))`
-
-      `(AND (EXISTS ?39 (AND (PERSON ?39) T)) (LIKE ?37 ?39)))`
 
 `Every man that loves a bird that` &blank; `flies likes a person.`
 
 ```lisp
 (AND (ALL ?28 (AND (MAN ?28)
+      (AND T (AND (EXISTS ?54
+         (AND (BIRD ?54)
+             (AND T (FLY ?54))))
+        (LOVE ?28 ?54)))))
+   (AND (EXISTS ?60 (AND (PERSON ?60) T)) (LIKE ?28 ?60)))
 ```
-
-            `(AND T (AND (EXISTS ?54`
-
-                  `(AND (BIRD ?54)`
-
-                          `(AND T (FLY ?54))))`
-
-                `(LOVE ?28 ?54)))))`
-
-      `(AND (EXISTS ?60 (AND (PERSON ?60) T)) (LIKE ?28 ?60)))`
 
 Actually, there are limitations on the situations in which gaps can appear.
 In particular, it is rare to have a gap in the subject of a sentence, except in the case of a relative clause.
@@ -1103,34 +857,27 @@ Consider again a rule from [section 20.4](#s0025):
 
 ```lisp
 (rule (S (and ?np ?vp)) -->
+   (NP ?agr ?x ?np)
+   (VP ?agr ?x ?vp))
 ```
-
-      `(NP ?agr ?x ?np)`
-
-      `(VP ?agr ?x ?vp))`
 
 If we were to alter this rule to produce a simplified semantic interpretation, it would look like the following, where the predicate `and*` simplifies a list of conjunctions into a single conjunction:
 
 ```lisp
 (rule (S ?sem) -->
+   (np ?agr ?x ?np)
+   (vp ?agr ?x ?vp)
+   (:test (and*(?np ?vp) ?sem)))
 ```
-
-      `(np ?agr ?x ?np)`
-
-      `(vp ?agr ?x ?vp)`
-
-      `(:test (and*(?np ?vp) ?sem)))`
 
 Many rules will have this form, so we adopt a simple convention: if the last argument of the constituent on the left-hand side of a rule is the keyword `:sem`, then we will build the semantics by replacing `:sem` with a conjunction formed by combining all the last arguments of the constituents on the right-hand side of the rule.
 `A==>` arrow will be used for rules that follow this convention, so the following rule is equivalent to the one above:
 
 ```lisp
 (rule (S :sem) ==>
+   (NP ?agr ?x ?np)
+   (VP ?agr ?x ?vp))
 ```
-
-      `(NP ?agr ?x ?np)`
-
-      `(VP ?agr ?x ?vp))`
 
 It is sometimes useful to introduce additional semantics that does not come from one of the constituents.
 This can be indicated with an element of the right-hand side that is a list starting with `:sem`.
@@ -1138,13 +885,10 @@ For example, the following rule adds to the semantics the fact that `?x` is the 
 
 ```lisp
 (rule (S :sem) ==>
+   (NP ?agr ?x ?np)
+   (VP ?agr ?x ?vp)
+   (:sem (topic ?x)))
 ```
-
-      `(NP ?agr ?x ?np)`
-
-      `(VP ?agr ?x ?vp)`
-
-      `(:sem (topic ?x)))`
 
 Before implementing the rule function for the `==>` arrow, it is worth considering if there are other ways we could make things easier for the rule writer.
 One possibility is to provide a notation for describing examples.
@@ -1153,13 +897,10 @@ For the `S` rule, we could add examples like this:
 
 ```lisp
 (rule (S :sem) ==>
+   (:ex "John likes Mary" "He sleeps")
+   (NP ?agr ?x ?np)
+   (VP ?agr ?x ?vp))
 ```
-
-      `(:ex "John likes Mary" "He sleeps")`
-
-      `(NP ?agr ?x ?np)`
-
-      `(VP ?agr ?x ?vp))`
 
 These examples not only serve as documentation for the rule but also can be stored under `S` and subsequently run when we want to test if `S` is in fact implemented properly.
 
@@ -1168,15 +909,11 @@ Consider the rule that says that a sentence can consist of two sentences joined 
 
 ```lisp
 (rule (S (?conj ?sl ?s2)) ==>
+   (:ex "John likes Mary and Mary likes John")
+   (S ?sl)
+   (Conj ?conj)
+   (S ?s2))
 ```
-
-      `(:ex "John likes Mary and Mary likes John")`
-
-      `(S ?sl)`
-
-      `(Conj ?conj)`
-
-      `(S ?s2))`
 
 While this rule is correct as a declarative statement, it will run into difficulty when run by the standard top-down depth-first DCG interpretation process.
 The top-level goal of parsing an `S` will lead immediately to the subgoal of parsing an `S`, and the resuit will be an infinite loop.
@@ -1187,13 +924,10 @@ Thus, the following rule says that a sentence can consist of two sentences, wher
 
 ```lisp
 (rule (S (?conj ?sl ?s2)) ==>
+   (S_ ?sl)
+   (Conj ?conj)
+   (S ?s2))
 ```
-
-      `(S_ ?sl)`
-
-      `(Conj ?conj)`
-
-      `(S ?s2))`
 
 We also need a rule that says that a possibly conjoined sentence can consist of a nonconjoined sentence:
 
@@ -1356,15 +1090,9 @@ We also want to generate automatically (or as easily as possible) rules of the f
 
 ```lisp
 (rule (S (?conj ?sl ?s2)) ==>
-```
-
-      `(S_ ?sl)`
-
-      `(Conj ?conj)`
-
-      `(S ?s2))`
-
-```lisp
+   (S_ ?sl)
+   (Conj ?conj)
+   (S ?s2))
 (rule (S ?sem) ==> (S_ ?sem))
 ```
 
@@ -1380,21 +1108,11 @@ I have added ... to show where arguments to the predicate other than the semanti
 
 ```lisp
 (rule (S ... ?s-combined) ==>
-```
-
-      `(S_ ... ?seml)`
-
-      `(Conj_S ?seml ?s-combined))`
-
-```lisp
+   (S_ ... ?seml)
+   (Conj_S ?seml ?s-combined))
 (rule (Conj_S ?seml (?conj ?seml ?sem2)) ==>
-```
-
-      `(Conj ?conj)`
-
-      `(S ... ?sem2))`
-
-```lisp
+   (Conj ?conj)
+   (S ... ?sem2))
 (rule (Conj_S ?seml ?seml) ==>)
 ```
 
@@ -1405,11 +1123,9 @@ So the user will type:
 
 ```lisp
 (conj-rule (Conj_S ?seml (?conj ?seml ?sem2)) ==>
+   (Conj ?conj)
+   (S ?a ?b ?c ?sem2))
 ```
-
-      `(Conj ?conj)`
-
-      `(S ?a ?b ?c ?sem2))`
 
 Here is the macro definition:
 
@@ -1521,15 +1237,11 @@ should compile into the equivalent of :
 
 ```lisp
 (<- (A ?S0 ?S4)
+   (B ?S0 ?S1)
+   (OR (AND (C ?S1 ?S2) (= ?S2 ?S3))
+  (AND (D ?S1 ?S2) (E ?S2 ?S3)))
+   (F ?S3 ?S4))
 ```
-
-      `(B ?S0 ?S1)`
-
-      `(OR (AND (C ?S1 ?S2) (= ?S2 ?S3))`
-
-    `(AND (D ?S1 ?S2) (E ?S2 ?S3)))`
-
-      `(F ?S3 ?S4))`
 
 ## 20.10 Answers
 
@@ -1539,50 +1251,29 @@ The fix is to `gensym` symbols that are guaranteed to be unique.
 
 ### Answer 20.5
 
-`(defun setup-braces Uoptional (on?
-t) (readtable *readtable*))`
-
-      `"Make [a b] read as (:word a b) and {a b} as (:test a b c) if ON?
-is true; otherwise revert {[]} to normal."`
-
-      `if ON?
-is true; otherwise revert {[]} to normal."`
-
-      `(if (not on?)`
-
-      `(map nil #'(lambda (c)`
-
-              `(set-macro-character c (get-macro-character #\a)`
-
-                        `t readtable))`
-
-        `"{[]}")`
-
-      `(progn`
-
-        `(set-macro-character`
-
-          `#\] (get-macro-character #\)) nil readtable)`
-
-        `(set-macro-character`
-
-          `#\} (get-macro-character #\)) nil readtable)`
-
-        `(set-macro-character`
-
-          `#\[ #'(lambda (s ignore)`
-
-                  `(cons :word (read-delimited-list #\] s t)))`
-
-          `nil readtable)`
-
-        `(set-macro-character`
-
-          `#\{ #'(lambda (s ignore)`
-
-                  `(cons :test (read-delimited-list #\} s t)))`
-
-          `nil readtable))))`
+```lisp
+(defun setup-braces Uoptional (on? t) (readtable *readtable*))
+   "Make [a b] read as (:word a b) and {a b} as (:test a b c) if ON? is true; otherwise revert {[]} to normal."
+   if ON? is true; otherwise revert {[]} to normal."
+   (if (not on?)
+   (map nil #'(lambda (c)
+       (set-macro-character c (get-macro-character #\a)
+            t readtable))
+    "{[]}")
+   (progn
+    (set-macro-character
+     #\] (get-macro-character #\)) nil readtable)
+    (set-macro-character
+     #\} (get-macro-character #\)) nil readtable)
+    (set-macro-character
+     #\[ #'(lambda (s ignore)
+         (cons :word (read-delimited-1ist #\] s t)))
+     nil readtable)
+    (set-macro-character
+     #\{ #'(lambda (s ignore)
+         (cons :test (read-delimited-1ist #\} s t)))
+     nil readtable))))
+```
 
 ----------------------
 
