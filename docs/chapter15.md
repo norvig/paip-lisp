@@ -97,7 +97,7 @@ The number 5, for example, is a polynomial by our mathematical definition of pol
 But it is represented as 5, not as a vector, so `(typep 5 'polynomial)` will be false.
 The word "polynomial" is used ambiguously to refer to both the mathematical concept and the Lisp type, but it should be clear from context which is meant.
 
-A glossary for the canonical simplifier program is given in [figure  15.1](#f0010).
+A glossary for the canonical simplifier program is given in [figure 15.1](#f0010).
 
 | []()                                                        |
 |-------------------------------------------------------------|
@@ -112,15 +112,11 @@ More details on efficiency issues are given in [Chapter 9](B9780080571157500091.
 
 ```lisp
 (proclaim '(inline main-var degree coef
-```
-
-              `var= var> poly make-poly))`
-
-```lisp
+       var= var> poly make-poly))
 (deftype polynomial () 'simple-vector)
 (defun main-var (p) (svref (the polynomial p) 0))
-(defun coef (p i)  (svref (the polynomial p) (+ i 1)))
-(defun degree (p)  (-(length (the polynomial p)) 2))
+(defun coef (p i) (svref (the polynomial p) (+ i 1)))
+(defun degree (p) (-(length (the polynomial p)) 2))
 ```
 
 We had to make another design decision in defining `coef`, the function to extract a coefficient from a polynomial.
@@ -345,17 +341,12 @@ First, the exponentiation function:
 
 ```lisp
 (defun poly^n (p n)
+ "Raise polynomial p to the nth power, n>=0."
+ (check-type n (integer 0 *))
+ (cond ((= n 0) (assert (not (eql p 0))) 1)
+   ((integerp p) (expt p n))
+   (t (poly*poly p (poly^n p (- n 1))))))
 ```
-
-  `"Raise polynomial p to the nth power, n>=0."`
-
-  `(check-type n (integer 0 *))`
-
-  `(cond ((= n 0) (assert (not (eql p 0))) 1)`
-
-      `((integerp p) (expt p n))`
-
-      `(t (poly*poly p (poly^n p (- n 1))))))`
 
 ## 15.2 Differentiating Polynomials
 
@@ -500,27 +491,14 @@ CANON> (3 * x + y + z + x + 4 * x)
 ((8 * X) + (Y + Z))
 CANON> ((x + 1) ^ 10)
 ((X ^ 10) + (10 * (X ^ 9)) + (45 * (X ^ 8)) + (120 * (X ^ 7))
-```
-
-  `+ (210 * (X ^ 6)) + (252 * (X ^ 5)) + (210 * (X ^ 4))`
-
-  `+ (120 * (X ^ 3)) + (45 * (X ^ 2)) + (10 * X) + 1)`
-
-```lisp
+ + (210 * (X ^ 6)) + (252 * (X ^ 5)) + (210 * (X ^ 4))
+ + (120 * (X ^ 3)) + (45 * (X ^ 2)) + (10 * X) + 1)
 CANON> ((x + 1) ^ 10 + (x - 1) ^ 10)
 ((2 * (X ^ 10)) + (90 * (X ^ 8)) + (420 * (X ^ 6))
-```
-
-  `+ (420 * (X ^ 4)) + (90 * (X ^ 2)) + 2)`
-
-```lisp
+ + (420 * (X ^ 4)) + (90 * (X ^ 2)) + 2)
 CANON> ((x + 1) ^ 10 - (x - 1) ^ 10)
 ((20 * (X ^ 8)) + (240 * (X ^ 7)) + (504 * (X ^ 5))
-```
-
-  `+ (240 * (X ^ 3)) + (20 * X))`
-
-```lisp
+ + (240 * (X ^ 3)) + (20 * X))
 CANON> (3 * x ^ 3 + 4 * x * y * (x - 1) + x ^ 2 * (x + y))
 ((4 * (X ^ 3)) + ((5 * Y) * (X ^ 2)) + ((-4 * Y) * X))
 CANON> (3 * x ^ 3 + 4 * x * w * (x - 1) + x ^ 2 * (x + w))
@@ -545,13 +523,10 @@ The particular benchmark we will use here is raising 1 ***+** x + y + z* to the 
 
 ```lisp
 (defun r15-test ()
+ (let ((r (prefix->canon'(+ 1 (+ x (+ y z))))))
+  (time (poly^n r 15))
+  nil))
 ```
-
-  `(let ((r (prefix->canon'(+ 1 (+ x (+ y z))))))`
-
-    `(time (poly^n r 15))`
-
-    `nil))`
 
 This takes .97 seconds on our system.
 The equivalent test with the original `frpoly` code takes about the same time: .98 seconds.
@@ -573,21 +548,12 @@ Such an algorithm takes only log *n* multiplications instead of *n.* We can add 
 
 ```lisp
 (defun poly^n (p n)
-```
-
-  `"Raise polynomial p to the nth power, n>=0."`
-
-  `(check-type n (integer 0 *))`
-
-  `(cond ((= n 0) (assert (not (eql p 0))) 1)`
-
-      `((integerp p) (expt p n))`
-
-      `((evenp n) (poly^2 (poly^n p (/ n 2)))) ;***`
-
-      `(t (poly*poly p (poly^n p (- n 1))))))`
-
-```lisp
+ "Raise polynomial p to the nth power, n>=0."
+ (check-type n (integer 0 *))
+ (cond ((= n 0) (assert (not (eql p 0))) 1)
+   ((integerp p) (expt p n))
+   ((evenp n) (poly^2 (poly^n p (/ n 2)))) ;***
+   (t (poly*poly p (poly^n p (- n 1))))))
 (defun poly^2 (p) (poly*poly p p))
 ```
 
@@ -607,35 +573,24 @@ The initial algorithm is simple:
 
 ```lisp
 (defun poly^n (p n)
+ (let ((result 1))
+  (loop repeat n do (setf result (poly*poly p result)))
+  result))
 ```
-
-  `(let ((result 1))`
-
-    `(loop repeat n do (setf result (poly*poly p result)))`
-
-    `result))`
 
 But to change it, we have to change the repeat loop to a `while` loop, explicitly put in the decrement of *n*, and insert a test for the even case:
 
 ```lisp
 (defun poly^n (p n)
+ (let ((result 1))
+  (loop while (> n 0)
+   do (if (evenp n)
+     (setf p (poly^2 p)
+       n (/ n 2))
+     (setf result (poly*poly p result)
+       n (- n 1))))
+  result))
 ```
-
-  `(let ((result 1))`
-
-    `(loop while (> n 0)`
-
-      `do (if (evenp n)`
-
-          `(setf p (poly^2 p)`
-
-              `n (/ n 2))`
-
-          `(setf result (poly*poly p result)`
-
-              `n (- n 1))))`
-
-    `result))`
 
 For this problem, it is clear that thinking recursively leads to a simpler function that is easier to modify.
 
@@ -860,26 +815,17 @@ A brief history of symbolic algebra systems is given in [chapter 8](B97800805711
 
 ```lisp
 (defun poly/poly (p q)
+ "Divide p by q: if d is the greatest common divisor of p and q
+ then p/q = (p/d) / (q/d). Note if q-1. then p/q = p."
+ (if (eql q 1)
+   p
+   (let ((d (poly-gcd p q)))
+    (make-rat (poly/poly p d)
+        (poly/poly q d)))))
 ```
 
-  `"Divide p by q: if d is the greatest common divisor of p and q`
-
-  `then p/q = (p/d) / (q/d).
-Note if q-1.
-then p/q = p."`
-
-  `(if (eql q 1)`
-
-      `p`
-
-      `(let ((d (poly-gcd p q)))`
-
-        `(make-rat (poly/poly p d)`
-
-                `(poly/poly q d)))))`
-
 **Answer 15.10** (1) An integer takes less time and space to process.
-(2) Representing numbers as a polynomial would cause an infinit`e` regress, because the coefficients would be numbers.
+(2) Representing numbers as a polynomial would cause an infinite regress, because the coefficients would be numbers.
 (3) Unless a policy was decided upon, the representation would not be canonical, since `#(x 3)` and `#(y 3)` both represent 3.
 
 ----------------------

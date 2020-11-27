@@ -40,37 +40,21 @@ The following is a slightly modified version of one of MYCIN's rules, along with
 
 ```lisp
 (defrule 52
-```
-
-  `if (site culture is blood)`
-
-    `(gram organism is neg)`
-
-    `(morphology organism is rod)`
-
-    `(burn patient is serious)`
-
-  `then .4`
-
-    `(identity organism is pseudomonas))`
-
-```lisp
+ if (site culture is blood)
+  (gram organism is neg)
+  (morphology organism is rod)
+  (burn patient is serious)
+ then .4
+  (identity organism is pseudomonas))
 Rule 52:
+ If
+  1) THE SITE OF THE CULTURE IS BLOOD
+  2) THE GRAM OF THE ORGANISM IS NEG
+  3) THE MORPHOLOGY OF THE ORGANISM IS ROD
+  4) THE BURN OF THE PATIENT IS SERIOUS
+ Then there is weakly suggestive evidence (0.4) that
+  1) THE IDENTITY OF THE ORGANISM IS PSEUDOMONAS
 ```
-
-  `If`
-
-    `1) THE SITE OF THE CULTURE IS BLOOD`
-
-    `2) THE GRAM OF THE ORGANISM IS NEG`
-
-    `3) THE MORPHOLOGY OF THE ORGANISM IS ROD`
-
-    `4) THE BURN OF THE PATIENT IS SERIOUS`
-
-  `Then there is weakly suggestive evidence (0.4) that`
-
-    `1) THE IDENTITY OF THE ORGANISM IS PSEUDOMONAS`
 
 MYCIN lead to the development of the EMYCIN expert-system shell.
 EMYCIN stands for "essential MYCIN," although it is often mispresented as "empty MYCIN."
@@ -454,31 +438,22 @@ Here is an example of a rule that references all three contexts:
 
 ```lisp
 (defrule 52
+ if (site culture is blood)
+   (gram organism is neg)
+   (morphology organism is rod)
+   (burn patient is serious)
+ then .4
+   (identity organism is pseudomonas))
 ```
-
-  `if (site culture is blood)`
-
-      `(gram organism is neg)`
-
-      `(morphology organism is rod)`
-
-      `(burn patient is serious)`
-
-  `then .4`
-
-      `(identity organism is pseudomonas))`
 
 Ignoring certainty factors for the moment, this MYCIN rule is equivalent to a Prolog rule of the form:
 
 ```lisp
 (<- (identity ?o ?pseudomonas)
+ (and (culture` ?c) `(site ?c blood)
+  (organism ?o) (gram ?o neg) (morphology ?o rod)
+  (patient ?p) (burn ?p serious)))
 ```
-
-  `(and (culture` ?c) `(site ?c blood)`
-
-    `(organism ?o) (gram ?o neg) (morphology ?o rod)`
-
-    `(patient ?p) (burn ?p serious)))`
 
 The context mechanism provides sufficient flexibility to handle many of the cases that would otherwise be handled by variables.
 One important thing that cannot be done is to refer to more than one instance of the same context.
@@ -1025,15 +1000,8 @@ Patient's name: Sylvia Fischer
 Sex: female
 Age: 27
 ------ CULTURE-1 ------
-```
-
-`From what site was the specimen for CULTURE-1 taken?
-blood`
-
-`How many days ago was this culture (CULTURE-1) obtained?
-3`
-
-```lisp
+From what site was the specimen for CULTURE-1 taken? blood
+How many days ago was this culture (CULTURE-1) obtained? 3
 ------ ORGANISM-1 ------
 Enter the identity (genus) of ORGANISM-1: unknown
 The gram stain of ORGANISM-1: ?
@@ -1046,12 +1014,7 @@ The dialog continues:
 
 ```lisp
 Is ORGANISM-1 a rod or coccus (etc.): rod
-```
-
-`What is the AEROBICITY of ORGANISM-1?
-Why`
-
-```lisp
+What is the AEROBICITY of ORGANISM-1? Why
 [Why is the value of AEROBICITY being asked for?]
 It is known that:
       1) THE GRAM OF THE ORGANISM IS NEG
@@ -1068,18 +1031,10 @@ The user wants to know why the system is asking about the organism's aerobicity.
 The reply shows the current rule, what is already known about the rule, and the fact that if the organism is aerobic, then we can conclude something about its identity.
 In this hypothetical case, the organism is in fact aerobic:
 
-`What is the AEROBICITY of ORGANISM-1?
-aerobic`
-
-`Is Sylvia Fischer a compromised host?
-yes`
-
-`Is Sylvia Fischer a burn patient?
-If so.
-mild or serious?
-why`
-
 ```lisp
+What is the AEROBICITY of ORGANISM-1? aerobic
+Is Sylvia Fischer a compromised host? yes
+Is Sylvia Fischer a burn patient? If so. mild or serious? why
 [Why is the value of BURN being asked for?]
 It is known that:
       1) THE SITE OF THE CULTURE IS BLOOD
@@ -1087,17 +1042,11 @@ It is known that:
       3) THE MORPHOLOGY OF THE ORGANISM IS ROD
 Therefore,
 Rule 52:
-  If
-      1) THE BURN OF THE PATIENT IS SERIOUS
-  Then there is weakly suggestive evidence (0.4) that
-      1) THE IDENTITY OF THE ORGANISM IS PSEUDOMONAS
-```
-
-`Is Sylvia Fischer a burn patient?
-If so, mild or serious?
-serious`
-
-```lisp
+ If
+   1) THE BURN OF THE PATIENT IS SERIOUS
+ Then there is weakly suggestive evidence (0.4) that
+   1) THE IDENTITY OF THE ORGANISM IS PSEUDOMONAS
+Is Sylvia Fischer a burn patient? If so, mild or serious? serious
 Findings for ORGANISM-1:
   IDENTITY: ENTEROBACTERIACEAE (0.800) PSEUDOMONAS (0.760)
 ```
@@ -1108,18 +1057,14 @@ Rules 52 and 75 both support the hypothesis of pseudomonas.
 The certainty factors of the two rules, .6 and .4, are combined by the formula .6 + .4 - (.6 x .4) = .76.
 After printing the findings for the first organism, the system asks if another organism was obtained from this culture:
 
-`Is there another ORGANISM?
-(Y or N) Y`
-
 ```lisp
+Is there another ORGANISM? (Y or N) Y
 ------ ORGANISM-2 ------
 Enter the identity (genus) of ORGANISM-2: unknown
 The gram stain of ORGANISM-2: (neg .8 pos .2)
 Is ORGANISM-2 a rod or coccus (etc.): rod
+What is the AEROBICITY of ORGANISM-2? anaerobic
 ```
-
-`What is the AEROBICITY of ORGANISM-2?
-anaerobic`
 
 For the second organism, the lab test was inconclusive, so the user entered a qualified answer indicating that it is probably gram-negative, but perhaps gram-positive.
 This organism was also a rod but was anaerobic.
@@ -1134,14 +1079,11 @@ Findings for ORGANISM-2:
 
 Finally, the program gives the user the opportunity to extend the context tree with new organisms, cultures, or patients:
 
-`Is there another ORGANISM?
-(Y or N) N`
-
-`Is there another CULTURE?
-(Y or N) N`
-
-`Is there another PATIENT?
-(Y or N) N`
+```lisp
+Is there another ORGANISM? (Y or N) N
+Is there another CULTURE? (Y or N) N
+Is there another PATIENT? (Y or N) N
+```
 
 The set of rules listed above do not demonstrate two important features of the system: the ability to backward-chain, and the ability to use operators other than i s in premises.
 
@@ -1270,34 +1212,21 @@ In other words, have the prompts and findings printed like this:
 Patient's name: Sylvia Fischer
 Sex: female
 Age: 27
-      ------ CULTURE-1 ------
+   ------ CULTURE-1 ------
+   From what site was the specimen for CULTURE-1 taken? blood
+   How many days ago was this culture (CULTURE-1) obtained? 3
+     ------ ORGANISM-1 ------
+     Enter the identity (genus) of ORGANISM-1: unknown
+     The gram stain of ORGANISM-1: neg
+     ...
+     Findings for ORGANISM-1:
+      IDENTITY: ENTEROBACTERIACEAE (0.800) PSEUDOMONAS (0.760)
+     Is there another ORGANISM? (Y or N) N
+   Is there another CULTURE? (Y or N) N
+Is there another PATIENT? (Y or N) N
 ```
 
-`      From what site was the specimen for CULTURE-1 taken?
-blood`
-
-`      How many days ago was this culture (CULTURE-1) obtained?
-3`
-
-```lisp
-          ------ ORGANISM-1 ------
-          Enter the identity (genus) of ORGANISM-1: unknown
-          The gram stain of ORGANISM-1: neg
-          ...
-          Findings for ORGANISM-1:
-            IDENTITY: ENTEROBACTERIACEAE (0.800) PSEUDOMONAS (0.760)
-```
-
-`          Is there another ORGANISM?
-(Y or N) N`
-
-`      Is there another CULTURE?
-(Y or N) N`
-
-`Is there another PATIENT?
-(Y or N) N`
-
-**Exercise  16.11 [h]** We said that our `emycin` looks at all possible rules for each parameter, because there is no telling how a later rule may affect the certainty factor.
+**Exercise 16.11 [h]** We said that our `emycin` looks at all possible rules for each parameter, because there is no telling how a later rule may affect the certainty factor.
 Actually, that is not quite true.
 If there is a rule that leads to a conclusion with certainty 1, then no other rules need be considered.
 This was called a *unity path*.
