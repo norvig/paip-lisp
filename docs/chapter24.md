@@ -76,11 +76,9 @@ Also note that ANSI renames the `lisp package` as `common-lisp`.
 
 ```lisp
 (defpackage emycin
+ (:use common-lisp)
+ (:export emycin defrule defcontext defparm yes/no yes no is))
 ```
-
-  `(:use common-lisp)`
-
-  `(:export emycin defrule defcontext defparm yes/no yes no is))`
 
 For more on packages and building systems, see [section 25.16](B978008057115750025X.xhtml#s0110) or *Common Lisp the Language.*
 
@@ -110,19 +108,13 @@ In the following example `f`, can you identify which of the twelve uses of `f` r
 
 ```lisp
 (defun f (f)
+ (block f
+  (tagbody
+   f (catch 'f
+    (if (typep f 'f)
+     (throw 'f (go f)))
+    (funcall #'f (get (symbol-value 'f) 'f))))))
 ```
-
-  `(block f`
-
-    `(tagbody`
-
-      `f (catch 'f`
-
-        `(if (typep f 'f)`
-
-          `(throw 'f (go f)))`
-
-        `(funcall #'f (get (symbol-value 'f) 'f))))))`
 
 ## 24.2 Conditions and Error Handling
 
@@ -166,9 +158,10 @@ The simplest way of handling an error is with the macro `ignore-errors`.
 If noerror occurs, `ignore-errors` is just like `progn`.
 But if an error does occur, `ignore-errors` will return `nil` as its first value and `t` as its second, to indicate that an error has occurred but without doing anything else:
 
-`> (ignore-errors (/ 3 1))`=> `3 NIL`
-
-`> (ignore-errors (/ 3 0))`=> `NIL T`
+```lisp
+> (ignore-errors (/ 3 1)) => 3 NIL
+> (ignore-errors (/ 3 0)) => NIL T
+```
 
 `ignore-errors` is a very coarse-grain tool.
 In an interactive interpreter, `ignore-errors` can be used to recover from any and all errors in the response to one input and get back to the read-process-print loop for the next input.
@@ -187,19 +180,11 @@ In the following example, `handler-case` is used to handle division by zero and 
 
 ```lisp
 (defun div (x y)
-```
-
-  `(handler-case (/ x y)`
-
-    `(division-by-zero () most-positive-fixnum)`
-
-    `(arithmetic-error () 0)))`
-
-`> (div 8 2)`=> `4`
-
-`> (div 3 0)`=> `16777215`
-
-```lisp
+ (handler-case (/ x y)
+  (division-by-zero () most-positive-fixnum)
+  (arithmetic-error () 0)))
+> (div 8 2) => 4
+> (div 3 0) => 16777215
 > (div 'xyzzy 1)
 Error: The value of NUMBER, XYZZY, should be a number
 ```
@@ -228,15 +213,12 @@ Unfortunately, it is inefficient: both `find-all-if` and `mapcar` cons up interm
 The following two versions using `loop` and `dolist` are efficient but not as pretty:
 
 ```lisp
-;; Using Loop                      ;; Using dolist
-(loop for num in nums      (let ((sum 0))
+;; Using Loop           ;; Using dolist
+(loop for num in nums   (let ((sum 0))
+  when (plusp num)        (dolist (num nums sum)
+  sum (sqrt num))            (when (plusp num)
+                                                            (incf sum num))))
 ```
-
-    `when (plusp num)                (dolist (num nums sum)`
-
-    `sum (sqrt num))                        (when (plusp num)`
-
-                                                                                                                        `(incf sum num))))`
 
 A compromise between the two approaches is provided by the *series* facility, defined in appendix A of *Common Lisp the Language*, 2d edition.
 The example using series would look like:
@@ -269,71 +251,42 @@ Here are two examples:
 ```lisp
 (loop for i from 1 to n do (print (sqrt i))) =
 (LET* ((I 1)
-```
-
-        `(TEMP N))`
-
-  `(TAGBODY`
-
-      `LOOP`
-
-        `(IF (> I TEMP)`
-
-              `(GO END))`
-
-        `(PRINT (SQRT I))`
-
-        `(SETF I (+ I 1))`
-
-        `(GO LOOP)`
-
-      `END))`
-
-```lisp
+    (TEMP N))
+ (TAGBODY
+   LOOP
+    (IF (> I TEMP)
+       (GO END))
+    (PRINT (SQRT I))
+    (SETF I (+ I 1))
+    (GO LOOP)
+   END))
 (loop for v in list do (print v)) =
 (LET* ((IN LIST)
+    (V (CAR IN)))
+   (TAGBODY
+   LOOP
+    (IF (NULL IN)
+       (GO END))
+    (PRINT V)
+    (SETF IN (CDR IN))
+    (SETF V (CAR IN))
+    (GO LOOP)
+   END))
 ```
-
-        `(V (CAR IN)))`
-
-      `(TAGBODY`
-
-      `LOOP`
-
-        `(IF (NULL IN)`
-
-              `(GO END))`
-
-        `(PRINT V)`
-
-        `(SETF IN (CDR IN))`
-
-        `(SETF V (CAR IN))`
-
-        `(GO LOOP)`
-
-      `END))`
 
 Each loop initializes some variables, then enters a loop with some exit tests and a body.
 So the template is something like:
 
 ```lisp
 (let* (*variables...*)
+ (tagbody
+  loop
+   (if *exit-tests*
+    (go end))
+   *Body*
+   (go loop)
+  end))
 ```
-
-  `(tagbody`
-
-    `loop`
-
-      `(if *exit-tests*`
-
-        `(go end))`
-
-      *`Body`*
-
-      `(go loop)`
-
-    `end))`
 
 Actually, there's more we might need in the general case.
 There may be a prologue that appears before the loop but after the variable initialization, and similarly there may be an epilogue after the loop.
@@ -342,37 +295,25 @@ So the complete template is:
 
 ```lisp
 (let* (*variables...*)
+ (block *name*
+  *Prologue*
+  (tagbody
+   Loop
+    *body*
+    (go loop)
+   end
+    *epilogue*
+    (return *result*))))
 ```
-
-  `(block *name*`
-
-    *`Prologue`*
-
-    `(tagbody`
-
-      `Loop`
-
-        *`body`*
-
-        `(go loop)`
-
-      `end`
-
-        *`epilogue`*
-
-        `(return *result*))))`
 
 To generate this template from the body of a `loop` form, we will employ a structure with fields for each of the parts of the template:
 
 ```lisp
 (defstruct loop
+  "A structure to hold parts of a loop as it is built."
+  (vars nil) (prologue nil) (body nil) (steps nil)
+  (epilogue nil) (result nil) (name nil))
 ```
-
-    `"A structure to hold parts of a loop as it is built."`
-
-    `(vars nil) (prologue nil) (body nil) (steps nil)`
-
-    `(epilogue nil) (result nil) (name nil))`
 
 Now the `loop` macro needs to do four things: (1) decide if this is a use of the simple, non-keyword `loop` or the complex ANSI `loop`.
 If it is the latter, then (2) make an instance of the `loop` structure, (3) process the body of the loop, filling in apprpriate fields of the structure, and (4) place the filled fields into the template.
@@ -380,53 +321,29 @@ Here is the `loop` macro:
 
 ```lisp
 (defmacro loop (&rest exps)
-```
-
-    `"Supports both ANSI and simple LOOP.`
-
-    `Warning: Not every loop keyword is supported."`
-
-    `(if (every #'listp exps)`
-
-        `;; No keywords implies simple loop:`
-
-        `'(block nil (tagbody loop ,@exps (go loop)))`
-
-        `;; otherwise process loop keywords:`
-
-        `(let ((l (make-loop)))`
-
-            `(parse-loop-body l exps)`
-
-            `(fill-loop-template l))))`
-
-```lisp
+  "Supports both ANSI and simple LOOP.
+  Warning: Not every loop keyword is supported."
+  (if (every #'listp exps)
+    ;; No keywords implies simple loop:
+    '(block nil (tagbody loop ,@exps (go loop)))
+    ;; otherwise process loop keywords:
+    (let ((l (make-loop)))
+      (parse-loop-body l exps)
+      (fill-loop-template l))))
 (defun fill-loop-template (l)
+  "Use a loop-structure instance to fill the template."
+  '(let* .(nreverse (loop-vars l))
+    (block ,(loop-name l)
+     ,@(nreverse (loop-prologue l)
+     (tagbody
+      loop
+        ,@(nreverse (loop-body l))
+        ,@(nreverse (loop-steps l))
+        (go loop)
+      end
+        ,@(nreverse (loop-epilogue l))
+        (return ,(loop-result l))))))
 ```
-
-    `"Use a loop-structure instance to fill the template."`
-
-    `'(let* .(nreverse (loop-vars l))`
-
-        `(block ,(loop-name l)`
-
-          `,@(nreverse (loop-prologue l)`
-
-          `(tagbody`
-
-            `loop`
-
-                `,@(nreverse (loop-body l))`
-
-                `,@(nreverse (loop-steps l))`
-
-                `(go loop)`
-
-            `end`
-
-                `,@(nreverse (loop-epilogue l))`
-
-                `(return ,(loop-result l))))))`
 
 Most of the work is in writing `parse-loop-body`, which takes a list of expressions and parses them into the proper fields of a loop structure.
 It will use the following auxiliary functions:
@@ -434,25 +351,15 @@ It will use the following auxiliary functions:
 ```lisp
 (defun add-body (l exp) (push exp (loop-body l)))
 (defun add-test (l test)
-```
-
-    `"Put in a test for loop termination."`
-
-    `(push '(if .test (go end)) (loop-body l)))`
-
-```lisp
+  "Put in a test for loop termination."
+  (push '(if .test (go end)) (loop-body l)))
 (defun add-var (l var init &optional (update nil update?))
+  "Add a variable, maybe including an update step."
+  (unless (assoc var (loop-vars l))
+    (push (list var init) (loop-vars l)))
+  (when update?
+    (push '(setq ,var ,update) (loop-steps l))))
 ```
-
-    `"Add a variable, maybe including an update step."`
-
-    `(unless (assoc var (loop-vars l))`
-
-        `(push (list var init) (loop-vars l)))`
-
-    `(when update?`
-
-        `(push '(setq ,var ,update) (loop-steps l))))`
 
 There are a number of alternative ways of implementing this kind of processing.
 One would be to use special variables: `*prologue*, *body*, *epilogue*`, and so on.
@@ -461,15 +368,11 @@ Another possibility is to use local variables and close the definitions of `loop
 
 ```lisp
 (let (body prologue epilogue steps vars name result)
+  (defmacro loop ...)
+  (defun add-body ...)
+  (defun add-test ...)
+  (defun add-var ...))
 ```
-
-    `(defmacro loop ...)`
-
-    `(defun add-body ...)`
-
-    `(defun add-test ...)`
-
-    `(defun add-var ...))`
 
 This is somewhat cleaner style, but some early Common Lisp compilers do not support embedded `defuns`, so I chose to write in a style that I knew would work in all implementations.
 Another design choice would be to return multiple values for each of the components and have `parse-loop-body` put them all together.
@@ -496,53 +399,28 @@ Also, if the user specifies another symbol rather than a list of arguments, this
 
 ```lisp
 (defun parse-loop-body (l exps)
-```
-
-    `"Parse the exps based on the first exp being a keyword.`
-
-    `Continue until all the exps are parsed."`
-
-    `(unless (null exps)`
-
-        `(parse-loop-body`
-
-            `l (call-loop-fn l (first exps) (rest exps)))))`
-
-```lisp
+  "Parse the exps based on the first exp being a keyword.
+  Continue until all the exps are parsed."
+  (unless (null exps)
+    (parse-loop-body
+      l (call-loop-fn l (first exps) (rest exps)))))
 (defun call-loop-fn (l key exps)
-```
-
-    `"Return the loop parsing function for this keyword."`
-
-    `(if (and (symbolp key) (get key 'loop-fn))`
-
-        `(funcall (get key 'loop-fn) l (first exps) (rest exps))`
-
-        `(error "Unknown loop key: "a" key)))`
-
-```lisp
+  "Return the loop parsing function for this keyword."
+  (if (and (symbolp key) (get key 'loop-fn))
+    (funcall (get key 'loop-fn) l (first exps) (rest exps))
+    (error "Unknown loop key: "a" key)))
 (defmacro defloop (key args &rest body)
+  "Define a new LOOP keyword."
+  ;; If the args do not have a third arg, one is supplied.
+  ;; Also, we can define an alias with (defloop key other-key)
+  '(setf (get ',key 'loop-fn)
+    ,(cond ((and (symbolp args) (null body))
+      '#'(lambda (1 x y)
+          (call-loop-fn l '.args (cons x y))))
+       ((and (listp args) (= (length args) 2))
+        '#'(lambda (.@args -exps-) ,@body -exps-))
+       (t '#'(lambda .args ,@body)))))
 ```
-
-    `"Define a new LOOP keyword."`
-
-    `;; If the args do not have a third arg, one is supplied.`
-
-    `;; Also, we can define an alias with (defloop key other-key)`
-
-    `'(setf (get ',key 'loop-fn)`
-
-        `,(cond ((and (symbolp args) (null body))`
-
-            `'#'(lambda (1 x y)`
-
-                    `(call-loop-fn l '.args (cons x y))))`
-
-              `((and (listp args) (= (length args) 2))`
-
-                `'#'(lambda (.@args -exps-) ,@body -exps-))`
-
-              `(t '#'(lambda .args ,@body)))))`
 
 Now we are ready to define some `loop` keywords.
 Each of the following sections refers to (and implements the loop keywords in) a section of chapter 26 of *Common Lisp the Language*, 2d edition.
@@ -569,161 +447,82 @@ Then ail we need to do is call `add-test` to insert code that will exit the loop
 
 ```lisp
 (defloop repeat (l times)
+  "(LOOP REPEAT n ...) does loop body n times."
+  (let ((i (gensym "REPEAT")))
+    (add-var l i times '(- ,i 1))
+    (add-test l '(<= ,i 0))))
 ```
-
-    `"(LOOP REPEAT n ...) does loop body n times."`
-
-    `(let ((i (gensym "REPEAT")))`
-
-        `(add-var l i times '(- ,i 1))`
-
-        `(add-test l '(<= ,i 0))))`
 
 The loop keyword `for` is more complicated, but each case can be analyzed in the same way as `repeat`:
 
 ```lisp
 (defloop as for) ;; AS is the same as FOR
 (defloop for (l var exps)
-```
-
-    `"4 of the 7 cases for FOR are covered here:`
-
-    `(LOOP FOR i FROM s TO e BY inc ...) does arithmetic iteration`
-
-    `(LOOP FOR v IN l ...) iterates for each element of l`
-
-    `(LOOP FOR v ON l ...) iterates for each tail of l`
-
-    `(LOOP FOR v = expr [THEN step]) initializes and iterates v"`
-
-    `(let ((key (first exps))`
-
-            `(source (second exps))`
-
-            `(rest (rest2 exps)))`
-
-        `(ecase key`
-
-            `((from downfrom upfrom to downto upto by)`
-
-          `(loop-for-arithmetic l var exps))`
-
-            `(in (let ((v (gensym "IN")))`
-
-                      `(add-var l v source '(cdr ,v))`
-
-                      `(add-var l var '(car ,v) '(car ,v))`
-
-                      `(add-test l '(null ,v))`
-
-                      `rest))`
-
-            `(on (add-var l var source '(cdr ,var))`
-
-                    `(add-test l '(null .var))`
-
-                    `rest)`
-
-            `(= (if (eq (first rest) 'then)`
-
-                            `(progn`
-
-                                `(pop rest)`
-
-                                `(add-var l var source (pop rest)))`
-
-                            `(progn`
-
-                                `(add-var l var nil)`
-
-                                `(add-body l '(setq ,var .source))))`
-
-                    `rest)`
-
-            `;; ACROSS.
-BEING clauses omitted`
-
-            `)))`
-
-```lisp
+  "4 of the 7 cases for FOR are covered here:
+  (LOOP FOR i FROM s TO e BY inc ...) does arithmetic iteration
+  (LOOP FOR v IN l ...) iterates for each element of l
+  (LOOP FOR v ON l ...) iterates for each tail of l
+  (LOOP FOR v = expr [THEN step]) initializes and iterates v"
+  (let ((key (first exps))
+      (source (second exps))
+      (rest (rest2 exps)))
+    (ecase key
+      ((from downfrom upfrom to downto upto by)
+     (loop-for-arithmetic l var exps))
+      (in (let ((v (gensym "IN")))
+           (add-var l v source '(cdr ,v))
+           (add-var l var '(car ,v) '(car ,v))
+           (add-test l '(null ,v))
+           rest))
+      (on (add-var l var source '(cdr ,var))
+          (add-test l '(null .var))
+          rest)
+      (= (if (eq (first rest) 'then)
+              (progn
+                (pop rest)
+                (add-var l var source (pop rest)))
+              (progn
+                (add-var l var nil)
+                (add-body l '(setq ,var .source))))
+          rest)
+      ;; ACROSS. BEING clauses omitted
+      )))
 (defun loop-for-arithmetic (l var exps)
-```
-
-    `"Parse loop expressions of the form:`
-
-    `(LOOP FOR var [FROM | DOWNFROM | UPFROM exp1] [TO | DOWNTO | UPTO exp2]`
-
-              `[BY exp3]"`
-
-    `;; The prepositions BELOW and ABOVE are omitted`
-
-    `(let ((exp1 0)`
-
-              `(exp2 nil)`
-
-              `(exp3 1)`
-
-              `(down?
-nil))`
-
-        `;; Parse the keywords:`
-
-        `(when (member (first exps) '(from downfrom upfrom))`
-
-          `(setf exp1 (second exps)`
-
-                  `down?
-(eq (first exps) 'downfrom)`
-
-                  `exps (rest2 exps)))`
-
-        `(when (member (first exps) '(to downto upto))`
-
-          `(setf exp2 (second exps)`
-
-                  `down?
-(or down?
-(eq (first exps) 'downto))`
-
-                  `exps (rest2 exps)))`
-
-        `(when (eq (first exps) 'by)`
-
-          `(setf exp3 (second exps)`
-
-                  `exps (rest2 exps)))`
-
-        `;; Add variables and tests:`
-
-        `(add-var l var exp1`
-
-                  `'(,(if down?
-'- '+) ,var ,(maybe-temp l exp3)))`
-
-        `(when exp2`
-
-            `(add-test l '(,(if down?
-'< '>) ,var ,(maybe-temp l exp2))))`
-
-        `;; and return the remaining expressions:`
-
-                  `exps))`
-
-```lisp
+  "Parse loop expressions of the form:
+  (LOOP FOR var [FROM | DOWNFROM | UPFROM exp1] [TO | DOWNTO | UPTO exp2]
+       [BY exp3]"
+  ;; The prepositions BELOW and ABOVE are omitted
+  (let ((exp1 0)
+       (exp2 nil)
+       (exp3 1)
+       (down? nil))
+    ;; Parse the keywords:
+    (when (member (first exps) '(from downfrom upfrom))
+     (setf exp1 (second exps)
+         down? (eq (first exps) 'downfrom)
+         exps (rest2 exps)))
+    (when (member (first exps) '(to downto upto))
+     (setf exp2 (second exps)
+         down? (or down? (eq (first exps) 'downto))
+         exps (rest2 exps)))
+    (when (eq (first exps) 'by)
+     (setf exp3 (second exps)
+         exps (rest2 exps)))
+    ;; Add variables and tests:
+    (add-var l var exp1
+         '(,(if down? '- '+) ,var ,(maybe-temp l exp3)))
+    (when exp2
+      (add-test l '(,(if down? '< '>) ,var ,(maybe-temp l exp2))))
+    ;; and return the remaining expressions:
+         exps))
 (defun maybe-temp (l exp)
+  "Generate a temporary variable, if needed."
+  (if (constantp exp)
+    exp
+    (let ((temp (gensym "TEMP")))
+      (add-var l temp exp)
+      temp)))
 ```
-
-    `"Generate a temporary variable, if needed."`
-
-    `(if (constantp exp)`
-
-        `exp`
-
-        `(let ((temp (gensym "TEMP")))`
-
-            `(add-var l temp exp)`
-
-            `temp)))`
 
 ### End-Test Control (26.7)
 
@@ -744,32 +543,16 @@ Each keyword is quite simple:
 (defloop until (l test) (add-test l test))
 (defloop while (l test) (add-test l '(not .test)))
 (defloop always (l test)
-```
-
-    `(setf (loop-result l) t)`
-
-    `(add-body l '(if (not ,test) (return nil))))`
-
-```lisp
+  (setf (loop-result l) t)
+  (add-body l '(if (not ,test) (return nil))))
 (defloop never (l test)
-```
-
-    `(setf (loop-result l) t)`
-
-    `(add-body l '(if ,test (return nil))))`
-
-```lisp
+  (setf (loop-result l) t)
+  (add-body l '(if ,test (return nil))))
 (defloop thereis (l test) (add-body l '(return-if ,test)))
 (defmacro return-if (test)
-```
-
-    `"Return TEST if it is non-nil."`
-
-    `(once-only (test)`
-
-        `'(if ,test (return ,test))))`
-
-```lisp
+  "Return TEST if it is non-nil."
+  (once-only (test)
+    '(if ,test (return ,test))))
 (defmacro loop-finish () '(go end))
 ```
 
@@ -801,90 +584,40 @@ The implementation is:
 
 ```lisp
 (defconstant *acc* (gensym "ACC")
-```
-
-    `"Variable used for value accumulation in LOOP.")`
-
-```lisp
+  "Variable used for value accumulation in LOOP.")
 ;;; INTO preposition is omitted
 (defloop collect (l exp)
-```
-
-    `(add-var l *acc* '(make-queue))`
-
-    `(add-body l '(enqueue ,exp .*acc*))`
-
-    `(setf (loop-result l) '(queue-contents ,*acc*)))`
-
-```lisp
+  (add-var l *acc* '(make-queue))
+  (add-body l '(enqueue ,exp .*acc*))
+  (setf (loop-result l) '(queue-contents ,*acc*)))
 (defloop nconc (l exp)
-```
-
-    `(add-var l *acc* '(make-queue))`
-
-    `(add-body l '(queue-nconc ,*acc* .exp))`
-
-    `(setf (loop-result l) '(queue-contents .*acc*)))`
-
-```lisp
+  (add-var l *acc* '(make-queue))
+  (add-body l '(queue-nconc ,*acc* .exp))
+  (setf (loop-result l) '(queue-contents .*acc*)))
 (defloop append (l exp exps)
-```
-
-    `(call-loop-fn l 'nconc '((copy-list .exp) .,exps)))`
-
-```lisp
+  (call-loop-fn l 'nconc '((copy-list .exp) .,exps)))
 (defloop count (l exp)
-```
-
-    `(add-var l *acc* 0)`
-
-    `(add-body l '(when .exp (incf .*acc*)))`
-
-    `(setf (loop-result l) *acc*))`
-
-```lisp
+  (add-var l *acc* 0)
+  (add-body l '(when .exp (incf .*acc*)))
+  (setf (loop-result l) *acc*))
 (defloop sum (l exp)
-```
-
-    `(add-var l *acc* 0)`
-
-    `(add-body l '(incf ,*acc* .exp))`
-
-    `(setf (loop-result l) *acc*))`
-
-```lisp
+  (add-var l *acc* 0)
+  (add-body l '(incf ,*acc* .exp))
+  (setf (loop-result l) *acc*))
 (defloop maximize (l exp)
-```
-
-    `(add-var l *acc* nil)`
-
-    `(add-body l '(setf ,*acc*`
-
-                `(if ,*acc*`
-
-                        `(max ,*acc* ,exp)`
-
-                        `,exp)))`
-
-    `(setf (loop-result l) *acc*))`
-
-```lisp
+  (add-var l *acc* nil)
+  (add-body l '(setf ,*acc*
+        (if ,*acc*
+            (max ,*acc* ,exp)
+            ,exp)))
+  (setf (loop-result l) *acc*))
 (defloop minimize (l exp)
-```
-
-    `(add-var 1 *acc* nil)`
-
-    `(add-body l '(setf ,*acc*`
-
-                `(if ,*acc*`
-
-                        `(min ,*acc* ,exp)`
-
-                        `,exp)))`
-
-    `(setf (loop-result l) *acc*))`
-
-```lisp
+  (add-var 1 *acc* nil)
+  (add-body l '(setf ,*acc*
+        (if ,*acc*
+            (min ,*acc* ,exp)
+            ,exp)))
+  (setf (loop-result l) *acc*))
 (defloop collecting collect)
 (defloop nconcing nconc)
 (defloop appending append)
@@ -902,19 +635,11 @@ For example:
 
 ```lisp
 > (let ((A '#2a((l 0 0) (0 2 4) (0 0 3))))
-```
-
-    `(with-collection`
-
-        `(loop for i from 0 to 2 do`
-
-            `(loop for j from 0 to 2 do`
-
-                `(if (> (aref a i j) 0)`
-
-                    `(collect (aref A i j)))))))`
-
-```lisp
+  (with-collection
+    (loop for i from 0 to 2 do
+      (loop for j from 0 to 2 do
+        (if (> (aref a i j) 0)
+          (collect (aref A i j)))))))
 (1 2 4 3)
 ```
 
@@ -925,24 +650,16 @@ Implement `with-collection` and `collect`.
 The `with` clause allows local variables-I have included it, but recommend using a `let` instead.
 I have not included the `and` preposition, which allows the variables to nest at different levels.
 
-`;;;; 26.9.
-Variable Initializations ("and" omitted)`
-
 ```lisp
+;;;; 26.9. Variable Initializations ("and" omitted)
 (defloop with (l var exps)
+  (let ((init nil))
+    (when (eq (first exps) '=)
+      (setf init (second exps)
+        exps (rest2 exps)))
+    (add-var l var init)
+    exps))
 ```
-
-    `(let ((init nil))`
-
-        `(when (eq (first exps) '=)`
-
-            `(setf init (second exps)`
-
-                `exps (rest2 exps)))`
-
-        `(add-var l var init)`
-
-        `exps))`
 
 ### Conditional Execution (26.10)
 
@@ -960,15 +677,11 @@ The clauses covered here are:
 
 Here is an example of `when`:
 
-`> (loop for`x `from 1 to 10`
-
-          `when (oddp x)`
-
-                  `collect x`
-
-          `else collect (- x))`
-
 ```lisp
+> (loop for`x `from 1 to 10
+     when (oddp x)
+         collect x
+     else collect (- x))
 (1 -2 3 -4 5- 6 7 -8 9 -10)
 ```
 
@@ -978,13 +691,8 @@ There is one extra feature in loop's conditionals: the value of the test is stor
 
 ```lisp
 > (loop for x from 1 to 10
-```
-
-        `when (second (assoc x '((l one) (3 three) (5 five))))`
-
-        `collect it)`
-
-```lisp
+    when (second (assoc x '((l one) (3 three) (5 five))))
+    collect it)
 (ONE THREE FIVE)
 ```
 
@@ -996,64 +704,33 @@ Here is the code:
 
 ```lisp
 (defloop when (l test exps)
-```
-
-    `(loop-unless l '(not ,(maybe-set-it test exps)) exps))`
-
-```lisp
+  (loop-unless l '(not ,(maybe-set-it test exps)) exps))
 (defloop unless (l test exps)
-```
-
-    `(loop-unless l (maybe-set-it test exps) exps))`
-
-```lisp
+  (loop-unless l (maybe-set-it test exps) exps))
 (defun maybe-set-it (test exps)
-```
-
-    `"Return value, but if the variable IT appears in exps,`
-
-    `then return code that sets IT to value."`
-
-    `(if (find-anywhere 'it exps)`
-
-        `'(setq it .test)`
-
-        `test))`
-
-```lisp
+  "Return value, but if the variable IT appears in exps,
+  then return code that sets IT to value."
+  (if (find-anywhere 'it exps)
+    '(setq it .test)
+    test))
 (defloop if when)
 (defun loop-unless (l test exps)
+  (let ((label (gensym "L")))
+    (add-var l 'it nil )
+    ;; Emit code for the test and the THEN part
+    (add-body l '(if .test (go ,label)))
+    (setf exps (call-loop-fn l (first exps) (rest exps)))
+    ;; Optionally emit code for the ELSE part
+    (if (eq (first exps) 'else)
+      (progn
+        (let ((label2 (gensym "L")))
+          (add-body l '(go ,label2))
+          (add-body l label)
+          (setf exps (call-loop-fn l (second exps) (rest2 exps)))
+          (add-body l label2)))
+        (add-body l label)))
+  exps)
 ```
-
-    `(let ((label (gensym "L")))`
-
-        `(add-var l 'it nil )`
-
-        `;; Emit code for the test and the THEN part`
-
-        `(add-body l '(if .test (go ,label)))`
-
-        `(setf exps (call-loop-fn l (first exps) (rest exps)))`
-
-        `;; Optionally emit code for the ELSE part`
-
-        `(if (eq (first exps) 'else)`
-
-            `(progn`
-
-                `(let ((label2 (gensym "L")))`
-
-                    `(add-body l '(go ,label2))`
-
-                    `(add-body l label)`
-
-                    `(setf exps (call-loop-fn l (second exps) (rest2 exps)))`
-
-                    `(add-body l label2)))`
-
-                `(add-body l label)))`
-
-    `exps)`
 
 ### Unconditional Execution (26.11)
 
@@ -1061,15 +738,9 @@ The unconditional execution keywords are do and return:
 
 ```lisp
 (defloop do (l exp exps)
-```
-
-    `(add-body l exp)`
-
-    `(loop (if (symbolp (first exps)) (RETURN exps))`
-
-        `(add-body l (pop exps))))`
-
-```lisp
+  (add-body l exp)
+  (loop (if (symbolp (first exps)) (RETURN exps))
+    (add-body l (pop exps))))
 (defloop return (l exp) (add-body l '(return ,exp)))
 ```
 
@@ -1080,25 +751,13 @@ I have omitted the data-type declarations and destructuring capabilities.
 
 ```lisp
 (defloop initially (l exp exps)
-```
-
-    `(push exp (loop-prologue l))`
-
-    `(loop (if (symbolp (first exps)) (RETURN exps))`
-
-        `(push (pop exps) (loop-prologue l))))`
-
-```lisp
+  (push exp (loop-prologue l))
+  (loop (if (symbolp (first exps)) (RETURN exps))
+    (push (pop exps) (loop-prologue l))))
 (defloop finally (l exp exps)
-```
-
-    `(push exp (loop-epilogue l))`
-
-    `(loop (if (symbolp (first exps)) (RETURN exps))`
-
-        `(push (pop exps) (loop-epilogue l))))`
-
-```lisp
+  (push exp (loop-epilogue l))
+  (loop (if (symbolp (first exps)) (RETURN exps))
+    (push (pop exps) (loop-epilogue l))))
 (defloop named (l exp) (setf (loop-name l) exp))
 ```
 
@@ -1158,9 +817,8 @@ and have the generated code be just what we want:
 (* Z Z)
 > (macroexpand '(square (print (incf i))))
 (LET ((G3811 (PRINT (INCF I))))
+  (* G3811 G3811))
 ```
-
-    `(* G3811 G3811))`
 
 You have now learned lesson number one of `once-only` : you know how macros differ from functions when it comes to arguments with side effects, and you now know how to handle this.
 Lesson number two comes when you try to write (or even understand) a definition of `once-only`-only when you truly understand the nature of macros will you be able to write a correct version.
@@ -1171,15 +829,11 @@ Here's roughly what we want:
 ```lisp
 > (macroexpand '(once-only (x) '(* ,x ,x)))
 (if (side-effect-free-p x)
+  '(* ,x ,x)
+  '(let ((g00l ,x))
+    , (let ((x 'g00l))
+      '(* x ,x))))
 ```
-
-    `'(* ,x ,x)`
-
-    `'(let ((g001 ,x))`
-
-        `, (let ((x 'g001))`
-
-            `'(* x ,x))))`
 
 where `g001` is a new symbol, to avoid conflicts with the `x` or with symbols in the body.
 Normally, we generate macro bodies using backquotes, but if the macro body itself has a backquote, then what?
@@ -1188,92 +842,55 @@ I recommend replacing the inner backquote with its equivalent using `list` and `
 
 ```lisp
 (if (side-effect-free-p x)
+  '(* ,x ,x)
+  (list 'let (list (list 'g00l x))
+    (let ((x 'g00l))
+      '(* ,x ,x))))
 ```
-
-    `'(* ,x ,x)`
-
-    `(list 'let (list (list 'g001 x))`
-
-        `(let ((x 'g001))`
-
-            `'(* ,x ,x))))`
 
 Now we can write `once-only`.
 Note that we have to account for the case where there is more than one variable and where there is more than one expression in the body.
 
 ```lisp
 (defmacro once-only (variables &rest body)
-```
-
-    `"Returns the code built by BODY.
-If any of VARIABLES`
-
-    `might have side effects.
-they are evaluated once and stored`
-
-    `in temporary variables that are then passed to BODY."`
-
-    `(assert (every #'symbolp variables))`
-
-    `(let ((temps (loop repeat (length variables) collect (gensym))))`
-
-        `'(if (every #'side-effect-free-p (list .,variables))`
-
-            `(progn .,body)`
-
-            `(list 'let`
-
-                `,'(list .@(mapcar #'(lambda (tmp var)`
-
-                    `'(list '.tmp .var))`
-
-                `temps variables))`
-
-                  `(let .(mapcar #'(lambda (var tmp) '(.var ',tmp))`
-
-            `variables temps)`
-
-          `.,body)))))`
-
-```lisp
+  "Returns the code built by BODY. If any of VARIABLES
+  might have side effects. they are evaluated once and stored
+  in temporary variables that are then passed to BODY."
+  (assert (every #'symbolp variables))
+  (let ((temps (loop repeat (length variables) collect (gensym))))
+    '(if (every #'side-effect-free-p (list .,variables))
+      (progn .,body)
+      (list 'let
+        ,'(list .@(mapcar #'(lambda (tmp var)
+          '(list '.tmp .var))
+        temps variables))
+         (let .(mapcar #'(lambda (var tmp) '(.var ',tmp))
+      variables temps)
+     .,body)))))
 (defun side-effect-free-p (exp)
+  "Is exp a constant, variable, or function,
+  or of the form (THE type x) where x is side-effect-free?"
+  (or (constantp exp) (atom exp) (starts-with exp 'function)
+    (and (starts-with exp 'the)
+      (side-effect-free-p (third exp)))))
 ```
-
-    `"Is exp a constant, variable, or function,`
-
-    `or of the form (THE type x) where x is side-effect-free?"`
-
-    `(or (constantp exp) (atom exp) (starts-with exp 'function)`
-
-        `(and (starts-with exp 'the)`
-
-            `(side-effect-free-p (third exp)))))`
 
 Here we see the expansion of the call to `once-only` and a repeat of the expansions of two calls to `square`:
 
 ```lisp
 > (macroexpand '(once-only (x) '(* ,x ,x)))
 (IF (EVERY #'SIDE-EFFECT-FREE-P (LIST X))
-```
-
-        `(PROGN`
-
-            `'(* ,X ,X))`
-
-        `(LIST 'LET (LIST (LIST 'G3763 X))`
-
-                    `(LET ((X 'G3763))`
-
-                        `'(* ,X ,X))))`
-
-```lisp
+    (PROGN
+      '(* ,X ,X))
+    (LIST 'LET (LIST (LIST 'G3763 X))
+          (LET ((X 'G3763))
+            '(* ,X ,X))))
 > (macroexpand '(square z))
 (* Z Z)
 > (macroexpand '(square (print (incf i))))
 (LET ((G3811 (PRINT (INCF I))))
+  (* G3811 G3811))
 ```
-
-    `(* G3811 G3811))`
 
 This output was produced with `*print-gensym*` setto `nil`.
 When this variable is non-nil, uninterned symbols are printed with a prefix `#`:,as in `#:G3811`.
@@ -1302,19 +919,16 @@ For example, I could write:
 
 ```lisp
 (if (assoc item a-list)
+  (process (cdr that)))
 ```
-
-    `(process (cdr that)))`
 
 which would expand into:
 
 ```lisp
 (LET (THAT)
+  (COND
+    ((SETQ THAT (ASSOC ITEM A-LIST)) (PROCESS (CDR THAT)))))
 ```
-
-    `(COND`
-
-        `((SETQ THAT (ASSOC ITEM A-LIST)) (PROCESS (CDR THAT)))))`
 
 This was a convenient feature (compare it to the => feature of Scheme's cond, as discussed on [page 778](B9780080571157500224.xhtml#p778)), but it backfired often enough that I eventually gave up on my version of `if`.
 Here's why.
@@ -1322,21 +936,17 @@ I would write code like this:
 
 ```lisp
 (if (total-score x)
+  (print (/ that number-of-trials))
+  (error "No scores"))
 ```
-
-    `(print (/ that number-of-trials))`
-
-    `(error "No scores"))`
 
 and then make a small change:
 
 ```lisp
 (if (total-score x)
+  (if *print-scores* (print (/ that number-of-trials)))
+  (error "No scores"))
 ```
-
-    `(if *print-scores* (print (/ that number-of-trials)))`
-
-    `(error "No scores"))`
 
 The problem is that the variable `that` now refers to `*print-scores*`, not `(total-score x),` as it did before.
 My macro violates referential transparency.
@@ -1352,38 +962,26 @@ We'll start with a simple version:
 
 ```lisp
 (defun map-into (result-sequence function &rest sequences)
+  "Destructively set elements of RESULT-SEQUENCE to the results
+  of applying FUNCTION to respective elements of SEQUENCES."
+  (replace result-sequence (apply #'map 'list function sequences)))
 ```
-
-    `"Destructively set elements of RESULT-SEQUENCE to the results`
-
-    `of applying FUNCTION to respective elements of SEQUENCES."`
-
-    `(replace result-sequence (apply #'map 'list function sequences)))`
 
 This does the job, but it defeats the purpose of `map-into`, which is to avoid generating garbage.
 Here's a version that generates less garbage:
 
 ```lisp
 (defun map-into (result-sequence function &rest sequences)
+  "Destructively set elements of RESULT-SEQUENCE to the results
+  of applying FUNCTION to respective elements of SEQUENCES."
+  (let ((n (loop for seq in (cons result-sequence sequences)
+              minimize (length seq))))
+    (dotimes (i n)
+      (setf (elt result-sequence i)
+        (apply function
+          (mapcar #'(lambda (seq) (elt seq i))
+            sequences))))))
 ```
-
-    `"Destructively set elements of RESULT-SEQUENCE to the results`
-
-    `of applying FUNCTION to respective elements of SEQUENCES."`
-
-    `(let ((n (loop for seq in (cons result-sequence sequences)`
-
-                            `minimize (length seq))))`
-
-        `(dotimes (i n)`
-
-            `(setf (elt result-sequence i)`
-
-                `(apply function`
-
-                    `(mapcar #'(lambda (seq) (elt seq i))`
-
-                        `sequences))))))`
 
 There are three problems with this definition.
 First, it wastes space: mapcar creates a new argument list each time, only to have the list be discarded.
@@ -1393,87 +991,47 @@ The following version fixes those problems:
 
 ```lisp
 (defun map-into (result-sequence function &rest sequences)
+  "Destructively set elements of RESULT-SEQUENCE to the results
+  of applying FUNCTION to respective elements of SEQUENCES."
+  (let ((arglist (make-list (length sequences)))
+    (n (if (listp result-sequence)
+      most-positive-fixnum
+      (array-dimension result-sequence 0))))
+   ;; arglist is made into a list of args for each call
+   ;; n is the length of the longest vector
+   (when sequences
+     (setf n (min n (loop for seq in sequences
+       minimize (length seq)))))
+   ;; Define some shared functions:
+   (flet
+    ((do-one-call (i)
+      (loop for seq on sequences
+        for arg on arglist
+        do (if (listp (first seq))
+          (setf (first arg)
+            (pop (first seq)))
+          (setf (first arg)
+            (aref (first seq) i))))
+      (apply function arglist))
+    (do-result (i)
+      (if (and (vectorp result-sequence)
+        (array-has-fill-pointer-p result-sequence))
+      (setf (fill-pointer result-sequence)
+  (max i (fill-pointer result-sequence))))))
+   (declare (inline do-one-call))
+   ;; Decide if the result is a list or vector,
+   ;; and loop through each element
+   (if (listp result-sequence)
+    (loop for i from 0 to (- n 1)
+     for r on result-sequence
+     do (setf (first r)
+        (do-one-call i)))
+    (loop for i from 0 to (- n 1)
+     do (setf (aref result-sequence i)
+        (do-one-call i))
+     finally (do-result n))))
+   result-sequence))
 ```
-
-    `"Destructively set elements of RESULT-SEQUENCE to the results`
-
-    `of applying FUNCTION to respective elements of SEQUENCES."`
-
-    `(let ((arglist (make-list (length sequences)))`
-
-        `(n (if (listp result-sequence)`
-
-            `most-positive-fixnum`
-
-            `(array-dimension result-sequence 0))))`
-
-      `;; arglist is made into a list of args for each call`
-
-      `;; n is the length of the longest vector`
-
-      `(when sequences`
-
-          `(setf n (min n (loop for seq in sequences`
-
-              `minimize (length seq)))))`
-
-      `;; Define some shared functions:`
-
-      `(flet`
-
-        `((do-one-call (i)`
-
-            `(loop for seq on sequences`
-
-                `for arg on arglist`
-
-                `do (if (listp (first seq))`
-
-                    `(setf (first arg)`
-
-                        `(pop (first seq)))`
-
-                    `(setf (first arg)`
-
-                        `(aref (first seq) i))))`
-
-            `(apply function arglist))`
-
-        `(do-result (i)`
-
-            `(if (and (vectorp result-sequence)`
-
-                `(array-has-fill-pointer-p result-sequence))`
-
-            `(setf (fill-pointer result-sequence)`
-
-    `(max i (fill-pointer result-sequence))))))`
-
-      `(declare (inline do-one-call))`
-
-      `;; Decide if the result is a list or vector,`
-
-      `;; and loop through each element`
-
-      `(if (listp result-sequence)`
-
-        `(loop for i from 0 to (- n 1)`
-
-          `for r on result-sequence`
-
-          `do (setf (first r)`
-
-                `(do-one-call i)))`
-
-        `(loop for i from 0 to (- n 1)`
-
-          `do (setf (aref result-sequence i)`
-
-                `(do-one-call i))`
-
-          `finally (do-result n))))`
-
-      `result-sequence))`
 
 There are several things worth noticing here.
 First, I split the main loop into two versions, one where the result is a list, and the other where it is a vector.
@@ -1491,15 +1049,9 @@ With these primitives, the body of `do-one-call` would be:
 
 ```lisp
 (loop for seq on sequences
-```
-
-    `do (if (listp (first seq))`
-
-        `(%push (pop (first seq)))`
-
-        `(%push (aref (first seq) i))))`
-
-```lisp
+  do (if (listp (first seq))
+    (%push (pop (first seq)))
+    (%push (aref (first seq) i))))
 (%call function length-sequences)
 ```
 
@@ -1513,39 +1065,23 @@ Here's a start at that approach:
 
 ```lisp
 (defun map-into (result function &rest sequences)
+  (apply
+   (case (length sequences)
+    (0 (if (listp result) #'map-into-list-0 #'map-into-vect-0))
+    (1 (if (listp result)
+     (if (listp (first sequences))
+       #'map-into-list-l-list #'map-into-list-1-vect)
+     (if (listp (first sequences))
+       #'map-into-vect-l-list #'map-into-vect-l-vect)) )
+    (2 (if (listp result)
+     (if (listp (first sequences))
+      (if (listp (second sequences))
+       #'map-into-list-2-list-list
+       #'map-into-list-2-list-vect)
+      ...)))
+    (t (if (listp result) #'map-into-list-n #'map-into-vect-n)))
+   result function sequences))
 ```
-
-    `(apply`
-
-      `(case (length sequences)`
-
-        `(0 (if (listp result) #'map-into-list-0 #'map-into-vect-0))`
-
-        `(1 (if (listp result)`
-
-          `(if (listp (first sequences))`
-
-              `#'map-into-list-l-list #'map-into-list-1-vect)`
-
-          `(if (listp (first sequences))`
-
-              `#'map-into-vect-l-list #'map-into-vect-l-vect)) )`
-
-        `(2 (if (listp result)`
-
-          `(if (listp (first sequences))`
-
-            `(if (listp (second sequences))`
-
-              `#'map-into-list-2-list-list`
-
-              `#'map-into-list-2-list-vect)`
-
-            `...)))`
-
-        `(t (if (listp result) #'map-into-list-n #'map-into-vect-n)))`
-
-      `result function sequences))`
 
 The individual functions are not shown.
 This approach is efficient in execution time, but it takes up a lot of space, considering that `map-into` is a relatively obscure function.
@@ -1562,115 +1098,60 @@ They are both proclaimed inline, so there will be no overhead for the keywords i
 
 ```lisp
 (proclaim '(inline reduce reduce*))
-```
-
-  `(defun reduce* (fn seq from-end start end key init init-p)`
-
-          `(funcall (if (listp seq) #'reduce-list #'reduce-vect)`
-
-                    `fn seq from-end (or start 0) end key init init-p))`
-
-```lisp
+ (defun reduce* (fn seq from-end start end key init init-p)
+     (funcall (if (listp seq) #'reduce-list #'reduce-vect)
+          fn seq from-end (or start 0) end key init init-p))
 (defun reduce (function sequence &key from-end start end key
+               (initial-value nil initial-value-p))
+    (reduce* function sequence from-end start end
+                  key initial-value initial-value-p))
 ```
-
-                              `(initial-value nil initial-value-p))`
-
-```lisp
-        (reduce* function sequence from-end start end
-```
-
-                                    `key initial-value initial-value-p))`
 
 The easier case is when the sequence is a vector:
 
 ```lisp
 (defun reduce-vect (fn seq from-end start end key init init-p)
-```
-
-        `(when (null end) (setf end (length seq)))`
-
-        `(assert (<= 0 start end (length seq)) (start end)`
-
-                            `"Illegal subsequence of ~  a --- :start ~  d :end ~  d"`
-
-                                  `seq start end)`
-
-      `(case (- end start)`
-
-                  `(0 (if init-p init (funcall fn)))`
-
-                  `(1 (if init-p`
-
-                          `(funcall fn init (funcall-if key (aref seq start)))`
-
-                          `(funcall-if key (aref seq start))))`
-
-                  `(t (if (not from-end)`
-
-                          `(let ((result`
-
-                                  `(if init-p`
-
-                                    `(funcall fn init`
-
-                                      `(funcall-if key (aref seq start)))`
-
-                                  `(funcall`
-
-                                            `fn`
-
-                                                    `(funcall-if key (aref seq start))`
-
-                                                    `(funcall-if key (aref seq (+ start 1)))))))`
-
-                          `(loop for i from (+ start (if init-p 1 2))`
-
-                                          `to (- end 1)`
-
-                                          `do (setf result`
-
-                                              `(funcall`
-
-                                                `fn result`
-
-                                                `(funcall-if key (aref seq i)))))`
-
-                                  `result)`
-
-                          `(let ((result`
-
-                                  `(if init-p`
-
-                              `(funcall`
-
-              `fn`
-
-              `(funcall-if key (aref seq (- end 1)))`
-
-                              `init)`
-
-                    `(funcall`
-
-                            `fn`
-
-                              `(funcall-if key (aref seq (- end 2)))`
-
-                              `(funcall-if key (aref seq (- end 1)))))))`
-
-  `(loop for i from (- end (if init-p 2 3)) downto start`
-
-                  `do (setf result`
-
-                                `(funcall`
-
-                                                                `fn`
-
-                                                                `(funcall-if key (aref seq i))`
-
-                                                                `result)))`
-
-```lisp
+    (when (null end) (setf end (length seq)))
+    (assert (<= 0 start end (length seq)) (start end)
+              "Illegal subsequence of ~ a --- :start ~ d :end ~ d"
+                 seq start end)
+   (case (- end start)
+         (0 (if init-p init (funcall fn)))
+         (1 (if init-p
+             (funcall fn init (funcall-if key (aref seq start)))
+             (funcall-if key (aref seq start))))
+         (t (if (not from-end)
+             (let ((result
+                 (if init-p
+                  (funcall fn init
+                   (funcall-if key (aref seq start)))
+                 (funcall
+                      fn
+                          (funcall-if key (aref seq start))
+                          (funcall-if key (aref seq (+ start 1)))))))
+             (loop for i from (+ start (if init-p 1 2))
+                     to (- end 1)
+                     do (setf result
+                       (funcall
+                        fn result
+                        (funcall-if key (aref seq i)))))
+                 result)
+             (let ((result
+                 (if init-p
+               (funcall
+       fn
+       (funcall-if key (aref seq (- end 1)))
+               init)
+          (funcall
+              fn
+               (funcall-if key (aref seq (- end 2)))
+               (funcall-if key (aref seq (- end 1)))))))
+ (loop for i from (- end (if init-p 2 3)) downto start
+         do (setf result
+                (funcall
+                                fn
+                                (funcall-if key (aref seq i))
+                                result)))
 result)))))
 ```
 
@@ -1696,91 +1177,48 @@ Therefore, this is the approach I adopt.
 
 ```lisp
 (defmacro funcall-if (fn arg)
-```
-
-      `(once-only (fn)`
-
-              `'(if .fn (funcall .fn .arg) .arg)))`
-
-```lisp
+   (once-only (fn)
+       '(if .fn (funcall .fn .arg) .arg)))
 (defun reduce-list (fn seq from-end start end key init init-p)
+    (when (null end) (setf end most-positive-fixnum))
+    (cond ((> start 0)
+             (reduce-list fn (nthcdr start seq) from-end 0
+                   (- end start) key init init-p))
+             ((or (null seq) (eql start end))
+             (if init-p init (funcall fn)))
+             ((= (- end start) 1)
+             (if init-p
+                (funcall fn init (funcall-if key (first seq)))
+                (funcall-if key (first seq))))
+          (from-end
+             (reduce-vect fn (coerce seq 'vector) t start end
+                   key init init-p))
+                ((null (rest seq))
+             (if init-p
+                (funcall fn init (funcall-if key (first seq)))
+                (funcall-if key (first seq))))
+          (t (let ((result
+          (if init-p
+                 (funcall
+                        fn init
+                        (funcall-if key (pop seq)))
+                 (funcall
+                        fn
+                        (funcall-if key (pop seq))
+                        (funcall-if key (pop seq))))))
+          (if end
+                (loop repeat (- end (if init-p 1 2)) while seq
+                 do (setf result
+                        (funcall
+                        fn result
+                     (funcall-if key (pop seq)))))
+             (loop while seq
+                 do (setf result
+               (funcall
+                  fn result
+                  (funcall-if key (pop seq)))))
+             result)))))
 ```
-
-        `(when (null end) (setf end most-positive-fixnum))`
-
-        `(cond ((> start 0)`
-
-                          `(reduce-list fn (nthcdr start seq) from-end 0`
-
-                                      `(- end start) key init init-p))`
-
-                          `((or (null seq) (eql start end))`
-
-                          `(if init-p init (funcall fn)))`
-
-                          `((= (- end start) 1)`
-
-                          `(if init-p`
-
-                                `(funcall fn init (funcall-if key (first seq)))`
-
-                                `(funcall-if key (first seq))))`
-
-                    `(from-end`
-
-                          `(reduce-vect fn (coerce seq 'vector) t start end`
-
-                                      `key init init-p))`
-
-                                `((null (rest seq))`
-
-                          `(if init-p`
-
-                                `(funcall fn init (funcall-if key (first seq)))`
-
-                                `(funcall-if key (first seq))))`
-
-                    `(t (let ((result`
-
-                    `(if init-p`
-
-                                  `(funcall`
-
-                                                `fn init`
-
-                                                `(funcall-if key (pop seq)))`
-
-                                  `(funcall`
-
-                                                `fn`
-
-                                                `(funcall-if key (pop seq))`
-
-                                                `(funcall-if key (pop seq))))))`
-
-                    `(if end`
-
-                                `(loop repeat (- end (if init-p 1 2)) while seq`
-
-                                  `do (setf result`
-
-                                                `(funcall`
-
-                                                `fn result`
-
-                                          `(funcall-if key (pop seq)))))`
-
-                          `(loop while seq`
-
-                                  `do (setf result`
-
-                              `(funcall`
-
-                                    `fn result`
-
-                                    `(funcall-if key (pop seq)))))`
-
-                          `result)))))`
 
 ## 24.7 Exercises
 
@@ -1814,48 +1252,32 @@ Make them generate code conditionally, based on a global flag.
 (defvar *queue*)
 (defun collect (item) (enqueue item *queue*))
 (defmacro with-collection (&body body)
+     '(let ((*queue* (make-queue)))
+                 ,@body
+           (queue-contents *queue*)))
 ```
-
-          `'(let ((*queue* (make-queue)))`
-
-                                  `,@body`
-
-                      `(queue-contents *queue*)))`
 
 Here's another version that allows the collection variable to be named.
 That way, more than one collection can be going on at the same time.
 
 ```lisp
 (defun collect (item &optional (queue *queue*))
-```
-
-            `(enqueue item queue))`
-
-```lisp
+      (enqueue item queue))
 (defmacro with-collection ((&optional (queue '*queue*))
+                               &body body)
+      '(let ((,queue (make-queue)))
+       ,@body
+      (queue-contents .queue)))
 ```
-
-                                                              `&body body)`
-
-            `'(let ((,queue (make-queue)))`
-
-              `,@body`
-
-            `(queue-contents .queue)))`
 
 **Answer 24.2**
 
 ```lisp
 (defun append-r (x y)
-```
-
-            `(reduce #'cons x :initial-value y :from-end t))`
-
-```lisp
+      (reduce #'cons x :initial-value y :from-end t))
 (defun length-r (list)
+      (reduce #'+ list :key #'(lambda (x) 1)))
 ```
-
-            `(reduce #'+ list :key #'(lambda (x) 1)))`
 
 **Answer 24.4** The difference between `loop` and `mapcar` is that the former uses only one variable `x`, while the latter uses a different `x` each time.
 If `x`'s extent is no bigger than its scope (as it is in most expressions) then this makes no difference.
@@ -1864,18 +1286,10 @@ Consider *exp =*`#'(lambda () x).`
 
 ```lisp
 > (mapcar #'funcall (loop for x in '(1 2 3) collect
-```
-
-                                          `#'(lambda O x)))`
-
-```lisp
+                     #'(lambda O x)))
 (3 3 3)
 >(mapcar #'funcall (mapcar #'(lambda (x) #'(lambda () x))
-```
-
-                                                    `'(1 2 3)))`
-
-```lisp
+                          '(1 2 3)))
 (1 2 3)
 ```
 
@@ -1883,64 +1297,36 @@ Consider *exp =*`#'(lambda () x).`
 
 ```lisp
 (defvar *check-invariants* t
-```
-
-            `"Should VARIANT and INVARIANT clauses in LOOP be checked?")`
-
-```lisp
+      "Should VARIANT and INVARIANT clauses in LOOP be checked?")
 (defloop invariant (l exp)
-```
-
-            `(when *check-invariants*`
-
-                                `(add-body l '(assert .exp () "Invariant violated."))))`
-
-```lisp
+      (when *check-invariants*
+                (add-body l '(assert .exp () "Invariant violated."))))
 (defloop variant (l exp)
+ (when *check-invariants*
+           (let ((var (gensym "INV")))
+                (add-var l var nil)
+                (add-body l '(setf ,var (update-variant .var .exp))))))
+     (defun update-variant (old new)
+      (assert (or (null old) (< new old)) ()
+                "Variant is not monotonically decreasing")
+      (assert (> new 0) () "Variant is no longer positive")
+     new)
 ```
-
-  `(when *check-invariants*`
-
-                      `(let ((var (gensym "INV")))`
-
-                                `(add-var l var nil)`
-
-                                `(add-body l '(setf ,var (update-variant .var .exp))))))`
-
-          `(defun update-variant (old new)`
-
-            `(assert (or (null old) (< new old)) ()`
-
-                                `"Variant is not monotonically decreasing")`
-
-            `(assert (> new 0) () "Variant is no longer positive")`
-
-          `new)`
 
 Here's an example:
 
 ```lisp
 (defun gcd2 (a b)
+      "Greatest common divisor. For two positive integer arguments."
+      (check-type a (integer 1))
+      (check-type b (integer 1))
+      (loop with x = a with y = b
+                invariant (and (> x 0) (> y 0)) ;; (= (gcd x y) (gcd a b))
+                variant (max x y)
+                until (= x y)
+                do (if (> x y) (decf x y) (decf y x))
+                finally (return x)))
 ```
-
-            `"Greatest common divisor.
-For two positive integer arguments."`
-
-            `(check-type a (integer 1))`
-
-            `(check-type b (integer 1))`
-
-            `(loop with x = a with y = b`
-
-                                `invariant (and (> x 0) (> y 0)) ;; (= (gcd x y) (gcd a b))`
-
-                                `variant (max x y)`
-
-                                `until (= x y)`
-
-                                `do (if (> x y) (decf x y) (decf y x))`
-
-                                `finally (return x)))`
 
 Here the invariant is written semi-informally.
 We could include the calls to `gcd`, but that seems to be defeating the purpose of `gcd2`, so that part is left as a comment.
