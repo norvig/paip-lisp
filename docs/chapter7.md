@@ -28,24 +28,18 @@ However, remember that while the original was state-of-the-art as of 1964, AI ha
 The description of STUDENT is:
 
 1.  Break the input into phrases that will represent equations.
-!!!(p) {:.numlist}
 
 2.  Break each phrase into a pair of phrases on either side of the  =  sign.
-!!!(p) {:.numlist}
 
 3.  Break these phrases down further into sums and products, and so on, until finally we bottom out with numbers and variables.
 (By "variable" here, I mean "mathematical variable," which is distinct from the idea of a "pattern-matching variable" as used in `pat-match` in [chapter 6](B9780080571157500066.xhtml)).
-!!!(p) {:.numlist}
 
 4.  Translate each English phrase into a mathematical expression.
 We use the idea of a rule-based translator as developed for ELIZA.
-!!!(p) {:.numlist}
 
 5.  Solve the resulting mathematical equations, coming up with a value for each unknown variable.
-!!!(p) {:.numlist}
 
 6.  Print the values of all the variables.
-!!!(p) {:.numlist}
 
 For example, we might have a pattern of the form (`If ?x then ?y`), with an associated response that says that `?x` and `?y` will each be equations or lists of equations.
 Applying the pattern to the input above, `?y` would have the value (`what is the number of customers Tomgets`).
@@ -650,33 +644,26 @@ Make sure you handle special characters properly:
 
 (a)  The price of a radio is 69.70 dollars.
 If this price is 15% less than the marked The number of soldiers the Russians have is one half of the number of guns
-!!!(p) {:.numlist1}
 
 (b)  The number of soldiers the Russians have is one half of the number of guns they have.
 The number of guns they have is 7000.
 What is the number of soldiers they have?
-!!!(p) {:.numlist1}
 
 (c)  If the number of customers Tom gets is twice the square of 20 % of the number of advertisements he runs, and the number of advertisements is 45, and the profit Tom receives is 10 times the number of customers he gets, then what is the profit?
-!!!(p) {:.numlist1}
 
 (d)  The average score is 73.
 The maximum score is 97.
 What is the square of the difference between the average and the maximum?
-!!!(p) {:.numlist1}
 
 (e)  Tom is twice Mary's age, and Jane's age is half the difference between Mary and Tom.
 If Mary is 18 years old, how old is Jane?
-!!!(p) {:.numlist1}
 
 (f)  What is 4  +  5* 14/7?
-!!!(p) {:.numlist1}
 
 (g)  *x  x  b  =  c  +  d.
 b  x  c  =  x.
 x  =  b  +  b.
 b  =  5.*
-!!!(p) {:.numlist1}
 
 **Exercise  7.7 [h]**`Student's` infix-to-prefix rules account for the priority of operators properly, but they don't handle associativity in the standard fashion.
 For example, (`12 - 6 - 3`) translates to (`- 12 (- 6 3)`) or `9`, when the usual convention is to interpret this as (`- (- 12 6) 3`) or `3`.
@@ -752,5 +739,4 @@ The function `find-one-unknown` has four cases: (1) If we have already found two
 ----------------------
 
 [1](#xfn0015)[Page 316](B9780080571157500108.xhtml#p316) of *Common Lisp the Language* says, "Because a constructor of this type operates By Order of Arguments, it is sometimes known as a BOA constructor."
-!!!(p) {:.ftnote1}
 

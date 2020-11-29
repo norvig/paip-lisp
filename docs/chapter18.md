@@ -2234,13 +2234,10 @@ The user might also want the ability to start the values at some number other th
 
 [1](#xfn0015) Othello is a registered trademark of CBS Inc.
 Gameboard design @ 1974 CBS Inc.
-!!!(p) {:.ftnote1}
 
 [2](#xfn0020)*Othello,* [I.
 i.
 117] William Shakespeare.
-!!!(p) {:.ftnote1}
 
 [3](#xfn0025) Remember, when a constant is redefined, it may be necessary to recompile any functions that use the constant.
-!!!(p) {:.ftnote1}
 

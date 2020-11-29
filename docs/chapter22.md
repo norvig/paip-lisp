@@ -16,33 +16,24 @@ The Scheme manual is only 45 pages (only 38 if you omit the example, bibliograph
 Here is a partial list of the ways Scheme is simpler than Common Lisp:
 
 1.  Scheme has fewer built-in functions and special forms.
-!!!(p) {:.numlist}
 
 2.  Scheme has no special variables, only lexical variables.
-!!!(p) {:.numlist}
 
 3.  Scheme uses the same name space for functions and variables (and everything else).
-!!!(p) {:.numlist}
 
 4.  Scheme evaluates the function part of a function call in exactly the same way as the arguments.
-!!!(p) {:.numlist}
 
 5.  Scheme functions can not have optional and keyword parameters.
 However, they can have the equivalent of a `&rest` parameter.
-!!!(p) {:.numlist}
 
 6.  Scheme has no `block, return, go, orthrow`; a single function `(call/cc)` replaces all of these (and does much more).
-!!!(p) {:.numlist}
 
 7.  Scheme has no packages.
 Lexical variables can be used to implement package-like structures.
-!!!(p) {:.numlist}
 
 8.  Scheme, as a standard, has no macros, although most implementations provide macros as an extension.
-!!!(p) {:.numlist}
 
 9.  Scheme has no special forms for looping; instead it asks the user to use recursion and promises to implement the recursion efficiently.
-!!!(p) {:.numlist}
 
 The five main special forms in Scheme are `quote` and `if`, which are just as in Common Lisp; `begin` and `set!`, which are just different spellings for `progn` and `setq`; and `lambda`, which is as in Common Lisp, except that it doesn't require a # 'before it.
 In addition, Scheme allows variables, constants (numbers, strings, and characters), and function calls.
@@ -1278,11 +1269,8 @@ Also, this approach would not interact properly with `flet` and `labels`.
 
 [1](#xfn0010) One writes `numberp` because there is no hyphen in `number` but `random-state-p` because there is a hyphen in `random-state`.
 However, `defstruct` concatenates `-p` in all its predicates, regardless of the presence of a hyphen in the structure's name.
-!!!(p) {:.ftnote1}
 
 [2](#xfn0015) although inefficient
-!!!(p) {:.ftnote1}
 
 [3](#xfn0020) McCarthy's words from a talk on the history of Lisp, 1974, recorded by [Stoyan (1984)](B9780080571157500285.xhtml#bb1205).
-!!!(p) {:.ftnote1}
 

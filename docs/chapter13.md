@@ -1016,15 +1016,12 @@ Change these methods.
 Particular implementations may provide debugging tools for getting at this hidden information, such as `inspect`.
 So closures are not perfect at hiding information from these tools.
 Of course, no information-hiding method will be guaranteed against such covert channels-even with the most sophisticated software security measures, it is always possible to, say, wipe a magnet over the computer's disks and alter sensitive data.
-!!!(p) {:.ftnote1}
 
 [2](#xfn0020) There is a technical sense of "generic function" that is used within CLOS.
 These functions are not generic according to this technical sense.
-!!!(p) {:.ftnote1}
 
 [3](#xfn0025) Flavor fans will be happy to know that Steve's Ice Cream is now sold nationally in the United States.
 Alas, it is not possible to create flavors dynamically.
 Also, be warned that Steve's was bought out by his Teal Square rival, Joey's.
 The original Steve retired from the business for years, then came back with a new line of stores under his last name, Harrell.
-!!!(p) {:.ftnote1}
 

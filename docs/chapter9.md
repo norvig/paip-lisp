@@ -2044,12 +2044,9 @@ In general, things that you expect to be done multiple times should be moved out
 ----------------------
 
 [1](#xfn0010) One could say that the FORTRAN compiler was "broken." This underscores the problem of defining the efficiency of a language-do we judge by the most popular compiler, by the best compiler available, or by the best compiler imaginable?
-!!!(p) {:.ftnote1}
 
 [2](#xfn0015) In KCL, the symbol `lambda-closure` is used, and in Allegro, it is `excl:.
 lexical-closure`
-!!!(p) {:.ftnote1}
 
 [3](#xfn0020) The terms *metering* and *monitoring* are sometimes used instead of profiling.
-!!!(p) {:.ftnote1}
 

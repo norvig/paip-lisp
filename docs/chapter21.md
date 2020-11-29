@@ -1420,10 +1420,8 @@ A disambiguation procedure should be equipped to weed out such duplicates.
 Here we will concentrate on references that provide:
 
 1.  A comprehensive grammar of English.
-!!!(p) {:.numlist}
 
 2.  A complete implementation.
-!!!(p) {:.numlist}
 
 There are a few good textbooks that partially address both issues.
 Both [Winograd (1983)](B9780080571157500285.xhtml#bb1395) and [Allen (1987)](B9780080571157500285.xhtml#bb0030) do a good job of presenting the major grammatical features of English and discuss implementation techniques, but they do not provide actual code.
@@ -1495,5 +1493,4 @@ Contrast this to "The truck, which has 4-wheel drive, costs $5000." Here the rel
 
 Part V
 The Rest of Lisp
-!!!(p) {:.parttitle}
 

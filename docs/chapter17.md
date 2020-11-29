@@ -43,17 +43,14 @@ Given a diagram that fits these three restrictions, our goal is to identify each
 
 1.  A convex line separates two visible faces of a polyhedron such that a line from one face to the other would lie inside the polyhedron.
 It will be marked with a plus sign:+.
-!!!(p) {:.numlist}
 
 2.  A concave line separates two faces of two polyhedra such that a line between the two spaces would pass through empty space.
 It will be marked with a minus sign:-.
-!!!(p) {:.numlist}
 
 3.  A boundary line denotes the same physical situation as a convex line, but the diagram is oriented in such a way that only one of the two faces of the polyhedron is visible.
 Thus, the line marks the boundary between the polyhedron and the background.
 It will be marked with an arrow:&rarr;.
 Traveling along the line from the tail to the point of the arrow, the polyhedron is on the right, and the background is on the left.
-!!!(p) {:.numlist}
 
 [Figure 17.2](#f0015) shows a labeling of the cube using these conventions.
 Vertex A is the near corner of the cube, and the three lines coming out of it are all convex lines.

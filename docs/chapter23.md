@@ -2122,10 +2122,8 @@ This kind of restriction goes against the grain of Scheme.
 ----------------------
 
 [1](#xfn0010) Strictly speaking, this is a read-compile-funcall-write loop.
-!!!(p) {:.ftnote1}
 
 [2](#xfn0015) At the time, the MacLisp compiler dealt with something called "lisp assembly code" or LAP.
 The function to input LAP was called `lapin`.
 Those who know French will get the pun.
-!!!(p) {:.ftnote1}
 
