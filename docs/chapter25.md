@@ -145,7 +145,7 @@ Its value is the old definition of `score-fn`.
 
 **Remedy:** Re-evaluate the definition of *`scorer`*.
 It is unfortunate, but this problem encourages many programmers to use symbols where they really mean functions.
-Symbols will be coerced to the global function they name when passed to `funcall`or `apply`, but this can be the source of another error.
+Symbols will be coerced to the global function they name when passed to `funcall` or `apply`, but this can be the source of another error.
 In the following example, the symbol `local - fn` will not refer to the locally bound function.
 One needs to use `#'local - fn` to refer to it.
 

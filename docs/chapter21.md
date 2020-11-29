@@ -1021,7 +1021,7 @@ Here is a fairly complete list of prepositions:
 ## 21.12 Supporting the Lexicon
 
 This section describes the implementation of the macros `word`, `verb, noun`, and `abbrev.` Abbreviations are stored in a hash table.
-The macro `abbr`e`v` and the functions `get-abbrev` and `clear-abbrevs` define the interface.
+The macro `abbrev` and the functions `get-abbrev` and `clear-abbrevs` define the interface.
 We will see how to expand abbreviations later.
 
 ```lisp

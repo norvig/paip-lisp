@@ -479,7 +479,7 @@ The initial diagram is:
  E/6 L: EC=[RL+L-R] EB=[LRR+L-]
  F/6 L: FD=[RL+L-R] FC=[LRR+L-]
  G/6 L: GB=[RL+L-R] GD=[LRR+L-]
-For 29,160 interpr`e`tations.
+For 29,160 interpretations.
 After constraint propagation the diagram is:
  A/1 Y: AB=[+] AC=[+] AD=[+]
  B/2 W: BG=[L-] BE=[R-] BA=[++]
@@ -488,7 +488,7 @@ After constraint propagation the diagram is:
  E/3 L: EC=[R-R] EB=[LL-]
  F/3 L: FD=[R-R] FC=[LL-]
  G/3 L: GB=[R-R] GD=[LL-]
-For 216 interpr`e`tations.
+For 216 interpretations.
 There are four solutions:
 Diagram:
   A/1 Y: AB=[+] AC=[+] AD=[+]
@@ -560,7 +560,7 @@ The initial diagram is:
  E/6 L: EC=[RL+L-R] EB[LRR+L-]
  F/6 L: FD=[RL+L-R] FC=[LRR+L-]
  G/1 L: GB=[R] GD=[-]
-For 4,860 interpr`e`tations.
+For 4,860 interpretations.
 After constraint propagation the diagram is:
  A/1 Y: AB=[+] AC=[+] AD=[+]
  B/l W: BG=[L] BE=[R] BA=[+]
@@ -619,7 +619,7 @@ The initial diagram is:
  K/1 W: KM=[-] KL=[-] KJ=[+]
  L/6 L: LH=[RL+L-R] LK=[LRR+L-]
  M/6 L: MK=[RL+L-R] MI=[LRR+L-]
-For 32.805.000 interpr`e`tations.
+For 32.805.000 interpretations.
 After constraint propagation the diagram is
   A/1 Y: AB=[+] AC=[+] AD=[+]
   B/2 W: BG=[L-] BE=[R-] BA=[++]
@@ -667,7 +667,7 @@ The initial diagram is:
  J/6 L: JK=[RL+L-R] JB=[LRR+L-]
  K/3 W: KJ=[L-+] KI=[R-+] KF=[++-]
  L/3 W: LH=[L-+] LG=[R-+] LC=[++-]
-For 544,195.584 interpr`e`tations.
+For 544,195.584 interpretations.
 After constraint propagation the diagram is:
  A/5 L: AB=[RL+-R] AG=[LRRL-]
  B/5 L: BJ=[RLL-R] BA=[LR+L-]
@@ -681,8 +681,8 @@ After constraint propagation the diagram is:
  J/4 L: JK=[R+-R] JB=[LRL-]
  K/3 W: KJ=[L-+] KI=[R-+] KF=[++-]
  L/3 W: LH=[L-+] LG=[R-+] LC=[++-]
-For 2,073,600 interpr`e`tations.
-There are z`e`ro solutions:
+For 2,073,600 interpretations.
+There are zero solutions:
 ```
 
 Now we try a more complex diagram:

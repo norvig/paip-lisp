@@ -1459,7 +1459,7 @@ Modify the program to print "no" only when there are no answers at all, and "no 
 **Exercise  11.5 [h]** At least six books (Abelson and Sussman 1985, [Charniak and McDermott 1985](B9780080571157500285.xhtml#bb0175), Charniak et al.
 1986, [Hennessey 1989](B9780080571157500285.xhtml#bb0530), [Wilensky 1986](B9780080571157500285.xhtml#bb1390), and [Winston and Horn 1988](B9780080571157500285.xhtml#bb1410)) present unification algorithms with a common error.
 They all have problems unifying (`?x ?y a`) with (`?y ?x ?x`).
-Some of these texts assume that `unify`will be called in a context where no variables are shared between the two arguments.
+Some of these texts assume that `unify` will be called in a context where no variables are shared between the two arguments.
 However, they are still suspect to the bug, as the following example points out:
 
 ```lisp

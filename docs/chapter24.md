@@ -678,7 +678,7 @@ The clauses covered here are:
 Here is an example of `when`:
 
 ```lisp
-> (loop for`x `from 1 to 10
+> (loop for x from 1 to 10
      when (oddp x)
          collect x
      else collect (- x))

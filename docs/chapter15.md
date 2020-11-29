@@ -615,7 +615,7 @@ a+b3=b3+3ab2+3a2b+a3
 ![si5_e](images/chapter15/si5_e.gif)
 
 We can use this theorem to compute a power of a polynomial all at once, instead of computing it by repeated multiplication or squaring.
-Of course, a polynomial will in general be a sum of more than two components, so we have to decid`e` how to split it into the *a* and *b* pieces.
+Of course, a polynomial will in general be a sum of more than two components, so we have to decide how to split it into the *a* and *b* pieces.
 There are two obvious ways: either eut the polynomial in half, so that *a* and *b* will be of equal size, or split off one component at a time.
 Fateman shows that the latter method is more efficient in most cases.
 In other words, a polynomial k1xn+k2xn-1+k3xn-2+... !!!(span) {:.hiddenClass} ![si6_e](images/chapter15/si6_e.gif) will be treated as the sum *a + b* where *a*=  *k*1*xn* and *b* is the rest of the polynomial.

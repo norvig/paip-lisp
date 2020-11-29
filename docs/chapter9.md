@@ -1578,7 +1578,8 @@ We need to preserve the order of the rules, so only certain optimizations are po
 We'll use the `simp-fn` facility to install the one big function for each operator.
 
 The function `compile-rule-set` takes an operator, finds all the rules for that operator, and compiles each rule individually.
-(It uses`compile-indexed-rule` rather than `compile-rule`, because it assumes we have already done the indexing for the main operator.) After each rule has been compiled, they are combined with `combine-rules`, which merges similar parts of rules and concatenates the different parts.
+(It uses `compile-indexed-rule` rather than `compile-rule`, because it assumes we have already done the indexing for the main operator.)
+After each rule has been compiled, they are combined with `combine-rules`, which merges similar parts of rules and concatenates the different parts.
 The result is wrapped in a `lambda` expression and compiled as the final simplification function for the operator.
 
 ```lisp
