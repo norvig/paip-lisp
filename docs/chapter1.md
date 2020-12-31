@@ -466,6 +466,7 @@ In other words, the `mapcar` call above is equivalent to:
 (list (last-name (first names))
       (last-name (second names))
       (last-name (third names))
+      ...)
 ```
 
 `mapcar`'s name comes from the fact that it "maps" the function across each of the arguments.

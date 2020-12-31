@@ -168,7 +168,6 @@ Finally, the function `solve-equations` does the mathematics and prints the solu
   (solve-equations
     (create-list-of-equations
       (translate-to-expression (remove-if #'noise-word-p words)))))
-
 ```
 
 The function `translate-to-expression` is a rule-based translator.
@@ -708,10 +707,12 @@ Generate a similar characterization for this version of the program.
             (princ x))))
 ```
 
-**Answer 7.9**`one-unknown` is very inefficient because it searches each subcomponent of an expression twice.
+**Answer 7.9** `one-unknown` is very inefficient because it searches each subcomponent of an expression twice.
 For example, consider the equation:
 
-`(= (+ (+`  x  `2) (+  3 4)) (+ (+  5 6) (+  7 8)))`
+```lisp
+(= (+ (+ x 2) (+ 3 4)) (+ (+ 5 6) (+ 7 8)))
+```
 
 To decide if this has one unknown, `one-unknown` will call `no-unknown` on the left-hand side, and since it fails, call it again on the right-hand side.
 Although there are only eight atoms to consider, it ends up calling `no-unknown 17` times and `one-unknown 4` times.

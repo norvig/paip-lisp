@@ -991,10 +991,8 @@ It is not tail-recursive because before it calls `length` recursively, it must s
 
 ```lisp
 > (comp-show '(define (length l)
+                (if (null? l) 0 (+ 1 (length (cdr l))))))
 ```
-
-`                                (if (null?
-l) 0 (+  1 (length (cdr l))))))`
 
 | []()  |          |          |          |     |     |     |
 |-------|----------|----------|----------|-----|-----|-----|
@@ -1022,15 +1020,10 @@ Of course, it is possible to write `length` in tail-recursive fashion:
 
 ```lisp
 > (comp-show '(define (length l)
-                            (letrec ((len (lambda (l n)
-```
-
-`                                                            (if (null?
-l) n`
-
-```lisp
-                                                                    (len (rest l) (+ n l))))))
-                                (len l 0))))
+              (letrec ((len (lambda (l n)
+                              (if (null? l) n
+                                  (len (rest l) (+ n l))))))
+                (len l 0))))
 ```
 
 | []()  |          |          |         |          |        |     |       |       |
@@ -1741,23 +1734,18 @@ We could write the Scheme function:
 
 ```lisp
 (define (extrema list)
-```
-
-`      ;; Given a list of numbers.
-return an a-list`
-
-```lisp
-      ;; with max and min values
-      '((max ,(apply max list)) (min ,(apply min list))))
+   ;; Given a list of numbers. return an a-list
+   ;; with max and min values
+   '((max ,(apply max list)) (min ,(apply min list))))
 ```
 
 After expansion of the quasiquote, the definition of `extrema` will be:
 
 ```lisp
 (define extrema
-      (lambda (list)
-          (list (list 'max (apply max list))
-                      (list 'min (apply min list)))))
+   (lambda (list)
+     (list (list 'max (apply max list))
+           (list 'min (apply min list)))))
 ```
 
 The problem is that `list` is an argument to the function `extrema`, and the argument shadows the global definition of `list` as a function.
@@ -1847,11 +1835,10 @@ That is, `(set!
 You will need to add some new primitive functions, and you should also provide a way for the user to define new `set!` procedures.
 One way to do that would be with a `setter` function for `set!`, for example:
 
-`(set!
-(setter third)`
-
-`            (lambda (val list) (set-car!
-(cdr (cdr list)) val)))`
+```lisp
+(set! (setter third)
+      (lambda (val list) (set-car! (cdr (cdr list)) val)))
+```
 
 **Exercise  23.9 [m]** It is a curious asymmetry of Scheme that there is a special notation for lambda expressions within `define` expressions, but not within `let`.
 Thus, we see the following:
@@ -1948,19 +1935,9 @@ Consider:
 ```lisp
 => (define (one-two) '(1 2))
 ONE-TWO
-```
-
-`=> (eq?
-(one-two) (one-two))`
-
-```lisp
+=> (eq? (one-two) (one-two))
 T
-```
-
-`=> (eq?
-'(1 2) '(1 2))`
-
-```lisp
+=> (eq? '(1 2) '(1 2))
 NIL
 ```
 
@@ -2111,31 +2088,26 @@ But to demonstrate that the right solution doesn't always appear the first time,
 
 ```lisp
 (defun always (boolean pred env)
-      "Does predicate always evaluate to boolean in env?"
-      (if (atom pred)
-          (and (constantp pred) (equiv boolean pred))
-          (case (first pred)
-                (QUOTE (equiv boolean pred))
-                (BEGIN (if (null (rest pred)) (equiv boolean nil)
-                                                    (always boolean (last1 pred) env)))
-```
-
-`                (SET!
-(always boolean (third pred) env))`
-
-```lisp
-                (IF (or (and (always t (second pred) env)
-                                                      (always boolean (third pred) env))
-                                          (and (always nil (second pred) env)
-                                                      (always boolean (fourth pred) env))
-                                          (and (always boolean (third pred) env)
-                                                      (always boolean (fourth pred) env))))
-                (LAMBDA (equiv boolean t))
-                (t (let ((prim (primitive-p (first pred) env
-                                                                                          (length (rest pred)))))
-                        (and prim
-                                        (eq (prim-always prim)
-                                                    (if boolean 'true 'false))))))))
+   "Does predicate always evaluate to boolean in env?"
+   (if (atom pred)
+     (and (constantp pred) (equiv boolean pred))
+     (case (first pred)
+        (QUOTE (equiv boolean pred))
+        (BEGIN (if (null (rest pred)) (equiv boolean nil)
+                          (always boolean (last1 pred) env)))
+        (SET! (always boolean (third pred) env))
+        (IF (or (and (always t (second pred) env)
+                           (always boolean (third pred) env))
+                     (and (always nil (second pred) env)
+                           (always boolean (fourth pred) env))
+                     (and (always boolean (third pred) env)
+                           (always boolean (fourth pred) env))))
+        (LAMBDA (equiv boolean t))
+        (t (let ((prim (primitive-p (first pred) env
+                                             (length (rest pred)))))
+            (and prim
+                    (eq (prim-always prim)
+                          (if boolean 'true 'false))))))))
 (defun equiv (x y) "Boolean equivalence" (eq (not x) (not y)))
 ```
 

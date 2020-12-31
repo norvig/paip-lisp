@@ -429,10 +429,8 @@ Consider the following clauses:
 These clauses say that, for any person, the mother of that person and the father of that person are parents of that person.
 Now let us ask if there is a person who is his or her own parent:
 
-`> (?
-(parent ?y ?y))`
-
 ```lisp
+> (? (parent ?y ?y))
 ?Y = [Abort]
 ```
 
@@ -441,12 +439,7 @@ Without the printing, there would be no infinite loop:
 
 ```lisp
 (<- (self-parent) (parent ?y ?y))
-```
-
-`> (?
-(self-parent))`
-
-```lisp
+> (? (self-parent))
 Yes;
 Yes;
 No.
@@ -846,15 +839,10 @@ This is done by changing `index`:
 
 ```lisp
 (defun index (key)
-```
-
-`  "Store key in a dtree node.
-Key must be (predicate . args);`
-
-```lisp
-  it is stored in the predicate's dtree."
-  (dtree-index key (rename-variables key) ; store unique vars
-          (get-dtree (predicate key))))
+ "Store key in a dtree node. Key must be (predicate . args);
+ it is stored in the predicate's dtree."
+ (dtree-index key (rename-variables key) ; store unique vars
+     (get-dtree (predicate key))))
 ```
 
 With the new `index` in place, and after calling `test-index` to rebuild the data base, we are now ready to test the retrieval mechanism:
@@ -1105,18 +1093,11 @@ Conceptually, the function to do this, `retrieve-fact`, should be as simple as t
 
 ```lisp
 (defun retrieve-fact (query)
-```
-
-`  "Find all facts that match query.
-Return a list of bindings.`
-
-`  Warning!!
-this version is incomplete."`
-
-```lisp
-  (if (eq (predicate query) 'and)
-    (retrieve-conjunction (args query))
-    (retrieve query bindings)))
+ "Find all facts that match query. Return a list of bindings.
+ Warning!! this version is incomplete."
+ (if (eq (predicate query) 'and)
+  (retrieve-conjunction (args query))
+  (retrieve query bindings)))
 ```
 
 Unfortunately, there are some complications.
@@ -1181,21 +1162,16 @@ In each case the extra argument is made optional so that previously written func
 Now `add-fact` and `retrieve-fact` comprise all we need to implement the language.
 Here is a short example where `add-fact` is used to add facts about bears and dogs, both as individuals and as species:
 
-`> (add-fact '(sub dog animal))`=> `T`
-
-`> (add-fact '(sub bear animal))`=> `T`
-
-`> (add-fact '(ind Fido dog))`=> `T`
-
-`> (add-fact '(ind Yogi bear))`=> `T`
-
-`> (add-fact '(val color Yogi brown))`=> `T`
-
-`> (add-fact '(val color Fido golden))`=> `T`
-
-`> (add-fact '(val latin-name bear ursidae))`=> `T`
-
-`> (add-fact '(val latin-name dog canis-familiaris))`=> `T`
+```lisp
+> (add-fact '(sub dog animal)) => T
+> (add-fact '(sub bear animal)) => T
+> (add-fact '(ind Fido dog)) => T
+> (add-fact '(ind Yogi bear)) => T
+> (add-fact '(val color Yogi brown)) => T
+> (add-fact '(val color Fido golden)) => T
+> (add-fact '(val latin-name bear ursidae)) => T
+> (add-fact '(val latin-name dog canis-familiaris)) => T
+```
 
 Now `retrieve-fact` is used to answer three questions: What kinds of animais are there?
 What are the Latin names of each kind of animal?
@@ -1452,21 +1428,16 @@ To support the frame notation, we define the macros `a` and `each` to make asser
 
 ```lisp
 (defmacro a (&rest args)
-  "Define a new individual and assert facts about it in the data base."
-  '(add-fact ',(translate-exp (cons 'a args))))
+ "Define a new individual and assert facts about it in the data base."
+ '(add-fact ',(translate-exp (cons 'a args))))
 (defmacro each (&rest args)
-  "Define a new category and assert facts about it in the data base."
-  '(add-fact ',(transiate-exp (cons 'each args))))
-```
-
-`(defmacro ??
-(&rest queries)`
-
-```lisp
-  "Return a list of answers satisfying the query or queries."
-  '(retrieve-setof
-    '.(translate-exp (maybe-add 'and (replace-?-vars queries))
-          :query)))
+ "Define a new category and assert facts about it in the data base."
+ '(add-fact ',(transiate-exp (cons 'each args))))
+(defmacro ?? (&rest queries)
+ "Return a list of answers satisfying the query or queries."
+ '(retrieve-setof
+  '.(translate-exp (maybe-add 'and (replace-?-vars queries))
+     :query)))
 ```
 
 All three of these macros call on `translate-exp` to translate from the frame syntax to the primitive syntax.
@@ -1612,34 +1583,24 @@ The following changes to `index` and `dtree-index` add support for worlds:
 ```lisp
 (defvar *world* 'W0 "The current world used by index and fetch.")
 (defun index (key &optional (world *world*))
-```
-
-`  "Store key in a dtree node.
-Key must be (predicate . args);`
-
-```lisp
-  it is stored in the dtree, indexed by the world."
-  (dtree-index key key world (get-dtree (predicate key))))
+ "Store key in a dtree node. Key must be (predicate . args);
+ it is stored in the dtree, indexed by the world."
+ (dtree-index key key world (get-dtree (predicate key))))
 (defun dtree-index (key value world dtree)
-  "Index value under all atoms of key in dtree."
-  (cond
-    ((consp key)    ; index on both first and rest
-      (dtree-index (first key) value world
-            (or (dtree-first dtree)
-              (setf (dtree-first dtree) (make-dtree))))
-      (dtree-index (rest key) value world
-            (or (dtree-rest dtree)
-              (setf (dtree-rest dtree) (make-dtree)))))
-    ((null key))    ; don't index on nil
-    ((variable-p key)    ; index a variable
-      (nalist-push world value (dtree-var dtree)))
-```
-
-`    (t ;; Make sure there is an nlist for this atom.
-and add to it`
-
-```lisp
-      (nalist-push world value (lookup-atom key dtree)))))
+ "Index value under all atoms of key in dtree."
+ (cond
+  ((consp key)  ; index on both first and rest
+   (dtree-index (first key) value world
+      (or (dtree-first dtree)
+       (setf (dtree-first dtree) (make-dtree))))
+   (dtree-index (rest key) value world
+      (or (dtree-rest dtree)
+       (setf (dtree-rest dtree) (make-dtree)))))
+  ((null key))  ; don't index on nil
+  ((variable-p key)  ; index a variable
+   (nalist-push world value (dtree-var dtree)))
+  (t ;; Make sure there is an nlist for this atom. and add to it
+   (nalist-push world value (lookup-atom key dtree)))))
 ```
 
 The new function `nalist-push` adds a value to an nalist, either by inserting the value in an existing key's list or by adding a new key/value list:
@@ -1747,32 +1708,27 @@ To reflect this change, the new functions all have names ending in -`in-world`:
 
 ```lisp
 (defun mapc-retrieve-in-world (fn query)
-  "For every fact in the current world that matches the query,
-  apply the function to the binding list."
-  (dolist (bucket (fetch query))
-    (dolist (world/entries bucket)
-      (when (world-current (first world/entries))
-        (dolist (answer (rest world/entries))
-          (let ((bindings (unify query answer)))
-            (unless (eq bindings fall)
-              (funcall fn bindings))))))))
+ "For every fact in the current world that matches the query,
+ apply the function to the binding list."
+ (dolist (bucket (fetch query))
+  (dolist (world/entries bucket)
+   (when (world-current (first world/entries))
+    (dolist (answer (rest world/entries))
+     (let ((bindings (unify query answer)))
+      (unless (eq bindings fall)
+       (funcall fn bindings))))))))
 (defun retrieve-in-world (query)
-```
-
-`  "Find all facts that match query.
-Return a list of bindings."`
-
-```lisp
-  (let ((answers nil))
-    (mapc-retrieve-in-world
-      #'(lambda (bindings) (push bindings answers))
-      query)
-    answers))
+ "Find all facts that match query. Return a list of bindings."
+ (let ((answers nil))
+  (mapc-retrieve-in-world
+   #'(lambda (bindings) (push bindings answers))
+   query)
+  answers))
 (defun retrieve-bagof-in-world (query)
-  "Find all facts in the current world that match query.
-  Return a list of queries with bindings filled in."
-  (mapcar #'(lambda (bindings) (subst-bindings bindings query))
-          (retrieve-in-world query)))
+ "Find all facts in the current world that match query.
+ Return a list of queries with bindings filled in."
+ (mapcar #'(lambda (bindings) (subst-bindings bindings query))
+     (retrieve-in-world query)))
 ```
 
 Now let's see how these worlds work.
@@ -1791,11 +1747,11 @@ First, in `W0` we see that the facts from `test-index` are still in the data bas
 Now we create and use a new world that inherits from `W0`.
 Two new facts are added to this new world:
 
-`> (use-new-world)`=> `W7031`
-
-`> (index '(p new c))`=> `T`
-
-`> (index '(~p b b))`=> `T`
+```lisp
+> (use-new-world) => W7031
+> (index '(p new c)) => T
+> (index '(~p b b)) => T
+```
 
 We see that the two new facts are accessible in this world:
 
@@ -1813,13 +1769,12 @@ We see that the two new facts are accessible in this world:
 
 Now we create another world as an alternative to the current one by first switching back to the original `W0`, then creating the new world, and then adding some facts:
 
-`> (use-world 'W0)`=> `W0`
-
-`> (use-new-world)`=> `W7173`
-
-`> (index '(p newest c))`=> `T`
-
-`> (index '(~p c newest))`=> `T`
+```lisp
+> (use-world 'W0) => W0
+> (use-new-world) => W7173
+> (index '(p newest c)) => T
+> (index '(~p c newest)) => T
+```
 
 Here we see that the facts entered in `W7031` are not accessible, but the facts in the new world and in `W0` are:
 

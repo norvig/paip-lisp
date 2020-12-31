@@ -33,34 +33,18 @@ could be compiled into this:
 
 ```lisp
 (defun likes/2 (?arg1 ?arg2 cont)
-  ;; First clause:
-```
-
-`  (if (and (unify!
-?arg1 'Robin) (unify!
-?arg2 'cats))`
-
-```lisp
-      (funcall cont))
-  (undo-bindings)
-  ;; Second clause:
-```
-
-`  (if (unify!
-?argl 'Sandy)`
-
-```lisp
-      (likes/2 ?arg2 'cats cont))
-  (undo-bindings)
-  ;; Third clause:
-```
-
-`  (if (unify!
-?argl 'Kim)`
-
-```lisp
-      (likes/2 ?arg2 'Lee
-          #'(lambda () (likes/2 ?arg2 'Kim cont))))))
+ ;; First clause:
+ (if (and (unify! ?arg1 'Robin) (unify! ?arg2 'cats))
+   (funcall cont))
+ (undo-bindings)
+ ;; Second clause:
+ (if (unify! ?argl 'Sandy)
+   (likes/2 ?arg2 'cats cont))
+ (undo-bindings)
+ ;; Third clause:
+ (if (unify! ?argl 'Kim)
+   (likes/2 ?arg2 'Lee
+     #'(lambda () (likes/2 ?arg2 'Kim cont))))))
 ```
 
 In the first clause, we just check the two arguments and, if the unifications succeed, call the continuation directly, because the first clause has no body.
@@ -78,12 +62,9 @@ Note that the code for `likes/2` given before has eliminated some unnecessary ca
 The most obvious implementation would have one call to `unify!` for each argument.
 Thus, for the second clause, we would have the code:
 
-`(if (and (unify!
-?argl 'Sandy) (unify!
-?arg2 ?x))`
-
 ```lisp
-  (likes/2 ?x 'cats cont))
+(if (and (unify! ?argl 'Sandy) (unify! ?arg2 ?x))
+ (likes/2 ?x 'cats cont))
 ```
 
 where we would need a suitable let binding for the variable `?x`.
@@ -166,35 +147,25 @@ We'll start by setting as a target the simple code:
 ```lisp
 (<- (likes Kim ?x) (likes ?x Lee) (likes ?x Kim))
 (defun likes/2 (?arg1 ?arg2 cont)
-  ...
+ ...
+ (if (and (unify! ?argl 'Kim) (unify! ?arg2 ?x)
+   (likes/2 ?arg2 'Lee
+      #'(lambda () (likes/2 ?x 'Kim))))
 ```
 
-`  (if (and (unify!
-?argl 'Kim) (unify!
-?arg2 ?x)`
-
-```lisp
-      (likes/2 ?arg2 'Lee
-            #'(lambda () (likes/2 ?x 'Kim))))
-```
-
-  ...)
+ ...)
 
 but we'll also consider the possibility of upgrading to the improved code:
 
 ```lisp
 (defun likes/2 (?arg1 ?arg2 cont)
-  ...
+ ...
+ (if (unify! ?arg1 'Kim)
+   (likes/2 ?arg2 'Lee
+      #'(lambda () (likes/2 ?arg2 'Kim))))
 ```
 
-`  (if (unify!
-?arg1 'Kim)`
-
-      `(likes/2 ?arg2 'Lee`
-
-            `#'(lambda () (likes/2 ?arg2 'Kim))))`
-
-  ...)
+ ...)
 
 One approach would be to write two functions, `compile-head` and `compile-body`, and then combine them into the code (if *head body*).
 This approach could easily generate the prior code.
@@ -363,58 +334,23 @@ Here's what `prolog-compile` gives us:
 
 ```lisp
 (DEFUN LIKES/2 (?ARG1 ?ARG2 CONT)
-```
-
-`  (IF (UNIFY!
-?ARG1 'ROBIN)`
-
-`    (IF (UNIFY!
-?ARG2 'CATS)`
-
-```lisp
-      (FUNCALL CONT)))
-```
-
-`  (IF (UNIFY!
-?ARG1 'SANDY)`
-
-`    (IF (UNIFY!
-?ARG2 ?X)`
-
-```lisp
-      (LIKES/2 ?X 'CATS CONT)))
-```
-
-`  (IF (UNIFY!
-?ARG1 'KIM)`
-
-`    (IF (UNIFY!
-?ARG2 ?X)`
-
-```lisp
-      (LIKES/2 ?X 'LEE (LAMBDA ()
-            (LIKES/2 ?X 'KIM CONT))))))
+ (IF (UNIFY! ?ARG1 'ROBIN)
+  (IF (UNIFY! ?ARG2 'CATS)
+   (FUNCALL CONT)))
+ (IF (UNIFY! ?ARG1 'SANDY)
+  (IF (UNIFY! ?ARG2 ?X)
+   (LIKES/2 ?X 'CATS CONT)))
+ (IF (UNIFY! ?ARG1 'KIM)
+  (IF (UNIFY! ?ARG2 ?X)
+   (LIKES/2 ?X 'LEE (LAMBDA ()
+      (LIKES/2 ?X 'KIM CONT))))))
 (DEFUN MEMBER/2 (?ARG1 ?ARG2 CONT)
-```
-
-`  (IF (UNIFY!
-?ARG1 ?ITEM)`
-
-`    (IF (UNIFY!
-?ARG2 (CONS ?ITEM ?REST))`
-
-```lisp
-      (FUNCALL CONT)))
-```
-
-`  (IF (UNIFY!
-?ARG1 ?ITEM)`
-
-`    (IF (UNIFY!
-?ARG2 (CONS ?X ?REST))`
-
-```lisp
-      (MEMBER/2 ?ITEM ?REST CONT))))
+ (IF (UNIFY! ?ARG1 ?ITEM)
+  (IF (UNIFY! ?ARG2 (CONS ?ITEM ?REST))
+   (FUNCALL CONT)))
+ (IF (UNIFY! ?ARG1 ?ITEM)
+  (IF (UNIFY! ?ARG2 (CONS ?X ?REST))
+   (MEMBER/2 ?ITEM ?REST CONT))))
 ```
 
 ## 12.2 Fixing the Errors in the Compiler
@@ -485,90 +421,35 @@ With these improvements, here's the code we get for `likes` and `member`:
 
 ```lisp
 (DEFUN LIKES/2 (?ARG1 ?ARG2 CONT)
-  (LET ((OLD-TRAIL (FILL-POINTER *TRAIL*)))
-```
-
-`    (IF (UNIFY!
-?ARG1 'ROBIN)`
-
-`      (IF (UNIFY!
-?ARG2 'CATS)`
-
-```lisp
-            (FUNCALL CONT)))
-```
-
-`    (UNDO-BINDINGS!
-OLD-TRAIL)`
-
-```lisp
-    (LET ((?X (?)))
-```
-
-`      (IF (UNIFY!
-?ARG1 'SANDY)`
-
-`        (IF (UNIFY!
-?ARG2 ?X)`
-
-```lisp
-            (LIKES/2 ?X 'CATS CONT))))
-```
-
-`    (UNDO-BINDINGS!
-OLD-TRAIL)`
-
-```lisp
-    (LET ((?X (?)))
-```
-
-`      (IF (UNIFY!
-?ARG1 'KIM)`
-
-`        (IF (UNIFY!
-?ARG2 ?X)`
-
-```lisp
-            (LIKES/2 ?X 'LEE (LAMBDA ()
-                    (LIKES/2 ?X 'KIM CONT))))))))
+ (LET ((OLD-TRAIL (FILL-POINTER *TRAIL*)))
+  (IF (UNIFY! ?ARG1 'ROBIN)
+   (IF (UNIFY! ?ARG2 'CATS)
+      (FUNCALL CONT)))
+  (UNDO-BINDINGS! OLD-TRAIL)
+  (LET ((?X (?)))
+   (IF (UNIFY! ?ARG1 'SANDY)
+    (IF (UNIFY! ?ARG2 ?X)
+      (LIKES/2 ?X 'CATS CONT))))
+  (UNDO-BINDINGS! OLD-TRAIL)
+  (LET ((?X (?)))
+   (IF (UNIFY! ?ARG1 'KIM)
+    (IF (UNIFY! ?ARG2 ?X)
+      (LIKES/2 ?X 'LEE (LAMBDA ()
+          (LIKES/2 ?X 'KIM CONT))))))))
 (DEFUN MEMBER/2 (?ARG1 ?ARG2 CONT)
-  (LET ((OLD-TRAIL (FILL-POINTER *TRAIL*)))
-    (LET ((?ITEM (?))
-            (?REST (?)))
-```
-
-`      (IF (UNIFY!
-?ARG1 ?ITEM)`
-
-`            (IF (UNIFY!
-?ARG2 (CONS ?ITEM ?REST))`
-
-```lisp
-                        (FUNCALL CONT))))
-```
-
-`    (UNDO-BINDINGS!
-OLD-TRAIL)`
-
-```lisp
-    (LET ((?X (?))
-```
-
-`            (?
-ITEM (?))`
-
-```lisp
-            (?REST (?)))
-```
-
-`    (IF (UNIFY!
-?ARG1 ?ITEM)`
-
-`      (IF (UNIFY!
-?ARG2 (CONS ?X ?REST))`
-
-```lisp
-                        (MEMBER/2 ?ITEM ?REST CONT))))))
+ (LET ((OLD-TRAIL (FILL-POINTER *TRAIL*)))
+  (LET ((?ITEM (?))
+      (?REST (?)))
+   (IF (UNIFY! ?ARG1 ?ITEM)
+      (IF (UNIFY! ?ARG2 (CONS ?ITEM ?REST))
+            (FUNCALL CONT))))
+  (UNDO-BINDINGS! OLD-TRAIL)
+  (LET ((?X (?))
+      (? ITEM (?))
+      (?REST (?)))
+  (IF (UNIFY! ?ARG1 ?ITEM)
+   (IF (UNIFY! ?ARG2 (CONS ?X ?REST))
+            (MEMBER/2 ?ITEM ?REST CONT))))))
 ```
 
 ## 12.3 Improving the Compiler
@@ -633,36 +514,17 @@ Now `member` compiles into this:
 
 ```lisp
 (DEFUN MEMBER/2 (?ARG1 ?ARG2 CONT)
-```
-
-  `(LET ((OLD-TRAIL (FILL-POINTER *TRAIL*)))`
-
-    `(LET ((?ITEM (?)))`
-
-      `(IF (UNIFY!
-?ARG1 ?ITEM)`
-
-        `(IF (UNIFY!
-?ARG2 (CONS ?ITEM (?)))`
-
-                `(FUNCALL CONT))))`
-
-    `(UNDO-BINDINGS!
-OLD-TRAIL)`
-
-```lisp
-    (LET ((?ITEM (?))
-        (?REST (?)))
-```
-
-`      (IF (UNIFY!
-?ARG1 ?ITEM)`
-
-`        (IF (UNIFY!
-?ARG2 (CONS (?) ?REST))`
-
-```lisp
-            (MEMBER/2 ?ITEM ?REST CONT))))))
+ (LET ((OLD-TRAIL (FILL-POINTER *TRAIL*)))
+  (LET ((?ITEM (?)))
+   (IF (UNIFY! ?ARG1 ?ITEM)
+    (IF (UNIFY! ?ARG2 (CONS ?ITEM (?)))
+        (FUNCALL CONT))))
+  (UNDO-BINDINGS! OLD-TRAIL)
+  (LET ((?ITEM (?))
+    (?REST (?)))
+   (IF (UNIFY! ?ARG1 ?ITEM)
+    (IF (UNIFY! ?ARG2 (CONS (?) ?REST))
+      (MEMBER/2 ?ITEM ?REST CONT))))))
 ```
 
 ## 12.4 Improving the Compilation of Unification
@@ -678,25 +540,16 @@ compiles into:
 
 ```lisp
 (LET ((?ITEM (?)))
-```
-
-`  (IF (UNIFY!
-?ARG1 ?ITEM)`
-
-`    (IF (UNIFY!
-?ARG2 (CONS ?ITEM (?)))`
-
-```lisp
-        (FUNCALL CONT))))
+ (IF (UNIFY! ?ARG1 ?ITEM)
+  (IF (UNIFY! ?ARG2 (CONS ?ITEM (?)))
+    (FUNCALL CONT))))
 ```
 
 when it could compile to the more efficient:
 
-`(IF (UNIFY!
-?ARG2 (CONS ?ARG1 (?)))`
-
 ```lisp
-    (FUNCALL CONT))
+(IF (UNIFY! ?ARG2 (CONS ?ARG1 (?)))
+  (FUNCALL CONT))
 ```
 
 Eliminating the unification in one goal has repercussions in other goals later on, so we will need to keep track of expressions that have been unified together.
@@ -943,61 +796,25 @@ Finally, we can see the fruits of our efforts:
 
 ```lisp
 (DEFUN MEMBER/2 (?ARG1 ?ARG2 CONT)
+ (LET ((OLD-TRAIL (FILL-POINTER *TRAIL*)))
+  (IF (UNIFY! ?ARG2 (CONS ?ARG1 (?)))
+      (FUNCALL CONT))
+  (UNDO-BINDINGS! OLD-TRAIL)
+  (LET ((?REST (?)))
+    (IF (UNIFY! ?ARG2 (CONS (?) ?REST))
+        (MEMBER/2 ?ARG1 ?REST CONT)))))
+ (DEFUN LIKES/2 (?ARG1 ?ARG2 CONT)
   (LET ((OLD-TRAIL (FILL-POINTER *TRAIL*)))
-```
-
-`    (IF (UNIFY!
-?ARG2 (CONS ?ARG1 (?)))`
-
-```lisp
-            (FUNCALL CONT))
-```
-
-`    (UNDO-BINDINGS!
-OLD-TRAIL)`
-
-```lisp
-    (LET ((?REST (?)))
-```
-
-`        (IF (UNIFY!
-?ARG2 (CONS (?) ?REST))`
-
-```lisp
-                (MEMBER/2 ?ARG1 ?REST CONT)))))
-  (DEFUN LIKES/2 (?ARG1 ?ARG2 CONT)
-    (LET ((OLD-TRAIL (FILL-POINTER *TRAIL*)))
-```
-
-`        (IF (UNIFY!
-?ARG1 'ROBIN)`
-
-`                (IF (UNIFY!
-?ARG2 'CATS)`
-
-```lisp
-                    (FUNCALL CONT)))
-```
-
-`        (UNDO-BINDINGS!
-OLD-TRAIL)`
-
-`        (IF (UNIFY!
-?ARG1 'SANDY)`
-
-```lisp
-            (LIKES/2 ?ARG2 'CATS CONT))
-```
-
-`        (UNDO-BINDINGS!
-OLD-TRAIL)`
-
-`        (IF (UNIFY!
-?ARG1 'KIM)`
-
-```lisp
-            (LIKES/2 ?ARG2 'LEE (LAMBDA ()
-                        (LIKES/2 ?ARG2 'KIM CONT))))))
+    (IF (UNIFY! ?ARG1 'ROBIN)
+        (IF (UNIFY! ?ARG2 'CATS)
+          (FUNCALL CONT)))
+    (UNDO-BINDINGS! OLD-TRAIL)
+    (IF (UNIFY! ?ARG1 'SANDY)
+      (LIKES/2 ?ARG2 'CATS CONT))
+    (UNDO-BINDINGS! OLD-TRAIL)
+    (IF (UNIFY! ?ARG1 'KIM)
+      (LIKES/2 ?ARG2 'LEE (LAMBDA ()
+            (LIKES/2 ?ARG2 'KIM CONT))))))
 ```
 
 ## 12.5 Further Improvements to Unification
@@ -1011,8 +828,9 @@ But the first thing `unify!` does is redundantly test if the first argument is a
 We could eliminate unnecessary tests by calling more specialized functions rather than the general-purpose function `unify!`.
 Consider this call:
 
-`(unify!
-?arg2 (cons ?arg1 (?)))`
+```lisp
+(unify! ?arg2 (cons ?arg1 (?)))
+```
 
 If `?arg2` is an unbound variable, this code is appropriate.
 But if `?arg2` is a constant atom, we should fail immediately, without allowing `cons` and `?` to generate garbage.
@@ -1020,13 +838,9 @@ We could change the test to:
 
 ```lisp
 (and (consp-or-variable-p ?arg2)
+  (unify-first! ?arg2 ?arg1)
+  (unify-rest! ?arg2 (?)))
 ```
-
-`    (unify-first!
-?arg2 ?arg1)`
-
-`    (unify-rest!
-?arg2 (?)))`
 
 with suitable definitions for the functions referenced here.
 This change should speed execution time and limit the amount of garbage generated.
@@ -1265,16 +1079,11 @@ For the Prolog compiler, primitives can be installed simply by writing a Lisp fu
 
 ```lisp
 (defun read/1 (exp cont)
-```
-
-`  (if (unify!
-exp (read))`
-
-```lisp
-      (funcall cont)))
+ (if (unify! exp (read))
+   (funcall cont)))
 (defun write/1 (exp cont)
-  (write (deref-exp exp) :pretty t)
-  (funcall cont))
+ (write (deref-exp exp) :pretty t)
+ (funcall cont))
 ```
 
 Calling `(write ?x)` will always succeed, so the continuation will always be called.
@@ -1296,13 +1105,8 @@ However, we could have simplified the compiler greatly by having a simple defini
 
 ```lisp
 (defun =/2 (?arg1 ?arg2 cont)
-```
-
-`  (if (unify!
-?arg1 ?arg2)`
-
-```lisp
-    (funcall cont)))
+ (if (unify! ?arg1 ?arg2)
+  (funcall cont)))
 ```
 
 In fact, if we give our compiler the single clause:
@@ -1318,23 +1122,18 @@ Here's an implementation:
 
 ```lisp
 (defun =/2 (?arg1 ?arg2 cont)
-  "Are the two arguments EQUAL with no unification,
-```
-
-`  but with dereferencing?
-If so, succeed."`
-
-```lisp
-  (if (deref-equal ?arg1 ?arg2)
-    (funcall cont)))
+ "Are the two arguments EQUAL with no unification,
+ but with dereferencing? If so, succeed."
+ (if (deref-equal ?arg1 ?arg2)
+  (funcall cont)))
 (defun deref-equal (x y)
-  "Are the two arguments EQUAL with no unification,
-  but with dereferencing?"
-  (or (eql (deref x) (deref y))
-    (and (consp x)
-      (consp y)
-      (deref-equal (first x) (first y))
-      (deref-equal (rest x) (rest y)))))
+ "Are the two arguments EQUAL with no unification,
+ but with dereferencing?"
+ (or (eql (deref x) (deref y))
+  (and (consp x)
+   (consp y)
+   (deref-equal (first x) (first y))
+   (deref-equal (rest x) (rest y)))))
 ```
 
 One of the most important primitives is `call`.
@@ -1387,30 +1186,20 @@ Since it has to manipulate the trail, and we may have other predicates that will
 
 ```lisp
 (defmacro with-undo-bindings (&body body)
-  "Undo bindings after each expression in body except the last."
-  (if (length=1 body)
-    (first body)
-    '(let ((old-trail (fill-pointer *trail*)))
-      ,(first body)
-        ,@(loop for exp in (rest body)
-```
-
-`                collect '(undo-bindings!
-old-trail)`
-
-```lisp
-                collect exp))))
+ "Undo bindings after each expression in body except the last."
+ (if (length=1 body)
+  (first body)
+  '(let ((old-trail (fill-pointer *trail*)))
+   ,(first body)
+    ,@(loop for exp in (rest body)
+        collect '(undo-bindings! old-trail)
+        collect exp))))
 (defun not/1 (relation cont)
-```
-
-`  "Negation by failure: If you can't prove G.
-then (not G) true."`
-
-```lisp
-  ;; Either way, undo the bindings.
-  (with-undo-bindings
-    (call/1 relation #'(lambda () (return-from not/1 nil)))
-    (funcall cont)))
+ "Negation by failure: If you can't prove G. then (not G) true."
+ ;; Either way, undo the bindings.
+ (with-undo-bindings
+  (call/1 relation #'(lambda () (return-from not/1 nil)))
+  (funcall cont)))
 ```
 
 Here's an example where `not` works fine:
@@ -1448,32 +1237,22 @@ Here is an implementation of `bagof:`
 
 ```lisp
 (defun bagof/3 (exp goal resuit cont)
-  "Find all solutions to GOAL, and for each solution,
-  collect the value of EXP into the list RESULT."
-```
-
-`  ;; Ex: Assume (p 1) (p 2) (p 3).
-Then:`
-
-```lisp
-  ;: (bagof ?x (p ?x) ?1) => ?1 = (1 2 3)
-  (let ((answers nil))
-  (call/1 goal #'(lambda ()
-      (push (deref-copy exp) answers)))
-  (if (and (not (null answers))
-```
-
-`    (unify!
-resuit (nreverse answers)))`
-
-```lisp
-  (funcall cont))))
-  (defun deref-copy (exp)
-  "Copy the expression, replacing variables with new ones.
-  The part without variables can be returned as is."
-  (sublis (mapcar #'(lambda (var) (cons (deref var) (?))
-    (unique-find-anywhere-if #'var-p exp))
-  exp))
+ "Find all solutions to GOAL, and for each solution,
+ collect the value of EXP into the list RESULT."
+ ;; Ex: Assume (p 1) (p 2) (p 3). Then:
+ ;: (bagof ?x (p ?x) ?1) => ?1 = (1 2 3)
+ (let ((answers nil))
+ (call/1 goal #'(lambda ()
+   (push (deref-copy exp) answers)))
+ (if (and (not (null answers))
+  (unify! resuit (nreverse answers)))
+ (funcall cont))))
+ (defun deref-copy (exp)
+ "Copy the expression, replacing variables with new ones.
+ The part without variables can be returned as is."
+ (sublis (mapcar #'(lambda (var) (cons (deref var) (?))
+  (unique-find-anywhere-if #'var-p exp))
+ exp))
 ```
 
 Below we use `bagof` to collect a list of everyone Sandy likes.
@@ -1501,28 +1280,18 @@ Those who are disappointed with a bag containing multiple versions of the same a
 
 ```lisp
 (defun setof/3 (exp goal resuit cont)
-  "Find all unique solutions to GOAL, and for each solution,
-  collect the value of EXP into the list RESULT."
-```
-
-`  ;; Ex: Assume (p 1) (p 2) (p 3).
-Then:`
-
-```lisp
-  ;;  (setof ?x (p ?x) ?l ) => ?l = (1 2 3)
-  (let ((answers nil))
-  (call/1 goal #'(lambda ()
-      (push (deref-copy exp) answers)))
-  (if (and (not (null answers))
-```
-
-`    (unify!
-resuit (delete-duplicates`
-
-```lisp
-        answers
-        :test #'deref-equal)))
-  (funcall cont))))
+ "Find all unique solutions to GOAL, and for each solution,
+ collect the value of EXP into the list RESULT."
+ ;; Ex: Assume (p 1) (p 2) (p 3). Then:
+ ;; (setof ?x (p ?x) ?l ) => ?l = (1 2 3)
+ (let ((answers nil))
+ (call/1 goal #'(lambda ()
+   (push (deref-copy exp) answers)))
+ (if (and (not (null answers))
+  (unify! resuit (delete-duplicates
+    answers
+    :test #'deref-equal)))
+ (funcall cont))))
 ```
 
 Prolog supports arithmetic with the operator `is`.
@@ -1532,19 +1301,14 @@ For our version of Prolog, we can support not just arithmetic but any Lisp expre
 
 ```lisp
 (defun is/2 (var exp cont)
-  ;; Example: (is ?x (+  3 (* ?y (+ ?z 4))))
-  ;; Or even: (is (?x ?y ?x) (cons (first ?z) ?l))
-  (if (and (not (find-if-anywhere #'unbound-var-p exp))
-```
-
-`    (unify!
-var (eval (deref-exp exp))))`
-
-```lisp
-  (funcall cont)))
+ ;; Example: (is ?x (+ 3 (* ?y (+ ?z 4))))
+ ;; Or even: (is (?x ?y ?x) (cons (first ?z) ?l))
+ (if (and (not (find-if-anywhere #'unbound-var-p exp))
+  (unify! var (eval (deref-exp exp))))
+ (funcall cont)))
 (defun unbound-var-p (exp)
-  "Is EXP an unbound var?"
-  (and (var-p exp) (not (bound-p exp))))
+ "Is EXP an unbound var?"
+ (and (var-p exp) (not (bound-p exp))))
 ```
 
 As an aside, we might as well give the Prolog programmer access to the function `unbound-var-p`.
@@ -1573,15 +1337,10 @@ Needless to say, `lisp` is not a part of standard Prolog.
 
 ```lisp
 (defun lisp/2 (?result exp cont)
-  "Apply (first exp) to (rest exp), and return the result."
-  (if (and (consp (deref exp))
-```
-
-`    (unify!
-?result (apply (first exp) (rest exp))))`
-
-```lisp
-  (funcall cont)))
+ "Apply (first exp) to (rest exp), and return the result."
+ (if (and (consp (deref exp))
+  (unify! ?result (apply (first exp) (rest exp))))
+ (funcall cont)))
 ```
 
 **Exercise  12.7 [m]** Define the primitive `solve/1`, which works like the function `solve` used in student ([page 225](B9780080571157500078.xhtml#p225)).
@@ -1673,27 +1432,15 @@ Thus, we want code that looks something like this:
 
 ```lisp
 (defun p/2 (argl arg2 cont)
-  (let ((old-trail (fill-pointer *trail*)))
-```
-
-`    (if (unify!
-arg2 'a)`
-
-```lisp
-      (progn (q/1 argl cont)
-          (return-from p/2 nil)))
-```
-
-`    (undo-bindings!
-old-trail)`
-
-`    (if (unify!
-arg2 'b)`
-
-```lisp
-      (r/1 argl #'(lambda ()
-              (progn (s/1 argl cont)
-                (return-from p/2 nil)))))))
+ (let ((old-trail (fill-pointer *trail*)))
+  (if (unify! arg2 'a)
+   (progn (q/1 argl cont)
+     (return-from p/2 nil)))
+  (undo-bindings! old-trail)
+  (if (unify! arg2 'b)
+   (r/1 argl #'(lambda ()
+       (progn (s/1 argl cont)
+        (return-from p/2 nil)))))))
 ```
 
 We can get this code by making a single change to `compile-body:` when the first goal in a body (or what remains of the body) is the cut symbol, then we should generate a `progn` that contains the code for the rest of the body, followed by a `return-from` the predicate being compiled.
@@ -2126,34 +1873,19 @@ An expression is a goal if it is a member of the body of a clause, and is a lite
 
 ```lisp
 (defun member/2 (?arg1 ?arg2 cont)
-  (let ((old-trail (fill-pointer *tra1l*))
-      (exit-cont #'(lambda ()
-          (prolog-trace 'exit 'member ?arg1 ?arg2 )
-          (funcall cont))))
-    (prolog-trace 'call 'member ?arg1 ?arg2)
-```
-
-`    (if (unify!
-?arg2 (cons ?arg1 (?)))`
-
-```lisp
-      (funcall exit-cont))
-```
-
-`    (undo-bindings!
-old-trail)`
-
-```lisp
-    (prolog-trace 'redo 'member ?arg1 ?arg2)
-    (let ((?rest (?)))
-```
-
-`      (if (unify!
-?arg2 (cons (?) ?rest))`
-
-```lisp
-      (member/2 ?arg1 ?rest exit-cont)))
-    (prolog-trace 'fail 'member ?arg1 ?arg2)))
+ (let ((old-trail (fill-pointer *tra1l*))
+   (exit-cont #'(lambda ()
+     (prolog-trace 'exit 'member ?arg1 ?arg2 )
+     (funcall cont))))
+  (prolog-trace 'call 'member ?arg1 ?arg2)
+  (if (unify! ?arg2 (cons ?arg1 (?)))
+   (funcall exit-cont))
+  (undo-bindings! old-trail)
+  (prolog-trace 'redo 'member ?arg1 ?arg2)
+  (let ((?rest (?)))
+   (if (unify! ?arg2 (cons (?) ?rest))
+   (member/2 ?arg1 ?rest exit-cont)))
+  (prolog-trace 'fail 'member ?arg1 ?arg2)))
 ```
 
 The definition of `prolog-trace` is:

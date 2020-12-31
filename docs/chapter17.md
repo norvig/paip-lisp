@@ -472,31 +472,23 @@ First the cube:
 ```lisp
 > (print-labelings (diagram 'cube))
 The initial diagram is:
-  A/5 Y: AB=[+-L-R] AC=[+-RL-] AD=[+--RL]
-  B/3 W: BG=[L-+] BE=[R-+] BA=[++-]
-  C/3 W: CE=[L-+] CF=[R-+] CA=[++-]
-  D/3 W: DF=[L-+] DG=[R-+] DA=[++-]
-  E/6 L: EC=[RL+L-R] EB=[LRR+L-]
-  F/6 L: FD=[RL+L-R] FC=[LRR+L-]
-  G/6 L: GB=[RL+L-R] GD=[LRR+L-]
-```
-
-`For 29,160 interpr`e`tations.`
-
-```lisp
+ A/5 Y: AB=[+-L-R] AC=[+-RL-] AD=[+--RL]
+ B/3 W: BG=[L-+] BE=[R-+] BA=[++-]
+ C/3 W: CE=[L-+] CF=[R-+] CA=[++-]
+ D/3 W: DF=[L-+] DG=[R-+] DA=[++-]
+ E/6 L: EC=[RL+L-R] EB=[LRR+L-]
+ F/6 L: FD=[RL+L-R] FC=[LRR+L-]
+ G/6 L: GB=[RL+L-R] GD=[LRR+L-]
+For 29,160 interpr`e`tations.
 After constraint propagation the diagram is:
-  A/1 Y: AB=[+] AC=[+] AD=[+]
-  B/2 W: BG=[L-] BE=[R-] BA=[++]
-  C/2 W: CE=[L-] CF=[R-] CA=[++]
-  D/2 W: DF=[L-] DG=[R-] DA=[++]
-  E/3 L: EC=[R-R] EB=[LL-]
-  F/3 L: FD=[R-R] FC=[LL-]
-  G/3 L: GB=[R-R] GD=[LL-]
-```
-
-`For 216 interpr`e`tations.`
-
-```lisp
+ A/1 Y: AB=[+] AC=[+] AD=[+]
+ B/2 W: BG=[L-] BE=[R-] BA=[++]
+ C/2 W: CE=[L-] CF=[R-] CA=[++]
+ D/2 W: DF=[L-] DG=[R-] DA=[++]
+ E/3 L: EC=[R-R] EB=[LL-]
+ F/3 L: FD=[R-R] FC=[LL-]
+ G/3 L: GB=[R-R] GD=[LL-]
+For 216 interpr`e`tations.
 There are four solutions:
 Diagram:
   A/1 Y: AB=[+] AC=[+] AD=[+]
@@ -561,26 +553,22 @@ We can see how this works on the cube:
 ```lisp
 > (print-labelings (ground (diagram 'cube) 'g 'd))
 The initial diagram is:
-  A/5 Y: AB=[+-L-R] AC=[+-RL-] AD=[+--RL]
-  B/3 W: BG=[L-+] BE=[R-+] BA=[++-]
-  C/3 W: CE=[L-+] CF=[R-+] CA=[++-]
-  D/3 W: DF=[L-+] DG=[R-+] DA=[++-]
-  E/6 L: EC=[RL+L-R] EB[LRR+L-]
-  F/6 L: FD=[RL+L-R] FC=[LRR+L-]
-  G/1 L: GB=[R] GD=[-]
-```
-
-`For 4,860 interpr`e`tations.`
-
-```lisp
+ A/5 Y: AB=[+-L-R] AC=[+-RL-] AD=[+--RL]
+ B/3 W: BG=[L-+] BE=[R-+] BA=[++-]
+ C/3 W: CE=[L-+] CF=[R-+] CA=[++-]
+ D/3 W: DF=[L-+] DG=[R-+] DA=[++-]
+ E/6 L: EC=[RL+L-R] EB[LRR+L-]
+ F/6 L: FD=[RL+L-R] FC=[LRR+L-]
+ G/1 L: GB=[R] GD=[-]
+For 4,860 interpr`e`tations.
 After constraint propagation the diagram is:
-  A/1 Y: AB=[+] AC=[+] AD=[+]
-  B/l W: BG=[L] BE=[R] BA=[+]
-  C/l W: CE=[L] CF=[R] CA=[C  +]
-  D/l W: DF=[-] DG=[-] DA=[+]
-  E/l L: EC=[R] EB=[L]
-  F/1 L: FD=[-] FC=[L]
-  G/1 L: GB=[R] GD=[-]
+ A/1 Y: AB=[+] AC=[+] AD=[+]
+ B/l W: BG=[L] BE=[R] BA=[+]
+ C/l W: CE=[L] CF=[R] CA=[C +]
+ D/l W: DF=[-] DG=[-] DA=[+]
+ E/l L: EC=[R] EB=[L]
+ F/1 L: FD=[-] FC=[L]
+ G/1 L: GB=[R] GD=[-]
 ```
 
 Note that the user only had to specify one of the two ground lines, GD.
@@ -618,24 +606,20 @@ The grounded version yields the unique solution shown in the following output an
   (m L k i))
 > (print-labelings (ground (diagram 'cube-on-plate) 'k 'm))
 The initial diagram is:
-  A/5 Y: AB=[+-L-R] AC=[+-RL-] AD=[+--RL]
-  B/3 W: BG=[L-+] BE=[R-+] BA=[++-]
-  C/3 W: CE=[L-+] CF=[R-+] CA=[++-]
-  D/3 W: DF=[L-+] DG=[R-+] DA=[++-]
-  E/6 L: EC=[RL+L-R] EB=[LRR+L-]
-  F/5 Y: FD=C+-L-R] FC=[+-RL-] FI=[+--RL]
-  G/5 Y: GB=[+-L-R] GD=[+-RL-] GH=[+--RL]
-  H/3 W: HL=[L-+] HG=[R-+] HJ=[++-]
-  I/3 W: IF=[L-+] IM=[R-+] IJ=[++-]
-  J/5 Y: JH=[+-L-R] JI=[+-RL-] JK=[+--RL]
-  K/1 W: KM=[-] KL=[-] KJ=[+]
-  L/6 L: LH=[RL+L-R] LK=[LRR+L-]
-  M/6 L: MK=[RL+L-R] MI=[LRR+L-]
-```
-
-`For 32.805.000 interpr`e`tations.`
-
-```lisp
+ A/5 Y: AB=[+-L-R] AC=[+-RL-] AD=[+--RL]
+ B/3 W: BG=[L-+] BE=[R-+] BA=[++-]
+ C/3 W: CE=[L-+] CF=[R-+] CA=[++-]
+ D/3 W: DF=[L-+] DG=[R-+] DA=[++-]
+ E/6 L: EC=[RL+L-R] EB=[LRR+L-]
+ F/5 Y: FD=C+-L-R] FC=[+-RL-] FI=[+--RL]
+ G/5 Y: GB=[+-L-R] GD=[+-RL-] GH=[+--RL]
+ H/3 W: HL=[L-+] HG=[R-+] HJ=[++-]
+ I/3 W: IF=[L-+] IM=[R-+] IJ=[++-]
+ J/5 Y: JH=[+-L-R] JI=[+-RL-] JK=[+--RL]
+ K/1 W: KM=[-] KL=[-] KJ=[+]
+ L/6 L: LH=[RL+L-R] LK=[LRR+L-]
+ M/6 L: MK=[RL+L-R] MI=[LRR+L-]
+For 32.805.000 interpr`e`tations.
 After constraint propagation the diagram is
   A/1 Y: AB=[+] AC=[+] AD=[+]
   B/2 W: BG=[L-] BE=[R-] BA=[++]
@@ -671,41 +655,35 @@ It turns out the algorithm correctly finds no interpretation for this well-known
   (l W h g c))
 > (print-1 abel ings (diagram 'poiuyt))
 The initial diagram is:
-  A/6 L: AB=[RL+L-R] AG=[LRR+L-]
-  B/6 L: BJ=[RL+L-R] BA=[LRR+L-]
-  C/6 L: CD=[RL+L-R] CL=[LRR+L-]
-  D/6 L: DH=[RL+L-R] DC=[LRR+L-]
-  E/6 L: EF=[RL+L-R] EI=[LRR+L-]
-  F/6 L: FK=[RL+L-R] FE=[LRR+L-]
-  G/6 L: GA=[RL+L-R] GL=[LRR+L-]
-  H/6 L: HL=[RL+L-R] HD=[LRR+L-]
-  I/6 L: IE=[RL+L-R] IK=[LRR+L-]
-  J/6 L: JK=[RL+L-R] JB=[LRR+L-]
-  K/3 W: KJ=[L-+] KI=[R-+] KF=[++-]
-  L/3 W: LH=[L-+] LG=[R-+] LC=[++-]
-```
-
-`For 544,195.584 interpr`e`tations.`
-
-```lisp
+ A/6 L: AB=[RL+L-R] AG=[LRR+L-]
+ B/6 L: BJ=[RL+L-R] BA=[LRR+L-]
+ C/6 L: CD=[RL+L-R] CL=[LRR+L-]
+ D/6 L: DH=[RL+L-R] DC=[LRR+L-]
+ E/6 L: EF=[RL+L-R] EI=[LRR+L-]
+ F/6 L: FK=[RL+L-R] FE=[LRR+L-]
+ G/6 L: GA=[RL+L-R] GL=[LRR+L-]
+ H/6 L: HL=[RL+L-R] HD=[LRR+L-]
+ I/6 L: IE=[RL+L-R] IK=[LRR+L-]
+ J/6 L: JK=[RL+L-R] JB=[LRR+L-]
+ K/3 W: KJ=[L-+] KI=[R-+] KF=[++-]
+ L/3 W: LH=[L-+] LG=[R-+] LC=[++-]
+For 544,195.584 interpr`e`tations.
 After constraint propagation the diagram is:
-  A/5 L: AB=[RL+-R] AG=[LRRL-]
-  B/5 L: BJ=[RLL-R] BA=[LR+L-]
-  C/2 L: CD=[LR] CL=[+-]
-  D/3 L: DH=[RL-] DC=[LRL]
-  E/3 L: EF=[RLR] EI=[LR-]
-  F/2 L: FK=[+-] FE=[RL]
-  G/4 L: GA=[RL-R] GL=[L+L-]
-  H/4 L: HL=[R+-R] HD=[LRL-]
-  I/4 L: IE=[RL-R] IK=[L+L-]
-  J/4 L: JK=[R+-R] JB=[LRL-]
-  K/3 W: KJ=[L-+] KI=[R-+] KF=[++-]
-  L/3 W: LH=[L-+] LG=[R-+] LC=[++-]
+ A/5 L: AB=[RL+-R] AG=[LRRL-]
+ B/5 L: BJ=[RLL-R] BA=[LR+L-]
+ C/2 L: CD=[LR] CL=[+-]
+ D/3 L: DH=[RL-] DC=[LRL]
+ E/3 L: EF=[RLR] EI=[LR-]
+ F/2 L: FK=[+-] FE=[RL]
+ G/4 L: GA=[RL-R] GL=[L+L-]
+ H/4 L: HL=[R+-R] HD=[LRL-]
+ I/4 L: IE=[RL-R] IK=[L+L-]
+ J/4 L: JK=[R+-R] JB=[LRL-]
+ K/3 W: KJ=[L-+] KI=[R-+] KF=[++-]
+ L/3 W: LH=[L-+] LG=[R-+] LC=[++-]
+For 2,073,600 interpr`e`tations.
+There are z`e`ro solutions:
 ```
-
-`For 2,073,600 interpr`e`tations.`
-
-`There are z`e`ro solutions:`
 
 Now we try a more complex diagram:
 
@@ -851,13 +829,8 @@ Worse, when we try to ground the diagram on the line XZ and call `print-labeling
 
 ```lisp
 >>>ERROR: The first argument to NTH was of the wrong type.
-```
-
-`The function expected a fixnum >= z`e`ro.`
-
-`While in the function LABELS-FOR`<= `CONSISTENT-LABELINGS`
-
-```lisp
+The function expected a fixnum >= zero.
+While in the function LABELS-FOR <= CONSISTENT-LABELINGS
 Debugger entered while in the following function:
 ```
 
@@ -889,15 +862,9 @@ It also checks that each vertex is one of the four legal types, and has the righ
 
 ```lisp
 (defmacro defdiagram (name &rest vertex-descriptors)
-```
-
-`  "Define a diagram.
-A copy can be gotten by (diagram name)."`
-
-```lisp
-  '(put-diagram '.name (construct-diagram
-                    (check-diagram ',vertex-descriptors))))
-
+ "Define a diagram. A copy can be gotten by (diagram name)."
+ '(put-diagram '.name (construct-diagram
+          (check-diagram ',vertex-descriptors))))
 (defun check-diagram (vertex-descriptors)
   "Check if the diagram description appears consistent."
   (let ((errors 0))
@@ -1144,22 +1111,12 @@ Here's the error:
 
 ```lisp
 >>>ERROR: The first argument to NTH was of the wrong type.
-```
-
-`The function expected a fixnum >= z`e`ro.`
-
-`While in the function LABELS-FOR`<= `CONSISTENT-LABELINGS`
-
-```lisp
+The function expected a fixnum >= zero.
+While in the function LABELS-FOR <= CONSISTENT-LABELINGS
 Debugger entered while in the following function:
-```
-
-`LABELS-FOR (P.C.
-= 23)`
-
-```lisp
-      Arg 0 (VERTEX): U/6
-      Arg 1 (FROM): 4/4
+LABELS-FOR (P.C. = 23)
+   Arg 0 (VERTEX): U/6
+   Arg 1 (FROM): 4/4
 ```
 
 Looking at the definition of `labels-for`, we see that it is looking for the from vertex, which in this case is 4, among the neighbors of U.

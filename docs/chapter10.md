@@ -34,10 +34,10 @@ For example, consider the following function to compute the sum of the squares o
 
 ```lisp
 (defun sum-squares (seq)
-  (let ((sum 0))
-    (dotimes (i (length seq))
-      (incf sum (square (elt seq i))))
-    sum))
+ (let ((sum 0))
+  (dotimes (i (length seq))
+   (incf sum (square (elt seq i))))
+  sum))
 (defun square (x) (* x x))
 ```
 
@@ -45,14 +45,14 @@ If this function will only be used to sum vectors of fixnums, we can make it a l
 
 ```lisp
 (defun sum-squares (vect)
-  (declare (type (simple-array fixnum *) vect)
-        (inline square) (optimize speed (safety 0)))
-  (let ((sum 0))
-    (declare (fixnum sum))
-    (dotimes (i (length vect))
-      (declare (fixnum i))
-      (incf sum (the fixnum (square (svref vect i)))))))
-    sum))
+ (declare (type (simple-array fixnum *) vect)
+    (inline square) (optimize speed (safety 0)))
+ (let ((sum 0))
+  (declare (fixnum sum))
+  (dotimes (i (length vect))
+   (declare (fixnum i))
+   (incf sum (the fixnum (square (svref vect i)))))))
+  sum))
 ```
 
 The fixnum declarations let the compiler use integer arithmetic directly, rather than checking the type of each addend.
@@ -73,10 +73,9 @@ In some cases, further optimizations are possible.
 Consider the predicate `starts-with`:
 
 ```lisp
-  (defun starts-with (list x)
-    "Is x a list whose first element is x?"
-    (and (consp list) (eql (first list) x)))
-  )
+(defun starts-with (list x)
+ "Is this a list whose first element is x?"
+ (and (consp list) (eql (first list) x)))
 ```
 
 Suppose we have a code fragment like the following:
@@ -103,7 +102,7 @@ Besides eliminating run-time type checks, declarations also allow the compiler t
 Many compilers support both *boxed* and *unboxed* representations of data objects.
 A boxed representation includes enough information to determine the type of the object.
 An unboxed representation is just the "raw bits" that the computer can deal with directly.
-Consider the following function, which is used to clear a 1024  x  1024 array of floating point numbers, setting each one to zero:
+Consider the following function, which is used to clear a 1024 x 1024 array of floating point numbers, setting each one to zero:
 
 ```lisp
 (defun clear-m-array (array)
@@ -527,36 +526,29 @@ If you like, you can define a macro to automatically define the interface to the
 
 ```lisp
 (defmacro defun* (fn-name arg-list &rest body)
-```
-
-`  "Define two functions.
-one an interface to a &keyword-less`
-
-`  version.
-Proclaim the interface function inline."`
-
-```lisp
-  (if (and (member '&key arg-list)
-        (not (member '&rest arg-list)))
-      (let ((no-key-fn-name (symbol fn-name '*no-key))
-        (args (mapcar #'first-or-self
-              (set-difference
-                arg-list
-                lambda-list-keywords))))
-      '(progn
-        (proclaim '(inline ,fn-name))
-        (defun ,no-key-fn-name ,args
-          .,body)
-        (defun ,fn-name ,arg-list
-          (,no-key-fn-name .,args))))
-    '(defun ,fn-name ,arg-list
-      .,body)))
+ "Define two functions. one an interface to a &keyword-less
+ version. Proclaim the interface function inline."
+ (if (and (member '&key arg-list)
+    (not (member '&rest arg-list)))
+   (let ((no-key-fn-name (symbol fn-name '*no-key))
+    (args (mapcar #'first-or-self
+       (set-difference
+        arg-list
+        lambda-list-keywords))))
+   '(progn
+    (proclaim '(inline ,fn-name))
+    (defun ,no-key-fn-name ,args
+     .,body)
+    (defun ,fn-name ,arg-list
+     (,no-key-fn-name .,args))))
+  '(defun ,fn-name ,arg-list
+   .,body)))
 >(macroexpand '(defun* key (&key a b (c 1) (d (sqrt a)))
-            (list a b c d)))
+      (list a b c d)))
 (PROGN (PROCLAIM '(INLINE KEY))
-    (DEFUN KEY*NO-KEY (A B C D) (LIST A B C D))
-    (DEFUN KEY (&KEY A B (C 1) (D (SQRT A)))
-      (KEY*NO-KEY A B C D)))
+  (DEFUN KEY*NO-KEY (A B C D) (LIST A B C D))
+  (DEFUN KEY (&KEY A B (C 1) (D (SQRT A)))
+   (KEY*NO-KEY A B C D)))
 >(macroexpand '(defun* reg (a b c d) (list a b c d)))
 (DEFUN REG (A B C D) (LIST A B C D))
 ```
@@ -570,33 +562,33 @@ In CMU Lisp, the function `member` has the following definition, which is procla
 
 ```lisp
 (defun member (item list &key (key #'identity)
-                (test #'eql testp)(test-not nil notp))
-  (do ((list list (cdr list)))
-      ((null list) nil)
-    (let ((car (car list)))
-      (if (cond
-        (testp
-          (funcall test item
-                (funcall key car)))
-        (notp
-          (not
-      (funcall test-not item
-            (funcall key car))))
-    (t
-      (funcall test item
-            (funcall key car))))
-  (return list)))))
+        (test #'eql testp)(test-not nil notp))
+ (do ((list list (cdr list)))
+   ((null list) nil)
+  (let ((car (car list)))
+   (if (cond
+    (testp
+     (funcall test item
+        (funcall key car)))
+    (notp
+     (not
+   (funcall test-not item
+      (funcall key car))))
+  (t
+   (funcall test item
+      (funcall key car))))
+ (return list)))))
 ```
 
-A call like `(member`[ch 1](B9780080571157500017.xhtml)`:key #'first-letter :test #'char  =)` expands into the equivalent of the following code.
+A call like `(member`[ch 1](B9780080571157500017.xhtml)`:key #'first-letter :test #'char =)` expands into the equivalent of the following code.
 Unfortunately, not all compilers are this clever with inline declarations.
 
 ```lisp
 (do ((list list (cdr list)))
-      ((null list) nil)
-    (let ((car (car list)))
-      (if (char  = ch (first-letter car))
-        (return list))))
+   ((null list) nil)
+  (let ((car (car list)))
+   (if (char = ch (first-letter car))
+    (return list))))
 ```
 
 This chapter is concerned with efficiency and so has taken a stand against the use of keyword parameter s in frequently used functions.
@@ -624,12 +616,12 @@ Unlike the version in [chapter 5](B9780080571157500054.xhtml), this version retu
 
 ```lisp
 (defun flatten (input)
-  "Return a flat list of the atoms in the input.
-  Ex: (flatten '((a) (b (c) d))) => (a b c d)."
-  (cond ((null input) nil)
-      ((atom input) (list input))
-      (t (append (flatten (first input))
-            (flatten (rest input))))))
+ "Return a flat list of the atoms in the input.
+ Ex: (flatten '((a) (b (c) d))) => (a b c d)."
+ (cond ((null input) nil)
+   ((atom input) (list input))
+   (t (append (flatten (first input))
+      (flatten (rest input))))))
 ```
 
 This definition is quite simple, and it is easy to see that it is correct.
@@ -642,12 +634,12 @@ This way no garbage is generated, and no subcomponent is traversed more than onc
 
 ```lisp
 (defun flatten (input &optional accumulator)
-  "Return a flat list of the atoms in the input.
-  Ex: (flatten '((a) (b (c) d))) => (a b c d)."
-  (cond ((null input) accumulator)
-      ((atom input) (cons input accumulator))
-      (t (flatten (first input)
-            (flatten (rest input) accumulator)))))
+ "Return a flat list of the atoms in the input.
+ Ex: (flatten '((a) (b (c) d))) => (a b c d)."
+ (cond ((null input) accumulator)
+   ((atom input) (cons input accumulator))
+   (t (flatten (first input)
+      (flatten (rest input) accumulator)))))
 ```
 
 The version with the accumulator may be a little harder to understand, but it is far more efficient than the original version.
@@ -688,27 +680,19 @@ The latter will automatically allocate a larger vector and copy over elements if
 You can remove elements with `vector - pop`, or you can explicitly look at the fill pointer with `fill - pointer`, or change it with a `setf`.
 Here are some examples (with `*print-array*` set to t so we can see the results):
 
-`> (setf a (make-array 5 :fill-pointer 0))`=> `#()`
-
-`> (vector-push 1 a)`=> `0`
-
-`> (vector-push 2 a)`=> `1`
-
-`> a`=> `#(1 2)`
-
-`> (vector-pop a)`=> `2`
-
-`> a`=> `#(1)`
-
-`> (dotimes (i 10) (vector-push-extend 'x a))`=> `NIL`
-
-`> a`=> `#(1 XXXXXXXXXX)`
-
-`> (fill- pointer a)`=> `11`
-
-`> (setf (fill-pointer a) 1)`=> `1`
-
-`> a`=> `#(1)`
+```lisp
+> (setf a (make-array 5 :fill-pointer 0))`=> `#()
+> (vector-push 1 a)`=> `0
+> (vector-push 2 a)`=> `1
+> a`=> `#(1 2)
+> (vector-pop a)`=> `2
+> a`=> `#(1)
+> (dotimes (i 10) (vector-push-extend 'x a))`=> `NIL
+> a`=> `#(1 XXXXXXXXXX)
+> (fill- pointer a)`=> `11
+> (setf (fill-pointer a) 1)`=> `1
+> a`=> `#(1)
+```
 
 `> (find 'x a)`=> `NIL NIL ;`*FIND can't find past the fill pointer*
 
@@ -732,35 +716,35 @@ Note that it does not support segment variables, or any of the other options imp
 
 ```lisp
 (let* ((vars (make-array 10 :fill-pointer 0 :adjustable t))
-      (vals (make-array 10 :fill-pointer 0 :adjustable t))
-      (success (cons vars vals)))
+   (vals (make-array 10 :fill-pointer 0 :adjustable t))
+   (success (cons vars vals)))
 (defun efficient-pat-match (pattern input)
-  "Match pattern against input."
-  (setf (fill-pointer vars) 0)
-  (setf (fill-pointer vals) 0)
-  (pat-match-1 pattern input))
+ "Match pattern against input."
+ (setf (fill-pointer vars) 0)
+ (setf (fill-pointer vals) 0)
+ (pat-match-1 pattern input))
 (defun pat-match-1 (pattern input)
-  (cond ((variable-p pattern) (match-var pattern input))
-      ((eql pattern input) success)
-      ((and (consp pattern) (consp input))
-        (and (pat-match-1 (first pattern) (first input))
-            (pat-match-1 (rest pattern) (rest input))))
-      (t fail)))
+ (cond ((variable-p pattern) (match-var pattern input))
+   ((eql pattern input) success)
+   ((and (consp pattern) (consp input))
+    (and (pat-match-1 (first pattern) (first input))
+      (pat-match-1 (rest pattern) (rest input))))
+   (t fail)))
 (defun match-var (var input)
-  "Match a single variable against input."
-  (let ((i (position var vars)))
-    (cond ((null i)
-          (vector-push-extend var vars)
-          (vector-push-extend input vals) success)
-      ((equal input (aref vals i)) success)
-      (t fail)))))
+ "Match a single variable against input."
+ (let ((i (position var vars)))
+  (cond ((null i)
+     (vector-push-extend var vars)
+     (vector-push-extend input vals) success)
+   ((equal input (aref vals i)) success)
+   (t fail)))))
 ```
 
 An example of its use:
 
 ```lisp
 >(efficient-pat-match '(?x + ?x = ?y . ?z)
-                '(2 + 2 = (3 + 1) is true))
+        '(2 + 2 = (3 + 1) is true))
 (#(?X ?Y ?Z) . #(2 (3 + 1) (IS TRUE)))
 ```
 
@@ -770,38 +754,34 @@ The following version of `efficient-pat-match` explicitly manages the size of th
 
 ```lisp
 (let* ((current-size 0)
-      (max-size 1)
-      (vars (make-array max-size))
-      (vals (make-array max-size))
-      (success (cons vars vals)))
-  (declare (simple-vector vars vals)
-          (fixnum current-size max-size))
+   (max-size 1)
+   (vars (make-array max-size))
+   (vals (make-array max-size))
+   (success (cons vars vals)))
+ (declare (simple-vector vars vals)
+     (fixnum current-size max-size))
 (defun efficient-pat-match (pattern input)
-  "Match pattern against input."
-  (setf current-size 0)
-  (pat-match-1 pattern input))
+ "Match pattern against input."
+ (setf current-size 0)
+ (pat-match-1 pattern input))
 ;; pat-match-1 is unchanged
 (defun match-var (var input)
-  "Match a single variable against input."
-  (let ((i (position var vars)))
-    (cond
-      ((null i)
-        (when (= current-size max-size)
-          ;; Make new vectors when we run out of space
-          (setf max-size (* 2 max-size)
-              vars (replace (make-array max-size) vars)
-              vals (replace (make-array max-size) vals)
-              success (cons vars vals)))
-        ;; Store var and its value in vectors
-        (setf (aref vars current-size) var)
-        (setf (aref vals current-size) input)
-```
-
-`        (incf current-size)``        success)`
-
-```lisp
-      ((equal input (aref vals i)) success)
-      (t fail)))))
+ "Match a single variable against input."
+ (let ((i (position var vars)))
+  (cond
+   ((null i)
+    (when (= current-size max-size)
+     ;; Make new vectors when we run out of space
+     (setf max-size (* 2 max-size)
+       vars (replace (make-array max-size) vars)
+       vals (replace (make-array max-size) vals)
+       success (cons vars vals)))
+    ;; Store var and its value in vectors
+    (setf (aref vars current-size) var)
+    (setf (aref vals current-size) input)
+    (incf current-size)    success)
+   ((equal input (aref vals i)) success)
+   (t fail)))))
 ```
 
 In conclusion, replacing lists with vectors can often save garbage.
@@ -811,10 +791,10 @@ The following is such a version:
 ```lisp
 (proclaim '(inline reuse-cons))
 (defun reuse-cons (x y x-y)
-  "Return (cons x y), or just x-y if it is equal to (cons x y)."
-  (if (and (eql x (car x-y)) (eql y (cdr x-y)))
-      x-y
-      (cons x y)))
+ "Return (cons x y), or just x-y if it is equal to (cons x y)."
+ (if (and (eql x (car x-y)) (eql y (cdr x-y)))
+   x-y
+   (cons x y)))
 ```
 
 The trick is based on the definition of subst in Steele's *Common Lisp the Language*.
@@ -822,12 +802,12 @@ Here is a definition for a version of `remove` that uses `reuse-cons`:
 
 ```lisp
 (defun remq (item list)
-  "Like REMOVE, but uses EQ, and only works on lists."
-  (cond ((null list) nil )
-      ((eq item (first list)) (remq item (rest list)))
-      (t (reuse-cons (first list)
-                (remq item (rest list))
-                list))))
+ "Like REMOVE, but uses EQ, and only works on lists."
+ (cond ((null list) nil )
+   ((eq item (first list)) (remq item (rest list)))
+   (t (reuse-cons (first list)
+        (remq item (rest list))
+        list))))
 ```
 
 ### Avoid Consing: Unique Lists
@@ -844,17 +824,12 @@ Here is an implementation of `ucons`:
 ```lisp
 (defvar *uniq-cons-table* (make-hash-table :test #'eq))
 (defun ucons (x y)
-```
-
-`  "Return a cons s.t.
-(eq (ucons x y) (ucons x y)) is true."`
-
-```lisp
-  (let ((car-table (or (gethash x *uniq-cons-table*)
-                (setf (gethash x *uniq-cons-table*)
-                    (make-hash-table :test #'eq)))))
-    (or (gethash y car-table)
-        (setf (gethash y car-table) (cons x y)))))
+ "Return a cons s.t. (eq (ucons x y) (ucons x y)) is true."
+ (let ((car-table (or (gethash x *uniq-cons-table*)
+        (setf (gethash x *uniq-cons-table*)
+          (make-hash-table :test #'eq)))))
+  (or (gethash y car-table)
+    (setf (gethash y car-table) (cons x y)))))
 ```
 
 `ucons`, unlike `cons`, is a true function: it will always return the same value, given the same arguments, where "same" is measured by eq.
@@ -867,32 +842,27 @@ Besides `unique`, we also define `ulist` and uappend for convenience.
 
 ```lisp
 (defvar *uniq-atom-table* (make-hash-table :test #'equal))
-  (defun unique (exp)
-    "Return a canonical representation that is EQUAL to exp,
-    such that (equal x y) implies (eq (unique x) (unique y))."
-    (typecase exp
-      (symbol exp)
-      (fixnum exp) ;; Remove if fixnums are not eq in your Lisp
-      (atom (or (gethash exp *uniq-atom-table*)
-                (setf (gethash exp *uniq-atom-table*) exp)))
-      (cons (unique-cons (car exp) (cdr exp)))))
-  (defun unique-cons (x y)
-```
-
-`    "Return a cons s.t.
-(eq (ucons x y) (ucons x2 y2)) is true`
-
-```lisp
-    whenever (equal x x2) and (equal y y2) are true."
-    (ucons (unique x) (unique y)))
-  (defun ulist (&rest args)
-    "A uni qui fied list."
-    (unique args))
-  (defun uappend (x y)
-    "A unique list equal to (append x y)."
-    (if (null x)
-        (unique y)
-        (ucons (first x) (uappend (rest x) y))))
+ (defun unique (exp)
+  "Return a canonical representation that is EQUAL to exp,
+  such that (equal x y) implies (eq (unique x) (unique y))."
+  (typecase exp
+   (symbol exp)
+   (fixnum exp) ;; Remove if fixnums are not eq in your Lisp
+   (atom (or (gethash exp *uniq-atom-table*)
+        (setf (gethash exp *uniq-atom-table*) exp)))
+   (cons (unique-cons (car exp) (cdr exp)))))
+ (defun unique-cons (x y)
+  "Return a cons s.t. (eq (ucons x y) (ucons x2 y2)) is true
+  whenever (equal x x2) and (equal y y2) are true."
+  (ucons (unique x) (unique y)))
+ (defun ulist (&rest args)
+  "A uni qui fied list."
+  (unique args))
+ (defun uappend (x y)
+  "A unique list equal to (append x y)."
+  (if (null x)
+    (unique y)
+    (ucons (first x) (uappend (rest x) y))))
 ```
 
 The above code works, but it can be improved.
@@ -902,23 +872,18 @@ We can modify `unique - cons` so that it first checks to see if its arguments ar
 
 ```lisp
 (defun unique-cons (x y)
-```
-
-`  "Return a cons s.t.
-(eq (ucons x y) (ucons x2 y2)) is true`
-
-```lisp
-  whenever (equal x x2) and (equal y y2) are true."
-  (let ((ux) (uy)) ; unique x and y
-    (let ((car-table
-          (or (gethash x *uniq-cons-table*)
-            (gethash (setf ux (unique x)) *uniq-cons-table*)
-            (setf (gethash ux *uniq-cons-table*)
-                (make-hash-table :test #'eq)))))
-      (or (gethash y car-table)
-        (gethash (setf uy (unique y)) car-table)
-        (setf (gethash uy car-table)
-            (cons ux uy))))))
+ "Return a cons s.t. (eq (ucons x y) (ucons x2 y2)) is true
+ whenever (equal x x2) and (equal y y2) are true."
+ (let ((ux) (uy)) ; unique x and y
+  (let ((car-table
+     (or (gethash x *uniq-cons-table*)
+      (gethash (setf ux (unique x)) *uniq-cons-table*)
+      (setf (gethash ux *uniq-cons-table*)
+        (make-hash-table :test #'eq)))))
+   (or (gethash y car-table)
+    (gethash (setf uy (unique y)) car-table)
+    (setf (gethash uy car-table)
+      (cons ux uy))))))
 ```
 
 Another advantage of `unique` is that it can help in indexing.
@@ -933,19 +898,19 @@ For example, instead of :
 
 ```lisp
 (defstruct point "A point in 3-D cartesian space." x y z)
-(defun scale-point (k  pt)
-  "Multiply a point by a constant, K."
-  (make-point :x (* k (point-x pt))
-                  :y (* k (point-y pt))
-                  :z (* k (point-z pt))))
+(defun scale-point (k pt)
+ "Multiply a point by a constant, K."
+ (make-point :x (* k (point-x pt))
+         :y (* k (point-y pt))
+         :z (* k (point-z pt))))
 ```
 
 one could use the following approach, which doesn't generate structures:
 
 ```lisp
 (defun scale-point (k x y z)
-  "Multiply the point (x,y,z) by a constant, K."
-  (values (* k x) (* k y) (* k z)))
+ "Multiply the point (x,y,z) by a constant, K."
+ (values (* k x) (* k y) (* k z)))
 ```
 
 ### Avoid Consing: Resources
@@ -968,24 +933,23 @@ With all these warnings in mind, here is some code to manage resources:
 
 ```lisp
 (defmacro defresource (name &key constructor (initial-copies 0)
-                       (size (max initial-copies 10)))
-  (let ((resource (symbol '* (symbol name '-resource*)))
-        (deallocate (symbol 'deallocate- name))
-        (allocate (symbol 'allocate- name)))
-    `(progn
-       (defparameter ,resource (make-array ,size :fill-pointer 0))
-       (defun ,allocate ()
-         "Get an element from the resource pool, or make one."
-         (if (= (fill-pointer ,resource) 0)
-             ,constructor
-             (vector-pop ,resource)))
-       (defun ,deallocate (,name)
-         "Place a no-longer-needed element back in the pool."
-         (vector-push-extend ,name ,resource))
-       ,(if (> initial-copies 0)
-            `(mapc #',deallocate (loop repeat ,initial-copies
-                                       collect (,allocate))))
-       ',name)))
+         (size (max initial-copies 10)))
+ (let ((resource (symbol name '-resource))
+   (deallocate (symbol 'deallocate- name))
+   (allocate (symbol 'allocate- name)))
+  '(let ((.resource (make-array ,size :fill-pointer 0)))
+   (defun ,allocate ()
+    "Get an element from the resource pool, or make one."
+    (if (= (fill-pointer ,resource) 0)
+      ,constructor
+      (vector-pop ,resource)))
+   (defun ,deallocate (.name)
+    "Place a no-longer-needed element back in the pool."
+    (vector-push-extend ,name ,resource))
+   .(if (> initial-copies 0)
+      '(mapc #',deallocate (loop repeat ,initial-copies
+             collect (,allocate))))
+   ',name)))
 ```
 
 Let's say we had some structure called a buffer which we were constantly making instances of and then discarding.
@@ -994,34 +958,34 @@ We might use the buffer resource as follows:
 
 ```lisp
 (defresource buffer :constructor (make-buffer)
-            :size 100 : initial-copies 10)
+      :size 100 : initial-copies 10)
 ```
 
 This expands into the following code:
 
 ```lisp
 (let ((buffer-resource (make-array 100 :fill-pointer 0)))
-  (defun allocate-buffer ()
-    "Get an element from the resource pool, or make one."
-    (if (= (fill-pointer buffer-resource) 0)
-      (make-buffer)
-      (vector-pop buffer-resource)))
-  (defun deallocate-buffer (buffer)
-    "Place a no-longer-needed element back in the pool."
-    (vector-push-extend buffer buffer-resource))
-  (mapc #'deallocate-buffer
-        (loop repeat 10 collect (allocate-buffer)))
-  'buffer)
+ (defun allocate-buffer ()
+  "Get an element from the resource pool, or make one."
+  (if (= (fill-pointer buffer-resource) 0)
+   (make-buffer)
+   (vector-pop buffer-resource)))
+ (defun deallocate-buffer (buffer)
+  "Place a no-longer-needed element back in the pool."
+  (vector-push-extend buffer buffer-resource))
+ (mapc #'deallocate-buffer
+    (loop repeat 10 collect (allocate-buffer)))
+ 'buffer)
 ```
 
 We could then use:
 
 ```lisp
 (let ((b (allocate-buffer)))
-  ...
-  (process b)
-  ...
-  (deallocate-buffer b)))
+ ...
+ (process b)
+ ...
+ (deallocate-buffer b)))
 ```
 
 The important thing to remember is that this works only if the buffer `b` really can be deallocated.
@@ -1092,8 +1056,8 @@ The specification of the data type `variable` will include two operators, the re
 
 ```lisp
 (defun variable-p (x)
-  "Is x a variable (a symbol beginning with '?')?"
-  (and (symbolp x) (equal (elt (symbol-name x) 0) #\?)))
+ "Is x a variable (a symbol beginning with '?')?"
+ (and (symbolp x) (equal (elt (symbol-name x) 0) #\?)))
 (defun make-variable O "Generate a new variable" (gentemp "?"))
 ```
 
@@ -1114,15 +1078,15 @@ One was to have variables as structures, and provide a read macro and print func
 (defstruct (variable (:print-function print-variable)) name)
 (defvar *vars* (make-hash-table))
 (set-macro-character #\?
-  #'(lambda (stream char)
-      ;; Find an old var, or make a new one with the given name
-      (declare (ignore char))
-      (let ((name (read stream t nil t)))
-        (or (gethash name *vars*)
-          (setf (gethash name *vars*) (make-variable :name name))))))
+ #'(lambda (stream char)
+   ;; Find an old var, or make a new one with the given name
+   (declare (ignore char))
+   (let ((name (read stream t nil t)))
+    (or (gethash name *vars*)
+     (setf (gethash name *vars*) (make-variable :name name))))))
 (defun print-variable (var stream depth)
-  (declare (ignore depth))
-  (format stream "?~a" (var-name var)))
+ (declare (ignore depth))
+ (format stream "?~a" (var-name var)))
 ```
 
 It turned out that, on all three Lisps tested, structures were slower than keywords or symbols.
@@ -1142,7 +1106,7 @@ A naive implementation might look like this:
 (defvar *people* nil "Will hold a list of people")
 (defstruct person name address id-number)
 (defun person-with-id (id)
-  (find id *people* :key #'person-id-number))
+ (find id *people* :key #'person-id-number))
 ```
 
 In a traditional language like C, the natural solution is to include in the person structure a pointer to the next person, and to write a loop to follow these pointers.
@@ -1151,10 +1115,10 @@ Of course, we can do that in Lisp too:
 ```lisp
 (defstruct person name address id-number next)
 (defun person-with-id (id)
-  (loop for person = *people* then (person-next person)
-      until (null person)
-      do (when (eql id (person-id-number person))
-          (RETURN person))))
+ (loop for person = *people* then (person-next person)
+   until (null person)
+   do (when (eql id (person-id-number person))
+     (RETURN person))))
 ```
 
 This solution takes less space and is probably faster, because it requires less memory accesses: one for each person rather than one for each person plus one for each cons cell.
@@ -1166,7 +1130,7 @@ Fortunately, Lisp makes it easy to switch to more efficient data structures, for
 
 ```lisp
 (defun person-with-id (id)
-  (gethash id *people*))
+ (gethash id *people*))
 ```
 
 ### The Right Data Structure: Queues
@@ -1184,12 +1148,12 @@ This implementation in fact existed in BBN Lisp and UCI Lisp under the function 
 ```lisp
 ;;; A queue is a (contents . last) pair
 (defun tconc (item q)
-  "Insert item at the end of the queue."
-  (setf (cdr q)
-      (if (null (cdr q))
-          (setf (car q) (cons item nil))
-          (setf (rest (cdr q))
-              (cons item nil)))))
+ "Insert item at the end of the queue."
+ (setf (cdr q)
+   (if (null (cdr q))
+     (setf (car q) (cons item nil))
+     (setf (rest (cdr q))
+       (cons item nil)))))
 ```
 
 The `tconc` implementation has the disadvantage that adding the first element to the contents is different from adding subsequent elements, so an `if` statement is required to decide which action to take.
@@ -1202,36 +1166,36 @@ In the definitions below, we change the name `tconc` to the more standard `enque
 ```lisp
 ;;; A queue is a (last . contents) pair
 (proclaim '(inline queue-contents make-queue enqueue dequeue
-                front empty-queue-p queue-nconc))
+        front empty-queue-p queue-nconc))
 
 (defun queue-contents (q) (cdr q))
 
 (defun make-queue ()
-  "Build a new queue, with no elements."
-  (let ((q (cons nil nil)))
-    (setf (car q) q)))
+ "Build a new queue, with no elements."
+ (let ((q (cons nil nil)))
+  (setf (car q) q)))
 
 (defun enqueue (item q)
-  "Insert item at the end of the queue."
-  (setf (car q)
-        (setf (rest (car q))
-              (cons item nil)))
-  q)
+ "Insert item at the end of the queue."
+ (setf (car q)
+     (setf (rest (car q))
+      (cons item nil)))
+ q)
 
 (defun dequeue (q)
-  "Remove an item from the front of the queue."
-  (pop (cdr q))
-  (if (null (cdr q)) (setf (car q) q))
-  q)
+ "Remove an item from the front of the queue."
+ (pop (cdr q))
+ (if (null (cdr q)) (setf (car q) q))
+ q)
 
 (defun front (q) (first (queue-contents q)))
 
 (defun empty-queue-p (q) (null (queue-contents q)))
 
 (defun queue-nconc (q list)
-  "Add the elements of LIST to the end of the queue."
-  (setf (car q)
-        (last (setf (rest (car q)) list))))
+ "Add the elements of LIST to the end of the queue."
+ (setf (car q)
+     (last (setf (rest (car q)) list))))
 ```
 
 ### The Right Data Structure: Tables
@@ -1259,15 +1223,9 @@ If the keys can be arbitrary list structures, rather than a simple sequence of l
 One way to do that makes use of the fact that any tree can be written as a linear sequence of atoms and cons operations, in prefix form.
 Thus, we would make the following transformation:
 
-```lisp
-(a (b c) d) =
-```
-
-`(cons a (cons (cons b (cons c nil)) (cons d nil)))`=
-
-```lisp
-(cons a cons cons b cons c nil cons d nil)
-```
+`(a (b c) d)` &Congruent;
+`(cons a (cons (cons b (cons c nil)) (cons d nil)))` &Congruent;
+`(cons a cons cons b cons c nil cons d nil)`
 
 In the implementation of tries below, this transformation is done on the fly: The four user-level functions are `make-trie` to create a new trie, `put-trie` and `get-trie` to add and retrieve key/value pairs, and `delete-trie` to remove them.
 
@@ -1279,67 +1237,40 @@ It is an inobtrusive choice, because the programmer who decides not to store nul
 (defstruct trie (value nil) (arcs nil))
 (defconstant trie-deleted "deleted")
 (defun put-trie (key trie value)
-  "Set the value of key in trie."
-  (setf (trie-value (find-trie key t trie)) value))
+ "Set the value of key in trie."
+ (setf (trie-value (find-trie key t trie)) value))
 (defun get-trie (key trie)
-  "Return the value for a key in a trie, and t/nil if found."
-  (let* ((key-trie (find-trie key nil trie))
-        (val (if key-trie (trie-value key-trie))))
-    (if (or (null key-trie) (eq  val trie-deleted))
-        (values nil nil )
-        (values val t))))
+ "Return the value for a key in a trie, and t/nil if found."
+ (let* ((key-trie (find-trie key nil trie))
+    (val (if key-trie (trie-value key-trie))))
+  (if (or (null key-trie) (eq val trie-deleted))
+    (values nil nil )
+    (values val t))))
 (defun delete-trie (key trie)
-  "Remove a key from a trie."
-  (put-trie key trie trie-deleted))
-```
-
-`(defun find-trie (key extend?
-trie)`
-
-```lisp
-  "Find the trie node for this key.
-```
-
-`  If EXTEND?
-is true, make a new node if need be."`
-
-```lisp
-  (cond ((null trie) nil )
-        ((atom key)
-```
-
-`          (follow-arc key extend?
-trie))`
-
-```lisp
-        (t (find-trie
-              (cdr key) extend?
-              (find-trie
-                (car key) extend?
-              (find-trie
-```
-
-`                "." extend?
-trie))))))`
-
-`(defun follow-arc (component extend?
-trie)`
-
-```lisp
-  "Find the trie node for this component of the key.
-```
-
-`  If EXTEND?
-is true, make a new node if need be."`
-
-```lisp
-  (let ((arc (assoc component (trie-arcs trie))))
-    (cond ((not (null arc)) (cdr arc))
-          ((not extend?) nil)
-          (t (let ((new-trie (make-trie)))
-              (push (cons component new-trie)
-                  (trie-arcs trie))
-              new-trie)))))
+ "Remove a key from a trie."
+ (put-trie key trie trie-deleted))
+(defun find-trie (key extend? trie)
+ "Find the trie node for this key.
+ If EXTEND? is true, make a new node if need be."
+ (cond ((null trie) nil )
+    ((atom key)
+     (follow-arc key extend? trie))
+    (t (find-trie
+       (cdr key) extend?
+       (find-trie
+        (car key) extend?
+       (find-trie
+        "." extend? trie))))))
+(defun follow-arc (component extend? trie)
+ "Find the trie node for this component of the key.
+ If EXTEND? is true, make a new node if need be."
+ (let ((arc (assoc component (trie-arcs trie))))
+  (cond ((not (null arc)) (cdr arc))
+     ((not extend?) nil)
+     (t (let ((new-trie (make-trie)))
+       (push (cons component new-trie)
+         (trie-arcs trie))
+       new-trie)))))
 ```
 
 There are a few subtleties in the implementation.
@@ -1364,7 +1295,7 @@ A dag is a tree where some of the subtrees are shared.
 Imagine you have a spelling corrector program with a list of some 50,000 or so words.
 You could put them into a trie, each word with the value t.
 But there would be many subtrees repeated in this trie.
-For example, given a word list containing *look*, *looks*, *looked*, and *looking* as well as *show*, *shows*, *showed*, and *showing*, there would be repetition of the subtree containing -s, -  *ed* and -*ing*.
+For example, given a word list containing *look*, *looks*, *looked*, and *looking* as well as *show*, *shows*, *showed*, and *showing*, there would be repetition of the subtree containing -s, - *ed* and -*ing*.
 After the trie is built, we could pass the whole trie to un i que, and it would collapse the shared subtrees, saving storage.
 Of course, you can no longer add or delete keys from the dag without risking unintended side effects.
 
@@ -1386,7 +1317,8 @@ We will return to the problem of discrimination nets with variables in [section 
 
 ## 10.6 Exercises
 
-**Exercise  10.1 [h]** Define the macro `deftable,` such that `(deftable person assoc`) will act much like a `defstruct-`it will define a set of functions for manipulating a table of people: `get-person, put-person, clear-person,` and `map-person.` The table should be implemented as an association list.
+**Exercise 10.1 [h]** Define the macro `deftable,` such that `(deftable person assoc`) will act much like a `defstruct` - it will define a set of functions for manipulating a table of people: `get-person`, `put-person`, `clear-person,` and `map-person`.
+The table should be implemented as an association list.
 Later on, you can change the representation of the table simply by changing the form to (`deftable person hash` ), without having to change anything else in your code.
 Other implementation options include property lists and vectors.
 `deftable` should also take three keyword arguments: `inline`, `size` and `test`.
@@ -1395,27 +1327,27 @@ Here is a possible macroexpansion:
 `>(macroexpand '(deftableperson hash :-inline t :size 100))`=
 
 ```lisp
-  (progn
-  (proclaim '(inline get-person put-person map-person))
-  (defparameter *person-table*
-    (make-hash-table :test #eql :size 100))
-  (defun get-person (x &optional default)
-    (gethash x *person-table* default))
-  (defun put-person (x value)
-    (setf (gethash x *person-table*) value))
-  (defun clear-person () (clrhash *person-table*))
-  (defun map-person (fn) (maphash fn *person-table*))
-  (defsetf get-person put-person)
-  'person)
+ (progn
+ (proclaim '(inline get-person put-person map-person))
+ (defparameter *person-table*
+  (make-hash-table :test #eql :size 100))
+ (defun get-person (x &optional default)
+  (gethash x *person-table* default))
+ (defun put-person (x value)
+  (setf (gethash x *person-table*) value))
+ (defun clear-person () (clrhash *person-table*))
+ (defun map-person (fn) (maphash fn *person-table*))
+ (defsetf get-person put-person)
+ 'person)
 ```
 
-**Exercise  10.2 [m]** We can use the :`type` option to `defstruct` to define structures implemented as lists.
+**Exercise 10.2 [m]** We can use the :`type` option to `defstruct` to define structures implemented as lists.
 However, often we have a two-field structure that we would like to implement as a cons cell rather than a two-element list, thereby cutting storage in half.
 Since `defstruct` does not allow this, define a new macro that does.
 
-**Exercise  10.3 [m]** Use `reuse - cons` to write a version of `flatten` (see [page 329](B9780080571157500108.xhtml#p329)) that shares as much of its input with its output as possible.
+**Exercise 10.3 [m]** Use `reuse - cons` to write a version of `flatten` (see [page 329](B9780080571157500108.xhtml#p329)) that shares as much of its input with its output as possible.
 
-**Exercise  10.4 [h]** Consider the data type *set*.
+**Exercise 10.4 [h]** Consider the data type *set*.
 A set has two main operations: adjoin an element and test for membership.
 It is convenient to also add a map-over-elements operation.
 With these primitive operations it is possible to build up more complex operations like union and intersection.
@@ -1433,32 +1365,27 @@ Next, show how *sorted lists* can be used to implement sets, and compare the ope
 
 ```lisp
 (defmacro def-cons-struct (cons car cdr &optional inline?)
-  "Define aliases for cons, car and cdr."
-```
-
-`  '(progn (proclaim '(,(if inline?
-'inline 'notinline)`
-
-```lisp
-                  ,car ,cdr ,cons))
-          (defun ,car (x) (car x))
-          (defun ,cdr (x) (cdr x))
-          (defsetf ,car (x) (val) '(setf (car ,x) ,val))
-          (defsetf ,cdr (x) (val) '(setf (cdr ,x) ,val))
-          (defun ,cons (x y) (cons x y))))
+ "Define aliases for cons, car and cdr."
+ '(progn (proclaim '(,(if inline? 'inline 'notinline)
+         ,car ,cdr ,cons))
+     (defun ,car (x) (car x))
+     (defun ,cdr (x) (cdr x))
+     (defsetf ,car (x) (val) '(setf (car ,x) ,val))
+     (defsetf ,cdr (x) (val) '(setf (cdr ,x) ,val))
+     (defun ,cons (x y) (cons x y))))
 ```
 
 **Answer 10.3**
 
 ```lisp
 (defun flatten (exp &optional (so-far nil) last-cons)
-  "Return a flat list of the atoms in the input.
-  Ex: (flatten '((a) (b (c) d))) => (a b c d)."
-  (cond ((null exp) so-far)
-        ((atom exp) (reuse-cons exp so-far last-cons))
-        (t (flatten (first exp)
-                  (flatten (rest exp) so-far exp)
-                  exp))))
+ "Return a flat list of the atoms in the input.
+ Ex: (flatten '((a) (b (c) d))) => (a b c d)."
+ (cond ((null exp) so-far)
+    ((atom exp) (reuse-cons exp so-far last-cons))
+    (t (flatten (first exp)
+         (flatten (rest exp) so-far exp)
+         exp))))
 ```
 
 ----------------------

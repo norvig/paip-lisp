@@ -939,23 +939,13 @@ Here we see some final examples:
 > (meaning '([ 1 to 5 without [ 3 and 6 ] ] reversed))
 (5 4 2 1)
 > (meaning '(1 to 5 to 9))
-```
-
-`Sorry.
-I didn't understand that.`
-
-```lisp
+Sorry. I didn't understand that.
 NIL
 > (meaning '(1 to 5 without 3 and 7 repeat 2))
 Please pick one:
-      1: (12 4 5 7 12 4 5 7)
-      2: (12 4 5 7 7)
-```
-
-`Your choice?
-1`
-
-```lisp
+   1: (12 4 5 7 12 4 5 7)
+   2: (12 4 5 7 7)
+Your choice? 1
 (1 2 4 5 7 1 2 4 5 7)
 ```
 
@@ -1062,23 +1052,18 @@ Replace it by an *O*(*n*) algorithm.
                         (parses (parse words (length words) table)))
           (mapcar #'parse-tree (complete-parses parses))))
 (defun parse (words num-words table)
-```
-
-`      "Bottom-up parse.
-returning all parses of any prefix of words."`
-
-```lisp
-      (unless (null words)
-          (let ((ans (aref table num-words)))
-              (if (not (eq ans 0))
-                      ans
-                      (setf (aref table num-words)
-                                    (mapcan #'(lambda (rule)
-                                                            (extend-parse (rule-lhs rule)
-                                                                                        (list (firstwords))
-                                                                                        (rest words) nil
-                                                                                        (- num-words 1) table))
-                                                        (lexical-rules (first words))))))))
+   "Bottom-up parse. returning all parses of any prefix of words."
+   (unless (null words)
+     (let ((ans (aref table num-words)))
+       (if (not (eq ans 0))
+           ans
+           (setf (aref table num-words)
+                  (mapcan #'(lambda (rule)
+                              (extend-parse (rule-lhs rule)
+                                            (list (firstwords))
+                                            (rest words) nil
+                                            (- num-words 1) table))
+                            (lexical-rules (first words))))))))
 (defun extend-parse (lhs rhs rem needed num-words table)
       "Look for the categories needed to complete the parse."
       (if (null needed)
@@ -1154,24 +1139,17 @@ In other words, we could have:
 
 ```lisp
 (defun permute (bag)
-      "Return a random permutation of the bag."
-      ;; It is done by converting the bag to a vector, but the
-      ;; resuit is always the same type as the input bag.
-      (let ((bag-copy (replace (make-array (length bag)) bag))
-                  (bag-type (if (listp bag) 'list (type-of bag))))
-```
-
-`            (coerce (permute-vector!
-bag-copy) bag-type)))`
-
-`(defun permute-vector!
-(vector)`
-
-```lisp
-      "Destructively permute (shuffle) the vector."
-      (loop for i from (length vector) downto 2 do
-                  (rotatef (aref vector (- i 1))
-                                    (aref vector (random i))))
+   "Return a random permutation of the bag."
+   ;; It is done by converting the bag to a vector, but the
+   ;; resuit is always the same type as the input bag.
+   (let ((bag-copy (replace (make-array (length bag)) bag))
+         (bag-type (if (listp bag) 'list (type-of bag))))
+      (coerce (permute-vector! bag-copy) bag-type)))
+(defun permute-vector! (vector)
+   "Destructively permute (shuffle) the vector."
+   (loop for i from (length vector) downto 2 do
+         (rotatef (aref vector (- i 1))
+                  (aref vector (random i))))
 vector)
 ```
 
