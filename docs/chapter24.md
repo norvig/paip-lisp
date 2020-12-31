@@ -1335,8 +1335,6 @@ The idea is that the comment should help the reader prove the correctness of the
 ----------------------
 
 [1](#xfn0010) Or in the user package in non-ANSI systems.
-!!!(p) {:.ftnote1}
 
 [2](#xfn0015) As was noted before, the proper way to do this is to proclaim squa re as an inline function, not a macro, but please bear with the example.
-!!!(p) {:.ftnote1}
 

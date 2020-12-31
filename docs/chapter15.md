@@ -47,16 +47,12 @@ the main variable is *x,* the degree is 3 (the highest power of *x*), and the co
 We can define an input format for polynomials as follows:
 
 1.  Any Lisp number is a polynomial.
-!!!(p) {:.numlist}
 
 2.  Any Lisp symbol is a polynomial.
-!!!(p) {:.numlist}
 
 3.  If *p* and *q* are polynomials, so are (*p + q*) and (*p * q*).
-!!!(p) {:.numlist}
 
 4.  If *p* is a polynomial and *n* is a positive integer, then (*p* ^ *n*) is a polynomial.
-!!!(p) {:.numlist}
 
 However, the input format cannot be used as the canonical form, because it would admit both `(x + y)` and `(y + x)`, and both `4` and `(2 + 2)`.
 
@@ -832,9 +828,7 @@ A brief history of symbolic algebra systems is given in [chapter 8](B97800805711
 
 [1](#xfn0015) In fact, the algebraic properties of polynomial arithmetic and its generalizations fit so well with ideas in data abstraction that an extended example (in Scheme) on this topic is provided in *Structure and Interpretation of Computer Programs* by Abelson and Sussman (see section 2.4.3, [pages 153](B9780080571157500054.xhtml#p153)-[166](B9780080571157500054.xhtml#p166)).
 We'll pursue a slightly different approach here.
-!!!(p) {:.ftnote1}
 
 [2](#xfn0020) Note: systems that use `"`cdr-coding`"` take about the same space for lists that are allocated all at once as for vectors.
 But cdr-coding is losing favor as RISC chips replace microcoded processors.
-!!!(p) {:.ftnote1}
 

@@ -1914,9 +1914,7 @@ Now figure out how to find all the nlists that an item is indexed under.
 ----------------------
 
 [1](#xfn0015) A commentary on this paper appears in [Elcock and Hoddinott 1986](B9780080571157500285.xhtml#bb0360).
-!!!(p) {:.ftnote1}
 
 Part IV
 Advanced AI Programs
-!!!(p) {:.parttitle}
 

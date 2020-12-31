@@ -1278,5 +1278,4 @@ The fix is to `gensym` symbols that are guaranteed to be unique.
 ----------------------
 
 [1](#xfn0015) The asterisk at the start of a sentence is the standard linguistic notation for an utterance that is ungrammatical or otherwise ill-formed.
-!!!(p) {:.ftnote1}
 

@@ -1391,5 +1391,4 @@ Next, show how *sorted lists* can be used to implement sets, and compare the ope
 ----------------------
 
 [1](#xfn0015) These are all done with safety 0 and speed 3.
-!!!(p) {:.ftnote1}
 

@@ -894,16 +894,12 @@ Lisp programs tend to consist of many short functions, in contrast to some langu
 New functions should be introduced for any of the following reasons:
 
 1.  For a specific, easily stated purpose.
-!!!(p) {:.numlist}
 
 2.  To break up a function that is too long.
-!!!(p) {:.numlist}
 
 3.  When the name would be useful documentation.
-!!!(p) {:.numlist}
 
 4.  When it is used in several places.
-!!!(p) {:.numlist}
 
 In (2), it is interesting to consider what "too long" means.
 [Charniak et al.
@@ -919,13 +915,10 @@ Lexical variables are easier to understand, precisely because their scope is lim
 Try to limit special variables to one of the following uses:
 
 1.  For parameters that are used in many functions spread throughout a program.
-!!!(p) {:.numlist}
 
 2.  For global, persistant, mutable data, such as a data base of facts.
-!!!(p) {:.numlist}
 
 3.  For infrequent but deeply nested use.
-!!!(p) {:.numlist}
 
 An example of (3) might be a variable like `*standard-output*`, which is used by low-level priniting functions.
 It would be confusing to have to pass this variable around among all your high-level functions just to make it available to `print`.
@@ -936,16 +929,12 @@ In contrast to special variables, lexical variables are encouraged.
 You should feel free to introduce a lexical variable (with `a let, lambda` or `defun`) for any of the following reasons:
 
 1.  To avoid typing in the same expression twice.
-!!!(p) {:.numlist}
 
 2.  To avoid computing the same expression twice.
-!!!(p) {:.numlist}
 
 3.  When the name would be useful documentation.
-!!!(p) {:.numlist}
 
 4.  To keep the indentation manageable.
-!!!(p) {:.numlist}
 
 ### How to Choose a Name
 
@@ -953,53 +942,39 @@ Your choice of names for functions, variables, and other objects should be clear
 Some of the conventions are listed here:
 
 1.  Use mostly letters and hyphens, and use full words: `delete-file`.
-!!!(p) {:.numlist}
 
 2.  You can introduce an abbreviation if you are consistent: `get-dtree`, `dtree-fetch`.
 For example, this book uses `fn` consistently as the abbreviation for "function."
-!!!(p) {:.numlist}
 
 3.  Predicates end in - `p` (or ? in Scheme), unless the name is already a predicate: `variable-p`, `occurs-in`.
-!!!(p) {:.numlist}
 
 4.  Destructive functions start with n (or end in ! in Scheme): nreverse.
-!!!(p) {:.numlist}
 
 5.  Generalized variable-setting macros end in `f`: `setf`, `incf`.
 (`Push` is an exception.)
-!!!(p) {:.numlist}
 
 6.  Slot selectors created by `defstruct` are of the form *type-slot.* Use this for `non-defstruct` selectors as well: `char-bits`.
-!!!(p) {:.numlist}
 
 7.  Many functions have the form *action-object:*`copy-list, delete-file`.
-!!!(p) {:.numlist}
 
 8.  Other functions have the form *object-modifier:*`list-length, char-lessp`.
 Be consistent in your choice between these two forms.
 Don't have `print-edge` and `vertex-print` in the same system.
-!!!(p) {:.numlist}
 
 9.  A function of the form *modulename-functionname* is an indication that packages are needed.
 Use parser: `print-tree` instead of `parser-print-tree`.
-!!!(p) {:.numlist}
 
 10.  Special variables have asterisks: `*db*, *print-length*`.
-!!!(p) {:.numlista}
 
 11.  Constants do not have asterisks: `pi, most-positive-fixnum`.
-!!!(p) {:.numlista}
 
 12.  Parameters are named by type: (`defun length (sequence) ...)` or by purpose: (`defun subsetp(subset superset) ...`) or both: (`defun / (number &rest denominator-numbers) ...`)
-!!!(p) {:.numlista}
 
 13.  Avoid ambiguity.
 A variable named `last-node` could have two meanings; use `previous` -`node` or `final` - `node` instead.
-!!!(p) {:.numlista}
 
 14.  A name like `propagate-constraints-to-neighboring-vertexes` is too long, while `prp-con` is too short.
 In deciding on length, consider how the name will be used: `propagate-constraints` is just right, because a typical call will be `(propagate-const rai nts vertex)`, so it will be obvious what the constraints are propagating to.
-!!!(p) {:.numlista}
 
 ### Deciding on the Order of Parameters
 
@@ -1007,13 +982,10 @@ Once you have decided to define a function, you must decide what parameters it w
 In general,
 
 1.  Put important parameters first (and optional ones last).
-!!!(p) {:.numlist}
 
 2.  Make it read like prose if possible: (`push element stack`).
-!!!(p) {:.numlist}
 
 3.  Group similar parameters together.
-!!!(p) {:.numlist}
 
 Interestingly, the choice of a parameter list for top-level functions (those that the user is expected to call) depends on the environment in which the user will function.
 In many systems the user can type a keystroke to get back the previous input to the top level, and can then edit that input and re-execute it.
@@ -1047,36 +1019,28 @@ Each entry in the file is discussed in turn.
 1.  The first line is a comment known as the *mode line.* The text editor emacs will parse the characters between -*- delimiters to discover that the file contains Lisp code, and thus the Lisp editing commands should be made available.
 The dialect of Lisp and the package are also specified.
 This notation is becoming widespread as other text editors emulate emacs's conventions.
-!!!(p) {:.numlist}
 
 2.  Each file should have a description of its contents, along with information on the authors and what revisions have taken place.
-!!!(p) {:.numlist}
 
 3.  Comments with four semicolons (`;;;;`) denote header lines.
 Many text editors supply a command to print all such lines, thus achieving an outline of the major parts of a file.
-!!!(p) {:.numlist}
 
 4.  The first executable form in every file should be an `in-package`.
 Here we use the user package.
 We will soon create the `project-x package`, and it will be used in all subsequent files.
-!!!(p) {:.numlist}
 
 5.  We want to define the Project-X system as a collection of files.
 Unfortunately, Common Lisp provides no way to do that, so we have to load our own system-definition functions explicitly with a call to `load`.
-!!!(p) {:.numlist}
 
 6.  The call to `define - system` specifies the files that make up Project-X.
 We provide a name for the system, a directory for the source and object files, and a list of *modules* that make up the system.
 Each module is a list consisting of the module name (a symbol) followed by a one or more files (strings or pathnames).
 We have used keywords as the module names to eliminate any possible name conflicts, but any symbol could be used.
-!!!(p) {:.numlist}
 
 7.  The call to `defpackage` defines the package `project-x`.
 For more on packages, see section 24.1.
-!!!(p) {:.numlist}
 
 8.  The final form prints instructions on how to load and run the system.
-!!!(p) {:.numlist}
 
 ```lisp
 ;;; -*- Mode: Lisp; Syntax: Common-Lisp; Package: User -*-
@@ -1316,14 +1280,11 @@ It looks for the key in the a-list, and if the key is there, it modifies the cdr
 ----------------------
 
 [1](#xfn0010) This misunderstanding has shown up even in published articles, such as [Baker 1991](B9780080571157500285.xhtml#bb0060).
-!!!(p) {:.ftnote1}
 
 [2](#xfn0015) Scheme requires a list of keys in each clause.
 Now you know why.
-!!!(p) {:.ftnote1}
 
 [3](#xfn0020) def struct forms are put here because they may create inline functions.
-!!!(p) {:.ftnote1}
 
 
 

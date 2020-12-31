@@ -1035,49 +1035,34 @@ Here is an example of something Prolog is very good at: a logic puzzle.
 There are fifteen facts, or constraints, in the puzzle:
 
 1.  There are five houses in a line, each with an owner, a pet, a cigarette, a drink, and a color.
-!!!(p) {:.numlist}
 
 2.  The Englishman lives in the red house.
-!!!(p) {:.numlist}
 
 3.  The Spaniard owns the dog.
-!!!(p) {:.numlist}
 
 4.  Coffee is drunk in the green house.
-!!!(p) {:.numlist}
 
 5.  The Ukrainian drinks tea.
-!!!(p) {:.numlist}
 
 6.  The green house is immediately to the right of the ivory house.
-!!!(p) {:.numlist}
 
 7.  The Winston smoker owns snails.
-!!!(p) {:.numlist}
 
 8.  Kools are smoked in the yellow house.
-!!!(p) {:.numlist}
 
 9.  Milk is drunk in the middle house.
-!!!(p) {:.numlist}
 
 10.  The Norwegian lives in the first house on the left.
-!!!(p) {:.numlista}
 
 11.  The man who smokes Chesterfields lives next to the man with the fox.
-!!!(p) {:.numlista}
 
 12.  Kools are smoked in the house next to the house with the horse.
-!!!(p) {:.numlista}
 
 13.  The Lucky Strike smoker drinks orange juice.
-!!!(p) {:.numlista}
 
 14.  The Japanese smokes Parliaments.
-!!!(p) {:.numlista}
 
 15.  The Norwegian lives next to the blue house.
-!!!(p) {:.numlista}
 
 The questions to be answered are: who drinks water and who owns the zebra?
 To solve this puzzle, we first define the relations `nextto` (for "next to") and `iright` (for "immediately to the right of").
@@ -1615,15 +1600,11 @@ Now we are ready to make the queries:
 ----------------------
 
 [1](#xfn0015) Actually, *programmation en logique*, since it was invented by a French group (see page 382).
-!!!(p) {:.ftnote1}
 
 [2](#xfn0020) Actually, this is more like the Lisp `find` than the Lisp `member`.
 In this chapter we have adopted the traditional Prolog definition of `member`.
-!!!(p) {:.ftnote1}
 
 [3](#xfn0025) See exercise 11.12 for an alternative approach.
-!!!(p) {:.ftnote1}
 
 [4](#xfn0030) See the MU-Prolog and NU-Prolog languages ([Naish 1986](B9780080571157500285.xhtml#bb0890)).
-!!!(p) {:.ftnote1}
 

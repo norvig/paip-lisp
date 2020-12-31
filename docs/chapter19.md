@@ -1176,10 +1176,8 @@ Rarely, `rotatef` is used with more than two arguments, `(rotatef a b c)` is lik
 ----------------------
 
 [1](#xfn0015) Some erroneous expressions are underspecified and may return different results in different implementations, but we will ignore that problem.
-!!!(p) {:.ftnote1}
 
 [2](#xfn0020) The number of parses of sentences of this kind is the same as the number of bracketings of a arithmetic expression, or the number of binary trees with a given number of leaves.
 The resulting sequence (1,2,5,14,42,...) is known as the Catalan Numbers.
 This kind of ambiguity is discussed by [Church and Patil (1982)](B9780080571157500285.xhtml#bb0200) in their article *Coping with Syntactic Ambiguity, or How to Put the Block in the Box on the Table.*
-!!!(p) {:.ftnote1}
 

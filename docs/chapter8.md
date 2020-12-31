@@ -613,16 +613,12 @@ Then we can get the final answer:
 Abstracting from this example, the general algorithm for integrating an expression *y* with respect to *x* is:
 
 1.  Pick a factor of *y*, callingit *f*(*u*).
-!!!(p) {:.numlist}
 
 2.  Compute the derivative *du*/*dx*.
-!!!(p) {:.numlist}
 
 3.  Divide *y* by *f*(*u*) x *du*/*dx*, calling the quotient *k*.
-!!!(p) {:.numlist}
 
 4.  If *k* is a constant (with respect to *x*), then the result is *k &int; f*(*u*)*du*.
-!!!(p) {:.numlist}
 
 This algorithm is nondeterministic, as there may be many factors of *y*.
 In our example, *f*(*u*) = sin(*x*2), *u* = *x*2, and *du*/*dx* = 2*x*.
@@ -976,12 +972,9 @@ Add rules to propagate `undefined` values and prevent them from being simplified
 Project MAC is the MIT research organization that was the precursor of MIT's Laboratory for Computer Science.
 MAC stood either for Machine-Aided Cognition or Multiple-Access Computer, according to one of their annual reports.
 The cynical have claimed that MAC really stood for Man Against Computer.
-!!!(p) {:.ftnote1}
 
 [2](#xfn0015) The term antiderivative is more correct, because of branch point problems.
-!!!(p) {:.ftnote1}
 
 Part III
 Tools and Techniques
-!!!(p) {:.parttitle}
 

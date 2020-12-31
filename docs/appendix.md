@@ -18,49 +18,34 @@ Normally, there would be a prompt before each file asking if you do indeed want 
 The command *bye* ends the FTP session.
 
 [ ](#){:#l0010}`% *ftp mkp.com* (or *ftp 199.182.55.2*)`
-!!!(p) {:.unnumlist}
 
 `Name (mkp.com:smith): *anonymous*`
-!!!(p) {:.unnumlist}
 
 `331 Guest login ok, send ident as password`
-!!!(p) {:.unnumlist}
 
 `Password: *smith@cs.stateu.edu*`
-!!!(p) {:.unnumlist}
 
 `230 Guest login ok, access restrictions apply`
-!!!(p) {:.unnumlist}
 
 `ftp>*cd pub/norvig*`
-!!!(p) {:.unnumlist}
 
 `250 CWD command successful.`
-!!!(p) {:.unnumlist}
 
 `ftp>*ls*`
-!!!(p) {:.unnumlist}
 
 `...`
-!!!(p) {:.unnumlist}
 
 `ftp>*prompt*`
-!!!(p) {:.unnumlist}
 
 `Interactive mode off.`
-!!!(p) {:.unnumlist}
 
 `ftp>*mget**`
-!!!(p) {:.unnumlist}
 
 `...`
-!!!(p) {:.unnumlist}
 
 `ftp> bye`
-!!!(p) {:.unnumlist}
 
 `%`
-!!!(p) {:.unnumlist}
 
 Anonymous FTP is a privilege, not a right.
 The site administrators at `mkp.com` and at other sites below have made their systems available out of a spirit of sharing, but there are real costs that must be paid for the connections, storage, and processing that makes this sharing possible.
@@ -74,39 +59,28 @@ Use common sense and be considerate: none of us want to see sites start to close
 If you do not have FTP access to the Internet, you can still obtain the files from this book by contacting Morgan Kaufmann at the following:
 
 [ ](#){:#l0015}Morgan Kaufmann Publishers, Inc.
-!!!(p) {:.unnumlist}
 
 340 Pine Street, Sixth Floor
-!!!(p) {:.unnumlist}
 
 San Francisco, CA 94104-3205
-!!!(p) {:.unnumlist}
 
 USA
-!!!(p) {:.unnumlist}
 
 Telephone  415/392-2665
-!!!(p) {:.unnumlist}
 
 Facsimile  415/982-2665
-!!!(p) {:.unnumlist}
 
 Internet  mkp@mkp.com
-!!!(p) {:.unnumlist}
 
 (800) 745-7323
-!!!(p) {:.unnumlist}
 
 Make sure to specify which format you want:
 
 [ ](#){:#l0020}Macintosh diskette ISBN 1-55860-227-5
-!!!(p) {:.unnumlist}
 
 DOS 5.25 diskette ISBN 1-55860-228-3
-!!!(p) {:.unnumlist}
 
 DOS 3.5 diskette ISBN 1-55860-229-1
-!!!(p) {:.unnumlist}
 
 ### Available Software
 
