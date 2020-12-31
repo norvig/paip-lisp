@@ -982,7 +982,8 @@ With these definitions in place, we can invoke the compiler automatically just b
 In some implementations of Lisp, when you make a query like `(?
 - (p ?x))`, you may get a warning message like `"function q/1 undefined"` before getting the correct answer.
 The problem is that each function is compiled separately, so warnings detected during the compilation of `p/1` will be printed right away, even if the function `q/1` will be defined later.
-In ANSI Common Lisp there is a way to delay the printing of warnings until a series of compilations are done: wrap the compilation with the macro `with-compi`l`ation-unit.` Even if your implementation does not provide this macro, it may provide the same functionality under a different name.
+In ANSI Common Lisp there is a way to delay the printing of warnings until a series of compilations are done: wrap the compilation with the macro `with-compilation-unit`.
+Even if your implementation does not provide this macro, it may provide the same functionality under a different name.
 Find out if `with-compilation-unit` is already defined in your implementation, or if it can be defined.
 
 ## 12.7 Benchmarking the Compiler
