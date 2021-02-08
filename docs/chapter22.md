@@ -59,8 +59,8 @@ Also, in Scheme a single macro, `define`, serves to define both variables and fu
 | `#t`                            | `t`                                     |
 | `#f`                            | `nil`                                   |
 | `( )`                           | `nil`                                   |
-| (`define`*varexp*)              | (`defparameter`*var exp*)               |
-| (`define` (*fnparm*...) *body*) | (`defun`*fn* (*parm*...) *body*)        |
+| (`define`*var exp*)              | (`defparameter`*var exp*)               |
+| (`define` (*fn parm*...) *body*) | (`defun`*fn* (*parm*...) *body*)        |
 
 **Exercise  22**.**1** [**s**] What does the following expression evaluate to in Scheme?
 How many errors does it have as a Common Lisp expression?
