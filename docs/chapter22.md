@@ -46,20 +46,20 @@ The empty list is denoted by `()`, and it is distinct from the false value, #f.
 There are also minor lexical differences in the conventions for complex numbers and numbers in different bases, but these can be ignored for all the programs in this book.
 Also, in Scheme a single macro, `define`, serves to define both variables and functions.
 
-| Scheme                          | Common Lisp                             |
-|---------------------------------|-----------------------------------------|
-| *var*                           | *var*                                   |
-| *constant*                      | *constant*                              |
+| Scheme                           | Common Lisp                              |
+|----------------------------------|------------------------------------------|
+| *var*                            | *var*                                    |
+| *constant*                       | *constant*                               |
 | (`quote` *x*) or '*x*            | (`quote` *x*) or '*x*                    |
 | (`begin` *x*...)                 | (`progn` *x*...)                         |
 | (`set!` *var x*)                 | (`setq` *var x*)                         |
-| (`if` *p a b*)                     | (`if` *p a b*)                             |
+| (`if` *p a b*)                   | (`if` *p a b*)                           |
 | (`lambda` *parms x*...)          | `#'` (`lambda` *parms x*...)             |
-| (*fn arg*...)                   | (*fn arg*...) or (`funcall` *fn arg*...) |
-| `#t`                            | `t`                                     |
-| `#f`                            | `nil`                                   |
-| `( )`                           | `nil`                                   |
-| (`define` *var exp*)              | (`defparameter` *var exp*)               |
+| (*fn arg*...)                    | (*fn arg*...) or (`funcall` *fn arg*...) |
+| `#t`                             | `t`                                      |
+| `#f`                             | `nil`                                    |
+| `( )`                            | `nil`                                    |
+| (`define` *var exp*)             | (`defparameter` *var exp*)               |
 | (`define` (*fn parm*...) *body*) | (`defun` *fn* (*parm*...) *body*)        |
 
 **Exercise  22**.**1** [**s**] What does the following expression evaluate to in Scheme?
@@ -1034,8 +1034,8 @@ The `amb` operator for nondeterministic choice was proposed by [John McCarthy (1
 **Exercise  22.5 [m]** While Scheme does not provide full-blown support for optional and keyword arguments, it does support rest parameters.
 Modify the interpreter to support the Scheme syntax for rest parameters:
 
-| Scheme                     | Common Lisp                       |
-|----------------------------|-----------------------------------|
+| Scheme                      | Common Lisp                       |
+|-----------------------------|-----------------------------------|
 | (`lambda x` *body*)         | (`lambda` (`&rest x`) *body*)     |
 | (`lambda (x y . z)` *body*) | (`lambda` (`x y &rest z`) *body*) |
 
