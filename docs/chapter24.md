@@ -892,7 +892,7 @@ Here we see the expansion of the call to `once-only` and a repeat of the expansi
   (* G3811 G3811))
 ```
 
-This output was produced with `*print-gensym*` setto `nil`.
+This output was produced with `*print-gensym*` set to `nil`.
 When this variable is non-nil, uninterned symbols are printed with a prefix `#`:,as in `#:G3811`.
 This insures that the symbol will not be interned by a subsequent read.
 
@@ -1282,7 +1282,7 @@ That way, more than one collection can be going on at the same time.
 **Answer 24.4** The difference between `loop` and `mapcar` is that the former uses only one variable `x`, while the latter uses a different `x` each time.
 If `x`'s extent is no bigger than its scope (as it is in most expressions) then this makes no difference.
 But if any `x` is captured, giving it a longer extent, then a difference shows up.
-Consider *exp =*`#'(lambda () x).`
+Consider *exp =* `#'(lambda () x).`
 
 ```lisp
 > (mapcar #'funcall (loop for x in '(1 2 3) collect

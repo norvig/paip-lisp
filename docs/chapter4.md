@@ -454,7 +454,8 @@ The asking-for-a-phone-number operator could be implemented as follows:
       :add-list '(know-phone-number))
     *school-ops*)
 ```
-(The special form ( `push`*item list*) puts the item on the front of the list; it is equivalent to (setf *list* (`cons`*item list*) ) in the simple case.) Unfortunately, something unexpected happens when we attempt to solve seemingly simple problems with this new set of operators.
+(The special form ( `push` *item list*) puts the item on the front of the list; it is equivalent to (setf *list* (`cons` *item list*) ) in the simple case.)
+Unfortunately, something unexpected happens when we attempt to solve seemingly simple problems with this new set of operators.
 Consider the following:
 
 ```lisp
@@ -636,7 +637,7 @@ This is an example of exploratory programming: instead of starting all over when
 
 The definition of the variable `*ops*` and the structure op are exactly the same as before, and the rest of the program consists of five functions we have already seen: `GPS`, `achieve-all`, `achieve`, `appropriate-p`, and `apply-op`.
 At the top level, the function `GPS` calls `achieve-all`, which returns either nil or a valid state.
-From this we remove all the atoms, which leaves only the elements of the final state that are lists-in other words, the actions of the form (`executing`*operator*).
+From this we remove all the atoms, which leaves only the elements of the final state that are lists-in other words, the actions of the form (`executing` *operator*).
 Thus, the value of `GPS` itself is the list of actions taken to arrive at the final state.
 `GPS` no longer returns `SOLVED` when it finds a solution, but it still obeys the convention of returning nil for failure, and non-nil for success.
 In general, it is a good idea to have a program return a meaningful value rather than print that value, if there is the possibility that some other program might ever want to use the value.
@@ -1012,7 +1013,7 @@ This is the bug.
 If we go back and look at the function GPS, we find that it reports the resuit by removing all atoms from the state returned by `achieve-all`.
 This is a "pun"-we said remove atoms, when we really meant to remove all conditions except the `(START)` and `(EXECUTING *action*)` forms.
 Up to now, all these conditions were atoms, so this approach worked.
-The maze domain introduced conditions of the form (`AT`*n*), so for the first time there was a problem.
+The maze domain introduced conditions of the form (`AT` *n*), so for the first time there was a problem.
 The moral is that when a programmer uses puns-saying what's convenient instead of what's really happening-there's bound to be trouble.
 What we really want to do is not to remove atoms but to find all elements that denote actions.
 The code below says what we mean:

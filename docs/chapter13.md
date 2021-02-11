@@ -443,7 +443,7 @@ Like most object-oriented systems, CLOS is primarily concerned with defining cla
 In CLOS the macro `defclass` defines a class, `defmethod` defines a method, and `make-instance` creates an instance of a class-an object.
 The general form of the macro `defclass` is:
 
-(`defclass`*class-name* (*superclass...*) (*slot-specifier...*) *optional-class-option...*)
+(`defclass` *class-name* (*superclass...*) (*slot-specifier...*) *optional-class-option...*)
 
 The class-options are rarely used.
 `defclass` can be used to define the class `account`:
@@ -480,7 +480,7 @@ CLOS differs from most object-oriented systems in that methods are defined separ
 To define a method (besides the ones defined automatically by `:reader`, `:writer`, or `:accessor` options) we use the `defmethod` macro.
 It is similar to defun in form:
 
-`(defmethod`*method-name* (*parameter...*) *body...*)
+`(defmethod` *method-name* (*parameter...*) *body...*)
 
 Required parameters to a `defmethod` can be of the form (*var class*), meaning that this is a method that applies only to arguments of that class.
 Here is the method for withdrawing from an account.
