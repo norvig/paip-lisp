@@ -46,21 +46,21 @@ The empty list is denoted by `()`, and it is distinct from the false value, #f.
 There are also minor lexical differences in the conventions for complex numbers and numbers in different bases, but these can be ignored for all the programs in this book.
 Also, in Scheme a single macro, `define`, serves to define both variables and functions.
 
-| Scheme                          | Common Lisp                             |
-|---------------------------------|-----------------------------------------|
-| *var*                           | *var*                                   |
-| *constant*                      | *constant*                              |
-| (`quote`*x*) or '*x*            | (`quote`*x*) or '*x*                    |
-| (`begin`*x*...)                 | (`progn`*x*...)                         |
-| (`set!`*var x*)                 | (`setq`*var x*)                         |
-| (`if`*pab*)                     | (`if`*pab*)                             |
-| (`lambda`*parms x*...)          | `#'` (`lambda`*parms x*...)             |
-| (*fn arg*...)                   | (*fn arg*...) or (`funcall`*fn arg*...) |
-| `#t`                            | `t`                                     |
-| `#f`                            | `nil`                                   |
-| `( )`                           | `nil`                                   |
-| (`define`*var exp*)              | (`defparameter`*var exp*)               |
-| (`define` (*fn parm*...) *body*) | (`defun`*fn* (*parm*...) *body*)        |
+| Scheme                           | Common Lisp                              |
+|----------------------------------|------------------------------------------|
+| *var*                            | *var*                                    |
+| *constant*                       | *constant*                               |
+| (`quote` *x*) or '*x*            | (`quote` *x*) or '*x*                    |
+| (`begin` *x*...)                 | (`progn` *x*...)                         |
+| (`set!` *var x*)                 | (`setq` *var x*)                         |
+| (`if` *p a b*)                   | (`if` *p a b*)                           |
+| (`lambda` *parms x*...)          | `#'` (`lambda` *parms x*...)             |
+| (*fn arg*...)                    | (*fn arg*...) or (`funcall` *fn arg*...) |
+| `#t`                             | `t`                                      |
+| `#f`                             | `nil`                                    |
+| `( )`                            | `nil`                                    |
+| (`define` *var exp*)             | (`defparameter` *var exp*)               |
+| (`define` (*fn parm*...) *body*) | (`defun` *fn* (*parm*...) *body*)        |
 
 **Exercise  22**.**1** [**s**] What does the following expression evaluate to in Scheme?
 How many errors does it have as a Common Lisp expression?
@@ -519,9 +519,7 @@ REVERSE
 
 The macro `define` is just like `set!`, except that it returns the symbol rather than the value assigned to the symbol.
 In addition, `define` provides an optional syntax for defining functions-it serves the purposes of both `defun` and `defvar`.
-The syntax (`define` (*fn*.
-*args*).*body*) is an abbreviation for (`define`*fn* (`lambda`*args*.
-*body*)).
+The syntax (`define` (*fn* . *args*) . *body*) is an abbreviation for (`define` *fn* (`lambda` *args* . *body*)).
 
 In addition, Scheme provides a notation where `define` can be used inside a function definition in a way that makes it work like `let` rather than `set!.`
 
@@ -1036,10 +1034,10 @@ The `amb` operator for nondeterministic choice was proposed by [John McCarthy (1
 **Exercise  22.5 [m]** While Scheme does not provide full-blown support for optional and keyword arguments, it does support rest parameters.
 Modify the interpreter to support the Scheme syntax for rest parameters:
 
-| Scheme                     | Common Lisp                       |
-|----------------------------|-----------------------------------|
-| (`lambda x`*body*)         | (`lambda` (`&rest x`) *body*)     |
-| (`lambda (x y . z)`*body*) | (`lambda` (`x y &rest z`) *body*) |
+| Scheme                      | Common Lisp                       |
+|-----------------------------|-----------------------------------|
+| (`lambda x` *body*)         | (`lambda` (`&rest x`) *body*)     |
+| (`lambda (x y . z)` *body*) | (`lambda` (`x y &rest z`) *body*) |
 
 **Exercise  22.6 [h]** The representation of environments is somewhat wasteful.
 Currently it takes 3*n* cons cells to represent an environment with *n* variables.

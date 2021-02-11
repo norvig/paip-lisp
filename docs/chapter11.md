@@ -114,9 +114,9 @@ For example, the following clause says that Kim likes anyone who likes both Lee 
 
 This can be read as:
 
-*For any* x, *deduce that*`Kim likes x`
+*For any* x, *deduce that* `Kim likes x`
 
-*if it can be proved that*`x likes Lee`*and* x `likes Kim.`
+*if it can be proved that* `x likes Lee` *and* x `likes Kim.`
 
 ## 11.2 Idea 2: Unification of Logic Variables
 

@@ -1035,15 +1035,15 @@ That way, queries that would have been higher-order in the original language bec
 The language admits three types of objects: *categories, relations*, and *individuals.* A category corresponds to a one-place predicate, a relation to a two-place predicate, and an individual to constant, or zero-place predicate.
 Statements in the language must have one of five primitive operators: `sub, rel, ind, val`, and `and.` They have the following form:
 
-`(sub`*subcategory super category*)
+`(sub` *subcategory super category*)
 
-`(rel`*relation domain-category range-category*)
+`(rel` *relation domain-category range-category*)
 
-`(ind`*individual category*)
+`(ind` *individual category*)
 
-`(val`*relation individual value*)
+`(val` *relation individual value*)
 
-`(and`*assertion...*)
+`(and` *assertion...*)
 
 The following table gives some examples, along with English translations:
 
@@ -1059,13 +1059,13 @@ For those who feel more comfortable with predicate calculus, the following table
 The most complicated definition is for rel.
 The form (rel *R A B*) means that every *R* holds between an individual of *A* and an individual of *B,* and furthermore that every individual of *A* participates in at least one *R* relation.
 
-| []()            |                                                                                                                    |
-|-----------------|--------------------------------------------------------------------------------------------------------------------|
-| `(sub`*AB*)     | &forall;*x:A*(*x*) &Superset; *B*(*x*)                                                                             |
-| `(rel`*RAB*)    | &forall;*x,y* : *R*(*x,y*) &Superset; *A*(*x*) A *B*(*y*) *^*&forall;*xA*(*x*) &Superset; &exist;*y* : *R*(*x, y*) |
-| `(ind`*IC)*     | *C*(*I*)                                                                                                           |
-| `(val`*RIV*)    | *R*(*I, V*)                                                                                                        |
-| `(and`*P Q...*) | *P ^ Q...*                                                                                                         |
+| []()             |                                                                                                                    |
+|------------------|--------------------------------------------------------------------------------------------------------------------|
+| `(sub` *AB*)     | &forall;*x:A*(*x*) &Superset; *B*(*x*)                                                                             |
+| `(rel` *RAB*)    | &forall;*x,y* : *R*(*x,y*) &Superset; *A*(*x*) A *B*(*y*) *^*&forall;*xA*(*x*) &Superset; &exist;*y* : *R*(*x, y*) |
+| `(ind` *IC)*     | *C*(*I*)                                                                                                           |
+| `(val` *RIV*)    | *R*(*I, V*)                                                                                                        |
+| `(and` *P Q...*) | *P ^ Q...*                                                                                                         |
 
 Queries in the language, not surprisingly, have the same form as assertions, except that they may contain variables as well as constants.
 Thus, to find out what kinds of animais there are, use the query `(sub ?kind animal)`.

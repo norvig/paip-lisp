@@ -741,7 +741,8 @@ Different compilers will produce different code, but they will always respect th
 
 Unfortunately, there is an error in the `setf` method for `last`.
 It assumes that the list will have at least two elements.
-If the list is empty, it is probably an error, but if a list has exactly one element, then (`setf` (`last`*list) val)* should have the same effect as (`setf`*list val).* But there is no way to do that with `defsetf`, because the `setf` method defined by `defsetf` never sees *list* itself.
+If the list is empty, it is probably an error, but if a list has exactly one element, then (`setf` (`last` *list) val)* should have the same effect as (`setf` *list val).*
+But there is no way to do that with `defsetf`, because the `setf` method defined by `defsetf` never sees *list* itself.
 Instead, it sees a local variable that is automatically bound to the value of *list.* In other words, `defsetf` evaluates the *list* and *val* for you, so that you needn't worry about evaluating the arguments out of order, or more than once.
 
 To solve the problem we need to go beyond the simple `defsetf` macro and delve into the complexities of `define-setf-method`, one of the trickiest macros in all of Common Lisp.
@@ -920,7 +921,7 @@ Try to limit special variables to one of the following uses:
 
 3.  For infrequent but deeply nested use.
 
-An example of (3) might be a variable like `*standard-output*`, which is used by low-level priniting functions.
+An example of (3) might be a variable like `*standard-output*`, which is used by low-level printing functions.
 It would be confusing to have to pass this variable around among all your high-level functions just to make it available to `print`.
 
 ### When to Bind a Lexical Variable
@@ -955,9 +956,9 @@ For example, this book uses `fn` consistently as the abbreviation for "function.
 
 6.  Slot selectors created by `defstruct` are of the form *type-slot.* Use this for `non-defstruct` selectors as well: `char-bits`.
 
-7.  Many functions have the form *action-object:*`copy-list, delete-file`.
+7.  Many functions have the form *action-object:* `copy-list, delete-file`.
 
-8.  Other functions have the form *object-modifier:*`list-length, char-lessp`.
+8.  Other functions have the form *object-modifier:* `list-length, char-lessp`.
 Be consistent in your choice between these two forms.
 Don't have `print-edge` and `vertex-print` in the same system.
 

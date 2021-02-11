@@ -567,12 +567,12 @@ The parameter `val?` is true when the expression we are compiling returns a valu
 The parameter `more?` is false when the expression represents the final value, and it is true when there is more to compute.
 In summary, there are three possibilities:
 
-| `val?` | `more?` | example: the `X` in:          |
-|--------|---------|-------------------------------|
-| true   | true    | `(if X y z)`*or*`(f X y)`     |
-| true   | false   | `(if p X z)`*or*`(begin y X)` |
-| false  | true    | `(begin X y)`                 |
-| false  | false   | *impossible*                  |
+| `val?` | `more?` | example: the `X` in:            |
+|--------|---------|---------------------------------|
+| true   | true    | `(if X y z)` *or* `(f X y)`     |
+| true   | false   | `(if p X z)` *or* `(begin y X)` |
+| false  | true    | `(begin X y)`                   |
+| false  | false   | *impossible*                    |
 
 The code for the compiler employing these conventions follows:
 
@@ -1947,11 +1947,11 @@ In short, what's the point?
 It is also (nearly) possible to replace `if` with alternate code.
 The idea is to replace:
 
-`(if`*test then-part else-part*)
+`(if` *test then-part else-part*)
 
 with
 
-(*test*`(delay`*then-part*) `(delay`*else-part*))
+(*test* `(delay` *then-part*) `(delay` *else-part*))
 
 Now if we are assured that any *test* returns either `#t` or `#f`, then we can make the following definitions:
 
