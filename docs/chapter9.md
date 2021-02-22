@@ -1858,16 +1858,12 @@ Is this worth it?
 Then the time to compute *Fn*, *Tn*, is a small constant for *n* &le; 1, and is roughly equal to *Tn-1* plus *Tn-2* for larger *n*.
 Thus, *Tn* is roughly proportional to *Fn*:
 
-Tn=FnTiFi
-
-![si1_e](images/chapter9/si1_e.gif)
+![T_{n}=F_{n}\frac{T_{i}}{F_{i}}](images/chapter9/si1_e.svg)
 
 We could use some small value of *Ti* to calculate *T*100 if we knew *F*100.
 Fortunately, we can use the equation:
 
-Fn&alpha;&Phi;n
-
-![si2_e](images/chapter9/si2_e.gif)
+![F_{n} \alpha \phi^{n}](images/chapter9/si2_e.svg)
 
 Where &phi; = (1 + &radic;(5))/2 &asymp; 1.618.
 This equation was derived by de Moivre in 1718 (see Knuth, Donald E.
@@ -1878,9 +1874,7 @@ In the Renaissance it was called the "divine proportion," and in the last centur
 It is said to be a pleasing proportion when employed in paintings and architecture.
 Putting history aside, given *T*25 &asymp; 1.1 *sec* we can now calculate:
 
-T100&asymp;&Phi;1001.1sec&Phi;25&asymp;5x1015sec
-
-![si3_e](images/chapter9/si3_e.gif)
+![T_{100} \approx \phi^{100}\frac{1.1 \text{sec}}{\phi^{25}} \approx 5 \times 10^{15} \text{sec}](images/chapter9/si3_e.svg)
 
 which is roughly 150 million years.
 We can also see that the timing data in the table fits the equation fairly well.
