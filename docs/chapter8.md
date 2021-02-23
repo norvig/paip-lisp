@@ -21,7 +21,8 @@ The program worked its way through an integration problem by choosing among the 
 SAINT's behavior on such problems was originally similar to (and eventually much better than) the performance of undergraduate calculus students.
 
 Over time, the AI component of symbolic integration began to disappear.
-Joel Moses implemented a successor to SAINT called SIN. It used many of the same techniques, but instead of relying on search to find the right combination of techniques, it had additional mathematical knowledge that led it to pick the right technique at each step, without any provision for backing up and trying an alternative.
+Joel Moses implemented a successor to SAINT called SIN.
+It used many of the same techniques, but instead of relying on search to find the right combination of techniques, it had additional mathematical knowledge that led it to pick the right technique at each step, without any provision for backing up and trying an alternative.
 SIN solved more problems and was much faster than SAINT, although it was not perfect: it still occasionally made the wrong choice and failed to solve a problem it could have.
 
 By 1970, the mathematician R.
@@ -41,14 +42,15 @@ Then, we will extend `simplifier` to do differentiation, and some integration pr
 The idea is that given an expression like (2 - 1)*x* + 0, we want the program to compute the simplified form *x*.
 
 According to the *Mathematics Dictionary* (James and James 1949), the word "simplified" is "probably the most indefinite term used seriously in mathematics." The problem is that "simplified" is relative to what you want to use the expression for next.
-Which is simpler, *x*<sup>2</sup> + 3*x* + 2 or (*x* + 1)(*x* + 2)?
+Which is simpler, *x*2 + 3*x* + 2 or (*x* + 1)(*x* + 2)?
 The first makes it easier to integrate or differentiate, the second easier to find roots.
 We will be content to limit ourselves to "obvious" simplifications.
 For example, *x* is almost always preferable to 1*x* + 0.
 
 ## 8.1 Converting Infix to Prefix Notation
- 
-We will represent simplifications as a list of rules, much like the rules for STUDENT and ELIZA. But since each simplification rule is an algebraic equation, we will store each one as an exp rather than as a `rule`.
+
+We will represent simplifications as a list of rules, much like the rules for STUDENT and ELIZA.
+But since each simplification rule is an algebraic equation, we will store each one as an exp rather than as a `rule`.
 To make things more legible, we will write each expression in infix form, but store them in the prefix form expected by `exp`.
 This requires an `infix->prefix` function to convert infix expressions into prefix notation.
 We have a choice as to how general we want our infix notation to be.
@@ -82,84 +84,85 @@ The intent of your code will be clearer:
 ```
 
 As we saw above, fully parenthesized infix can be quite ugly, with all those extra parentheses, so instead we will use operator precedence.
-There are a number of ways of doing this, but the easiest way for us to proceed is to use our previously defined tool `rule-based-translator` and its subtool, `pat-match`. Note that the third clause of `infix->prefix`, the one that calls `rule-based-translator` is unusual in that it consists of a single expression.
+There are a number of ways of doing this, but the easiest way for us to proceed is to use our previously defined tool `rule-based-translator` and its subtool, `pat-match.` Note that the third clause of `infix->prefix`, the one that calls `rule-based-translator` is unusual in that it consists of a single expression.
 Most cond-clauses have two expressions: a test and a result, but ones like this mean, "Evaluate the test, and if it is non-nil, return it.
 Otherwise go on to the next clause."
 
 ```lisp
 (defun infix->prefix (exp)
- "Translate an infix expression into prefix notation."
- ;; Note we cannot do implicit multiplication in this system
- (cond ((atom exp) exp)
- ((= (length exp) 1) (infix->prefix (first exp)))
- ((rule-based-translator exp *infix->prefix-rules*
- :rule-if #'rule-pattern :rule-then #'rule-response
- :action
- #'(lambda (bindings response)
- (sublis (mapcar
- #'(lambda (pair)
- (cons (first pair)
- (infix->prefix (rest pair))))
- bindings)
- response))))
- ((symbolp (first exp))
- (list (first exp) (infix->prefix (rest exp))))
- (t (error "Illegal exp"))))
+  "Translate an infix expression into prefix notation."
+  ;; Note we cannot do implicit multiplication in this system
+  (cond ((atom exp) exp)
+        ((= (length exp) 1) (infix->prefix (first exp)))
+        ((rule-based-translator exp *infix->prefix-rules*
+           :rule-if #'rule-pattern :rule-then #'rule-response
+           :action
+           #'(lambda (bindings response)
+               (sublis (mapcar
+                         #'(lambda (pair)
+                             (cons (first pair)
+                                   (infix->prefix (rest pair))))
+                         bindings)
+                       response))))
+        ((symbolp (first exp))
+         (list (first exp) (infix->prefix (rest exp))))
+        (t (error "Illegal exp"))))
 ```
 
 Because we are doing mathematics in this chapter, we adopt the mathematical convention of using certain one-letter variables, and redefine `variable-p` so that variables are only the symbols `m` through `z`.
 
 ```lisp
 (defun variable-p (exp)
- "Variables are the symbols M through Z."
- ;; put x,y,z first to find them a little faster
- (member exp '(x y z m n o p q r s t u v w)))
-(pat-match-abbrev 'x + '(?+ x))
+  "Variables are the symbols M through Z."
+  ;; put x,y,z first to find them a little faster
+  (member exp '(x y z m n o p q r s t u v w)))
+
+;; Define x+ and y+ as a sequence:
+(pat-match-abbrev 'x+ '(?+ x))
 (pat-match-abbrev 'y+ '(?+ y))
 
 (defun rule-pattern (rule) (first rule))
-
 (defun rule-response (rule) (second rule))
 
 (defparameter *infix->prefix-rules*
- (mapcar #'expand-pat-match-abbrev
- '(((x+ = y+) (= x y))
- ((- x+) (- x))
- ((+ x+) (+ x))
- ((x+ + y+) (+ x y))
- ((x+ - y+) (- x y))
- ((x+ * y+) (* x y))
- ((x+ / y+) (/ x y))
- ((x+ ^ y+) (^ x y))))
- "A list of rules, ordered by precedence.")
+  (mapcar #'expand-pat-match-abbrev
+    '(((x+ = y+) (= x y))
+      ((- x+)    (- x))
+      ((+ x+)    (+ x))
+      ((x+ + y+) (+ x y))
+      ((x+ - y+) (- x y))
+      ((x+ * y+) (* x y))
+      ((x+ / y+) (/ x y))
+      ((x+ ^ y+) (^ x y)))))
+  "A list of rules, ordered by precedence.")
 ```
 
 ## 8.2 Simplification Rules
 
 Now we are ready to define the simplification rules.
-We use the definition of the data types rule and exp ([page 221](B9780080571157500078.xhtml#p221)) and `prefix->infix` ([page 228](B9780080571157500078.xhtml#p228)) from STUDENT. They are repeated here:
+We use the definition of the data types rule and exp ([page 221](B9780080571157500078.xhtml#p221)) and `prefix->infix` ([page 228](B9780080571157500078.xhtml#p228)) from STUDENT.
+They are repeated here:
 
 ```lisp
 (defstruct (rule (:type list)) pattern response)
 
 (defstruct (exp (:type list)
- (:constructor mkexp (lhs op rhs)))
- op lhs rhs)
- 
-(defun exp-p (x) (consp x))
+                (:constructor mkexp (lhs op rhs)))
+  op lhs rhs)
 
+(defun exp-p (x) (consp x))
 (defun exp-args (x) (rest x))
 
 (defun prefix->infix (exp)
- "Translate prefix to infix expressions."
- (if (atom exp) exp
- (mapcar #'prefix->infix
- (if (binary-exp-p exp)
- (list (exp-lhs exp) (exp-op exp) (exp-rhs exp))
- exp))))
- 
+  "Translate prefix to infix expressions."
+  (if (atom exp) exp
+      (mapcar #'prefix->infix
+              (if (binary-exp-p exp)
+                  (list (exp-lhs exp) (exp-op exp) (exp-rhs exp))
+                  exp))))
+
 (defun binary-exp-p (x)
- (and (exp-p x) (= (length (exp-args x)) 2)))
+  (and (exp-p x) (= (length (exp-args x)) 2)))
 ```
 
 We also use `rule-based-translator` ([page 188](B9780080571157500066.xhtml#p188)) once again, this time on a list of simplification rules.
@@ -171,38 +174,38 @@ So, for example, 0 / 0 simplifies to `undefined`, and not to 1 or 0, because the
 See [exercise 8.8](#st0045) for a more complete treatment of this.
 
 ```lisp
-(defparameter *simplification-rules* (mapcar #'infix->prefix '(
- (x + 0 = x)
- (0 + x = x)
- (x + x = 2 * x)
- (x - 0 = x)
- (0 - x = - x)
- (x - x = 0)
- (- - x = x)
- (x * 1 = x)
- (x * x = x)
- (x * 0 = 0)
- (x * x = x)
- (x * x = x ^ 2)
- (x / 0 = undefined)
- (0 / x = 0)
- (x / 1 = x)
- (x / x = 1)
- (0 ^ 0 = undefined)
- (x ^ 0 = 1)
- (0 ^ x = 0)
- (1 ^ x = 1)
- (x ^ 1 = x)
- (x ^ - 1 = 1 / x)
- (x *(y / x) = y)
- ((y / x)* x = y)
- ((y * x) / x = y)
- ((x * y) / x = y)
- (x + - x = 0)
- ((- x) + x = 0)
- (x + y - x = y)
- )))
- 
+(setf *simplification-rules* (mapcar #'simp-rule '(
+  (x + 0  = x)
+  (0 + x  = x)
+  (x + x  = 2 * x)
+  (x - 0  = x)
+  (0 - x  = - x)
+  (x - x  = 0)
+  (- - x  = x)
+  (x * 1  = x)
+  (1 * x  = x)
+  (x * 0  = 0)
+  (0 * x  = 0)
+  (x * x  = x ^ 2)
+  (x / 0  = undefined)
+  (0 / x  = 0)
+  (x / 1  = x)
+  (x / x  = 1)
+  (0 ^ 0  = undefined)
+  (x ^ 0  = 1)
+  (0 ^ x  = 0)
+  (1 ^ x  = 1)
+  (x ^ 1  = x)
+  (x ^ -1 = 1 / x)
+  (x * (y / x) = y)
+  ((y / x) * x = y)
+  ((y * x) / x = y)
+  ((x * y) / x = y)
+  (x + - x = 0)
+  ((- x) + x = 0)
+  (x + y - x = y)
+  )))
+
 (defun ^ (x y) "Exponentiation" (expt x y))
 ```
 
@@ -240,33 +243,34 @@ Here is the program:
 
 ```lisp
 (defun simplifier ()
- "Read a mathematical expression, simplify it, and print the result."
- (loop
- (print 'simplifier>)
- (print (simp (read)))))
- 
+  "Read a mathematical expression, simplify it, and print the result."
+  (loop
+    (print 'simplifier>)
+    (print (simp (read)))))
+
 (defun simp (inf) (prefix->infix (simplify (infix->prefix inf))))
 
 (defun simplify (exp)
- "Simplify an expression by first simplifying its components."
- (if (atom exp) exp
- (simplify-exp (mapcar #'simplify exp))))
- 
+  "Simplify an expression by first simplifying its components."
+  (if (atom exp) exp
+      (simplify-exp (mapcar #'simplify exp))))
+
+;;; simplify-exp is redefined below
 (defun simplify-exp (exp)
- "Simplify using a rule, or by doing arithmetic."
- (cond ((rule-based-translator exp *simplification-rules*
- :rule-if #'exp-lhs :rule-then #'exp-rhs
- :action #'(lambda (bindings response)
- (simplify (sublis bindings response)))))
- ((evaluable exp) (eval exp))
- (t exp)))
- 
+  "Simplify using a rule, or by doing arithmetic."
+  (cond ((rule-based-translator exp *simplification-rules*
+           :rule-if #'exp-lhs :rule-then #'exp-rhs
+           :action #'(lambda (bindings response)
+                       (simplify (sublis bindings response)))))
+        ((evaluable exp) (eval exp))
+        (t exp)))
+
 (defun evaluable (exp)
- "Is this an arithmetic expression that can be evaluated?"
- (and (every #'numberp (exp-args exp))
- (or (member (exp-op exp) '(+ - */))
- (and (eq (exp-op exp) '^
- (integerp (second (exp-args exp)))))))
+  "Is this an arithmetic expression that can be evaluated?"
+  (and (every #'numberp (exp-args exp))
+       (or (member (exp-op exp) '(+ - * /))
+           (and (eq (exp-op exp) '^)
+                (integerp (second (exp-args exp)))))))
 ```
 
 The function `simplify` assures that any compound expression will be simplified by first simplifying the arguments and then calling `simplify-exp`. This latter function searches through the simplification rules, much like `use-eliza-rules` and `translate-to-expression`.
@@ -329,28 +333,27 @@ We adopt similar conventions for addition, except that we prefer numbers last th
 ```lisp
 ;; Define n and m as numbers; s as a non-number:
 (pat-match-abbrev 'n '(?is n numberp))
-
 (pat-match-abbrev 'm '(?is m numberp))
-
 (pat-match-abbrev 's '(?is s not-numberp))
 
 (defun not-numberp (x) (not (numberp x)))
 
 (defun simp-rule (rule)
- "Transform a rule into proper format."
- (let ((exp (infix->prefix rule)))
- (mkexp (expand-pat-match-abbrev (exp-lhs exp))
- (exp-op exp) (exp-rhs exp))))
+  "Transform a rule into proper format."
+  (let ((exp (infix->prefix rule)))
+    (mkexp (expand-pat-match-abbrev (exp-lhs exp))
+     (exp-op exp) (exp-rhs exp))))
+
 (setf *simplification-rules*
  (append *simplification-rules* (mapcar #'simp-rule
- '((s * n = n * s)
- (n * (m * x) = (n * m) * x)
- (x * (n * y) = n * (x * y))
- ((n * x) * y = n * (x * y))
- (n + s = s + n)
- ((x + m) + n = x + n + m)
- (x + (y + n) = (x + y) + n)
- ((x + n) + y = (x + y) + n)))))
+  '((s * n = n * s)
+    (n * (m * x) = (n * m) * x)
+    (x * (n * y) = n * (x * y))
+    ((n * x) * y = n * (x * y))
+    (n + s = s + n)
+    ((x + m) + n = x + n + m)
+    (x + (y + n) = (x + y) + n)
+    ((x + n) + y = (x + y) + n)))))
 ```
 
 With the new rules in place, we are ready to try again.
@@ -401,23 +404,23 @@ If they were, log *ex* (and even *xy*) would have multiple values, and it would 
 ```lisp
 (setf *simplification-rules*
  (append *simplification-rules* (mapcar #'simp-rule '(
- (log 1 = 0)
- (log 0 = undefined)
- (log e = 1)
- (sin 0 = 0)
- (sin pi = 0)
- (cos 0 = 1)
- (cos pi = -1)
- (sin(pi / 2) = 1)
- (cos(pi / 2) = 0)
- (log (e ^ x) = x)
- (e ^ (log x) = x)
- ((x ^ y) * (x ^ z) = x ^ (y + z))
- ((x ^ y) / (x ^ z) = x ^ (y - z))
- (log x + log y = log(x * y))
- (log x - log y = log(x / y))
- ((sin x) ^ 2 + (cos x) ^ 2 = 1)
- ))))
+  (log 1         = 0)
+  (log 0         = undefined)
+  (log e         = 1)
+  (sin 0         = 0)
+  (sin pi        = 0)
+  (cos 0         = 1)
+  (cos pi        = -1)
+  (sin(pi / 2)   = 1)
+  (cos(pi / 2)   = 0)
+  (log (e ^ x)   = x)
+  (e ^ (log x)   = x)
+  ((x ^ y) * (x ^ z) = x ^ (y + z))
+  ((x ^ y) / (x ^ z) = x ^ (y - z))
+  (log x + log y = log(x * y))
+  (log x - log y = log(x / y))
+  ((sin x) ^ 2 + (cos x) ^ 2 = 1)
+  ))))
 ```
 
 Now we would like to go a step further and extend the system to handle differentiation.
@@ -433,11 +436,11 @@ We will require a new infix-to-prefix translation rule.
 While we're at it, we'll add a rule for indefinite integration as well, although we won't write simplification rules for integration yet.
 Here are the new notations:
 
-| []() | | |
+| []()        |             |             |
 |-------------|-------------|-------------|
-| math | infix | prefix |
-| *dy*/*dx* | `d y / d x` | `(d y x)` |
-| &int; *ydx* | `Int y d x` | `(int y x)` |
+| math        | infix       | prefix      |
+| *dy*/*dx*   | `d y / d x` | `(d y x)`   |
+| *&int; ydx* | `Int y d x` | `(int y x)` |
 
 And here are the necessary infix-to-prefix rules:
 
@@ -463,14 +466,14 @@ The user can always avoid the problem by using (`d`) instead of `d` inside an in
 Now we augment the simplification rules, by copying a differentiation table out of a reference book:
 
 ```lisp
-(setf *simplification-rules* 
+(setf *simplification-rules*
  (append *simplification-rules* (mapcar #'simp-rule '(
   (d x / d x       = 1)
   (d (u + v) / d x = (d u / d x) + (d v / d x))
   (d (u - v) / d x = (d u / d x) - (d v / d x))
   (d (- u) / d x   = - (d u / d x))
   (d (u * v) / d x = u * (d v / d x) + v * (d u / d x))
-  (d (u / v) / d x = (v * (d u / d x) - u * (d v / d x)) 
+  (d (u / v) / d x = (v * (d u / d x) - u * (d v / d x))
                      / v ^ 2) ; [This corrects an error in the first printing]
   (d (u ^ n) / d x = n * u ^ (n - 1) * (d u / d x))
   (d (u ^ v) / d x = v * u ^ (v - 1) * (d u / d x)
@@ -577,29 +580,28 @@ The simplification function can elect not to handle the expression after all by 
 
 ```lisp
 (defun simp-fn (op) (get op 'simp-fn))
-
 (defun set-simp-fn (op fn) (setf (get op 'simp-fn) fn))
 
 (defun simplify-exp (exp)
- "Simplify using a rule, or by doing arithmetic.
- or by using the simp function supplied for this operator."
- (cond ((simplify-by-fn exp)) ;***
- ((rule-based-translator exp *simplification-rules*
- :rule-if #'exp-lhs :rule-then #'exp-rhs
- :action #'(lambda (bindings response)
- (simplify (subiis bindings response)))))
- ((evaluable exp) (eval exp))
- (t exp)))
- 
+  "Simplify using a rule, or by doing arithmetic,
+  or by using the simp function supplied for this operator."
+  (cond ((simplify-by-fn exp))                             ;***
+        ((rule-based-translator exp *simplification-rules*
+           :rule-if #'exp-lhs :rule-then #'exp-rhs
+           :action #'(lambda (bindings response)
+                       (simplify (sublis bindings response)))))
+        ((evaluable exp) (eval exp))
+        (t exp)))
+
 (defun simplify-by-fn (exp)
- "If there is a simplification fn for this exp,
- and if applying it gives a non-null result,
- then simplify the result and return that."
- (let* ((fn (simp-fn (exp-op exp)))
- (result (if fn (funcall fn exp))))
- (if (null result)
- nil
- (simplify result))))
+  "If there is a simplification fn for this exp,
+  and if applying it gives a non-null result,
+  then simplify the result and return that."
+  (let* ((fn (simp-fn (exp-op exp)))
+         (result (if fn (funcall fn exp))))
+    (if (null result)
+        nil
+        (simplify result))))
 ```
 
 Freshman calculus classes teach a variety of integration techniques.
@@ -705,24 +707,23 @@ Finally, the predicate `free-of` returns true if an expression does not have any
 
 ```lisp
 (defun free-of (exp var)
- "True if expression has no occurrence of var."
- (not (find-anywhere var exp)))
- 
+  "True if expression has no occurrence of var."
+  (not (find-anywhere var exp)))
+
 (defun find-anywhere (item tree)
- "Does item occur anywhere in tree?
- If so, return it."
- (cond ((eql item tree) tree)
- ((atom tree) nil)
- ((find-anywhere item (first tree)))
- ((find-anywhere item (rest tree)))))
+  "Does item occur anywhere in tree?  If so, return it."
+  (cond ((eql item tree) tree)
+        ((atom tree) nil)
+        ((find-anywhere item (first tree)))
+        ((find-anywhere item (rest tree)))))
 ```
 
 In `factorize` we made use of the auxiliary function `length=1`. The function call `(length=l x)` is faster than `(= (length x) 1)` because the latter has to compute the length of the whole list, while the former merely has to see if the list has a `rest` element or not.
 
 ```lisp
 (defun length=l (x)
- "Is X a list of length 1?"
- (and (consp x) (null (rest x))))
+  "Is X a list of length 1?"
+  (and (consp x) (null (rest x))))
 ```
 
 Given these preliminaries, the function `integrate` is fairly easy.
@@ -739,8 +740,8 @@ If none of them work, we return an expression indicating that the integral is un
     ((starts-with exp '+)                  ; Int f + g  = 
      `(+ ,(integrate (exp-lhs exp) x)      ;   Int f + Int g
          ,(integrate (exp-rhs exp) x)))
-    ((starts-with exp '-)              
-     (ecase (length (exp-args exp))        
+    ((starts-with exp '-)
+     (ecase (length (exp-args exp))
        (1 (integrate (exp-lhs exp) x))     ; Int - f = - Int f
        (2 `(- ,(integrate (exp-lhs exp) x) ; Int f - g  =
               ,(integrate (exp-rhs exp) x)))))  ; Int f - Int g
@@ -779,7 +780,7 @@ It turns out that the function is a little more complicated than the simple four
   (assert (starts-with factor '^))
   (let* ((u (exp-lhs factor))              ; factor = u^n
          (n (exp-rhs factor))
-         (k (divide-factors 
+         (k (divide-factors
               factors (factorize `(* ,factor ,(deriv u x))))))
     (cond ((free-of k x)
            ;; Int k*u^n*du/dx dx = k*Int u^n du
@@ -817,7 +818,8 @@ We don't need a derivative table, because we can just use the simplifier for tha
     (let ((rule (simp-rule i-rule)))
       (setf (get (exp-op (exp-lhs (exp-lhs rule))) 'int)
             rule))))
-			
+
+
 (defun in-integral-table? (exp)
   (and (exp-p exp) (get (exp-op exp) 'int)))
 
@@ -825,10 +827,16 @@ We don't need a derivative table, because we can just use the simplifier for tha
   (let ((rule (get op 'int)))
     (subst arg (exp-lhs (exp-lhs (exp-lhs rule))) (exp-rhs rule))))
 
-(set-simp-fn 'Int #'(lambda (exp)
-		      (unfactorize
-		       (factorize
-			(integrate (exp-lhs exp) (exp-rhs exp))))))
+(integration-table
+  '((Int log(x) d x = x * log(x) - x)
+    (Int exp(x) d x = exp(x))
+    (Int sin(x) d x = - cos(x))
+    (Int cos(x) d x = sin(x))
+    (Int tan(x) d x = - log(cos(x)))
+    (Int sinh(x) d x = cosh(x))
+    (Int cosh(x) d x = sinh(x))
+    (Int tanh(x) d x = log(cosh(x)))
+    ))
 ```
 
 The last step is to install integrate as the simplification function for the operator Int.
@@ -845,7 +853,7 @@ We could go back and edit `simplify-exp` to change the convention, but instead I
 
 ```lisp
 (set-simp-fn 'Int #'(lambda (exp)
- (integrate (exp-lhs exp) (exp-rhs exp))))
+          (integrate (exp-lhs exp) (exp-rhs exp))))
 ```
 
 Here are some examples, taken from [chapters 8](#c0040) and [9](B9780080571157500091.xhtml) of *Calculus* ([Loomis 1974](B9780080571157500285.xhtml#bb0750)):
@@ -872,10 +880,10 @@ One quick way to simplify such an expression is to factor and unfactor it, and t
 
 ```lisp
 (set-simp-fn 'Int
- #'(lambda (exp)
- (unfactorize
- (factorize
- (integrate (exp-lhs exp) (exp-rhs exp))))))
+    #'(lambda (exp)
+      (unfactorize
+        (factorize
+          (integrate (exp-lhs exp) (exp-rhs exp))))))
 ```
 
 With this change, we get:
@@ -891,7 +899,8 @@ A brief history is given in the introduction to this chapter.
 An interesting point is that the history of Lisp and of symbolic algebraic manipulation are deeply intertwined.
 It is not too gross an exaggeration to say that Lisp was invented by John McCarthy to express the symbolic differentiation algorithm.
 And the development of the first high-quality Lisp system, MacLisp, was driven largely by the needs of MACSYMA, one of the first large Lisp systems.
-See [McCarthy 1958](B9780080571157500285.xhtml#bb0790) for early Lisp history and the differentiation algorithm, and [Martin and Fateman 1971](B9780080571157500285.xhtml#bb0775) and [Moses (1975)](B9780080571157500285.xhtml#bb0875) for more details on MACSYMA. A comprehensive book on computer algebra systems is [Davenport 1988](B9780080571157500285.xhtml#bb0270).
+See [McCarthy 1958](B9780080571157500285.xhtml#bb0790) for early Lisp history and the differentiation algorithm, and [Martin and Fateman 1971](B9780080571157500285.xhtml#bb0775) and [Moses (1975)](B9780080571157500285.xhtml#bb0875) for more details on MACSYMA.
+A comprehensive book on computer algebra systems is [Davenport 1988](B9780080571157500285.xhtml#bb0270).
 It covers the MACSYMA and REDUCE systems as well as the algorithms behind those systems.
 
 Because symbolic differentiation is historically important, it is presented in a number of text books, from the original Lisp 1.5 Primer ([Weissman 1967](B9780080571157500285.xhtml#bb1370)) and Allen's influential [*Anatomy of Lisp* (1978)](B9780080571157500285.xhtml#bb0040) to recent texts like [Brooks 1985](B9780080571157500285.xhtml#bb0135), [Hennessey 1989](B9780080571157500285.xhtml#bb0530), and [Tanimoto 1990](B9780080571157500285.xhtml#bb1220).
