@@ -84,7 +84,8 @@ The intent of your code will be clearer:
 ```
 
 As we saw above, fully parenthesized infix can be quite ugly, with all those extra parentheses, so instead we will use operator precedence.
-There are a number of ways of doing this, but the easiest way for us to proceed is to use our previously defined tool `rule-based-translator` and its subtool, `pat-match.` Note that the third clause of `infix->prefix`, the one that calls `rule-based-translator` is unusual in that it consists of a single expression.
+There are a number of ways of doing this, but the easiest way for us to proceed is to use our previously defined tool `rule-based-translator` and its subtool, `pat-match`.
+Note that the third clause of `infix->prefix`, the one that calls `rule-based-translator` is unusual in that it consists of a single expression.
 Most cond-clauses have two expressions: a test and a result, but ones like this mean, "Evaluate the test, and if it is non-nil, return it.
 Otherwise go on to the next clause."
 
@@ -174,7 +175,7 @@ So, for example, 0 / 0 simplifies to `undefined`, and not to 1 or 0, because the
 See [exercise 8.8](#st0045) for a more complete treatment of this.
 
 ```lisp
-(setf *simplification-rules* (mapcar #'simp-rule '(
+(defparameter *simplification-rules* (mapcar #'infix->prefix '(
   (x + 0  = x)
   (0 + x  = x)
   (x + x  = 2 * x)
@@ -237,7 +238,8 @@ It is summarized in [figure 8.1](#f0010).
 | `pat-match`              | Match pattern against an input. (p. 180)              |
 | `rule-based-translator`  | Apply a set of rules. (p. 189)                        |
 | `pat-match-abbrev`       | Define an abbreviation for use in `pat-match`         |
-Figure 8.1: Glossary for the Simplifier
+
+**Figure 8.1:** Glossary for the Simplifier
 
 Here is the program:
 
@@ -273,7 +275,8 @@ Here is the program:
                 (integerp (second (exp-args exp)))))))
 ```
 
-The function `simplify` assures that any compound expression will be simplified by first simplifying the arguments and then calling `simplify-exp`. This latter function searches through the simplification rules, much like `use-eliza-rules` and `translate-to-expression`.
+The function `simplify` assures that any compound expression will be simplified by first simplifying the arguments and then calling `simplify-exp`.
+This latter function searches through the simplification rules, much like `use-eliza-rules` and `translate-to-expression`.
 When it finds a match, `simplify-exp` substitutes in the proper variable values and calls `simplify` on the result, `simplify-exp` also has the ability to call `eval` to simplify an arithmetic expression to a number.
 As in STUDENT, it is for the sake of this `eval` that we require expressions to be represented as lists in prefix notation.
 Numeric evaluation is done *after* checking the rules so that the rules can intercept expressions like `(/ 1 0)` and simplify them to `undefined`.
@@ -281,7 +284,7 @@ If we did the numeric evaluation first, these expressions would yield an error w
 Because Common Lisp supports arbitrary precision rational numbers (fractions), we are guaranteed there will be no round-off error, unless the input explicitly includes inexact (floating-point) numbers.
 Notice that we allow computations involving the four arithmetic operators, but exponentiation is only allowed if the exponent is an integer.
 That is because expressions like `(^ 4 1/2)` are not guaranteed to return 2 (the exact square root of 4); the answer might be 2.0 (an inexact number).
-Another problem is that - 2 is also a square root of 4, and in some contexts it is the correct one to use.
+Another problem is that -2 is also a square root of 4, and in some contexts it is the correct one to use.
 
 The following trace shows some examples of the simplifier in action.
 First we show that it can be used as a calculator; then we show more advanced problems.
@@ -440,7 +443,7 @@ Here are the new notations:
 |-------------|-------------|-------------|
 | math        | infix       | prefix      |
 | *dy*/*dx*   | `d y / d x` | `(d y x)`   |
-| *&int; ydx* | `Int y d x` | `(int y x)` |
+| &int; *ydx* | `Int y d x` | `(int y x)` |
 
 And here are the necessary infix-to-prefix rules:
 
@@ -718,7 +721,8 @@ Finally, the predicate `free-of` returns true if an expression does not have any
         ((find-anywhere item (rest tree)))))
 ```
 
-In `factorize` we made use of the auxiliary function `length=1`. The function call `(length=l x)` is faster than `(= (length x) 1)` because the latter has to compute the length of the whole list, while the former merely has to see if the list has a `rest` element or not.
+In `factorize` we made use of the auxiliary function `length=1`.
+The function call `(length=1 x)` is faster than `(= (length x) 1)` because the latter has to compute the length of the whole list, while the former merely has to see if the list has a `rest` element or not.
 
 ```lisp
 (defun length=l (x)
@@ -803,7 +807,7 @@ It turns out that the function is a little more complicated than the simple four
 There are three cases.
 In any case, all factors are of the form `(^ u n)`, so we separate the factor into a base, `u`, and exponent, `n`.
 If *u* or *u*<sup>*n*</sup> evenly divides the original expression (here represented as factors), then we have an answer.
-But we need to check the exponent, because *&int; u<sup>n</sup>du* is *u*<sup>*n*+1</sup>/(*n* + 1) for *n*&ne; - 1, but it is log (*u*) for *n* = - 1.
+But we need to check the exponent, because *&int; u<sup>n</sup>du* is *u*<sup>*n*+1</sup>/(*n* + 1) for *n* &ne; -1, but it is log (*u*) for *n* = -1.
 But there is a third case to consider.
 The factor may be something like `(^ (sin (^ x 2)) 1)`, in which case we should consider *f*(*u*) = sin(*x*<sup>2</sup>).
 This case is handled with the help of an integral table.
@@ -979,6 +983,3 @@ MAC stood either for Machine-Aided Cognition or Multiple-Access Computer, accord
 The cynical have claimed that MAC really stood for Man Against Computer.
 
 [2](#xfn0015) The term antiderivative is more correct, because of branch point problems.
-
-Part III
-Tools and Techniques
