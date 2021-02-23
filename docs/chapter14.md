@@ -17,7 +17,7 @@ In particular, a lot of work was concerned with *theorem proving:* stating a pro
 The implicit assumption was that the power resided in the inference mechanism-if we could just find the right search technique, then all our problems would be solved, and all our theorems would be proved.
 
 Starting in the 1970s, this began to change.
-The theorem-proving approach falled to live up to its promise.
+The theorem-proving approach failed to live up to its promise.
 AI workers slowly began to realize that they were not going to solve NP-hard problems by coming up with a clever inference algorithm.
 The general inferencing mechanisms that worked on toy examples just did not scale up when the problem size went into the thousands (or sometimes even into the dozens).
 
@@ -28,7 +28,7 @@ In this view it doesn't matter very much if MYCIN uses forward- or backward-chai
 What matters crucially is that we know pseudomonas is a gram-negative, rod-shaped organism that can infect patients with compromised immune systems.
 In other words, the key problem is acquiring and representing knowledge.
 
-While the expert system approach had some successes, it also had fallures, and researchers were interested in learning the limits of this new technology and understanding exactly how it works.
+While the expert system approach had some successes, it also had failures, and researchers were interested in learning the limits of this new technology and understanding exactly how it works.
 Many found it troublesome that the meaning of the knowledge used in some systems was never clearly defined.
 For example, does the assertion `(color apple red)` mean that a particular apple is red, that all apples are red, or that some/most apples are red?
 The field of *knowledge representation* concentrated on providing clear semantics for such representations, as well as providing algorithms for manipulating the knowledge.
@@ -404,7 +404,7 @@ One approach would be this:
 
 These rules say that 0 is an integer, and any *n* is an integer if *n* + 1 is, and *n* + 1 is if *n* is.
 While these rules are correct in a logical sense, they don't work as a Prolog program.
-Asking `(integer *x*)` will resuit in an endless series of ever-increasing queries: `(integer (1  + *x*)), (integer (1  + (1  + *x*)))`, and so on.
+Asking `(integer *x*)` will result in an endless series of ever-increasing queries: `(integer (1  + *x*)), (integer (1  + (1  + *x*)))`, and so on.
 Each goal is different, so no check can stop the recursion.
 
 The occurs check may or may not introduce problems into Prolog, depending on your interpretation of infinite trees.
@@ -545,7 +545,7 @@ In general, all the keys indexed under variables along the path must be consider
 
 The retrieval mechanism can overretrieve.
 Given the query `(p a (f ?x))`, the atom `p` will again retrieve all six keys, the atom a retrieves 1, 2, 3, and 6, and f again retrieves 5, 6, and 3.
-So `f` retrieves the shortest list, and hence it will be used to determine the final resuit.
+So `f` retrieves the shortest list, and hence it will be used to determine the final result.
 But key 5 is `(p b (f c))`, which does not match the query `(pa (f?x))`.
 
 We could eliminate this problem by intersecting all the lists instead of just taking the shortest list.
@@ -808,7 +808,7 @@ If the match is true, it calls the supplied function with the binding list that 
 ```
 
 There are many ways to use this retriever.
-The function `retrieve` returns a list of the matching binding lists, and `retrieve-matches` substitutes each binding list into the original query so that the resuit is a list of expressions that unify with the query.
+The function `retrieve` returns a list of the matching binding lists, and `retrieve-matches` substitutes each binding list into the original query so that the result is a list of expressions that unify with the query.
 
 ```lisp
 (defun retrieve (query)
@@ -862,7 +862,7 @@ The macro `query-bind` is provided as a nice interface to `mapc-retrieve`.
 The macro takes as arguments a list of variables to bind, a query, and one or more forms to apply to each retrieved answer.
 Within this list of forms, the variables will be bound to the values that satisfy the query.
 The syntax was chosen to be the same as `multiple-value-bind`.
-Here we see a typical use of `query-bind`, its resuit, and its macro-expansion:
+Here we see a typical use of `query-bind`, its result, and its macro-expansion:
 
 ```lisp
 > (query-bind (?x ?fn) '(p ?x (?fn c))
@@ -1615,7 +1615,7 @@ The new function `nalist-push` adds a value to an nalist, either by inserting th
 ```
 
 In the following, `fetch` is used on the same data base created by `test-index`, indexed under the world `W0`.
-This time the resuit is a list-of-lists of world/values a-lists.
+This time the result is a list-of-lists of world/values a-lists.
 The count, 3, is the same as before.
 
 ```lisp
