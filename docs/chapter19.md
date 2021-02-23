@@ -14,11 +14,11 @@ Anatural language is a language spoken by people, such as English, German, or Ta
 This is in opposition to artificial languages like Lisp, FORTRAN, or Morse code.
 Natural language processing is an important part of AI because language is intimately connected to thought.
 One measure of this is the number of important books that mention language and thought in the title: in AI, Schank and Colby's *Computer Models of Thought and Language;* in linguistics, Whorf's *Language, Thought, and Reality* (and Chomsky's *Language and Mind;)* in philosophy, Fodor's *The Language of Thought;* and in psychology, Vygotsky's *Thought and Language* and John Anderson's *Language, Memory, and Thought.* Indeed, language is the trait many think of as being the most characteristic of humans.
-Much controversy has been generated over the question of whether animais, especially primates and dolphins, can use and "understand" language.
+Much controversy has been generated over the question of whether animals, especially primates and dolphins, can use and "understand" language.
 Similar controversy surrounds the same question asked of computers.
 
 The study of language has been traditionally separated into two broad classes: syntax, or grammar, and semantics, or meaning.
-Historically, syntax has achieved the most attention, largely because on the surface it is more amenable to formai and semiformal methods.
+Historically, syntax has achieved the most attention, largely because on the surface it is more amenable to formal and semiformal methods.
 Although there is evidence that the boundary between the two is at best fuzzy, we still maintain the distinction for the purposes of these notes.
 We will cover the "easier" part, syntax, first, and then move on to semantics.
 
@@ -442,7 +442,7 @@ For example, given the rule
 
 then the semantics of the phrase "1 to 5 without 3" could be determined by first determining the semantics of"1 to 5" tobe(l 2 3 4 5),of"without"tobe set-`difference`, and of "3" to be (3).
 After these sub-constituents are determined, the rule is applied by calling the function `infix-funcall` with the three arguments (1 2 3 4 5), `set-difference`, and (3).
-Assuming that `infix-funcall` is defined to apply its second argument to the other two arguments, the resuit will be (1 2 4 5).
+Assuming that `infix-funcall` is defined to apply its second argument to the other two arguments, the result will be (1 2 4 5).
 
 This may make more sense if we look at a complete grammar for the CD player problem:
 
@@ -693,7 +693,7 @@ If the tree is a nonterminal, then the score is computed in two steps.
 First, all the scores of the constituents of the tree are added up.
 Then, this is added to a measure for the tree as a whole.
 The rule associated with each tree will have either a number attached to it, which is added to the sum, or a function.
-In the latter case, the function is applied to the tree, and the resuit is added to obtain the final score.
+In the latter case, the function is applied to the tree, and the result is added to obtain the final score.
 As a final special case, if the function returns nil, then we assume it meant to return zero.
 This will simplify the definition of some of the scoring functions.
 
@@ -1122,7 +1122,7 @@ Note that I was careful to exclude such rules in my grammars earlier.
 
 **Answer 19.5** If it were omitted, then `:test` would default to `#'eql`, and it would be possible to remove the "wrong" element from the list.
 Consider the list (1.0 1.0) in an implementation where floating-point numbers are `eql` but not `eq`.
-if `random-elt` chooses the first 1.0 first, then everything is satisfactory-the resuit list is the same as the input list.
+if `random-elt` chooses the first 1.0 first, then everything is satisfactory-the result list is the same as the input list.
 However, if `random-elt` chooses the second 1.0, then the second 1.0 will be the first element of the answer, but `remove` will remove the wrong 1.0!
 It will remove the first 1.0, and the final answer will be a list with two pointers to the second 1.0 and none to the first.
 In other words, we could have:
@@ -1138,7 +1138,7 @@ In other words, we could have:
 (defun permute (bag)
   "Return a random permutation of the bag."
   ;; It is done by converting the bag to a vector, but the
-  ;; resuit is always the same type as the input bag.
+  ;; result is always the same type as the input bag.''
   (let ((bag-copy (replace (make-array (length bag)) bag))
         (bag-type (if (listp bag) 'list (type-of bag))))
     (coerce (permute-vector! bag-copy) bag-type)))

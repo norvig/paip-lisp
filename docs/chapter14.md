@@ -292,7 +292,7 @@ In other words, everyone likes some person, but not necessarily the same person.
 In the previous section we saw that Prolog has traded some expressiveness for efficiency.
 This section explores the limits of predicate calculus's expressiveness.
 
-Suppose we want to assert that lions, tigers, and bears are kinds of animais.
+Suppose we want to assert that lions, tigers, and bears are kinds of animals.
 In predicate calculus or in Prolog we could write an implication for each case:
 
 ```lisp
@@ -302,7 +302,7 @@ In predicate calculus or in Prolog we could write an implication for each case:
 ```
 
 These implications allow us to prove that any known lion, tiger, or bear is in fact an animal.
-However, they do not allow us to answer the question "What kinds of animais are there?" It is not hard to imagine extending Prolog so that the query
+However, they do not allow us to answer the question "What kinds of animals are there?" It is not hard to imagine extending Prolog so that the query
 
 ```lisp
 (?- (<- (animal ?x) ?proposition))
@@ -331,7 +331,7 @@ But how well does predicate calculus fare in a world of continuous substances?
 Consider a body of water consisting of an indefinite number of subconstituents that are all water, with some of the water evaporating into the air and rising to form clouds.
 It is not at all obvious how to define the individuals here.
 However, Patrick Hayes has shown that when the proper choices are made, predicate calculus can describe this kind of situation quite well.
-The detalls are in Hayes 1985.
+The details are in Hayes 1985.
 
 The need to define categories is a more difficult problem.
 Predicate calculus works very well for crisp, mathematical categories: a; is a triangle if and only if *x* is a polygon with three sides.
@@ -370,7 +370,7 @@ No.
 
 We get the expected conclusions, but they are deduced repeatedly, because the commutative clause for siblings is applied over and over again.
 This is annoying, but not critical.
-Far worseis when we ask `(?- (sibling fred ?x))`.
+Far worse is when we ask `(?- (sibling fred ?x))`.
 This query loops forever.
 Happily, this particular type of example has an easy fix: just introduce two predicates, one for data-base level facts, and one at the level of axioms and queries:
 
@@ -489,7 +489,7 @@ We don't know what typical facts will look like, nor typical queries.
 Therefore, we will design a fairly abstract tool, forgetting for the moment that it will be used to index Prolog facts.
 
 We will address the problem of a discrimination tree where both the keys and queries are predicate structures with wild cards.
-A wild card is a variable, but with the understanding thatthere is no variable binding; each instance of a variable can match anything.
+A wild card is a variable, but with the understanding that there is no variable binding; each instance of a variable can match anything.
 A predicate structure is a list whose first element is a nonvariable symbol.
 The discrimination tree supports three operations:
 
@@ -517,7 +517,7 @@ This should match keys 2, 3, and 4.
 How could we efficiently arrive at this set?
 One idea is to list the key/value pairs under every atom that they contain.
 Thus, all six would be listed under the atom `p`, while 2, 4, and 5 would be listed under the atom c.
-A unification check could elimina te 5, but we still would be missing 3.
+A unification check could eliminate 5, but we still would be missing 3.
 Key 3 (and every key with a variable in it) could potentially contain the atom `c`.
 So to get the right answers under this approach, we will need to index every key that contains a variable under every atom-not an appealing situation.
 
@@ -976,7 +976,7 @@ However, it only proceeds to the next iteration if the search was cut off at som
 ```
 
 There is one final complication.
-When we increase the depth of search, we may find some new proof s, but we will also find all the old proof s that were found on the previous iteration.
+When we increase the depth of search, we may find some new proofs, but we will also find all the old proofs that were found on the previous iteration.
 We can modify `show-prolog-vars` to only print proofs that are found with a depth less than the increment-that is, those that were not found on the previous iteration.
 
 ```lisp
@@ -1024,7 +1024,8 @@ We also introduce a way to attach functions to predicates to do forward-chaining
 
 ### Higher-Order Predications
 
-First we will tackle the problem of answering questions like "What kinds of animais are there?" Paradoxically, the key to allowing more expressiveness in this case is to invent a new, more limited language and insist that all assertions and queries are made in that language.
+First we will tackle the problem of answering questions like "What kinds of animals are there?"
+Paradoxically, the key to allowing more expressiveness in this case is to invent a new, more limited language and insist that all assertions and queries are made in that language.
 That way, queries that would have been higher-order in the original language become first-order in the restricted language.
 
 The language admits three types of objects: *categories, relations*, and *individuals.* A category corresponds to a one-place predicate, a relation to a two-place predicate, and an individual to constant, or zero-place predicate.
@@ -1063,15 +1064,15 @@ The form (rel *R A B*) means that every *R* holds between an individual of *A* a
 | `(and` *P Q...*) | *P ^ Q...*                                                                                                         |
 
 Queries in the language, not surprisingly, have the same form as assertions, except that they may contain variables as well as constants.
-Thus, to find out what kinds of animais there are, use the query `(sub ?kind animal)`.
-To find out what individual animais there are, use the query `(ind ?x animal)`.
-To find out what individual animais of what kinds there are, use:
+Thus, to find out what kinds of animals there are, use the query `(sub ?kind animal)`.
+To find out what individual animals there are, use the query `(ind ?x animal)`.
+To find out what individual animals of what kinds there are, use:
 
 ```lisp
 (and (sub ?kind animal) (ind ?x ?kind))
 ```
 
-The implemention of this new language can be based directly on the previous implementation of dtrees.
+The implementation of this new language can be based directly on the previous implementation of dtrees.
 Each assertion is stored as a fact in a dtree, except that the components of an and assertion are stored separately.
 The function `add-fact` does this:
 
@@ -1098,14 +1099,14 @@ Conceptually, the function to do this, `retrieve-fact`, should be as simple as t
 Unfortunately, there are some complications.
 Think about what must be done in `retrieve-conjunction`.
 It is passed a list of conjuncts and must return a list of binding lists, where each binding list satisfies the query.
-For example, to find out what people were born on July Ist, we could use the query:
+For example, to find out what people were born on July 1st, we could use the query:
 
 ```lisp
 (and (val birthday ?p july-1) (ind ?p person))
 ```
 
 `retrieve-conjunction` could solve this problem by first calling `retrieve-fact` on `(val birthday ?p july-1)`.
-Once that is done, there is only one conjunct remaining, but in general there could be several, so we need to call `retrieve-conjunction` recursively with two arguments: the remainingconjuncts, and the resultthat `retrieve-fact` gave for the first solution.
+Once that is done, there is only one conjunct remaining, but in general there could be several, so we need to call `retrieve-conjunction` recursively with two arguments: the remaining conjuncts, and the result that `retrieve-fact` gave for the first solution.
 Since `retrieve-fact` returns a list of binding lists, it will be easiest if `retrieve-conjunction` accepts such a list as its second argument.
 Furthermore, when it comes time to call `retrieve-fact` on the second conjunct, we will want to respect the bindings set up by the first conjunct.
 So `retrieve-fact` must accept a binding list as its second argument.
@@ -1168,7 +1169,7 @@ Here is a short example where `add-fact` is used to add facts about bears and do
 > (add-fact '(val latin-name dog canis-familiaris)) => T
 ```
 
-Now `retrieve-fact` is used to answer three questions: What kinds of animais are there?
+Now `retrieve-fact` is used to answer three questions: What kinds of animals are there?
 What are the Latin names of each kind of animal?
 and What are the colors of each individual bear?
 
@@ -1427,7 +1428,7 @@ To support the frame notation, we define the macros `a` and `each` to make asser
  '(add-fact ',(translate-exp (cons 'a args))))
 (defmacro each (&rest args)
  "Define a new category and assert facts about it in the data base."
- '(add-fact ',(transiate-exp (cons 'each args))))
+ '(add-fact ',(translate-exp (cons 'each args))))
 (defmacro ?? (&rest queries)
  "Return a list of answers satisfying the query or queries."
  '(retrieve-setof
@@ -1437,10 +1438,10 @@ To support the frame notation, we define the macros `a` and `each` to make asser
 
 All three of these macros call on `translate-exp` to translate from the frame syntax to the primitive syntax.
 Note that an `a` or `each` expression is computing a conjunction of primitive relations, but it is also computing a *term* when it is used as the nested value of a slot.
-It would be possible to do this by returning multiple values, but it is easier to build `transiate-exp` as a set of local functions that construct facts and push them on the local variable `conjuncts`.
+It would be possible to do this by returning multiple values, but it is easier to build `translate-exp` as a set of local functions that construct facts and push them on the local variable `conjuncts`.
 At the end, the list of `conjuncts` is returned as the value of the translation.
-The local functions `transiate-a` and `transiate-each` return the atom that represents the term they are translating.
-The local function `translate` translates any kind of expression, `transiate-siot` handles a slot, and `collect-fact` is responsible for pushing a fact onto the list of conjuncts.
+The local functions `translate-a` and `translate-each` return the atom that represents the term they are translating.
+The local function `translate` translates any kind of expression, `translate-slot` handles a slot, and `collect-fact` is responsible for pushing a fact onto the list of conjuncts.
 The optional argument `query-mode-p` tells what to do if the individual is not provided in an `a` expression.
 If `query-mode-p` is true, the individual will be represented by a variable; otherwise it will be a Skolem constant.
 
@@ -1542,13 +1543,13 @@ First, we could add multiple truth values beyond the simple "true" and "false." 
 Second, we could introduce the idea of *possible worlds.*
 That is, the truth of a proposition could be unknown in the current world, but true if we assume *p*, and false if we assume *q.*
 In the possible world approach, this is handled by calling the current world *W*, and then creating a new world *W*<sub>1</sub>, which is just like *W* except that *p* is true, and *W*<sub>2</sub>, which is just like *W* except that *q* is true.
-By doing reasoning in different worlds we can make predictions about the future, resolve ambiguitites about the current state, and do reasoning by cases.
+By doing reasoning in different worlds we can make predictions about the future, resolve ambiguities about the current state, and do reasoning by cases.
 
 For example, possible worlds allow us to solve Moore's communism/democracy problem ([page 466](#p466)).
 We create two new possible worlds, one where *E* is a democracy and one where it is communist.
 In each world it is easy to derive that there is a democracy next to a communist country.
 The trick is to realize then that the two worlds form a partition, and that therefore the assertion holds in the original "real" world as well.
-This requires an interaction between the Prolog-based tactical reasoning going on within a world and the planning-based strategie reasoning that decides which worlds to consider.
+This requires an interaction between the Prolog-based tactical reasoning going on within a world and the planning-based strategic reasoning that decides which worlds to consider.
 
 We could also add a *truth maintenance system* (or TMS) to keep track of the assumptions or justifications that lead to each fact being considered true.
 A truth maintenance system can lessen the need to backtrack in a search for a global solution.
@@ -1574,7 +1575,7 @@ The following is an `nalist` showing six facts indexed under three different wor
 
 The fetching routine will remain unchanged, but the postfetch processing will have to sort through the nalists to find only the facts in the current world.
 It would also be possible for `fetch` to do this work, but the reasoning is that most facts will be indexed under the "real world," and only a few facts will exist in alternative, hypothetical worlds.
-Therefore, we should delay the effort of sorting through the answers to elimina te those answers in the wrong world-it may be that the first answer fetched will suffice, and then it would have been a waste to go through and eliminate other answers.
+Therefore, we should delay the effort of sorting through the answers to eliminate those answers in the wrong world-it may be that the first answer fetched will suffice, and then it would have been a waste to go through and eliminate other answers.
 The following changes to `index` and `dtree-index` add support for worlds:
 
 ```lisp
@@ -1664,7 +1665,7 @@ We also include a definition of the default initial world.
 The function `use-world` is used to switch to a new world.
 It first makes the current world and all its parents no longer current, and then makes the new chosen world and all its parents current.
 The function `use-new-world` is more efficient in the common case where you want to create a new world that inherits from the current world.
-It doesn't have to turn any worlds off; it j ust crea tes the new world and makes it current.
+It doesn't have to turn any worlds off; it just creates the new world and makes it current.
 
 ```lisp
 (defun use-world (world)
@@ -1840,7 +1841,7 @@ This approach was pioneered by [Doyle (1979)](B9780080571157500285.xhtml#bb0340)
 Doyle tried to change the name to "reason maintenance,' in (1983), but it was too late.
 The version in widest used today is the assumption-based truth maintenance system, or ATMS, developed by de Kleer (1986a,b,c).
 [Charniak et al.
-(1987)](B9780080571157500285.xhtml#bb0180) present a complete Common Lisp implementation of a McAllester-styleTMS.
+(1987)](B9780080571157500285.xhtml#bb0180) present a complete Common Lisp implementation of a McAllester-style TMS.
 
 There is little communication between the logic programming and knowledge representation communities, even though they cover overlapping territory.
 [Colmerauer (1990)](B9780080571157500285.xhtml#bb0250) and [Cohen (1990)](B9780080571157500285.xhtml#bb0230) describe Logic Programming languages that address some of the issues covered in this chapter.
@@ -1878,8 +1879,8 @@ This support has already been provided for dtrees, but you will have to provide 
 
 **Exercise  14.9 [h]** Integrate the language described in [section 14.10](#s0055) and the frame syntax from [section 14.10](#s0055) with the extended Prolog compiler from the previous exercise.
 
-**Exercise  14.10 [d]** Build a strategie reasoner that decides when to create a possible world and does reasoning by cases over these worlds.
-Use it to solve Moore 's problem ([page 466](#p466)).
+**Exercise  14.10 [d]** Build a strategic reasoner that decides when to create a possible world and does reasoning by cases over these worlds.
+Use it to solve Moore's problem ([page 466](#p466)).
 
 ## 14.13 Answers
 

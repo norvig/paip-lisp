@@ -732,7 +732,7 @@ For example, if we put the same expression inside a `begin` expression, we get s
         RETURN
 ```
 
-What happens here is that `(+ x y)` and `(* x y)`, when compiled in a context where the value is ignored, both resuit in no generated code.
+What happens here is that `(+ x y)` and `(* x y)`, when compiled in a context where the value is ignored, both result in no generated code.
 Thus, the `if` expression reduces to `(if p nil nil)`, which is compiled like `(begin p nil)`, which also generates no code when not evaluated for value, so the final code just references `z`.
 The compiler can only do this optimization because it knows that `+` and `*` are side-effect-free operations.
 Consider what happens when we replace + with `f` :
@@ -2028,7 +2028,7 @@ But to demonstrate that the right solution doesn't always appear the first time,
 Assuming a properly tail-recursive compiler, the modified version will never require more than *O*(log *n*) space, because at each step at least half of the vector is being sorted tail-recursively.
 
 **Answer 23.10** (1) `(defun (funcall fn . args) (apply fn args))` (2) Suppose you changed the piece of code `(+ . numbers)` to `(+ . (map sqrt numbers))`.
-The latter is the same expression as (+ `map sqrt numbers),` which is not the intended resuit at all.
+The latter is the same expression as (+ `map sqrt numbers),` which is not the intended result at all.
 So there would be an arbitrary restriction: the last argument in an apply form would have to be an atom.
 This kind of restriction goes against the grain of Scheme.
 

@@ -1923,7 +1923,7 @@ What happens if you change the order of the loss clauses in `win` and/or `nim?`
 **Answer 9.6** We start by defining a function, `moves`, which generates all possible moves from a given position.
 This is done by considering each pile of *n* tokens within a set of piles *s*.
 Any pile bigger than two tokens can be split.
-We take care to elimina te duplicate positions by sorting each set of piles, and then removing the duplicates.
+We take care to eliminate duplicate positions by sorting each set of piles, and then removing the duplicates.
 
 ```lisp
 (defun moves (s)

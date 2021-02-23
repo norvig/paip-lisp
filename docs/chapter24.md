@@ -1335,8 +1335,9 @@ The idea is that the comment should help the reader prove the correctness of the
 
 ----------------------
 
+
 <a id="fn24-1"></a><sup>[1](#tfn24-1)</sup>
 Or in the user package in non-ANSI systems.
 
 <a id="fn24-2"></a><sup>[2](#tfn24-2)</sup>
-As was noted before, the proper way to do this is to proclaim squa re as an inline function, not a macro, but please bear with the example.
+As was noted before, the proper way to do this is to proclaim `square` as an inline function, not a macro, but please bear with the example.

@@ -916,7 +916,7 @@ Consider the rule that says that a sentence can consist of two sentences joined 
 ```
 
 While this rule is correct as a declarative statement, it will run into difficulty when run by the standard top-down depth-first DCG interpretation process.
-The top-level goal of parsing an `S` will lead immediately to the subgoal of parsing an `S`, and the resuit will be an infinite loop.
+The top-level goal of parsing an `S` will lead immediately to the subgoal of parsing an `S`, and the result will be an infinite loop.
 
 Fortunately, we know how to avoid this kind of infinite loop: split the offending predicate, `S`, into two predicates: one that supports the recursion, and one that is at a lower level.
 We will call the lower-level predicate `S_`.
