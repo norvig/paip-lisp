@@ -84,7 +84,8 @@ The intent of your code will be clearer:
 ```
 
 As we saw above, fully parenthesized infix can be quite ugly, with all those extra parentheses, so instead we will use operator precedence.
-There are a number of ways of doing this, but the easiest way for us to proceed is to use our previously defined tool `rule-based-translator` and its subtool, `pat-match.` Note that the third clause of `infix->prefix`, the one that calls `rule-based-translator` is unusual in that it consists of a single expression.
+There are a number of ways of doing this, but the easiest way for us to proceed is to use our previously defined tool `rule-based-translator` and its subtool, `pat-match`.
+Note that the third clause of `infix->prefix`, the one that calls `rule-based-translator` is unusual in that it consists of a single expression.
 Most cond-clauses have two expressions: a test and a result, but ones like this mean, "Evaluate the test, and if it is non-nil, return it.
 Otherwise go on to the next clause."
 
@@ -145,6 +146,7 @@ They are repeated here:
 
 ```lisp
 (defstruct (rule (:type list)) pattern response)
+
 (defstruct (exp (:type list)
                 (:constructor mkexp (lhs op rhs)))
   op lhs rhs)
@@ -169,11 +171,11 @@ A reasonable list of simplification rules is shown below.
 This list covers the four arithmetic operators, addition, subtraction, multiplication, and division, as well as exponentiation (raising to a power), denoted by the symbol "^"
 
 Again, it is important to note that the rules are ordered, and that later rules will be applied only when earlier rules do not match.
-So, for example, 0 / 0 simplifies to `undefined,` and not to 1 or 0, because the rule for 0 / 0 comes before the other rules.
+So, for example, 0 / 0 simplifies to `undefined`, and not to 1 or 0, because the rule for 0 / 0 comes before the other rules.
 See [exercise 8.8](#st0045) for a more complete treatment of this.
 
 ```lisp
-(setf *simplification-rules* (mapcar #'simp-rule '(
+(defparameter *simplification-rules* (mapcar #'infix->prefix '(
   (x + 0  = x)
   (0 + x  = x)
   (x + x  = 2 * x)
@@ -210,15 +212,34 @@ See [exercise 8.8](#st0045) for a more complete treatment of this.
 
 We are now ready to go ahead and write the simplifier.
 The main function, `simplifier` will repeatedly print a prompt, read an input, and print it in simplified form.
-Input and output is in infix and the computation is in prefix, so we need to convert accordingly; the function simp does this, and the function `simplify` takes care of a single prefix expression.
-It is summarized in [figure  8.1](#f0010).
+Input and output is in infix and the computation is in prefix, so we need to convert accordingly; the function `simp` does this, and the function `simplify` takes care of a single prefix expression.
+It is summarized in [figure 8.1](#f0010).
 
-| []()                                    |
-|-----------------------------------------|
-| ![f08-01](images/chapter8/f08-01.jpg)   |
-| Figure 8.1: Glossary for the Simplifier |
+| Symbol                   | Use                                                   |
+| ------                   | ---                                                   |
+|                          | **Top-Level Function**                                |
+| `simplifier`             | A rad-simplify-print loop.                            |
+| `simp`                   | Simplify an infix expression.                         |
+| `simplify`               | Simplify a prefix expression.                         |
+|                          | **Special Variables**                                 |
+| `*infix->prefix-rules*`  | Rules to translate from infix to prefix.              |
+| `*simplification-rules*` | Rules to simplify an expression.                      |
+|                          | **Data Types**                                        |
+| `exp`                    | A prefix expression                                   |
+|                          | **Auxiliary Functions**                               |
+| `simplify-exp`           | Simplify a non-atomic prefix expression.              |
+| `infix->prefix`          | Convert infix to prefix notation.                     |
+| `variable-p`             | The symbols m through z are variables.                |
+| `^`                      | An alias for `expt`, exponentiation.                  |
+| `evaluable`              | Decide if an expression can be numerically evaluated. |
+| `simp-rule`              | Transform a rule into proper format.                  |
+| `length=1`               | Is the argument a list of length 1?                   |
+|                          | **Previously Defined Functions**                      |
+| `pat-match`              | Match pattern against an input. (p. 180)              |
+| `rule-based-translator`  | Apply a set of rules. (p. 189)                        |
+| `pat-match-abbrev`       | Define an abbreviation for use in `pat-match`         |
 
-(ed: this should be a markdown table)
+**Figure 8.1:** Glossary for the Simplifier
 
 Here is the program:
 
@@ -254,14 +275,15 @@ Here is the program:
                 (integerp (second (exp-args exp)))))))
 ```
 
-The function `simplify` assures that any compound expression will be simplified by first simplifying the arguments and then calling `simplify-exp.` This latter function searches through the simplification rules, much like `use-eliza-rules` and `translate-to-expression`.
+The function `simplify` assures that any compound expression will be simplified by first simplifying the arguments and then calling `simplify-exp`.
+This latter function searches through the simplification rules, much like `use-eliza-rules` and `translate-to-expression`.
 When it finds a match, `simplify-exp` substitutes in the proper variable values and calls `simplify` on the result, `simplify-exp` also has the ability to call `eval` to simplify an arithmetic expression to a number.
-As in STUDENT, it is for the sake of this eval that we require expressions to be represented as lists in prefix notation.
-Numeric evaluation is done *after* checking the rules so that the rules can intercept expressions like (/ 1 0) and simplify them to `undefined`.
-If we did the numeric evaluation first, these expressions would yield an error when passed to eval.
+As in STUDENT, it is for the sake of this `eval` that we require expressions to be represented as lists in prefix notation.
+Numeric evaluation is done *after* checking the rules so that the rules can intercept expressions like `(/ 1 0)` and simplify them to `undefined`.
+If we did the numeric evaluation first, these expressions would yield an error when passed to `eval`.
 Because Common Lisp supports arbitrary precision rational numbers (fractions), we are guaranteed there will be no round-off error, unless the input explicitly includes inexact (floating-point) numbers.
 Notice that we allow computations involving the four arithmetic operators, but exponentiation is only allowed if the exponent is an integer.
-That is because expressions like (^ 4 1/2) are not guaranteed to return 2 (the exact square root of 4); the answer might be 2.0 (an inexact number).
+That is because expressions like `(^ 4 1/2)` are not guaranteed to return 2 (the exact square root of 4); the answer might be 2.0 (an inexact number).
 Another problem is that -2 is also a square root of 4, and in some contexts it is the correct one to use.
 
 The following trace shows some examples of the simplifier in action.
@@ -269,21 +291,21 @@ First we show that it can be used as a calculator; then we show more advanced pr
 
 ```lisp
 >(simplifier)
-SIMPLIFIER  > (2 + 2)
+SIMPLIFIER > (2 + 2)
 4
-SIMPLIFIER  > (5 * 20 + 30 + 7)
+SIMPLIFIER > (5 * 20 + 30 + 7)
 137
-SIMPLIFIER  > (5 * x - (4 + 1) * x)
+SIMPLIFIER > (5 * x - (4 + 1) * x)
 0
-SIMPLIFIER  > (y / z * (5 * x - (4 + 1) * x))
+SIMPLIFIER > (y / z * (5 * x - (4 + 1) * x))
 0
-SIMPLIFIER  > ((4-3) * x + (y / y - 1) * z)
+SIMPLIFIER > ((4-3) * x + (y / y - 1) * z)
 X
-SIMPLIFIER  > (1 * f(x) + 0)
+SIMPLIFIER > (1 * f(x) + 0)
 (F X)
-SIMPLIFIER  > (3 * 2 * X)
+SIMPLIFIER > (3 * 2 * X)
 (3 * (2 * X))
-SIMPLIFIER  > [Abort]
+SIMPLIFIER > [Abort]
 >
 ```
 
@@ -293,8 +315,8 @@ In the next section, we will correct that problem.
 
 ## 8.3 Associativity and Commutativity
 
-We could easily add a rule to rewrite `(3 * (2 *X))` as `((3 * 2) * X)` andhence `(6 * X)`.
-The problem is that this rule would also rewrite `(X*(2*3))` as `((X* 2) * 3)`, unless we had a way to limit the rule to apply only when it would group numbers together.
+We could easily add a rule to rewrite `(3 * (2 *X))` as `((3 * 2) * X)` and hence `(6 * X)`.
+The problem is that this rule would also rewrite `(X*(2*3))` as `((X*2)*3)`, unless we had a way to limit the rule to apply only when it would group numbers together.
 Fortunately, `pat-match` does provide just this capability, with the `?is` pattern.
 We could write this rule:
 
@@ -342,33 +364,33 @@ For some problems we get just the right answers:
 
 ```lisp
 > (simplifier)
-SIMPLIFIER  > (3 * 2 * x)
+SIMPLIFIER > (3 * 2 * x)
 (6 * X)
-SIMPLIFIER  > (2 * x * x * 3)
+SIMPLIFIER > (2 * x * x * 3)
 (6 * (X ^ 2))
-SIMPLIFIER  > (2 * x * 3 * y * 4 * z * 5 * 6)
+SIMPLIFIER > (2 * x * 3 * y * 4 * z * 5 * 6)
 (720 * (X * (Y * Z)))
-SIMPLIFIER  > (3 + x + 4 + x)
+SIMPLIFIER > (3 + x + 4 + x)
 ((2 * X) + 7)
-SIMPLIFIER  > (2 * x * 3 * x * 4 * (l / x) * 5 * 6)
+SIMPLIFIER > (2 * x * 3 * x * 4 * (l / x) * 5 * 6)
 (720 * X)
 ```
 
 Unfortunately, there are other problems that aren't simplified properly:
 
 ```lisp
-SIMPLIFIER  > (3 + x + 4 - x)
+SIMPLIFIER > (3 + x + 4 - x)
 ((X + (4 - X)) + 3)
-SIMPLIFIER  > (x + y + y + x)
+SIMPLIFIER > (x + y + y + x)
 (X + (Y + (Y + X)))
-SIMPLIFIER  > (3 * x + 4 * x)
+SIMPLIFIER > (3 * x + 4 * x)
 ((3 * X) + (4 * X))
 ```
 
 We will return to these problems in [section 8.5](#s0030).
 
 **Exercise 8.1** Verify that the set of rules just prior does indeed implement the desired conventions, and that the conventions have the proper effect, and always terminate.
-As an example of a potential problem, what would happen if we used the rule `(x * n = n * x)` instead of the rule `(s * n = n * s)?`
+As an example of a potential problem, what would happen if we used the rule `(x * n = n * x)` instead of the rule `(s * n = n * s)`?
 
 ## 8.4 Logs, Trig, and Differentiation
 
@@ -377,7 +399,7 @@ In this section, we add a little to the mathematical complexity, without having 
 Thus, the mathematically shy can safely skip to the next section without feeling they are missing any of the fun.
 
 We start off by representing some elementary properties of the logarithmic and trigonometric functions.
-The new rules are similar to the "zero and one" rules we needed for the arithmetic operators, except here the constants e and `pi` (*e* = 2.71828... and *&pi;* = 3.14159...) are important in addition to 0 and 1.
+The new rules are similar to the "zero and one" rules we needed for the arithmetic operators, except here the constants `e` and `pi` (*e* = 2.71828... and *&pi;* = 3.14159...) are important in addition to 0 and 1.
 We also throw in some rules relating logs and exponents, and for sums and differences of logs.
 The rules assume that complex numbers are not allowed.
 If they were, log *ex* (and even *xy*) would have multiple values, and it would be wrong to arbitrarily choose one of these values.
@@ -421,23 +443,23 @@ Here are the new notations:
 |-------------|-------------|-------------|
 | math        | infix       | prefix      |
 | *dy*/*dx*   | `d y / d x` | `(d y x)`   |
-| *&int; ydx* | `Int y d x` | `(int y x)` |
+| &int; *ydx* | `Int y d x` | `(int y x)` |
 
 And here are the necessary infix-to-prefix rules:
 
 ```lisp
 (defparameter *infix->prefix-rules*
-      (mapcar #'expand-pat-match-abbrev
-          '(((x+ = y+) (= x y))
-          ((- x+) (- x))
-          ((+ x+) (+ x))
-          ((x+ + y+) (+ x y))
-          ((x+ - y+) (- x y))
-          ((d y+ / d x) (d y x))        ;*** New rule
-          ((Int y+ d x) (int y x))    ;*** New rule
-          ((x+ * y+) (* x y))
-          ((x+ / y+) (/ x y))
-          ((x+ ^ y+) (^ x y)))))
+  (mapcar #'expand-pat-match-abbrev
+    '(((x+ = y+) (= x y))
+      ((- x+)    (- x))
+      ((+ x+)    (+ x))
+      ((x+ + y+) (+ x y))
+      ((x+ - y+) (- x y))
+      ((d y+ / d x) (d y x))        ;*** New rule
+      ((Int y+ d x) (int y x))      ;*** New rule
+      ((x+ * y+) (* x y))
+      ((x+ / y+) (/ x y))
+      ((x+ ^ y+) (^ x y)))))
 ```
 
 Since the new rule for differentiation occurs before the rule for division, there won't be any confusion with a differential being interpreted as a quotient.
@@ -466,48 +488,46 @@ Now we augment the simplification rules, by copying a differentiation table out 
   (d u / d x       = 0)))))
 ```
 
-We have added a default rule, `(d u / d x = 0)`; this should only apply when the expression `u` is free of the variable `x` (that is, when u is not a function of `x`).
+We have added a default rule, `(d u / d x = 0)`; this should only apply when the expression `u` is free of the variable `x` (that is, when `u` is not a function of `x`).
 We could use `?if` to check this, but instead we rely on the fact that differentiation is closed over the list of operators described here-as long as we don't introduce any new operators, the answer will always be correct.
 Note that there are two rules for exponentiation, one for the case when the exponent is a number, and one when it is not.
 This was not strictly necessary, as the second rule covers both cases, but that was the way the rules were written in the table of differentials I consulted, so I left both rules in.
 
 ```lisp
-SIMPLIFIER  > (d (x + x) / d x)
+SIMPLIFIER > (d (x + x) / d x)
 2
-SIMPLIFIER  > (d (a * x ^ 2 + b * x + c) / d x)
+SIMPLIFIER > (d (a * x ^ 2 + b * x + c) / d x)
 ((2 * (A * X)) + B)
-SIMPLIFIER  > (d ((a * x ^ 2 + b * x + c) / x) / d x)
+SIMPLIFIER > (d ((a * x ^ 2 + b * x + c) / x) / d x)
 ((((A * (X ^ 2)) + ((B * X) + C)) - (X * ((2 * (A * X)) + B)))
 / (X ^ 2))
-SIMPLIFIER  > (log ((d (x + x) / d x) / 2))
+SIMPLIFIER > (log ((d (x + x) / d x) / 2))
 0
-SIMPLIFIER  > (log(x + x) - log x)
+SIMPLIFIER > (log(x + x) - log x)
 (LOG 2)
-SIMPLIFIER  > (x ^ cos pi)
+SIMPLIFIER > (x ^ cos pi)
 (1 / X)
-SIMPLIFIER  > (d (3 * x + (cos x) / x) / d x)
+SIMPLIFIER > (d (3 * x + (cos x) / x) / d x)
 ((((COS X) - (X * (- (SIN X)))) / (X ^ 2)) + 3)
-SIMPLIFIER  > (d ((cos x) / x) / d x)
+SIMPLIFIER > (d ((cos x) / x) / d x)
 (((COS X) - (X * (- (SIN X)))) / (X ^ 2))
-SIMPLIFIER  > (d (3 * x ^ 2 + 2 * x + 1) / d x)
+SIMPLIFIER > (d (3 * x ^ 2 + 2 * x + 1) / d x)
 ((6 * X) + 2)
-SIMPLIFIER  > (sin(x + x) ^ 2 + cos(d x ^ 2 / d x) ^ 2)
+SIMPLIFIER > (sin(x + x) ^ 2 + cos(d x ^ 2 / d x) ^ 2)
 1
-SIMPLIFIER  > (sin(x + x) * sin(d x ^ 2 / d x) +
-      cos(2 * x) * cos(x * d 2 * y / d y))
+SIMPLIFIER > (sin(x + x) * sin(d x ^ 2 / d x) +
+ cos(2 * x) * cos(x * d 2 * y / d y))
 1
 ```
 
-The program handles differentiation problems well and is seemingly clever in its use of the identity sin2*x* + cos2*x* = 1.
+The program handles differentiation problems well and is seemingly clever in its use of the identity sin<sup>2</sup>*x* + cos<sup>2</sup>*x* = 1.
 
 ## 8.5 Limits of Rule-Based Approaches
 
 In this section we return to some examples that pose problems for the simplifier.
 Here is a simple one:
 
-```lisp
-SIMPLIFIER > (x + y + y + x) => (X + (Y + (Y + X)))
-```
+`SIMPLIFIER > (x + y + y + x)`=> `(X + (Y + (Y + X)))`
 
 We would prefer `2 * (x + y)`.
 The problem is that, although we went to great trouble to group numbers together, there was no effort to group non-numbers.
@@ -529,7 +549,7 @@ For that we would need more rules:
 ```
 
 To handle all the cases, we would need an infinite number of rules.
-The pattern-matching language is not powerful enough to express this succintly.
+The pattern-matching language is not powerful enough to express this succinctly.
 It might help if nested sums (and products) were unnested; that is, if we allowed + to take an arbitrary number of arguments instead of just one.
 Once the arguments are grouped together, we could sort them, so that, say, all the `ys` appear before `z` and after `x`.
 Then like terms could be grouped together.
@@ -537,9 +557,9 @@ We have to be careful, though.
 Consider these examples:
 
 ```lisp
-SIMPLIFIER  > (3 * x + 4 * x)
+SIMPLIFIER > (3 * x + 4 * x)
 ((3 * X) + (4 * X))
-SIMPLIFIER  > (3 * x + y + x + 4 * x)
+SIMPLIFIER > (3 * x + y + x + 4 * x)
 ((3 * X) + (Y + (X + (4 * X))))
 ```
 
@@ -591,38 +611,32 @@ Freshman calculus classes teach a variety of integration techniques.
 Fortunately, one technique-the derivative-divides technique-can be adopted to solve most of the problems that come up at the freshman calculus level, perhaps 90% of the problems given on tests.
 The basic rule is:
 
-&int;fxdx=&int;fududxdx.
+&int;*f(x)dx* = &int;*f(u)<sup>du</sup>/<sub>dx</sub>dx*
 
-![si1_e](images/chapter8/si1_e.gif)
-
-As an example, consider *&int; x* sin(*x*2) *dx*.
-Using the substitution *u* = *x*2, we can differentiate to get *du*/*dx* = 2*x*.
+As an example, consider &int;*xsin(x<sup>2</sup>)dx*.
+Using the substitution *u* = *x*<sup>2</sup>, we can differentiate to get *du*/*dx* = 2*x*.
 Then by applying the basic rule, we get:
 
-&int;xsinx2dx=12&int;sinududxdx=12&int;sinudu.
+&int;*xsin(x<sup>2</sup>)dx* = <sup>1</sup>/<sub>2</sub>&int;*sin(u)<sup>du</sup>/<sub>dx</sub>dx* = <sup>1</sup>/<sub>2</sub>&int;*sin(u)du*
 
-![si2_e](images/chapter8/si2_e.gif)
-
-Assume we have a table of integrals that includes the rule *&int;* sin(*x*) *dx* = - cos(*x*).
+Assume we have a table of integrals that includes the rule &int;*sin(x)dx* = -*cos(x)*.
 Then we can get the final answer:
 
--12cosx2.
-
-![si3_e](images/chapter8/si3_e.gif)
+-<sup>1</sup>/<sub>2</sub>*cos(x<sup>2</sup>)*.
 
 Abstracting from this example, the general algorithm for integrating an expression *y* with respect to *x* is:
 
-1.  Pick a factor of *y*, callingit *f*(*u*).
+1. Pick a factor of *y*, calling it *f(u)*.
 
-2.  Compute the derivative *du*/*dx*.
+2. Compute the derivative *du*/*dx*.
 
-3.  Divide *y* by *f*(*u*) x *du*/*dx*, calling the quotient *k*.
+3. Divide *y* by *f(u)* * *du*/*dx*, calling the quotient *k*.
 
-4.  If *k* is a constant (with respect to *x*), then the result is *k &int; f*(*u*)*du*.
+4. If *k* is a constant (with respect to *x*), then the result is *k* &int; *f*(*u*)*du*.
 
 This algorithm is nondeterministic, as there may be many factors of *y*.
-In our example, *f*(*u*) = sin(*x*2), *u* = *x*2, and *du*/*dx* = 2*x*.
-So k=12 !!!(span) {:.hiddenClass} ![si4_e](images/chapter8/si4_e.gif), and the answer is -12cosx2 !!!(span) {:.hiddenClass} ![si5_e](images/chapter8/si5_e.gif).
+In our example, *f*(*u*) = sin(*x*<sup>2</sup>), *u* = *x*<sup>2</sup>, and *du*/*dx* = 2*x*.
+So *k = <sup>1</sup>/<sub>2</sub>*, and the answer is -*<sup>1</sup>/<sub>2</sub>cos(x<sup>2</sup>)*.
 
 The first step in implementing this technique is to make sure that division is done correctly.
 We need to be able to pick out the factors of *y*, divide expressions, and then determine if a quotient is free of *x*.
@@ -707,7 +721,8 @@ Finally, the predicate `free-of` returns true if an expression does not have any
         ((find-anywhere item (rest tree)))))
 ```
 
-In `factorize` we made use of the auxiliary function `length=1.` The function call `(length=l x)` is faster than `(= (length x) 1)` because the latter has to compute the length of the whole list, while the former merely has to see if the list has a `rest` element or not.
+In `factorize` we made use of the auxiliary function `length=1`.
+The function call `(length=1 x)` is faster than `(= (length x) 1)` because the latter has to compute the length of the whole list, while the former merely has to see if the list has a `rest` element or not.
 
 ```lisp
 (defun length=l (x)
@@ -725,14 +740,14 @@ If none of them work, we return an expression indicating that the integral is un
 (defun integrate (exp x)
   ;; First try some trivial cases
   (cond
-    ((free-of exp x) `(* ,exp ,x))         ; Int c dx = c*x
-    ((starts-with exp '+)                  ; Int f + g  =
+    ((free-of exp x) `(* ,exp x))          ; Int c dx = c*x
+    ((starts-with exp '+)                  ; Int f + g  = 
      `(+ ,(integrate (exp-lhs exp) x)      ;   Int f + Int g
          ,(integrate (exp-rhs exp) x)))
     ((starts-with exp '-)
      (ecase (length (exp-args exp))
-       (1 `(- ,(integrate (exp-lhs exp) x))) ; Int - f = - Int f
-       (2 `(- ,(integrate (exp-lhs exp) x)   ; Int f - g  =
+       (1 (integrate (exp-lhs exp) x))     ; Int - f = - Int f
+       (2 `(- ,(integrate (exp-lhs exp) x) ; Int f - g  =
               ,(integrate (exp-rhs exp) x)))))  ; Int f - Int g
     ;; Now move the constant factors to the left of the integral
     ((multiple-value-bind (const-factors x-factors)
@@ -791,10 +806,10 @@ It turns out that the function is a little more complicated than the simple four
 
 There are three cases.
 In any case, all factors are of the form `(^ u n)`, so we separate the factor into a base, `u`, and exponent, `n`.
-If *u* or *un* evenly divides the original expression (here represented as factors), then we have an answer.
-But we need to check the exponent, because *&int; undu* is *u**n*+1/(*n* + 1) for *n*&ne; -  1, but it is log (*u*) for *n* = -  1.
+If *u* or *u*<sup>*n*</sup> evenly divides the original expression (here represented as factors), then we have an answer.
+But we need to check the exponent, because *&int; u<sup>n</sup>du* is *u*<sup>*n*+1</sup>/(*n* + 1) for *n* &ne; -1, but it is log (*u*) for *n* = -1.
 But there is a third case to consider.
-The factor may be something like `(^ (sin (^ x 2)) 1)`, in which case we should consider *f*(*u*) = sin(*x*2).
+The factor may be something like `(^ (sin (^ x 2)) 1)`, in which case we should consider *f*(*u*) = sin(*x*<sup>2</sup>).
 This case is handled with the help of an integral table.
 We don't need a derivative table, because we can just use the simplifier for that.
 
@@ -848,19 +863,19 @@ We could go back and edit `simplify-exp` to change the convention, but instead I
 Here are some examples, taken from [chapters 8](#c0040) and [9](B9780080571157500091.xhtml) of *Calculus* ([Loomis 1974](B9780080571157500285.xhtml#bb0750)):
 
 ```lisp
-SIMPLIFIER  > (Int x * sin(x ^ 2) d x)
+SIMPLIFIER > (Int x * sin(x ^ 2) d x)
 (1/2 * (- (COS (X ^ 2))))
-SIMPLIFIER  > (Int ((3 * x ^ 3) - 1 / (3 * x ^ 3)) d x)
+SIMPLIFIER > (Int ((3 * x ^ 3) - 1 / (3 * x ^ 3)) d x)
 ((3 * ((X ^ 4) / 4)) - (1/3 * ((X ^ -2) / -2)))
-SIMPLIFIER  > (Int (3 * x + 2) ^ -2/3 d x)
+SIMPLIFIER > (Int (3 * x + 2) ^ -2/3 d x)
 (((3 * X) + 2) ^ 1/3)
-SIMPLIFIER  > (Int sin(x) ^ 2 * cos(x) d x)
+SIMPLIFIER > (Int sin(x) ^ 2 * cos(x) d x)
 (((SIN X) ^ 3) / 3)
-SIMPLIFIER  > (Int sin(x) / (1 + cos(x)) d x)
+SIMPLIFIER > (Int sin(x) / (1 + cos(x)) d x)
 (-1 * (LOG ((COS X) + 1)))
-SIMPLIFIER  > (Int (2 * x + 1) / (x ^ 2 + x - 1) d x)
+SIMPLIFIER > (Int (2 * x + 1) / (x ^ 2 + x - 1) d x)
 (LOG ((X ^ 2) + (X - 1)))
-SIMPLIFIER  > (Int 8 * x ^ 2 / (x ^ 3 + 2) ^ 3 d x)
+SIMPLIFIER > (Int 8 * x ^ 2 / (x ^ 3 + 2) ^ 3 d x)
 (8 * ((1/3 * (((X ^ 3) + 2) ^ -2)) / -2))
 ```
 
@@ -878,7 +893,7 @@ One quick way to simplify such an expression is to factor and unfactor it, and t
 With this change, we get:
 
 ```lisp
-SIMPLIFIER  > (Int 8 * x ^ 2 / (x ^ 3 + 2) ^ 3 d x)
+SIMPLIFIER > (Int 8 * x ^ 2 / (x ^ 3 + 2) ^ 3 d x)
 (-4/3 * (((X ^ 3) + 2) ^ -2))
 ```
 
@@ -907,36 +922,30 @@ In this book, techniques for improving the efficiency of algebraic manipulation 
 ## 8.8 Exercises
 
 **Exercise 8.2 [s]** Some notations use the operator ** instead of ^ to indicate exponentiation.
-`Fix infix->prefix` so that either notation is allowed.
+Fix `infix->prefix` so that either notation is allowed.
 
 **Exercise 8.3 [m]** Can the system as is deal with imaginary numbers?
 What are some of the difficulties?
 
 **Exercise 8.4 [h]** There are some simple expressions involving sums that are not handled by the `integrate` function.
-The function can integrate *a*x *x*2 + *b*x *x* + *c* but not 5 x (*a*x *x*2 + *b*x *x* + *c*).
-Similarly, it can integrate *x*4 + 2 x *x*3 + *x*2 but not (*x*2 + *x*)2, and it can do *x*3 + *x*2 + *x* + 1 but not (*x*2 + 1) x (*x* + 1).
+The function can integrate *ax*<sup>2</sup> + *bx* + *c* but not 5(*ax*<sup>2</sup> + *bx* + *c*).
+Similarly, it can integrate *x*<sup>4</sup> + 2*x*<sup>3</sup> + *x*<sup>2</sup> but not (*x*<sup>2</sup> + *x*)<sup>2</sup>, and it can do *x*<sup>3</sup> + *x*<sup>2</sup> + *x* + 1 but not (*x*<sup>2</sup> + 1)(*x* + 1).
 Modify `integrate` so that it expands out products (or small exponents) of sums.
 You will probably want to try the usual techniques first, and do the expansion only when that fails.
 
 **Exercise 8.5 [d]** Another very general integration technique is called integration by parts.
 It is based on the rule:
 
-&int;udv=uv-&int;vdu
-
-![si6_e](images/chapter8/si6_e.gif)
+&int;*udv=uv-&int;vdu*
 
 So, for example, given
 
-&int;xcosxdx
+&int;*xcos(x)dx*
 
-![si7_e](images/chapter8/si7_e.gif)
+we can take *u* = *x*, *dv = cos(x)dx*.
+Then we can determine *v* = *sin(x)* by integration, and come up with the solution:
 
-we can take *u* = *x*, *dv* = cos *xdx*.
-Then we can determine *v* = sin *x* by integration, and come up with the solution:
-
-&int;xcosxdx=xsinx-&int;sinxx1dx=xsinx+cosx
-
-![si8_e](images/chapter8/si8_e.gif)
+&int;*xcos(x)dx=xsin(x)*-&int;*sin(x)* * *1dx=xsin(x)+cos(x)*
 
 It is easy to program an integration by parts routine.
 The hard part is to program the control component.
@@ -947,7 +956,7 @@ Implement this approach.
 **Exercise 8.6 [d]** A more complicated approach is to try to decide which ways of breaking up the original expression are promising and which are not.
 Derive some heuristics for making this division, and reimplement `integrate` to include a search component, using the search tools of [chapter 6](B9780080571157500066.xhtml).
 
-Look in a calculus textbook to see how *&int;* sin2*xdx* is evaluated by two integrations by parts and a division.
+Look in a calculus textbook to see how &int;*sin<sup>2</sup>(x)dx is evaluated by two integrations by parts and a division.
 Implement this technique as well.
 
 **Exercise 8.7 [m]** Write simplification rules for predicate calculus expressions.
@@ -964,7 +973,7 @@ For example,
 For example, the expression `((0 / 0) - (0 / 0))` will simplify to zero, when it should simplify to `undefined`.
 Add rules to propagate `undefined` values and prevent them from being simplified away.
 
-**Exercise 8.9 [d]** Extend the method used to handle `undefined` to handle `+ infinity` and `-infinity` as well.
+**Exercise 8.9 [d]** Extend the method used to handle `undefined` to handle `+infinity` and `-infinity` as well.
 
 ----------------------
 
@@ -974,7 +983,3 @@ MAC stood either for Machine-Aided Cognition or Multiple-Access Computer, accord
 The cynical have claimed that MAC really stood for Man Against Computer.
 
 [2](#xfn0015) The term antiderivative is more correct, because of branch point problems.
-
-Part III
-Tools and Techniques
-
