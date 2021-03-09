@@ -102,7 +102,9 @@ A predicate calculus representation assumes a universe of individuals, with rela
 Philosophers and psychologists will argue the question of how appropriate predicate calculus is as a model of human thought, but one point stands clear: predicate calculus is sufficient to represent anything that can be represented in a digital computer.
 This is easy to show: assuming the computer's memory has *n* bits, and the equation *bi* = 1 means that bit *i* is on, then the entire state of the computer is represented by a conjunction such as:
 
-![b_{0}=0 \wedge b_{1}=0 \wedge b_{2}=1 ... \wedge b_{n}=0](images/chapter14/si1_e.svg)
+<img src="images/chapter14/si1_e.svg"
+onerror="this.src='images/chapter14/si1_e.png'; this.onerror=null;"
+alt="b_{0}=0 \wedge b_{1}=0 \wedge b_{2}=1 ... \wedge b_{n}=0">
 
 Once we can represent a state of the computer, it becomes possible to represent any computer program in predicate calculus as a set of axioms that map one state onto another.
 Thus, predicate calculus is shown to be a *sufficient* language for representing anything that goes on inside a computer-it can be used as a tool for analyzing any program from the outside.
@@ -113,7 +115,9 @@ But we should still be able to describe our system in terms of predicate calculu
 To do any less is to be sloppy.
 For example, we may want to manipulate numbers inside the computer by using the arithmetic instructions that are built into the CPU rather than by manipulating predicate calculus axioms, but when we write a square-root routine, it had better satisfy the axiom:
 
-![\sqrt{x} = y \Rightarrow y \times y = x](images/chapter14/si2_e.svg)
+<img src="images/chapter14/si2_e.svg"
+onerror="this.src='images/chapter14/si2_e.png'; this.onerror=null;"
+alt="\sqrt{x} = y \Rightarrow y \times y = x">
 
 Predicate calculus also serves another purpose: as a tool that can be used *by* a program rather than *on* a program.
 All programs need to manipulate data, and some programs will manipulate data that is considered to be in predicate calculus notation.

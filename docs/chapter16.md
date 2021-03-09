@@ -114,9 +114,11 @@ It is defined by the formula:
 
 combine (A, B) =
 
-![A+B-AB;     & A,B $>$ 0     \\
-A+B+AB;     & A,B $<$ 0     \\
-$\dfrac {A + B} {1 - \textup{min}( \lvert A \rvert, \lvert B \rvert )}$; & otherwise \\](images/chapter16/si1_e.svg)
+<img src="images/chapter16/si1_e.svg"
+onerror="this.src='images/chapter16/si1_e.png'; this.onerror=null;"
+alt="A+B$-$AB; & A,B &gt; 0 \\
+A+B+AB;   & A,B &lt; 0 \\
+$\dfrac {A + B} {1 - \textup{min}( \lvert A \rvert, \lvert B \rvert )}$; & otherwise \\">
 
 According to this formula, combine(.60,.40) = .76, which is a compromise between the extremes of .60 and 1.00.
 It is the same as the probability p(A or B), assuming that A and B are independent.
