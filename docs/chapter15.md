@@ -39,7 +39,9 @@ The best we can do is choose one that works well for the problems we are most li
 This section will concentrate on a canonical form for *polynomials.* Mathematically speaking, a polynomial is a function (of one or more variables) that can be computed using only addition and multiplication.
 We will speak of a polynomial's *main variable, coefficients,* and *degree.* In the polynomial:
 
-![5 \times x^{3} +b \times x^{2} +c \times x + 1](images/chapter15/si1_e.svg)
+<img src="images/chapter15/si1_e.svg"
+onerror="this.src='images/chapter15/si1_e.png'; this.onerror=null;"
+alt="5 \times x^{3} +b \times x^{2} +c \times x + 1">
 
 the main variable is *x,* the degree is 3 (the highest power of *x*), and the coefficients are 5, *b, c* and 1.
 We can define an input format for polynomials as follows:
@@ -381,12 +383,16 @@ The differentiation routine is easy, mainly because there are only two operators
 **Exercise  15.1 [h]** Integrating polynomials is not much harder than differentiating them.
 For example:
 
-![\int ax^{2} + bx\, dx = \frac {ax^{3}}{3} + \frac {bx^{2}}{2} + c.](images/chapter15/si2_e.svg)
+<img src="images/chapter15/si2_e.svg"
+onerror="this.src='images/chapter15/si2_e.png'; this.onerror=null;"
+alt="\int ax^{2} + bx\, dx = \frac {ax^{3}}{3} + \frac {bx^{2}}{2} + c.">
 
 Write a function to integrate polynomials and install it in `prefix->canon`.
 
 **Exercise  15.2 [m]** Add support for *definite* integrals, such as
-![\int_{a}^{b} y\, dx](images/chapter15/si3_e.svg).
+<img src="images/chapter15/si3_e.svg"
+onerror="this.src='images/chapter15/si3_e.png'; this.onerror=null;"
+alt="\int_{a}^{b} y\, dx">.
 You will need to make up a suitable notation and properly install it in both `infix->prefix` and `prefix->canon`.
 A full implementation of this feature would have to consider infinity as a bound, as well as the problem of integrating over singularises.
 You need not address these problems.
@@ -597,11 +603,15 @@ Such analysis is crucial for small values of *n*.
 It turns out that for a variety of polynomials, an exponentiation algorithm based on the binomial theorem is best.
 The binomial theorem states that
 
-![( a + b ) ^{n} = \sum_{i=0}^{n} \frac {n!}{i! (n-i)!)} a^{i} b^{n-i}](images/chapter15/si4_e.svg)
+<img src="images/chapter15/si4_e.svg"
+onerror="this.src='images/chapter15/si4_e.png'; this.onerror=null;"
+alt="( a + b ) ^{n} = \sum_{i=0}^{n} \frac {n!}{i! (n-i)!)} a^{i} b^{n-i}">
 
 for example,
 
-![(a+b)^{3} = b^{3} + 3ab^{2} + 3a^{2}b + a^{3}](images/chapter15/si5_e.svg)
+<img src="images/chapter15/si5_e.svg"
+onerror="this.src='images/chapter15/si5_e.png'; this.onerror=null;"
+alt="(a+b)^{3} = b^{3} + 3ab^{2} + 3a^{2}b + a^{3}">
 
 We can use this theorem to compute a power of a polynomial all at once, instead of computing it by repeated multiplication or squaring.
 Of course, a polynomial will in general be a sum of more than two components, so we have to decide how to split it into the *a* and *b* pieces.
@@ -742,9 +752,11 @@ Now that we can divide polynomials, the final step is to reinstate the logarithm
 The problem is that if we allow all these functions, we get into problems with canonical form again.
 For example, the following three expressions are all equivalent  :
 
-![\sin{(x)},
+<img src="images/chapter15/si7_e.svg"
+onerror="this.src='images/chapter15/si7_e.png'; this.onerror=null;"
+alt="\sin{(x)},
 \cos{\left (x - \frac {\pi}{2} \right ) },
-\frac {e^{ix} - e^{-ix}} {2i}](images/chapter15/si7_e.svg)
+\frac {e^{ix} - e^{-ix}} {2i}">
 
 If we are interested in assuring we have a canonical form, the safest thing is to allow only *e**x*** and log(*x*).
 All the other functions can be defined in terms of these two.
