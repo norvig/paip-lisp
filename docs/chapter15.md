@@ -753,7 +753,7 @@ Polynomials are not closed under division, so `poly/poly` will return a rational
 
 Now that we can divide polynomials, the final step is to reinstate the logarithmic, exponential, and trigonometric functions.
 The problem is that if we allow all these functions, we get into problems with canonical form again.
-For example, the following three expressions are all equivalent  :
+For example, the following three expressions are all equivalent:
 
 <img src="images/chapter15/si7_e.svg"
 onerror="this.src='images/chapter15/si7_e.png'; this.onerror=null;"
