@@ -100,7 +100,7 @@ More often than not, that definition is given in terms of predicate calculus.
 
 A predicate calculus representation assumes a universe of individuals, with relations and functions on those individuals, and sentences formed by combining relations with the logical connectives `and`, `or`, and `not`.
 Philosophers and psychologists will argue the question of how appropriate predicate calculus is as a model of human thought, but one point stands clear: predicate calculus is sufficient to represent anything that can be represented in a digital computer.
-This is easy to show: assuming the computer's memory has *n* bits, and the equation *bi* = 1 means that bit *i* is on, then the entire state of the computer is represented by a conjunction such as:
+This is easy to show: assuming the computer's memory has *n* bits, and the equation *b<sub>i</sub>* = 1 means that bit *i* is on, then the entire state of the computer is represented by a conjunction such as:
 
 <img src="images/chapter14/si1_e.svg"
 onerror="this.src='images/chapter14/si1_e.png'; this.onerror=null;"
@@ -1544,7 +1544,9 @@ The typical backward-chaining rule says "Conclude X is true if Y is true." Thus,
 Representing true and false opens the door to a host of possible extensions.
 First, we could add multiple truth values beyond the simple "true" and "false." These could be symbolic values like "probably-true" or "false-by-default" or they could be numeric values representing probabilities or certainty factors.
 
-Second, we could introduce the idea of *possible worlds.* That is, the truth of a proposition could be unknown in the current world, but true if we assume *p*, and false if we assume *q.* In the possible world approach, this is handled by calling the current world *W*, and then creating a new world *W*1, which is just like *W* except that *p* is true, and *W*2, which is just like *W* except that *q* is true.
+Second, we could introduce the idea of *possible worlds.*
+That is, the truth of a proposition could be unknown in the current world, but true if we assume *p*, and false if we assume *q.*
+In the possible world approach, this is handled by calling the current world *W*, and then creating a new world *W*<sub>1</sub>, which is just like *W* except that *p* is true, and *W*<sub>2</sub>, which is just like *W* except that *q* is true.
 By doing reasoning in different worlds we can make predictions about the future, resolve ambiguitites about the current state, and do reasoning by cases.
 
 For example, possible worlds allow us to solve Moore's communism/democracy problem ([page 466](#p466)).

@@ -625,7 +625,7 @@ Unlike the version in [chapter 5](B9780080571157500054.xhtml), this version retu
 ```
 
 This definition is quite simple, and it is easy to see that it is correct.
-However, each call to `append` requires copying the first argument, so this version can cons *O*(*n*2) cells on an input with *n* atoms.
+However, each call to `append` requires copying the first argument, so this version can cons *O*(*n*<sup>2</sup>) cells on an input with *n* atoms.
 The problem with this approach is that it computes the list of atoms in the `first` and `rest` of each subcomponent of the input.
 But the `first` sublist by itself is not part of the final answer-that's why we have to call `append.` We could avoid generating garbage by replacing `append` with `nconc,` but even then we would still be wasting time, because `nconc` would have to scan through each sublist to find its end.
 
@@ -1139,7 +1139,7 @@ A *queue* is a data structure where one can add elements at the rear and remove 
 This is almost like a stack, except that in a stack, elements are both added and removed at the same end.
 
 Lists can be used to implement stacks, but there is a problem in using lists to implement queues: adding an element to the rear requires traversing the entire list.
-So collecting *n* elements would be *O*(*n2*) instead of *O*(*n*).
+So collecting *n* elements would be *O*(*n<sup>2</sup>*) instead of *O*(*n*).
 
 An alternative implementation of queues is as a cons of two pointers: one to the list of elements of the queue (the contents), and one to the last cons cell in the list.
 Initially, both pointers would be nil.

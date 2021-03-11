@@ -27,10 +27,10 @@ Thus, our system is not canonical.
 Most of the problems of the previous section stem from the lack of a canonical form.
 
 Adhering to canonical form imposes grave restrictions on the representation.
-For example, *x2*-  1 and (*x*- 1)(*x* + 1) are equal, so they must be represented identically.
+For example, *x<sup>2</sup>* - 1 and (*x* - 1)(*x* + 1) are equal, so they must be represented identically.
 One way to insure this is to multiply out all factors and collect similar terms.
-So (*x*- 1)(*x* + 1) is *x2*- *x* + *x*- 1, which simplifies to *x2*-  1, in whatever the canonical internal form is.
-This approach works fine for *x2*- 1, but for an expression like (*x*- 1)1000, multiplying out all factors would be quite time- (and space-) consuming.
+So (*x* - 1)(*x* + 1) is *x<sup>2</sup>* - *x* + *x* - 1, which simplifies to *x<sup>2</sup>* - 1, in whatever the canonical internal form is.
+This approach works fine for *x<sup>2</sup>* - 1, but for an expression like (*x* - 1)<sup>1000</sup>, multiplying out all factors would be quite time- (and space-) consuming.
 It is hard to find a canonical form that is ideal for all problems.
 The best we can do is choose one that works well for the problems we are most likely to encounter.
 
@@ -72,9 +72,10 @@ Our task is to convert a polynomial as previously defined into some canonical fo
 Much of the code and some of the commentary on this format and the routines to manipulate it was written by Richard Fateman, with some enhancements made by Peter Klier.
 
 The first design decision is to assume that we will be dealing mostly with *dense* polynomials, rather than *sparse* ones.
-That is, we expect most of the polynomials to be like *ax*3*+ bx*2*+ cx* + *d,* not like *ax*100*+ bx*50 + *c.* For dense polynomials, we can save space by representing the main variable (*x* in these examples) and the individual coefficients (*a*, *b*, *c*, and *d* in these examples) explicitly, but representing the exponents only implicitly, by position.
+That is, we expect most of the polynomials to be like *ax*<sup>3</sup> + *bx*<sup>2</sup> + *cx* + *d,* not like *ax*<sup>100</sup>+ *bx*<sup>50</sup> + *c.*
+For dense polynomials, we can save space by representing the main variable (*x* in these examples) and the individual coefficients (*a*, *b*, *c*, and *d* in these examples) explicitly, but representing the exponents only implicitly, by position.
 Vectors will be used instead of lists, to save space and to allow fast access to any element.
-Thus, the representation of 5*x*3+ 10*x*2+ 20*x +* 30 will be the vector:
+Thus, the representation of 5*x*<sup>3</sup> + 10*x*<sup>2</sup> + 20*x* + 30 will be the vector:
 
 ```lisp
 #(x 30 20 10 5)
@@ -83,11 +84,11 @@ Thus, the representation of 5*x*3+ 10*x*2+ 20*x +* 30 will be the vector:
 The main variable, *x*, is in the 0th element of the vector, and the coefficient of the *i*th power of *x* is in element *i* + 1 of the vector.
 A single variable is represented as a vector whose first coefficient is 1, and a number is represented as itself:
 
-| []()              |                                        |
-|-------------------|----------------------------------------|
-| `#(x 30 20 10 5)` | represents 5*x*3 + 10*x*2 + 20*x* + 30 |
-| `#(x 0 1)`        | represents *x*                         |
-| `5`               | represents 5                           |
+| []()              |                                                              |
+|-------------------|--------------------------------------------------------------|
+| `#(x 30 20 10 5)` | represents 5*x*<sup>3</sup> + 10*x*<sup>2</sup> + 20*x* + 30 |
+| `#(x 0 1)`        | represents *x*                                               |
+| `5`               | represents 5                                                 |
 
 The fact that a number is represented as itself is a possible source of confusion.
 The number 5, for example, is a polynomial by our mathematical definition of polynomials.
@@ -222,7 +223,7 @@ Here's how to compare variables:
 (defun var> (x y) (string> x y))
 ```
 
-The canonical form of the variable `x` will be `#(x 0 1)`, which is 0 x *x*0 + 1 x *x*1.
+The canonical form of the variable `x` will be `#(x 0 1)`, which is 0 *x*<sup>0</sup> + 1 *x*<sup>1</sup>.
 The canonical form of `(+ x y)` is `#(x #(y 0 1) 1)`.
 It couldn't be `#(y #(x 0 1) 1)`, because then the resulting polynomial would have a coefficient with a lesser main variable.
 The policy of ordering variables assures canonicality, by properly grouping like variables together and by imposing a particular ordering on expressions that would otherwise be commutative.
@@ -564,7 +565,8 @@ If we use this version of `poly^n,` then `r15-test` takes 1.6 seconds instead of
 By the way, this is a perfect example of the conceptual power of recursive functions.
 We took an existing function, poly^n, added a single cond clause, and changed it from an *O*(*n*) to *O*(log *n*) algorithm.
 (This turned out to be a bad idea, but that's beside the point.
-It would be a good idea for raising integers to powers.) The reasoning that allows the change is simple: First, *pn* is certainly equal to (*p**n*/2)2 when *n* is even, so the change can't introduce any wrong answers.
+It would be a good idea for raising integers to powers.)
+The reasoning that allows the change is simple: First, *p<sup>n</sup>* is certainly equal to (*p*<sup>*n*/2</sup>)<sup>2</sup> when *n* is even, so the change can't introduce any wrong answers.
 Second, the change continues the policy of decrementing *n* on every recursive call, so the function must eventually termina te (when *n =* 0).
 If it gives no wrong answers, and it terminates, then it must give the right answer.
 
@@ -598,8 +600,8 @@ It turns out that this is not the final word.
 Exponentiation of polynomials can be done even faster, with a little more mathematical sophistication.
 [Richard Fateman's 1974](B9780080571157500285.xhtml#bb0380) paper on Polynomial Multiplication analyzes the complexity of a variety of exponentiation algorithms.
 Instead of the usual asymptotic analysis (e.g.
-*O*(*n*) or *O*(*n*2)), he uses a fine-grained analysis that computes the constant factors (e.g.
-1000 x *n* or 2 x *n*2).
+*O*(*n*) or *O*(*n*<sup>2</sup>)), he uses a fine-grained analysis that computes the constant factors (e.g.
+1000 x *n* or 2 x *n*<sup>2</sup>).
 Such analysis is crucial for small values of *n*.
 It turns out that for a variety of polynomials, an exponentiation algorithm based on the binomial theorem is best.
 The binomial theorem states that
@@ -706,7 +708,7 @@ This section presents a canonical form for rational expressions.
 First, a number or polynomial will continue to be represented as before.
 The quotient of two polynomials will be represented as a cons cells of numerator and denominator pairs.
 However, just as Lisp automatically reduces rational numbers to simplest form (6/8 is represented as 3/4), we must reduce rational expressions.
-So, for example, (*x*2- 1)/(*x*- 1) must be reduced to *x* + 1, not left as a quotient of two polynomials.
+So, for example, (*x*<sup>2</sup> - 1)/(*x* - 1) must be reduced to *x* + 1, not left as a quotient of two polynomials.
 
 The following functions build and access rational expressions but do not reduce to simplest form, except in the case where the denominator is a number.
 Building up the rest of the functionality for full rational expressions is left to a series of exercises:
@@ -759,13 +761,13 @@ alt="\sin{(x)},
 \cos{\left (x - \frac {\pi}{2} \right ) },
 \frac {e^{ix} - e^{-ix}} {2i}">
 
-If we are interested in assuring we have a canonical form, the safest thing is to allow only *e**x*** and log(*x*).
+If we are interested in assuring we have a canonical form, the safest thing is to allow only *e<sup>x</sup>* and log(*x*).
 All the other functions can be defined in terms of these two.
 With this extension, the set of expressions we can form is closed under differentiation, and it is possible to canonicalize expressions.
 The `result` is a mathematically sound construction known as a *differentiable field.* This is precisely the construct that is assumed by the Risch integration algorithm ([Risch 1969](B9780080571157500285.xhtml#bb0985),[1979](B9780080571157500285.xhtml#bb0990)).
 
 The disadvantage of this minimal extension is that answers may be expressed in unfamiliar terms.
-The user asks for *d* sin(*x2*)*/dx,* expecting a simple answer in terms of cos, and is surprised to see a complex answer involving *eix*.
+The user asks for *d* sin(*x*<sup>2</sup>)*/dx,* expecting a simple answer in terms of cos, and is surprised to see a complex answer involving *e<sup>ix</sup>*.
 Because of this problem, most computer algebra systems have made more radical extensions, allowing sin, cos, and other functions.
 These systems are treading on thin mathematical ice.
 Algorithms that would be guaranteed to work over a simple differentiable field may fail when the domain is extended this way.

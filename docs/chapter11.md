@@ -1516,8 +1516,8 @@ For example, here's a definition of grandfather that says that G is the grandfat
 *I married a widow (let's call her W) who has a grown-up daughter (call her D).
 My father (F), who visited us often, fell in love with my step-daughter and married her.
 Hence my father became my son-in-law and my step-daughter became my mother.
-Some months later, my wife gave birth to a son (S1), who became the brother-in-law of my father, as well as my uncle.
-The wife of my father, that is, my step-daughter, also had a son (S2).*
+Some months later, my wife gave birth to a son (S<sub>1</sub>), who became the brother-in-law of my father, as well as my uncle.
+The wife of my father, that is, my step-daughter, also had a son (S<sub>2</sub>).*
 
 Represent this situation using the predicates defined in the previous exercise, verify its conclusions, and prove that the narrator of this tale is his own grandfather.
 
