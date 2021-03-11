@@ -451,7 +451,7 @@ A user might write:
 
 expecting the expression to start reading at position `2` and thus return `b`.
 In fact, this expression returns a.
-The angry user thinks the implementation has erroneously ignored the :`start` argument and files a bug report,[1](#fn0010) only to get back the following explanation:
+The angry user thinks the implementation has erroneously ignored the :`start` argument and files a bug report,<a id="tfn25-1"></a><sup>[1](#fn25-1)</sup> only to get back the following explanation:
 
 The function `read-from-string` takes two optional arguments, `eof-errorp` and `eof-value`, in addition to the keyword arguments.
 Thus, in the expression above, : `start` is taken as the value of `eof-errorp`, with `2` as the value of `eof-value`.
@@ -556,7 +556,8 @@ For example:
 
 Here the t is taken as the default clause; it will always succeed, and all subsequent clauses will be ignored.
 Similarly, using a () `ornil` as a key will not have the desired effect: it will be interpreted as an empty key list.
-If you want to be completely safe, you can use a list of keys for every clause.[2](#fn0015) This is a particularly good idea when you write a macro that expands into a `case`.
+If you want to be completely safe, you can use a list of keys for every clause.<a id="tfn25-2"></a><sup>[2](#fn25-2)</sup>
+This is a particularly good idea when you write a macro that expands into a `case`.
 The following code correctly tests for `t` and `nil` keys:
 
 ```lisp
@@ -1078,7 +1079,7 @@ Now we need to provide the system-definition functions, `define-system` and `mak
 The idea is that `define-system` is used to define the files that make up a system, the modules that the system is comprised of, and the files that make up each module.
 It is necessary to group files into modules because some files may depend on others.
 For example, all macros, special variables, constants, and inline functions need to be both compiled and loaded before any other files that reference them are compiled.
-In Project-X, all `defvar, defparameter, defconstant,` and `defstruct`[3](#fn0020) forms are put in the file header, and all defmacro forms are put in the file macros.
+In Project-X, all `defvar, defparameter, defconstant,` and `defstruct`<a id="tfn25-3"></a><sup>[3](#fn25-3)</sup> forms are put in the file header, and all defmacro forms are put in the file macros.
 Together these two files form the first module, named : macros, which will be loaded before the other two modules (: `main` and :`windows`) are compiled and loaded.
 
 define-system also provides a place to specify a directory where the source and object files will reside.
@@ -1280,12 +1281,12 @@ It looks for the key in the a-list, and if the key is there, it modifies the cdr
 
 ----------------------
 
-[1](#xfn0010) This misunderstanding has shown up even in published articles, such as [Baker 1991](B9780080571157500285.xhtml#bb0060).
+<a id="fn25-1"></a><sup>[1](#tfn25-1)</sup>
+This misunderstanding has shown up even in published articles, such as [Baker 1991](B9780080571157500285.xhtml#bb0060).
 
-[2](#xfn0015) Scheme requires a list of keys in each clause.
+<a id="fn25-2"></a><sup>[2](#tfn25-2)</sup>
+Scheme requires a list of keys in each clause.
 Now you know why.
 
-[3](#xfn0020) def struct forms are put here because they may create inline functions.
-
-
-
+<a id="fn25-3"></a><sup>[3](#tfn25-3)</sup>
+def struct forms are put here because they may create inline functions.
