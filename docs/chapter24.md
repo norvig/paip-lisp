@@ -18,7 +18,8 @@ For example, if I wanted to hook up the `emycin` expert system from [chapter 16]
 Common Lisp uses the package system to help resolve such conflicts.
 Instead of a single symbol table, Common Lisp allows any number of packages.
 The function `read` always uses the current package, which is defined to be the value of the special variable `*package*`.
-By default, Lisp starts out in the `common-lisp-user` package.[1](#fn0010) That means that if we type a new symbol, like `zxv!!!(char) ®!?+qw`, it will be entered into that package.
+By default, Lisp starts out in the `common-lisp-user` package.<a id="tfn24-1"></a><sup>[1](#fn24-1)</sup>
+That means that if we type a new symbol, like `zxv!!!(char) ®!?+qw`, it will be entered into that package.
 Converting a string to a symbol and placing it in a package is called *interning.* It is done automatically by `read`, and can be done by the function `intern` if necessary.
 Name conflicts arise when there is contention for names within the `common-lisp-user` package.
 
@@ -781,7 +782,7 @@ The macro `once-only` has been around for a long time on various systems, althou
 I include it here for two reasons: first, it is used in the following `funcall-if` macro, and second, if you can understand how to write and when to use `once-only`, then you truly understand macro.
 
 First, you have to understand the problem that `once-only` addresses.
-Suppose we wanted to have a macro that multiplies its input by itself:[2](#fn0015)
+Suppose we wanted to have a macro that multiplies its input by itself:<a id="tfn24-2"></a><sup>[2](#fn24-2)</sup>
 
 ```lisp
 (defmacro square (x) '(* ,x ,x))
@@ -1334,7 +1335,8 @@ The idea is that the comment should help the reader prove the correctness of the
 
 ----------------------
 
-[1](#xfn0010) Or in the user package in non-ANSI systems.
+<a id="fn24-1"></a><sup>[1](#tfn24-1)</sup>
+Or in the user package in non-ANSI systems.
 
-[2](#xfn0015) As was noted before, the proper way to do this is to proclaim squa re as an inline function, not a macro, but please bear with the example.
-
+<a id="fn24-2"></a><sup>[2](#tfn24-2)</sup>
+As was noted before, the proper way to do this is to proclaim squa re as an inline function, not a macro, but please bear with the example.
