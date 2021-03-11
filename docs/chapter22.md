@@ -80,7 +80,8 @@ Scheme would use consistent names-`reverse`!
 and `remove`!
 -if these functions were defined at all (they are not defined in the standard).
 Most Scheme predicates end in '`?`', not '`p`'.
-This makes predicates more obvious and eliminates the complicated conventions for adding a hyphen before the `p`.[1](#fn0010) The only problem with this convention is in spoken language: is `equal?` pronounced "equal-question-mark" or "equal-q" or perhaps equal, with rising intonation?
+This makes predicates more obvious and eliminates the complicated conventions for adding a hyphen before the `p`.<a id="tfn22-1"></a><sup>[1](#fn22-1)</sup>
+The only problem with this convention is in spoken language: is `equal?` pronounced "equal-question-mark" or "equal-q" or perhaps equal, with rising intonation?
 This would make Scheme a tone language, like Chinese.
 
 In Scheme, it is an error to apply `car` or `cdr` to the empty list.
@@ -794,7 +795,7 @@ We could write:
 
 and a call to `integer` would return some random positive integer.
 In addition, suppose we had a function, `fail`, which doesn't return at all but instead causes execution to continue at a prior `amb` point, with the other choice taken.
-Then we could write succinct[2](#fn0015) backtracking code like the following:
+Then we could write succinct<a id="tfn22-2"></a><sup>[2](#fn22-2)</sup> backtracking code like the following:
 
 ```lisp
 (define (prime)
@@ -1004,7 +1005,8 @@ A programmer on the project, Steve Russell, saw the paper, and, according to McC
 
 > Steve Russell said, look, why don't I program this `eval` and-you remember the interpreter-and I said to him, ho, ho, you're confusing theory with practice, this `eval` is intended for reading not for computing.
 But he went ahead and did it.
-That is, he compiled the `eval` in my paper into 704 machine code fixing bugs and then advertised this as a Lisp interpreter, which it certainly was.[3](#fn0020)
+That is, he compiled the `eval` in my paper into 704 machine code fixing bugs and then advertised this as a Lisp interpreter, which it certainly was.<a id="tfn22-3"></a><sup>[3](#fn22-3)</sup>
+
 
 So the first Lisp interpreter was the result of a programmer ignoring his boss's advice.
 The first compiler was for the Lisp 1.5 system ([McCarthy et al.
@@ -1265,10 +1267,12 @@ Also, this approach would not interact properly with `flet` and `labels`.
 
 ----------------------
 
-[1](#xfn0010) One writes `numberp` because there is no hyphen in `number` but `random-state-p` because there is a hyphen in `random-state`.
+<a id="fn22-1"></a><sup>[1](#tfn22-1)</sup>
+One writes `numberp` because there is no hyphen in `number` but `random-state-p` because there is a hyphen in `random-state`.
 However, `defstruct` concatenates `-p` in all its predicates, regardless of the presence of a hyphen in the structure's name.
 
-[2](#xfn0015) although inefficient
+<a id="fn22-2"></a><sup>[2](#tfn22-2)</sup>
+although inefficient
 
-[3](#xfn0020) McCarthy's words from a talk on the history of Lisp, 1974, recorded by [Stoyan (1984)](B9780080571157500285.xhtml#bb1205).
-
+<a id="fn22-3"></a><sup>[3](#tfn22-3)</sup>
+McCarthy's words from a talk on the history of Lisp, 1974, recorded by [Stoyan (1984)](B9780080571157500285.xhtml#bb1205).
