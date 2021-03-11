@@ -401,7 +401,7 @@ It is not important to be able to read all this assembly language.
 The point is that there is considerable overhead, even though this architecture has a specific instruction `(%STORE-KEY-WORD-ARGS)` to help deal with keyword arguments.
 
 Now let's look at the results on another system, the Allegro compiler for the 68000.
-First, here's the assembly code for reg, to give you an idea of the minimal calling sequence:[1](#fn0015)
+First, here's the assembly code for reg, to give you an idea of the minimal calling sequence:<a id="tfn10-1"></a><sup>[1](#fn10-1)</sup>
 
 ```
 > (disassemble 'reg)
@@ -1390,5 +1390,6 @@ Next, show how *sorted lists* can be used to implement sets, and compare the ope
 
 ----------------------
 
-[1](#xfn0015) These are all done with safety 0 and speed 3.
+<a id="fn10-1"></a><sup>[1](#tfn10-1)</sup>
+These are all done with safety 0 and speed 3.
 
