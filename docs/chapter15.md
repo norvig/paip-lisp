@@ -68,7 +68,8 @@ This may be surprising, and we don't have space here to explain exactly why it i
 Then "converting to canonical form" would be the same as "running a program." But it is an elementary result of computability theory that it is in general impossible to determine the result of running an arbitrary program (this is known as the halting problem).
 Thus, it is not surprising that it is impossible to canonicalize complex expressions.
 
-Our task is to convert a polynomial as previously defined into some canonical form.[1](#fn0015) Much of the code and some of the commentary on this format and the routines to manipulate it was written by Richard Fateman, with some enhancements made by Peter Klier.
+Our task is to convert a polynomial as previously defined into some canonical form.<a id="tfn15-1"></a><sup>[1](#fn15-1)</sup>
+Much of the code and some of the commentary on this format and the routines to manipulate it was written by Richard Fateman, with some enhancements made by Peter Klier.
 
 The first design decision is to assume that we will be dealing mostly with *dense* polynomials, rather than *sparse* ones.
 That is, we expect most of the polynomials to be like *ax*3*+ bx*2*+ cx* + *d,* not like *ax*100*+ bx*50 + *c.* For dense polynomials, we can save space by representing the main variable (*x* in these examples) and the individual coefficients (*a*, *b*, *c*, and *d* in these examples) explicitly, but representing the exponents only implicitly, by position.
@@ -530,7 +531,7 @@ The particular benchmark we will use here is raising 1 ***+** x + y + z* to the 
 This takes .97 seconds on our system.
 The equivalent test with the original `frpoly` code takes about the same time: .98 seconds.
 Thus, our program is as fast as production-quality code.
-In terms of storage space, vectors use about half as much storage as lists, because half of each cons cell is a pointer, while vectors are all useful data.[2](#fn0020)
+In terms of storage space, vectors use about half as much storage as lists, because half of each cons cell is a pointer, while vectors are all useful data.<a id="tfn15-2"></a><sup>[2](#fn15-2)</sup>
 
 How much faster is the polynomial-based code than the rule-based version?
 Unfortunately, we can't answer that question directly.
@@ -835,9 +836,10 @@ A brief history of symbolic algebra systems is given in [chapter 8](B97800805711
 
 ----------------------
 
-[1](#xfn0015) In fact, the algebraic properties of polynomial arithmetic and its generalizations fit so well with ideas in data abstraction that an extended example (in Scheme) on this topic is provided in *Structure and Interpretation of Computer Programs* by Abelson and Sussman (see section 2.4.3, [pages 153](B9780080571157500054.xhtml#p153)-[166](B9780080571157500054.xhtml#p166)).
+<a id="fn15-1"></a><sup>[1](#tfn15-1)</sup>
+In fact, the algebraic properties of polynomial arithmetic and its generalizations fit so well with ideas in data abstraction that an extended example (in Scheme) on this topic is provided in *Structure and Interpretation of Computer Programs* by Abelson and Sussman (see section 2.4.3, [pages 153](B9780080571157500054.xhtml#p153)-[166](B9780080571157500054.xhtml#p166)).
 We'll pursue a slightly different approach here.
 
-[2](#xfn0020) Note: systems that use `"`cdr-coding`"` take about the same space for lists that are allocated all at once as for vectors.
+<a id="fn15-2"></a><sup>[2](#tfn15-2)</sup>
+Note: systems that use `"`cdr-coding`"` take about the same space for lists that are allocated all at once as for vectors.
 But cdr-coding is losing favor as RISC chips replace microcoded processors.
-
