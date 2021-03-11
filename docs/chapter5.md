@@ -117,7 +117,8 @@ This presupposes that there is some way of deciding that `X` is a variable and t
 We must then arrange to substitute `vacation` for `X` within the response, in order to get the final transformation.
 
 Ignoring for a moment the problem of transforming the pattern into the response, we can see that this notion of pattern matching is just a generalization of the Lisp function `equal`.
-Below we show the function `simple-equal`, which is like the built-in function `equal`,<sup>[1](#chapter5-fn1)</sup> and the function `pat-match`, which is extended to handle pattern-matching variables:
+Below we show the function `simple-equal`, which is like the built-in function `equal`,<a id="tfn05-1"></a><sup>[1](#fn05-1)</sup>
+and the function `pat-match`, which is extended to handle pattern-matching variables:
 
 ```lisp
 (defun simple-equal (x y)
@@ -949,4 +950,5 @@ The following includes most of Weizenbaum's rules:
 
 ----------------------
 
-<a name="chapter5-fn1">1</a>: The difference is that `simple-equal` does not handle strings.
+<a id="fn05-1"></a><sup>[1](#tfn05-1)</sup>
+The difference is that `simple-equal` does not handle strings.
