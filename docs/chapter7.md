@@ -55,7 +55,7 @@ With that in mind, we can define a list of pattern-response rules corresponding 
 The structure definition for a rule is repeated here, and the structure `exp`, an expression, is added.
 `lhs` and `rhs` stand for left-and right-hand side, respectively.
 Note that the constructor `mkexp` is defined as a constructor that builds expressions without taking keyword arguments.
-In general, the notation (`:constructor`*fn args*) creates a constructor function with the given name and argument list.[1](#fn0015)
+In general, the notation (`:constructor` *fn args*) creates a constructor function with the given name and argument list.<a id="tfn07-1"></a><sup>[1](#fn07-1)</sup>
 
 ```lisp
 (defstruct (rule (:type list)) pattern response)
@@ -737,6 +737,6 @@ The function `find-one-unknown` has four cases: (1) If we have already found two
 ```
 
 ----------------------
-
-[1](#xfn0015)[Page 316](B9780080571157500108.xhtml#p316) of *Common Lisp the Language* says, "Because a constructor of this type operates By Order of Arguments, it is sometimes known as a BOA constructor."
+<a id="fn07-1"></a><sup>[1](#tfn07-1)</sup>
+Page 316 of *Common Lisp the Language* says, "Because a constructor of this type operates By Order of Arguments, it is sometimes known as a BOA constructor."
 
