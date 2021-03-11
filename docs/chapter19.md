@@ -25,7 +25,7 @@ We will cover the "easier" part, syntax, first, and then move on to semantics.
 A good artificial language, like Lisp or C, is unambiguous.
 There is only one interpretation for a valid Lisp expression.
 Of course, the interpretation may depend on the state of the current state of the Lisp world, such as the value of global variables.
-But these dependencies can be explicitly enumerated, and once they are spelled out, then there can only be one meaning for the expression.[1](#fn0015)
+But these dependencies can be explicitly enumerated, and once they are spelled out, then there can only be one meaning for the expression.<a id="tfn19-1"></a><sup>[1](#fn19-1)</sup>
 
 Natural language does not work like this.
 Natural expressions are inherently ambiguous, depending on any number of factors that can never be quite spelled out completely.
@@ -328,7 +328,8 @@ Evaluation of (LENGTH (PARSER S 's)) took .13 Seconds of elapsed time.
 By memoizing p a r s e we reduce the parse time f rom 33 to.
 13 seconds, a 250-f old speed- up.
 We can get a more systematic comparison by looking at a range of examples.
-For example, consider sentences of the form "The man hit the table [with the ball]*" for zero or more repetitions of the PP "with the ball." In the following table we record N, the number of repetitions of the PP, along with the number of resulting parses,[2](#fn0020) and for both memoized and unmemoized versions of parse, the number of seconds to produce the parse, the number of parses per second (PPS), and the number of recursive calls to `parse`.
+For example, consider sentences of the form "The man hit the table [with the ball]*" for zero or more repetitions of the PP "with the ball."
+In the following table we record N, the number of repetitions of the PP, along with the number of resulting parses,<a id="tfn19-2"></a><sup>[2](#fn19-2)</sup> and for both memoized and unmemoized versions of parse, the number of seconds to produce the parse, the number of parses per second (PPS), and the number of recursive calls to `parse`.
 The performance of the memoized version is quite acceptable; for N=5, a 20-word sentence is parsed into 132 possibilities in .68 seconds, as opposed to the 20 seconds it takes in the unmemoized version.
 
 |      |        | Memoized |     |       | Unmemoized |     |       |
@@ -1175,9 +1176,11 @@ Rarely, `rotatef` is used with more than two arguments, `(rotatef a b c)` is lik
 
 ----------------------
 
-[1](#xfn0015) Some erroneous expressions are underspecified and may return different results in different implementations, but we will ignore that problem.
+<a id="fn19-1"></a><sup>[1](#tfn19-1)</sup>
+Some erroneous expressions are underspecified and may return different results in different implementations, but we will ignore that problem.
 
-[2](#xfn0020) The number of parses of sentences of this kind is the same as the number of bracketings of a arithmetic expression, or the number of binary trees with a given number of leaves.
+<a id="fn19-2"></a><sup>[2](#tfn19-2)</sup>
+The number of parses of sentences of this kind is the same as the number of bracketings of a arithmetic expression, or the number of binary trees with a given number of leaves.
 The resulting sequence (1,2,5,14,42,...) is known as the Catalan Numbers.
 This kind of ambiguity is discussed by [Church and Patil (1982)](B9780080571157500285.xhtml#bb0200) in their article *Coping with Syntactic Ambiguity, or How to Put the Block in the Box on the Table.*
 
