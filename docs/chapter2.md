@@ -148,7 +148,7 @@ In this notation, 0&#x0338; indicates a choice of nothing at all, a comma indica
 However, the convention used here is that names ending in an asterisk denote zero or more repetitions of the underlying name.
 That is, *PP\** denotes zero or more repetitions of *PP*.
 <a id="tfn02-1"></a>
-This is known as "Kleene star" notation (pronounced "clean-E") after the mathematician Stephen Cole Kleene.[1](#fn02-1)
+This is known as "Kleene star" notation (pronounced "clean-E") after the mathematician Stephen Cole Kleene.<sup>[1](#fn02-1)</sup>
 
 The problem is that the rules for *Adj\** and *PP\** contain choices that we would have to represent as some kind of conditional in Lisp.
 For example:
@@ -566,5 +566,5 @@ Now we can use the `cross-product` in other ways as well:
 ```
 
 ----------------------
-<a id="fn02-1"></a>
-[1](#tfn02-1) We will soon see "Kleene plus" notation, wherein *PP+* denotes one or more repetition of *PP*.
+<a id="fn02-1"></a><sup>[1](#tfn02-1)</sup>
+We will soon see "Kleene plus" notation, wherein *PP+* denotes one or more repetition of *PP*.
