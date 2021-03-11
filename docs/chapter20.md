@@ -372,7 +372,7 @@ Here is the trivial grammar from [page 688](chapter20.xhtml#p688) in DCG format.
 ```
 
 This grammar is quite limited, generating only four sentences.
-The first way we will extend it is to allow verbs with objects: in addition to "The boy sleeps," we will allow "The boy meets the girl." To avoid generating ungrammatical sentences like "* The boy meets,"[1](#fn0015) we will separate the category of verb into two *subcategories*: transitive verbs, which take an object, and intransitive verbs, which don't.
+The first way we will extend it is to allow verbs with objects: in addition to "The boy sleeps," we will allow "The boy meets the girl." To avoid generating ungrammatical sentences like "* The boy meets,"<a id="tfn20-1"></a><sup>[1](#fn20-1)</sup> we will separate the category of verb into two *subcategories*: transitive verbs, which take an object, and intransitive verbs, which don't.
 
 Transitive verbs complicate the semantic interpretation of sentences.
 We would like the interpretation of "Terry kisses Jean" to be `(kiss Terry Jean)`.
@@ -1277,5 +1277,5 @@ The fix is to `gensym` symbols that are guaranteed to be unique.
 
 ----------------------
 
-[1](#xfn0015) The asterisk at the start of a sentence is the standard linguistic notation for an utterance that is ungrammatical or otherwise ill-formed.
-
+<a id="fn20-1"></a><sup>[1](#tfn20-1)</sup>
+The asterisk at the start of a sentence is the standard linguistic notation for an utterance that is ungrammatical or otherwise ill-formed.
