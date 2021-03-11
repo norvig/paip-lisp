@@ -1847,7 +1847,8 @@ The version in widest used today is the assumption-based truth maintenance syste
 
 There is little communication between the logic programming and knowledge representation communities, even though they cover overlapping territory.
 [Colmerauer (1990)](B9780080571157500285.xhtml#bb0250) and [Cohen (1990)](B9780080571157500285.xhtml#bb0230) describe Logic Programming languages that address some of the issues covered in this chapter.
-Key papers in equality reasoning include Galler and Fisher 1974, [Kornfeld 1983](B9780080571157500285.xhtml#bb0645),[1](#fn0015) Jaffar, Lassez, and Maher 1984, and [van Emden and Yukawa 1987](B9780080571157500285.xhtml#bb1265).
+Key papers in equality reasoning include Galler and Fisher 1974, [Kornfeld 1983](B9780080571157500285.xhtml#bb0645),<a id="tfn14-1"></a><sup>[1](#fn14-1)</sup>
+Jaffar, Lassez, and Maher 1984, and [van Emden and Yukawa 1987](B9780080571157500285.xhtml#bb1265).
 [H&ouml;lldobler's book (1987)](B9780080571157500285.xhtml#bb0550) includes an overview of the area.
 Papers on extending unification in ways other than equality include [A&iuml;t-Kaci et al.
 1987](B9780080571157500285.xhtml#bb0025) and [Staples and Robinson 1988](B9780080571157500285.xhtml#bb1125).
@@ -1913,8 +1914,5 @@ Now figure out how to find all the nlists that an item is indexed under.
 
 ----------------------
 
-[1](#xfn0015) A commentary on this paper appears in [Elcock and Hoddinott 1986](B9780080571157500285.xhtml#bb0360).
-
-Part IV
-Advanced AI Programs
-
+<a id="fn14-1"></a><sup>[1](#tfn14-1)</sup>
+A commentary on this paper appears in [Elcock and Hoddinott 1986](B9780080571157500285.xhtml#bb0360).
