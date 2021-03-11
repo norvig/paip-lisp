@@ -151,7 +151,7 @@ An account object can do only one thing: receive a message and return the approp
 For example, if you pass the message `withdraw` to an account object, it will return a function that, when applied to a single argument (the amount to withdraw), will perform the withdrawal action.
 This function is called the *method* that implements the message.
 The advantage of this approach is that account objects are completely encapsulated; the information corresponding to the name, balance, and interest rate is only accessible through the five messages.
-We have a guarantee that no other code can manipulate the information in the account in any other way.[1](#fn0015)
+We have a guarantee that no other code can manipulate the information in the account in any other way.<a id="tfn13-1"></a><sup>[1](#fn13-1)</sup>
 
 The function `get-method` finds the method that implements a message for a given object.
 The function send gets the method and applies it to a list of arguments.
@@ -213,7 +213,7 @@ So object-oriented programming eliminates many problems with name clashes that a
 Many of the built-in Common Lisp functions can be considered generic functions, in that they operate on different types of data.
 For example, `sqrt` does one thing when passed an integer and quite another when passed an imaginary number.
 The sequence functions (like `find` or `delete`) operate on lists, vectors, or strings.
-These functions are not implemented like `withdraw,` but they still act like generic functions.[2](#fn0020)
+These functions are not implemented like `withdraw,` but they still act like generic functions.<a id="tfn13-2"></a><sup>[2](#fn13-2)</sup>
 
 ## 13.4 Classes
 
@@ -941,7 +941,7 @@ Once it was accepted, the MIT group soon came to embrace it.
 They developed complex protocols for combining different flavors into new ones.
 The concept of *mix-ins* was developed by programmers who frequented Steve's Ice Cream parlor in nearby Davis Square.
 Steve's offered a list of ice cream flavors every day but also offered to create new flavors-dynamically-by mixing in various cookies, candies, or fruit, at the request of the individual customer.
-For example, Steve's did not have chocolate-chip ice cream on the menu, but you could always order vanilla ice cream with chocolate chips mixed in.[3](#fn0025)
+For example, Steve's did not have chocolate-chip ice cream on the menu, but you could always order vanilla ice cream with chocolate chips mixed in.<a id="tfn13-3"></a><sup>[3](#fn13-3)</sup>
 
 This kind of "flavor hacking" appealed to the MIT Lisp Machine group, who adopted the metaphor for their object-oriented programming system.
 All flavors inherited from the top-mostflavor in the hierarchy: vanilla.
@@ -1012,15 +1012,18 @@ Change these methods.
 
 ----------------------
 
-[1](#xfn0015) More accurately, we have a guarantee that there is no way to get at the inside of a closure using portable Common Lisp code.
+<a id="fn13-1"></a><sup>[1](#tfn13-1)</sup>
+More accurately, we have a guarantee that there is no way to get at the inside of a closure using portable Common Lisp code.
 Particular implementations may provide debugging tools for getting at this hidden information, such as `inspect`.
 So closures are not perfect at hiding information from these tools.
 Of course, no information-hiding method will be guaranteed against such covert channels-even with the most sophisticated software security measures, it is always possible to, say, wipe a magnet over the computer's disks and alter sensitive data.
 
-[2](#xfn0020) There is a technical sense of "generic function" that is used within CLOS.
+<a id="fn13-2"></a><sup>[2](#tfn13-2)</sup>
+There is a technical sense of "generic function" that is used within CLOS.
 These functions are not generic according to this technical sense.
 
-[3](#xfn0025) Flavor fans will be happy to know that Steve's Ice Cream is now sold nationally in the United States.
+<a id="fn13-3"></a><sup>[3](#tfn13-3)</sup>
+Flavor fans will be happy to know that Steve's Ice Cream is now sold nationally in the United States.
 Alas, it is not possible to create flavors dynamically.
 Also, be warned that Steve's was bought out by his Teal Square rival, Joey's.
 The original Steve retired from the business for years, then came back with a new line of stores under his last name, Harrell.
