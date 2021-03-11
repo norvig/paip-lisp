@@ -114,7 +114,8 @@ This list will be constant over the course of a problem, or even a series of pro
 *   An operator can be represented as a structure composed of an action, a list of preconditions, and a list of effects.
 We can place limits on the kinds of possible effects by saying that an effect either adds or deletes a condition from the current state.
 Thus, the list of effects can be split into an add-list and a delete-list.
-This was the approach taken by the Strips [1](#fn0010) implementation of GPS, which we will be in effect reconstructing in this chapter.
+This was the approach taken by the Strips<a id="tfn04-1"></a><sup>[1](#fn04-1)</sup>
+implementation of GPS, which we will be in effect reconstructing in this chapter.
 The original GPS allowed more flexibility in the specification of effects, but flexibility leads to inefficiency.
 
 *   A complete problem is described to GPS in terms of a starting state, a goal state, and a set of known operators.
@@ -396,7 +397,8 @@ SOLVED
 The "bug" is that GPS uses the expression (`every #'achieve goals`) to achieve a set of goals.
 If this expression returns true, it means that every one of the goals has been achieved in sequence, but it doesn't mean they are all still true at the end.
 In other words, the goal (`have-money son-at-school`), which we intended to mean "end up in a state where both have-money and son-at-school are true," was interpreted by GPS to mean "first achieve `have-money`, and then achieve `son-at-school`." Sometimes achieving one goal can undo another, previously achieved goal.
-We will call this the "prerequisite clobbers sibling goal" problem.[2](#fn0015) That is, `have-money` and `son-at-school` are sibling goals, one of the prerequisites for the plan for `son-at-school` is `car-works`, and achieving that goal clobbers the `have-money goal`.
+We will call this the "prerequisite clobbers sibling goal" problem.<a id="tfn04-2"></a><sup>[2](#fn04-2)</sup>
+That is, `have-money` and `son-at-school` are sibling goals, one of the prerequisites for the plan for `son-at-school` is `car-works`, and achieving that goal clobbers the `have-money goal`.
 
 Modifying the program to recognize the "prerequisite clobbers sibling goal" problem is straightforward.
 First note that we call (`every #`'`achieve`*something*) twice within the program, so let's replace those two forms with ( `achieve-all`*something*).
@@ -883,7 +885,8 @@ Finally, we see that this version of GPS also works on trivial problems requirin
 ## 4.12 The New Domain Problem: Monkey and Bananas
 
 To show that GPS is at all general, we have to make it work in different domains.
-We will start with a "classic" AI problem.[3](#fn0020) Imagine the following scenario: a hungry monkey is standing at the doorway to a room.
+We will start with a "classic" AI problem.<a id="tfn04-3"></a><sup>[3](#fn04-3)</sup>
+Imagine the following scenario: a hungry monkey is standing at the doorway to a room.
 In the middle of the room is a bunch of bananas suspended from the ceiling by a rope, well out of the monkey's reach.
 There is a chair near the door, which is light enough for the monkey to push and tall enough to reach almost to the bananas.
 Just to make things complicated, assume the monkey is holding a toy ball and can only hold one thing at a time.
@@ -1305,7 +1308,8 @@ This doesn't look too hard, so let's see how our GPS handles it:
 
 There is a "prerequisite clobbers sibling goal" problem regardless of which way we order the conjuncts!
 In other words, no combination of plans for the two individual goals can solve the conjunction of the two goals.
-This is a surprising fact, and the example has come to be known as "the Sussman anomaly."[4](#fn0025) We will return to this problem in [chapter 6](B9780080571157500066.xhtml).
+This is a surprising fact, and the example has come to be known as "the Sussman anomaly."<a id="tfn04-4"></a><sup>[4](#fn04-4)</sup>
+We will return to this problem in [chapter 6](B9780080571157500066.xhtml).
 
 ## 4.15 Stage 5 Repeated: Analysis of Version 2
 
@@ -1559,14 +1563,16 @@ The sophisticated Lisp programmer should also see the exercise on [page 680](B97
 
 ----------------------
 
-[1](#xfn0010)Strips is the Stanford Research Institute Problem Solver, designed by [Richard Fikes and Nils Nilsson (1971)](B9780080571157500285.xhtml#bb0405).
+<a id="fn04-1"</a><sup>[1](#tfn04-1)</sup>
+Strips is the Stanford Research Institute Problem Solver, designed by [Richard Fikes and Nils Nilsson (1971)](B9780080571157500285.xhtml#bb0405).
 
-[2](#xfn0015) Gerald Sussman, in his book *A Computer Model of Skill Acquisition,* uses the term "prerequisite clobbers brother goal" or PCBG.
+<a id="fn04-2"</a><sup>[2](#tfn04-2)</sup>
+Gerald Sussman, in his book *A Computer Model of Skill Acquisition,* uses the term "prerequisite clobbers brother goal" or PCBG.
 I prefer to be gender neutral, even at the risk of being labeled a historical revisionist.
 
-[3](#xfn0020) Originally posed by [Saul Amarel (1968)](B9780080571157500285.xhtml#bb0045).
+<a id="fn04-3"</a><sup>[3](#tfn04-3)</sup>
+Originally posed by [Saul Amarel (1968)](B9780080571157500285.xhtml#bb0045).
 
-[4](#xfn0025) A footnote in Waldinger 1977 says, "This problem was proposed by Allen Brown.
+<a id="fn04-4"</a><sup>[4](#tfn04-4)</sup>
+A footnote in Waldinger 1977 says, "This problem was proposed by Allen Brown.
 Perhaps many children thought of it earlier but did not recognize that it was hard." The problem is named after Gerald Sussman because he popularized it in Sussman 1973.
-
-
