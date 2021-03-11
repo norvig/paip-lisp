@@ -42,7 +42,7 @@ Then, we will extend `simplifier` to do differentiation, and some integration pr
 The idea is that given an expression like (2 - 1)*x* + 0, we want the program to compute the simplified form *x*.
 
 According to the *Mathematics Dictionary* (James and James 1949), the word "simplified" is "probably the most indefinite term used seriously in mathematics." The problem is that "simplified" is relative to what you want to use the expression for next.
-Which is simpler, *x*2 + 3*x* + 2 or (*x* + 1)(*x* + 2)?
+Which is simpler, *x*<sup>2</sup> + 3*x* + 2 or (*x* + 1)(*x* + 2)?
 The first makes it easier to integrate or differentiate, the second easier to find roots.
 We will be content to limit ourselves to "obvious" simplifications.
 For example, *x* is almost always preferable to 1*x* + 0.
@@ -402,7 +402,7 @@ We start off by representing some elementary properties of the logarithmic and t
 The new rules are similar to the "zero and one" rules we needed for the arithmetic operators, except here the constants `e` and `pi` (*e* = 2.71828... and *&pi;* = 3.14159...) are important in addition to 0 and 1.
 We also throw in some rules relating logs and exponents, and for sums and differences of logs.
 The rules assume that complex numbers are not allowed.
-If they were, log *ex* (and even *xy*) would have multiple values, and it would be wrong to arbitrarily choose one of these values.
+If they were, log *e<sup>x</sup>* (and even *x<sup>y</sup>*) would have multiple values, and it would be wrong to arbitrarily choose one of these values.
 
 ```lisp
 (setf *simplification-rules*
