@@ -6,7 +6,8 @@
 > -Alan Perlis
 
 Lisp is the major language for AI work, but it is by no means the only one.
-The other strong contender is Prolog, whose name derives from "programming in logic."[1](#fn0015) The idea behind logic programming is that the programmer should state the relationships that describe a problem and its solution.
+The other strong contender is Prolog, whose name derives from "programming in logic."<a id="tfn11-1"></a><sup>[1](#fn11-1)</sup>
+The idea behind logic programming is that the programmer should state the relationships that describe a problem and its solution.
 These relationships act as constraints on the algorithms that can solve the problem, but the system itself, rather than the programmer, is responsible for the details of the algorithm.
 The tension between the "programming" and "logic" will be covered in [chapter 14](B9780080571157500145.xhtml), but for now it is safe to say that Prolog is an approximation to the ideal goal of logic programming.
 Prolog has arrived at a comfortable niche between a traditional programming language and a logical specification language.
@@ -412,7 +413,7 @@ This definition can be translated into Prolog almost Verbatim:
 
 Of course, we can write a similar definition in Lisp.
 The most visible difference is that Prolog allows us to put patterns in the head of a clause, so we don't need recognizers like `consp` or accessors like `first` and `rest`.
-Otherwise, the Lisp definition is similar:[2](#fn0020)
+Otherwise, the Lisp definition is similar:<a id="tfn11-2"></a><sup>[2](#fn11-2)</sup>
 
 ```lisp
 (defun lisp-member (item list)
@@ -568,7 +569,7 @@ The tricky part is that we need some way of distinguishing a variable `?x` in on
 Otherwise, a variable used in two different clauses in the course of a proof would have to take on the same value in each clause, which would be a mistake.
 Just as arguments to a function can have different values in different recursive calls to the function, so the variables in a clause are allowed to take on different values in different recursive uses.
 The easiest way to keep variables distinct is just to rename all variables in each clause before it is used.
-The function `rename-variables` does this:[3](#fn0025)
+The function `rename-variables` does this:<a id="tfn11-3"></a><sup>[3](#fn11-3)</sup>
 
 ```lisp
 (defun rename-variables (x)
@@ -955,7 +956,8 @@ It is implicit in the definition of `member` that subsequent solutions will be l
 This example reveals the limitations of Prolog as a pure logic-programming language.
 It turns out the user must be concerned not only about the logic of the problem but also with the flow of control.
 Prolog is smart enough to backtrack and find all solutions when the search space is small enough, but when it is infinite (or even very large), the programmer still has a responsibility to guide the flow of control.
-It is possible to devise languages that do much more in terms of automatic flow of control.[4](#fn0030) Prolog is a convenient and efficient middle ground between imperative languages and pure logic.
+It is possible to devise languages that do much more in terms of automatic flow of control.<a id="tfn11-4"></a><sup>[4](#fn11-4)</sup>
+Prolog is a convenient and efficient middle ground between imperative languages and pure logic.
 
 ### Approaches to Backtracking
 
@@ -1599,12 +1601,15 @@ Now we are ready to make the queries:
 
 ----------------------
 
-[1](#xfn0015) Actually, *programmation en logique*, since it was invented by a French group (see page 382).
+<a id="fn11-1"></a><sup>[1](#tfn11-1)</sup>
+Actually, *programmation en logique*, since it was invented by a French group (see page 382).
 
-[2](#xfn0020) Actually, this is more like the Lisp `find` than the Lisp `member`.
+<a id="fn11-2"></a><sup>[2](#tfn11-2)</sup>
+Actually, this is more like the Lisp `find` than the Lisp `member`.
 In this chapter we have adopted the traditional Prolog definition of `member`.
 
-[3](#xfn0025) See exercise 11.12 for an alternative approach.
+<a id="fn11-3"></a><sup>[3](#tfn11-3)</sup>
+See exercise 11.12 for an alternative approach.
 
-[4](#xfn0030) See the MU-Prolog and NU-Prolog languages ([Naish 1986](B9780080571157500285.xhtml#bb0890)).
-
+<a id="fn11-4"></a><sup>[4](#tfn11-4)</sup>
+See the MU-Prolog and NU-Prolog languages ([Naish 1986](B9780080571157500285.xhtml#bb0890)).

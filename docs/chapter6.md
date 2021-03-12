@@ -112,7 +112,7 @@ If we use the informal approach, then adding such a feature to one program would
 But if we use the formal approach, then improving `interactive-interpreter` would automatically bring the new features to all the programs that use it.
 
 The following version of `interactive-interpreter` adds two new features.
-First, it uses the macro `handler-case`[1](#fn0015) to handle errors.
+First, it uses the macro `handler-case`<a id="tfn06-1"></a><sup>[1](#fn06-1)</sup> to handle errors.
 This macro evaluates its first argument, and normally just returns that value.
 However, if an error occurs, the subsequent arguments are checked for an error condition that matches the error that occurred.
 In this use, the case `error` matches all errors, and the action taken is to prints the error condition and continue.
@@ -164,7 +164,8 @@ This would look like:
 ```
 
 Since patterns are like boolean expressions, it makes sense to allow boolean operators on them.
-Following the question-mark convention, we will use `?and`, `?or` and `?not` for the operators.[2](#fn0020) Here is a pattern to match a relational expression with one of three relations.
+Following the question-mark convention, we will use `?and`, `?or` and `?not` for the operators.<a id="tfn06-2"></a><sup>[2](#fn06-2)</sup>
+Here is a pattern to match a relational expression with one of three relations.
 It succeeds because the < matches one of the three possibilities specified by `(?or < = >).`
 
 ```lisp
@@ -832,7 +833,8 @@ Now, using the difference from the goal as the cost function, we can search usin
 
 The more we know about the state space, the better we can search.
 For example, if we know that all successors are greater than the states they come from, then we can use a cost function that gives a very high cost for numbers above the goal.
-The function `price-is-right` is like `diff`, except that it gives a high penalty for going over the goal.[3](#fn0025) Using this cost function leads to a near-optimal search on this example.
+The function `price-is-right` is like `diff`, except that it gives a high penalty for going over the goal.<a id="tfn06-3"></a><sup>[3](#fn06-3)</sup>
+Using this cost function leads to a near-optimal search on this example.
 It makes the "mistake" of searching 7 before 6 (because 7 is closer to 12), but does not waste time searching 14 and 15:
 
 ```lisp
@@ -918,7 +920,7 @@ This could be called "depth-only search," but it is more commonly known as *hill
 Think of a mountaineer trying to reach a peak in a heavy fog.
 One strategy would be for the mountaineer to look at adjacent locations, climb to the highest one, and look again.
 This strategy may eventually hit the peak, but it may also get stuck at the top of a foothill, or *local maximum*.
-Another strategy would be for the mountaineer to turn back and try again when the fog lifts, but in AI, unfortunately, the fog rarely lifts.[4](#fn0030)
+Another strategy would be for the mountaineer to turn back and try again when the fog lifts, but in AI, unfortunately, the fog rarely lifts.<a id="tfn06-4"></a><sup>[4](#fn06-4)</sup>
 
 As a concrete example of a problem that can be solved by search, consider the task of planning a flight across the North American continent in a small airplane, one whose range is limited to 1000 kilometers.
 Suppose we have a list of selected cities with airports, along with their position in longitude and latitude:
@@ -950,7 +952,9 @@ Instead of just giving the name of the structure, it is also possible to use:
 For city, the option :type is specified as `list`.
 This means that cities will be implemented as lists of three elements, as they are in the initial value for `*cities*`.
 
-The cities are shown on the map in [figure  6.1](#f0010), which has connections between all cities within the 1000 kilometer range of each other.[5](#fn0035) This map was drawn with the help of `air-distance`, a function that returns the distance in kilometers between two cities "as the crow flies." It will be defined later.
+The cities are shown on the map in [figure  6.1](#f0010), which has connections between all cities within the 1000 kilometer range of each other.<a id="tfn06-5"></a><sup>[5](#fn06-5)</sup>
+This map was drawn with the help of `air-distance`, a function that returns the distance in kilometers between two cities "as the crow flies."
+It will be defined later.
 Two other useful functions are `neighbors`, which finds all the cities within 1000 kilometers, and `city`, which maps from a name to a city.
 The former uses `find-all-if`, which was defined on [page 101](B9780080571157500030.xhtml#p101) as a synonym for `remove-if-not`.
 
@@ -1734,17 +1738,20 @@ Start with states, and search according to successors and combiner."
 
 ----------------------
 
-[1](#xfn0015) The macro `handler-case` is only in ANSI Common Lisp.
+<a id="fn06-1"></a><sup>[1](#tfn06-1)</sup>
+The macro `handler-case` is only in ANSI Common Lisp.
 
-
-[2](#xfn0020) An alternative would be to reserve the question mark for variables only and use another notation for these match operators.
+<a id="fn06-2"></a><sup>[2](#tfn06-2)</sup>
+An alternative would be to reserve the question mark for variables only and use another notation for these match operators.
 Keywords would be a good choice, such as `:and`, `:or`, `:is`, etc.
 
-[3](#xfn0025) The built-in constant `most-positive-fixnum` is a large integer, the largest that can be expressed without using bignums.
+<a id="fn06-3"></a><sup>[3](#tfn06-3)</sup>
+The built-in constant `most-positive-fixnum` is a large integer, the largest that can be expressed without using bignums.
 Its value depends on the implementation, but in most Lisps it is over 16 million.
 
-[4](#xfn0030) In [chapter 8](B978008057115750008X.xhtml) we will see an example where the fog did lift: symbolic integration was once handled as a problem in search, but new mathematical results now make it possible to solve the same class of integration problems without search.
+<a id="fn06-4"></a><sup>[4](#tfn06-4)</sup>
+In [chapter 8](B978008057115750008X.xhtml) we will see an example where the fog did lift: symbolic integration was once handled as a problem in search, but new mathematical results now make it possible to solve the same class of integration problems without search.
 
-
-[5](#xfn0035) The astute reader will recognize that this graph is not a tree.
+<a id="fn06-5"></a><sup>[5](#tfn06-5)</sup>
+The astute reader will recognize that this graph is not a tree.
 The difference between trees and graphs and the implications for searching will be covered later.

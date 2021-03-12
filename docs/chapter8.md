@@ -30,7 +30,7 @@ Risch and others developed algorithms for indefinite integration of any expressi
 In other words, given a "normal" function, the Risch algorithm will return either the indefinite integral of the function or an indication that no closed-form integral is possible in terms of elementary functions.
 Such work effectively ended the era of considering integration as a problem in search.
 
-SIN was further refined, merged with parts of the Risch algorithm, and put into the evolving MACSYMA [1](#fn0010) program.
+SIN was further refined, merged with parts of the Risch algorithm, and put into the evolving MACSYMA<a id="tfn08-1"></a><sup>[1](#fn08-1)</sup> program.
 For the most part, refinement of MACSYMA consisted of the incorporation of new algorithms.
 Few heuristics of any sort survive.
 Today MACSYMA is no longer considered an AI program.
@@ -570,7 +570,7 @@ In [chapter 15](B9780080571157500157.xhtml), we develop a new version of the pro
 
 So far, the algebraic manipulations have been straightforward.
 There is a direct algorithm for computing the derivative of every expression.
-When we consider integrals, or antiderivatives,[2](#fn0015) the picture is much more complicated.
+When we consider integrals, or antiderivatives,<a id="tfn08-2"></a><sup>[2](#fn08-2)</sup> the picture is much more complicated.
 As you may recall from freshman calculus, there is a fine art to computing integrals.
 In this section, we try to see how far we can get by encoding just a few of the many tricks available to the calculus student.
 
@@ -977,9 +977,11 @@ Add rules to propagate `undefined` values and prevent them from being simplified
 
 ----------------------
 
-[1](#xfn0010)MACSYMA is the Project MAC SYMbolic MAthematics program.
+<a id="fn08-1"></a><sup>[1](#tfn08-1)</sup>
+MACSYMA is the Project MAC SYMbolic MAthematics program.
 Project MAC is the MIT research organization that was the precursor of MIT's Laboratory for Computer Science.
 MAC stood either for Machine-Aided Cognition or Multiple-Access Computer, according to one of their annual reports.
 The cynical have claimed that MAC really stood for Man Against Computer.
 
-[2](#xfn0015) The term antiderivative is more correct, because of branch point problems.
+<a id="fn08-2"></a><sup>[2](#tfn08-2)</sup>
+The term antiderivative is more correct, because of branch point problems.

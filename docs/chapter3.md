@@ -56,7 +56,7 @@ For example, if your code is trying to find an element in a list, you should use
 
 Sometimes, however, the maxims are in conflict, and experience will tell you which one to prefer.
 <a id="tfn03-1"></a>
-Consider the following two ways of placing a new key/value pair on an association list:[[1]](#fn03-1)
+Consider the following two ways of placing a new key/value pair on an association list:<sup>[1](#fn03-1)</sup>
 
 ```lisp
 (push (cons key val) a-list)
@@ -1286,7 +1286,7 @@ In mathematics, applying an operator to *x* can have no effect on the value of *
 
 In Lisp, some functions *are* able to take effect beyond just computing the result.
 <a id="tfn03-2"></a>
-These "functions" are not functions in the mathematical sense,[[2]](#fn03-2) and in other languages they are known as "procedures."
+These "functions" are not functions in the mathematical sense,<sup>[2](#fn03-2)</sup> and in other languages they are known as "procedures."
 Of course, most of the Lisp functions *are* true mathematical functions, but the few that are not can cause great problems.
 They can also be quite useful in certain situations.
 For both reasons, they are worth knowing about.
@@ -2105,7 +2105,7 @@ The term *keyword* is used differently in Lisp than in many other languages.
 For example, in Pascal, keywords (or *reserved* words) are syntactic symbols, like `if, else, begin`, and `end`.
 In Lisp we call such symbols *special form operators* or just *special forms.*
 <a id="tfn03-3"></a>
-Lisp keywords are symbols that happen to reside in the keyword package.[[3]](#fn03-3)
+Lisp keywords are symbols that happen to reside in the keyword package.<sup>[3](#fn03-3)</sup>
 They have no special syntactic meaning, although they do have the unusual property of being self-evaluating: they are constants that evaluate to themselves, unlike other symbols, which evaluate to whatever value was stored in the variable named by the symbol.
 Keywords also happen to be used in specifying `&key` argument lists, but that is by virtue of their value, not by virtue of some syntax rule.
 It is important to remember that keywords are used in the function call, but normal nonkeyword symbols are used as parameters in the function definition.
@@ -2449,11 +2449,11 @@ or, with an ANSI-compliant Common Lisp, you can specify a `:` key
 
 ----------------------
 
-<a id="fn03-1"></a>
-[[1]](#tfn03-1) Association lists are covered in section 3.6.
+<a id="fn03-1"></a><sup>[1](#tfn03-1)</sup>
+Association lists are covered in section 3.6.
 
-<a id="fn03-2"></a>
-[[2]](#tfn03-2) In mathematics, a function must associate a unique output value with each input value.
+<a id="fn03-2"></a><sup>[2](#tfn03-2)</sup>
+In mathematics, a function must associate a unique output value with each input value.
 
-<a id="fn03-3"></a>
-[[3]](#tfn03-3) A *package* is a symbol table: a mapping between strings and the symbols they name.
+<a id="fn03-3"></a><sup>[3](#tfn03-3)</sup>
+A *package* is a symbol table: a mapping between strings and the symbols they name.

@@ -19,7 +19,8 @@ Also, as it turns out, the techniques that allow computers to play well are not 
 Humans are capable of recognizing abstract patterns learned from previous games, and formulating plans of attack and defense.
 While some computer programs try to emulate this approach, the more successful programs work by rapidly searching thousands of possible sequences of moves, making fairly superficial evaluations of the worth of each sequence.
 
-While much previous work on game playing has concentrated on chess and checkers, this chapter demonstrates a program to play the game of Othello.[1](#fn0015) Othello is a variation on the nineteenth-century game Reversi.
+While much previous work on game playing has concentrated on chess and checkers, this chapter demonstrates a program to play the game of Othello.<a id="tfn18-1"></a><sup>[1](#fn18-1)</sup>
+Othello is a variation on the nineteenth-century game Reversi.
 It is an easy game to program because the rules are simpler than chess.
 Othello is also a rewarding game to program, because a simple search technique can yield an excellent player.
 There are two reasons for this.
@@ -29,7 +30,8 @@ This makes it difficult for human players to visualize the long-range consequenc
 Search-based programs are not confused, and thus do well relative to humans.
 
 The very name "Othello" derives from the fact that the game is so unpredictable, like the Moor of Venice.
-The name may also be an allusion to the line, "Your daughter and the Moor are now making the beast with two backs,"[2](#fn0020) since the game pieces do indeed have two backs, one white and one black.
+The name may also be an allusion to the line, "Your daughter and the Moor are now making the beast with two backs,"<a id="tfn18-2"></a><sup>[2](#fn18-2)</sup>
+ since the game pieces do indeed have two backs, one white and one black.
 In any case, the association between the game and the play carries over to the name of several programs: Cassio, Iago, and Bill.
 The last two will be discussed in this chapter.
 They are equal to or better than even champion human players.
@@ -1324,7 +1326,8 @@ Our current algorithm loops through the list of `legal-moves`, but `legal-moves`
 We will call this the *random-ordering* strategy (even though the ordering is not random at all-square 11 is always considered first, then 12, etc.).
 
 One way to try to generate good moves first is to search highly weighted squares first.
-Since `legal-moves` considers squares in the order defined by `all-squares`, all we have to do is redefine the list `all-squares`[3](#fn0025):
+Since `legal-moves` considers squares in the order defined by `all-squares`, all we have to do is redefine the list `all-squares`<a id="tfn18-3"></a><sup>[3](#fn18-3)</sup>
+:
 
 ```lisp
 (defconstant all-squares
@@ -2232,12 +2235,13 @@ The user might also want the ability to start the values at some number other th
 
 ----------------------
 
-[1](#xfn0015) Othello is a registered trademark of CBS Inc.
+<a id="fn18-1"></a><sup>[1](#tfn18-1)</sup>
+Othello is a registered trademark of CBS Inc.
 Gameboard design @ 1974 CBS Inc.
 
-[2](#xfn0020)*Othello,* [I.
-i.
-117] William Shakespeare.
+<a id="fn18-2"></a><sup>[2](#tfn18-2)</sup>
+Othello,* [I. i. 117] William Shakespeare.
 
-[3](#xfn0025) Remember, when a constant is redefined, it may be necessary to recompile any functions that use the constant.
+<a id="fn18-3"></a><sup>[3](#tfn18-3)</sup>
+Remember, when a constant is redefined, it may be necessary to recompile any functions that use the constant.
 

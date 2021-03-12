@@ -1370,7 +1370,7 @@ If we want to be able to look at assembled code, we need a new printing function
 ```
 
 Here's the Scheme top level.
-Note that it is written in Scheme itself; we compile the definition of the read-eval-print loop,[1](#fn0010) load it into the machine, and then start executing it.
+Note that it is written in Scheme itself; we compile the definition of the read-eval-print loop,<a id="tfn23-1"></a><sup>[1](#fn23-1)</sup> load it into the machine, and then start executing it.
 There's also an interface to compile and execute a single expression, `comp-go`.
 
 ```lisp
@@ -1761,8 +1761,8 @@ Those who do define local functions tend not to use already established names li
 
 ## 23.6 History and References
 
-Guy Steele's 1978 MIT master's thesis on the language Scheme, rewritten as Steele 1983, describes an innovative and influential compiler for Scheme, called RABBIT.
-[2](#fn0015) A good article on an "industrial-strength" Scheme compiler based on this approach is described in [Kranz et al.'s 1986](B9780080571157500285.xhtml#bb0675) paper on ORBIT, the compiler for the T dialect of Scheme.
+Guy Steele's 1978 MIT master's thesis on the language Scheme, rewritten as Steele 1983, describes an innovative and influential compiler for Scheme, called RABBIT.<a id="tfn23-2"></a><sup>[2](#fn23-2)</sup>
+A good article on an "industrial-strength" Scheme compiler based on this approach is described in [Kranz et al.'s 1986](B9780080571157500285.xhtml#bb0675) paper on ORBIT, the compiler for the T dialect of Scheme.
 
 Abelson and Sussman's *Structure and Interpretation of Computer Programs* (1985) contains an excellent chapter on compilation, using slightly different techniques and compiling into a somewhat more confusing machine language.
 Another good text is [John Allen's *Anatomy of Lisp* (1978)](B9780080571157500285.xhtml#bb0040).
@@ -2121,9 +2121,11 @@ This kind of restriction goes against the grain of Scheme.
 
 ----------------------
 
-[1](#xfn0010) Strictly speaking, this is a read-compile-funcall-write loop.
+<a id="fn23-1"></a><sup>[1](#tfn23-1)</sup>
+Strictly speaking, this is a read-compile-funcall-write loop.
 
-[2](#xfn0015) At the time, the MacLisp compiler dealt with something called "lisp assembly code" or LAP.
+<a id="fn23-2"></a><sup>[2](#tfn23-2)</sup>
+At the time, the MacLisp compiler dealt with something called "lisp assembly code" or LAP.
 The function to input LAP was called `lapin`.
 Those who know French will get the pun.
 

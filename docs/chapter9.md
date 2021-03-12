@@ -65,7 +65,8 @@ This is very convenient, but it means that type checks must be made at run time,
 If efficiency is important, Common Lisp allows the programmer to include declarations that can eliminate run-time checks.
 In fact, once the proper declarations are added, Lisp can be as fast or faster than conventional languages.
 [Fateman (1973)](B9780080571157500285.xhtml#bb0375) compared the FORTRAN cube root routine on the PDP-10 to a MacLisp transliteration.
-The MacLisp version produced almost identical numerical code, but was 18% faster overall, due to a superior function-calling sequence.[1](#fn0010)The epigraph at the beginning of this chapter is from this article.
+The MacLisp version produced almost identical numerical code, but was 18% faster overall, due to a superior function-calling sequence.<a id="tfn09-1"></a><sup>[1](#fn09-1)</sup>
+The epigraph at the beginning of this chapter is from this article.
 [Berlin and Weise (1990)](B9780080571157500285.xhtml#bb0085) show that with a special compilation technique called *partial evaluation*, speeds 7 to 90 times faster than conventionally compiled code can be achieved.
 Of course, partial evaluation could be used in any language, but it is very easy to do in Lisp.
 The fact remains that Lisp objects must somehow represent their type, and even with declarations, not all of this overhead can be eliminated.
@@ -736,7 +737,8 @@ closure*) pairs, where the closure values are stored into the actual cons cells 
 Previously we needed structures of type delay to distinguish a delayed from a nondelayed object, but in a pipe we know the rest can be only one of three things: nil, a list, or a delayed value.
 Thus, we can use the closures directly instead of using `delay` structures, if we have some way of distinguishing closures from lists.
 Compiled closures are atoms, so they can always be distinguished from lists.
-But sometimes closures are implemented as lists beginning with `lambda` or some other implementation-dependent symbol.[2](#fn0015) The built-in function `functionp` is defined to be true of such lists, as well as of all symbols and all objects returned by `compile`.
+But sometimes closures are implemented as lists beginning with `lambda` or some other implementation-dependent symbol.<a id="tfn09-2"></a><sup>[2](#fn09-2)</sup>
+The built-in function `functionp` is defined to be true of such lists, as well as of all symbols and all objects returned by `compile`.
 But using `functionp` means that we cannot have a pipe that includes the symbol `lambda` as an element, because it will be confused for a closure:
 
 ```lisp
@@ -939,7 +941,8 @@ Before we go about trying to improve the efficiency of the implementation, it is
 Improving little-used features is a waste of time.
 
 The minimal support we need is to count the number of calls to selected functions, and then print out the totals.
-This is called *profiling* the functions.[3](#fn0020) For each function to be profiled, we change the definition so that it increments a counter and then calls the original function.
+This is called *profiling* the functions.<a id="tfn09-3"></a><sup>[3](#fn09-3)</sup>
+For each function to be profiled, we change the definition so that it increments a counter and then calls the original function.
 
 Most Lisp systems have some built-in profiling mechanism.
 If your system has one, by all means use it.
@@ -2044,10 +2047,13 @@ In general, things that you expect to be done multiple times should be moved out
 
 ----------------------
 
-[1](#xfn0010) One could say that the FORTRAN compiler was "broken." This underscores the problem of defining the efficiency of a language-do we judge by the most popular compiler, by the best compiler available, or by the best compiler imaginable?
+<a id="fn09-1"></a><sup>[1](#tfn09-1)</sup>
+One could say that the FORTRAN compiler was "broken." This underscores the problem of defining the efficiency of a language-do we judge by the most popular compiler, by the best compiler available, or by the best compiler imaginable?
 
-[2](#xfn0015) In KCL, the symbol `lambda-closure` is used, and in Allegro, it is `excl:.
+<a id="fn09-2"></a><sup>[2](#tfn09-2)</sup>
+In KCL, the symbol `lambda-closure` is used, and in Allegro, it is `excl:.
 lexical-closure`
 
-[3](#xfn0020) The terms *metering* and *monitoring* are sometimes used instead of profiling.
+<a id="fn09-3"></a><sup>[3](#tfn09-3)</sup>
+The terms *metering* and *monitoring* are sometimes used instead of profiling.
 
