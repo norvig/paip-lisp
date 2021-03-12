@@ -59,7 +59,7 @@ In this approach, no calls to concat are necessary, no wild guesses are made, an
        (VP ?sl ?s2))
 ```
 
-This rule can be read as "The string from `*s*0` to `*s*2` is a sentence if there is an `*s*1` such that the string from `s0` to `*s*1` is a noun phrase and the string from `*s*1` to `*s*2` is a verb phrase."
+This rule can be read as "The string from *s*<sub>0</sub> to *s*<sub>2</sub> is a sentence if there is an *s*<sub>1</sub> such that the string from s<sub>0</sub> to *s*<sub>1</sub> is a noun phrase and the string from *s*<sub>1</sub> to *s*<sub>2</sub> is a verb phrase."
 
 A sample query would be `(?- (S (The boy ate the apple) ())).` With suitable definitions of `NP` and `VP`, this would succeed, with the following bindings holding within `S`:
 
@@ -919,7 +919,7 @@ While this rule is correct as a declarative statement, it will run into difficul
 The top-level goal of parsing an `S` will lead immediately to the subgoal of parsing an `S`, and the resuit will be an infinite loop.
 
 Fortunately, we know how to avoid this kind of infinite loop: split the offending predicate, `S`, into two predicates: one that supports the recursion, and one that is at a lower level.
-We will call the lower-level predicate `S-`.
+We will call the lower-level predicate `S_`.
 Thus, the following rule says that a sentence can consist of two sentences, where the first one is not conjoined and the second is possibly conjoined:
 
 ```lisp
@@ -932,14 +932,14 @@ Thus, the following rule says that a sentence can consist of two sentences, wher
 We also need a rule that says that a possibly conjoined sentence can consist of a nonconjoined sentence:
 
 ```lisp
-(rule (S ?sem) ==> (S- ?sem))
+(rule (S ?sem) ==> (S_ ?sem))
 ```
 
-To make this work, we need to replace any mention of `S` in the left-hand side of a rule with `S-`.
+To make this work, we need to replace any mention of `S` in the left-hand side of a rule with `S_`.
 References to `S` in the right-hand side of rules remain unchanged.
 
 ```lisp
-(rule (S- ?sem) ==>...)
+(rule (S_ ?sem) ==>...)
 ```
 
 To make this all automatic, we will provide a macro, `conj-rule`, that declares a category to be one that can be conjoined.
@@ -1145,7 +1145,7 @@ Here is the macro definition:
      (rule (,conj-cat ?sem1 ?sem1) ==>)))
 ```
 
-and here we define `handle-conj` to substitute `S-` for `S` in the left-hand side of rules:
+and here we define `handle-conj` to substitute `S_` for `S` in the left-hand side of rules:
 
 ```lisp
 (defun handle-conj (head)
