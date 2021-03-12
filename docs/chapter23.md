@@ -1803,7 +1803,7 @@ Here the function `partition` takes a vector, two indices into the vector, and a
 It modifies the vector and returns an index, `pivot`, such that all elements of the vector below `pivot` are less than all elements at `pivot` or above.
 
 It is well known that quicksort takes time proportional to *n* log *n* to sort a vector of *n* elements, if the pivots are chosen well.
-With poor pivot choices, it can take time proportional to *n*2.
+With poor pivot choices, it can take time proportional to *n*<sup>2</sup>.
 
 The question is, what is the space required by quicksort?
 Besides the vector itself, how much additional storage must be temporarily allocated to sort a vector?
