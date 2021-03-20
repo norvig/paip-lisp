@@ -670,16 +670,16 @@ Let's go back to our familiar search tree:
 ![u18-05](images/chapter18/u18-05.jpg)
 
 Here we have marked certain positions with question marks.
-The idea is that the whole search tree evaluates to 10 regardless of the value of the positions labeled ?*i*.
-Consider the position labeled ?1.
+The idea is that the whole search tree evaluates to 10 regardless of the value of the positions labeled ?<sub>*i*</sub>.
+Consider the position labeled ?<sub>1</sub>.
 It does not matter what this position evaluates to, because the opponent will always choose to play toward the 10-position, to avoid the possibility of the 15.
 Thus, we can cut off the search at this point and not consider the ?-position.
 This kind of cutoff has historically been called a *beta* cutoff.
 
-Now consider the position labeled ?4.
+Now consider the position labeled ?<sub>4</sub>.
 It does not matter what this position evaluates to, because we will always prefer to choose the 10 position at the left branch, rather than giving the opponent a chance to play to the 9-position.
 This is an *alpha* cutoff.
-Notice that it cuts off a whole subtree of positions below it (labeled ?2 and ?3).
+Notice that it cuts off a whole subtree of positions below it (labeled ?<sub>2</sub> and ?<sub>3</sub>).
 
 In general, we keep track of two parameters that bound the true value of the current position.
 The lower bound is a value we know we can achieve by choosing a certain line of play.
@@ -691,7 +691,7 @@ Again, the idea is that we need not consider moves with a higher value than this
 The alpha-beta algorithm is just minimax, but with some needless evaluations pruned by these two parameters.
 
 In deeper trees with higher branching factors, many more evaluations can be pruned.
-In general, a tree of depth *d* and branching factor *b* requires *bd* evaluations for full minimax, and as few as *b**d*/2 evaluations with alpha-beta minimax.
+In general, a tree of depth *d* and branching factor *b* requires *b<sup>d</sup>* evaluations for full minimax, and as few as *b*<sup>*d*/2</sup> evaluations with alpha-beta minimax.
 
 To implement alpha-beta search, we add two more parameters to the function `minimax` and rename it `alpha-beta`.
 `achievable` is the best score the player can achieve; it is what we want to maximize.
@@ -1619,7 +1619,7 @@ The evaluation can be made more accurate by considering the X-squares to be part
 
 Even evaluating a single edge is a time-consuming task, so Bill and Iago compile away the evaluation by building a table of all possible edge positions.
 An "edge" according to Bill is ten squares: the eight actual edge squares and the two X-squares.
-Since each square can be black, white, or empty, there are 310 or 59,049 possible edge positions-a large but manageable number.
+Since each square can be black, white, or empty, there are 3<sup>10</sup> or 59,049 possible edge positions-a large but manageable number.
 
 The value of each edge position is determined by a process of successive approximation.
 Just as in a minimax search, we will need a static edge evaluation function to determine the value of a edge position without search.
@@ -2110,7 +2110,7 @@ The evaluation function is a linear combination of features, such as the number 
 Learning is done by a hill-climbing search procedure: change one of the coefficients for one of the features at random, and then see if the changed evaluation function is better than the original one.
 
 Without some guidance, this hill-climbing search would be very slow.
-First, the space is very large-Samuel used 38 different features, and although he restricted the coefficients to be a power of two between 0 and 20, that still leaves 2138 possible evaluation functions.
+First, the space is very large-Samuel used 38 different features, and although he restricted the coefficients to be a power of two between 0 and 20, that still leaves 21<sup>38</sup> possible evaluation functions.
 Second, the obvious way of determining the relative worth of two evaluation functions-playing a series of games between them and seeing which wins more often-is quite time-consuming.
 
 Fortunately, there is a faster way of evaluating an evaluation function.
@@ -2191,7 +2191,7 @@ It will also be helpful to read [Rosenbloom 1982](B9780080571157500285.xhtml#bb1
 **Answer 18.2** The `weighted-squares` strategy wins the first game by 20 pieces, but when `count-difference` plays first, it captures all the pieces on its fifth move.
 These two games alone are not enough to determine the best strategy; the function `othello-series` on [page 626](#p626) shows a better comparison.
 
-**Answer 18.3** 364  =  3, 433, 683, 820, 292, 512, 484, 657, 849, 089, 281.
+**Answer 18.3** 3<sup>64</sup> = 3,433,683,820,292,512,484,657,849,089,281.
 No.
 
 **Answer 18.4** Besides the constants, we provide a `deftype` for the type itself, and conversion routines between integers and symbols:

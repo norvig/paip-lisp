@@ -1091,8 +1091,9 @@ A third way to represent table is with *property lists.*
 A property list is a list of alternating key/value pairs.
 Property lists (sometimes called p-lists or plists) and association lists (sometimes called a-lists or alists) are similar:
 
-> `a-list:` ((*key*<sub>1</sub> . *val*<sub>1</sub>) (*key*<sub>2</sub> . *val*<sub>2</sub>) ... (*key*<sub>n</sub> . *val*<sub>n</sub>))  
-> `p-list: (`*key*<sub>1</sub> *val*<sub>1</sub> *key*<sub>2</sub> *val*<sub>2</sub> ... *key*<sub>n</sub> *val*<sub>n</sub>)
+`a-list: ((`*key*<sub>1</sub> . *val*<sub>1</sub>) (*key*<sub>2</sub> .
+*val*<sub>2</sub>) ... (*key<sub>n</sub> . val<sub>n</sub>*))
+`p-list: (`*key*<sub>1</sub> *val*<sub>1</sub> *key*<sub>2</sub> *val*<sub>2</sub> ... *key<sub>n</sub> val<sub>n</sub>*)
 
 Given this representation, there is little to choose between a-lists and p-lists.
 They are slightly different permutations of the same information.

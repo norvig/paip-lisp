@@ -241,7 +241,7 @@ For example, each patient has a name parameter.
 Presumably, the value of this parameter will be known exactly.
 On the other hand, each microscopic organism has an `identity` parameter that is normally not known at the start of the consultation.
 Applying the rules will lead to several possible values for this parameter, each with its own certainty factor.
-In general, then, the data base will have keys of the form (*parameter instance*) with values of the form ((*val*1*cf*1) (*val*2*cf*2)...).
+In general, then, the data base will have keys of the form (*parameter instance*) with values of the form ((*val*<sub>1</sub>*cf*<sub>1</sub>) (*val*<sub>2</sub>*cf*<sub>2</sub>)...).
 In the following code, `get-vals` returns the list of value/cf pairs for a given parameter and instance, `get-cf` returns the certainty factor for a parameter/instance/value triplet, and `update-cf` changes the certainty factor by combining the old one with a new one.
 Note that the first time `update-cf` is called on a given parameter/instance/value triplet, `get-cf` will return un known (zero).
 Combining that with the given `cf` yields `cf` itself.

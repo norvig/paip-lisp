@@ -1019,7 +1019,7 @@ The more modern view of a lexically scoped Lisp was documented in an influential
 His papers "Lambda: the ultimate goto" and "Compiler optimization based on viewing lambda as rename plus goto" describe properly tail-recursive interpreters and compilers.
 
 The Scheme dialect was invented by Gerald Sussman and Guy Steele around 1975 (see their MIT AI Memo 349).
-The *Revised*4*Report on the Algorithmic Language Scheme* ([Clinger et al.
+The *Revised*<sup>4</sup> *Report on the Algorithmic Language Scheme* ([Clinger et al.
 1991](B9780080571157500285.xhtml#bb0205)) is the definitive reference manual for the current version of Scheme.
 
 [Abelson and Sussman (1985)](B9780080571157500285.xhtml#bb0010) is probably the best introduction to computer science ever written.

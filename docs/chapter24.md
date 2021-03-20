@@ -986,7 +986,7 @@ Here's a version that generates less garbage:
 
 There are three problems with this definition.
 First, it wastes space: mapcar creates a new argument list each time, only to have the list be discarded.
-Second, it wastes time: doing a `setf` of the ith element of a list makes the algorithm *O*(*n2*) instead of *O*(*n*), where *n* is the length of the list.
+Second, it wastes time: doing a `setf` of the ith element of a list makes the algorithm *O*(*n<sup>2</sup>*) instead of *O*(*n*), where *n* is the length of the list.
 Third, it is subtly wrong: if `result-sequence` is a vector with a fill pointer, then `map-into` is supposed to ignore `result-sequence's` current length and extend the fill pointer as needed.
 The following version fixes those problems:
 
@@ -1059,7 +1059,7 @@ With these primitives, the body of `do-one-call` would be:
 There is a remaining inefficiency, though.
 Each sequence is type-checked each time through the loop, even though the type remains constant once it is determined the first time.
 Theoretically, we could code separate loops for each combination of types, just as we coded two loops depending on the type of the result sequence.
-But that would mean 2*n* loops for *n* sequences, and there is no limit on how large *n* can be.
+But that would mean 2*<sup>n</sup>* loops for *n* sequences, and there is no limit on how large *n* can be.
 
 It might be worth it to provide specialized functions for small values of *n*, and dispatch to the appropriate function.
 Here's a start at that approach:

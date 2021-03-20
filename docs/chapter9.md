@@ -328,8 +328,7 @@ The other is to analyze the *asymptotic complexity* of the algorithm.
 For the `fib` problem, an asymptotic analysis considers how long it takes to compute `(fib *n*)` as *n* approaches infinity.
 The notation *O*(*f*(*n*)) is used to describe the complexity.
 For example, the memoized version `fib` is an *O*(*n*) algorithm because the computation time is bounded by some constant times *n*, for any value of *n*.
-The unmemoized version, it turns out, is *O*(1.
-7*n*), meaning computing `fib` of n  +  1 can take up to 1.7 times as long as `fib` of *n*.
+The unmemoized version, it turns out, is *O*(1.7*<sup>n</sup>*), meaning computing `fib` of n + 1 can take up to 1.7 times as long as `fib` of *n*.
 In simpler terms, the memoized version has *linear* complexity, while the unmemoized version has *exponential* complexity.
 [Exercise 9.4](B9780080571157500091.xhtml#p4655) ([Page 308](B9780080571157500091.xhtml#p308)) describes where the 1.7 comes from, and gives a tighter bound on the complexity.
 
@@ -1770,9 +1769,9 @@ Make sure that the compiler is data-driven, so that the programmer who adds a ne
 One hard part will be accounting for segment variables.
 It is worth spending a considerable amount of effort at compile time to make this efficient at run time.
 
-**Exercise 9.4 [m]** Define the time to compute (fib n) without memoization as *Tn*.
-Write a formula to express *Tn*.
-Given that *T*25 &asymp; 1.1 seconds, predict *T*100.
+**Exercise 9.4 [m]** Define the time to compute (fib n) without memoization as *T<sub>n</sub>*.
+Write a formula to express *T<sub>n</sub>*.
+Given that *T*<sub>25</sub> &asymp; 1.1 seconds, predict *T*<sub>100</sub>.
 
 **Exercise 9.5 [m]** Consider a version of the game of Nim played as follows: there is a pile of *n* tokens.
 Two players alternate removing tokens from the pile; on each turn a player must take either one, two, or three tokens.
@@ -1857,15 +1856,15 @@ Is this worth it?
 
 ## 9.9 Answers
 
-**Answer 9.4** Let *Fn* denote (`fib n`).
-Then the time to compute *Fn*, *Tn*, is a small constant for *n* &le; 1, and is roughly equal to *Tn-1* plus *Tn-2* for larger *n*.
-Thus, *Tn* is roughly proportional to *Fn*:
+**Answer 9.4** Let *F<sub>n</sub>* denote (`fib n`).
+Then the time to compute *F<sub>n</sub>*, *T<sub>n</sub>*, is a small constant for *n* &le; 1, and is roughly equal to *T<sub>n-1</sub>* plus *T<sub>n-2</sub>* for larger *n*.
+Thus, *T<sub>n</sub>* is roughly proportional to *F<sub>n</sub>*:
 
 <img src="images/chapter9/si1_e.svg"
 onerror="this.src='images/chapter9/si1_e.png'; this.onerror=null;"
 alt="T_{n}=F_{n}\frac{T_{i}}{F_{i}}">
 
-We could use some small value of *Ti* to calculate *T*100 if we knew *F*100.
+We could use some small value of *T<sub>i</sub>* to calculate *T*<sub>100</sub> if we knew *F*<sub>100</sub>.
 Fortunately, we can use the equation:
 
 <img src="images/chapter9/si2_e.svg"
@@ -1879,7 +1878,7 @@ This equation was derived by de Moivre in 1718 (see Knuth, Donald E.
 Euclid called it the "extreme and mean ratio," because the ratio of *A* to *B* is the ratio of *A* + *B* to *A* if *A*/*B* is *&phi;*.
 In the Renaissance it was called the "divine proportion," and in the last century it has been known as the "golden ratio," because a rectangle with sides in this ratio can be divided into two smaller rectangles that both have the same ratio between sides.
 It is said to be a pleasing proportion when employed in paintings and architecture.
-Putting history aside, given *T*25 &asymp; 1.1 *sec* we can now calculate:
+Putting history aside, given *T*<sub>25</sub> &asymp; 1.1 *sec* we can now calculate:
 
 <img src="images/chapter9/si3_e.svg"
 onerror="this.src='images/chapter9/si3_e.png'; this.onerror=null;"

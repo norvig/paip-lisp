@@ -703,7 +703,7 @@ For example, consider the equation:
 
 To decide if this has one unknown, `one-unknown` will call `no-unknown` on the left-hand side, and since it fails, call it again on the right-hand side.
 Although there are only eight atoms to consider, it ends up calling `no-unknown 17` times and `one-unknown 4` times.
-In general, for a tree of depth *n*, approximately 2*n* calls to `no-unknown` are made.
+In general, for a tree of depth *n*, approximately 2<sup>*n*</sup> calls to `no-unknown` are made.
 This is clearly wasteful; there should be no need to look at each component more than once.
 
 The following version uses an auxiliary function, `find-one-unknown,` that has an accumulator parameter, `unknown.` This parameter can take on three possible values: nil, indicating that no unknown has been found; or the single unknown that has been found so far; or the number 2 indicating that two unknowns have been found and therefore the final result should be nil.

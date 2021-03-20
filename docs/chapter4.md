@@ -1399,7 +1399,7 @@ Often we want to characterize a state in terms of something more abstract than a
 For example, in solving a chess problem, the goal is to have the opponent in checkmate, a situation that cannot be economically described in terms of primitives like `(black king on A 4)`, so we need to be able to state some kind of constraint on the goal state, rather than just listing its components.
 We might want to be able to achieve a disjunction or negation of conditions, where the current formalism allows only a conjunction.
 
-It also is important, in many domains, to be able to state problems dealing with time: we want to achieve *X* before time *T*0, and then achieve *Y* before time *T*2, but not before *T*1.
+It also is important, in many domains, to be able to state problems dealing with time: we want to achieve *X* before time *T*<sub>0</sub>, and then achieve *Y* before time *T*<sub>2</sub>, but not before *T*<sub>1</sub>.
 Scheduling work on a factory floor or building a house are examples of planning where time plays an important role.
 
 Often there are costs associated with actions, and we want to find a solution with minimal, or near-minimal costs.

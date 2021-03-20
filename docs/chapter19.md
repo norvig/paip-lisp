@@ -1039,7 +1039,7 @@ You could also extend the grammar to accommodate an automatic timer, with phrase
                   (cons e (permute (remove e bag :count 1 :test #'eq))))))
 ```
 
-**Exercise  19.6 [m]** The definition of `permute` takes *O*(*n*2).
+**Exercise 19.6 [m]** The definition of `permute` takes *O*(*n*<sup>2</sup>).
 Replace it by an *O*(*n*) algorithm.
 
 ## 19.10 Answers
