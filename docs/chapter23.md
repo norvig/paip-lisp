@@ -1779,16 +1779,16 @@ What time and space complexity does it have?
 
 ```lisp
 (define (sort-vector vector test)
-      (define (sort lo hi)
-          (if (>= lo hi)
-                  vector
-                  (let ((pivot (partition vector lo hi)))
-                        (if (> (- hi pivot) (- pivot lo))
-                                  (begin (sort lo pivot)
-                                                      (sort (+ pivot 1) hi))
-                                  (begin (sort (+ pivot 1) hi)
-                                                      (sort lo pivot))))))
-      (sort 0 (- (vector-length vector 1))))
+   (define (sort lo hi)
+     (if (>= lo hi)
+         vector
+         (let ((pivot (partition vector lo hi)))
+            (if (> (- hi pivot) (- pivot lo))
+                 (begin (sort lo pivot)
+                           (sort (+ pivot 1) hi))
+                 (begin (sort (+ pivot 1) hi)
+                           (sort lo pivot))))))
+   (sort 0 (- (vector-length vector 1))))
 ```
 
 The next three exercises describe extensions that are not part of the Scheme standard.

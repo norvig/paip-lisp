@@ -773,7 +773,7 @@ Black is able to increase the piece difference dramatically as the game progress
 After 17 moves, white is down to only one piece:
 
 ```lisp
-     1 2 3 4 5 6 7 8    [@=20 0=1 (+19)]
+     1 2 3 4 5 6 7 8  [@=20 0=1 (+19)]
   10 0 @ . . . . . .
   20 . @ . . . @ @ .
   30 @ @ @ @ @ @ . .
@@ -788,7 +788,7 @@ Although behind by 19 points, white is actually in a good position, because the 
 White is able to maintain good position while being numerically far behind black, as shown in these positions later in the game:
 
 ```lisp
-     1 2 3 4 5 6 7 8    [@=32 0=15 (+17)]
+     1 2 3 4 5 6 7 8  [@=32 0=15 (+17)]
   10 0 0 0 0 @ @ 0 0
   20 @ @ 0 @ @ @ @ @
   30 @ @ 0 0 @ 0 @ @
@@ -800,7 +800,7 @@ White is able to maintain good position while being numerically far behind black
 ```
 
 ```
-     1 2 3 4 5 6 7 8    [@=34 0=19 (+15)]
+     1 2 3 4 5 6 7 8  [@=34 0=19 (+15)]
   10 0 0 0 0 @ @ 0 0
   20 @ @ 0 @ @ @ @ @
   30 @ @ 0 0 @ 0 @ @
@@ -814,7 +814,7 @@ White is able to maintain good position while being numerically far behind black
 After some give-and-take, white gains the advantage for good by capturing eight pieces on a move to square 85 on the third-to-last move of the game:
 
 ```lisp
-     1 2 3 4 5 6 7 8    [@=31 0=30 (+1)]
+     1 2 3 4 5 6 7 8  [@=31 0=30 (+1)]
   10 0 0 0 0 @ @ 0 0
   20 @ @ 0 0 @ @ @ 0
   30 @ @ 0 0 0 @ @ 0
@@ -822,13 +822,13 @@ After some give-and-take, white gains the advantage for good by capturing eight 
   50 0 @ 0 @ 0 @ @ 0
   60 0 @ 0 @ @ @ @ 0
   70 0 @ @ @ @ @ 0 0
-  80 0 @ @ @ . . .0
+  80 0 @ @ @ . . . 0
 
 0 moves to 85.
 ```
 
 ```
-     1 2 3 4 5 6 7 8    [@=23 0=39 (-16)]
+     1 2 3 4 5 6 7 8  [@=23 0=39 (-16)]
   10 0 0 0 0 @ @ 0 0
   20 @ @ 0 0 @ @ @ 0
   30 @ @ 0 0 0 @ @ 0
@@ -842,7 +842,7 @@ After some give-and-take, white gains the advantage for good by capturing eight 
 ```
 
 ```
-     1 2 3 4 5 6 7 8    [@=26 0=37 (-11)]
+     1 2 3 4 5 6 7 8  [@=26 0=37 (-11)]
   10 0 0 0 0 @ @ 0 0
   20 @ @ 0 0 @ @ @ 0
   30 @ @ 0 0 0 @ @ 0
@@ -885,7 +885,7 @@ The same things happen, although black's doom takes a bit longer to unfold.
 Black slowly builds up an advantage:
 
 ```lisp
-     1 2 3 4 5 6 7 8    [@=21 0=8 (+13)]
+     1 2 3 4 5 6 7 8  [@=21 0=8 (+13)]
   10 . . @ @ @ @ @ .
   20 . @ . @ 0 @ . .
   30 0 @ @ 0 @ 0 0 .
@@ -900,7 +900,7 @@ But at this point white has clear access to the upper left corner, and through t
 Still, black maintains a material edge as the game goes on:
 
 ```lisp
-     1 2 3 4 5 6 7 8    [@=34 0=11 (+23)]
+     1 2 3 4 5 6 7 8  [@=34 0=11 (+23)]
   10 0 . @ @ @ @ @ .
   20 . 0 0 @ @ @ . .
   30 0 @ 0 0 @ @ @ @
@@ -914,7 +914,7 @@ Still, black maintains a material edge as the game goes on:
 But eventually white's weighted-squares strategy takes the lead:
 
 ```lisp
-     1 2 3 4 5 6 7 8    [@=23 0=27 (-4)]
+     1 2 3 4 5 6 7 8  [@=23 0=27 (-4)]
   10 0 0 0 0 0 0 0 0
   20 @ @ 0 @ @ @ . .
   30 0 @ 0 0 @ @ @ @
@@ -928,7 +928,7 @@ But eventually white's weighted-squares strategy takes the lead:
 and is able to hold on to win:
 
 ```lisp
-     1 2 3 4 5 6 7 8    [@=24 0=40 (-16)]
+     1 2 3 4 5 6 7 8  [@=24 0=40 (-16)]
   10 0 0 0 0 0 0 0 0
   20 @ @ 0 @ 0 0 @ @
   30 0 @ 0 0 @ @ @ @
@@ -946,7 +946,7 @@ There are many problems with the weighted-squares evaluation function.
 Consider again this position from the first game above:
 
 ```lisp
-     1 2 3 4 5 6 7 8    [@=20 0=1 (+19)]
+     1 2 3 4 5 6 7 8  [@=20 0=1 (+19)]
   10 0 @ . . . . . .
   20 . @ . . . @ @ .
   30 @ @ @ @ @ @ . .
@@ -1310,11 +1310,11 @@ Here is a comparison of five strategies that search only 1 ply:
                 #'random-strategy)
     5 10
     '(count-difference mobility weighted modified-weighted random))
-COUNT-DIFFERENCE      12.5:   --- 3.0 2.5 0.0 7.0
-MOBILITY                      20.5:   7.0 --- 1.5 5.0 7.0
-WEIGHTED                      28.0:   7.5 8.5 --- 3.0 9.0
-MODIFIED-WEIGHTED    31.5: 10.0 5.0 7.0 --- 9.5
-RANDOM                            7.5:   3.0 3.0 1.0 0.5 ---
+COUNT-DIFFERENCE   12.5:  --- 3.0 2.5 0.0 7.0
+MOBILITY           20.5:  7.0 --- 1.5 5.0 7.0
+WEIGHTED           28.0:  7.5 8.5 --- 3.0 9.0
+MODIFIED-WEIGHTED  31.5: 10.0 5.0 7.0 --- 9.5
+RANDOM              7.5:  3.0 3.0 1.0 0.5 ---
 ```
 
 The parameter `n-pairs` is 5, meaning that each strategy plays five games as black and five as white against each of the other four strategies, for a total of 40 games for each strategy and 100 games overall.
@@ -1324,16 +1324,16 @@ Now we see what happens when the search depth is increased to 4 ply (this will t
 
 ```lisp
 > (round-robin
-    (list (alpha-beta-searcher 4 #'count-difference)
-                (alpha-beta-searcher 4 #'weighted-squares)
-                (alpha-beta-searcher 4 #'modified-weighted-squares)
-                #'random-strategy)
-    5 10
-    '(count-difference weighted modified-weighted random))
-COUNT-DIFFERENCE      12.0:   --- 2.0 0.0 10.0
-WEIGHTED                      23.5:   8.0 --- 5.5 10.0
-MODIFIED-WEIGHTED    24.5: 10.0 4.5 --- 10.0
-RANDOM                            0.0:   0.0 0.0 0.0   ---
+  (list (alpha-beta-searcher 4 #'count-difference)
+        (alpha-beta-searcher 4 #'weighted-squares)
+        (alpha-beta-searcher 4 #'modified-weighted-squares)
+        #'random-strategy)
+  5 10
+  '(count-difference weighted modified-weighted random))
+COUNT-DIFFERENCE   12.0:  --- 2.0 0.0 10.0
+WEIGHTED           23.5:  8.0 --- 5.5 10.0
+MODIFIED-WEIGHTED  24.5: 10.0 4.5 --- 10.0
+RANDOM              0.0:  0.0 0.0 0.0  ---
 ```
 
 Here the random strategy does not win any games-an indication that the other strategies are doing something right.

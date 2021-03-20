@@ -1009,10 +1009,10 @@ It's up to you to design the grammar, but you should allow input something like 
 
 ```lisp
 > (meaning '(play 1 to 5 from CD shuffled and
-                          record 1 to 5 from CD and 1 and 3 and 7 from 1))
+             record 1 to 5 from CD and 1 and 3 and 7 from 1))
 (PROGN (PLAY '(15 2 3 4) :FROM 'CD)
-              (RECORD '(12345) :FROM 'CD)
-              (RECORD '(1 3 7) :FROM '1))
+       (RECORD '(12345) :FROM 'CD)
+       (RECORD '(1 3 7) :FROM '1))
 ```
 
 This assumes that the functions play and record take keyword arguments (with defaults) for : `from` and : `to`.

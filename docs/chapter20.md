@@ -526,9 +526,9 @@ They must come from the determiners, "every" and "a." Also, it seems that `all` 
 So the determiners will have translations looking like this:
 
 ```lisp
-(rule (Det ?any ?x ?p ?q (the ?x (and ?p ?q)))     --> (:word the))
+(rule (Det ?any ?x ?p ?q (the ?x (and ?p ?q)))   --> (:word the))
 (rule (Det 3sg ?x ?p ?q (exists ?x (and ?p ?q))) --> (:word a))
-(rule (Det 3sg ?x ?p ?q (all ?x (-> ?p ?q)))         --> (:word every))
+(rule (Det 3sg ?x ?p ?q (all ?x (-> ?p ?q)))     --> (:word every))
 ```
 
 Once we have accepted these translations of the determiners, everything else follows.
@@ -643,23 +643,26 @@ With this grammar, we get the following correspondence between sentences and log
 ```lisp
 Every picture paints a story.
 (ALL ?3 (-> (PICTURE ?3)
-                     (EXISTS ?14 (AND (STORY ?14) (PAINT ?3 ?14)))))
+            (EXISTS ?14 (AND (STORY ?14) (PAINT ?3 ?14)))))
+
 Every boy that paints a picture sleeps.
 (ALL ?3 (-> (AND (AND (YOUNG ?3) (MALE ?3) (HUMAN ?3))
-                              (EXISTS ?19 (AND (PICTURE ?19)
-                                                            (PAINT ?3 ?19))))
-                  (SLEEP ?3)))
+                 (EXISTS ?19 (AND (PICTURE ?19)
+                                  (PAINT ?3 ?19))))
+            (SLEEP ?3)))
+
 Every boy that sleeps paints a picture.
 (ALL ?3 (-> (AND (AND (YOUNG ?3) (MALE ?3) (HUMAN ?3))
-                                (SLEEP ?3))
-                    (EXISTS ?22 (AND (PICTURE ?22) (PAINT ?3 ?22)))))
+                 (SLEEP ?3))
+            (EXISTS ?22 (AND (PICTURE ?22) (PAINT ?3 ?22)))))
+
 Every boy that paints a picture that sells
 paints a picture that stinks.
 (ALL ?3 (-> (AND (AND (YOUNG ?3) (MALE ?3) (HUMAN ?3))
-                              (EXISTS ?19 (AND (AND (PICTURE ?19) (SELLS ?19))
-                                                    (PAINT ?3 ?19))))
-                    (EXISTS ?39 (AND (AND (PICTURE ?39) (STINKS ?39))
-                                                  (PAINT ?3 ?39)))))
+                 (EXISTS ?19 (AND (AND (PICTURE ?19) (SELLS ?19))
+                                  (PAINT ?3 ?19))))
+            (EXISTS ?39 (AND (AND (PICTURE ?39) (STINKS ?39))
+                             (PAINT ?3 ?39)))))
 ```
 
 ## 20.5 Preserving Quantifier Scope Ambiguity

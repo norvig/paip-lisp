@@ -483,10 +483,10 @@ But I can turn to Lisp itself and ask:
 
 ```lisp
 > (apropos "push")
-PUSH                              Macro          (VALUE PLACE), plist
-PUSHNEW                        Macro          (VALUE PLACE &KEY ...), plist
-VECTOR-PUSH                function    (NEW-ELEMENT VECTOR), plist
-VECTOR-PUSH-EXTEND  function    (DATA VECTOR &OPTIONAL ...), plist
+PUSH               Macro     (VALUE PLACE), plist
+PUSHNEW            Macro     (VALUE PLACE &KEY ...), plist
+VECTOR-PUSH        function  (NEW-ELEMENT VECTOR), plist
+VECTOR-PUSH-EXTEND function  (DATA VECTOR &OPTIONAL ...), plist
 ```
 
 This should be enough to remind me that `vector-push` is the answer.
@@ -783,23 +783,23 @@ The code to access the value just retrieves `last - var`.
 It should be mentioned that `setf` methods are very useful and powerful things.
 It is often better to provide a `setf` method for an arbitrary function, `f`, than to define a special setting function, say, `set-f`.
 The advantage of the `setf` method is that it can be used in idioms like `incf` and `pop`, in addition to `setf` itself.
-Also, in ANSI Common Lisp, it is permissible to name a function with # ' (`setf f`), so you can also use map or apply the `setf` method.
+Also, in ANSI Common Lisp, it is permissible to name a function with `#'(setf f)`, so you can also use map or apply the `setf` method.
 Most `setf` methods are for functions that just access data, but it is permissible to define `setf` methods for functions that do any computation whatsoever.
 As a rather fanciful example, here is a `setf` method for the square-root function.
 It makes (`setf (sqrt x) 5`) be almost equivalent to (`setf x (* 5 5)`) ; the difference is that the first returns 5 while the second returns 25.
 
 ```lisp
 (define-setf-method sqrt (num)
-  (multiple-value-bind (temps vals stores store-form access-form)
-        (get-setf-method num)
-    (let ((store (gensym)))
-        (values temps
-                    vals
-                    (list store)
-                    '(let ((,(first stores) (* .store .store)))
-                        ,store-form
-                        ,store)
-                    '(sqrt .access-form)))))
+ (multiple-value-bind (temps vals stores store-form access-form)
+    (get-setf-method num)
+  (let ((store (gensym)))
+    (values temps
+          vals
+          (list store)
+          '(let ((,(first stores) (* .store .store)))
+            ,store-form
+            ,store)
+          '(sqrt .access-form)))))
 ```
 
 Turning from `setf` methods back to macros, another hard part about writing portable macros is anticipating what compilers might warn about.
