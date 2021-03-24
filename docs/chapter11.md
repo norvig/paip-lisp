@@ -874,7 +874,7 @@ Finally, the Lisp predicate `continue-p` asks the user if he or she wants to see
 This version works just as well as the previous version on finite problems.
 The only difference is that the user, not the system, types the semicolons.
 The advantage is that we can now use the system on infinite problems as well.
-First, we'll ask what lists 2 is a member of :
+First, we'll ask what lists 2 is a member of:
 
 ```lisp
 > (?- (member 2 ?list))
@@ -1459,7 +1459,7 @@ It is interesting to compare different implementations of the same algorithm.
 It turns out there are more similarities than differences.
 This indicates two things: (1) there is a generally agreed-upon style for writing these functions, and (2) good programmers sometimes take advantage of opportunities to look at other's code.
 
-The question is : Can you give an informal proof of the correctness of the algorithm presented in this chapter?
+The question is: Can you give an informal proof of the correctness of the algorithm presented in this chapter?
 Start by making a clear statement of the specification.
 Apply that to the other algorithms, and show where they go wrong.
 Then see if you can prove that the `unify` function in this chapter is correct.

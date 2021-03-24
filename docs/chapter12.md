@@ -1797,7 +1797,7 @@ The macro for `or` is trickier:
                 bindings)))))))))
 ```
 
-**Answer 12.11**`true/0` is `funcall` : when a goal succeeds, we call the continuation, `fail/0` is `ignore`: when a goal fails, we ignore the continuation.
+**Answer 12.11** `true/0` is `funcall`: when a goal succeeds, we call the continuation, `fail/0` is `ignore`: when a goal fails, we ignore the continuation.
 We could also define compiler macros for these primitives:
 
 ```lisp

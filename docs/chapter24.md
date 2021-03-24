@@ -628,7 +628,7 @@ The implementation is:
 (defloop minimizing minimize)
 ```
 
-**Exercise  24.1**`loop` lets us build aggregates (lists, maximums, sums, etc.) over the body of the loop.
+**Exercise  24.1** `loop` lets us build aggregates (lists, maximums, sums, etc.) over the body of the loop.
 Sometimes it is inconvenient to be restricted to a single-loop body.
 For example, we might want a list of all the nonzero elements of a two-dimensional array.
 One way to implement this is with a macro, `with-collection`, that sets up and returns a queue structure that is built by calls to the function `collect`.
@@ -1223,9 +1223,9 @@ Therefore, this is the approach I adopt.
 
 ## 24.7 Exercises
 
-**Exercise  24.2 [m]** The function reduce is a very useful one, especially with the key keyword.
-Write nonrecursive definitions for append and 1 ength using reduce.
-What other common functions can be written with reduce?
+**Exercise  24.2 [m]** The function `reduce` is a very useful one, especially with the `key` keyword.
+Write nonrecursive definitions for `append` and `length` using `reduce`.
+What other common functions can be written with `reduce`?
 
 **Exercise  24.3** The so-called loop keywords are not symbols in the keyword package.
 The preceding code assumes they are all in the current package, but this is not quite right.

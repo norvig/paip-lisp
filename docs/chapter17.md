@@ -232,7 +232,7 @@ But since there are a finite number of labelings initially (no more than six per
 The function `consistent-labelings` is passed a vertex.
 It gets all the labels for this vertex from the neighboring vertexes, collecting them in `neighbor-labels`.
 It then checks all the labels on the current vertex, keeping only the ones that are consistent with all the neighbors' constraints.
-The auxiliary function `labels-for` finds the labels for a particular neighbor at a vertex, and reverse-1 abel accounts for the fact that L and R labels are interpreted with respect to the vertex they point at.
+The auxiliary function `labels-for` finds the labels for a particular neighbor at a vertex, and `reverse-label` accounts for the fact that L and R labels are interpreted with respect to the vertex they point at.
 
 ```lisp
 (defun consistent-labelings (vertex)
@@ -389,7 +389,7 @@ Here again is the `defdiagram` description for the cube shown in [figure 17.6](#
 
 The macro `defdiagram` calls `construct-diagram` to do the real work.
 It would be feasible to have `defdiagram` expand into a `defvar,` making the names be special variables.
-But then it would be the user`'s` responsibility to make copies of such a variable before passing it to a destructive function.
+But then it would be the user's responsibility to make copies of such a variable before passing it to a destructive function.
 Instead, I use `put-diagram` and `diagram` to put and get diagrams in a table, `diagram` retrieves the named diagram and makes a copy of it.
 Thus, the user cannot corrupt the original diagrams stored in the table.
 Another possibility would be to have `defdiagram` expand into a function definition for `name` that returns a copy of the diagram.

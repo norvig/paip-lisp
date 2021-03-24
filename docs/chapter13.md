@@ -538,12 +538,13 @@ It could be defined as follows using a new feature of CLOS, `:before` and `:afte
   (audit-trail acct)))
 ```
 
-Now a call to `withdraw` with a `audited-account` as the first argument yields three applicable methods: the primary method from `account` and the :`before` and :`after` methods.
+Now a call to `withdraw` with a `audited-account` as the first argument yields three applicable methods: the primary method from `account` and the `:before` and `:after` methods.
 In general, there might be several of each kind of method.
-In that case, all the :`before` methods are called in order, most specific first.
+In that case, all the `:before` methods are called in order, most specific first.
 Then the most specific primary method is called.
-It may choose to invoke `cal1-next-method` to get at the other methods.
-(It is an error for a :`before` or :`after` method to use `call-next-method.)` Finally, all the :`after` methods are called, least specific first.
+It may choose to invoke `call-next-method` to get at the other methods.
+(It is an error for a `:before` or `:after` method to use `call-next-method.)`
+Finally, all the `:after` methods are called, least specific first.
 
 The values from the `:before` and `:after` methods are ignored, and the value from the primary method is returned.
 Here is an example:
@@ -950,7 +951,7 @@ These mix-in flavors were used only to define other flavors.
 Just as you couldn't go into Steve's and order "crushed Heath bars, hold the ice cream," there was a mechanism to prohibit instantiation of mix-ins.
 
 A complicated repetoire of *method combinations* was developed.
-The default method combination on Flavors was similar to CLOS: first do all the :`before` methods, then the most specific primary method, then the `:after` methods.
+The default method combination on Flavors was similar to CLOS: first do all the `:before` methods, then the most specific primary method, then the `:after` methods.
 But it was possible to combine methods in other ways as well.
 For example, consider the `inside-width` method, which returns the width in pixels of the usuable portion of a window.
 A programmer could specify that the combined method for `inside-width` was to be computed by calling all applicable methods and summing them.

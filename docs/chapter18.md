@@ -2258,7 +2258,7 @@ Here's how the macro would be used to define the piece data type, and the code p
 ```
 
 A more general facility would, like `defstruct`, provide for several options.
-For example, it might allow for a documentation string for the type and each constant, and for a : `conc-name`, so the constants could have names like `piece-empty` instead of `empty`.
+For example, it might allow for a documentation string for the type and each constant, and for a `:conc-name`, so the constants could have names like `piece-empty` instead of `empty`.
 This would avoid conflicts with other types that wanted to use the same names.
 The user might also want the ability to start the values at some number other than zero, or to assign specific values to some of the symbols.
 

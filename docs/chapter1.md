@@ -1203,7 +1203,7 @@ This list of symbols is not a legal Lisp assignment statement, but it is a Lisp 
 
 <a id="fn01-2"></a><sup>[2](#tfn01-2)</sup>
 The variable `*print-case*` controls how symbols will be printed.
-By default, the value of this variable is :`upcase`, but it can be changed to :`downcase` or `:capitalize`.
+By default, the value of this variable is `:upcase`, but it can be changed to `:downcase` or `:capitalize`.
 
 <a id="fn01-3"></a><sup>[3](#tfn01-3)</sup>
 Later we will see what happens when the second argument is not a list.

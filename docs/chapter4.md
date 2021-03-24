@@ -511,7 +511,7 @@ The function `dbg` provides this capability.
 `dbg` prints output in the same way as `format`, but it will only print when debugging output is desired.
 Each call to `dbg` is accompanied by an identifier that is used to specify a class of debugging messages.
 The functions `debug` and `undebug` are used to add or remove message classes to the list of classes that should be printed.
-In this chapter, all the debugging output will use the identifier :`gps`.
+In this chapter, all the debugging output will use the identifier `:gps`.
 Other programs will use other identifiers, and a complex program will use many identifiers.
 
 A call to `dbg` will result in output if the first argument to `dbg`, the identifier, is one that was specified in a call to `debug`.
@@ -521,7 +521,7 @@ In other words, we will write functions that include calls to `dbg` like:
 ```lisp
 (dbg :gps "The current goal is: ~a" goal)
 ```
-If we have turned on debugging with `(debug :gps)`, then calls to dbg with the identifier :`gps` will print output.
+If we have turned on debugging with `(debug :gps)`, then calls to `dbg` with the identifier `:gps` will print output.
 The output is turned off with `(undebug :gps)`.
 `debug` and `undebug` are designed to be similar to `trace` and `untrace`, in that they turn diagnostic output on and off.
 They also follow the convention that `debug` with no arguments returns the current list of identifiers, and that `undebug` with no arguments turns all debugging off.

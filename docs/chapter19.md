@@ -115,7 +115,7 @@ Compare this to the treatment on [page 40](B9780080571157500029.xhtml#p40).
 
 Now we're ready to define the parser.
 The main function parser takes a list of words to parse.
-It calls parse, which returns a list of all parses that parse some subsequence of the words, starting at the beginning.
+It calls `parse`, which returns a list of all parses that parse some subsequence of the words, starting at the beginning.
 parser keeps only the parses with no remainder-that is, the parses that span all the words.
 
 ```lisp
@@ -131,7 +131,8 @@ parser keeps only the parses with no remainder-that is, the parses that span all
 The function parse looks at the first word and considers each category it could be.
 It makes a parse of the first word under each category, and calls extend - parse to try to continue to a complete parse.
 parse uses mapcan to append together all the resulting parses.
-As an example, suppose we are trying to parse "the man took the ball." pa rse would find the single lexical rule for "the" and call extend-parse with a parse with tree (Art the) and remainder "man took the ball," with no more categories needed.
+As an example, suppose we are trying to parse "the man took the ball."
+`parse` would find the single lexical rule for "the" and call extend-parse with a parse with tree (Art the) and remainder "man took the ball," with no more categories needed.
 
 `extend-parse` has two cases.
 If the partial parse needs no more categories to be complete, then it returns the parse itself, along with any parses that can be formed by extending parses starting with the partial parse.
@@ -288,7 +289,7 @@ Evaluation of (LENGTH (PARSER S)) took 33.11 Seconds of elapsed time.
 The sentence S has 10 parses, since there are two ways to parse the subject NP and five ways to parse the VP.
 It took 33 seconds to discover these 10 parses with the parse function as it was written.
 
-We can improve this dramatically by memoizing parse (along with the table- lookup functions).
+We can improve this dramatically by memoizing `parse` (along with the table-lookup functions).
 Besides memoizing, the only change is to clear the memoization table within parser.
 
 ```lisp
@@ -317,7 +318,7 @@ The function use is introduced to tell the table-lookup functions that they are 
   (length (setf *grammar* grammar)))
 ```
 
-Now we run the benchmark again with the memoized version of pa rse:
+Now we run the benchmark again with the memoized version of `parse`:
 
 ```lisp
 > (time (length (parser s)))
@@ -365,7 +366,7 @@ This can be programmed very simply by having `lexical-rules` return a list of th
       (mapcar #'(lambda (cat) `(,cat -> ,word)) *open-categories*)))
 ```
 
-With memoization of lexical - rules, this means that the lexicon is expanded every time an unknown word is encountered.
+With memoization of `lexical-rules`, this means that the lexicon is expanded every time an unknown word is encountered.
 Let's try this out:
 
 ```lisp
@@ -419,7 +420,7 @@ Now let's stretch the imagination one more time by assuming that this CD player 
 Let's first consider the relevant data structures.
 We need to add a component for the semantics to both the rule and tree structures.
 Once we've done that, it is clear that trees are nothing more than instances of rules, so their definitions should reflect that.
-Thus, I use an : incl ude defstruct to define trees, and I specify no copier function, because copy-tree is already a Common Lisp function, and I don't want to redefine it.
+Thus, I use an `:include` defstruct to define trees, and I specify no copier function, because copy-tree is already a Common Lisp function, and I don't want to redefine it.
 To maintain consistency with the old new-tree function (and to avoid having to put in all those keywords) I define the constructor new-tree.
 This option to `defstruct makes (new-tree a b c)` equivalent to `(make-tree :lhs a :sem b :rhs c)`.
 
@@ -431,7 +432,7 @@ This option to `defstruct makes (new-tree a b c)` equivalent to `(make-tree :lhs
 ```
 
 We will adopt the convention that the semantics of a word can be any Lisp object.
-For example, the semantics of the word "1" could be the object 1, and the semantics of "without" could be the function set-di fference.
+For example, the semantics of the word "1" could be the object 1, and the semantics of "without" could be the function `set-difference`.
 The semantics of a tree is formed by taking the semantics of the rule that generated the tree and applying it (as a function) to the semantics of the constituents of the tree.
 Thus, the grammar writer must insure that the semantic component of rules are functions that expect the right number of arguments.
 For example, given the rule
@@ -440,9 +441,9 @@ For example, given the rule
 (NP -> (NP CONJ NP) infix-funcall)
 ```
 
-then the semantics of the phrase "1 to 5 without 3" could be determined by first determining the semantics of"1 to 5" tobe(l 2 3 4 5),of"without"tobe set-`difference`, and of "3" to be (3).
-After these sub-constituents are determined, the rule is applied by calling the function `infix-funcall` with the three arguments (1 2 3 4 5), `set-difference`, and (3).
-Assuming that `infix-funcall` is defined to apply its second argument to the other two arguments, the result will be (1 2 4 5).
+then the semantics of the phrase "1 to 5 without 3" could be determined by first determining the semantics of "1 to 5" to be `(1 2 3 4 5)`, of "without" to be `set-difference`, and of "3" to be `(3)`.
+After these sub-constituents are determined, the rule is applied by calling the function `infix-funcall` with the three arguments `(1 2 3 4 5)`, `set-difference`, and `(3)`.
+Assuming that `infix-funcall` is defined to apply its second argument to the other two arguments, the result will be `(1 2 4 5)`.
 
 This may make more sense if we look at a complete grammar for the CD player problem:
 
@@ -478,10 +479,10 @@ As for the lexical rules, the conjunction "and" translates to the union function
 The numbers "0" to "9" translate to themselves.
 Note that both lexical rules like "`CONJ ->` and" and nonlexical rules like "`NP -> (N P N)`" can have functions as their semantic translations; in the first case, the function will just be returned as the semantic translation, whereas in the second case the function will be applied to the list of constituents.
 
-Only minor changes are needed to pa rse to support this kind of semantic processing.
-As we see in the following, we add a sem argument to extend - parse and arrange to pass the semantic components around properly.
+Only minor changes are needed to `parse` to support this kind of semantic processing.
+As we see in the following, we add a `sem` argument to `extend-parse` and arrange to pass the semantic components around properly.
 When we have gathered all the right-hand-side components, we actually do the function application.
-All changes are marked with ***.
+All changes are marked with `***`.
 We adopt the convention that the semantic value `nil` indicates failure, and we discard all such parses.
 
 ```lisp
@@ -595,12 +596,16 @@ With this new grammar, we can get single interpretations out of most reasonable 
 ```lisp
 > (meanings '(1 to 6 without 3 and 4))
 ((1 2 5 6))
+
 > (meanings '(1 and 3 to 7 and 9 without 5 and 6))
-((13 4 7 9))
+((1 3 4 7 9))
+
 > (meanings '(1 and 3 to 7 and 9 without 5 and 2))
 ((1 3 4 6 7 9 2))
+
 > (meanings '(1 9 8 to 2 0 1))
 ((198 199 200 201))
+
 > (meanings '(1 2 3))
 (123 (123))
 ```
@@ -686,7 +691,7 @@ There are two places where we put the score into trees as we create them, and on
 ```
 
 Again we need some new functions to support this.
-Most important is appl y - scorer, which computes the score for a tree.
+Most important is `apply-scorer`, which computes the score for a tree.
 If the tree is a terminal (a word), then the function just looks up the score associated with that word.
 In this grammar all words have a score of 0, but in a grammar with ambiguous words it would be a good idea to give lower scores for infrequently used senses of ambiguous words.
 If the tree is a nonterminal, then the score is computed in two steps.
@@ -891,7 +896,7 @@ It turns out that, in each case, all the interpretations with positive scores re
 Seeing all the scores in gory detail may be of academic interest, but what we really want is something to pick out the best interpretation.
 The following code is appropriate for many situations.
 It picks the top scorer, if there is a unique one, or queries the user if several interpretations tie for the best score, and it complains if there are no valid parses at all.
-The query-user function may be useful in many applications, but note that meani ng uses it only as a default; a program that had some automatic way of deciding could supply another `tie-breaker` function to meani ng.
+The query-user function may be useful in many applications, but note that `meaning` uses it only as a default; a program that had some automatic way of deciding could supply another `tie-breaker` function to `meaning`.
 
 ```lisp
 (defun meaning (words &optional (tie-breaker #'query-user))
@@ -1015,10 +1020,10 @@ It's up to you to design the grammar, but you should allow input something like 
        (RECORD '(1 3 7) :FROM '1))
 ```
 
-This assumes that the functions play and record take keyword arguments (with defaults) for : `from` and : `to`.
+This assumes that the functions `play` and `record` take keyword arguments (with defaults) for `:from` and `:to`.
 You could also extend the grammar to accommodate an automatic timer, with phrases like "at 3:00."
 
-**Exercise  19.5 [m]** In the definition of `permute`, repeated here, why is the :`test # ' eq needed?`
+**Exercise  19.5 [m]** In the definition of `permute`, repeated here, why is the `:test #'eq` needed?
 
 ```lisp
 (defun permute (bag)
@@ -1121,10 +1126,10 @@ Note that I was careful to exclude such rules in my grammars earlier.
 ```
 
 **Answer 19.5** If it were omitted, then `:test` would default to `#'eql`, and it would be possible to remove the "wrong" element from the list.
-Consider the list (1.0 1.0) in an implementation where floating-point numbers are `eql` but not `eq`.
-if `random-elt` chooses the first 1.0 first, then everything is satisfactory-the result list is the same as the input list.
-However, if `random-elt` chooses the second 1.0, then the second 1.0 will be the first element of the answer, but `remove` will remove the wrong 1.0!
-It will remove the first 1.0, and the final answer will be a list with two pointers to the second 1.0 and none to the first.
+Consider the list `(1.0 1.0)` in an implementation where floating-point numbers are `eql` but not `eq`.
+if `random-elt` chooses the first `1.0` first, then everything is satisfactory - the result list is the same as the input list.
+However, if `random-elt` chooses the second `1.0`, then the second `1.0` will be the first element of the answer, but `remove` will remove the wrong `1.0`!
+It will remove the first `1.0`, and the final answer will be a list with two pointers to the second `1.0` and none to the first.
 In other words, we could have:
 
 ```lisp

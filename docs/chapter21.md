@@ -510,7 +510,7 @@ The *** indicates no mapping:
 (<- (slot-constituent (?role ?n (P ?particle)) *** ? ?))
 ```
 
-We are now ready to define compi ement.
+We are now ready to define `complement`.
 It takes a slot description, maps it into a constituent, and then calls `XP` to parse that constituent:
 
 ```lisp
@@ -712,7 +712,7 @@ The implementation of these tools is left for the next section; here we show the
 
 The first set of abbreviations defines the agreement features.
 The obvious way to handle agreement is with two features, one for person and one for number.
-So first-person singular might be represented (1 `sing`).
+So first-person singular might be represented `(1 sing)`.
 A problem arises when we want to describe verbs.
 Every verb except "be" makes the distinction only between third- person singular and all the others.
 We don't want to make five separate entries in the lexicon to represent all the others.
@@ -1281,7 +1281,7 @@ This option is only available for categories that are listed in the definition:
 
 ## 21.13 Other Primitives
 
-To support the : `test` predicates made in various grammar rules we need definitions of the Prolog predicates `if, member, =, numberp`, and `atom`.
+To support the `:test` predicates made in various grammar rules we need definitions of the Prolog predicates `if, member, =, numberp`, and `atom`.
 They are repeated here:
 
 ```lisp

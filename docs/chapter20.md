@@ -262,8 +262,8 @@ Here's the `rule` macro:
   (funcall (get arrow 'rule-function) head body))
 ```
 
-As an example of a rule function, the arrow : - will be used to represent normal Prolog clauses.
-That is, the form (`rule`*head : - body*) will be equivalent to (<- *head body).*
+As an example of a rule function, the arrow `:-` will be used to represent normal Prolog clauses.
+That is, the form (`rule` *head :- body*) will be equivalent to `(<-` *head body).*
 
 ```lisp
 (setf (get ':- 'rule-function)
@@ -347,7 +347,7 @@ The function `make-dcg` inserts variables to keep track of the strings that are 
                (make-dcg-body (rest body) (+ n 1))))))))
 ```
 
-**Exercise  20.1 [m]**`make-dcg` violates one of the cardinal rules of macros.
+**Exercise  20.1 [m]** `make-dcg` violates one of the cardinal rules of macros.
 What does it do wrong?
 How would you fix it?
 

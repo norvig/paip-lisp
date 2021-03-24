@@ -35,14 +35,14 @@ Lexical variables can be used to implement package-like structures.
 
 9.  Scheme has no special forms for looping; instead it asks the user to use recursion and promises to implement the recursion efficiently.
 
-The five main special forms in Scheme are `quote` and `if`, which are just as in Common Lisp; `begin` and `set!`, which are just different spellings for `progn` and `setq`; and `lambda`, which is as in Common Lisp, except that it doesn't require a # 'before it.
+The five main special forms in Scheme are `quote` and `if`, which are just as in Common Lisp; `begin` and `set!`, which are just different spellings for `progn` and `setq`; and `lambda`, which is as in Common Lisp, except that it doesn't require a `#'` before it.
 In addition, Scheme allows variables, constants (numbers, strings, and characters), and function calls.
 The function call is different because the function itself is evaluated in the same way as the arguments.
 In Common Lisp, (`f x`) means to look up the function binding of `f` and apply that to the value of `x`.
 In Scheme, `(f x)` means to evaluate `f` (in this case by looking up the value of the variable `f` ), evaluate `x` (by looking up the value of the variable in exactly the same way) and then apply the function to the argument.
 Any expression can be in the function position, and it is evaluated just like the arguments.
 Another difference is that Scheme uses `#t` and `#f` for true and false, instead of `t` and `nil`.
-The empty list is denoted by `()`, and it is distinct from the false value, #f.
+The empty list is denoted by `()`, and it is distinct from the false value, `#f`.
 There are also minor lexical differences in the conventions for complex numbers and numbers in different bases, but these can be ignored for all the programs in this book.
 Also, in Scheme a single macro, `define`, serves to define both variables and functions.
 
@@ -577,7 +577,7 @@ The following is a properly tail-recursive interpreter.
 The macro `prog` sets up a `tagbody` within which we can use `go` statements to branch to labels, and it also sets up a `block` from which we can return a value.
 It can also bind variables like `let`, although in this usage, the variable list is empty.
 Any symbol within the body of a `prog` is considered a label.
-In this case, the label : `INTERP` is the target of the branch statements `(GO : INTERP)`.
+In this case, the label `:INTERP` is the target of the branch statements `(GO :INTERP)`.
 I use uppercase to indicate that go-to statements are being used, but this convention has not been widely adopted.
 
 ```lisp
@@ -999,9 +999,8 @@ Once the working of `call/cc` is understood, the implementation is obvious:
 ## 22.6 History and References
 
 Lisp interpreters and AI have a long history together.
-MIT AI Lab Memo No.
-1 ([McCarthy 1958](B9780080571157500285.xhtml#bb0790)) was the first paper on Lisp.
-McCarthy's students were working on a Lisp compiler, had written certain routines-`read`, `print`, etc.-`in` assembly language, and were trying to develop a full Lisp interpreter in assembler.
+MIT AI Lab Memo No. 1 ([McCarthy 1958](B9780080571157500285.xhtml#bb0790)) was the first paper on Lisp.
+McCarthy's students were working on a Lisp compiler, had written certain routines-`read`, `print`, etc. - in assembly language, and were trying to develop a full Lisp interpreter in assembler.
 Sometime around the end of 1958, McCarthy wrote a theoretical paper showing that Lisp was powerful enough to write the universal function, `eval`.
 A programmer on the project, Steve Russell, saw the paper, and, according to McCarthy:
 
@@ -1109,10 +1108,10 @@ The above definition is equivalent to:
 
 Make changes to the interpreter to allow this kind of internal definition.
 
-**Exercise  22.10** Scheme programmers are often disdainful of the `function` or `#`' notation in Common Lisp.
-Is it possible (without changing the compiler) to make Common Lisp accept `(lambda ( ) ... )` instead of `#` ' `(lambda ( ) ... )` and `fn` instead of `#`'`fn?`
+**Exercise 22.10** Scheme programmers are often disdainful of the `function` or `#'` notation in Common Lisp.
+Is it possible (without changing the compiler) to make Common Lisp accept `(lambda ( ) ... )` instead of `#'(lambda () ... )` and `fn` instead of `#'fn`?
 
-**Exercise  22.11 [m]** The top level of the continuation-passing version of `scheme` includes the call: `(interp (read)``nil` #'`print)`.
+**Exercise 22.11 [m]** The top level of the continuation-passing version of `scheme` includes the call: `(interp (read) nil #'print)`.
 Will this always result in some value being printed?
 Or is it possible that the expression read might call some escape function that ignores the value without printing anything?
 
@@ -1138,7 +1137,7 @@ Explain how this would be done both for the first version of the interpreter and
 **Answer 22.3** No.
 `fail` requires continuations with dynamic extent.
 
-**Answer 22.5** We need only modify `extend` - `env` to know about an atomic `vars` list.
+**Answer 22.5** We need only modify `extend-env` to know about an atomic `vars` list.
 While we're at it, we might as well add some error checking:
 
 ```lisp
