@@ -154,7 +154,7 @@ One needs to use `#'local-fn` to refer to it.
   (mapcar 'local-fn list))
 ```
 
-**Diagnosis:** If you changed the name of a function, did you change the name every-where?
+**Diagnosis:** If you changed the name of a function, did you change the name everywhere?
 For example, if you decide to change the name of `print-fn` to `print-function` but forget to change the value of `*printer*`, then the old function will be called.
 
 **Remedy:** Use your editor's global replace command.
@@ -1223,8 +1223,8 @@ The programmer must be careful not to use such extensions in portable code.
 
 ## 25.18 Exercises
 
-**Exercise  251 [h]** On your next programming project, keep a log of each bug you detect and its eventual cause and remedy.
-Classify each one according to the taxon-omy given in this chapter.
+**Exercise 25.1 [h]** On your next programming project, keep a log of each bug you detect and its eventual cause and remedy.
+Classify each one according to the taxonomy given in this chapter.
 What kind of mistakes do you make most often?
 How could you correct that?
 

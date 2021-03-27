@@ -956,7 +956,7 @@ But it was possible to combine methods in other ways as well.
 For example, consider the `inside-width` method, which returns the width in pixels of the usuable portion of a window.
 A programmer could specify that the combined method for `inside-width` was to be computed by calling all applicable methods and summing them.
 Then an `inside-width` method for the `basic-window` flavor would be defined to return the width of the full window, and each mix-in would have a simple method to say how much of the width it consumed.
-For example, if borders are 8 pixels wide and scroll bars are 12 pixels wide, then the `inside-width` method for `border-mixin` returns `-8` and `scroll-bar-mixin` returns `-  12`.
+For example, if borders are 8 pixels wide and scroll bars are 12 pixels wide, then the `inside-width` method for `border-mixin` returns `-8` and `scroll-bar-mixin` returns `-12`.
 Then any window, no matter how many mix-ins it is composed of, automatically computes the proper inside width.
 
 In 1981, Symbolics came out with a more efficient implementation of Flavors.

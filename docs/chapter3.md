@@ -1218,7 +1218,7 @@ There are quite a few other numeric functions that have been omitted.
 | `(> 100 99)`   | => `t`   | greater than (also `>=`, greater than or equal to)             |
 | `(= 100 100)`  | => `t`   | equal (also `/=`, not equal)                                   |
 | `(< 99 100)`   | => `t`   | less than (also `<=`, less than or equal to)                   |
-| `(random 100)` | `=> 42`  | random integer from 0 to 99                                    |
+| `(random 100)` | => `42`  | random integer from 0 to 99                                    |
 | `(expt 4 2)`   | => `16`  | exponentiation (also exp, *e<sup>x</sup>* and `log`)           |
 | `(sin pi)`     | => `0.0` | sine function (also `cos`, `tan,` etc.)                        |
 | `(asin 0)`     | => `0.0` | arcsine or sin<sup>-1</sup> function (also `acos, atan`, etc.) |
@@ -1226,7 +1226,7 @@ There are quite a few other numeric functions that have been omitted.
 | `(abs -3)`     | => `3`   | absolute value                                                 |
 | `(sqrt 4)`     | => `2`   | square root                                                    |
 | `(round 4.1)`  | => `4`   | round off (also `truncate, floor, ceiling`)                    |
-| `(rem 11 5)`   | => 1     | remainder (also `mod`)                                         |
+| `(rem 11 5)`   | => `1`   | remainder (also `mod`)                                         |
 
 ## 3.9 Functions on Sets
 

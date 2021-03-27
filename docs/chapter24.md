@@ -19,7 +19,7 @@ Common Lisp uses the package system to help resolve such conflicts.
 Instead of a single symbol table, Common Lisp allows any number of packages.
 The function `read` always uses the current package, which is defined to be the value of the special variable `*package*`.
 By default, Lisp starts out in the `common-lisp-user` package.<a id="tfn24-1"></a><sup>[1](#fn24-1)</sup>
-That means that if we type a new symbol, like `zxv!!!(char) ®!?+qw`, it will be entered into that package.
+That means that if we type a new symbol, like `zxv@!?+qw`, it will be entered into that package.
 Converting a string to a symbol and placing it in a package is called *interning.* It is done automatically by `read`, and can be done by the function `intern` if necessary.
 Name conflicts arise when there is contention for names within the `common-lisp-user` package.
 
@@ -58,8 +58,8 @@ Second, the user can make `emycin` be the current package with `(in-package "EMY
 Third, if we only need part of the functionality of a system, we can import specific symbols into the current package.
 For example, we could call `(import ' emycin:defrule)`.
 From then on, typing `defrule` (in the current package) will refer to `emycin:defrule`.
-Fourth, if we want the full functionality of the system, wecall `(use-package "EMYCIN")`.
-This makes ail the external symbols ofthe `emycin` package accessible in the current package.
+Fourth, if we want the full functionality of the system, we call `(use-package "EMYCIN")`.
+This makes all the external symbols of the `emycin` package accessible in the current package.
 
 While packages help eliminate name conflicts, `import` and `use-package` allow them to reappear.
 The advantage is that there will only be conflicts between external symbols.
@@ -821,7 +821,7 @@ and have the generated code be just what we want:
   (* G3811 G3811))
 ```
 
-You have now learned lesson number one of `once-only` : you know how macros differ from functions when it comes to arguments with side effects, and you now know how to handle this.
+You have now learned lesson number one of `once-only`: you know how macros differ from functions when it comes to arguments with side effects, and you now know how to handle this.
 Lesson number two comes when you try to write (or even understand) a definition of `once-only`-only when you truly understand the nature of macros will you be able to write a correct version.
 As always, the first thing to determine is what a call to `once-only` should expand into.
 The generated code should test the variable to see if it is free of side effects, and if so, generate the body as is; otherwise it should generate code to bind a new variable, and use that variable in the body of the code.

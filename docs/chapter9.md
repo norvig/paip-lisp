@@ -233,7 +233,7 @@ First, a call to (`fib 5`) with `fib` traced:
 8
 ```
 
-We see that (`fib 5`) and (`fib 4`) are each computed once, but (`fib 3`) is computed twice, (`fib 2`) three times,and (`fib 1`) five times.
+We see that (`fib 5`) and (`fib 4`) are each computed once, but (`fib 3`) is computed twice, (`fib 2`) three times, and (`fib 1`) five times.
 Below we call (`memoize 'fib`) and repeat the calculation.
 This time, each computation is done only once.
 Furthermore, when the computation of (`fib 5`) is repeated, the answer is returned immediately with no intermediate computation, and a further call to (`fib 6`) can make use of the value of (`fib 5`).
@@ -1090,7 +1090,7 @@ The function `time:microsecond-time-difference` is used to compare two of these 
 In the code below, I use the conditional read macro characters `#+`and `#-` to define the right behavior on both Explorer and non-Explorer machines.
 We have seeen that `#` is a special character to the reader that takes different action depending on the following character.
 For example, `#'fn` is read as `(function fn)`.
-The character sequence `#+`is defined so that `#+`*feature expression* reads as *expression* if the *feature* is defined in the current implementation, and as nothing at all if it is not.
+The character sequence `#+` is defined so that `#+`*feature expression* reads as *expression* if the *feature* is defined in the current implementation, and as nothing at all if it is not.
 The sequence `#-` acts in just the opposite way.
 For example, on a TI Explorer, we would get the following:
 
@@ -1816,7 +1816,7 @@ The function should take as argument a function representing a strategy for play
 Read the definition of the function `random` and describe how a player could cheat.
 Then describe a countermeasure.
 
-**Exercise 9.10 [m]** On [Page 292](B9780080571157500091.xhtml#p292) we saw the use of the read-time conditionals, #+and #-, where #+is the read-time equivalent of when, and #- is the read-time equivalent of unless.
+**Exercise 9.10 [m]** On [Page 292](B9780080571157500091.xhtml#p292) we saw the use of the read-time conditionals, `#+` and `#-`, where `#+` is the read-time equivalent of when, and `#-` is the read-time equivalent of unless.
 Unfortunately, there is no read-time equivalent of case.
 Implement one.
 

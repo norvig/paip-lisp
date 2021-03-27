@@ -1476,7 +1476,7 @@ This marker would be checked by `variable-p`.
 Variable names can be stored in a hash table that is cleared before each query.
 Implement this representation for variables and compare it to the structure representation.
 
-**Exercise  11.7 [m]** Consider the following alternative implementation for anonymous variables: Leave the macros <- and ?- alone, so that anonymous variables are allowed in assertions and queries.
+**Exercise 11.7 [m]** Consider the following alternative implementation for anonymous variables: Leave the macros `<-` and `?-` alone, so that anonymous variables are allowed in assertions and queries.
 Instead, change `unify` so that it lets anything match against an anonymous variable:
 
 ```lisp

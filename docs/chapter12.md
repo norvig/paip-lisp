@@ -1684,7 +1684,7 @@ should be compiled as if it were:
 
 *   `atomic/1` True if the argument is a number or symbol (like Lisp's `atom`).
 
-*   <,>,=<,>= Arithmetic comparison; succeeds when the arguments are both instantiated to numbers and the comparison is true.
+*   `<`, `>`, `=<`, `>=` Arithmetic comparison; succeeds when the arguments are both instantiated to numbers and the comparison is true.
 
 *   `listing/0` Print out the clauses for all defined predicates.
 

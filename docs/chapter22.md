@@ -533,7 +533,7 @@ This also holds for the compiler, as we see in the next section.
 ## 22.3 A Properly Tail-Recursive Interpreter
 
 Unfortunately, the interpreter presented above can not lay claim to the name Scheme, because a true Scheme must be properly tail-recursive.
-Our interpreter is tail- recursive only when run in a Common Lisp that is tail-recursive.
+Our interpreter is tail-recursive only when run in a Common Lisp that is tail-recursive.
 To see the problem, consider the following Scheme procedure:
 
 ```lisp

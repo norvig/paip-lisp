@@ -423,11 +423,11 @@ This is a much easier task than hunting through a large program and changing the
   "Select the first name from a name represented as a list."
   (first name))
 
-> p => (JOHN Q PUBLIC)`
+> p => (JOHN Q PUBLIC)
 
-> (first-name p) => JOHN`
+> (first-name p) => JOHN
 
-> (first-name '(Wilma Flintstone)) => WILMA`
+> (first-name '(Wilma Flintstone)) => WILMA
 
 > (setf names '((John Q Public) (Malcolm X)
               (Admiral Grace Murray Hopper) (Spot) 

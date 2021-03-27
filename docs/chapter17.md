@@ -10,7 +10,7 @@ Instead I think it is an elegant case study of a paradigm we can expect to see a
 
 This book touches only the areas of AI that deal with abstract reasoning.
 There is another side of AI, the field of *robotics,* that deals with interfacing abstract reasoning with the real world through sensors and motors.
-A robot receives input from cameras, microphones, sonar, and touch-sensitive devices, and produces "ouput" by moving its appendages or generating sounds.
+A robot receives input from cameras, microphones, sonar, and touch-sensitive devices, and produces "output" by moving its appendages or generating sounds.
 The real world is a messier place than the abstract worlds we have been covering.
 A robot must deal with noisy data, faulty components, and other agents and events in the world that can affect changes in the environment.
 
@@ -42,10 +42,10 @@ We will assume that this is not the case.
 Given a diagram that fits these three restrictions, our goal is to identify each line, placing it in one of three classes:
 
 1.  A convex line separates two visible faces of a polyhedron such that a line from one face to the other would lie inside the polyhedron.
-It will be marked with a plus sign:+.
+It will be marked with a plus sign: `+`.
 
 2.  A concave line separates two faces of two polyhedra such that a line between the two spaces would pass through empty space.
-It will be marked with a minus sign:-.
+It will be marked with a minus sign: `-`.
 
 3.  A boundary line denotes the same physical situation as a convex line, but the diagram is oriented in such a way that only one of the two faces of the polyhedron is visible.
 Thus, the line marks the boundary between the polyhedron and the background.
@@ -109,7 +109,7 @@ Keep going until the diagram is either unambiguous or inconsistent.
 
 That completes the sketch of the line-labeling algorithm.
 We are now ready to implement a labeling program.
-It's glossary is in [figure 17.5](#f0030).
+Its glossary is in [figure 17.5](#f0030).
 
 | []()                                                |
 |-----------------------------------------------------|

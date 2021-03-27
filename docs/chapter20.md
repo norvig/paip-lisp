@@ -488,7 +488,7 @@ More careful representations of "The girls kissed the girls" include the followi
 
 The first of these says that every girl kisses every other girl.
 The second says the same thing, except that a girl need not kiss herself.
-The third says that every girl kisses and is kissed by at least one other girl, but not necessarily all of them, and the fourth says that everbody is in on at least one kissing.
+The third says that every girl kisses and is kissed by at least one other girl, but not necessarily all of them, and the fourth says that everybody is in on at least one kissing.
 None of these interpretations says anything about who "the girls" are.
 
 Clearly, the predicate calculus representations are less ambiguous than the representation produced by the current system.
@@ -745,7 +745,7 @@ If we simplified this, eliminating the ts and joining ands, we would get the des
         (loves ?m ?w))
 ```
 
-From there, we could use what we know about syntax, in addition to what we know about men, woman, and loving, to determine the most likely final interpretation.
+From there, we could use what we know about syntax, in addition to what we know about men, women, and loving, to determine the most likely final interpretation.
 This will be covered in the next chapter.
 
 ## 20.6 Long-Distance Dependencies
@@ -953,7 +953,7 @@ That is, we will get parses like "spaghetti and (meatballs and salad)" not "(spa
 Still, it can be argued that it is best to produce a single canonical parse, and then let the semantic interpretation functions worry about rearranging the parse in the right order.
 We will not attempt to resolve this debate but will provide the automatic conjunction mechanism as a tool that can be convenient but has no cost for the user who prefers a different solution.
 
-We are now ready to implement the extended DCG rule formalism that handles `:sem, :ex,` and automatie conjunctions.
+We are now ready to implement the extended DCG rule formalism that handles `:sem, :ex,` and automatic conjunctions.
 The function `make-augmented-dcg,` stored under the arrow `==>`, will be used to implement the formalism:
 
 ```lisp

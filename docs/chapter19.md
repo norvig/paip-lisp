@@ -2,7 +2,7 @@
 ## Introduction to Natural Language
 
 > Language is everywhere.
-It permeates our thoughts mediates our relations with others, and even creeps into our dreams.
+It permeates our thoughts, mediates our relations with others, and even creeps into our dreams.
 The overwhelming bulk of human knowledge is stored and transmitted in language.
 Language is so ubiquitous that we take it for granted but without it, society as we know it would be impossible.
 >
@@ -10,7 +10,7 @@ Language is so ubiquitous that we take it for granted but without it, society as
 >
 > Language and its Structure (1967)
 
-Anatural language is a language spoken by people, such as English, German, or Tagalog.
+A natural language is a language spoken by people, such as English, German, or Tagalog.
 This is in opposition to artificial languages like Lisp, FORTRAN, or Morse code.
 Natural language processing is an important part of AI because language is intimately connected to thought.
 One measure of this is the number of important books that mention language and thought in the title: in AI, Schank and Colby's *Computer Models of Thought and Language;* in linguistics, Whorf's *Language, Thought, and Reality* (and Chomsky's *Language and Mind;)* in philosophy, Fodor's *The Language of Thought;* and in psychology, Vygotsky's *Thought and Language* and John Anderson's *Language, Memory, and Thought.* Indeed, language is the trait many think of as being the most characteristic of humans.
@@ -304,7 +304,7 @@ Besides memoizing, the only change is to clear the memoization table within pars
 ```
 
 In normal human language use, memoization would not work very well, since the interpretation of a phrase depends on the context in which the phrase was uttered.
-But with context-f ree grammars we have a guarantee that the context cannot af f ect the interpretation.
+But with context-free grammars we have a guarantee that the context cannot affect the interpretation.
 The call `(parse words)` must return all possible parses for the words.
 We are free to choose between the possibilities based on contextual information, but context can never supply a new interpretation that is not in the context-free list of parses.
 
@@ -1095,12 +1095,11 @@ An infinite structure of NPs is explored before even the first word is considere
 
 Bottom-up parsers are stymied by rules with null right-hand sides: `(X -> O)`.
 Note that I was careful to exclude such rules in my grammars earlier.
-<!--- indent below -->
 
 ```lisp
 (defun parser (words &optional (cat 's))
   "Parse a list of words; return only parses with no remainder."
-  (mapcar #'parse-tree (compiete-parses (parse words cat))))
+  (mapcar #'parse-tree (complete-parses (parse words cat))))
 
 (defun parse (tokens start-symbol)
   "Parse a list of tokens, return parse trees and remainders."
@@ -1182,7 +1181,8 @@ Rarely, `rotatef` is used with more than two arguments, `(rotatef a b c)` is lik
 Some erroneous expressions are underspecified and may return different results in different implementations, but we will ignore that problem.
 
 <a id="fn19-2"></a><sup>[2](#tfn19-2)</sup>
-The number of parses of sentences of this kind is the same as the number of bracketings of a arithmetic expression, or the number of binary trees with a given number of leaves.
-The resulting sequence (1,2,5,14,42,...) is known as the Catalan Numbers.
+The number of parses of sentences of this kind is the same as the number of bracketings of an arithmetic expression, or the number of binary trees with a given number of leaves.
+The resulting sequence (1, 2, 5, 14, 42, ...) is known as the Catalan Numbers.
+
 This kind of ambiguity is discussed by [Church and Patil (1982)](B9780080571157500285.xhtml#bb0200) in their article *Coping with Syntactic Ambiguity, or How to Put the Block in the Box on the Table.*
 

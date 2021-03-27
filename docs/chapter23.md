@@ -222,9 +222,7 @@ If this environment were called `env`, then `(in-env-p 'f env)` would return `(0
             (lambda ,(rest name) . ,body)))))
 ```
 
-Finally, we have some auxiliary functions to print out the results, to distinguish bet
-ween labels and instructions, and to determine the index of a variable in an environme
-nt.
+Finally, we have some auxiliary functions to print out the results, to distinguish between labels and instructions, and to determine the index of a variable in an environment.
 Scheme functions now are implemented as structures, which must have a field for the code, and one for the environment.
 In addition, we provide a field for the name of the function and for the argument list; these are used only for debugging purposes.
 We'll adopt the convention that the `define` macro sets the function's name field, by calling `name!` (which is not part of standard Scheme).
@@ -1891,7 +1889,7 @@ The other problem is that complex numbers can only have a lowercase `i`, but `re
 ```
 
 With some work we could also eliminate quote.
-Instead of `'x`, we could use `(string->symbol "X" )`, and instead of `'(1 2)`, wecoulduse something like `(list 1 2)`.
+Instead of `'x`, we could use `(string->symbol "X" )`, and instead of `'(1 2)`, we could use something like `(list 1 2)`.
 The problem is in knowing when to reuse the same list.
 Consider:
 

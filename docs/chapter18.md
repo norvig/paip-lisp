@@ -5,7 +5,7 @@
 
 > -Suzuki Roshi, Zen Master
 
-**G**ame playing has been the target of much early work in AI for three reasons.
+Game playing has been the target of much early work in AI for three reasons.
 First, the rules of most games are formalized, and they can be implemented in a computer program rather easily.
 Second, in many games the interface requirements are trivial.
 The computer need only print out its moves and read in the opponent's moves.
@@ -1608,7 +1608,7 @@ Bill's evaluation function is fast enough to search 6-8 ply under tournament con
 (However, Lee is only a novice Othello player; his real interest is in speech recognition; see [Waibel and Lee 1991](B9780080571157500285.xhtml#bb1285).) There are other programs that also play at a high level, but they have not been written up in the AI literature as Iago and Bill have.
 
 In this section we present an evaluation function based on Iago's, although it also contains elements of Bill, and of an evaluation function written by Eric Wefald in 1989.
-The evaluation function makes use of two main features: *mobilityand edge stability*.
+The evaluation function makes use of two main features: *mobility and edge stability*.
 
 ### Mobility
 
@@ -1957,7 +1957,7 @@ Now we have a measure of the three factors: current mobility, potential mobility
 All that remains is to find a good way to combine them into a single evaluation metric.
 The combination function used by [Rosenbloom (1982)](B9780080571157500285.xhtml#bb1000) is a linear combination of the three factors, but each factor's coefficient is dependent on the move number.
 Rosenbloom's features are normalized to the range [-1000, 1000]; we normalize to the range [-1, 1] by doing a division after multiplying by the coefficient.
-That allows us to use fixnuums for the coefficients.
+That allows us to use fixnums for the coefficients.
 Since our three factors are not calculated in quite the same way as Rosenbloom's, it is not surprising that his coefficients are not the best for our program.
 The edge coefficient was doubled and the potential coefficient cut by a factor of five.
 

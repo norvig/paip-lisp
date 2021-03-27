@@ -714,7 +714,7 @@ The first set of abbreviations defines the agreement features.
 The obvious way to handle agreement is with two features, one for person and one for number.
 So first-person singular might be represented `(1 sing)`.
 A problem arises when we want to describe verbs.
-Every verb except "be" makes the distinction only between third- person singular and all the others.
+Every verb except "be" makes the distinction only between third-person singular and all the others.
 We don't want to make five separate entries in the lexicon to represent all the others.
 One alternative is to have the agreement feature be a set of possible values, so all the others would be a single set of five values rather than five separate values.
 This makes a big difference in cutting down on backtracking.
@@ -1490,7 +1490,3 @@ Contrast this to "The truck, which has 4-wheel drive, costs $5000." Here the rel
 (and (the ?x (truck ?x))
       (4-wheel-drive ?x) (costs ?x $5000))
 ```
-
-Part V
-The Rest of Lisp
-

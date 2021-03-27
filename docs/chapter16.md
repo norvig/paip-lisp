@@ -5,7 +5,7 @@
 
 > -Nicholas Murray Butler (1862-1947)
 
-In the 1970s there was terrifie interest in the area of *knowledge-based expert systems*.
+In the 1970s there was terrific interest in the area of *knowledge-based expert systems*.
 An expert system or knowledge-based system is one that solves problems by applying knowledge that has been garnered from one or more experts in a field.
 Since these experts will not in general be programmers, they will very probably express their expertise in terms that cannot immediately be translated into a program.
 It is the goal of expert-system research to come up with a representation that is flexible enough to handle expert knowledge, but still capable of being manipulated by a computer program to come up with solutions.
@@ -1317,5 +1317,4 @@ This suggests that the system should have some way of dealing with mutually excl
 One way would be to accept only yes responses for Boolean parameters, but have the input routine translate no to `(yes -1)` and `(no *cf*)` to `(yes 1-*cf*)`.
 Another possibility would be to have `update-cf check` to see if any certainty factor on a mutually exclusive value is 1, and if so, change the other values to -1.
 
-**Answer 16.18** Add the clause `(stop (throw 'stop nil))` to the case statement inask-valsandwrapa `(catch 'stop ...)` around the code in `emycin`.
-
+**Answer 16.18** Add the clause `(stop (throw 'stop nil))` to the `case` statement in `ask-vals` and wrap a `(catch 'stop ...)` around the code in `emycin`.
