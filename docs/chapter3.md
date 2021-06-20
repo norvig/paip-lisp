@@ -203,7 +203,7 @@ Here is a table of equivalences:
 | `(or` *a b c*)                   | `(if` *a a* `(if` *b b c*))         | `(cond (a)` (*b*) (*c*))           |
 | `(*case*` *a* (*b c*) `*(t x*))` | `(if (eql` *a 'b*) *c x*)           | `(cond ((eql `*a 'b*) *c*) (*tx*)) |
 
-It is considered poor style to use `and` and `or` for anything other than testing a logical condition, `when, unless,` and `if` can all be used for taking conditional action.
+It is considered poor style to use `and` and `or` for anything other than testing a logical condition, `when`, `unless,` and `if` can all be used for taking conditional action.
 For example:
 
 ```lisp
@@ -217,7 +217,7 @@ For example:
   (princ "N is large."))    ; Good style.
 ```
 
-When the main purpose is to return a value rather than take action, `cond` and `if` (with explicit `nil` in the else case) are preferred over when and `unless`, which implicitly return `nil` in the else case, `when` and `unless` are preferred when there is only one possibility, `if` (or, for some people, `cond)` when there are two, and `cond` when there are more than two:
+When the main purpose is to return a value rather than take action, `cond` and `if` (with explicit `nil` in the else case) are preferred over `when` and `unless`, which implicitly return `nil` in the else case, `when` and `unless` are preferred when there is only one possibility, `if` (or, for some people, `cond)` when there are two, and `cond` when there are more than two:
 
 ```lisp
 (defun tax-bracket (income)
