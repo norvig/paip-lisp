@@ -99,7 +99,7 @@ Now we can test the program by generating a few random sentences, along with a n
 
 > (sentence) => (THE WOMAN HIT THE MAN)
 
-> (sentence) =>(THE BALL SAW THE WOMAN)
+> (sentence) => (THE BALL SAW THE WOMAN)
 
 > (sentence) => (THE BALL SAW THE TABLE)
 
@@ -292,7 +292,7 @@ Here are some examples of `generate` in use:
 
 > (generate 'noun-phrase) => (THE MAN)
 
-> (generate 'verb-phrase) (TOOK A TABLE)
+> (generate 'verb-phrase) => (TOOK A TABLE)
 ```
 
 There are many possible ways to write `generate`.
