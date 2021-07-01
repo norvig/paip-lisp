@@ -41,7 +41,7 @@ Much of the emphasis was on finding a good trade-off between *expressiveness* an
 If we want to guarantee that queries will be answered quickly, then we have to limit what can be expressed in the language.
 
 In the late 1980s, a series of results shed doubt on the hopes of finding an efficient language with any reasonable degree of expressiveness at all.
-Using mathematical techniques based on worst-case analysis, it was shown that even seemingly trivial languages were *intractable-*in the worst case, it would take an exponential amount of time to answer a simple query.
+Using mathematical techniques based on worst-case analysis, it was shown that even seemingly trivial languages were *intractable*—in the worst case, it would take an exponential amount of time to answer a simple query.
 
 Thus, in the 1990s the emphasis has shifted to *knowledge representation and reasoning,* a field that encompasses both the expressiveness and efficiency of languages but recognizes that the average case is more important than the worst case.
 No amount of knowledge can help solve an intractable problem in the worse case, but in practice the worst case rarely occurs.
