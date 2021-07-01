@@ -2,7 +2,7 @@
 ## Introduction to Lisp
 
 > You think you know when you learn, are more sure when you can write, even more when you can teach, but certain when you can program.
-
+>
 > -Alan Perlis  
 > Yale University computer scientist
 
@@ -48,7 +48,7 @@ It turns out that the Lisp convention for arithmetic expressions is slightly dif
 This is called *prefix notation.*
 
 ```lisp
-> (+  2 2)
+> (+ 2 2)
 4
 >
 ```
@@ -62,7 +62,7 @@ Of course, with symbols like + and 4 there is no difference.
 To save space on the page, the output will sometimes be shown on the same line as the input, separated by an arrow (=>), which can be read as "evaluates to," and can also be thought of as standing for the return or enter key that the user presses to complete the input:
 
 ```lisp
-> (+  2 2) => 4
+> (+ 2 2) => 4
 ```
 
 One advantage of parenthesized prefix notation is that the parentheses clearly mark the beginning and end of an expression.
@@ -88,7 +88,7 @@ We will see below that the actual Lisp evaluation rule is a little more complica
 Sometimes programmers who are familiar with other languages have preconceptions that make it difficult for them to learn Lisp.
 For them, three points are worth stressing here.
 First, many other languages make a distinction between statements and expressions.
-An expression, like `2 + 2`, has a value, but a statement, like `x  = 2 + 2`, does not.
+An expression, like `2 + 2`, has a value, but a statement, like `x = 2 + 2`, does not.
 Statements have effects, but they do not return values.
 In Lisp, there is no such distinction: every expression returns a value.
 It is true that some expressions have effects, but even those expressions also return values.
@@ -100,7 +100,7 @@ Thus, while the statement `y=a*x+3` is analyzed as seven separate tokens in othe
 To get a list of tokens, we would have to insert spaces: `(y = a * x + 3)`.<sup>[1](#fn01-1)</sup>
 
 Third, while many languages use semicolons to delimit statements, Lisp has no need of semicolons, since expressions are delimited by parentheses.
-Lisp chooses to use semicolons for another purpose-to mark the beginning of a comment, which lasts until the end of the line:
+Lisp chooses to use semicolons for another purpose—to mark the beginning of a comment, which lasts until the end of the line:
 
 ```lisp
 > (+ 2 2) ; this is a comment
@@ -133,12 +133,12 @@ This is not what we had in mind.
 The quote mark instructs Lisp to treat the list as a piece of data rather than as a function call:
 
 ```lisp
-> '(Pat Kim) (PAT KIM)
+> '(Pat Kim) => (PAT KIM)
 ```
 
 In other computer languages (and in English), quotes usually come in pairs: one to mark the beginning, and one to mark the end.
 In Lisp, a single quote is used to mark the beginning of an expression.
-Since we always know how long a single expression is-either to the end of an atom or to the matching parenthesis of a list-we don't need an explicit punctuation mark to tell us where the expression ends.
+Since we always know how long a single expression is—either to the end of an atom or to the matching parenthesis of a list—we don't need an explicit punctuation mark to tell us where the expression ends.
 Quotes can be used on lists, as in `'(Pat Kim)`, on symbols as in `'Robin`, and in fact on anything else.
 Here are some examples:
 
