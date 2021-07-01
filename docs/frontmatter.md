@@ -42,7 +42,7 @@ otherwise—without the prior written permission of the publisher.
 Library of Congress Cataloging-in-Publication Data 
 
 Norvig, Peter. 
-Paradigms of artificial inteUigence programming: case studies in 
+Paradigms of artificial intelligence programming: case studies in 
 common Lisp / Peter Norvig. 
 
 p. cm. 
