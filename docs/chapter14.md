@@ -2,20 +2,18 @@
 ## Knowledge Representation and Reasoning
 
 > Knowledge itself is power.
-
+>
 > -Francis Bacon (1561-1626)
-
+>
 > The power resides in the knowledge.
-
+>
 > -Edward Feigenbaum
-
+>
 > Stanford University Heuristic Programming Project
-
+>
 > Knowledge is Knowledge, and vice versa.
-
-> -Tee shirt
-
-> Stanford University Heuristic Programming Project
+>
+> -Tee shirt<br>&nbsp; Stanford University Heuristic Programming Project
 
 In the 1960s, much of AI concentrated on search techniques.
 In particular, a lot of work was concerned with *theorem proving:* stating a problem as a small set of axioms and searching for a proof of the problem.
