@@ -780,7 +780,7 @@ Here are some more examples of the correct use of functions:
 (2 4 6 8 10)
 
 > (mappend #'(lambda (l) (list l (reverse l)))
-           ((1 2 3) (a b c))) =>
+           '((1 2 3) (a b c))) =>
 ((1 2 3) (3 2 1) (A B C) (C B A))
 ```
 
