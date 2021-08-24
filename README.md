@@ -1,7 +1,7 @@
 
 # *Paradigms of Artificial Intelligence Programming* 
 
-![PAIP](paip-cover.gif)
+![PAIP](paip-cover.png)
 
 This is an open-source repository for the book *Paradigms of Artificial
 Intelligence Programming: Case Studies in Common Lisp* by Peter Norvig (1992), and the code contained therein.  The copyright has reverted to the author, who has shared it here under MIT license.
