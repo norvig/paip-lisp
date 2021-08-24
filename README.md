@@ -70,7 +70,7 @@ The [Lisp code files](https://github.com/norvig/paip-lisp/tree/master/lisp) are 
 | 7    | [student.lisp](lisp/student.lisp)   | The Student Program                                                    |
 | 8    | [macsyma.lisp](lisp/macsyma.lisp)   | The Macsyma Program                                                    |
 | 8    | [macsymar.lisp](lisp/macsymar.lisp) | Simplification and integration rules for Macsyma                       |
-| 9-10 |  &nbsp;                             | (functions from these chapters are in [auxfns.lisp](lisp/auxfns.lisp)) |
+| 9-10 | [auxfns.lisp](lisp/auxfns.lisp)     | Auxiliary functions                                                    |
 | 11   | [unify.lisp](lisp/unify.lisp)       | Unification functions                                                  |
 | 11   | [prolog1.lisp](lisp/prolog1.lisp)   | First version of Prolog interpreter                                    |
 | 11   | [prolog.lisp](lisp/prolog.lisp)     | Final version of Prolog interpreter                                    |
