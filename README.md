@@ -122,5 +122,5 @@ the examples from chapter 1. Access this by doing `(requires "examples")`.
 
 # Other resources
 
-* I wrote a [retrospective](http://norvig.com/Lisp-retro.html) on the book.
+* I wrote a [retrospective](http://norvig.com/Lisp-retro.html) on the book in 2002.
 * There is a nice [Python version](https://github.com/dhconnelly/paip-python) of the code, by Daniel Connelly at Georgia Tech, supervised by Ashok Goel.
