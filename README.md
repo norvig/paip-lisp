@@ -7,6 +7,8 @@ This is an open-source repository for the book *Paradigms of Artificial
 Intelligence Programming: Case Studies in Common Lisp* by Peter Norvig (1992), and the code contained therein.  The copyright has reverted to the author, who has shared it here under MIT license.
 
 ## The Book
+  
+On the list of [most influential books for programmers](https://github.com/cs-books/influential-cs-books). As seen on [TV](https://norvig.com/paip-tv.html). See also: [errata](https://norvig.com/paip-errata.html), [comments](https://norvig.com/paip-comments.html),  [retrospective](https://norvig.com/Lisp-retro.html).
 
 The book is available in these formats:
 
@@ -50,8 +52,6 @@ The book is available in these formats:
   * 23  [Compiling Lisp](docs/chapter23.md)
   * 24  [ANSI Common Lisp](docs/chapter24.md)
   * 25  [Troubleshooting](docs/chapter25.md)
-  
-As seen on [TV](https://norvig.com/paip-tv.html). See also: [errata](https://norvig.com/paip-errata.html), [comments](https://norvig.com/paip-comments.html),  [retrospective](https://norvig.com/Lisp-retro.html).
 
 ## The Lisp Files
 
