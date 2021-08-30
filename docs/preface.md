@@ -206,9 +206,9 @@ Part III and [chapter 25](chapter25.md) are particularly important.
 
 ## Supplementary Texts and Reference Books
 
-The definitive reference source is Steele's *Common Lisp the Language*.
+The definitive reference source is [Steele](https://en.wikipedia.org/wiki/Guy_L._Steele_Jr.)'s [*Common Lisp the Language*](https://www.cs.cmu.edu/Groups/AI/html/cltl/cltl2.html).
 From 1984 to 1990, this unambiguously defined the language Common Lisp.
-However, in 1990 the picture became more complicated by the publication of *Common Lisp the Language*, 2d edition.
+However, in 1990 the picture became more complicated by the publication of [*Common Lisp the Language*, 2d edition](https://www.cs.cmu.edu/Groups/AI/html/cltl/cltl2.html).
 This book, also by Steele, contains the recommendations of ANSI subcommittee X3J13, whose charter is to define a standard for Lisp.
 These recommendations include many minor changes and clarifications, as well as brand new material on object-oriented programming, error condition handling, and the loop macro.
 The new material doubles the size of the book from 465 to 1029 pages.
@@ -220,8 +220,8 @@ The ANSI `map-into`, `complement`, and `reduce` functions are also used, althoug
 Definitions for all these functions are included, so even those using an "original" Common Lisp system can still run all the code in the book.
 
 While *Common Lisp the Language* is the definitive standard, it is sometimes terse and can be difficult for a beginner.
-*Common Lisp: the Reference*, published by Franz Inc., offers complete coverage of the language with many helpful examples.
-*Common LISPcraft*, by Robert Wilensky, and *Artificial Intelligence Programming*, by Charniak et al., also include brief summaries of the Common Lisp functions.
+[*Common Lisp: the Reference*](https://archive.org/details/commonlisprefere00fran), published by Franz Inc., offers complete coverage of the language with many helpful examples.
+[*Common LISPcraft*](https://www.amazon.com/Common-LISPcraft-Robert-Wilensky/dp/0393955443), by [the late] [Robert Wilensky](https://www2.eecs.berkeley.edu/Faculty/Homepages/wilensky.html), and *Artificial Intelligence Programming*, by Charniak et al., also include brief summaries of the Common Lisp functions.
 They are not as comprehensive, but that can be a blessing, because it can lead the reader more directly to the functions that are important (at least in the eyes of the author).
 
 It is a good idea to read this book with a computer at hand, to try out the examples and experiment with examples of your own.
@@ -231,7 +231,7 @@ Many implementations also provide more extensive documentation through some kind
 The five introductory Lisp textbooks I recommend are listed below.
 The first is more elementary than the others.
 
-*   *Common Lisp: A Gentle Introduction to Symbolic Computation* by David Touretzky.
+*   [*Common Lisp: A Gentle Introduction to Symbolic Computation*](https://www.cs.cmu.edu/~dst/LispBook/book.pdf) by [David Touretzky](http://www.cs.cmu.edu/~dst/).
 Most appropriate for beginners, including those who are not computer scientists.
 
 *   *A Programmer's Guide to Common Lisp* by Deborah G. Tatar.
