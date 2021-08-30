@@ -13,7 +13,7 @@ Just as a liberal arts education includes a course in "the great books" of a cul
 
 At another level, this book is a highly technical compendium of the knowledge you will need to progress from being an intermediate Lisp programmer to being an expert.
 Parts I and II are designed to help the novice get up to speed, but the complete beginner may have a hard time even with this material.
-Fortunately, there are at least five good texts available for the beginner; see page xiii for my recommendations.
+Fortunately, there are at least five good texts available for the beginner; see [page xiii](#page-xiii) for my recommendations.
 
 All too often, the teaching of computer programming consists of explaining the syntax of the chosen language, showing the student a 10-line program, and then asking the student to write programs.
 In this book, we take the approach that the best way to learn to write is to read (and conversely, a good way to improve reading skills is to write).
@@ -204,6 +204,7 @@ Cover [chapters 11](chapter11.md) and [13](chapter13.md) if similar material is 
 *   *For the Professional Lisp Programmer:* Read as much of the book as possible, and refer back to it often.
 Part III and [chapter 25](chapter25.md) are particularly important.
 
+<a name="page-xiii"></a>
 ## Supplementary Texts and Reference Books
 
 The definitive reference source is [Steele](https://en.wikipedia.org/wiki/Guy_L._Steele_Jr.)'s [*Common Lisp the Language*](https://www.cs.cmu.edu/Groups/AI/html/cltl/cltl2.html).
