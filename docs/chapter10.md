@@ -994,7 +994,7 @@ Of course, if `process` stored a *copy* of `b,` then everything is alright.
 This pattern of allocation and deallocation is so common that we can provide a macro for it:
 
 ```lisp
-defmacro with-resource ((var resource &optional protect) &rest body)
+(defmacro with-resource ((var resource &optional protect) &rest body)
   "Execute body with VAR bound to an instance of RESOURCE."
   (let ((allocate (symbol 'allocate- resource))
         (deallocate (symbol 'deallocate- resource)))
