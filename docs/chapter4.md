@@ -155,7 +155,7 @@ The specification is complete enough to lead directly to a complete Common Lisp 
 | `appropriate-p`    | Decide if an operator is appropriate for a goal.      |
 | `apply-op`         | Apply operator to current state.                      |
 |                    | **Selected Common Lisp Functions**                    |
-| `member`           | Test if an elementis a member of a list. (p.78)       |
+| `member`           | Test if an element is a member of a list. (p.78)       |
 | `set-difference`   | All elements in one set but not the other.            |
 | `union`            | All elements in either of the two sets.               |
 | `every`            | Test if every element of a list passes a test. (p. 62)|
