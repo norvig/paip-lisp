@@ -250,7 +250,7 @@ Thus, the special form `(setf x (+  2 1))` should be considered the equivalent o
 When there is risk of confusion, we will call `setf` a *special form operator* and `(setf x 3)` a *special form expression.*
 
 It turns out that the quote mark is just an abbreviation for another special form.
-The expression '*x* is equivalent to `(quote *x*)`, a special form expression that evaluates to *x.*
+The expression '*x* is equivalent to `(quote x)`, a special form expression that evaluates to *x.*
 The special form operators used in this chapter are:
 
 | []()            |                                              |
@@ -425,11 +425,11 @@ This is a much easier task than hunting through a large program and changing the
   "Select the first name from a name represented as a list."
   (first name))
 
-> p => (JOHN Q PUBLIC)`
+> p => (JOHN Q PUBLIC)
 
-> (first-name p) => JOHN`
+> (first-name p) => JOHN
 
-> (first-name '(Wilma Flintstone)) => WILMA`
+> (first-name '(Wilma Flintstone)) => WILMA
 
 > (setf names '((John Q Public) (Malcolm X)
               (Admiral Grace Murray Hopper) (Spot) 
@@ -716,9 +716,9 @@ The alternate definition of `mappend` shown in the following doesn't make use of
 ```lisp
 > (funcall #'+ 2 3) => 5
 
-> (apply #' + '(2 3)) => 5
+> (apply #'+ '(2 3)) => 5
 
-> (funcall #' + '(2 3)) => *Error: (2 3) is not a number.*
+> (funcall #'+ '(2 3)) => *Error: (2 3) is not a number.*
 ```
 
 These are equivalent to `(+  2 3), (+ 2 3)`,and`(+ '(2 3))`, respectively.
@@ -828,7 +828,7 @@ The notation `'x` is actually an abbreviation for the special form expression `(
 Similarly, the notation `#'f` is an abbreviation for the special form expression `(function f)`.
 
 ```lisp
-'John = (quote John) => JOHN
+'John ≡ (quote John) => JOHN
 
 (setf p 'John) => JOHN
 
@@ -1079,7 +1079,8 @@ A (COND
 (SETQ RESTLIST (CONS (CONS TEMP
      (ADD1 DEPTH)) RESTLIST))
 ))))
-))))(GO A))
+))))
+(GO A))
 ```
 
 Note the use of the now-deprecated goto `(GO)` statement, and the lack of consistent indentation conventions.
