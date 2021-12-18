@@ -1055,8 +1055,8 @@ To get the value, we just take the `cdr` of the result returned by `assoc`.
 If we want to search the table by value rather than by key, we can use rassoc:
 
 ```lisp
-> (rassoc 'Arizona table) => (AZ . ARIZONA)
-> (car (rassoc 'Arizona table)) => AZ
+> (rassoc 'Arizona state-table) => (AZ . ARIZONA)
+> (car (rassoc 'Arizona state-table)) => AZ
 ```
 
 Managing a table with `assoc` is simple, but there is one drawback: we have to search through the whole list one element at a time.
