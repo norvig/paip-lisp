@@ -122,7 +122,48 @@ The program is summarized in [figure 7.1](#f0010).
 | ![f07-01](images/chapter7/f07-01.jpg)        |
 | Figure 7.1: Glossary for the STUDENT Program |
 
-(ed: this should be a markdown table)
+~~(ed: this should be a markdown table)~~
+
+
+|----------------------------|----------------------------------------------------------------------|
+|                            | **Top-Level Function**                                               |
+| `student`                  | Solve certain algebra word problems.                                 |
+|----------------------------|----------------------------------------------------------------------|
+|                            | **Special Variables**                                                |
+| `*student-rules*`          | A list of pattern/response pairs.                                    |
+|----------------------------|----------------------------------------------------------------------|
+|                            | **Data Types**                                                       |
+| `exp`                      | An operator and its arguments.                                       |
+| `rule`                     | A pattern and response.                                              |
+|----------------------------|----------------------------------------------------------------------|
+|                            | **Major Functions**                                                  |
+| `translate-to-expression`  | Translate an English phrase into an equation or expression.          |
+| `translate-pair`           | Translate the value part of the pair into an equation or expression. |
+| `create-list-of-equations` | Separate out equations embedded in nested parens.                    |
+| `solve-equations`          | Print the equations and their solution.                              |
+| `solve`                    | Solve a system of equations by constrain propagation.                |
+|----------------------------|----------------------------------------------------------------------|
+|                            | **Auxiliary Functions**                                              |
+| `isolate`                  | Isolate the lone variable on the left-hand side of an expression.    |
+| `noise-word-p`             | Is this a low-content word that can be safely ignored?               |
+| `make-variable`            | Create a variable name based on the given list of words.             |
+| `print-equations`          | Print a list of equations.                                           |
+| `inverse-op`               | For example, the inverse of `|` is `-`.                              |
+| `unknown-p`                | Is the argument an unknown (variable)?                               |
+| `in-exp`                   | True if `x` appears anywhere in exp.                                 |
+| `no-unknown`               | Returns true if there are no unknowns in exp.                        |
+| `one-unknown`              | Returns the single unknown in exp, if there is exactly one.          |
+| `commutative-p`            | Is the operator commutative?                                         |
+| `solve-arithmetic`         | Perform arithmetic on rhs of an equation.                            |
+| `binary-exp-p`             | Is this a binary expression?                                         |
+| `prefix->infix`            | Translate prefix to infix expressions.                               |
+| `mkexp`                    | Make an expression.                                                  |
+|----------------------------|----------------------------------------------------------------------|
+|                            | **Previously Defined Functions**                                     |
+| `pat-match`                | Match pattern against an input. (p. 180)                             |
+| `rule-based-translator`    | Apply a set of rules. (p. 189)                                       |
+|----------------------------|----------------------------------------------------------------------|
+
 
 Before looking carefully at the program, let's try a sample problem: "If z is 3, what is twice z?" Applying the rules to the input gives the following trace:
 
