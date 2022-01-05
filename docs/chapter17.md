@@ -109,7 +109,7 @@ Keep going until the diagram is either unambiguous or inconsistent.
 
 That completes the sketch of the line-labeling algorithm.
 We are now ready to implement a labeling program.
-It's glossary is in [figure 17.5](#f0030).
+Its glossary is in [figure 17.5](#f0030).
 
 | []()                                                |
 |-----------------------------------------------------|
@@ -1161,4 +1161,3 @@ Consult [Waltz 1975](B9780080571157500285.xhtml#bb1300).
 
 **Exercise  17.5 [d]** If you have access to a workstation with a graphical interface, implement a program to allow a user to draw diagrams with a mouse.
 Have the program generate output in the form expected by `construct-diagram`
-
