@@ -118,7 +118,7 @@ The other difference is that once we're done, we don't just print the response; 
 The program is summarized in [figure 7.1](#f0010).
 
 | Function                   | Description                                                          |
-| -------------------------- | -------------------------------------------------------------------- |
+|----------------------------|----------------------------------------------------------------------|
 |                            | **Top-Level Function**                                               |
 | `student`                  | Solve certain algebra word problems.                                 |
 |                            | **Special Variables**                                                |
