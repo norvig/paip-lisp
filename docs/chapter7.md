@@ -117,25 +117,21 @@ The first point of deviation is that before we substitute the values of the `pat
 The other difference is that once we're done, we don't just print the response; instead we have to solve the set of equations and print the answers.
 The program is summarized in [figure 7.1](#f0010).
 
-|                            |                                                                      |
+| Function                   | Description                                                          |
 | -------------------------- | -------------------------------------------------------------------- |
 |                            | **Top-Level Function**                                               |
 | `student`                  | Solve certain algebra word problems.                                 |
-|                            |                                                                      |
 |                            | **Special Variables**                                                |
 | `*student-rules*`          | A list of pattern/response pairs.                                    |
-|                            |                                                                      |
 |                            | **Data Types**                                                       |
 | `exp`                      | An operator and its arguments.                                       |
 | `rule`                     | A pattern and response.                                              |
-|                            |                                                                      |
 |                            | **Major Functions**                                                  |
 | `translate-to-expression`  | Translate an English phrase into an equation or expression.          |
 | `translate-pair`           | Translate the value part of the pair into an equation or expression. |
 | `create-list-of-equations` | Separate out equations embedded in nested parens.                    |
 | `solve-equations`          | Print the equations and their solution.                              |
 | `solve`                    | Solve a system of equations by constrain propagation.                |
-|                            |                                                                      |
 |                            | **Auxiliary Functions**                                              |
 | `isolate`                  | Isolate the lone variable on the left-hand side of an expression.    |
 | `noise-word-p`             | Is this a low-content word that can be safely ignored?               |
@@ -151,7 +147,6 @@ The program is summarized in [figure 7.1](#f0010).
 | `binary-exp-p`             | Is this a binary expression?                                         |
 | `prefix->infix`            | Translate prefix to infix expressions.                               |
 | `mkexp`                    | Make an expression.                                                  |
-|                            |                                                                      |
 |                            | **Previously Defined Functions**                                     |
 | `pat-match`                | Match pattern against an input. (p. 180)                             |
 | `rule-based-translator`    | Apply a set of rules. (p. 189)                                       |
