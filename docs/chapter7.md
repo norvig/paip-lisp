@@ -137,7 +137,7 @@ The program is summarized in [figure 7.1](#f0010).
 | `noise-word-p`             | Is this a low-content word that can be safely ignored?               |
 | `make-variable`            | Create a variable name based on the given list of words.             |
 | `print-equations`          | Print a list of equations.                                           |
-| `inverse-op`               | For example, the inverse of `|` is `-`.                              |
+| `inverse-op`               | For example, the inverse of `+` is `-`.                              |
 | `unknown-p`                | Is the argument an unknown (variable)?                               |
 | `in-exp`                   | True if `x` appears anywhere in exp.                                 |
 | `no-unknown`               | Returns true if there are no unknowns in exp.                        |
