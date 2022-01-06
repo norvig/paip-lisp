@@ -117,13 +117,6 @@ The first point of deviation is that before we substitute the values of the `pat
 The other difference is that once we're done, we don't just print the response; instead we have to solve the set of equations and print the answers.
 The program is summarized in [figure 7.1](#f0010).
 
-| []()                                         |
-|----------------------------------------------|
-| ![f07-01](images/chapter7/f07-01.jpg)        |
-| Figure 7.1: Glossary for the STUDENT Program |
-
-~~(ed: this should be a markdown table)~~
-
 
 |----------------------------|----------------------------------------------------------------------|
 |                            | **Top-Level Function**                                               |
