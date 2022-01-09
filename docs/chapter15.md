@@ -97,12 +97,44 @@ The word "polynomial" is used ambiguously to refer to both the mathematical conc
 
 A glossary for the canonical simplifier program is given in [figure 15.1](#f0010).
 
-| []()                                                        |
-|-------------------------------------------------------------|
-| ![f15-01](images/chapter15/f15-01.jpg)                      |
-| Figure 15.1: Glossary for the Symbolic Manipulation Program |
+| Function           | Description                                            |
+|--------------------|--------------------------------------------------------|
+|                    | **Top-Level Functions**                                |
+| `canon-simplifier` | A read-canonicalize-print loop.                        |
+| `canon`            | Canonicalize argument and convert it back to infix.    |
+|                    | **Data Types**                                         |
+| `polynomial`       | A vector of main variable and coefficients.            |
+|                    | **Major Functions**                                    |
+| `prefix->canon`    | Convert a prefix expression to canonical polynomial.   |
+| `canon->prefix`    | Convert a canonical polynomial to a prefix expression. |
+| `poly+poly`        | Add two polynomials.                                   |
+| `poly*poly`        | Multiply two polynomials.                              |
+| `poly^n`           | Raise the polynomial *p* to the nth power, *n*>=0.     |
+| `deriv-poly`       | Return the derivative, *dp/dx*, of the polynomial *p*. |
+|                    | **Auxiliary Functions**                                |
+| `poly`             | Construct a polynomial with given coefficients.        |
+| `make-poly`        | Construct a polynomial of given degree.                |
+| `coef`             | Pick out the ith coefficient of a polynomial.          |
+| `main-var`         | The main variable of a polynomial.                     |
+| `degree`           | The degree of a polynomial; e.g., `(degree x^2) = 2`.  |
+| `var=`             | Are two variables identical?                           |
+| `var>`             | Is one variable ordered before another?                |
+| `poly+`            | Unary or binary polynomial addition.                   |
+| `poly-`            | Unary or binary polynomial subtraction.                |
+| `k+poly`           | Add a constant *k* to a polynomial *p*.                |
+| `k*poly`           | Multiply a polynomial *p* by a constant *k*.           |
+| `poly+same`        | Add two polynomials with the same main variable.       |
+| `poly*same`        | Multiply two polynomials with the same main variable.  |
+| `normalize-poly`   | Alter a polynomial by dropping trailing zeros.         |
+| `exponent->prefix` | Used to convert to prefix.                             |
+| `args->prefix`     | Used to convert to prefix.                             |
+| `rat-numerator`    | Select the numerator of a rational.                    |
+| `rat-denominator`  | Select the denominator of a rational.                  |
+| `rat*rat`          | Multiply two rationals.                                |
+| `rat+rat`          | Add two rationals.                                     |
+| `rat/rat`          | Divide two rationals.                                  |
 
-*(ed: should be a markdown table)*
+Figure 15.1: Glossary for the Symbolic Manipulation Program
 
 The functions defining the type `polynomial` follow.
 Because we are concerned with efficiency, we proclaim certain short functions to be compiled inline, use the specific function `svref` (simple-vector reference) rather than the more general aref, and provide declarations for the polynomials using the special form the.
