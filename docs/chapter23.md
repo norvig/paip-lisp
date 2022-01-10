@@ -480,7 +480,7 @@ However, all this explicit manipulation of environments is inefficient; in this 
 
 ## 23.1 A Properly Tail-Recursive Lisp Compiler
 
-In this section we describe a new version of the compiler, first by showing examples of its output, and then by examining the compiler itself, which is summarized in [figure 23.3](#f0020).
+In this section we describe a new version of the compiler, first by showing examples of its output, and then by examining the compiler itself, which is summarized in figure 23.3.
 The new version of the compiler also makes use of a different function calling sequence, using two new instructions, `CALLJ` and `SAVE`.
 As the name implies, `SAVE` saves a return address on the stack.
 The `CALLJ` instruction no longer saves anything; it can be seen as an unconditional jump-hence the `J` in its name.
