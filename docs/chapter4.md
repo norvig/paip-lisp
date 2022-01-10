@@ -120,7 +120,7 @@ The original GPS allowed more flexibility in the specification of effects, but f
 
 *   A complete problem is described to GPS in terms of a starting state, a goal state, and a set of known operators.
 Thus, GPS will be a function of three arguments.
-For example, a sample call might be: `(GPS '(unknown poor)'(rich famous) list-of-ops)` In other words, starting from the state of being poor and unknown, achieve the state of being rich and famous, using any combination of the known operators.
+For example, a sample call might be: `(GPS '(unknown poor) '(rich famous) list-of-ops)` In other words, starting from the state of being poor and unknown, achieve the state of being rich and famous, using any combination of the known operators.
 GPS should return a true value only if it solves the problem, and it should print a record of the actions taken.
 The simplest approach is to go through the conditions in the goal state one at a time and try to achieve each one.
 If they can all be achieved, then the problem is solved.
@@ -155,7 +155,7 @@ The specification is complete enough to lead directly to a complete Common Lisp 
 | `appropriate-p`    | Decide if an operator is appropriate for a goal.      |
 | `apply-op`         | Apply operator to current state.                      |
 |                    | **Selected Common Lisp Functions**                    |
-| `member`           | Test if an elementis a member of a list. (p.78)       |
+| `member`           | Test if an element is a member of a list. (p.78)       |
 | `set-difference`   | All elements in one set but not the other.            |
 | `union`            | All elements in either of the two sets.               |
 | `every`            | Test if every element of a list passes a test. (p. 62)|

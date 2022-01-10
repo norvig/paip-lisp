@@ -735,7 +735,7 @@ Here are the necessary abbreviations:
 
 The next step is to provide abbreviations for some of the common verb complement lists:
 
-``lisp
+```lisp
 (abbrev v/intrans   ((agt 1 (NP ?))))
 (abbrev v/trans     ((agt 1 (NP ?)) (obj 2 (NP ?))))
 (abbrev v/ditrans   ((agt 1 (NP ?)) (goal 2 (NP ?)) (obj 3 (NP ?))))
