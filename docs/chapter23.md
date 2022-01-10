@@ -32,7 +32,7 @@ A summary of a more complex version of the compiler appears in [figure 23.3](#fi
 | JUMP   | label | Go to label (don't pop stack).                          |
 | RETURN |       | Go to last return point.                                |
 | ARGS   | n     | Move *n* arguments from stack to environment.           |
-| CALL   | n     | Go to start of function, saving return point            |
+| CALL   | n     | Go to start of function, saving return point,           |
 |        |       | [where] *n* is the number of arguments passed.          |
 | FN     | fn    | Create  a closure from argument and current environment |
 |        |       | and push it on the stack.                               |
