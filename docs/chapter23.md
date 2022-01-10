@@ -29,7 +29,7 @@ A summary of a more complex version of the compiler appears in [figure 23.3](#fi
 | POP    |       | Pop the stack.                                          |
 | TJUMP  | label | Go to label if top-of-stack is non-nil; pop stack.      |
 | FJUMP  | label | Go to label if top-of-stack is nil; pop stack.          |
-| JUMP   | label | Go to label (don't pop stack.)                          |
+| JUMP   | label | Go to label (don't pop stack).                          |
 | RETURN |       | Go to last return point.                                |
 | ARGS   | n     | Move *n* arguments from stack to environment.           |
 | CALL   | n     | Go to start of function, saving return point            |
