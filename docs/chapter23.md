@@ -14,10 +14,6 @@ The function should return with a `RETURN` instruction, which resets the program
 
 In addition, our machine has three `JUMP` instructions; one that branches unconditionally, and two that branch depending on if the top of the stack is nil or non-nil.
 There is also an instruction for popping unneeded values off the stack, and for accessing and altering global variables.
-The instruction set is shown in [figure 23.1](#f0010).
-A glossary for the compiler program is given in [figure 23.2](#f0015).
-A summary of a more complex version of the compiler appears on [page 795](#p795).
-
 | []() |
 |---|
 | ![f23-01](images/chapter23/f23-01.jpg) |
@@ -31,6 +27,11 @@ A summary of a more complex version of the compiler appears on [page 795](#p795)
 | Figure 23.2: Glossary for the Scheme Compiler |
 
 *(ed: should be a markdown table)*
+The instruction set is shown in figure 23.1.
+A glossary for the compiler program is given in figure 23.2.
+A summary of a more complex version of the compiler appears in [figure 23.3](#figure-23-3).
+
+
 
 
 As an example, the procedure
@@ -454,6 +455,7 @@ The `CALLJ` instruction no longer saves anything; it can be seen as an unconditi
 | Figure 23.3: Glossary of the Scheme Compiler, Second Version |
 
 *(ed: should be a markdown table)*
+<a id="figure-23-3"></a>
 
 First, we see how nested function calls work:
 
