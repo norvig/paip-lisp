@@ -19,6 +19,55 @@ A glossary for the compiler program is given in figure 23.2.
 A summary of a more complex version of the compiler appears in [figure 23.3](#figure-23-3).
 
 
+| opcode | args  | description                                             |
+|--------|-------|---------------------------------------------------------|
+| CONST  | x     | push a constant on the stack                            |
+| LVAR   | i,j   | push a local variable's value                           |
+| GVAR   | sym   | push a global variable's value                          |
+| LSET   | i,j   | store top-of-stack in a local variable                  |
+| GSET   | sym   | store top-of-stack in a global variable                 |
+| POP    |       | pop the stack                                           |
+| TJUMP  | label | go to label if top-of-stack is non-nil; pop stack       |
+| FJUMP  | label | go to label if top-of-stack is nil; pop stack           |
+| JUMP   | label | go to label (don't pop stack)                           |
+| RETURN |       | go to last return point                                 |
+| ARGS   | n     | move *n* arguments from stack to environment            |
+| CALL   | n     | go to start of function, saving return point            |
+|        |       | [where] *n* is the number of arguments passed           |
+| FN     | fn    | create  a closure from argument and current environment |
+|        |       | and push it on the stack                                |
+
+Figure 23.1: Instruction Set for Hypothetical Stack Machine
+
+
+| Function          | Description                                        |
+|-------------------|----------------------------------------------------|
+|                   | **Top-Level Functions**                            |
+| `comp-show`       | Compile an expression and show the resulting code. |
+| `compiler`        | Compile an expression as a parameterless function. |
+|                   | **Special Variables**                              |
+| `*label-num*`     | Number for the next assembly language label.       |
+| `*primitive-fns*` | List of built-in Scheme functions.                 |
+|                   | **Data Types**                                     |
+| `fn`              | A Scheme function.                                 |
+|                   | **Major Functions**                                |
+| `comp`            | Compile an expression into a list of instructions. |
+| `comp-begin`      | Compile a sequence of expressions.                 |
+| `comp-if`         | Compile a conditional (`if`) expression.           |
+| `comp-lambda`     | Compile a lambda expression.                       |
+|                   | **Auxiliary Functions**                            |
+| `gen`             | Generate a single instruction.                     |
+| `seq`             | Generate a sequence of instructions.               |
+| `gen-label`       | Generate an assembly language label.               |
+| `gen-var`         | Generate an instruction to reference a variable.   |
+| `gen-set`         | Generate an instruction to set a variable.         |
+| `name!`           | Set the name of a function to a given value.       |
+| `print-fn`        | Print a Scheme function (just the name).           |
+| `show-fn`         | Print the instructions in a Scheme function.       |
+| `label-p`         | Is the argument a label?                           |
+| `in-env-p`        | Is the symbol in the environment?  If so, where?   |
+
+Figure 23.2: Glossary for the Scheme Compiler
 
 
 As an example, the procedure
@@ -437,6 +486,41 @@ As the name implies, `SAVE` saves a return address on the stack.
 The `CALLJ` instruction no longer saves anything; it can be seen as an unconditional jump-hence the `J` in its name.
 
 <a id="figure-23-3"></a>
+| Function           | Description                                                |
+|--------------------|------------------------------------------------------------|
+|                    | **Top-Level Functions**                                    |
+| `scheme`           | A read-compile-execute-print loop.                         |
+| `comp-go`          | Compile and execute an expression.                         |
+| `machine`          | Run the abstract machine.                                  |
+|                    | **Data Types**                                             |
+| `prim`             | A Scheme primitive function.                               |
+| `ret-addr`         | A return address (function, program counter, environment). |
+|                    | **Auxiliary Functions**                                    |
+| `arg-count`        | Report an error for wrong number of arguments.             |
+| `comp-list`        | Compile a list of expressions onto the stack.              |
+| `comp-const`       | Compile a constant expression.                             |
+| `comp-var`         | Compile a variable reference.                              |
+| `comp-funcall`     | Compile a function application.                            |
+| `primitive-p`      | Is this function a primitive?                              |
+| `init-scheme-comp` | Initialize primitives used by compiler.                    |
+| `gen-args`         | Generate code to load arguments to a function.             |
+| `make-true-list`   | Convert a dotted list to a nondotted one.                  |
+| `new-fn`           | Build a new function.                                      |
+| `is`               | Predicate is true if instructions opcode matches.          |
+| `optimize`         | A peephole optimizer.                                      |
+| `gen1`             | Generate a single instruction.                             |
+| `target`           | The place a branch instruction branches to.                |
+| `next-instr`       | The next instruction in a sequence.                        |
+| `quasi-q`          | Expand a quasiquote form into `append`, `cons`, etc.       |
+|                    | **Functions for the Abstract Machine**                     |
+| `assemble`         | Turn a list of instructions into a vector.                 |
+| `asm-first-pass`   | Find labels and length of code.                            |
+| `asm-second-pass`  | Put code into the code vector.                             |
+| `opcode`           | The opcode of an instruction.                              |
+| `args`             | The arguments of an instruction.                           |
+| `arg`*i*           | For *i* = 1,2,3 -- select *i*th argument of instruction.   |
+
+Figure 23.3: Glossary of the Scheme Compiler, Second Version
 
 First, we see how nested function calls work:
 
