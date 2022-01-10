@@ -2195,4 +2195,3 @@ Strictly speaking, this is a read-compile-funcall-write loop.
 At the time, the MacLisp compiler dealt with something called "lisp assembly code" or LAP.
 The function to input LAP was called `lapin`.
 Those who know French will get the pun.
-
