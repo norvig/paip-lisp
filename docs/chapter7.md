@@ -115,7 +115,7 @@ The special meaning of these characters to the Lisp reader can be escaped either
 The main section of STUDENT will search through the list of rules for a response, just as ELIZA did.
 The first point of deviation is that before we substitute the values of the `pat-match` variables into the response, we must first recursively translate the value of each variable, using the same list of pattern-response rules.
 The other difference is that once we're done, we don't just print the response; instead we have to solve the set of equations and print the answers.
-The program is summarized in [figure 7.1](#f0010).
+The program is summarized in figure 7.1.
 
 | Function                   | Description                                                          |
 |----------------------------|----------------------------------------------------------------------|
