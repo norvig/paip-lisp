@@ -29,7 +29,7 @@ The description of STUDENT is:
 
 1.  Break the input into phrases that will represent equations.
 
-2.  Break each phrase into a pair of phrases on either side of the  =  sign.
+2.  Break each phrase into a pair of phrases on either side of the = sign.
 
 3.  Break these phrases down further into sums and products, and so on, until finally we bottom out with numbers and variables.
 (By "variable" here, I mean "mathematical variable," which is distinct from the idea of a "pattern-matching variable" as used in `pat-match` in [chapter 6](B9780080571157500066.xhtml)).
@@ -363,7 +363,7 @@ However, we don't have to go to that effort, since the function already exists.
 The data structure exp was carefully selected to be the same structure (lists with prefix functions) used by Lisp itself for its own expressions.
 So Lisp will find the right-hand side to be an acceptable expression, one that could be evaluated if typed in to the top level.
 Lisp evaluates expressions by calling the function `eval`, so we can call `eval` directly and have it return a number.
-The function `solve-arithmetic` returns an equation of the form (=  *var number*).
+The function `solve-arithmetic` returns an equation of the form (= *var number*).
 
 Auxiliary functions for `solve` are shown below.
 Most are straightforward, but I will remark on a few of them.
