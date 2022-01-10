@@ -21,21 +21,21 @@ A summary of a more complex version of the compiler appears in [figure 23.3](#fi
 
 | opcode | args  | description                                             |
 |--------|-------|---------------------------------------------------------|
-| CONST  | x     | push a constant on the stack                            |
-| LVAR   | i,j   | push a local variable's value                           |
-| GVAR   | sym   | push a global variable's value                          |
-| LSET   | i,j   | store top-of-stack in a local variable                  |
-| GSET   | sym   | store top-of-stack in a global variable                 |
-| POP    |       | pop the stack                                           |
-| TJUMP  | label | go to label if top-of-stack is non-nil; pop stack       |
-| FJUMP  | label | go to label if top-of-stack is nil; pop stack           |
-| JUMP   | label | go to label (don't pop stack)                           |
-| RETURN |       | go to last return point                                 |
-| ARGS   | n     | move *n* arguments from stack to environment            |
-| CALL   | n     | go to start of function, saving return point            |
-|        |       | [where] *n* is the number of arguments passed           |
-| FN     | fn    | create  a closure from argument and current environment |
-|        |       | and push it on the stack                                |
+| CONST  | x     | Push a constant on the stack.                           |
+| LVAR   | i,j   | Push a local variable's value.                          |
+| GVAR   | sym   | Push a global variable's value.                         |
+| LSET   | i,j   | Store top-of-stack in a local variable.                 |
+| GSET   | sym   | Store top-of-stack in a global variable.                |
+| POP    |       | Pop the stack.                                          |
+| TJUMP  | label | Go to label if top-of-stack is non-nil; pop stack.      |
+| FJUMP  | label | Go to label if top-of-stack is nil; pop stack.          |
+| JUMP   | label | Go to label (don't pop stack.)                          |
+| RETURN |       | Go to last return point.                                |
+| ARGS   | n     | Move *n* arguments from stack to environment.           |
+| CALL   | n     | Go to start of function, saving return point            |
+|        |       | [where] *n* is the number of arguments passed.          |
+| FN     | fn    | Create  a closure from argument and current environment |
+|        |       | and push it on the stack.                               |
 
 Figure 23.1: Instruction Set for Hypothetical Stack Machine
 
