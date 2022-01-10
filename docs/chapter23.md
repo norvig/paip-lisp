@@ -518,7 +518,7 @@ The `CALLJ` instruction no longer saves anything; it can be seen as an unconditi
 | `asm-second-pass`  | Put code into the code vector.                             |
 | `opcode`           | The opcode of an instruction.                              |
 | `args`             | The arguments of an instruction.                           |
-| `arg`*i*           | For *i* = 1,2,3 -- select *i*th argument of instruction.   |
+| `argi`             | For *i* = 1,2,3 -- select ith argument of instruction.     |
 
 Figure 23.3: Glossary of the Scheme Compiler, Second Version
 
