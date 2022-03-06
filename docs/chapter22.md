@@ -381,6 +381,8 @@ Only one clause has to be added, but we'll repeat the whole definition:
   (cond
     ((symbolp x) (get-var x env))
     ((atom x) x)
+    ((scheme-macro (first x))              ;***
+     (interp (scheme-macro-expand x) env)) ;***
     ((case (first x)
        (QUOTE  (second x))
        (BEGIN  (last1 (mapcar #'(lambda (y) (interp y env))
