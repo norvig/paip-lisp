@@ -41,29 +41,29 @@ As an example, the procedure
 
 should compile into the following instructions:
 
-| []()  |          |      |
-|-------|----------|------|
-|       | `ARGS`   | `0`  |
-|       | `GVAR`   | `X`  |
-|       | `GVAR`   | `Y`  |
-|       | `GVAR`   | `=`  |
-|       | `CALL`   | `2`  |
-|       | `FJUMP`  | `L1` |
-|       | `GVAR`   | `X`  |
-|       | `GVAR`   | `G`  |
-|       | `CALL`   | `1`  |
-|       | `GVAR`   | `F`  |
-|       | `CALL`   | `1`  |
-|       | `JUMP`   | `L2` |
-| `L1:` | `GVAR`   | `X`  |
-|       | `GVAR`   | `Y`  |
-|       | `CONST`  | `1`  |
-|       | `CONST`  | `2`  |
-|       | `GVAR`   | `H`  |
-|       | `CALL`   | `2`  |
-|       | `GVAR`   | `H`  |
-|       | `CALL`   | `3`  |
-| `L2:` | `RETURN` |      |
+```
+      ARGS    0
+      GVAR    X
+      GVAR    Y
+      GVAR    =
+      CALL    2
+      FJUMP   L1
+      GVAR    X
+      GVAR    G
+      CALL    1
+      GVAR    F
+      CALL    1
+      JUMP    L2
+L1:   GVAR    X
+      GVAR    Y
+      CONST   1
+      CONST   2
+      GVAR    H
+      CALL    2
+      GVAR    H
+      CALL    3
+L2:   RETURN
+```
 
 The first version of the Scheme compiler is quite simple.
 It mimics the structure of the Scheme evaluator.
@@ -708,21 +708,18 @@ First, a very simple example:
 
 ```
 > (comp-show '(if p (+ x y) (* x y)))
+        ARGS    0
+        GVAR    P
+        FJUMP   L1
+        GVAR    X
+        GVAR    Y
+        +
+        RETURN
+L1 :    GVAR    X
+        GVAR    Y
+        *
+        RETURN
 ```
-
-| []()   |          |      |
-|--------|----------|------|
-|        | `ARGS`   | `0`  |
-|        | `GVAR`   | `P`  |
-|        | `FJUMP`  | `L1` |
-|        | `GVAR`   | `X`  |
-|        | `GVAR`   | `Y`  |
-|        | `+`      |      |
-|        | `RETURN` |      |
-| `L1 :` | `GVAR`   | `X`  |
-|        | `GVAR`   | `Y`  |
-|        | `*`      |      |
-|        | `RETURN` |      |
 
 Each branch has its own `RETURN` instruction.
 But note that the code generated is sensitive to its context.
@@ -730,13 +727,10 @@ For example, if we put the same expression inside a `begin` expression, we get s
 
 ```
 > (comp-show '(begin (if p (+ x y) (* x y)) z))
+        ARGS   0
+        GVAR   Z
+        RETURN
 ```
-
-| []() |          |     |
-|------|----------|-----|
-|      | `ARGS`   | `0` |
-|      | `GVAR`   | `Z` |
-|      | `RETURN` |     |
 
 What happens here is that `(+ x y)` and `(* x y)`, when compiled in a context where the value is ignored, both resuit in no generated code.
 Thus, the `if` expression reduces to `(if p nil nil)`, which is compiled like `(begin p nil)`, which also generates no code when not evaluated for value, so the final code just references `z`.
@@ -745,20 +739,17 @@ Consider what happens when we replace + with `f` :
 
 ```
 > (comp-show '(begin (if p (f x) (* x x)) z))
+        ARGS    0
+        GVAR    P
+        FJUMP   L2
+        SAVE    K1
+        GVAR    X
+        GVAR    F
+        CALLJ   1
+K1:     POP
+L2:     GVAR    Z
+        RETURN
 ```
-
-| []()  |          |      |
-|-------|----------|------|
-|       | `ARGS`   | `0`  |
-|       | `GVAR`   | `P`  |
-|       | `FJUMP`  | `L2` |
-|       | `SAVE`   | `K1` |
-|       | `GVAR`   | `X`  |
-|       | `GVAR`   | `F`  |
-|       | `CALLJ`  | `1`  |
-| `K1:` | `POP`    |      |
-| `L2:` | `GVAR`   | `Z`  |
-|       | `RETURN` |      |
 
 Here we have to call `(f x)` if `p` is true (and then throw away the value returned), but we don't have to compute `(* x x)` when `p` is false.
 
@@ -929,59 +920,49 @@ Here are some more examples of the compiler at work:
 
 ```
 > (comp-show '(if (null? (car l)) (f (+ (* a x) b)) (g (/ x 2))))
+        ARGS    0
+        GVAR    L
+        CAR
+        FJUMP   L1
+        GVAR    X
+        2
+        /
+        GVAR    G
+        CALLJ   1
+L1:     GVAR    A
+        GVAR    X
+        *
+        GVAR    B
+        +
+        GVAR    F
+        CALLJ   1
 ```
-
-| []()  |         |         |     |
-|-------|---------|---------|-----|
-|       | `ARGS`  | `0`     |     |
-|       | `GVAR`  | `L`     |     |
-|       | `CAR`   |         |     |
-|       | `FJUMP` | `L1`    |     |
-|       | `GVAR`  | `X`     |     |
-|       | `2`     |         |     |
-|       | /       |         |     |
-|       | `GVAR`  | `G`     |     |
-|       | `CALLJ` | `1`     |     |
-| `L1:` | `GVAR`  | `A`     |     |
-|       |         | `GVAR`  | `X` |
-|       |         | `*`     |     |
-|       |         | `GVAR`  | `B` |
-|       |         | `+`     |     |
-|       |         | `GVAR`  | `F` |
-|       |         | `CALLJ` | `1` |
 
 There is no need to save any continuation points in this code, because the only calls to nonprimitive functions occur as the final values of the two branches of the function.
 
 ```lisp
 > (comp-show '(define (lastl l)
+                (if (null? (cdr l)) (car l)
+                    (last1 (cdr l)))))
+
+        ARGS    0
+        FN
+                ARGS    1
+                LVAR    0       0       ;       L
+                CDR
+                FJUMP   L1
+                LVAR    0       0       ;       L
+                CDR
+                GVAR    LAST1
+                CALLJ   1
+L1:             LVAR    0       0       ;       L
+                CAR
+                RETURN
+        GSET    LAST1
+        CONST   LAST1
+        NAME!
+        RETURN
 ```
-
-`                            (if (null?
-(cdr l)) (car l)`
-
-```lisp
-                                    (last1 (cdr l)))))
-```
-
-| []()  |          |          |     |     |     |     |
-|-------|----------|----------|-----|-----|-----|-----|
-|       | `ARGS`   | `0`      |     |     |     |     |
-|       | `FN`     |          |     |     |     |     |
-|       | `ARGS`   | `1`      |     |     |     |     |
-|       | `LVAR`   | `0`      | `0` | `;` | `L` |     |
-|       | `CDR`    |          |     |     |     |     |
-|       | `FJUMP`  | `L1`     |     |     |     |     |
-|       | `LVAR`   | `0`      | `0` | `;` | `L` |     |
-|       | `CDR`    |          |     |     |     |     |
-|       | `GVAR`   | `LAST1`  |     |     |     |     |
-|       | `CALLJ`  | `1`      |     |     |     |     |
-| `L1:` |          | `LVAR`   | `0` | `0` | `;` | `L` |
-|       |          | `CAR`    |     |     |     |     |
-|       |          | `RETURN` |     |     |     |     |
-|       | `GSET`   | `LAST1`  |     |     |     |     |
-|       | `CONST`  | `LAST1`  |     |     |     |     |
-|       | `NAME!`  |          |     |     |     |     |
-|       | `RETURN` |          |     |     |     |     |
 
 The top-level function just assigns the nested function to the global variable `last1`.
 Since `last1` is tail-recursive, it has only one return point, for the termination case, and just calls itself without saving continuations until that case is executed.
@@ -992,29 +973,26 @@ It is not tail-recursive because before it calls `length` recursively, it must s
 ```lisp
 > (comp-show '(define (length l)
                 (if (null? l) 0 (+ 1 (length (cdr l))))))
+        ARGS    0
+        FN
+                ARGS    1
+                LVAR    0       0       ;       L
+                FJUMP   L2
+                1
+                SAVE    K1
+                LVAR    0       0       ;       L
+                CDR
+                GVAR    LENGTH
+                CALLJ   1
+K1:             +
+                RETURN
+L2:             0
+                RETURN
+        GSET    LENGTH
+        CONST   LENGTH
+        NAME!
+        RETURN
 ```
-
-| []()  |          |          |          |     |     |     |
-|-------|----------|----------|----------|-----|-----|-----|
-|       | `ARGS`   | `0`      |          |     |     |     |
-|       | `FN`     |          |          |     |     |     |
-|       |          | `ARGS`   | `1`      |     |     |     |
-|       |          | `LVAR`   | `0`      | `0` | `;` | `L` |
-|       |          | `FJUMP`  | `L2`     |     |     |     |
-|       |          | `1`      |          |     |     |     |
-|       |          | `SAVE`   | `K1`     |     |     |     |
-|       |          | `LVAR`   | `0`      | `0` | `;` | `L` |
-|       |          | `CDR`    |          |     |     |     |
-|       |          | `GVAR`   | `LENGTH` |     |     |     |
-|       |          | `CALLJ`  | `1`      |     |     |     |
-| `K1:` |          | `+`      |          |     |     |     |
-|       |          | `RETURN` |          |     |     |     |
-| `L2`  |          | `0`      |          |     |     |     |
-|       |          | `RETURN` |          |     |     |     |
-|       | `GSET`   | `LENGTH` |          |     |     |     |
-|       | `CONST`  | `LENGTH` |          |     |     |     |
-|       | `NAME!`  |          |          |     |     |     |
-|       | `RETURN` |          |          |     |     |     |
 
 Of course, it is possible to write `length` in tail-recursive fashion:
 
@@ -1024,67 +1002,61 @@ Of course, it is possible to write `length` in tail-recursive fashion:
                               (if (null? l) n
                                   (len (rest l) (+ n l))))))
                 (len l 0))))
+        ARGS   0
+        FN
+               ARGS   1
+               NIL
+               FN
+                      ARGS      1
+                      FN
+                                ARGS    2
+                                LVAR    0       0       ;       L
+                                FJUMP   L2
+                                SAVE    K1
+                                LVAR    0       0       ;       L
+                                GVAR    REST
+                                CALLJ   1
+K1:                             LVAR    0       1       ;       N
+                                1
+                                +
+                                LVAR    1       0       ;       LEN
+                                CALLJ   2
+L2:                             LVAR    0       1       ;       N
+                                RETURN
+                      LSET      0       0       ;       LEN
+                      POP
+                      LVAR      1       0       ;       L
+                      0
+                      LVAR      0       0       ;       LEN
+                      CALLJ     2
+               CALLJ  1
+        GSET   LENGTH
+        CONST  LENGTH
+        NAME!
+        RETURN
 ```
-
-| []()  |          |          |         |          |        |     |       |       |
-|-------|----------|----------|---------|----------|--------|-----|-------|-------|
-|       | `ARGS`   | `0`      |         |          |        |     |       |       |
-|       | `FN`     |          |         |          |        |     |       |       |
-|       |          | `ARGS`   | `1`     |          |        |     |       |       |
-|       |          | `NIL`    |         |          |        |     |       |       |
-|       |          | `FN`     |         |          |        |     |       |       |
-|       |          |          | `ARGS`  | `1`      |        |     |       |       |
-|       |          |          | `FN`    |          |        |     |       |       |
-|       |          |          |         | `ARGS`   | `2`    |     |       |       |
-|       |          |          |         | `LVAR`   | `0`    | `0` | `;`   | `L`   |
-|       |          |          |         | `FJUMP`  | `L2`   |     |       |       |
-|       |          |          |         | `SAVE`   | `K1`   |     |       |       |
-|       |          |          |         | `LVAR`   | `0`    | `0` | `;`   | `L`   |
-|       |          |          |         | `GVAR`   | `REST` |     |       |       |
-|       |          |          |         | `CALLJ`  | `1`    |     |       |       |
-| `K1:` |          |          |         | `LVAR`   | `0`    | `1` | `;`   | `N`   |
-|       |          |          |         | `1`      |        |     |       |       |
-|       |          |          |         | `+`      |        |     |       |       |
-|       |          |          |         | `LVAR`   | `1`    | `0` | `;`   | `LEN` |
-|       |          |          |         | `CALLJ`  | `2`    |     |       |       |
-| `L2:` |          |          |         | `LVAR`   | `0`    | `1` | `;`   | `N`   |
-|       |          |          |         | `RETURN` |        |     |       |       |
-|       |          |          | `LSET`  | `0`      | `0`    | `;` | `LEN` |       |
-|       |          |          | `POP`   |          |        |     |       |       |
-|       |          |          | `LVAR`  | `1`      | `0`    | `;` | `L`   |       |
-|       |          |          | `0`     |          |        |     |       |       |
-|       |          |          | `LVAR`  | `0`      | `0`    | `;` | `LEN` |       |
-|       |          |          | `CALLJ` | `2`      |        |     |       |       |
-|       |          | `CALLJ`  | `1`     |          |        |     |       |       |
-|       | `GSET`   | `LENGTH` |         |          |        |     |       |       |
-|       | `CONST`  | `LENGTH` |         |          |        |     |       |       |
-|       | `NAME!`  |          |         |          |        |     |       |       |
-|       | `RETURN` |          |         |          |        |     |       |       |
 
 Let's look once again at an example with nested conditionals:
 
 ```
 > (comp-show '(if (not (and p q (not r))) x y))
+        ARGS    0
+        GVAR    P
+        FJUMP   L3
+        GVAR    Q
+        FJUMP   L1
+        GVAR    R
+        NOT
+        JUMP    L2
+L1:     NIL
+L2:     JUMP    L4
+L3:     NIL
+L4:     FJUMP   L5
+        GVAR    Y
+        RETURN
+L5:     GVAR    X
+        RETURN
 ```
-
-| []()  |          |      |
-|-------|----------|------|
-|       | `ARGS`   | `0`  |
-|       | `GVAR`   | `P`  |
-|       | `FJUMP`  | `L3` |
-|       | `GVAR`   | `Q`  |
-|       | `FJUMP`  | `L1` |
-|       | `GVAR`   | `R`  |
-|       | `NOT`    |      |
-|       | `JUMP`   | `L2` |
-| `L1:` | `NIL`    |      |
-| `L2:` | `JUMP`   | `L4` |
-| `L3:` | `NIL`    |      |
-| `L4:` | `FJUMP`  | `L5` |
-|       | `GVAR`   | `Y`  |
-|       | `RETURN` |      |
-| `L5:` | `GVAR`   | `X`  |
-|       | `RETURN` |      |
 
 Here the problem is with multiple `JUMP`s and with not recognizing negation.
 If `p` is false, then the and expression is false, and the whole predicate is true, so we should return `x`.
@@ -1092,19 +1064,19 @@ The code does in fact return `x`, but it first jumps to `L3`, loads `NIL`, and t
 Other branches have similar inefficiencies.
 A sufficiently clever compiler should be able to generate the following code:
 
-| []()  |          |      |
-|-------|----------|------|
-|       | `ARGS`   | `0`  |
-|       | `GVAR`   | `P`  |
-|       | `FJUMP`  | `L1` |
-|       | `GVAR`   | `Q`  |
-|       | `FJUMP`  | `L1` |
-|       | `GVAR`   | `R`  |
-|       | `TJUMP`  | `L1` |
-|       | `GVAR`   | `Y`  |
-|       | `RETURN` |      |
-| `L1:` | `GVAR X` |      |
-|       | `RETURN` |      |
+```
+        ARGS    0
+        GVAR    P
+        FJUMP   L1
+        GVAR    Q
+        FJUMP   L1
+        GVAR    R
+        TJUMP   L1
+        GVAR    Y
+        RETURN
+L1:     GVAR X
+        RETURN
+```
 
 ## 23.2 Introducing Call/cc
 
@@ -1409,18 +1381,15 @@ In the following example, `comp-if` has already done some source-level optimizat
 
 ```
 > (comp-show '(begin (if (if t 1 (f x)) (set! x 2)) x))
+   0: ARGS    0
+   1: 1
+   2: FJUMP   6
+   3: 2
+   4: GSET    X
+   5: POP
+   6: GVAR    X
+   7: RETURN
 ```
-
-| []() |          |     |
-|------|----------|-----|
-| `0:` | `ARGS`   | `0` |
-| 1:   | 1        |     |
-| `2:` | `FJUMP`  | `6` |
-| `3:` | `2`      |     |
-| `4:` | `GSET`   | `X` |
-| `5:` | `POP`    |     |
-| `6:` | `GVAR`   | `X` |
-| `7:` | `RETURN` |     |
 
 But the generated code could be made much better.
 This could be done with more source-level optimizations to transform the expression into `(set!
@@ -1430,14 +1399,11 @@ The optimizer presented in this section is capable of generating the following c
 
 ```
 > (comp-show '(begin (if (if t 1 (f x)) (set! x 2)) x))
+   0: ARGS    0
+   1: 2
+   2: GSET    X
+   3: RETURN
 ```
-
-| []() |          |     |
-|------|----------|-----|
-| `0:` | `ARGS`   | `0` |
-| 1:   | 2        |     |
-| `2:` | `GSET`   | `X` |
-| `3:` | `RETURN` |     |
 
 The function `optimize` is implemented as a data-driven function that looks at the opcode of each instruction and makes optimizations based on the following instructions.
 To be more specific, `optimize` takes a list of assembly language instructions and looks at each instruction in order, trying to apply an optimization.

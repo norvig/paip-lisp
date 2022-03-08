@@ -839,62 +839,53 @@ We will need a way to show off the preference rankings:
 
 Now we can try some examples:
 
-```
+```lisp
 > (all-parses '(1 to 6 without 3 and 4))
+Score  Semantics         (1 TO 6 WITHOUT 3 AND 4)
+=====  ===========       ========================
+0.3    (12 5 6)          ((1 TO 6) WITHOUT (3 AND 4))
+-0.7   (12 4 5 6 4)      (((1 TO 6) WITHOUT 3) AND 4)
 ```
-
-| []()      |                |                                |
-|-----------|----------------|--------------------------------|
-| `Score`   | `Semantics`    | `(1 TO 6 WITHOUT 3 AND 4)`     |
-| `=======` | `===========`  | `========================`     |
-| `0.3`     | `(12 5 6)`     | `((1 TO 6) WITHOUT (3 AND 4))` |
-| `-0.7`    | `(12 4 5 6 4)` | `(((1 TO 6) WITHOUT 3) AND 4)` |
 
 ```
 > (all-parses '(1 and 3 to 7 and 9 without 5 and 6))
+Score  Semantics         (1 AND 3 TO 7 AND 9 WITHOUT 5 AND 6)
+=====  ===========       =================================
+0.2    (1 3 4 7 9)       (1 AND (((3 TO 7) AND 9) WITHOUT (5 AND 6)))
+0.1    (1 3 4 7 9)       (((1 AND (3 TO 7)) AND 9) WITHOUT (5 AND 6))
+0.1    (1 3 4 7 9)       ((1 AND ((3 TO 7) AND 9)) WITHOUT (5 AND 6))
+-0.8   (1 3 4 6 7 9 6)   ((1 AND (((3 TO 7) AND 9) WITHOUT 5)) AND 6)
+-0.8   (1 3 4 6 7 9 6)   (1 AND ((((3 TO 7) AND 9) WITHOUT 5) AND 6))
+-0.9   (1 3 4 6 7 9 6)   ((((1 AND (3 TO 7)) AND 9) WITHOUT 5) AND 6)
+-0.9   (1 3 4 6 7 9 6)   (((1 AND ((3 TO 7) AND 9)) WITHOUT 5) AND 6)
+-2.0   (1 3 4 5 6 7 9)   ((1 AND (3 TO 7)) AND (9 WITHOUT (5 AND 6)))
+-2.0   (1 3 4 5 6 7 9)   (1 AND ((3 TO 7) AND (9 WITHOUT (5 AND 6))))
+-3.0   (1 3 4 5 6 7 9 6) (((1 AND (3 TO 7)) AND (9 WITHOUT 5)) AND 6)
+-3.0   (1 3 4 5 6 7 9 6) ((1 AND (3 TO 7)) AND ((9 WITHOUT 5) AND 6))
+-3.0   (1 3 4 5 6 7 9 6) ((1 AND ((3 TO 7) AND (9 WITHOUT 5))) AND 6)
+-3.0   (1 3 4 5 6 7 9 6) (1 AND (((3 TO 7) AND (9 WITHOUT 5)) AND 6))
+-3.0   (1 3 4 5 6 7 9 6) (1 AND ((3 TO 7) AND ((9 WITHOUT 5) AND 6)))
 ```
 
-| []()      |                     |                                                |
-|-----------|---------------------|------------------------------------------------|
-| `Score`   | `Semantics`         | `(1 AND 3 T0 7 AND 9 WITHOUT 5 AND 6)`         |
-| `=======` | `===========`       | `=================================`            |
-| `0.2`     | `(1 3 4 7 9)`       | `(1 AND (((3 T0 7) AND 9) WITHOUT (5 AND 6)))` |
-| `0.1`     | `(1 3 4 7 9)`       | `(((1 AND (3 T0 7)) AND 9) WITHOUT (5 AND 6))` |
-| `0.1`     | `(1 3 4 7 9)`       | `((1 AND ((3 T0 7) AND 9)) WITHOUT (5 AND 6))` |
-| `-0.8`    | `(1 3 4 6 7 9 6)`   | `((1 AND (((3 T0 7) AND 9) WITHOUT 5)) AND 6)` |
-| `-0.8`    | `(1 3 4 6 7 9 6)`   | `(1 AND ((((3 T0 7) AND 9) WITHOUT 5) AND 6))` |
-| `-0.9`    | `(1 3 4 6 7 9 6)`   | `((((1 AND (3 T0 7)) AND 9) WITHOUT 5) AND 6)` |
-| `-0.9`    | `(1 3 4 6 7 9 6)`   | `(((1 AND ((3 T0 7) AND 9)) WITHOUT 5) AND 6)` |
-| `-2.0`    | `(1 3 4 5 6 7 9)`   | `((1 AND (3 TO 7)) AND (9 WITHOUT (5 AND 6)))` |
-| `-2.0`    | `(1 3 4 5 6 7 9)`   | `(1 AND ((3 TO 7) AND (9 WITHOUT (5 AND 6))))` |
-| `-3.0`    | `(1 3 4 5 6 7 9 6)` | `(((1 AND (3 TO 7)) AND (9 WITHOUT 5)) AND 6)` |
-| `-3.0`    | `(1 3 4 5 6 7 9 6)` | `((1 AND (3 TO 7)) AND ((9 WITHOUT 5) AND 6))` |
-| `-3.0`    | `(1 3 4 5 6 7 9 6)` | `((1 AND ((3 TO 7) AND (9 WITHOUT 5))) AND 6)` |
-| `-3.0`    | `(1 3 4 5 6 7 9 6)` | `(1 AND (((3 T0 7) AND (9 WITHOUT 5)) AND 6))` |
-| `-3.0`    | `(1 3 4 5 6 7 9 6)` | `(1 AND ((3 T0 7) AND ((9 WITHOUT 5) AND 6)))` |
-
 ```
-> (all -parses '(1 and 3 to 7 and 9 without 5 and 2))
+> (all-parses '(1 and 3 to 7 and 9 without 5 and 2))
+Score   Semantics         (1 AND 3 TO 7 AND 9 WITHOUT 5 AND 2)
+=====   ================  ===================================
+0.2     (1 3 4 6 7 9 2)   ((1 AND (((3 TO 7) AND 9) WITHOUT 5)) AND 2)
+0.2     (1 3 4 6 7 9 2)   (1 AND ((((3 TO 7) AND 9) WITHOUT 5) AND 2))
+0.1     (1 3 4 6 7 9 2)   ((((1 AND (3 TO 7)) AND 9) WITHOUT 5) AND 2)
+0.1     (1 3 4 6 7 9 2)   (((1 AND ((3 TO 7) AND 9)) WITHOUT 5) AND 2)
+-2.0    (1 3 4 5 6 7 9 2) (((1 AND (3 TO 7)) AND (9 WITHOUT 5)) AND 2)
+-2.0    (1 3 4 5 6 7 9 2) ((1 AND (3 TO 7)) AND ((9 WITHOUT 5) AND 2))
+-2.0    (1 3 4 5 6 7 9)   ((1 AND (3 TO 7)) AND (9 WITHOUT (5 AND 2)))
+-2.0    (1 3 4 5 6 7 9 2) ((1 AND ((3 TO 7) AND (9 WITHOUT 5))) AND 2)
+-2.0    (1 3 4 5 6 7 9 2) (1 AND (((3 TO 7) AND (9 WITHOUT 5)) AND 2))
+-2.0    (1 3 4 5 6 7 9 2) (1 AND ((3 TO 7) AND ((9 WITHOUT 5) AND 2)))
+-2.0    (1 3 4 5 6 7 9)   (1 AND ((3 TO 7) AND (9 WITHOUT (5 AND 2))))
+-2.8    (1 3 4 6 7 9)     (1 AND (((3 TO 7) AND 9) WITHOUT (5 AND 2)))
+-2.9    (1 3 4 6 7 9)     (((1 AND (3 TO 7)) AND 9) WITHOUT (5 AND 2))
+-2.9    (1 3 4 6 7 9)     ((1 AND ((3 TO 7) AND 9)) WITHOUT (5 AND 2))
 ```
-
-| []()     |                     |                                                |
-|----------|---------------------|------------------------------------------------|
-| `Score`  | `Semantics`         | `(1 AND 3 T0 7 AND 9 WITHOUT 5 AND 2)`         |
-| `======` | `================`  | `===================================`          |
-| `0.2`    | `(1 3 4 6 7 9 2)`   | `((1 AND (((3 T0 7) AND 9) WITHOUT 5)) AND 2)` |
-| `0.2`    | `(1 3 4 6 7 9 2)`   | `(1 AND ((((3 T0 7) AND 9) WITHOUT 5) AND 2))` |
-| `0.1`    | `(1 3 4 6 7 9 2)`   | `((((1 AND (3 T0 7)) AND 9) WITHOUT 5) AND 2)` |
-| `0.1`    | `(1 3 4 6 7 9 2)`   | `(((1 AND ((3 T0 7) AND 9)) WITHOUT 5) AND 2)` |
-| `-2.0`   | `(1 3 4 5 6 7 9 2)` | `(((1 AND (3 T0 7)) AND (9 WITHOUT 5)) AND 2)` |
-| `-2.0`   | `(1 3 4 5 6 7 9 2)` | `((1 AND (3 T0 7)) AND ((9 WITHOUT 5) AND 2))` |
-| `-2.0`   | `(1 3 4 5 6 7 9)`   | `((1 AND (3 T0 7)) AND (9 WITHOUT (5 AND 2)))` |
-| `-2.0`   | `(1 3 4 5 6 7 9 2)` | `((1 AND ((3 T0 7) AND (9 WITHOUT 5))) AND 2)` |
-| `-2.0`   | `(1 3 4 5 6 7 9 2)` | `(1 AND (((3 T0 7) AND (9 WITHOUT 5)) AND 2))` |
-| `-2.0`   | `(1 3 4 5 6 7 9 2)` | `(1 AND ((3 T0 7) AND ((9 WITHOUT 5) AND 2)))` |
-| `-2.0`   | `(1 3 4 5 6 7 9)`   | `(1 AND ((3 T0 7) AND (9 WITHOUT (5 AND 2))))` |
-| `-2.8`   | `(1 3 4 6 7 9)`     | `(1 AND (((3 T0 7) AND 9) WITHOUT (5 AND 2)))` |
-| `-2.9`   | `(1 3 4 6 7 9)`     | `(((1 AND (3 T0 7)) AND 9) WITHOUT (5 AND 2))` |
-| `-2.9`   | `(1 3 4 6 7 9)`     | `((1 AND ((3 T0 7) AND 9)) WITHOUT (5 AND 2))` |
 
 In each case, the preference rules are able to assign higher scores to more reasonable interpretations.
 It turns out that, in each case, all the interpretations with positive scores represent the same set of numbers, while interpretations with negative scores seem worse.
