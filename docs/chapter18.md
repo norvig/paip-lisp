@@ -242,19 +242,32 @@ Also, even though there is no contiguous range of numbers that represents the le
 Now let's take a look at the initial board, as it is printed by `print-board`, and by a raw `write` (I added the line breaks to make it easier to read):
 
 ```lisp
-> (write (initial-board)   > (print-board (initial-board))
-          :array t)
-#(3 3 3 3 3 3 3 3 3 3                  1 2 3 4 5 6 7 8[@=2 0=2 (+0)]
-    3 0 0 0 0 0 0 0 0 3            10 . . . . . . . .
-    3 0 0 0 0 0 0 0 0 3            20 . . . . . . . .
-    3 0 0 0 0 0 0 0 0 3            30 . . . . . . . .
-    3 0 0 0 2 1 0 0 0 3            40 . . . 0 @ . . .
-    3 0 0 0 1 2 0 0 0 3            50 . . . @ 0 . . .
-    3 0 0 0 0 0 0 0 0 3            60 . . . . . . . .
-    3 0 0 0 0 0 0 0 0 3            70 . . . . . . . .
-    3 0 0 0 0 0 0 0 0 3            80 . . . . . . . .
+> (write (initial-board)
+         :array t)
+  #(3 3 3 3 3 3 3 3 3 3
+    3 0 0 0 0 0 0 0 0 3
+    3 0 0 0 0 0 0 0 0 3
+    3 0 0 0 0 0 0 0 0 3
+    3 0 0 0 2 1 0 0 0 3
+    3 0 0 0 1 2 0 0 0 3
+    3 0 0 0 0 0 0 0 0 3
+    3 0 0 0 0 0 0 0 0 3
+    3 0 0 0 0 0 0 0 0 3
     3 3 3 3 3 3 3 3 3 3)
-#<ART-2B-100 -72570734>    NIL
+#<ART-2B-100 -72570734>
+
+> (print-board (initial-board))
+     1 2 3 4 5 6 7 8 [@=2 0=2 (+0)]
+  10 . . . . . . . .
+  20 . . . . . . . .
+  30 . . . . . . . .
+  40 . . . 0 @ . . .
+  50 . . . @ 0 . . .
+  60 . . . . . . . .
+  70 . . . . . . . .
+  80 . . . . . . . .
+
+NIL
 ```
 
 Notice that `print-board` provides some additional information: the number of pieces that each player controls, and the difference between these two counts.
@@ -760,75 +773,91 @@ Black is able to increase the piece difference dramatically as the game progress
 After 17 moves, white is down to only one piece:
 
 ```lisp
-          1 2 3 4 5 6 7 8    [@=20 0=1 (+19)]
-    10 0 @ . . . . . .
-    20 . @ . . . @ @ .
-    30 @ @ @ @ @ @ . .
-    40 . @ . @ @ . . .
-    50 @ @ @ @ @ @ . .
-    60 . . @ . . . . .
-    70 . . . . . . . .
-    80 . . . . . . . .
+     1 2 3 4 5 6 7 8    [@=20 0=1 (+19)]
+  10 0 @ . . . . . .
+  20 . @ . . . @ @ .
+  30 @ @ @ @ @ @ . .
+  40 . @ . @ @ . . .
+  50 @ @ @ @ @ @ . .
+  60 . . @ . . . . .
+  70 . . . . . . . .
+  80 . . . . . . . .
 ```
 
 Although behind by 19 points, white is actually in a good position, because the piece in the corner is safe and threatens many of black's pieces.
 White is able to maintain good position while being numerically far behind black, as shown in these positions later in the game:
 
 ```lisp
-          1 2 3 4 5 6 7 8    [@=32 0=15 (+17)]
-    10 0 0 0 0 @ @ 0 0
-    20 @ @ 0 @ @ @ @ @
-    30 @ @ 0 0 @ 0 @ @
-    40 0 0 @ @ @ @ @ @
-    50 @ 0 @ @ @ @ . .
-    60 @ @ 0 @ @ 0 . .
-    70 @ . . @ @ . . .
-    80 . . . . . . . .
-          1 2 3 4 5 6 7 8    [@=34 0=19 (+15)]
-    10 0 0 0 0 @ @ 0 0
-    20 @ @ 0 @ @ @ @ @
-    30 @ @ 0 0 @ 0 @ @
-    40 0 @ 0 @ @ @ @ @
-    50 0 @ 0 @ @ @ @ .
-    60 0 @ 0 @ @ @ . .
-    70 0 @ @ @ @ . . .
-    80 0 @ 0 . . . . .
+     1 2 3 4 5 6 7 8    [@=32 0=15 (+17)]
+  10 0 0 0 0 @ @ 0 0
+  20 @ @ 0 @ @ @ @ @
+  30 @ @ 0 0 @ 0 @ @
+  40 0 0 @ @ @ @ @ @
+  50 @ 0 @ @ @ @ . .
+  60 @ @ 0 @ @ 0 . .
+  70 @ . . @ @ . . .
+  80 . . . . . . . .
+```
+
+```
+     1 2 3 4 5 6 7 8    [@=34 0=19 (+15)]
+  10 0 0 0 0 @ @ 0 0
+  20 @ @ 0 @ @ @ @ @
+  30 @ @ 0 0 @ 0 @ @
+  40 0 @ 0 @ @ @ @ @
+  50 0 @ 0 @ @ @ @ .
+  60 0 @ 0 @ @ @ . .
+  70 0 @ @ @ @ . . .
+  80 0 @ 0 . . . . .
 ```
 
 After some give-and-take, white gains the advantage for good by capturing eight pieces on a move to square 85 on the third-to-last move of the game:
 
 ```lisp
-          1 2 3 4 5 6 7 8    [@=31 0=30 (+1)]
-    10 0 0 0 0 @ @ 0 0
-    20 @ @ 0 0 @ @ @ 0
-    30 @ @ 0 0 0 @ @ 0
-    40 0 @ 0 0 0 @ @ 0
-    50 0 @ 0 @ 0 @ @ 0
-    60 0 @ 0 @ @ @ @ 0
-    70 0 @ @ @ @ @ 0 0
-    80 0 @ @ @ . . .0
+     1 2 3 4 5 6 7 8    [@=31 0=30 (+1)]
+  10 0 0 0 0 @ @ 0 0
+  20 @ @ 0 0 @ @ @ 0
+  30 @ @ 0 0 0 @ @ 0
+  40 0 @ 0 0 0 @ @ 0
+  50 0 @ 0 @ 0 @ @ 0
+  60 0 @ 0 @ @ @ @ 0
+  70 0 @ @ @ @ @ 0 0
+  80 0 @ @ @ . . .0
+
 0 moves to 85.
-          1 2 3 4 5 6 7 8    [@=23 0=39 (-16)]
-    10 0 0 0 0 @ @ 0 0
-    20 @ @ 0 0 @ @ @ 0
-    30 @ @ 0 0 0 @ @ 0
-    40 0 @ 0 0 0 @ @ 0
-    50 0 @ 0 @ 0 @ @ 0
-    60 0 @ 0 @ 0 @ 0 0
-    70 0 @ @ 0 0 0 0 0
-    80 0 0 0 0 0 . . 0
+```
+
+```
+     1 2 3 4 5 6 7 8    [@=23 0=39 (-16)]
+  10 0 0 0 0 @ @ 0 0
+  20 @ @ 0 0 @ @ @ 0
+  30 @ @ 0 0 0 @ @ 0
+  40 0 @ 0 0 0 @ @ 0
+  50 0 @ 0 @ 0 @ @ 0
+  60 0 @ 0 @ 0 @ 0 0
+  70 0 @ @ 0 0 0 0 0
+  80 0 0 0 0 0 . . 0
+
 @ moves to 86.
-          1 2 3 4 5 6 7 8    [@=26 0=37 (-11)]
-    10 0 0 0 0 @ @ 0 0
-    20 @ @ 0 0 @ @ @ 0
-    30 @ @ 0 0 0 @ @ 0
-    40 0 @ 0 0 0 @ @ 0
-    50 0 @ 0 @ 0 @ @ 0
-    60 0 @ 0 @ 0 @ 0 0
-    70 0 @ @ 0 @ @ 0 0
-    80 0 0 0 0 0 @ . 0
+```
+
+```
+     1 2 3 4 5 6 7 8    [@=26 0=37 (-11)]
+  10 0 0 0 0 @ @ 0 0
+  20 @ @ 0 0 @ @ @ 0
+  30 @ @ 0 0 0 @ @ 0
+  40 0 @ 0 0 0 @ @ 0
+  50 0 @ 0 @ 0 @ @ 0
+  60 0 @ 0 @ 0 @ 0 0
+  70 0 @ @ 0 @ @ 0 0
+  80 0 0 0 0 0 @ . 0
+
 0 moves to 87.
+```
+
+```
 The game is over. Final result:
+
      1 2 3 4 5 6 7 8  [@=24 0=40 (-16)]
   10 0 0 0 0 @ @ 0 0
   20 @ @ 0 0 @ @ @ 0
@@ -856,58 +885,58 @@ The same things happen, although black's doom takes a bit longer to unfold.
 Black slowly builds up an advantage:
 
 ```lisp
-          1 2 3 4 5 6 7 8    [@=21 0=8 (+13)]
-    10 . . @ @ @ @ @ .
-    20 . @ . @ 0 @ . .
-    30 0 @ @ 0 @ 0 0 .
-    40 . @ . @ 0 @ 0 .
-    50 . @ @ @ @ @ . .
-    60 . @ . @ . 0 . .
-    70 . . . . . . . .
-    80 . . . . . . . .
+     1 2 3 4 5 6 7 8    [@=21 0=8 (+13)]
+  10 . . @ @ @ @ @ .
+  20 . @ . @ 0 @ . .
+  30 0 @ @ 0 @ 0 0 .
+  40 . @ . @ 0 @ 0 .
+  50 . @ @ @ @ @ . .
+  60 . @ . @ . 0 . .
+  70 . . . . . . . .
+  80 . . . . . . . .
 ```
 
 But at this point white has clear access to the upper left corner, and through that corner threatens to take the whole top edge.
 Still, black maintains a material edge as the game goes on:
 
 ```lisp
-          1 2 3 4 5 6 7 8    [@=34 0=11 (+23)]
-    10 0 . @ @ @ @ @ .
-    20 . 0 0 @ @ @ . .
-    30 0 @ 0 0 @ @ @ @
-    40 @ @ @ @ 0 @ @ .
-    50 @ @ @ @ @ 0 @ .
-    60 @ @ @ @ @ @ 0 0
-    70 @ . . @ . . @ 0
-    80 . . . . . . . .
+     1 2 3 4 5 6 7 8    [@=34 0=11 (+23)]
+  10 0 . @ @ @ @ @ .
+  20 . 0 0 @ @ @ . .
+  30 0 @ 0 0 @ @ @ @
+  40 @ @ @ @ 0 @ @ .
+  50 @ @ @ @ @ 0 @ .
+  60 @ @ @ @ @ @ 0 0
+  70 @ . . @ . . @ 0
+  80 . . . . . . . .
 ```
 
 But eventually white's weighted-squares strategy takes the lead:
 
 ```lisp
-          1 2 3 4 5 6 7 8    [@=23 0=27 (-4)]
-    10 0 0 0 0 0 0 0 0
-    20 @ @ 0 @ @ @ . .
-    30 0 @ 0 0 @ @ @ @
-    40 0 @ 0 @ 0 @ @ .
-    50 0 @ 0 @ @ 0 @ .
-    60 0 0 0 @ @ @ 0 0
-    70 0 . 0 @ . . @ 0
-    80 0 . . . . . . .
+     1 2 3 4 5 6 7 8    [@=23 0=27 (-4)]
+  10 0 0 0 0 0 0 0 0
+  20 @ @ 0 @ @ @ . .
+  30 0 @ 0 0 @ @ @ @
+  40 0 @ 0 @ 0 @ @ .
+  50 0 @ 0 @ @ 0 @ .
+  60 0 0 0 @ @ @ 0 0
+  70 0 . 0 @ . . @ 0
+  80 0 . . . . . . .
 ```
 
 and is able to hold on to win:
 
 ```lisp
-          1 2 3 4 5 6 7 8    [@=24 0=40 (-16)]
-    10 0 0 0 0 0 0 0 0
-    20 @ @ 0 @ 0 0 @ @
-    30 0 @ 0 0 @ @ @ @
-    40 0 @ 0 0 @ @ @ 0
-    50 0 0 @ @ 0 @ 0 0
-    60 0 0 0 @ 0 @ @ 0
-    70 0 0 0 0 @ @ 0 0
-    80 0 0 0 0 0 @ @ 0
+     1 2 3 4 5 6 7 8    [@=24 0=40 (-16)]
+  10 0 0 0 0 0 0 0 0
+  20 @ @ 0 @ 0 0 @ @
+  30 0 @ 0 0 @ @ @ @
+  40 0 @ 0 0 @ @ @ 0
+  50 0 0 @ @ 0 @ 0 0
+  60 0 0 0 @ 0 @ @ 0
+  70 0 0 0 0 @ @ 0 0
+  80 0 0 0 0 0 @ @ 0
 -16
 ```
 
@@ -917,15 +946,15 @@ There are many problems with the weighted-squares evaluation function.
 Consider again this position from the first game above:
 
 ```lisp
-          1 2 3 4 5 6 7 8    [@=20 0=1 (+19)]
-    10 0 @ . . . . . .
-    20 . @ . . . @ @ .
-    30 @ @ @ @ @ @ . .
-    40 . @ . @ @ . . .
-    50 @ @ @ @ @ @ . .
-    60 . @ . . . . . .
-    70 . . . . . . . .
-    80 . . . . . . . .
+     1 2 3 4 5 6 7 8    [@=20 0=1 (+19)]
+  10 0 @ . . . . . .
+  20 . @ . . . @ @ .
+  30 @ @ @ @ @ @ . .
+  40 . @ . @ @ . . .
+  50 @ @ @ @ @ @ . .
+  60 . @ . . . . . .
+  70 . . . . . . . .
+  80 . . . . . . . .
 ```
 
 Here white, playing the weighted-squares strategy, chose to play 66.
