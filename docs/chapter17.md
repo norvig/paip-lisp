@@ -930,14 +930,14 @@ Repairing these bugs gives the diagram:
   (b L d a)      (q T P i r)
   (c Y a d g)    (r T j s q)
   (d Y c b m)    (s L r t)
-  (e L a f)      (t W u s k)        *;t-u not t-v*
-  (f T e g n)    (u L t 4)          *;u-4 not u-l*
+  (e L a f)      (t W u s k)    ;t-u not t-v
+  (f T e g n)    (u L t 4)      ;u-4 not u-l
   (g W h f c)    (v L 2 4)
   (h T g i o)    (w W x l y)
   (i T h j q)    (x L w z)
   (j T i k r)    (y Y w 2 z)
   (k T J l t)    (z W 3 x y)
-  (l T k m 4)    (1 T n o w)          *;l-4 not l-v*
+  (l T k m 4)    (1 T n o w)    ;l-4 not l-v
   (m L l d)      (2 W v 3 y)
   (n L f 1)      (3 L z 2)
   (o W P 1 h)    (4 T u l v))

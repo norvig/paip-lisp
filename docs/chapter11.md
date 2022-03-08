@@ -779,15 +779,15 @@ Note that `prove` relies on the fact that `fail` is `nil`, because of the way it
 (defun prove-all (goals bindings)
   "Find a solution to the conjunction of goals."
   (cond ((eq bindings fail) fail)
-              ((null goals) bindings)
-              (t (prove (first goals) bindings (rest goals)))))
+        ((null goals) bindings)
+        (t (prove (first goals) bindings (rest goals)))))
 (defun prove (goal bindings other-goals)
   "Return a list of possible solutions to goal."
   (some #'(lambda (clause)
-                      (let ((new-clause (rename-variables clause)))
-                          (prove-all
-                              (append (clause-body new-clause) other-goals)
-                      (unify goal (clause-head new-clause) bindings))))
+             (let ((new-clause (rename-variables clause)))
+               (prove-all
+                 (append (clause-body new-clause) other-goals)
+             (unify goal (clause-head new-clause) bindings))))
   (get-clauses (predicate goal))))
 ```
 
@@ -1022,10 +1022,10 @@ It is installed in the top-level macros `<-` and `?-` so that all clauses and qu
 (defun replace-?-vars (exp)
   "Replace any ? within exp with a var of the form ?123."
   (cond ((eq exp '?) (gensym "?"))
-              ((atom exp) exp)
-              (t (reuse-cons (replace-?-vars (first exp))
-                                            (replace-?-vars (rest exp))
-                                            exp))))
+        ((atom exp) exp)
+        (t (reuse-cons (replace-?-vars (first exp))
+                       (replace-?-vars (rest exp))
+                       exp))))
 ```
 
 A named variable that is used only once in a clause can also be considered an anonymous variable.

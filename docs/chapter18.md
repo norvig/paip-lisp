@@ -400,17 +400,17 @@ If we passed the *real* game board, the function could cheat by changing the pie
 
 ```lisp
 (defun get-move (strategy player board print)
-    "Call the player's strategy function to get a move.
-    Keep calling until a legal move is made."
-    (when print (print-board board))
-    (let ((move (funcall strategy player (copy-board board))))
-        (cond
-            ((and (valid-p move) (legal-p move player board))
-              (when print
-                  (format t "~&~c moves to ~d." (name-of player) move))
-              (make-move move player board))
-            (t (warn "Illegal move: ~d" move)
-                (get-move strategy player board print)))))
+  "Call the player's strategy function to get a move.
+  Keep calling until a legal move is made."
+  (when print (print-board board))
+  (let ((move (funcall strategy player (copy-board board))))
+    (cond
+      ((and (valid-p move) (legal-p move player board))
+       (when print
+         (format t "~&~c moves to ~d." (name-of player) move))
+       (make-move move player board))
+      (t (warn "Illegal move: ~d" move)
+         (get-move strategy player board print)))))
 ```
 
 Here we define two simple strategies:
@@ -879,7 +879,7 @@ The same things happen, although black's doom takes a bit longer to unfold.
 
 ```lisp
 > (othello (alpha-beta-searcher 6 #'count-difference)
-                      (alpha-beta-searcher 4 #'weighted-squares))
+           (alpha-beta-searcher 4 #'weighted-squares))
 ```
 
 Black slowly builds up an advantage:

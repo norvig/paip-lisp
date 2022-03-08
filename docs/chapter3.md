@@ -208,13 +208,13 @@ For example:
 
 ```lisp
 (and (> n 100)
-     (princ "N is large."))    ; Bad style!
+     (princ "N is large."))   ; Bad style!
 (or (<= n 100)
     (princ "N is large."))    ; Even worse style!
-(cond ((> n 100)        ; OK, but not MY preference
+(cond ((> n 100)              ; OK, but not MY preference
       (princ "N is large."))
 (when (> n 100)
-  (princ "N is large."))    ; Good style.
+  (princ "N is large."))      ; Good style.
 ```
 
 When the main purpose is to return a value rather than take action, `cond` and `if` (with explicit `nil` in the else case) are preferred over `when` and `unless`, which implicitly return `nil` in the else case, `when` and `unless` are preferred when there is only one possibility, `if` (or, for some people, `cond)` when there are two, and `cond` when there are more than two:
@@ -720,10 +720,15 @@ I can only think of three places where a `progn` is justified.
 First, to implement side effects in a branch of a two-branched conditional, one could use either an `if` with a `progn,` or a `cond`:
 
 ```lisp
-(if (> x 100)                             (cond ((> x 100)
-    (progn (print "too big")                     (print "too big")
-           (setf x 100))                         (setf x 100))
-    x)                                          (t x))
+(if (> x 100)
+    (progn (print "too big")
+           (setf x 100))
+    x)
+
+(cond ((> x 100)
+       (print "too big")
+       (setf x 100))
+      (t x))
 ```
 
 If the conditional had only one branch, then `when` or `unless` should be used, since they allow an implicit `progn`.

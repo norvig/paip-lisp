@@ -1809,15 +1809,12 @@ One way to do that would be with a `setter` function for `set!`, for example:
 **Exercise  23.9 [m]** It is a curious asymmetry of Scheme that there is a special notation for lambda expressions within `define` expressions, but not within `let`.
 Thus, we see the following:
 
-`(define square (lambda (x) (* x x)))`*;is the same as*
-
 ```lisp
+(define square (lambda (x) (* x x)))      ; is the same as
 (define (square x) (* x x))
+(let ((square (lambda (x) (* x x)))) ...) ; is not the same as
+(let (((square x) (* x x))) ...)          ; <= illegal!
 ```
-
-`(let ((square (lambda (x) (* x x)))) ...) ;`*is not the same as*
-
-`(let (((square x) (* x x))) ...) ;`*                          <= illegal!*
 
 Do you think this last expression should be legal?
 If so, modify the macros for `let, let*`, and `letrec` to allow the new syntax.
@@ -1937,114 +1934,64 @@ Common Lisp attempts to get the advantages of both by allowing implementations t
 
 ```lisp
 (defun always (pred env)
-      "Does predicate always evaluate to true or false?"
-      (cond ((eq pred t) 'true)
-                        ((eq pred nil) 'false)
-                        ((symbolp pred) nil)
-                        ((atom pred) 'true)
-                        ((scheme-macro (first pred))
-                          (always (scheme-macro-expand pred) env))
-                        ((case (first pred)
-                                (QUOTE (if (null (second pred)) 'false 'true))
-                                (BEGIN (if (null (rest pred)) 'false
-                                                                    (always (last1 pred) env)))
-```
+  "Does predicate always evaluate to true or false?"
+  (cond ((eq pred t) 'true)
+        ((eq pred nil) 'false)
+        ((symbolp pred) nil)
+        ((atom pred) 'true)
+        ((scheme-macro (first pred))
+         (always (scheme-macro-expand pred) env))
+        ((case (first pred)
+          (QUOTE (if (null (second pred)) 'false 'true))
+          (BEGIN (if (null (rest pred)) 'false
+                     (always (last1 pred) env)))
+          (SET! (always (third pred) env))`
+          (IF (let ((test (always (second pred)) env)
+                    (then (always (third pred)) env)
+                    (else (always (fourth pred)) env))
+                (cond ((eq test 'true) then)
+                      ((eq test 'false) else)
+                      ((eq then else) then))))
+          (LAMBDA 'true)
+          (t (let ((prim (primitive-p (first pred) env
+                         (length (rest pred)))))
+               (if prim (prim-always prim))))))))
 
-`                                (SET!
-(always (third pred) env))`
-
-```lisp
-        (IF (let ((test (always (second pred)) env)
-            (then (always (third pred)) env)
-            (else (always (fourth pred)) env))
-                                (cond ((eq test 'true) then)
-                                                                    ((eq test 'false) else)
-                                                                    ((eq then else) then))))
-        (LAMBDA 'true)
-        (t (let ((prim (primitive-p (first pred) env
-                                              (length (rest pred)))))
-                      (if prim (prim-always prim))))))))
-```
-
-`(defun comp-if (pred then else env val?
-more?)`
-
-```lisp
-      (case (always pred env)
-          (true ; (if nil x y) = => y ; ***
-```
-
-`              (comp then env val?
-more?)) ; ***`
-
-```lisp
-          (false ; (if t x y) = => x ; ***
-```
-
-`              (comp else env val?
-more?)) ; ***`
-
-```lisp
-          (otherwise
-              (let ((pcode (comp pred env t t))
-```
-
-`                            (tcode (comp then env val?
-more?))`
-
-`                            (ecode (comp else env val?
-more?)))`
-
-```lisp
-              (cond
-                  ((and (listp pred) ; (if (not p) x y) ==> (if p y x)
-                                    (length=1 (rest pred))
-                                    (primitive-p (first pred) env 1)
-                                    (eq (prim-opcode (primitive-p (first pred) env 1))
-                                                  'not))
-```
-
-`                  (comp-if (second pred) else then env val?
-more?))`
-
-```lisp
-                ((equal tcode ecode) ; (if p x x) ==> (begin p x)
-                  (seq (comp pred env nil t) ecode))
-                ((null tcode) ; (if p nil y) ==> p (TJUMP L2) y L2:
-                  (let ((L2 (gen-label)))
-                          (seq pcode (gen 'TJUMP L2) ecode (list L2)
-```
-
-`                  (unless more?
-(gen 'RETURN)))))`
-
-```lisp
-            ((null ecode) ; (if p x) ==> p (FJUMP L1) x L1:
+(defun comp-if (pred then else env val? more?)
+  (case (always pred env)
+    (true ; (if nil x y) = => y  ; ***
+     (comp then env val? more?)) ; ***
+    (false ; (if t x y) = => x   ; ***
+     (comp else env val? more?)) ; ***`
+    (otherwise
+     (let ((pcode (comp pred env t t))
+           (tcode (comp then env val? more?))
+           (ecode (comp else env val? more?)))
+       (cond
+         ((and (listp pred) ; (if (not p) x y) ==> (if p y x)
+               (length=1 (rest pred))
+               (primitive-p (first pred) env 1)
+               (eq (prim-opcode (primitive-p (first pred) env 1))
+                   'not))
+          (comp-if (second pred) else then env val? more?))
+         ((equal tcode ecode) ; (if p x x) ==> (begin p x)
+          (seq (comp pred env nil t) ecode))
+         ((null tcode) ; (if p nil y) ==> p (TJUMP L2) y L2:
+          (let ((L2 (gen-label)))
+                   (seq pcode (gen 'TJUMP L2) ecode (list L2)
+                   (unless more? (gen 'RETURN)))))
+           ((null ecode) ; (if p x) ==> p (FJUMP L1) x L1:
             (let ((L1 (gen-label)))
-                    (seq pcode (gen TJUMP L1) tcode (list L1)
+              (seq pcode (gen TJUMP L1) tcode (list L1)
+                   (unless more? (gen 'RETURN)))))
+            (t                  ; (if p x y) ==> p (FJUMP L1) x L1: y
+                                ; or p (FJUMP L1) x (JUMP L2) L1: y L2:
+             (let ((L1 (gen-label))
+                   (L2 (if more? (gen-label))))
+               (seq pcode (gen 'FJUMP L1) tcode
+                    (if more? (gen 'JUMP L2))
+                    (list L1) ecode (if more? (list L2))))))))))
 ```
-
-`                                  (unless more?
-(gen 'RETURN)))))`
-
-```lisp
-            (t                                                             ; (if p x y) ==> p (FJUMP L1) x L1: y
-                                                                              ; or p (FJUMP L1) x (JUMP L2) L1: y L2:
-            (let ((L1 (gen-label))
-```
-
-`                          (L2 (if more?
-(gen-label))))`
-
-```lisp
-                (seq pcode (gen 'FJUMP L1) tcode
-```
-
-`                              (if more?
-(gen 'JUMP L2))`
-
-`                              (list L1) ecode (if more?
-(list L2))))))))))`
 
 Development note: originally, I had coded `always` as a predicate that took a Boolean value as input and returned true if the expression always had that value.
 Thus, you had to ask first if the predicate was always true, and then if it was always false.

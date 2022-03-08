@@ -1038,10 +1038,11 @@ Replace it by an *O*(*n*) algorithm.
 
 ```lisp
 (defun parser (words)
-      "Return all complete parses of a list of words."
-      (let* ((table (make-array (+ (length words) 1) :initial-element 0))
-                        (parses (parse words (length words) table)))
-          (mapcar #'parse-tree (complete-parses parses))))
+  "Return all complete parses of a list of words."
+  (let* ((table (make-array (+ (length words) 1) :initial-element 0))
+                (parses (parse words (length words) table)))
+    (mapcar #'parse-tree (complete-parses parses))))
+
 (defun parse (words num-words table)
    "Bottom-up parse. returning all parses of any prefix of words."
    (unless (null words)
@@ -1049,33 +1050,34 @@ Replace it by an *O*(*n*) algorithm.
        (if (not (eq ans 0))
            ans
            (setf (aref table num-words)
-                  (mapcan #'(lambda (rule)
-                              (extend-parse (rule-lhs rule)
-                                            (list (firstwords))
-                                            (rest words) nil
-                                            (- num-words 1) table))
-                            (lexical-rules (first words))))))))
+                (mapcan #'(lambda (rule)
+                             (extend-parse (rule-lhs rule)
+                                           (list (firstwords))
+                                           (rest words) nil
+                                           (- num-words 1) table))
+                         (lexical-rules (first words))))))))
+
 (defun extend-parse (lhs rhs rem needed num-words table)
-      "Look for the categories needed to complete the parse."
-      (if (null needed)
-            ;; If nothing is needed, return this parse and upward extensions
-            (let ((parse (make-parse :tree (new-tree lhs rhs) :rem rem)))
-                (cons parse
-                            (mapcan
-                          #'(lambda (rule)
-                                          (extend-parse (rule-lhs rule)
-                                                                      (list (parse-tree parse))
-                                                                        rem (rest (rule-rhs rule))
-                                                                        num-words table))
-                                  (rules-starting-with lhs))))
-              ;; otherwise try to extend rightward
+  "Look for the categories needed to complete the parse."
+  (if (null needed)
+      ;; If nothing is needed, return this parse and upward extensions
+      (let ((parse (make-parse :tree (new-tree lhs rhs) :rem rem)))
+        (cons parse
               (mapcan
-                  #'(lambda (p)
-                          (if (eq (parse-lhs p) (first needed))
-                                    (extend-parse lhs (appendl rhs (parse-tree p))
-                                                                (parse-rem p) (rest needed)
-                                                                (length (parse-rem p)) table)))
-                  (parse rem num-words table))))
+                #'(lambda (rule)
+                    (extend-parse (rule-lhs rule)
+                                  (list (parse-tree parse))
+                                  rem (rest (rule-rhs rule))
+                                  num-words table))
+                    (rules-starting-with lhs))))
+        ;; otherwise try to extend rightward
+        (mapcan
+          #'(lambda (p)
+              (if (eq (parse-lhs p) (first needed))
+                  (extend-parse lhs (appendl rhs (parse-tree p))
+                                (parse-rem p) (rest needed)
+                                (length (parse-rem p)) table)))
+          (parse rem num-words table))))
 ```
 
 It turns out that, for the Lisp system used in the timings above, this version is no faster than normal memoization.
@@ -1088,30 +1090,34 @@ An infinite structure of NPs is explored before even the first word is considere
 
 Bottom-up parsers are stymied by rules with null right-hand sides: `(X -> O)`.
 Note that I was careful to exclude such rules in my grammars earlier.
+<!--- indent below -->
 
 ```lisp
 (defun parser (words &optional (cat 's))
-      "Parse a list of words; return only parses with no remainder."
-      (mapcar #'parse-tree (compiete-parses (parse words cat))))
+  "Parse a list of words; return only parses with no remainder."
+  (mapcar #'parse-tree (compiete-parses (parse words cat))))
+
 (defun parse (tokens start-symbol)
-      "Parse a list of tokens, return parse trees and remainders."
-      (if (eq (first tokens) start-symbol)
-              (list (make-parse :tree (first tokens) :rem (rest tokens)))
-              (mapcan #'(lambda (rule)
-                                      (extend-parse (lhs rule) nil tokens (rhs rule)))
-                                  (rules-for start-symbol))))
+  "Parse a list of tokens, return parse trees and remainders."
+  (if (eq (first tokens) start-symbol)
+      (list (make-parse :tree (first tokens) :rem (rest tokens)))
+      (mapcan #'(lambda (rule)
+                  (extend-parse (lhs rule) nil tokens (rhs rule)))
+              (rules-for start-symbol))))
+
 (defun extend-parse (lhs rhs rem needed)
-      "Parse the remaining needed symbols."
-      (if (null needed)
-              (list (make-parse :tree (cons lhs rhs) :rem rem))
-              (mapcan
-                  #'(lambda (p)
-                            (extend-parse lhs (append rhs (list (parse-tree p)))
-                                                            (parse-rem p) (rest needed)))
-                  (parse rem (first needed)))))
+  "Parse the remaining needed symbols."
+  (if (null needed)
+      (list (make-parse :tree (cons lhs rhs) :rem rem))
+      (mapcan
+        #'(lambda (p)
+            (extend-parse lhs (append rhs (list (parse-tree p)))
+                          (parse-rem p) (rest needed)))
+        (parse rem (first needed)))))
+
 (defun rules-for (cat)
-      "Return all the rules with category on lhs"
-      (find-all cat *grammar* :key #'rule-lhs))
+  "Return all the rules with category on lhs"
+  (find-all cat *grammar* :key #'rule-lhs))
 ```
 
 **Answer 19.5** If it were omitted, then `:test` would default to `#'eql`, and it would be possible to remove the "wrong" element from the list.
@@ -1130,18 +1136,19 @@ In other words, we could have:
 
 ```lisp
 (defun permute (bag)
-   "Return a random permutation of the bag."
-   ;; It is done by converting the bag to a vector, but the
-   ;; resuit is always the same type as the input bag.
-   (let ((bag-copy (replace (make-array (length bag)) bag))
-         (bag-type (if (listp bag) 'list (type-of bag))))
-      (coerce (permute-vector! bag-copy) bag-type)))
+  "Return a random permutation of the bag."
+  ;; It is done by converting the bag to a vector, but the
+  ;; resuit is always the same type as the input bag.
+  (let ((bag-copy (replace (make-array (length bag)) bag))
+        (bag-type (if (listp bag) 'list (type-of bag))))
+    (coerce (permute-vector! bag-copy) bag-type)))
+
 (defun permute-vector! (vector)
-   "Destructively permute (shuffle) the vector."
-   (loop for i from (length vector) downto 2 do
-         (rotatef (aref vector (- i 1))
-                  (aref vector (random i))))
-vector)
+  "Destructively permute (shuffle) the vector."
+  (loop for i from (length vector) downto 2 do
+        (rotatef (aref vector (- i 1))
+                 (aref vector (random i))))
+  vector)
 ```
 
 The answer uses `rotatef`, a relative of `setf` that swaps 2 or more values.
@@ -1149,19 +1156,19 @@ That is, `(rotatef a b)` is like:
 
 ```lisp
 (let ((temp a))
-      (setf a b)
-      (setf b temp)
-      nil)
+  (setf a b)
+  (setf b temp)
+  nil)
 ```
 
 Rarely, `rotatef` is used with more than two arguments, `(rotatef a b c)` is like:
 
 ```lisp
 (let ((temp a))
-      (setf a b)
-      (setf b c)
-      (setf c temp)
-      nil)
+  (setf a b)
+  (setf b c)
+  (setf c temp)
+  nil)
 ```
 
 ----------------------
