@@ -696,10 +696,9 @@ This is done with the special form `labels`:
 In general, a `labels` form (or the similar `flet` form) can be used to introduce one or more local functions.
 It has the following syntax:
 
-```lisp
-(labels ((function-name (parameter...) function-body)...)
- body-of-labels)
-```
+`(labels`
+&nbsp;&nbsp;&nbsp;&nbsp;((*function-name* (*parameter...*) *function-body*)...)
+&nbsp;&nbsp;&nbsp;&nbsp;*body-of-labels*)
 
 ### Other Special Forms
 
