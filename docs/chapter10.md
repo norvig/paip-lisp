@@ -574,7 +574,7 @@ In CMU Lisp, the function `member` has the following definition, which is procla
  (return list)))))
 ```
 
-A call like `(member`[ch 1](B9780080571157500017.xhtml)`:key #'first-letter :test #'char =)` expands into the equivalent of the following code.
+A call like `(member ch 1 :key #'first-letter :test #'char =)` expands into the equivalent of the following code.
 Unfortunately, not all compilers are this clever with inline declarations.
 
 ```lisp
@@ -585,7 +585,7 @@ Unfortunately, not all compilers are this clever with inline declarations.
     (return list))))
 ```
 
-This chapter is concerned with efficiency and so has taken a stand against the use of keyword parameter s in frequently used functions.
+This chapter is concerned with efficiency and so has taken a stand against the use of keyword parameters in frequently used functions.
 But when maintainability is considered, keyword parameters look much better.
 When a program is being developed, and it is not clear if a function will eventually need additional arguments, keyword parameters may be the best choice.
 

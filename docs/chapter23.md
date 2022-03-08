@@ -1550,7 +1550,7 @@ The entry for `#\;` would be directions to ignore every character up to the end 
 
 Because the readtable is stored in a special variable, it is possible to alter completely the way read works just by dynamically rebinding this variable.
 
-The new function `scheme - read` temporarily changes the readtable to a new one, the Scheme readtable.
+The new function `scheme-read` temporarily changes the readtable to a new one, the Scheme readtable.
 It also accepts an optional argument, the stream to read from, and it returns a special marker on end of file.
 This can be tested for with the predicate `eof-object?`.
 Note that once `scheme-read` is installed as the value of the Scheme `symbol-read` we need do no more-`scheme-read` will always be called when appropriate (by the top level of Scheme, and by any user Scheme program).
@@ -1830,7 +1830,7 @@ Show a definition or explain why there can't be one.
 Would you ever have reason to use `funcall` in a Scheme program?
 (2) Scheme does define `apply`, as there is no syntax for an application.
 One might want to extend the syntax to make `(+ . numbers)` equivalent to `(apply + numbers)`.
-Would this bea good idea?
+Would this be a good idea?
 
 **Exercise  23.11 [d]** Write a compiler that translates Scheme to Common Lisp.
 This will involve changing the names of some procedures and special forms, figuring out a way to map Scheme's single name space into Common Lisp's distinct function and variable name spaces, and dealing with Scheme's continuations.
@@ -1839,7 +1839,7 @@ One possibility is to translate a `call/cc` into a `catch` and `throw`, and disa
 ## 23.8 Answers
 
 **Answer 23.2** We can save frames by making a resource for frames, as was done on page 337.
-Unfortunately, we can't just use the def resource macro as is, because we need a separate resource for each size frame.
+Unfortunately, we can't just use the `defresource` macro as is, because we need a separate resource for each size frame.
 Thus, a two-dimensional array or a vector of vectors is necessary.
 Furthermore, one must be careful in determining when a frame is no longer needed, and when it has been saved and may be used again.
 Some compilers will generate a special calling sequence for a tail-recursive call where the environment can be used as is, without discarding and then creating a new frame for the arguments.

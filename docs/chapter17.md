@@ -943,8 +943,8 @@ Repairing these bugs gives the diagram:
   (o W P 1 h)    (4 T u l v))
 ```
 
-This time there arenoerrorsdetected by `check-diagram,` butrunning `print-labelings` again still does not give a solution.
-`To` get more information about which constraints are applied, `I` modified `propagate-constraints` to print out some information:
+This time there are no errors detected by `check-diagram,` but running `print-labelings` again still does not give a solution.
+To get more information about which constraints are applied, I modified `propagate-constraints` to print out some information:
 
 ```lisp
 (defun propagate-constraints (vertex)
@@ -1129,10 +1129,10 @@ Second, even when input checking is done, it is still up to the user to understa
 
 [Guzman (1968)](B9780080571157500285.xhtml#bb0500) was one of the first to consider the problem of interpreting line diagrams.
 He classified vertexes, and defined some heuristics for combining information from adjacent vertexes.
-[Huffman (1971)](B9780080571157500285.xhtml#bb0560) and [Clowes (1971)](B9780080571157500285.xhtml#bb0215) independently came up with more formai and complete analyses, and David [Waltz (1975)](B9780080571157500285.xhtml#bb1300) extended the analysis to handle shadows, and introduced the constraint propagation algorithm to eut down on the need for search.
+[Huffman (1971)](B9780080571157500285.xhtml#bb0560) and [Clowes (1971)](B9780080571157500285.xhtml#bb0215) independently came up with more formal and complete analyses, and David [Waltz (1975)](B9780080571157500285.xhtml#bb1300) extended the analysis to handle shadows, and introduced the constraint propagation algorithm to cut down on the need for search.
 The algorithm is sometimes called "Waltz filtering" in his honor.
 With shadows and nontrihedral angles, there are thousands of vertex labelings instead of 18, but there are also more constraints, so the constraint propagation actually does better than it does in our limited world.
-Waltz's approach and the Huf f man-Clowes labels are covered in most introductory AI books, including Rich and Knight 1990, [Charniak and McDermott 1985](B9780080571157500285.xhtml#bb0175), and [Winston 1984](B9780080571157500285.xhtml#bb1405).
+Waltz's approach and the Huffman-Clowes labels are covered in most introductory AI books, including Rich and Knight 1990, [Charniak and McDermott 1985](B9780080571157500285.xhtml#bb0175), and [Winston 1984](B9780080571157500285.xhtml#bb1405).
 Waltz's original paper appears in *The Psychology of Computer Vision* ([Winston 1975](B9780080571157500285.xhtml#bb1400)), an influential volume collecting early work done at MIT.
 He also contributed a summary article on Waltz filtering ([Waltz 1990](B9780080571157500285.xhtml#bb1305)).
 

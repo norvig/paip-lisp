@@ -1246,7 +1246,7 @@ It is a predicate that returns true for success and false for failure, and has t
  t)
 ```
 
-To make `vars` easier to read, we can install a :`print-function`:
+To make `vars` easier to read, we can install a `:print-function`:
 
 ```lisp
 (defstruct (var (:print-function print-var))
@@ -1259,19 +1259,19 @@ To make `vars` easier to read, we can install a :`print-function`:
         (write var :stream stream)))
 ```
 
-This is the first example of a carefully crafted : `print-function`.
+This is the first example of a carefully crafted `:print-function`.
 There are three things to notice about it.
 First, it explicitly writes to the stream passed as the argument.
 It does not write to a default stream.
 Second, it checks the variable `depth` against `*print-level*`, and prints just the variable name when the depth is exceeded.
 Third, it uses `write` to print the bindings.
-This is because write pays attention to the current values of `*print-escape*, *print-pretty*`, and `soon`.
+This is because write pays attention to the current values of `*print-escape*`, `*print-pretty*`, and so on.
 Other printing functions such as `prinl` or `print` do not pay attention to these variables.
 
 Now, for backtracking purposes, we want to make `set-binding!` keep track of the bindings that were made, so they can be undone later:
 
 ```lisp
-(defvar *trall* (make-array 200 :fill-pointer 0 :adjustable t))
+(defvar *trail* (make-array 200 :fill-pointer 0 :adjustable t))
 (defun set-binding! (var value)
  "Set var's binding to value, after saving the variable
  in the trail. Always returns t."

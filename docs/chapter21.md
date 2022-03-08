@@ -454,7 +454,7 @@ The verb "to be" is the most idiosyncratic in English.
 It is the only verb that has agreement differences for anything besides third-person singular.
 And it is also the only verb that can be used in an `aux-inv-S` without a main verb.
 An example of this is "Is he a doctor?," where "is" clearly is not an auxiliary, because there is no main verb that it could be auxiliary to.
-Other verb can not be used in this way: "*Seems he happy?" and "* Did they it?" are ungrammatical.
+Other verbs can not be used in this way: "\*Seems he happy?" and "\*Did they it?" are ungrammatical.
 The only possibility is "have," as in "Have you any wool?," but this use is rare.
 
 The following rule parses a verb, checks to see that it is a version of "be," and then parses the subject and the modifiers for the verb.

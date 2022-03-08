@@ -2269,7 +2269,7 @@ Othello is a registered trademark of CBS Inc.
 Gameboard design @ 1974 CBS Inc.
 
 <a id="fn18-2"></a><sup>[2](#tfn18-2)</sup>
-Othello,* [I. i. 117] William Shakespeare.
+*Othello,* [I. i. 117] William Shakespeare.
 
 <a id="fn18-3"></a><sup>[3](#tfn18-3)</sup>
 Remember, when a constant is redefined, it may be necessary to recompile any functions that use the constant.

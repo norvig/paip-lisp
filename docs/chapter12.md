@@ -1781,7 +1781,7 @@ The macro for `and` is trivial:
   (compile-body (append (args goal) body) cont bindings))
 ```
 
-The macro for or is trickier:
+The macro for `or` is trickier:
 
 ```lisp
 (def-prolog-compiler-macro or (goal body cont bindings)
@@ -1790,7 +1790,7 @@ The macro for or is trickier:
       (0 fail)
       (1 (compile-body (cons (first disjuncts) body) cont bindings))
       (t (let ((fn (gensym "F")))
-        '(fl&egrave;t ((,fn () ,(compile-body body cont bindings)))
+        '(flet ((,fn () ,(compile-body body cont bindings)))
           .,(maybe-add-undo-bindings
             (loop for g in disjuncts collect
               (compile-body (list g) '#',fn

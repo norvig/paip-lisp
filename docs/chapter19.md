@@ -5,9 +5,9 @@
 It permeates our thoughts mediates our relations with others, and even creeps into our dreams.
 The overwhelming bulk of human knowledge is stored and transmitted in language.
 Language is so ubiquitous that we take it for granted but without it, society as we know it would be impossible.
-
+>
 > -Ronand Langacker
-
+>
 > Language and its Structure (1967)
 
 Anatural language is a language spoken by people, such as English, German, or Tagalog.
@@ -325,11 +325,10 @@ Evaluation of (LENGTH (PARSER S 's)) took .13 Seconds of elapsed time.
 10
 ```
 
-By memoizing p a r s e we reduce the parse time f rom 33 to.
-13 seconds, a 250-f old speed- up.
+By memoizing `parse` we reduce the parse time from 33 to .13 seconds, a 250-fold speed-up.
 We can get a more systematic comparison by looking at a range of examples.
-For example, consider sentences of the form "The man hit the table [with the ball]*" for zero or more repetitions of the PP "with the ball."
-In the following table we record N, the number of repetitions of the PP, along with the number of resulting parses,<a id="tfn19-2"></a><sup>[2](#fn19-2)</sup> and for both memoized and unmemoized versions of parse, the number of seconds to produce the parse, the number of parses per second (PPS), and the number of recursive calls to `parse`.
+For example, consider sentences of the form "The man hit the table [with the ball]\*" for zero or more repetitions of the PP "with the ball."
+In the following table we record N, the number of repetitions of the PP, along with the number of resulting parses,<a id="tfn19-2"></a><sup>[2](#fn19-2)</sup> and for both memoized and unmemoized versions of `parse`, the number of seconds to produce the parse, the number of parses per second (PPS), and the number of recursive calls to `parse`.
 The performance of the memoized version is quite acceptable; for N=5, a 20-word sentence is parsed into 132 possibilities in .68 seconds, as opposed to the 20 seconds it takes in the unmemoized version.
 
 |     |          | Memoized |       |         | Unmemoized |       |         |
@@ -1084,7 +1083,7 @@ It turns out that, for the Lisp system used in the timings above, this version i
 **Answer 19.3** Actually, the top-down parser is a little easier (shorter) than the bottom-up version.
 The problem is that the most straightforward way of implementing a top-down parser does not handle so-called *left recursive* rules-rules of the form `(X -> (X ...))`.
 This includes rules we've used, like `(NP -> (NP and NP))`.
-The problem is that the parser will postulate an NP, and then postulate that it is of the form `(NP and NP)`, and that the first NPof that expression is ofthe form `(NP and NP)`, and so on.
+The problem is that the parser will postulate an NP, and then postulate that it is of the form `(NP and NP)`, and that the first NP of that expression is of the form `(NP and NP)`, and so on.
 An infinite structure of NPs is explored before even the first word is considered.
 
 Bottom-up parsers are stymied by rules with null right-hand sides: `(X -> O)`.
@@ -1115,7 +1114,7 @@ Note that I was careful to exclude such rules in my grammars earlier.
       (find-all cat *grammar* :key #'rule-lhs))
 ```
 
-**Answer 19.5** If it were omitted, then : test would default `to #'eql`, and it would be possible to remove the "wrong" element from the list.
+**Answer 19.5** If it were omitted, then `:test` would default to `#'eql`, and it would be possible to remove the "wrong" element from the list.
 Consider the list (1.0 1.0) in an implementation where floating-point numbers are `eql` but not `eq`.
 if `random-elt` chooses the first 1.0 first, then everything is satisfactory-the resuit list is the same as the input list.
 However, if `random-elt` chooses the second 1.0, then the second 1.0 will be the first element of the answer, but `remove` will remove the wrong 1.0!

@@ -618,7 +618,7 @@ alt="(a+b)^{3} = b^{3} + 3ab^{2} + 3a^{2}b + a^{3}">
 
 We can use this theorem to compute a power of a polynomial all at once, instead of computing it by repeated multiplication or squaring.
 Of course, a polynomial will in general be a sum of more than two components, so we have to decide how to split it into the *a* and *b* pieces.
-There are two obvious ways: either eut the polynomial in half, so that *a* and *b* will be of equal size, or split off one component at a time.
+There are two obvious ways: either cut the polynomial in half, so that *a* and *b* will be of equal size, or split off one component at a time.
 Fateman shows that the latter method is more efficient in most cases.
 In other words, a polynomial
 *k*<sub>1</sub>*x<sup>n</sup>* + *k*<sub>2</sub>*x<sup>n-1</sup>* + *k*<sub>3</sub>*x<sup>n-2</sup>* + ...
