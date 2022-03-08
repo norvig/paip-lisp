@@ -332,18 +332,18 @@ For example, consider sentences of the form "The man hit the table [with the bal
 In the following table we record N, the number of repetitions of the PP, along with the number of resulting parses,<a id="tfn19-2"></a><sup>[2](#fn19-2)</sup> and for both memoized and unmemoized versions of parse, the number of seconds to produce the parse, the number of parses per second (PPS), and the number of recursive calls to `parse`.
 The performance of the memoized version is quite acceptable; for N=5, a 20-word sentence is parsed into 132 possibilities in .68 seconds, as opposed to the 20 seconds it takes in the unmemoized version.
 
-|      |        | Memoized |     |       | Unmemoized |     |       |
-| N    | Parses | Secs     | PPS | Calls | Secs       | PPS | Calls |
-|------|--------|----------|-----|-------|------------|-----|-------|
-| 0    | 1      | 0.02     | 60  | 4     | 0.02       | 60  | 17    |
-| 1    | 2      | 0.02     | 120 | 11    | 0.07       | 30  | 96    |
-| 2    | 5      | 0.05     | 100 | 21    | 0.23       | 21  | 381   |
-| 3    | 14     | 0.10     | 140 | 34    | 0.85       | 16  | 1388  |
-| 4    | 42     | 0.23     | 180 | 50    | 3.17       | 13  | 4999  |
-| 5    | 132    | 0.68     | 193 | 69    | 20.77      | 6   | 18174 |
-| 6    | 429    | 1.92     | 224 | 91    | -          |     |       |
-| 7    | 1430   | 5.80     | 247 | 116   | -          |     |       |
-| 8    | 4862   | 20.47    | 238 | 144   | -          |     |       |
+|     |          | Memoized |       |         | Unmemoized |       |         |
+|-----|----------|----------|-------|---------|------------|-------|---------|
+| *N* | *Parses* | *Secs*   | *PPS* | *Calls* | *Secs*     | *PPS* | *Calls* |
+| 0   | 1        | 0.02     | 60    | 4       | 0.02       | 60    | 17      |
+| 1   | 2        | 0.02     | 120   | 11      | 0.07       | 30    | 96      |
+| 2   | 5        | 0.05     | 100   | 21      | 0.23       | 21    | 381     |
+| 3   | 14       | 0.10     | 140   | 34      | 0.85       | 16    | 1388    |
+| 4   | 42       | 0.23     | 180   | 50      | 3.17       | 13    | 4999    |
+| 5   | 132      | 0.68     | 193   | 69      | 20.77      | 6     | 18174   |
+| 6   | 429      | 1.92     | 224   | 91      | -          |       |         |
+| 7   | 1430     | 5.80     | 247   | 116     | -          |       |         |
+| 8   | 4862     | 20.47    | 238   | 144     | -          |       |         |
 
 **Exercise  19.1 [h]** It seems that we could be more efficient still by memoizing with a table consisting of a vector whose length is the number of words in the input (plus one).
 Implement this approach and see if it entails less overhead than the more general hash table approach.
