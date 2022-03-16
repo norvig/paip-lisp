@@ -1521,7 +1521,7 @@ The program should never undo a goal that has been achieved, but it should allow
 In this way, the program will solve the Sussman anomaly and similar problems.
 
 **Exercise  4.6 [d]** *The Lack of Descriptive Power Problem*.
-Read [chapters 5](B9780080571157500054.xhtml) and [6](B9780080571157500066.xhtml) tolearn about pattern matching.
+Read [chapters 5](B9780080571157500054.xhtml) and [6](B9780080571157500066.xhtml) to learn about pattern matching.
 Write a version of GPS that uses the pattern matching tools, and thus allows variables in the operators.
 Apply it to the maze and blocks world domains.
 Your program will be more efficient if, like Chapman's Tweak program, you allow for the possibility of variables that remain unbound as long as possible.
