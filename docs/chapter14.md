@@ -1843,7 +1843,7 @@ This approach was pioneered by [Doyle (1979)](B9780080571157500285.xhtml#bb0340)
 Doyle tried to change the name to "reason maintenance,' in (1983), but it was too late.
 The version in widest used today is the assumption-based truth maintenance system, or ATMS, developed by de Kleer (1986a,b,c).
 [Charniak et al.
-(1987)](B9780080571157500285.xhtml#bb0180) present a complete Common Lisp implementation of a McAllester-styleTMS.
+(1987)](B9780080571157500285.xhtml#bb0180) present a complete Common Lisp implementation of a McAllester-style TMS.
 
 There is little communication between the logic programming and knowledge representation communities, even though they cover overlapping territory.
 [Colmerauer (1990)](B9780080571157500285.xhtml#bb0250) and [Cohen (1990)](B9780080571157500285.xhtml#bb0230) describe Logic Programming languages that address some of the issues covered in this chapter.
