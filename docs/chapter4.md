@@ -1521,7 +1521,7 @@ The program should never undo a goal that has been achieved, but it should allow
 In this way, the program will solve the Sussman anomaly and similar problems.
 
 **Exercise  4.6 [d]** *The Lack of Descriptive Power Problem*.
-Read [chapters 5](B9780080571157500054.xhtml) and [6](B9780080571157500066.xhtml) tolearn about pattern matching.
+Read [chapters 5](B9780080571157500054.xhtml) and [6](B9780080571157500066.xhtml) to learn about pattern matching.
 Write a version of GPS that uses the pattern matching tools, and thus allows variables in the operators.
 Apply it to the maze and blocks world domains.
 Your program will be more efficient if, like Chapman's Tweak program, you allow for the possibility of variables that remain unbound as long as possible.
@@ -1563,16 +1563,16 @@ The sophisticated Lisp programmer should also see the exercise on [page 680](B97
 
 ----------------------
 
-<a id="fn04-1"</a><sup>[1](#tfn04-1)</sup>
+<a id="fn04-1"></a><sup>[1](#tfn04-1)</sup>
 Strips is the Stanford Research Institute Problem Solver, designed by [Richard Fikes and Nils Nilsson (1971)](B9780080571157500285.xhtml#bb0405).
 
-<a id="fn04-2"</a><sup>[2](#tfn04-2)</sup>
+<a id="fn04-2"></a><sup>[2](#tfn04-2)</sup>
 Gerald Sussman, in his book *A Computer Model of Skill Acquisition,* uses the term "prerequisite clobbers brother goal" or PCBG.
 I prefer to be gender neutral, even at the risk of being labeled a historical revisionist.
 
-<a id="fn04-3"</a><sup>[3](#tfn04-3)</sup>
+<a id="fn04-3"></a><sup>[3](#tfn04-3)</sup>
 Originally posed by [Saul Amarel (1968)](B9780080571157500285.xhtml#bb0045).
 
-<a id="fn04-4"</a><sup>[4](#tfn04-4)</sup>
+<a id="fn04-4"></a><sup>[4](#tfn04-4)</sup>
 A footnote in Waldinger 1977 says, "This problem was proposed by Allen Brown.
 Perhaps many children thought of it earlier but did not recognize that it was hard." The problem is named after Gerald Sussman because he popularized it in Sussman 1973.
