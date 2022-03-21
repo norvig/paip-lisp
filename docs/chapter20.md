@@ -263,7 +263,7 @@ Here's the `rule` macro:
 ```
 
 As an example of a rule function, the arrow : - will be used to represent normal Prolog clauses.
-That is, the form (`rule`*head : - body*) will be equivalent to (<- *head body).*
+That is, the form (`rule` *head : - body*) will be equivalent to (<- *head body).*
 
 ```lisp
 (setf (get ':- 'rule-function)
@@ -277,7 +277,7 @@ One would write:
 
 ```lisp
 s(Sem) --> np(Subj), vp(Pred),
-                  {combi ne(Subj,Pred,Sem)}.
+           {combine(Subj,Pred,Sem)}.
 ```
 
 where the idea is that `combine` is not a grammatical constituent, but rather a Prolog predicate that could do some calculations on `Subj` and `Pred` to arrive at the proper semantics, `Sem`.
@@ -488,7 +488,7 @@ More careful representations of "The girls kissed the girls" include the followi
 
 The first of these says that every girl kisses every other girl.
 The second says the same thing, except that a girl need not kiss herself.
-The third says that every girl kisses and is kissed by at least one other girl, but not necessarily all of them, and the fourth says that everbody is in on at least one kissing.
+The third says that every girl kisses and is kissed by at least one other girl, but not necessarily all of them, and the fourth says that everybody is in on at least one kissing.
 None of these interpretations says anything about who "the girls" are.
 
 Clearly, the predicate calculus representations are less ambiguous than the representation produced by the current system.
@@ -916,7 +916,7 @@ Consider the rule that says that a sentence can consist of two sentences joined 
 ```
 
 While this rule is correct as a declarative statement, it will run into difficulty when run by the standard top-down depth-first DCG interpretation process.
-The top-level goal of parsing an `S` will lead immediately to the subgoal of parsing an `S`, and the resuit will be an infinite loop.
+The top-level goal of parsing an `S` will lead immediately to the subgoal of parsing an `S`, and the result will be an infinite loop.
 
 Fortunately, we know how to avoid this kind of infinite loop: split the offending predicate, `S`, into two predicates: one that supports the recursion, and one that is at a lower level.
 We will call the lower-level predicate `S_`.
@@ -1038,11 +1038,11 @@ To make this work, :ex will have to be a macro:
 Each example is stored in a hash table indexed under the the category.
 Each example is transformed into a two-element list: the example phrase string itself and a call to the proper predicate with all arguments supplied.
 The function `add-examples` does this transformation and indexing, and `run-examples` retrieves the examples stored under a category, prints each phrase, and calls each goal.
-The auxiliary functions `get-examples` and `clear-exampl` es are provided to manipulate the example table, and `remove-punction, punctuation-p` and `string->list` are used to map from a string to a list of words.
+The auxiliary functions `get-examples` and `clear-examples` are provided to manipulate the example table, and `remove-punction, punctuation-p` and `string->list` are used to map from a string to a list of words.
 
 ```lisp
 (defvar *examples* (make-hash-table :test #'eq))
-(defun get-exampl es (category) (gethash category *examples*))
+(defun get-examples (category) (gethash category *examples*))
 (defun clear-examples () (clrhash *examples*))
 
 (defun add-examples (category args examples)

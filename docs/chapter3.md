@@ -1707,7 +1707,8 @@ In this example, the variable `x` is the only thing that can be changed:
 ```
 
 If the assertion is violated, an error message will be printed and the user will be given the option of continuing by altering `x`.
-If `x` is given a value that satisfies the assertion, then the program continues, `assert` always returns nil.
+If `x` is given a value that satisfies the assertion, then the program continues.
+`assert` always returns nil.
 
 Finally, the user who wants more control over the error message can provide a format control string and optional arguments.
 So the most complex syntax for assert is:

@@ -75,7 +75,8 @@ Check the base case and loop variant on active functions and loops.
 
 **PROBLEM:** You redefined a variable, but the new value was ignored.
 
-**Diagnosis:** Altering a variable by editing and re-evaluating a `defvar` form will not change the variable's value, `defvar` only assigns an initial value when the variable is unbound.
+**Diagnosis:** Altering a variable by editing and re-evaluating a `defvar` form will not change the variable's value.
+`defvar` only assigns an initial value when the variable is unbound.
 
 **Remedy:** Use setf to update the variable, or change the `defvar` to a `defparameter`.
 
@@ -89,7 +90,7 @@ For example, consider:
   (mapcar #'check-op *ops*))
 ```
 
-If `check - ops` is called with a null argument, the `*ops*` that is a parameter of `check - ops` will be updated, but the global `*ops*` will not be, even if it is declared special.
+If `check-ops` is called with a null argument, the `*ops*` that is a parameter of `check-ops` will be updated, but the global `*ops*` will not be, even if it is declared special.
 
 **Remedy:** Don't shadow variables you want to update.
 Use a different name for the local variable.
@@ -135,7 +136,7 @@ Consider:
       (reduce #'better values)))
 ```
 
-Now suppose that the definitions of `score - fn, print - fn`, and `better` are all changed.
+Now suppose that the definitions of `score-fn`, `print-fn`, and `better` are all changed.
 Does any of the prior code have to be recompiled?
 The variable *`printer`* can stay as is.
 When it is funcalled, the symbol `print-fn` will be consulted for the current functional value.
@@ -146,16 +147,16 @@ Its value is the old definition of `score-fn`.
 **Remedy:** Re-evaluate the definition of *`scorer`*.
 It is unfortunate, but this problem encourages many programmers to use symbols where they really mean functions.
 Symbols will be coerced to the global function they name when passed to `funcall` or `apply`, but this can be the source of another error.
-In the following example, the symbol `local - fn` will not refer to the locally bound function.
-One needs to use `#'local - fn` to refer to it.
+In the following example, the symbol `local-fn` will not refer to the locally bound function.
+One needs to use `#'local-fn` to refer to it.
 
 ```lisp
 (flet ((local-fn (x) ...))
   (mapcar 'local-fn list))
 ```
 
-**Diagnosis:** If you changed the name of a function, did you change the name every-where?
-For example, if you decide to change the name of `print-fn` to `print-function` but forget to change the value of *`printer`*, then the old function will be called.
+**Diagnosis:** If you changed the name of a function, did you change the name everywhere?
+For example, if you decide to change the name of `print-fn` to `print-function` but forget to change the value of `*printer*`, then the old function will be called.
 
 **Remedy:** Use your editor's global replace command.
 To be even safer, redefine obsolete functions to call `error`.
@@ -221,7 +222,7 @@ Let's fix the problem by changing `labels` to `flet` and naming the local functi
 ```
 
 Annoyingly, this version still doesn't work!
-This time, the problem is carelessness; we changed the `replace- ? - vars to recurse` in two places, but not in the two calls in the body of `recurse`.
+This time, the problem is carelessness; we changed the `replace-?-vars` to `recurse` in two places, but not in the two calls in the body of `recurse`.
 
 **Remedy:** In general, the lesson is to make sure you call the right function.
 If there are two functions with similar effects and you call the wrong one, it can be hard to see.
@@ -248,19 +249,19 @@ But in either version, it is a bad idea to do so.
 A list beginning with `lambda` is just that: a list, not a closure.
 Therefore, it cannot capture lexical variables the way a closure does.
 
-**Remedy:** The correct way to create a closure is to evaluate a call to the special form `function`, or its abbreviation, # '.
+**Remedy:** The correct way to create a closure is to evaluate a call to the special form `function`, or its abbreviation, `#'`.
 Here is a replacement for the code beginning with '(`lambda ....` Note that it is a closure, closed over `pred` and `c`.
 Also note that it gets the `predicate` each time it is called; thus, it is safe to use even when predicates are being changed dynamically.
 The previous version would not work when a predicate is changed.
 
 ```lisp
-#'(lambda (obj)            ; *Do this instead.*
+#'(lambda (obj)            ; Do this instead.
       (and (funcall pred obj)
           (funcall (get c 'predicate) obj)))
 ```
 
-It is important to remember that `function` (and thus # ') is a special form, and thus only returns the right value when it is evaluated.
-A common error is to use # ' notation in positions that are not evaluated:
+It is important to remember that `function` (and thus `#'`) is a special form, and thus only returns the right value when it is evaluated.
+A common error is to use `#'` notation in positions that are not evaluated:
 
 ```lisp
 (defvar *obscure-fns* '(#'cis #'cosh #'ash #'bit-orc2)) ; *wrong*
@@ -442,7 +443,7 @@ When all else fails, it is tempting to shift the blame for an error away from yo
 It is certainly true that errors are found in existing implementations.
 But it is also true that most of the time, Common Lisp is merely doing something the user did not expect rather than something that is in error.
 
-For example, a common "bug report" is to complain about read - `from- string`.
+For example, a common "bug report" is to complain about `read-from-string`.
 A user might write:
 
 ```lisp
@@ -454,8 +455,8 @@ In fact, this expression returns a.
 The angry user thinks the implementation has erroneously ignored the :`start` argument and files a bug report,<a id="tfn25-1"></a><sup>[1](#fn25-1)</sup> only to get back the following explanation:
 
 The function `read-from-string` takes two optional arguments, `eof-errorp` and `eof-value`, in addition to the keyword arguments.
-Thus, in the expression above, : `start` is taken as the value of `eof-errorp`, with `2` as the value of `eof-value`.
-The correct answer is in fact to read from the start of the string and return the very first form, a.
+Thus, in the expression above, `:start` is taken as the value of `eof-errorp`, with `2` as the value of `eof-value`.
+The correct answer is in fact to read from the start of the string and return the very first form, `a`.
 
 The functions `read-from-string` and `parse-namestring` are the only built-in functions that have this problem, because they are the only ones that have both optional and keyword arguments, with an even number of optional arguments.
 The functions `write-line` and `write-string` have keyword arguments and a single optional argument (the stream), so if the stream is accidently omitted, an error will be signaled.
@@ -595,8 +596,8 @@ A common mistake is to define macros that *do not* violate the usual evaluation 
 One recent book on AI programming suggests the following:
 
 ```lisp
-(defmacro binding-of (binding)    ; *Warning!*
-    '(cadr .binding))                          ; *Don't do this.*
+(defmacro binding-of (binding)      ; Warning!
+    '(cadr .binding))               ; Don't do this.
 ```
 
 The only possible reason for this macro is an unfounded desire for efficiency.
@@ -872,10 +873,10 @@ That is, if macro-expansion results in code like:
 
 the compiler will treat it the same as `(progn *abc de).*`
 
-On the other hand, if the beginner wants a macro that *returns* two values, the proper form is val ues, but it must be understood that the calling function needs to arrange specially to see both values.
+On the other hand, if the beginner wants a macro that *returns* two values, the proper form is `values`, but it must be understood that the calling function needs to arrange specially to see both values.
 There is no way around this limitation.
 That is, there is no way to write a macro-or a function for that matter-that will "splice in" its results to an arbitrary call.
-For example, the function `floor` returns two values (the quotient and remainder), as does i ntern (the symbol and whether or not the symbol already existed).
+For example, the function `floor` returns two values (the quotient and remainder), as does `intern` (the symbol and whether or not the symbol already existed).
 But we need a special form to capture these values.
 For example, compare:
 
@@ -1010,7 +1011,7 @@ First we define the function `required` to signal an error, and then we use a ca
 While this book has covered topics that are more advanced than any other Lisp text available, it is still concerned only with programming in the small: a single project at a time, capable of being implemented by a single programmer.
 More challenging is the problem of programming in the large: building multiproject, multiprogrammer systems that interact well.
 
-This section briefly outlines an approach to organizing a larger project into man-ageable components, and how to place those components in files.
+This section briefly outlines an approach to organizing a larger project into manageable components, and how to place those components in files.
 
 Every system should have a separate file that defines the other files that comprise the system.
 I recommend defining any packages in that file, although others put package definitions in separate files.

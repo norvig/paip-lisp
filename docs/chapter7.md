@@ -287,7 +287,7 @@ The reader should try to verify that transformations (1) to (8) are valid, and t
 
 ```lisp
 (defun isolate (e x)
-  "Isolate the lone x in e on the left hand side of e."
+  "Isolate the lone x in e on the left-hand side of e."
   ;; This assumes there is exactly one x in e,
   ;; and that e is an equation.
   (cond ((eq (exp-lhs e) x)
@@ -383,8 +383,8 @@ Unlike `isolate`, it assumes the expressions will be implemented as lists.
   (member op '(+ * =)))
 
 (defun solve-arithmetic (equation)
-  "Do the arithmetic for the right hand side."
-  ;; This assumes that the right hand side is in the right form.
+  "Do the arithmetic for the right-hand side."
+  ;; This assumes that the right-hand side is in the right form.
   (mkexp (exp-lhs equation) '= (eval (exp-rhs equation))))
 
 (defun binary-exp-p (x)
@@ -631,7 +631,8 @@ Since the variables are arbitrary symbols, the printing routine should probably 
 
 **Exercise  7.4 [h]** The original STUDENT also had a set of "common knowledge" equations that it could use when necessary.
 These were mostly facts about conversion factors, such as (`1 inch = 2.54  cm`).
-Also included were equations like (`distance equal s rate times time`), which could be used to solve problems like "If the distance from Anabru to Champaign is 10 miles and the time it takes Sandy to travel this distance is 2 hours, what is Sandy's rate of speed?" Make changes to incorporate this facility.
+Also included were equations like (`distance equals rate times time`), which could be used to solve problems like "If the distance from Anabru to Champaign is 10 miles and the time it takes Sandy to travel this distance is 2 hours, what is Sandy's rate of speed?"
+Make changes to incorporate this facility.
 It probably only helps in conjunction with a solution to the previous exercise.
 
 **Exercise  7.5 [h]** Change `student` so that it prints values only for those variables that are being asked for in the problem.

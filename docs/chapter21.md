@@ -261,7 +261,7 @@ The `VP` category takes seven arguments.
 The first is an inflection, which represents the tense of the verb.
 To describe the possibilities for this argument we need a quick review of some basic linguistics.
 A sentence must have a *finite* verb, meaning a verb in the present or past tense.
-Thus, we say "Kim likes Lee," not "*Kim liking Lee." Subject-predicate agreement takes effect for finite verbs but not for any other tense.
+Thus, we say "Kim likes Lee," not "\*Kim liking Lee." Subject-predicate agreement takes effect for finite verbs but not for any other tense.
 The other tenses show up as complements to other verbs.
 For example, the complement to "want" is an infinitive: "Kim wants *to like* Lee" and the complement to the modal auxiliary verb "would" is a nonfinite verb: "Kim would *like* Lee." If this were in the present tense, it would be "likes," not "like." The inflection argument takes on one of the forms in the table here:
 
@@ -323,7 +323,8 @@ We define the category `advp` for adverbial phrase, but currently restrict it to
 
 A clause consists of a subject followed by a predicate.
 However, the subject need not be realized immediately before the predicate.
-For example, in "Alice promised Bob to lend him her car" there is an inf initive clause that consists of the predicate "to lend him her car" and the subject "Alice." The sentence as a whole is another clause.
+For example, in "Alice promised Bob to lend him her car" there is an infinitive clause that consists of the predicate "to lend him her car" and the subject "Alice."
+The sentence as a whole is another clause.
 In our analysis, then, a clause is a subject followed by a verb phrase, with the possibility that the subject will be instantiated by something from the gap arguments:
 
 ```lisp
@@ -374,7 +375,8 @@ Finally, the rules for subject-predicate agreement say that only finite predicat
 
 In the previous chapter we allowed only simple declarative sentences.
 The current grammar supports commands and four kinds of questions in addition to declarative sentences.
-It also supports *thematic fronting:* placing a nonsubject at the beginning of a sentence to emphasize its importance, as in "*Smith* he says his name is" or *"Murder,* she wrote" or *"ln God* we trust." In the last example it is a prepositional phrase, not a noun phrase, that occurs first.
+It also supports *thematic fronting:* placing a nonsubject at the beginning of a sentence to emphasize its importance, as in "*Smith* he says his name is" or *"Murder,* she wrote" or *"In God* we trust."
+In the last example it is a prepositional phrase, not a noun phrase, that occurs first.
 It is also possible to have a subject that is not a noun phrase: *"That the dog didn't bark* puzzled Holmes." To support all these possibilities, we introduce a new category, `XP`, which stands for any kind of phrase.
 A declarative sentence is then just an XP followed by a clause, where the subject of the clause may or may not turn out to be the XP:
 
@@ -454,7 +456,7 @@ The verb "to be" is the most idiosyncratic in English.
 It is the only verb that has agreement differences for anything besides third-person singular.
 And it is also the only verb that can be used in an `aux-inv-S` without a main verb.
 An example of this is "Is he a doctor?," where "is" clearly is not an auxiliary, because there is no main verb that it could be auxiliary to.
-Other verb can not be used in this way: "*Seems he happy?" and "* Did they it?" are ungrammatical.
+Other verb can not be used in this way: "\*Seems he happy?" and "\*Did they it?" are ungrammatical.
 The only possibility is "have," as in "Have you any wool?," but this use is rare.
 
 The following rule parses a verb, checks to see that it is a version of "be," and then parses the subject and the modifiers for the verb.
@@ -483,7 +485,7 @@ For example, one sense of the verb "want" has the following complement list:
 ```
 
 This says that the first complement (the subject) is a noun phrase that serves as the agent of the wanting, and the second is an infinitive verb phrase that is the concept of the wanting.
-The subject of this verb phrase is the same as the subject of the wanting, so in "She wants to go home" it is she who both wants and goes.
+The subject of this verb phrase is the same as the subject of the wanting, so in "She wants to go home," it is she who both wants and goes.
 (Contrast this to "He persuaded her to go home," where it is he that persuades, but she that goes.)
 
 But when we put a noun phrase on a gap list, we need to include its number and case as well as the fact that it is an NP and its metavariable, but we don't need to include the fact that it is an agent.
@@ -510,7 +512,7 @@ The *** indicates no mapping:
 (<- (slot-constituent (?role ?n (P ?particle)) *** ? ?))
 ```
 
-We are now ready to define compi ement.
+We are now ready to define `complement`.
 It takes a slot description, maps it into a constituent, and then calls `XP` to parse that constituent:
 
 ```lisp
@@ -1242,7 +1244,7 @@ These functions can be placed at the top of the lexicon and grammar files, respe
 
 Testing could be done with `run-examples`, but it is convenient to provide another interface, the macro `try` (and its corresponding function, `try-dcg`).
 Both macro and function can be invoked three ways.
-With no argument, all the examples stored by : ex are run.
+With no argument, all the examples stored by `:ex` are run.
 When the name of a category is given, all the examples for that category alone are run.
 Finally, the user can supply both the name of a category and a list of words to test whether those words can be parsed as that category.
 This option is only available for categories that are listed in the definition:
@@ -1366,14 +1368,14 @@ It is ambiguous between an interpretation where Kim is searching for Lee and one
             (PAT ?S ?L) (THE ?L (NAME LEE ?L)));
 ?SEM = (AND (THE ?K (NAME KIM ?K)) (AGT ?2 ?K)
             (EXPECTED ?2) (NOT ?2) (PAST-PARTICIPLE ?LOOK)
-            (PROGRESSIVE ?LOOK) (LOOK ?LOOK) (FOR ?LOOOK ?L)
+            (PROGRESSIVE ?LOOK) (LOOK ?LOOK) (FOR ?LOOK ?L)
             (THE ?L (NAME LEE ?L)));
 ```
 
 The next two examples are unambiguous:
 
 ```lisp
->(try s It should not surprise you that Kim does not like Lee)
+> (try s It should not surprise you that Kim does not like Lee)
 ?SEM = (AND (MANDATORY ?2) (NOT ?2) (SURPRISE ?2) (EXP ?2 ?Y0U)
             (PRO ?YOU (LISTENER ?YOU)) (CON ?2 ?LIKE)
             (THE ?K (NAME KIM ?K)) (AGT ?LIKE ?K)
@@ -1446,12 +1448,13 @@ The grammar is separated into a simple, neat, context-free component and a rathe
 They should be treated separately, since there are determiners such as "much" that work only with mass nouns, and other determiners such as "these" that work only with plural count nouns.
 
 **Exercise  21.2 [m]** Change the grammar to make a distinction between *attributive* and *predicative* adjectives.
-Most adjectives fail into both classes, but some can be used only attributively, as in "an *utter* fool" but not " * the fool is *utter."* Other adjectives can only be used predicatively, as in "the woman was *loath* to admit it" but not "*a *loath* (to admit it) woman."
+Most adjectives fall into both classes, but some can be used only attributively, as in "an *utter* fool" but not "\*the fool is *utter."*
+Other adjectives can only be used predicatively, as in "the woman was *loath* to admit it" but not "\*a *loath* (to admit it) woman."
 
-**Exercise  21.3 [h]** Implement complement lists for adjectives, so that "loath" would take an obligatory infinitive complement, and "proud" would take an optional (PP of) complement.
-In connection to the previous exercise, note that it is rare if not impossible for attributive adjectives to take complements: "he is proud," "he is proud of his country" and "a proud citizen" are all acceptable, but "*a proud of his country citizen" is not.
+**Exercise  21.3 [h]** Implement complement lists for adjectives, so that "loath" would take an obligatory infinitive complement, and "proud" would take an optional `(PP of)` complement.
+In connection to the previous exercise, note that it is rare if not impossible for attributive adjectives to take complements: "he is proud," "he is proud of his country" and "a proud citizen" are all acceptable, but "\*a proud of his country citizen" is not.
 
-**Exercise  21.4 [m]** Add rules to advp to allow for adverbs to modify other adverbs, as in "extremely likely" or "very strongly."
+**Exercise  21.4 [m]** Add rules to `advp` to allow for adverbs to modify other adverbs, as in "extremely likely" or "very strongly."
 
 **Exercise  21.5 [h]** Allow adverbs to modify adjectives, as in "very good" or "really delicious." The syntax will be easy, but it is harder to get a reasonable semantics.
 While you're at it, make sure that you can handle adjectives with so-called *noninter- sective* semantics.

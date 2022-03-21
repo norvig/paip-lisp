@@ -242,11 +242,11 @@ We will need three functions: one to get the right-hand side of a rule, one for 
 
 ```lisp
 (defun rule-lhs (rule)
-  "The left hand side of a rule."
+  "The left-hand side of a rule."
   (first rule))
 
 (defun rule-rhs (rule)
-  "The right hand side of a rule."
+  "The right-hand side of a rule."
   (rest (rest rule)))
 
 (defun rewrites (category)

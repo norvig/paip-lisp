@@ -738,10 +738,10 @@ For example, if we put the same expression inside a `begin` expression, we get s
 |      | `GVAR`   | `Z` |
 |      | `RETURN` |     |
 
-What happens here is that `(+ x y)` and `(* x y)`, when compiled in a context where the value is ignored, both resuit in no generated code.
+What happens here is that `(+ x y)` and `(* x y)`, when compiled in a context where the value is ignored, both result in no generated code.
 Thus, the `if` expression reduces to `(if p nil nil)`, which is compiled like `(begin p nil)`, which also generates no code when not evaluated for value, so the final code just references `z`.
 The compiler can only do this optimization because it knows that `+` and `*` are side-effect-free operations.
-Consider what happens when we replace + with `f` :
+Consider what happens when we replace `+` with `f`:
 
 ```
 > (comp-show '(begin (if p (f x) (* x x)) z))
@@ -1584,7 +1584,7 @@ The entry for `#\;` would be directions to ignore every character up to the end 
 
 Because the readtable is stored in a special variable, it is possible to alter completely the way read works just by dynamically rebinding this variable.
 
-The new function `scheme - read` temporarily changes the readtable to a new one, the Scheme readtable.
+The new function `scheme-read` temporarily changes the readtable to a new one, the Scheme readtable.
 It also accepts an optional argument, the stream to read from, and it returns a special marker on end of file.
 This can be tested for with the predicate `eof-object?`.
 Note that once `scheme-read` is installed as the value of the Scheme `symbol-read` we need do no more-`scheme-read` will always be called when appropriate (by the top level of Scheme, and by any user Scheme program).
@@ -1670,7 +1670,7 @@ NIL
 (QUASIQUOTE (A (UNQUOTE B) (UNQUOTE-SPLICING C) D))
 ```
 
-The final step is to make quasi quote a macro that expands into the proper sequence of calls to `cons`, `list`, and `append`.
+The final step is to make `quasiquote` a macro that expands into the proper sequence of calls to `cons`, `list`, and `append`.
 The careful reader will keep track of the difference between the form returned by `scheme-read` (something starting with `quasiquote`), the expansion of this form with the Scheme macro `quasiquote` (which is implemented with the Common Lisp function `quasi-q`), and the eventual evaluation of the expansion.
 In an environment where `b` is bound to the number 2 and `c` is bound to the list `(c1 c2)`, we might have:
 
@@ -1734,7 +1734,7 @@ We could write the Scheme function:
 
 ```lisp
 (define (extrema list)
-   ;; Given a list of numbers. return an a-list
+   ;; Given a list of numbers, return an a-list
    ;; with max and min values
    '((max ,(apply max list)) (min ,(apply min list))))
 ```
@@ -1782,7 +1782,7 @@ How could you make `scheme-read` account for this?
 
 **Exercise  23.6 [h]** In `comp-if` we included a special case for `(if t x y)` and `(if nil x y)`.
 But there are other cases where we know the value of the predicate.
-For example, `(if (*a b) x y)` can also reduce to `x`.
+For example, `(if (* a b) x y)` can also reduce to `x`.
 Arrange for these optimizations to be made.
 Note the `prim-always` field of the `prim structure` has been provided for this purpose.
 
@@ -1915,9 +1915,7 @@ The following routines do this without consing.
 (defun sign-p (char) (find char "+-"))
 ```
 
-Actually, that's not quite good enough, because a Scheme complex number can have multiple signs in it, as in `3.
-4e- 5+6.
-7e+8i`, and it need not have two numbers, as in `3i` or `4+i` or just `+  i`.
+Actually, that's not quite good enough, because a Scheme complex number can have multiple signs in it, as in `3.4e-5+6.7e+8i`, and it need not have two numbers, as in `3i` or `4+i` or just `+i`.
 The other problem is that complex numbers can only have a lowercase `i`, but read does not distinguish between the symbols `3+4i` and `3+4I`.
 
 **Answer 23.4** Yes, it is possible to implement `begin` as a macro:
@@ -2114,8 +2112,9 @@ But to demonstrate that the right solution doesn't always appear the first time,
 **Answer 23.7** The original version requires *O*(*n*) stack space for poorly chosen pivots.
 Assuming a properly tail-recursive compiler, the modified version will never require more than *O*(log *n*) space, because at each step at least half of the vector is being sorted tail-recursively.
 
-**Answer 23.10** (1) `(defun (funcall fn . args) (apply fn args))` (2) Suppose you changed the piece of code `(+ . numbers)` to `(+ . (map sqrt numbers))`.
-The latter is the same expression as (+ `map sqrt numbers),` which is not the intended resuit at all.
+**Answer 23.10** (1) `(defun (funcall fn . args) (apply fn args))`
+(2) Suppose you changed the piece of code `(+ . numbers)` to `(+ . (map sqrt numbers))`.
+The latter is the same expression as `(+ map sqrt numbers)`, which is not the intended result at all.
 So there would be an arbitrary restriction: the last argument in an apply form would have to be an atom.
 This kind of restriction goes against the grain of Scheme.
 

@@ -1,10 +1,9 @@
 # Chapter 10
 ## Low-Level Efficiency Issues
 
-> There are only two qualities in the world: efficiency and inefficiency; and only two sorts of people: the efficient and the inefficient
-
-> -George Bernard Shaw
-
+> There are only two qualities in the world: efficiency and inefficiency; and only two sorts of people: the efficient and the inefficient.
+>
+> -George Bernard Shaw \
 > John Bull's Other Island (1904)
 
 The efficiency techniques of the previous chapter all involved fairly significant changes to an algorithm.
@@ -164,7 +163,7 @@ More recent versions of the compiler will omit these instructions.
 
 The heart of function `f` is the two-instruction sequence 12-16.
 Instruction 12 retrieves `y`, and 16 adds `y` to `x`, leaving the result in `d4`, which is the "result" register.
-Instruction 20 sets `dl`, the "number of values returned" register, to 1.
+Instruction 20 sets `d1`, the "number of values returned" register, to 1.
 
 Contrast this to the code for `g`, which has no declarations and is compiled at default speed and safety settings:
 
@@ -553,8 +552,8 @@ If you like, you can define a macro to automatically define the interface to the
 (DEFUN REG (A B C D) (LIST A B C D))
 ```
 
-There is one disadvantage to this approach: a user who wants to declare key inline or not inline does not get the expected result.
-The user has to know that key is implemented with `key*no- key`, and declare `key*no- key` inline.
+There is one disadvantage to this approach: a user who wants to declare `key` inline or not inline does not get the expected result.
+The user has to know that `key` is implemented with `key*no-key`, and declare `key*no-key` inline.
 
 An alternative is just to proclaim the function that uses `&key` to be inline.
 Rob MacLachlan provides an example.
@@ -580,18 +579,18 @@ In CMU Lisp, the function `member` has the following definition, which is procla
  (return list)))))
 ```
 
-A call like `(member`[ch 1](B9780080571157500017.xhtml)`:key #'first-letter :test #'char =)` expands into the equivalent of the following code.
+A call like `(member ch 1 :key #'first-letter :test #'char =)` expands into the equivalent of the following code.
 Unfortunately, not all compilers are this clever with inline declarations.
 
 ```lisp
 (do ((list list (cdr list)))
    ((null list) nil)
   (let ((car (car list)))
-   (if (char = ch (first-letter car))
+   (if (char= ch (first-letter car))
     (return list))))
 ```
 
-This chapter is concerned with efficiency and so has taken a stand against the use of keyword parameter s in frequently used functions.
+This chapter is concerned with efficiency and so has taken a stand against the use of keyword parameters in frequently used functions.
 But when maintainability is considered, keyword parameters look much better.
 When a program is being developed, and it is not clear if a function will eventually need additional arguments, keyword parameters may be the best choice.
 
@@ -675,9 +674,9 @@ It turns out that Common Lisp has a built-in facility to do just this.
 When a vector is created, it can be given a *fill pointer*.
 This is a counter variable, but one that is conceptually stored inside the vector.
 Vectors with fill pointers act like a cross between a vector and a stack.
-You can push new elements onto the stack with the functions `vector - push` or `vector - push - extend`.
+You can push new elements onto the stack with the functions `vector-push` or `vector-push-extend`.
 The latter will automatically allocate a larger vector and copy over elements if necessary.
-You can remove elements with `vector - pop`, or you can explicitly look at the fill pointer with `fill - pointer`, or change it with a `setf`.
+You can remove elements with `vector-pop`, or you can explicitly look at the fill pointer with `fill-pointer`, or change it with a `setf`.
 Here are some examples (with `*print-array*` set to t so we can see the results):
 
 ```lisp
@@ -705,7 +704,8 @@ In any case, the total storage is small, fixed in size, and amortized over all c
 However, there is a grave danger with this approach: the value returned must be managed carefully.
 The new `pat-match` returns the value of `success` when it matches.
 `success` is bound to a cons of the variable and value vectors.
-These can be freely manipulated by the calling routine, but only up until the next call to `pat - match.` At that time, the contents of the two vectors can change.
+These can be freely manipulated by the calling routine, but only up until the next call to `pat-match`.
+At that time, the contents of the two vectors can change.
 Therefore, if any calling function needs to hang on to the returned value after another call to `pat-match,` it should make a copy of the returned value.
 So it is not quite right to say that this version of `pat-match` eliminates all consing.
 It will cons when `vector-push-extend` runs out of space, or when the user needs to make a copy of a returned value.
@@ -815,7 +815,8 @@ Here is a definition for a version of `remove` that uses `reuse-cons`:
 Of course, `reuse-cons` only works when you have candidate cons cells around.
 That is, (`reuse-cons a b c`) only saves space when `c` is (or might be) equal to (`cons a b`).
 For some applications, it is useful to have a version of `cons` that returns a unique cons cell without needing `c` as a hint.
-We will call this version `ucons` for "unique cons." `ucons` maintains a double hash table: `*uniq - cons - table*` is a hash table whose keys are the `cars` of cons cells.
+We will call this version `ucons` for "unique cons."
+`ucons` maintains a double hash table: `*uniq-cons-table*` is a hash table whose keys are the `cars` of cons cells.
 The value for each `car` is another hash table whose keys are the `cdrs` of cons cells.
 The value of each `cdr` in this second table is the original cons cell.
 So two different cons cells with the same `car` and `cdr` will retrieve the same value.
@@ -856,7 +857,7 @@ Besides `unique`, we also define `ulist` and uappend for convenience.
   whenever (equal x x2) and (equal y y2) are true."
   (ucons (unique x) (unique y)))
  (defun ulist (&rest args)
-  "A uni qui fied list."
+  "A uniquified list."
   (unique args))
  (defun uappend (x y)
   "A unique list equal to (append x y)."
@@ -868,7 +869,7 @@ Besides `unique`, we also define `ulist` and uappend for convenience.
 The above code works, but it can be improved.
 The problem is that when `unique` is applied to a tree, it always traverses the tree all the way to the leaves.
 The function `unique-cons` is like `ucons,` except that `unique-cons` assumes its arguments are not yet unique.
-We can modify `unique - cons` so that it first checks to see if its arguments are unique, by looking in the appropriate hash tables:
+We can modify `unique-cons` so that it first checks to see if its arguments are unique, by looking in the appropriate hash tables:
 
 ```lisp
 (defun unique-cons (x y)
@@ -894,7 +895,7 @@ An `eq` hash table for lists is almost as good as a property list on symbols.
 ### Avoid Consing: Multiple Values
 
 Parameters and multiple values can also be used to pass around values, rather than building up lists.
-For example, instead of :
+For example, instead of:
 
 ```lisp
 (defstruct point "A point in 3-D cartesian space." x y z)
@@ -1007,11 +1008,11 @@ This pattern of allocation and deallocation is so common that we can provide a m
            (,deallocate var)))))
 ```
 
-The macro allows for an optional argument that sets up an `unwind` - protect environment, so that the buffer gets deallocated even when the body is abnormally exited.
+The macro allows for an optional argument that sets up an `unwind-protect` environment, so that the buffer gets deallocated even when the body is abnormally exited.
 The following expansions should make this clearer:
 
 ```lisp
->(macroexpand '(with-resource (b buffer)
+> (macroexpand '(with-resource (b buffer)
                 "..." (process b) "..."))
 (let ((b (allocate-buffer)))
   "..."
@@ -1277,7 +1278,7 @@ There are a few subtleties in the implementation.
 First, we test for deleted entries with an `eq` comparison to a distinguished marker, the string `trie-deleted`.
 No other object will be `eq` to this string except `trie-deleted` itself, so this is a good test.
 We also use a distinguished marker, the string "." to mark cons cells.
-Components are implicitly compared against this marker with an `eql` test by the `associn follow - arc`.
+Components are implicitly compared against this marker with an `eql` test by the `assoc` in `follow-arc`.
 Maintaining the identity of this string is crucial; if, for example, you recompiled the definition of `find-trie` (without changing the definition at all), then you could no longer find keys that were indexed in an existing trie, because the ".
 " used by `find-trie` would be a different one from the ".
 " in the existing trie.
@@ -1300,17 +1301,16 @@ After the trie is built, we could pass the whole trie to un i que, and it would 
 Of course, you can no longer add or delete keys from the dag without risking unintended side effects.
 
 This process was carried out for a 56,000 word list.
-The trie took up 3.2Mbytes, while the dag was 1 .IMbytes.
+The trie took up 3.2Mbytes, while the dag was 1.1Mbytes.
 This was still deemed unacceptable, so a more compact encoding of the dag was created, using a .2Mbytes vector.
 Encoding the same word list in a hash table took twice this space, even with a special format for encoding suffixes.
 
 Tries work best when neither the indexing key nor the retrieval key contains variables.
 They work reasonably well when the variables are near the end of the sequence.
-Consider looking up the pattern `"yello?
-"` in the dictionary, where the " ? " character indicates a match of any letter.
-Following the branches for `"yello"` leads quickly to the only possible match, `"yellow"`.
-In contrast, fetching with the pattern `"??llow"` is much less efficient.
-The table lookup function would have to search all 26 top-level branches, and for each of those consider all possible second letters, and for each of those consider the path `"llow"`.
+Consider looking up the pattern `yello?` in the dictionary, where the `?` character indicates a match of any letter.
+Following the branches for `yello` leads quickly to the only possible match, `yellow`.
+In contrast, fetching with the pattern `??llow` is much less efficient.
+The table lookup function would have to search all 26 top-level branches, and for each of those consider all possible second letters, and for each of those consider the path `llow`.
 Quite a bit of searching is required before arriving at the complete set of matches: bellow, billow, fallow, fellow, follow, hallow, hollow, mallow, mellow, pillow, sallow, tallow, wallow, willow, and yellow.
 
 We will return to the problem of discrimination nets with variables in [section 14.8](B9780080571157500145.xhtml#s0040), [page 472](B9780080571157500145.xhtml#p472).
@@ -1319,7 +1319,7 @@ We will return to the problem of discrimination nets with variables in [section 
 
 **Exercise 10.1 [h]** Define the macro `deftable,` such that `(deftable person assoc`) will act much like a `defstruct` - it will define a set of functions for manipulating a table of people: `get-person`, `put-person`, `clear-person,` and `map-person`.
 The table should be implemented as an association list.
-Later on, you can change the representation of the table simply by changing the form to (`deftable person hash` ), without having to change anything else in your code.
+Later on, you can change the representation of the table simply by changing the form to `(deftable person hash)`, without having to change anything else in your code.
 Other implementation options include property lists and vectors.
 `deftable` should also take three keyword arguments: `inline`, `size` and `test`.
 Here is a possible macroexpansion:
@@ -1345,7 +1345,7 @@ Here is a possible macroexpansion:
 However, often we have a two-field structure that we would like to implement as a cons cell rather than a two-element list, thereby cutting storage in half.
 Since `defstruct` does not allow this, define a new macro that does.
 
-**Exercise 10.3 [m]** Use `reuse - cons` to write a version of `flatten` (see [page 329](B9780080571157500108.xhtml#p329)) that shares as much of its input with its output as possible.
+**Exercise 10.3 [m]** Use `reuse-cons` to write a version of `flatten` (see [page 329](B9780080571157500108.xhtml#p329)) that shares as much of its input with its output as possible.
 
 **Exercise 10.4 [h]** Consider the data type *set*.
 A set has two main operations: adjoin an element and test for membership.
