@@ -211,8 +211,8 @@ As another example, consider the clauses:
 (<- (damned) (not (do)))
 ```
 
-With these rules, the query `(?
-(damned))` should logically be answered "yes." Furthermore, it should be possible to conclude `(damned)` without even investigating if `(do)` is provable or not.
+With these rules, the query `(? (damned))` should logically be answered "yes."
+Furthermore, it should be possible to conclude `(damned)` without even investigating if `(do)` is provable or not.
 What Prolog does is first try to prove `(do)`.
 If this succeeds, then `(damned)` is proved.
 Either way, Prolog then tries again to prove `(do)`, and this time if the proof fails, then `(damned)` is proved.

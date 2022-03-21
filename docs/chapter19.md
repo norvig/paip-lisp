@@ -187,12 +187,12 @@ Some examples of the parser in action are shown here:
 ((NP (ART THE) (NOUN TABLE)))
 > (parser '(the ball hit the table))
 ((SENTENCE (NP (ART THE) (NOUN BALL))
-                            (VP (VERB HIT)
-                                      (NP (ARTTHE) (NOUN TABLE)))))
+           (VP (VERB HIT)
+               (NP (ART THE) (NOUN TABLE)))))
 > (parser '(the noun took the verb))
 ((SENTENCE (NP (ART THE) (NOUN NOUN))
-                            (VP (VERB TOOK)
-                                      (NP (ARTTHE) (NOUN VERB)))))
+           (VP (VERB TOOK)
+               (NP (ART THE) (NOUN VERB)))))
 ```
 
 ## 19.2 Extending the Grammar and Recognizing Ambiguity
@@ -247,7 +247,8 @@ Here is the grammar:
 ```
 
 Now we can parse more interesting sentences, and we can see a phenomenon that was not present in the previous examples: ambiguous sentences.
-The sentence "The man hit the table with the ball" has two parses, one where the ball is the thing that hits the table, and the other where the ball is on or near the table, parser finds both of these parses (although of course it assigns no meaning to either parse):
+The sentence "The man hit the table with the ball" has two parses, one where the ball is the thing that hits the table, and the other where the ball is on or near the table.
+`parser` finds both of these parses (although of course it assigns no meaning to either parse):
 
 ```lisp
 > (parser '(The man hit the table with the ball))
@@ -308,7 +309,7 @@ But with context-free grammars we have a guarantee that the context cannot affec
 The call `(parse words)` must return all possible parses for the words.
 We are free to choose between the possibilities based on contextual information, but context can never supply a new interpretation that is not in the context-free list of parses.
 
-The function use is introduced to tell the table-lookup functions that they are out of date whenever the grammar changes:
+The function `use` is introduced to tell the table-lookup functions that they are out of date whenever the grammar changes:
 
 ```lisp
 (defun use (grammar)
@@ -475,9 +476,9 @@ The second rule says that a single noun (whose translation should be a number) t
 The third rule is similar to the first, but concerns joining Ns rather than NPs.
 The overall intent is that the translation of an NP will always be a list of integers, representing the songs to play.
 
-As for the lexical rules, the conjunction "and" translates to the union function, "without" translates to the function that subtracts one set from another, and "to" translates to the function that generates a list of integers between two end points.
+As for the lexical rules, the conjunction "and" translates to the `union` function, "without" translates to the function that subtracts one set from another, and "to" translates to the function that generates a list of integers between two end points.
 The numbers "0" to "9" translate to themselves.
-Note that both lexical rules like "`CONJ ->` and" and nonlexical rules like "`NP -> (N P N)`" can have functions as their semantic translations; in the first case, the function will just be returned as the semantic translation, whereas in the second case the function will be applied to the list of constituents.
+Note that both lexical rules like "`CONJ -> and`" and nonlexical rules like "`NP -> (N P N)`" can have functions as their semantic translations; in the first case, the function will just be returned as the semantic translation, whereas in the second case the function will be applied to the list of constituents.
 
 Only minor changes are needed to `parse` to support this kind of semantic processing.
 As we see in the following, we add a `sem` argument to `extend-parse` and arrange to pass the semantic components around properly.
@@ -543,12 +544,11 @@ We need to add some new functions to support this:
 
 Here are some examples of the meanings that the parser can extract:
 
-(meanings '(1 to 5 without 3))
-
+```
+> (meanings '(1 to 5 without 3))
 ((1 2 4 5))
 
-(meanings '(1 to 4 and 7 to 9))
-
+> (meanings '(1 to 4 and 7 to 9))
 ((1 2 3 4 7 8 9))
 
 > (meanings '(1 to 6 without 3 and 4))
@@ -758,9 +758,12 @@ The "x shuffled" scorer, `prefer-not-singleton`, is similar, except that there t
 
 ```lisp
 (defun prefer< (x y) (if (>= (sem x) (sem y)) -1))
+
 (defun prefer-disjoint (x y) (if (intersection (sem x) (sem y)) -1))
+
 (defun prefer-subset (x y)
   (+ (inv-span x) (if (subsetp (sem y) (sem x)) 0 -3)))
+
 (defun prefer-not-singleton (x)
   (+ (inv-span x) (if (< (length (sem x)) 2) -4 0)))
 ```
@@ -969,7 +972,7 @@ There can be a complicated interplay between phrases, and it is not always clear
 For example, it doesn't make much sense to repeat a "without" phrase; that is, the bracketing `(x without (y repeat n))` is probably a bad one.
 But the scorer for "without" nearly handles that already.
 It assigns a penalty if its right argument is not a subset of its left.
-Unfortunately, repeated elements are not counted in sets, so for example, the list (1 2 3 1 2 3) is a subset of (1 2 3 4).
+Unfortunately, repeated elements are not counted in sets, so for example, the list `(1 2 3 1 2 3)` is a subset of `(1 2 3 4)`.
 However, we could change the scorer for "without" to test for `sub-bag-p` (not a built-in Common Lisp function) instead, and then "repeat" would not have to be concerned with that case.
 
 ## 19.7 The Problem with Context-Free Phrase-Structure Rules

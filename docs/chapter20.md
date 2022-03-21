@@ -734,7 +734,7 @@ This gives us the following parse for "Every man loves a woman":
         (and (love ?4 ?12) (exists ?12 (and (woman ?12) t))))
 ```
 
-If we simplified this, eliminating the ts and joining ands, we would get the desired representation:
+If we simplified this, eliminating the `t`s and joining `and`s, we would get the desired representation:
 
 ```lisp
 (and (all ?m (man ?m))

@@ -233,10 +233,10 @@ First, a call to (`fib 5`) with `fib` traced:
 8
 ```
 
-We see that (`fib 5`) and (`fib 4`) are each computed once, but (`fib 3`) is computed twice, (`fib 2`) three times,and (`fib 1`) five times.
-Below we call (`memoize 'fib`) and repeat the calculation.
+We see that `(fib 5)` and `(fib 4)` are each computed once, but `(fib 3)` is computed twice, `(fib 2)` three times, and `(fib 1)` five times.
+Below we call `(memoize 'fib)` and repeat the calculation.
 This time, each computation is done only once.
-Furthermore, when the computation of (`fib 5`) is repeated, the answer is returned immediately with no intermediate computation, and a further call to (`fib 6`) can make use of the value of (`fib 5`).
+Furthermore, when the computation of `(fib 5)` is repeated, the answer is returned immediately with no intermediate computation, and a further call to `(fib 6)` can make use of the value of `(fib 5)`.
 
 ```lisp
 > (memoize 'fib) => #  <  CLOSURE 76626607  >

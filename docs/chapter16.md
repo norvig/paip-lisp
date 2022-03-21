@@ -330,9 +330,10 @@ The functions `print-why`, `parm-type`, and `check-reply` will be defined shortl
                              Type ? to see legal ones."))))))))
 ```
 
-The following is `prompt-and-read-vals,` the function that actually asks the query and reads the reply.
+The following is `prompt-and-read-vals`, the function that actually asks the query and reads the reply.
 It basically calls `format` to print a prompt and `read` to get the reply, but there are a few subtleties.
-First, it calls `finish-output.` Some Lisp implementations buffer output on a line-by-line basis.
+First, it calls `finish-output`.
+Some Lisp implementations buffer output on a line-by-line basis.
 Since the prompt may not end in a newline, `finish-output` makes sure the output is printed before the reply is read.
 
 So far, all the code that refers to a `parm` is really referring to the name of a parameter-a symbol.
@@ -1272,9 +1273,9 @@ It will require storing additional information in the data base.
 **Exercise  16.18 [m]** There was also a stop command that immediately halted the session.
 Implement it.
 
-**Exercise  16.19 [d]** The original EMYCIN also had a change command to allow the user to change the answer to certain questions without starting all over.
+**Exercise  16.19 [d]** The original EMYCIN also had a `change` command to allow the user to change the answer to certain questions without starting all over.
 Each question was assigned a number, which was printed before the prompt.
-The command change, followed by a list of numbers, causes the system to look up the questions associated with each number and delete the answer to these questions.
+The command `change`, followed by a list of numbers, causes the system to look up the questions associated with each number and delete the answer to these questions.
 The system also throws away the entire context tree and all derived parameter values.
 At that point the entire consultation is restarted, using only the data obtained from the unchanged questions.
 Although it may seem wasteful to start over from the beginning, it will not be wasteful of the user's time, since correct answers will not be asked again.
@@ -1314,8 +1315,8 @@ Then any rule that uses an undefined parameter will automatically generate a war
 **Answer 16.7** Logically, there should be no difference, but to EMYCIN there is a big difference.
 EMYCIN would not complain if you answered `(yes 1 no 1)`.
 This suggests that the system should have some way of dealing with mutually exclusive answers.
-One way would be to accept only yes responses for Boolean parameters, but have the input routine translate no to `(yes -1)` and `(no *cf*)` to `(yes 1-*cf*)`.
-Another possibility would be to have `update-cf check` to see if any certainty factor on a mutually exclusive value is 1, and if so, change the other values to -1.
+One way would be to accept only yes responses for Boolean parameters, but have the input routine translate no to `(yes -1)` and `(no` *cf*) to `(yes 1-`*cf*).
+Another possibility would be to have `update-cf` check to see if any certainty factor on a mutually exclusive value is 1, and if so, change the other values to -1.
 
 **Answer 16.18** Add the clause `(stop (throw 'stop nil))` to the case statement in `ask-vals` and wrap a `(catch 'stop ...)` around the code in `emycin`.
 

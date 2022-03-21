@@ -35,7 +35,7 @@ Lexical variables can be used to implement package-like structures.
 
 9.  Scheme has no special forms for looping; instead it asks the user to use recursion and promises to implement the recursion efficiently.
 
-The five main special forms in Scheme are `quote` and `if`, which are just as in Common Lisp; `begin` and `set!`, which are just different spellings for `progn` and `setq`; and `lambda`, which is as in Common Lisp, except that it doesn't require a # 'before it.
+The five main special forms in Scheme are `quote` and `if`, which are just as in Common Lisp; `begin` and `set!`, which are just different spellings for `progn` and `setq`; and `lambda`, which is as in Common Lisp, except that it doesn't require a `#'` before it.
 In addition, Scheme allows variables, constants (numbers, strings, and characters), and function calls.
 The function call is different because the function itself is evaluated in the same way as the arguments.
 In Common Lisp, (`f x`) means to look up the function binding of `f` and apply that to the value of `x`.

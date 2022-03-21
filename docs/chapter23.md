@@ -1608,7 +1608,7 @@ This is similar to the `^D` convention in UNIX systems, and it can be quite hand
 So far the Scheme readtable is just a copy of the standard readtable.
 The next step in implementing `scheme-read` is to alter `*scheme-readtable*`, adding read macros for whatever characters are necessary.
 Here we define macros for `#t` and `#f` (the true and false values), for `#d` (decimal numbers) and for the backquote read macro (called quasiquote in Scheme).
-Note that the backquote and comma characters are defined as read macros, but the `@` in ,`@` is processed by reading the next character, not by a read macro on `@`.
+Note that the backquote and comma characters are defined as read macros, but the `@` in `,@` is processed by reading the next character, not by a read macro on `@`.
 
 ```lisp
 (set-dispatch-macro-character #\# #\t
@@ -1784,7 +1784,7 @@ How could you make `scheme-read` account for this?
 But there are other cases where we know the value of the predicate.
 For example, `(if (* a b) x y)` can also reduce to `x`.
 Arrange for these optimizations to be made.
-Note the `prim-always` field of the `prim structure` has been provided for this purpose.
+Note the `prim-always` field of the `prim` structure has been provided for this purpose.
 
 **Exercise  23.7 [m]** Consider the following version of the quicksort algorithm for sorting a vector:
 

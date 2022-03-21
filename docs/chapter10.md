@@ -228,7 +228,7 @@ On a Lisp Machine, both `f` and `g` compile into the same code:
 | `7 +`      | `ARG|1`   | `; Y` |
 | `8 RETURN` | `PDL-POP` |       |
 
-The Lisp Machine has a microcoded  +  instruction that simultaneously does a fixnum add and checks for non-fixnum arguments, branching to a subroutine if either argument is not a fixnum.
+The Lisp Machine has a microcoded `+` instruction that simultaneously does a fixnum add and checks for non-fixnum arguments, branching to a subroutine if either argument is not a fixnum.
 The hardware does the work that the compiler has to do on a conventional processor.
 This makes the Lisp Machine compiler simpler, so compiling a function is faster.
 However, on modern pipelined computers with instruction caches, there is little or no advantage to microcoding.
@@ -461,7 +461,7 @@ code vector @ #x83de34
 | `64`  | `jmp`    | `(a4)`          |                         |
 
 The loop from 20-26 builds up the `&rest` list one cons at a time.
-Part of the difficulty is that cons could initiate a garbage collection at any time, so the list has to be built in a place that the garbage collector will know about.
+Part of the difficulty is that `cons` could initiate a garbage collection at any time, so the list has to be built in a place that the garbage collector will know about.
 The function with optional arguments is even worse, taking 34 instructions (104 bytes), and keywords are worst of all, weighing in at 71 instructions (178 bytes), and including a loop.
 The overhead for optional arguments is proportional to the number of optional arguments, while for keywords it is proportional to the product of the number of parameters allowed and the number of arguments actually supplied.
 
@@ -475,7 +475,7 @@ Consider:
 ```
 
 Here the function `key` is used as an interface to the function `no-key`, which does the real work.
-The inline proclamation should allow the compiler to compile a call to key as a call to `no-key` with the appropriate arguments:
+The inline proclamation should allow the compiler to compile a call to `key` as a call to `no-key` with the appropriate arguments:
 
 ```
 > (disassemble #'(lambda (x y) (key :b x :a y)))
@@ -1296,7 +1296,7 @@ A dag is a tree where some of the subtrees are shared.
 Imagine you have a spelling corrector program with a list of some 50,000 or so words.
 You could put them into a trie, each word with the value t.
 But there would be many subtrees repeated in this trie.
-For example, given a word list containing *look*, *looks*, *looked*, and *looking* as well as *show*, *shows*, *showed*, and *showing*, there would be repetition of the subtree containing -s, - *ed* and -*ing*.
+For example, given a word list containing *look*, *looks*, *looked*, and *looking* as well as *show*, *shows*, *showed*, and *showing*, there would be repetition of the subtree containing *-s*, *-ed* and *-ing*.
 After the trie is built, we could pass the whole trie to un i que, and it would collapse the shared subtrees, saving storage.
 Of course, you can no longer add or delete keys from the dag without risking unintended side effects.
 
@@ -1324,10 +1324,10 @@ Other implementation options include property lists and vectors.
 `deftable` should also take three keyword arguments: `inline`, `size` and `test`.
 Here is a possible macroexpansion:
 
-`>(macroexpand '(deftableperson hash :-inline t :size 100))`=
+```
 
-```lisp
- (progn
+> (macroexpand '(deftableperson hash :-inline t :size 100))
+(progn
  (proclaim '(inline get-person put-person map-person))
  (defparameter *person-table*
   (make-hash-table :test #eql :size 100))
@@ -1341,7 +1341,7 @@ Here is a possible macroexpansion:
  'person)
 ```
 
-**Exercise 10.2 [m]** We can use the :`type` option to `defstruct` to define structures implemented as lists.
+**Exercise 10.2 [m]** We can use the `:type` option to `defstruct` to define structures implemented as lists.
 However, often we have a two-field structure that we would like to implement as a cons cell rather than a two-element list, thereby cutting storage in half.
 Since `defstruct` does not allow this, define a new macro that does.
 

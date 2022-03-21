@@ -339,7 +339,7 @@ In the first case it has already been parsed, and we pick it up from the gap lis
 If that is so, then we also need to find the agreement feature of the subject.
 If the subject was a noun phrase, the agreement will be present in the gap list.
 If it was not, then the agreement is third-person singular.
-An example of this is " *That the Red Sox won* surprises me," where the italicized phrase is a non-NP subject.
+An example of this is "*That the Red Sox won* surprises me," where the italicized phrase is a non-NP subject.
 The fact that we need to use "surprises" and not "surprise" indicates that it is third-person singular.
 We will see that the code `(- - + -)` is used for this.
 

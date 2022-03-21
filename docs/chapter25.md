@@ -138,13 +138,13 @@ Consider:
 
 Now suppose that the definitions of `score-fn`, `print-fn`, and `better` are all changed.
 Does any of the prior code have to be recompiled?
-The variable *`printer`* can stay as is.
+The variable `*printer*` can stay as is.
 When it is funcalled, the symbol `print-fn` will be consulted for the current functional value.
-Within show, the expression # ' `better` is compiled into code that will get the current version of `better`, so it too is safe.
-However, the variable *`scorer`* must be changed.
+Within `show`, the expression `#'better` is compiled into code that will get the current version of `better`, so it too is safe.
+However, the variable `*scorer*` must be changed.
 Its value is the old definition of `score-fn`.
 
-**Remedy:** Re-evaluate the definition of *`scorer`*.
+**Remedy:** Re-evaluate the definition of `*scorer*`.
 It is unfortunate, but this problem encourages many programmers to use symbols where they really mean functions.
 Symbols will be coerced to the global function they name when passed to `funcall` or `apply`, but this can be the source of another error.
 In the following example, the symbol `local-fn` will not refer to the locally bound function.
@@ -753,24 +753,24 @@ The five values give more control over the exact order in which expressions are 
 The five values are: (1) a list of temporary, local variables used in the code; (2) a list of values these variables should be bound to; (3) a list of one variable to hold the value specified in the call to `setf`; (4) code that will store the value in the proper place; (5) code that will access the value of the place.
 This is necessary for variations of `setf` like `inef` and `pop`, which need to both access and store.
 
-In the following `setf` method for `last`, then, we are defining the meaning of (`setf` (`last place`) `value`).
-We keep track of all the variables and values needed to evaluate `place`, and add to that three more local variables: `last2`-var will hold the last two elements of the list, `last2`-p will be true only if there are two or more elements in the list, and `last-var` will hold the form to access the last element of the list.
+In the following `setf` method for `last`, then, we are defining the meaning of `(setf (last place) value)`.
+We keep track of all the variables and values needed to evaluate `place`, and add to that three more local variables: `last2-var` will hold the last two elements of the list, `last2-p` will be true only if there are two or more elements in the list, and `last-var` will hold the form to access the last element of the list.
 We also make up a new variable, `result`, to hold the `value`.
-The code to store the value either modifies the cdr of `last2-var`, if the list is long enough, or it stores directly into `place`.
-The code to access the value just retrieves `last - var`.
+The code to store the value either modifies the `cdr` of `last2-var`, if the list is long enough, or it stores directly into `place`.
+The code to access the value just retrieves `last-var`.
 
 ```lisp
 (define-setf-method last (place)
-  (multiple-value-bind (temps vais stores store-form access-form)
+  (multiple-value-bind (temps vals stores store-form access-form)
         (get-setf-method place)
     (let ((result (gensym))
           (last2-var (gensym))
           (last2-p (gensym))
           (last-var (gensym)))
-        ;; Return 5 vais: temps vais stores store-form access-form
+        ;; Return 5 vals: temps vals stores store-form access-form
         (values
           '(.@temps .last2-var .last2-p .last-var)
-          '(.@vais (last2 .access-form)
+          '(.@vals (last2 .access-form)
             (= (length .last2-var) 2)
             (if .last2-p (rest .last2-var) .access-form))
           (list result)
@@ -1262,14 +1262,14 @@ It looks for the key in the a-list, and if the key is there, it modifies the cdr
 
 ```lisp
 (define-setf-method lookup (key alist-place)
-  (multiple-value-bind (temps vais stores store-form access-form)
+  (multiple-value-bind (temps vals stores store-form access-form)
       (get-setf-method alist-place)
   (let ((key-var (gensym))
           (pair-var (gensym))
           (result (gensym)))
       (values
         '(.key-var .@temps .pair-var)
-        '(.key .@vais (assoc .key-var ,access-form))
+        '(.key .@vals (assoc .key-var ,access-form))
         '(.result)
         '(if .pair-var
             (setf (cdr .pair-var) .result)

@@ -392,7 +392,7 @@ Here are some examples of `unifier`:
 ((?A * 5 ^ 2) + (4 * 5) + 3)
 ```
 
-When *`occurs-check`* is false, we get the following answers:
+When `*occurs-check*` is false, we get the following answers:
 
 ```lisp
 > (unify '?x '(f ?x)) => ((?X F ?X))
@@ -442,7 +442,7 @@ If we define or in Prolog, we would write a version that is clearly just a synta
 ```
 
 Let's see how the Prolog version of `member` works.
-Imagine that we have a Prolog interpreter that can be given a query using the macro ?-, and that the definition of `member` has been entered.
+Imagine that we have a Prolog interpreter that can be given a query using the macro `?-`, and that the definition of `member` has been entered.
 Then we would see:
 
 ```lisp
@@ -1247,7 +1247,7 @@ It is a predicate that returns true for success and false for failure, and has t
  t)
 ```
 
-To make `vars` easier to read, we can install a :`print-function`:
+To make `vars` easier to read, we can install a `:print-function`:
 
 ```lisp
 (defstruct (var (:print-function print-var))
@@ -1312,7 +1312,7 @@ Just as it is easy to write a Lisp interpreter in Lisp, it is easy to write a Pr
 The following Prolog metainterpreter has three main relations.
 The relation clause is used to store clauses that make up the rules and facts that are to be interpreted.
 The relation `prove` is used to prove a goal.
-It calls `prove`-`all`, which attempts to prove a list of goals, `prove`-`all` succeeds in two ways: (1) if the list is empty, or (2) if there is some clause whose head matches the first goal, and if we can prove the body of that clause, followed by the remaining goals:
+It calls `prove-all`, which attempts to prove a list of goals, `prove-all` succeeds in two ways: (1) if the list is empty, or (2) if there is some clause whose head matches the first goal, and if we can prove the body of that clause, followed by the remaining goals:
 
 ```lisp
 (<- (prove ?goal) (prove-all (?goal)))
@@ -1345,30 +1345,37 @@ No.
 Many of the features that make Prolog a successful language for AI (and for program development in general) are the same as Lisp's features.
 Let's reconsider the list of features that make Lisp different from conventional languages (see page 25) and see what Prolog has to offer:
 
-*   *Built-in Support for Lists (and other data types).* New data types can be created easily using lists or structures (structures are preferred).
+* *Built-in Support for Lists (and other data types).*
+New data types can be created easily using lists or structures (structures are preferred).
 Support for reading, printing, and accessing components is provided automatically.
 Numbers, symbols, and characters are also supported.
 However, because logic variables cannot be altered, certain data structures and operations are not provided.
 For example, there is no way to update an element of a vector in Prolog.
 
-*   *Automatic Storage Management.* The programmer can allocate new objects without worrying about reclaiming them.
+* *Automatic Storage Management.*
+The programmer can allocate new objects without worrying about reclaiming them.
 Reclaiming is usually faster in Prolog than in Lisp, because most data can be stack-allocated instead of heap-allocated.
 
-*   *Dynamic Typing.* Declarations are not required.
+* *Dynamic Typing.*
+Declarations are not required.
 Indeed, there is no standard way to make type declarations, although some implementations allow for them.
 Some Prolog systems provide only fixnums, so that eliminates the need for a large class of declarations.
 
-*   *First-Class Functions.* Prolog has no equivalent of `lambda,` but the built-in predicate `call` allows a term-a piece of data-to be called as a goal.
+* *First-Class Functions.*
+Prolog has no equivalent of `lambda`, but the built-in predicate `call` allows a term - a piece of data - to be called as a goal.
 Although backtracking choice points are not first-class objects, they can be used in a way very similar to continuations in Lisp.
 
-*   *Uniform Syntax.* Like Lisp, Prolog has a uniform syntax for both programs and data.
+* *Uniform Syntax.*
+Like Lisp, Prolog has a uniform syntax for both programs and data.
 This makes it easy to write interpreters and compilers in Prolog.
 While Lisp's prefix-operator list notation is more uniform, Prolog allows infix and postfix operators, which may be more natural for some applications.
 
-*   *Interactive Environment.* Expressions can be immediately evaluated.
+* *Interactive Environment.*
+Expressions can be immediately evaluated.
 High-quality Prolog systems offer both a compiler and interpreter, along with a host of debugging tools.
 
-*   *Extensibility.* Prolog syntax is extensible.
+* *Extensibility.*
+Prolog syntax is extensible.
 Because programs and data share the same format, it is possible to write the equivalent of macros in Prolog and to define embedded languages.
 However, it can be harder to ensure that the resulting code will be compiled efficiently.
 The details of Prolog compilation are implementation-dependent.

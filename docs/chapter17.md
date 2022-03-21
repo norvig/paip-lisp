@@ -205,11 +205,11 @@ If the number of consistent labelings is less than the number before we started,
 The function returns nil and thus immediately stops the propagation if there is an impossible vertex.
 Otherwise, propagation continues until there are no more changes to the labelings.
 
-The whole propagation algorithm is started by a call to `every in print-labelings,` which propagates constraints from each vertex in the diagram.
+The whole propagation algorithm is started by a call to `every` in `print-labelings`, which propagates constraints from each vertex in the diagram.
 But it is not obvious that this is all that is required.
 After propagating from each vertex once, couldn't there be another vertex that needs relabeling?
 The only vertex that could possibly need relabeling would be one that had a neighbor changed since its last update.
-But any such vertex would have been visited by `propagate-constraint,` since we propagate to all neighbors.
+But any such vertex would have been visited by `propagate-constraint`, since we propagate to all neighbors.
 Thus, a single pass through the vertexes, compounded with recursive calls, will find and apply all possible constraints.
 
 The next question worth asking is if the algorithm is guaranteed to terminate.
@@ -252,8 +252,8 @@ The auxiliary function `labels-for` finds the labels for a particular neighbor a
 
 Constraint propagation is often sufficient to yield a unique interpretation.
 But sometimes the diagram is still underconstrained, and we will have to search for solutions.
-The function `search-solutions` first checks to see if the diagram is ambiguous, by seeing if it has an ambiguous vertex, v.
-If the diagram is unambiguous, then it is a solution, and we return it (in a list, `since search-solutions` is designed to return a list of all solutions).
+The function `search-solutions` first checks to see if the diagram is ambiguous, by seeing if it has an ambiguous vertex, `v`.
+If the diagram is unambiguous, then it is a solution, and we return it (in a list, since `search-solutions` is designed to return a list of all solutions).
 Otherwise, for each of the possible labelings for the ambiguous vertex, we create a brand new copy of the diagram and set v's labeling in the copy to one of the possible labelings.
 In effect, we are guessing that a labeling is a correct one.
 We call `propagate-constraints`; if it fails, then we have guessed wrong, so there are no solutions with this labeling.
@@ -477,6 +477,7 @@ The initial diagram is:
  F/6 L: FD=[RL+L-R] FC=[LRR+L-]
  G/6 L: GB=[RL+L-R] GD=[LRR+L-]
 For 29,160 interpretations.
+
 After constraint propagation the diagram is:
  A/1 Y: AB=[+] AC=[+] AD=[+]
  B/2 W: BG=[L-] BE=[R-] BA=[++]
@@ -486,6 +487,7 @@ After constraint propagation the diagram is:
  F/3 L: FD=[R-R] FC=[LL-]
  G/3 L: GB=[R-R] GD=[LL-]
 For 216 interpretations.
+
 There are four solutions:
 Diagram:
   A/1 Y: AB=[+] AC=[+] AD=[+]
@@ -495,7 +497,8 @@ Diagram:
   E/l L: EC=[R] EB=[L]
   F/1 L: FD=[R] FC=[L]
   G/1 L: GB=[R] GD=[L]
-  Diagram:
+
+Diagram:
   A/1 Y: AD=[+] AC=[+] AD=[+]
   B/1 W: BG=[L] BE=[R] BA=[+]
   C/l W: CE=[L] CF=[R] CA=[+]
@@ -503,6 +506,7 @@ Diagram:
   E/l L: EC=[R] EB=[L]
   F/1 L: FD=[-] FC=[L]
   G/1 L: GB=[R] GD=[-]
+
 Diagram:
   A/1 Y: AB=[+] AC=[+] AD=[+]
   B/1 W: BG=[L] BE=[R] BA=[+]
@@ -511,6 +515,7 @@ Diagram:
   E/l L: EC=[-] EB=[L]
   F/1 L: FD=[R] FC=[-]
   G/1 L: GB=[R] GD=[L]
+
 Diagram:
   A/1 Y: AB=[+] AC=[+] AD=[+]
   B/1 W: BG=[-] BE=[-] BA=[+]
@@ -602,6 +607,7 @@ The grounded version yields the unique solution shown in the following output an
   (k W m l j)
   (l L h k)
   (m L k i))
+
 > (print-labelings (ground (diagram 'cube-on-plate) 'k 'm))
 The initial diagram is:
  A/5 Y: AB=[+-L-R] AC=[+-RL-] AD=[+--RL]
@@ -618,6 +624,7 @@ The initial diagram is:
  L/6 L: LH=[RL+L-R] LK=[LRR+L-]
  M/6 L: MK=[RL+L-R] MI=[LRR+L-]
 For 32.805.000 interpretations.
+
 After constraint propagation the diagram is
   A/1 Y: AB=[+] AC=[+] AD=[+]
   B/2 W: BG=[L-] BE=[R-] BA=[++]
@@ -682,6 +689,7 @@ After constraint propagation the diagram is:
  K/3 W: KJ=[L-+] KI=[R-+] KF=[++-]
  L/3 W: LH=[L-+] LG=[R-+] LC=[++-]
 For 2,073,600 interpretations.
+
 There are zero solutions:
 ```
 
@@ -702,6 +710,7 @@ Now we try a more complex diagram:
   (k W m l j)    (x Y r u t)
   (l L h k)      (y Y v u o)
   (m L k i)      (z Y t u v))
+
 > (print-labelings (ground (diagram 'tower) 'l 'k))
 The initial diagram is:
   A/5 Y: AB=[+-L-R] AC=[+-RL-] AD=[+--RL]

@@ -198,23 +198,23 @@ It has to be listed as a segment pattern rather than a single pattern because it
 When the description of a problem gets this complicated, it is a good idea to attempt a more formal specification.
 The following table describes a grammar of patterns, using the same grammar rule format described in [chapter 2](B9780080571157500029.xhtml).
 
-| []()              |                        |                                                   |
-|-------------------|------------------------|---------------------------------------------------|
-| *pat*=>           | *var*                  | match any one expression                          |
-|                   | *Constant*             | match just this atom                              |
-|                   | *segment*-*pat*        | match something against a sequence                |
-|                   | *single*-*pat*         | match something against one expression            |
-|                   | (*pat* . *pat*)         | match the first and the rest                      |
-| *single*-*pat*=>  | (?is *var predicate*) | test predicate on one expression                  |
-|                   | (?or *pat*...)        | match any pattern on one expression               |
-|                   | (?and *pat*...)       | match every pattern on one expression             |
-|                   | (?not *pat*...)       | succeed if pattern(s) do not match                |
-| *segment*-*pat*=> | ( (?* *var*)...)       | match zero or more expressions                    |
-|                   | ( (?+ *var*) ... )     | match one or more expressions                     |
-|                   | ( ( ?? *var*) ... )    | match zero or one expression                      |
-|                   | ( ( ?if *exp* )...)   | test if exp (which may contain variables) is true |
-| *Var* =>          | ?*chars*               | a symbol starting with ?                          |
-| *constant* =>     | *atom*                 | any nonvariable atom                              |
+| []()            |                         |                                                   |
+|-----------------|-------------------------|---------------------------------------------------|
+| *pat*=>         | *var*                   | match any one expression                          |
+|                 | *constant*              | match just this atom                              |
+|                 | *segment-pat*           | match something against a sequence                |
+|                 | *single-pat*            | match something against one expression            |
+|                 | (*pat . pat*)           | match the first and the rest                      |
+| *single-pat*=>  | (`?is` *var predicate*) | test predicate on one expression                  |
+|                 | (`?or` *pat*...)        | match any pattern on one expression               |
+|                 | (`?and` *pat*...)       | match every pattern on one expression             |
+|                 | (`?not` *pat*...)       | succeed if pattern(s) do not match                |
+| *segment-pat*=> | ((`?*` *var*)...)       | match zero or more expressions                    |
+|                 | ((`?+` *var*) ... )     | match one or more expressions                     |
+|                 | ((`??` *var*) ... )     | match zero or one expression                      |
+|                 | ((`?if` *exp* )...)     | test if exp (which may contain variables) is true |
+| *var* =>        | `?`*chars*              | a symbol starting with ?                          |
+| *constant* =>   | *atom*                  | any nonvariable atom                              |
 
 Despite the added complexity, all patterns can still be classified into five cases.
 The pattern must be either a variable, constant, a (generalized) segment pattern, a (generalized) single-element pattern, or a cons of two patterns.

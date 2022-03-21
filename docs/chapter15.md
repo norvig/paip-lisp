@@ -764,7 +764,8 @@ alt="\sin{(x)},
 If we are interested in assuring we have a canonical form, the safest thing is to allow only *e<sup>x</sup>* and log(*x*).
 All the other functions can be defined in terms of these two.
 With this extension, the set of expressions we can form is closed under differentiation, and it is possible to canonicalize expressions.
-The `result` is a mathematically sound construction known as a *differentiable field.* This is precisely the construct that is assumed by the Risch integration algorithm ([Risch 1969](B9780080571157500285.xhtml#bb0985),[1979](B9780080571157500285.xhtml#bb0990)).
+The `result` is a mathematically sound construction known as a *differentiable field.*
+This is precisely the construct that is assumed by the Risch integration algorithm ([Risch 1969](B9780080571157500285.xhtml#bb0985), [1979](B9780080571157500285.xhtml#bb0990)).
 
 The disadvantage of this minimal extension is that answers may be expressed in unfamiliar terms.
 The user asks for *d* sin(*x*<sup>2</sup>)*/dx,* expecting a simple answer in terms of cos, and is surprised to see a complex answer involving *e<sup>ix</sup>*.
