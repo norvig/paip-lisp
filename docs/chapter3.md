@@ -944,8 +944,9 @@ A cons cell is a data structure with two fields: a first and a rest.
 What we have been calling "a list of three elements" can also be seen as a single cons cell, whose first field points to the first element and whose rest field points to another cons cell that is a cons cell representing a list of two elements.
 This second cons cell has a rest field that is a third cons cell, one whose rest field is nil.
 All proper lists have a last cons cell whose rest field is nil.
-[Figure 3.1](#f0010) shows the cons cell notation for the three-element list (`one two three`), as well as for the result of (`cons 'one 'two`).
+[Figure 3.1](#fig-03-01) shows the cons cell notation for the three-element list (`one two three`), as well as for the result of (`cons 'one 'two`).
 
+<a id="fig-03-01"></a>
 | []() |
 |---|
 | <img src="images/chapter3/fig-03-01.svg" onerror="this.src='images/chapter3/fig-03-01.png'; this.onerror=null;" alt="Figure 3.1: Cons Cell Diagrams"> |
@@ -970,14 +971,16 @@ When Lisp reads a symbol in two different places, the result is guaranteed to be
 The Lisp system maintains a symbol table that the function read uses to map between characters and symbols.
 But when a list is read (or built) in two different places, the results are *not* identically the same, even though the corresponding elements may be.
 This is because `read` calls `cons` to build up the list, and each call to `cons` returns a new cons cell.
-[Figure 3.2](#f0015) shows two lists, `x` and `Y`, which are both equal to (`one two`), but which are composed of different cons cells, and hence are not identical.
-[Figure 3.3](#f0020) shows that the expression (`rest x`) does not generate new cons cells, but rather shares structure with `x`, and that the expression (`cons 'zero x`) generates exactly one new cons cell, whose rest is `x`.
+[Figure 3.2](#fig-03-02) shows two lists, `x` and `Y`, which are both equal to (`one two`), but which are composed of different cons cells, and hence are not identical.
+[Figure 3.3](#fig-03-03) shows that the expression (`rest x`) does not generate new cons cells, but rather shares structure with `x`, and that the expression (`cons 'zero x`) generates exactly one new cons cell, whose rest is `x`.
 
+<a id="fig-03-02"></a>
 | []() |
 |---|
 | <img src="images/chapter3/fig-03-02.svg" onerror="this.src='images/chapter3/fig-03-02.png'; this.onerror=null;" alt="Figure 3.2: Equal But Nonidentical Lists"> |
 | **Figure 3.2: Equal But Nonidentical Lists** |
 
+<a id="fig-03-03"></a>
 | []() |
 |---|
 | <img src="images/chapter3/fig-03-03.svg" onerror="this.src='images/chapter3/fig-03-03.png'; this.onerror=null;" alt="Figure 3.3: Parts of Lists"> |
@@ -1179,8 +1182,9 @@ In that respect, `tree-equal` is similar to `equal`, but `tree-equal` is more po
 > (same-shape-tree tree '((1 2) (3) (4 5))) => NIL
 ```
 
-[Figure 3.4](#f0025) shows the tree `((a b) ((c)) (d e))` as a cons cell diagram.
+[Figure 3.4](#fig-03-04) shows the tree `((a b) ((c)) (d e))` as a cons cell diagram.
 
+<a id="fig-03-04"></a>
 | []() |
 |---|
 | <img src="images/chapter3/fig-03-04.svg" onerror="this.src='images/chapter3/fig-03-04.png'; this.onerror=null;" alt="Figure 3.4: Cons Cell Diagram of a Tree"> |

@@ -403,6 +403,7 @@ For example, instead of the list `(a woman took a ball)`, we want to get the nes
 
 This corresponds to the tree that linguists draw as in figure 2.1.
 
+<a id="fig-02-01"></a>
 | []() |
 |---|
 | <img src="images/chapter2/fig-02-01.svg" onerror="this.src='images/chapter2/fig-02-01.png'; this.onerror=null;" alt="Figure 2.1"> |
