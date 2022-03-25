@@ -630,7 +630,10 @@ Some graphs will have a regular structure, while others will appear random.
 We will start by considering only trees-that is, graphs where a state can be reached by only one unique sequence of successor links.
 Here is a tree:
 
-![u06-01](images/chapter6/u06-01.jpg)
+<a id="diagram-06-01"></a>
+<img src="images/chapter6/diagram-06-01.svg"
+  onerror="this.src='images/chapter6/diagram-06-01.png'; this.onerror=null;"
+  alt="Diagram 6.1">
 
 ### Searching Trees
 
@@ -952,17 +955,17 @@ Instead of just giving the name of the structure, it is also possible to use:
 For city, the option :type is specified as `list`.
 This means that cities will be implemented as lists of three elements, as they are in the initial value for `*cities*`.
 
-The cities are shown on the map in [figure  6.1](#f0010), which has connections between all cities within the 1000 kilometer range of each other.<a id="tfn06-5"></a><sup>[5](#fn06-5)</sup>
+The cities are shown on the map in [figure 6.1](#fig-06-01), which has connections between all cities within the 1000 kilometer range of each other.<a id="tfn06-5"></a><sup>[5](#fn06-5)</sup>
 This map was drawn with the help of `air-distance`, a function that returns the distance in kilometers between two cities "as the crow flies."
 It will be defined later.
 Two other useful functions are `neighbors`, which finds all the cities within 1000 kilometers, and `city`, which maps from a name to a city.
 The former uses `find-all-if`, which was defined on [page 101](B9780080571157500030.xhtml#p101) as a synonym for `remove-if-not`.
 
-
-| []()                                  |
-|---------------------------------------|
-| ![f06-01](images/chapter6/f06-01.jpg) |
-| Figure 6.1: A Map of Some Cities      |
+<a id="fig-06-01"></a>
+| []() |
+|---|
+| <img src="images/chapter6/fig-06-01.svg" onerror="this.src='images/chapter6/fig-06-01.png'; this.onerror=null;" alt="Figure 6.1"> |
+| **Figure 6.1: A Map of Some Cities** |
 
 ```lisp
 (defun neighbors (city)
@@ -1122,12 +1125,13 @@ This example shows how search is susceptible to irregularities in the search spa
 It was easy to find the correct path from west to east, but the return trip required more search, because Flagstaff is a falsely promising step.
 In general, there may be even worse dead ends lurking in the search space.
 Look what happens when we limit the airplane's range to 700 kilometers.
-The map is shown in [figure 6.2](#f0015).
+The map is shown in [figure 6.2](#fig-06-02).
 
-| []()                                      |
-|-------------------------------------------|
-| ![f06-02](images/chapter6/f06-02.jpg)     |
-| Figure 6.2: A Map of Cities within 700 km |
+<a id="fig-06-02"></a>
+| []() |
+|---|
+| <img src="images/chapter6/fig-06-02.svg" onerror="this.src='images/chapter6/fig-06-02.png'; this.onerror=null;" alt="Figure 6.2"> |
+| **Figure 6.2: A Map of Cities within 700 km** |
 
 If we try to plan a trip from Tampa to Quebec, we can run into problems with the dead end at Wilmington, North Carolina.
 With a beam width of 1, the path to Jacksonville and then Wilmington will be tried first.
@@ -1275,18 +1279,19 @@ We will see it again in [chapters 11](B978008057115750011X.xhtml) and [18](B9780
 So far, `tree-search` has been the workhorse behind all the searching routines.
 This is curious, when we consider that the city problem involves a graph that is not a tree at all.
 The reason `tree-search` works is that any graph can be treated as a tree, if we ignore the fact that certain nodes are identical.
-For example, the graph in [figure 6.3](#f0020) can be rendered as a tree.
+For example, the graph in [figure 6.3](#fig-06-03) can be rendered as a tree.
 [Figure 6.4](#f0025) shows only the top four levels of the tree; each of the bottom nodes (except the 6s) needs to be expanded further.
 
-| []()                                  |
-|---------------------------------------|
-| ![f06-03](images/chapter6/f06-03.jpg) |
-| Figure 6.3: A Graph with Six Nodes    |
 
-| []()                                  |
-|---------------------------------------|
-| ![f06-04](images/chapter6/f06-04.jpg) |
-| Figure 6.4: The Corresponding Tree    |
+| <a id="fig-06-03"></a>[]() |
+|---|
+| <img src="images/chapter6/fig-06-03.svg" onerror="this.src='images/chapter6/fig-06-03.png'; this.onerror=null;" alt="Figure 6.3"> |
+| **Figure 6.3: A Graph with Six Nodes** |
+
+| <a id="fig-06-04"></a>[]() |
+|---|
+| <img src="images/chapter6/fig-06-04.svg" onerror="this.src='images/chapter6/fig-06-04.png'; this.onerror=null;" alt="Figure 6.4"> |
+| **Figure 6.4: The Corresponding Tree** |
 
 In searching for paths through the graph of cities, we were implicitly turning the graph into a tree.
 That is, if `tree-search` found two paths from Pittsburgh to Kansas City (via Chicago or Indianapolis), then it would treat them as two independent paths, just as if there were two distinct Kansas Cities.
@@ -1436,7 +1441,7 @@ Here are the three auxiliary functions:
             (path-states (path-previous path)))))
 ```
 
-Below we use `a*-search` to search for 6 in the graph previously shown in [figure 6.3](#f0020).
+Below we use `a*-search` to search for 6 in the graph previously shown in [figure 6.3](#fig-06-03).
 The cost function is a constant 1 for each step.
 In other words, the total cost is the length of the path.
 The heuristic evaluation function is just the difference from the goal.
@@ -1486,12 +1491,12 @@ Here is a function that finds all solutions, using beam search:
 The GPS program can be seen as a problem in search.
 For example, in the three-block blocks world, there are only 13 different states.
 They could be arranged in a graph and searched just as we searched for a route between cities.
-[Figure 6.5](#f0030) shows this graph.
+[Figure 6.5](#fig-06-05) shows this graph.
 
-| []()                                    |
-|-----------------------------------------|
-| ![f06-05](images/chapter6/f06-05.jpg)   |
-| Figure 6.5: The Blocks World as a Graph |
+| <a id="fig-06-05"></a>[]() |
+|---|
+| <img src="images/chapter6/fig-06-05.svg" onerror="this.src='images/chapter6/fig-06-05.png'; this.onerror=null;" alt="Figure 6.5"> |
+| **Figure 6.5: The Blocks World as a Graph** |
 
 The function `search-gps` does just that.
 Like the gps function on [page 135](B9780080571157500042.xhtml#p135), it computes a final state and then picks out the actions that lead to that state.
