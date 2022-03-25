@@ -226,7 +226,10 @@ His problem concerned three colored blocks, but we will update it to deal with t
 Suppose that a certain Eastern European country, *E*, has just decided if it will remain under communist rule or become a democracy, but we do not know the outcome of the decision.
 *E* is situated between the democracy *D* and the communist country *C*:
 
-![u14-02](images/chapter14/u14-02.jpg)
+<a id="diagram-14-02"></a>
+<img src="images/chapter14/diagram-14-02.svg"
+  onerror="this.src='images/chapter4/diagram-14-02.png'; this.onerror=null;"
+  alt="Diagram 14.2">
 
 The question is: Is there a communist country next to a democracy?
 Moore points out that the answer is "yes," but discovering this requires reasoning by cases.
@@ -531,10 +534,10 @@ To create the index, we essentially superimpose the list structure of all the ke
 At each position in the tree, we create an index of the keys that have either an atom or a variable at that position.
 [Figure 14.1](#f0010) shows the discrimination tree for the six keys.
 
-| []()                                           |
-|------------------------------------------------|
-| ![f14-01](images/chapter14/f14-01.jpg)         |
-| Figure 14.1: Discrimination Tree with Six Keys |
+| <a id="fig-14-01"></a>[]() |
+|---|
+| <img src="images/chapter14/fig-14-01.svg" onerror="this.src='images/chapter14/fig-14-01.png'; this.onerror=null;" alt="Figure 14.1"> |
+| **Figure 14.1: Discrimination Tree with Six Keys** |
 
 Consider the query `(p ?y c)`.
 Either the `p` or the `c` could be used as an index.
