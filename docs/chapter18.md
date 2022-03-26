@@ -53,15 +53,15 @@ Players alternate turns, except that a player who has no legal moves must pass.
 When neither player has any moves, the game is over, and the player with the most pieces on the board wins.
 This usually happens because there are no empty squares left, but it occasionally happens earlier in the game.
 
-| []()                                   |
-|----------------------------------------|
-| ![f18-01](images/chapter18/f18-01.jpg) |
-| Figure 18.1: The Othello Board         |
+| <a id="fig-18-01"></a>[]() |
+|---|
+| <img src="images/chapter18/fig-18-01.svg" onerror="this.src='images/chapter18/fig-18-01.png'; this.onerror=null;" alt="Figure 18.1"> |
+| **Figure 18.1: The Othello Board** |
 
-| []()                                   |
-|----------------------------------------|
-| ![f18-02](images/chapter18/f18-02.jpg) |
-| Figure 18.2: Legal Othello Moves       |
+| <a id="fig-18-02"></a>[]() |
+|---|
+| <img src="images/chapter18/fig-18-02.svg" onerror="this.src='images/chapter18/fig-18-02.png'; this.onerror=null;" alt="Figure 18.2"> |
+| **Figure 18.2: Legal Othello Moves** |
 
 ## 18.2 Representation Choices
 
@@ -474,10 +474,10 @@ Edge squares are weighted highly, corner squares higher still, and squares adjac
 In general, X and C squares are to be avoided, because taking them gives the opponent a chance to take the corner.
 The `weighted-squares` evaluation function reflects this.
 
-| []()                                   |
-|----------------------------------------|
-| ![f18-04](images/chapter18/f18-04.jpg) |
-| Figure 18.4: Names for Edge Squares    |
+| <a id="fig-18-04"></a>[]() |
+|---|
+| <img src="images/chapter18/fig-18-04.svg" onerror="this.src='images/chapter18/fig-18-04.png'; this.onerror=null;" alt="Figure 18.4"> |
+| **Figure 18.4: Names for Edge Squares** |
 
 ```lisp
 (defparameter *weights*
@@ -524,7 +524,10 @@ By searching through several levels of moves, we can steer away from potential d
 
 Another way to look at the `maximizer` function is as a search function that searches only one level, or *ply*, deep:
 
-![u18-01](images/chapter18/u18-01.jpg)
+<a id="diagram-18-01"></a>
+<img src="images/chapter18/diagram-18-01.svg"
+  onerror="this.src='images/chapter18/diagram-18-01.png'; this.onerror=null;"
+  alt="Diagram 18.1">
 
 The top of the tree is the current board position, and the squares below that indicate possible moves.
 The `maximizer` function evaluates each of these and picks the best move, which is underlined in the diagram.
@@ -533,7 +536,10 @@ Now let's see how a 3-ply search might go.
 The first step is to apply `maximizer` to the positions just above the bottom of the tree.
 Suppose we get the following values:
 
-![u18-02](images/chapter18/u18-02.jpg)
+<a id="diagram-18-02"></a>
+<img src="images/chapter18/diagram-18-02.svg"
+  onerror="this.src='images/chapter18/diagram-18-02.png'; this.onerror=null;"
+  alt="Diagram 4.1">
 
 Each position is shown as having two possible legal moves, which is unrealistic but makes the diagram fit on the page.
 In a real game, five to ten legal moves per position is typical.
@@ -544,11 +550,17 @@ Going up a level, it is the opponent's turn to move.
 We can assume the opponent will choose the move that results in the minimal value to us, which would be the maximal value to the opponent.
 Thus, the opponent's choices would be the 10- and 9-valued positions, avoiding the 20- and 23-valued positions.
 
-![u18-03](images/chapter18/u18-03.jpg)
+<a id="diagram-18-03"></a>
+<img src="images/chapter18/diagram-18-03.svg"
+  onerror="this.src='images/chapter18/diagram-18-03.png'; this.onerror=null;"
+  alt="Diagram 18.3">
 
 Now it is our turn to move again, so we apply `maximizer` once again to get the final value of the top-level position:
 
-![u18-04](images/chapter18/u18-04.jpg)
+<a id="diagram-18-04"></a>
+<img src="images/chapter18/diagram-18-04.svg"
+  onerror="this.src='images/chapter18/diagram-18-04.png'; this.onerror=null;"
+  alt="Diagram 18.4">
 
 If the opponent plays as expected, we will always follow the left branch of the tree and end up at the position with value 10.
 If the opponent plays otherwise, we will end up at a position with a better value.
@@ -667,7 +679,10 @@ It looks at every line of play, including many improbable ones.
 Fortunately, there is a way to find the optimal line of play without looking at every possible position.
 Let's go back to our familiar search tree:
 
-![u18-05](images/chapter18/u18-05.jpg)
+<a id="diagram-18-05"></a>
+<img src="images/chapter18/diagram-18-05.svg"
+  onerror="this.src='images/chapter18/diagram-18-05.png'; this.onerror=null;"
+  alt="Diagram 18.5">
 
 Here we have marked certain positions with question marks.
 The idea is that the whole search tree evaluates to 10 regardless of the value of the positions labeled ?<sub>*i*</sub>.
