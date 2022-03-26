@@ -23,20 +23,21 @@ This chapter covers one small aspect of high-level vision.
 ## 17.1 The Line-Labeling Problem
 
 In this chapter we look at the line-diagram labeling problem: Given a list of lines and the vertexes at which they intersect, how can we determine what the lines represent?
-For example, given the nine lines in [figure 17.1](#f0010), how can we interpret the diagram as a cube?
+For example, given the nine lines in [figure 17.1](#fig-17-01), how can we interpret the diagram as a cube?
 
-| []()                                   |
-|----------------------------------------|
-| ![f17-01](images/chapter17/f17-01.jpg) |
-| Figure 17.1: A Cube                    |
+
+| <a id="fig-17-01"></a>[]() |
+|---|
+| <img src="images/chapter17/fig-17-01.svg" onerror="this.src='images/chapter17/fig-17-01.png'; this.onerror=null;" alt="Figure 17.1"> |
+| **Figure 17.1:  A Cube** |
 
 Before we can arrive at an interpretation, we have to agree on what the candidates are.
-After all, [figure 17.1](#f0010) could be just a hexagon with three lines in the middle.
+After all, [figure 17.1](#fig-17-01) could be just a hexagon with three lines in the middle.
 For the purposes of this chapter, we will consider only diagrams that depict one or more *polyhedra-*three-dimensional solid figures whose surfaces are flat faces bounded by straight lines.
 In addition, we will only allow *trihedral* vertexes.
 That is, each vertex must be formed by the intersection of three faces, as in the corner of a cube, where the top, front, and side of the cube come together.
 A third restriction on diagrams is that no so-called *accidental* vertexes are allowed.
-For example, [figure 17.1](#f0010) might be a picture of three different cubes hanging in space, which just happen to line up so that the edge of one is aligned with the edge of another from our viewpoint.
+For example, [figure 17.1](#fig-17-01) might be a picture of three different cubes hanging in space, which just happen to line up so that the edge of one is aligned with the edge of another from our viewpoint.
 We will assume that this is not the case.
 
 Given a diagram that fits these three restrictions, our goal is to identify each line, placing it in one of three classes:
@@ -57,24 +58,25 @@ Vertex A is the near corner of the cube, and the three lines coming out of it ar
 Lines GD and DF are concave lines, indicating the junction between the cube and the surface on which it is resting.
 The remaining lines are boundary lines, indicating that there is no physical connection between the cube and the background there, but that there are other sides of the cube that cannot be seen.
 
-| []()                                   |
-|----------------------------------------|
-| ![f17-02](images/chapter17/f17-02.jpg) |
-| Figure 17.2: A Line-labeled Cube       |
+
+| <a id="fig-17-02"></a>[]() |
+|---|
+| <img src="images/chapter17/fig-17-02.svg" onerror="this.src='images/chapter17/fig-17-02.png'; this.onerror=null;" alt="Figure 17.2"> |
+| **Figure 17.2: A Line-labeled Cube** |
 
 The line-labeling technique developed in this chapter is based on a simple idea.
 First we enumerate all the possible vertexes, and all the possible labelings for each vertex.
 It turns out there are only four different vertex types in the trihedral polygon world.
 We call them L, Y, W, and T vertexes, because of their shape.
 The Y and W vertexes are also known as forks and arrows, respectively.
-The vertexes are listed in [figure 17.3](#f0020).
+The vertexes are listed in [figure 17.3](#fig-17-03).
 Each vertex imposes some constraints on the lines that compose it.
 For example, in a W vertex, the middle line can be labeled with a + or -, but not with an arrow.
 
-| []()                                          |
-|-----------------------------------------------|
-| ![f17-03](images/chapter17/f17-03.jpg)        |
-| Figure 17.3: The Possible Vertexes and Labels |
+| <a id="fig-17-03"></a>[]() |
+|---|
+| <img src="images/chapter17/fig-17-03.svg" onerror="this.src='images/chapter17/fig-17-03.png'; this.onerror=null;" alt="Figure 17.3"> |
+| **Figure 17.3: The Possible Vertexes and Labels** |
 
 Each line connects two vertexes, so it must satisfy both constraints.
 This suggests a simple algorithm for labeling a diagram based on constraint propagation: First, label each vertex with all the possible labelings for the vertex type.
@@ -88,17 +90,18 @@ We adjust N and V's possible labelings accordingly.
 Every time we add a constraint at a vertex, we repeat the whole process for all the neighboring vertexes, to give the constraint a chance to propagate as far as possible.
 When every vertex has been visited at least once and there are no more constraints to propagate, then we are done.
 
-[Figure 17.4](#f0025) illustrates this process.
+[Figure 17.4](#fig-17-04) illustrates this process.
 On the left we start with a cube.
 All vertexes have all possible labelings, except that we know line GD is concave (-), indicating that the cube is resting on a surface.
 This constrains vertex D in such a way that line DA must be convex (+).
 In the middle picture the constraint on vertex D has propagated to vertex A, and in the right-hand picture it propagates to vertex B.
 Soon, the whole cube will be uniquely labeled.
 
-| []()                                   |
-|----------------------------------------|
-| ![f17-04](images/chapter17/f17-04.jpg) |
-| Figure 17.4: Propagating Constraints   |
+
+| <a id="fig-17-04"></a>[]() |
+|---|
+| <img src="images/chapter17/fig-17-04.svg" onerror="this.src='images/chapter17/fig-17-04.png'; this.onerror=null;" alt="Figure 17.4"> |
+| **Figure 17.4: Propagating Constraints** |
 
 Many diagrams will be labeled uniquely by this constraint propagation process.
 Some diagrams, however, are ambiguous.
@@ -109,7 +112,7 @@ Keep going until the diagram is either unambiguous or inconsistent.
 
 That completes the sketch of the line-labeling algorithm.
 We are now ready to implement a labeling program.
-It's glossary is in [figure 17.5](#f0030).
+Its glossary is in [figure 17.5](#fig-17-05).
 
 | []()                                                |
 |-----------------------------------------------------|
@@ -369,12 +372,13 @@ But since there is not yet a Common Lisp standard for interacting with such devi
 The macro `defdiagram` defines and names a diagram.
 The name is followed by a list of vertex descriptions.
 Each description is a list consisting of the name of a vertex, the vertex type (Y, A, L, or T), and the names of the neighboring vertexes.
-Here again is the `defdiagram` description for the cube shown in [figure 17.6](#f0035).
+Here again is the `defdiagram` description for the cube shown in [figure 17.6](#fig-17-06).
 
-| []()                                   |
-|----------------------------------------|
-| ![f17-06](images/chapter17/f17-06.jpg) |
-| Figure 17.6: A Cube                    |
+<!-- 17.6 is a copy of 17.1 -->
+| <a id="fig-17-06"></a>[]() |
+|---|
+| <img src="images/chapter17/fig-17-01.svg" onerror="this.src='images/chapter17/fig-17-01.png'; this.onerror=null;" alt="Figure 17.6"> |
+| **Figure 17.6: A Cube** |
 
 ```lisp
 (defdiagram cube
@@ -574,17 +578,17 @@ Similarly, in programming `ground-line`, we only had to update one of the vertex
 The rest is done by constraint propagation.
 
 The next example yields the same four interpretations, in the same order (free floating, attached at bottom, attached at right, and attached at left) when interpreted ungrounded.
-The grounded version yields the unique solution shown in the following output and in [figure 17.9](#f0050).
+The grounded version yields the unique solution shown in the following output and in [figure 17.9](#fig-17-09).
 
-| []()                                   |
-|----------------------------------------|
-| ![f17-08](images/chapter17/f17-08.jpg) |
-| Figure 17.8: Cube on a Plate           |
+| <a id="fig-17-08"></a>[]() |
+|---|
+| <img src="images/chapter17/fig-17-08.svg" onerror="this.src='images/chapter17/fig-17-08.png'; this.onerror=null;" alt="Figure 17.8"> |
+| **Figure 17.8: Cube on a Plate** |
 
-| []()                                   |
-|----------------------------------------|
-| ![f17-09](images/chapter17/f17-09.jpg) |
-| Figure 17.9: Labeled Cube on a Plate   |
+| <a id="fig-17-09"></a>[]() |
+|---|
+| <img src="images/chapter17/fig-17-09.svg" onerror="this.src='images/chapter17/fig-17-09.png'; this.onerror=null;" alt="Figure 17.9"> |
+| **Figure 17.9: Labeled Cube on a Plate** |
 
 ```lisp
 (defdiagram cube-on-plate
@@ -784,22 +788,22 @@ It is interesting that the same fact that makes the processing of the poiuyt tak
 ## 17.4 Checking Diagrams for Errors
 
 This section considers one more example, and considers what to do when there are apparent errors in the input.
-The example is taken from Charniak and McDermott's *Introduction to Artificial Intelligence*, page 138, and shown in [figure 17.12](#f0065).
+The example is taken from Charniak and McDermott's *Introduction to Artificial Intelligence*, page 138, and shown in [figure 17.12](#fig-17-12).
 
-| []()                                          |
-|-----------------------------------------------|
-| ![f17-10](images/chapter17/f17-10.jpg)        |
-| Figure 17.10: An Impossible Figure (A Poiuyt) |
+| <a id="fig-17-10"></a>[]() |
+|---|
+| <img src="images/chapter17/fig-17-10.svg" onerror="this.src='images/chapter17/fig-17-10.png'; this.onerror=null;" alt="Figure 17.10"> |
+| **Figure 17.10: An Impossible Figure (A Poiuyt)** |
 
-| []()                                   |
-|----------------------------------------|
-| ![f17-11](images/chapter17/f17-11.jpg) |
-| Figure 17.11: A Tower                  |
+| <a id="fig-17-11"></a>[]() |
+|---|
+| <img src="images/chapter17/fig-17-11.svg" onerror="this.src='images/chapter17/fig-17-11.png'; this.onerror=null;" alt="Figure 17.11"> |
+| **Figure 17.11: A Tower** |
 
-| []()                                   |
-| ---------------------------------------|
-| ![f17-12](images/chapter17/f17-12.jpg) |
-| Figure 17.12: Diagram of an arch       |
+| <a id="fig-17-12"></a>[]() |
+|---|
+| <img src="images/chapter17/fig-17-12.svg" onerror="this.src='images/chapter17/fig-17-12.png'; this.onerror=null;" alt="Figure 17.12"> |
+| **Figure 17.12: Diagram of an arch** |
 
 ```lisp
 (defdiagram arch
