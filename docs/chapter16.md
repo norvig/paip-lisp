@@ -486,12 +486,13 @@ The contexts form a tree.
 In our example, the `patient` context is the root of the tree, and the current patient is stored in the data base under the key `patient.` The next level of the tree is for cultures taken from the patient; the current culture is stored under the `culture` key.
 Finally, there is a level for organisms found in each culture.
 The current organism is stored under both the `organism` and `current-instance` keys.
-The context tree is shown in [figure  16.2](#f0015).
+The context tree is shown in [figure 16.2](#fig-16-02).
 
-| []()                                   |
-|----------------------------------------|
-| ![f16-02](images/chapter16/f16-02.jpg) |
-| Figure 16.2: A Context Tree            |
+
+| <a id="fig-16-02"></a>[]() |
+|---|
+| <img src="images/chapter16/fig-16-02.svg" onerror="this.src='images/chapter16/fig-16-02.png'; this.onerror=null;" alt="Figure 16.2"> |
+| **Figure 16.2: A Context Tree** |
 
 ```lisp
 (defun new-instance (context)

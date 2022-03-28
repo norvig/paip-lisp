@@ -526,14 +526,14 @@ Diagram:
 ```
 
 The four interpretations correspond, respectively, to the cases where the cube is free floating, attached to the floor (GD and DF = -), attached to a wall on the right (EC and CF = -), or attached to a wall on the left (BG and BE = -).
-These are shown in [figure 17.7](#f0040).
+These are shown in [figure 17.7](#fig-17-07).
 It would be nice if we could supply information about where the cube is attached, and see if we can get a unique interpretation.
 The function ground takes a diagram and modifies it by making one or more lines be grounded lines-lines that have a concave (-) label, corresponding to a junction with the ground.
 
-| []()                                          |
-|-----------------------------------------------|
-| ![f17-07](images/chapter17/f17-07.jpg)        |
-| Figure 17.7: Four Interpretations of the Cube |
+| <a id="fig-17-07"></a>[]() |
+|---|
+| <img src="images/chapter17/fig-17-07.svg" onerror="this.src='images/chapter17/fig-17-07.png'; this.onerror=null;" alt="Figure 17.7"> |
+| **Figure 17.7: Four Interpretations of the Cube** |
 
 ```lisp
 (defun ground (diagram vertex-a vertex-b)

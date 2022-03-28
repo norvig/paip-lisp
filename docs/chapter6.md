@@ -961,8 +961,7 @@ It will be defined later.
 Two other useful functions are `neighbors`, which finds all the cities within 1000 kilometers, and `city`, which maps from a name to a city.
 The former uses `find-all-if`, which was defined on [page 101](B9780080571157500030.xhtml#p101) as a synonym for `remove-if-not`.
 
-<a id="fig-06-01"></a>
-| []() |
+| <a id="fig-06-01"></a>[]() |
 |---|
 | <img src="images/chapter6/fig-06-01.svg" onerror="this.src='images/chapter6/fig-06-01.png'; this.onerror=null;" alt="Figure 6.1"> |
 | **Figure 6.1: A Map of Some Cities** |
@@ -1127,8 +1126,7 @@ In general, there may be even worse dead ends lurking in the search space.
 Look what happens when we limit the airplane's range to 700 kilometers.
 The map is shown in [figure 6.2](#fig-06-02).
 
-<a id="fig-06-02"></a>
-| []() |
+| <a id="fig-06-02"></a>[]() |
 |---|
 | <img src="images/chapter6/fig-06-02.svg" onerror="this.src='images/chapter6/fig-06-02.png'; this.onerror=null;" alt="Figure 6.2"> |
 | **Figure 6.2: A Map of Cities within 700 km** |
