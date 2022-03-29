@@ -242,19 +242,32 @@ Also, even though there is no contiguous range of numbers that represents the le
 Now let's take a look at the initial board, as it is printed by `print-board`, and by a raw `write` (I added the line breaks to make it easier to read):
 
 ```lisp
-> (write (initial-board)   > (print-board (initial-board))
-          :array t)
-#(3 3 3 3 3 3 3 3 3 3                  1 2 3 4 5 6 7 8[@=2 0=2 (+0)]
-    3 0 0 0 0 0 0 0 0 3            10 . . . . . . . .
-    3 0 0 0 0 0 0 0 0 3            20 . . . . . . . .
-    3 0 0 0 0 0 0 0 0 3            30 . . . . . . . .
-    3 0 0 0 2 1 0 0 0 3            40 . . . 0 @ . . .
-    3 0 0 0 1 2 0 0 0 3            50 . . . @ 0 . . .
-    3 0 0 0 0 0 0 0 0 3            60 . . . . . . . .
-    3 0 0 0 0 0 0 0 0 3            70 . . . . . . . .
-    3 0 0 0 0 0 0 0 0 3            80 . . . . . . . .
+> (write (initial-board)
+         :array t)
+  #(3 3 3 3 3 3 3 3 3 3
+    3 0 0 0 0 0 0 0 0 3
+    3 0 0 0 0 0 0 0 0 3
+    3 0 0 0 0 0 0 0 0 3
+    3 0 0 0 2 1 0 0 0 3
+    3 0 0 0 1 2 0 0 0 3
+    3 0 0 0 0 0 0 0 0 3
+    3 0 0 0 0 0 0 0 0 3
+    3 0 0 0 0 0 0 0 0 3
     3 3 3 3 3 3 3 3 3 3)
-#<ART-2B-100 -72570734>    NIL
+#<ART-2B-100 -72570734>
+
+> (print-board (initial-board))
+     1 2 3 4 5 6 7 8 [@=2 0=2 (+0)]
+  10 . . . . . . . .
+  20 . . . . . . . .
+  30 . . . . . . . .
+  40 . . . 0 @ . . .
+  50 . . . @ 0 . . .
+  60 . . . . . . . .
+  70 . . . . . . . .
+  80 . . . . . . . .
+
+NIL
 ```
 
 Notice that `print-board` provides some additional information: the number of pieces that each player controls, and the difference between these two counts.
@@ -387,17 +400,17 @@ If we passed the *real* game board, the function could cheat by changing the pie
 
 ```lisp
 (defun get-move (strategy player board print)
-    "Call the player's strategy function to get a move.
-    Keep calling until a legal move is made."
-    (when print (print-board board))
-    (let ((move (funcall strategy player (copy-board board))))
-        (cond
-            ((and (valid-p move) (legal-p move player board))
-              (when print
-                  (format t "~&~c moves to ~d." (name-of player) move))
-              (make-move move player board))
-            (t (warn "Illegal move: ~d" move)
-                (get-move strategy player board print)))))
+  "Call the player's strategy function to get a move.
+  Keep calling until a legal move is made."
+  (when print (print-board board))
+  (let ((move (funcall strategy player (copy-board board))))
+    (cond
+      ((and (valid-p move) (legal-p move player board))
+       (when print
+         (format t "~&~c moves to ~d." (name-of player) move))
+       (make-move move player board))
+      (t (warn "Illegal move: ~d" move)
+         (get-move strategy player board print)))))
 ```
 
 Here we define two simple strategies:
@@ -760,75 +773,91 @@ Black is able to increase the piece difference dramatically as the game progress
 After 17 moves, white is down to only one piece:
 
 ```lisp
-          1 2 3 4 5 6 7 8    [@=20 0=1 (+19)]
-    10 0 @ . . . . . .
-    20 . @ . . . @ @ .
-    30 @ @ @ @ @ @ . .
-    40 . @ . @ @ . . .
-    50 @ @ @ @ @ @ . .
-    60 . . @ . . . . .
-    70 . . . . . . . .
-    80 . . . . . . . .
+     1 2 3 4 5 6 7 8    [@=20 0=1 (+19)]
+  10 0 @ . . . . . .
+  20 . @ . . . @ @ .
+  30 @ @ @ @ @ @ . .
+  40 . @ . @ @ . . .
+  50 @ @ @ @ @ @ . .
+  60 . . @ . . . . .
+  70 . . . . . . . .
+  80 . . . . . . . .
 ```
 
 Although behind by 19 points, white is actually in a good position, because the piece in the corner is safe and threatens many of black's pieces.
 White is able to maintain good position while being numerically far behind black, as shown in these positions later in the game:
 
 ```lisp
-          1 2 3 4 5 6 7 8    [@=32 0=15 (+17)]
-    10 0 0 0 0 @ @ 0 0
-    20 @ @ 0 @ @ @ @ @
-    30 @ @ 0 0 @ 0 @ @
-    40 0 0 @ @ @ @ @ @
-    50 @ 0 @ @ @ @ . .
-    60 @ @ 0 @ @ 0 . .
-    70 @ . . @ @ . . .
-    80 . . . . . . . .
-          1 2 3 4 5 6 7 8    [@=34 0=19 (+15)]
-    10 0 0 0 0 @ @ 0 0
-    20 @ @ 0 @ @ @ @ @
-    30 @ @ 0 0 @ 0 @ @
-    40 0 @ 0 @ @ @ @ @
-    50 0 @ 0 @ @ @ @ .
-    60 0 @ 0 @ @ @ . .
-    70 0 @ @ @ @ . . .
-    80 0 @ 0 . . . . .
+     1 2 3 4 5 6 7 8    [@=32 0=15 (+17)]
+  10 0 0 0 0 @ @ 0 0
+  20 @ @ 0 @ @ @ @ @
+  30 @ @ 0 0 @ 0 @ @
+  40 0 0 @ @ @ @ @ @
+  50 @ 0 @ @ @ @ . .
+  60 @ @ 0 @ @ 0 . .
+  70 @ . . @ @ . . .
+  80 . . . . . . . .
+```
+
+```
+     1 2 3 4 5 6 7 8    [@=34 0=19 (+15)]
+  10 0 0 0 0 @ @ 0 0
+  20 @ @ 0 @ @ @ @ @
+  30 @ @ 0 0 @ 0 @ @
+  40 0 @ 0 @ @ @ @ @
+  50 0 @ 0 @ @ @ @ .
+  60 0 @ 0 @ @ @ . .
+  70 0 @ @ @ @ . . .
+  80 0 @ 0 . . . . .
 ```
 
 After some give-and-take, white gains the advantage for good by capturing eight pieces on a move to square 85 on the third-to-last move of the game:
 
 ```lisp
-          1 2 3 4 5 6 7 8    [@=31 0=30 (+1)]
-    10 0 0 0 0 @ @ 0 0
-    20 @ @ 0 0 @ @ @ 0
-    30 @ @ 0 0 0 @ @ 0
-    40 0 @ 0 0 0 @ @ 0
-    50 0 @ 0 @ 0 @ @ 0
-    60 0 @ 0 @ @ @ @ 0
-    70 0 @ @ @ @ @ 0 0
-    80 0 @ @ @ . . .0
+     1 2 3 4 5 6 7 8    [@=31 0=30 (+1)]
+  10 0 0 0 0 @ @ 0 0
+  20 @ @ 0 0 @ @ @ 0
+  30 @ @ 0 0 0 @ @ 0
+  40 0 @ 0 0 0 @ @ 0
+  50 0 @ 0 @ 0 @ @ 0
+  60 0 @ 0 @ @ @ @ 0
+  70 0 @ @ @ @ @ 0 0
+  80 0 @ @ @ . . .0
+
 0 moves to 85.
-          1 2 3 4 5 6 7 8    [@=23 0=39 (-16)]
-    10 0 0 0 0 @ @ 0 0
-    20 @ @ 0 0 @ @ @ 0
-    30 @ @ 0 0 0 @ @ 0
-    40 0 @ 0 0 0 @ @ 0
-    50 0 @ 0 @ 0 @ @ 0
-    60 0 @ 0 @ 0 @ 0 0
-    70 0 @ @ 0 0 0 0 0
-    80 0 0 0 0 0 . . 0
+```
+
+```
+     1 2 3 4 5 6 7 8    [@=23 0=39 (-16)]
+  10 0 0 0 0 @ @ 0 0
+  20 @ @ 0 0 @ @ @ 0
+  30 @ @ 0 0 0 @ @ 0
+  40 0 @ 0 0 0 @ @ 0
+  50 0 @ 0 @ 0 @ @ 0
+  60 0 @ 0 @ 0 @ 0 0
+  70 0 @ @ 0 0 0 0 0
+  80 0 0 0 0 0 . . 0
+
 @ moves to 86.
-          1 2 3 4 5 6 7 8    [@=26 0=37 (-11)]
-    10 0 0 0 0 @ @ 0 0
-    20 @ @ 0 0 @ @ @ 0
-    30 @ @ 0 0 0 @ @ 0
-    40 0 @ 0 0 0 @ @ 0
-    50 0 @ 0 @ 0 @ @ 0
-    60 0 @ 0 @ 0 @ 0 0
-    70 0 @ @ 0 @ @ 0 0
-    80 0 0 0 0 0 @ . 0
+```
+
+```
+     1 2 3 4 5 6 7 8    [@=26 0=37 (-11)]
+  10 0 0 0 0 @ @ 0 0
+  20 @ @ 0 0 @ @ @ 0
+  30 @ @ 0 0 0 @ @ 0
+  40 0 @ 0 0 0 @ @ 0
+  50 0 @ 0 @ 0 @ @ 0
+  60 0 @ 0 @ 0 @ 0 0
+  70 0 @ @ 0 @ @ 0 0
+  80 0 0 0 0 0 @ . 0
+
 0 moves to 87.
+```
+
+```
 The game is over. Final result:
+
      1 2 3 4 5 6 7 8  [@=24 0=40 (-16)]
   10 0 0 0 0 @ @ 0 0
   20 @ @ 0 0 @ @ @ 0
@@ -850,64 +879,64 @@ The same things happen, although black's doom takes a bit longer to unfold.
 
 ```lisp
 > (othello (alpha-beta-searcher 6 #'count-difference)
-                      (alpha-beta-searcher 4 #'weighted-squares))
+           (alpha-beta-searcher 4 #'weighted-squares))
 ```
 
 Black slowly builds up an advantage:
 
 ```lisp
-          1 2 3 4 5 6 7 8    [@=21 0=8 (+13)]
-    10 . . @ @ @ @ @ .
-    20 . @ . @ 0 @ . .
-    30 0 @ @ 0 @ 0 0 .
-    40 . @ . @ 0 @ 0 .
-    50 . @ @ @ @ @ . .
-    60 . @ . @ . 0 . .
-    70 . . . . . . . .
-    80 . . . . . . . .
+     1 2 3 4 5 6 7 8    [@=21 0=8 (+13)]
+  10 . . @ @ @ @ @ .
+  20 . @ . @ 0 @ . .
+  30 0 @ @ 0 @ 0 0 .
+  40 . @ . @ 0 @ 0 .
+  50 . @ @ @ @ @ . .
+  60 . @ . @ . 0 . .
+  70 . . . . . . . .
+  80 . . . . . . . .
 ```
 
 But at this point white has clear access to the upper left corner, and through that corner threatens to take the whole top edge.
 Still, black maintains a material edge as the game goes on:
 
 ```lisp
-          1 2 3 4 5 6 7 8    [@=34 0=11 (+23)]
-    10 0 . @ @ @ @ @ .
-    20 . 0 0 @ @ @ . .
-    30 0 @ 0 0 @ @ @ @
-    40 @ @ @ @ 0 @ @ .
-    50 @ @ @ @ @ 0 @ .
-    60 @ @ @ @ @ @ 0 0
-    70 @ . . @ . . @ 0
-    80 . . . . . . . .
+     1 2 3 4 5 6 7 8    [@=34 0=11 (+23)]
+  10 0 . @ @ @ @ @ .
+  20 . 0 0 @ @ @ . .
+  30 0 @ 0 0 @ @ @ @
+  40 @ @ @ @ 0 @ @ .
+  50 @ @ @ @ @ 0 @ .
+  60 @ @ @ @ @ @ 0 0
+  70 @ . . @ . . @ 0
+  80 . . . . . . . .
 ```
 
 But eventually white's weighted-squares strategy takes the lead:
 
 ```lisp
-          1 2 3 4 5 6 7 8    [@=23 0=27 (-4)]
-    10 0 0 0 0 0 0 0 0
-    20 @ @ 0 @ @ @ . .
-    30 0 @ 0 0 @ @ @ @
-    40 0 @ 0 @ 0 @ @ .
-    50 0 @ 0 @ @ 0 @ .
-    60 0 0 0 @ @ @ 0 0
-    70 0 . 0 @ . . @ 0
-    80 0 . . . . . . .
+     1 2 3 4 5 6 7 8    [@=23 0=27 (-4)]
+  10 0 0 0 0 0 0 0 0
+  20 @ @ 0 @ @ @ . .
+  30 0 @ 0 0 @ @ @ @
+  40 0 @ 0 @ 0 @ @ .
+  50 0 @ 0 @ @ 0 @ .
+  60 0 0 0 @ @ @ 0 0
+  70 0 . 0 @ . . @ 0
+  80 0 . . . . . . .
 ```
 
 and is able to hold on to win:
 
 ```lisp
-          1 2 3 4 5 6 7 8    [@=24 0=40 (-16)]
-    10 0 0 0 0 0 0 0 0
-    20 @ @ 0 @ 0 0 @ @
-    30 0 @ 0 0 @ @ @ @
-    40 0 @ 0 0 @ @ @ 0
-    50 0 0 @ @ 0 @ 0 0
-    60 0 0 0 @ 0 @ @ 0
-    70 0 0 0 0 @ @ 0 0
-    80 0 0 0 0 0 @ @ 0
+     1 2 3 4 5 6 7 8    [@=24 0=40 (-16)]
+  10 0 0 0 0 0 0 0 0
+  20 @ @ 0 @ 0 0 @ @
+  30 0 @ 0 0 @ @ @ @
+  40 0 @ 0 0 @ @ @ 0
+  50 0 0 @ @ 0 @ 0 0
+  60 0 0 0 @ 0 @ @ 0
+  70 0 0 0 0 @ @ 0 0
+  80 0 0 0 0 0 @ @ 0
 -16
 ```
 
@@ -917,15 +946,15 @@ There are many problems with the weighted-squares evaluation function.
 Consider again this position from the first game above:
 
 ```lisp
-          1 2 3 4 5 6 7 8    [@=20 0=1 (+19)]
-    10 0 @ . . . . . .
-    20 . @ . . . @ @ .
-    30 @ @ @ @ @ @ . .
-    40 . @ . @ @ . . .
-    50 @ @ @ @ @ @ . .
-    60 . @ . . . . . .
-    70 . . . . . . . .
-    80 . . . . . . . .
+     1 2 3 4 5 6 7 8    [@=20 0=1 (+19)]
+  10 0 @ . . . . . .
+  20 . @ . . . @ @ .
+  30 @ @ @ @ @ @ . .
+  40 . @ . @ @ . . .
+  50 @ @ @ @ @ @ . .
+  60 . @ . . . . . .
+  70 . . . . . . . .
+  80 . . . . . . . .
 ```
 
 Here white, playing the weighted-squares strategy, chose to play 66.
@@ -1415,26 +1444,26 @@ The following table compares the performance of the random-ordering strategy, th
 All strategies search 6 ply deep.
 The table measures the number of boards investigated, the number of those boards that were evaluated (in all cases the evaluation function was `modified-weighted-squares`) and the time in seconds to compute a move.
 
-| random | order |      | sorted | order |      | static | order |      |
-| boards | evals | secs | boards | evals | secs | boards | evals | secs |
-|--------|-------|------|--------|-------|------|--------|-------|------|
-| 13912  | 10269 | 69   | 5556   | 5557  | 22   | 2365   | 1599  | 19   |
-| 9015   | 6751  | 56   | 6571   | 6572  | 25   | 3081   | 2188  | 18   |
-| 9820   | 7191  | 46   | 11556  | 11557 | 45   | 5797   | 3990  | 31   |
-| 4195   | 3213  | 20   | 5302   | 5303  | 17   | 2708   | 2019  | 15   |
-| 10890  | 7336  | 60   | 10709  | 10710 | 38   | 3743   | 2401  | 23   |
-| 13325  | 9679  | 63   | 6431   | 6432  | 24   | 4222   | 2802  | 24   |
-| 13163  | 9968  | 58   | 9014   | 9015  | 32   | 6657   | 4922  | 31   |
-| 16642  | 12588 | 70   | 9742   | 9743  | 33   | 10421  | 7488  | 51   |
-| 18016  | 13366 | 80   | 11002  | 11003 | 37   | 9508   | 7136  | 41   |
-| 23295  | 17908 | 104  | 15290  | 15291 | 48   | 26435  | 20282 | 111  |
-| 34120  | 25895 | 143  | 22994  | 22995 | 75   | 20775  | 16280 | 78   |
-| 56117  | 43230 | 224  | 46883  | 46884 | 150  | 48415  | 36229 | 203  |
-| 53573  | 41266 | 209  | 62252  | 62253 | 191  | 37803  | 28902 | 148  |
-| 43943  | 33184 | 175  | 31039  | 31040 | 97   | 33180  | 24753 | 133  |
-| 51124  | 39806 | 193  | 45709  | 45710 | 135  | 19297  | 15064 | 69   |
-| 24743  | 18777 | 105  | 20003  | 20004 | 65   | 15627  | 11737 | 66   |
-| 1.0    | 1.0   | 1.0  | .81    | 1.07  | .62  | .63    | .63   | .63  |
+| random order |         |        | sorted order |         |        | static order |         |        |
+|--------------|---------|--------|--------------|---------|--------|--------------|---------|--------|
+| *boards*     | *evals* | *secs* | *boards*     | *evals* | *secs* | *boards*     | *evals* | *secs* |
+| 13912        | 10269   | 69     | 5556         | 5557    | 22     | 2365         | 1599    | 19     |
+| 9015         | 6751    | 56     | 6571         | 6572    | 25     | 3081         | 2188    | 18     |
+| 9820         | 7191    | 46     | 11556        | 11557   | 45     | 5797         | 3990    | 31     |
+| 4195         | 3213    | 20     | 5302         | 5303    | 17     | 2708         | 2019    | 15     |
+| 10890        | 7336    | 60     | 10709        | 10710   | 38     | 3743         | 2401    | 23     |
+| 13325        | 9679    | 63     | 6431         | 6432    | 24     | 4222         | 2802    | 24     |
+| 13163        | 9968    | 58     | 9014         | 9015    | 32     | 6657         | 4922    | 31     |
+| 16642        | 12588   | 70     | 9742         | 9743    | 33     | 10421        | 7488    | 51     |
+| 18016        | 13366   | 80     | 11002        | 11003   | 37     | 9508         | 7136    | 41     |
+| 23295        | 17908   | 104    | 15290        | 15291   | 48     | 26435        | 20282   | 111    |
+| 34120        | 25895   | 143    | 22994        | 22995   | 75     | 20775        | 16280   | 78     |
+| 56117        | 43230   | 224    | 46883        | 46884   | 150    | 48415        | 36229   | 203    |
+| 53573        | 41266   | 209    | 62252        | 62253   | 191    | 37803        | 28902   | 148    |
+| 43943        | 33184   | 175    | 31039        | 31040   | 97     | 33180        | 24753   | 133    |
+| 51124        | 39806   | 193    | 45709        | 45710   | 135    | 19297        | 15064   | 69     |
+| 24743        | 18777   | 105    | 20003        | 20004   | 65     | 15627        | 11737   | 66     |
+| 1.0          | 1.0     | 1.0    | .81          | 1.07    | .62    | .63          | .63     | .63    |
 
 The last two lines of the table give the averages and the averages normalized to the random-ordering strategy's performance.
 The sorted-ordering strategy takes only 62% of the time of the random-ordering strategy, and the static-ordering takes 63%.
@@ -2240,7 +2269,7 @@ Othello is a registered trademark of CBS Inc.
 Gameboard design @ 1974 CBS Inc.
 
 <a id="fn18-2"></a><sup>[2](#tfn18-2)</sup>
-Othello,* [I. i. 117] William Shakespeare.
+*Othello,* [I. i. 117] William Shakespeare.
 
 <a id="fn18-3"></a><sup>[3](#tfn18-3)</sup>
 Remember, when a constant is redefined, it may be necessary to recompile any functions that use the constant.

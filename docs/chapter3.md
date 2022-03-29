@@ -201,20 +201,20 @@ Here is a table of equivalences:
 | `(unless` *test x y*)            | `(if (not` *test*) `(progn` *x y*)) | `(cond ((not` *test*) *x y*))      |
 | `(and` *a b c*)                  | `(if` *a* `(if` *b c*))             | `(cond` (*a* `(cond` (*b c*))))    |
 | `(or` *a b c*)                   | `(if` *a a* `(if` *b b c*))         | `(cond (a)` (*b*) (*c*))           |
-| `(*case*` *a* (*b c*) `*(t x*))` | `(if (eql` *a 'b*) *c x*)           | `(cond ((eql `*a 'b*) *c*) (*tx*)) |
+| `(*case*` *a* (*b c*) `*(t x*))` | `(if (eql` *a 'b*) *c x*)           | `(cond ((eql` *a 'b*) *c*) (*tx*)) |
 
 It is considered poor style to use `and` and `or` for anything other than testing a logical condition, `when`, `unless,` and `if` can all be used for taking conditional action.
 For example:
 
 ```lisp
 (and (> n 100)
-     (princ "N is large."))    ; Bad style!
+     (princ "N is large."))   ; Bad style!
 (or (<= n 100)
     (princ "N is large."))    ; Even worse style!
-(cond ((> n 100)        ; OK, but not MY preference
+(cond ((> n 100)              ; OK, but not MY preference
       (princ "N is large."))
 (when (> n 100)
-  (princ "N is large."))    ; Good style.
+  (princ "N is large."))      ; Good style.
 ```
 
 When the main purpose is to return a value rather than take action, `cond` and `if` (with explicit `nil` in the else case) are preferred over `when` and `unless`, which implicitly return `nil` in the else case, `when` and `unless` are preferred when there is only one possibility, `if` (or, for some people, `cond)` when there are two, and `cond` when there are more than two:
@@ -696,10 +696,9 @@ This is done with the special form `labels`:
 In general, a `labels` form (or the similar `flet` form) can be used to introduce one or more local functions.
 It has the following syntax:
 
-```lisp
-(labels ((function-name (parameter...) function-body)...)
- body-of-labels)
-```
+`(labels`
+&nbsp;&nbsp;&nbsp;&nbsp;((*function-name* (*parameter...*) *function-body*)...)
+&nbsp;&nbsp;&nbsp;&nbsp;*body-of-labels*)
 
 ### Other Special Forms
 
@@ -721,10 +720,15 @@ I can only think of three places where a `progn` is justified.
 First, to implement side effects in a branch of a two-branched conditional, one could use either an `if` with a `progn,` or a `cond`:
 
 ```lisp
-(if (> x 100)                             (cond ((> x 100)
-    (progn (print "too big")                     (print "too big")
-           (setf x 100))                         (setf x 100))
-    x)                                          (t x))
+(if (> x 100)
+    (progn (print "too big")
+           (setf x 100))
+    x)
+
+(cond ((> x 100)
+       (print "too big")
+       (setf x 100))
+      (t x))
 ```
 
 If the conditional had only one branch, then `when` or `unless` should be used, since they allow an implicit `progn`.

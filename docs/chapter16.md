@@ -194,8 +194,8 @@ But if we only used the certainty factors `true` and `false`, then EMYCIN would 
 It is only when we provide fractional certainty factors that the additional EMYCIN mechanism makes a difference.
 
 Truth values actually serve two purposes in Prolog.
-They determine the final answer, yes, but they also determine when to eut off search: if any one of the premises of a rule is false, then there is no sense looking at the other premises.
-If in EMYCIN we only eut off the search when one of the premises was absolutely false, then we might have to search through a lot of rules, only to yield answers with very low certainty factors.
+They determine the final answer, yes, but they also determine when to cut off search: if any one of the premises of a rule is false, then there is no sense looking at the other premises.
+If in EMYCIN we only cut off the search when one of the premises was absolutely false, then we might have to search through a lot of rules, only to yield answers with very low certainty factors.
 Instead, EMYCIN arbitrarily cuts off the search and considers a premise false when it has a certainty factor below .2.
 The following functions support this arbitrary cutoff point:
 

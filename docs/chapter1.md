@@ -385,11 +385,9 @@ The difference is that here we want to pick out the last name of any `name,` not
 
 In general, a function definition takes the following form (where the documentation string is optional, and all other parts are required):
 
-```lisp
-(defun *function-name* (*parameter...*)
-      "*documentation string*"
-      *function-body...*)
-```
+`(defun` *function-name* (*parameter...*)
+&nbsp;&nbsp;&nbsp;&nbsp;"*documentation string*"
+&nbsp;&nbsp;&nbsp;&nbsp;*function-body...*)
 
 The function name must be a symbol, the parameters are usually symbols (with some complications to be explained later), and the function body consists of one or more expressions that are evaluated when the function is called.
 The last expression is returned as the value of the function call.
@@ -601,12 +599,10 @@ This two-part requirement is equivalent to the first one, but it makes it easier
 
 Next I show an abstract description of the `first-name` problem, to emphasize the design of the function and the fact that recursive solutions are not tied to Lisp in any way:
 
-```lisp
-function first-name(name):
-  if *the first element of name is a title*
-    then *do something complicated to get the first-name*
-    else *return the first element of the name*
-```
+`function first-name(name):`
+&nbsp;&nbsp;&nbsp;&nbsp;`if` *the first element of name is a title*
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`then` *do something complicated to get the first-name*
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`else` *return the first element of the name*
 
 This breaks up the problem into two cases.
 In the second case, we return an answer, and it is in fact the correct answer.
@@ -614,12 +610,10 @@ We have not yet specified what to do in the first case.
 But we do know that it has something to do with the rest of the name after the first element, and that what we want is to extract the first name out of those elements.
 The leap of faith is to go ahead and use `first-name`, even though it has not been fully defined yet:
 
-```lisp
-function first-name(name):
-  if *the first element of name is a title*
-    then *return the* first-name *of the rest of the name*
-    else *return the first element of the name*
-```
+`function first-name(name):`
+&nbsp;&nbsp;&nbsp;&nbsp;`if` *the first element of name is a title*
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`then` *return the* `first-name` *of the rest of the name*
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`else` *return the first element of the name*
 
 Now the first case in `first-name` is recursive, and the second case remains unchanged.
 We already agreed that the second case returns the correct answer, and the first case only returns what `first-name` returns.

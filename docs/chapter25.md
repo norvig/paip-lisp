@@ -248,7 +248,7 @@ But in either version, it is a bad idea to do so.
 A list beginning with `lambda` is just that: a list, not a closure.
 Therefore, it cannot capture lexical variables the way a closure does.
 
-**Remedy:** The correct way to create a closure is to evaluate a call to the special form `function`, or its abbreviation, # '.
+**Remedy:** The correct way to create a closure is to evaluate a call to the special form `function`, or its abbreviation, `#'`.
 Here is a replacement for the code beginning with '(`lambda ....` Note that it is a closure, closed over `pred` and `c`.
 Also note that it gets the `predicate` each time it is called; thus, it is safe to use even when predicates are being changed dynamically.
 The previous version would not work when a predicate is changed.
@@ -872,10 +872,10 @@ That is, if macro-expansion results in code like:
 
 the compiler will treat it the same as `(progn *abc de).*`
 
-On the other hand, if the beginner wants a macro that *returns* two values, the proper form is val ues, but it must be understood that the calling function needs to arrange specially to see both values.
+On the other hand, if the beginner wants a macro that *returns* two values, the proper form is `values`, but it must be understood that the calling function needs to arrange specially to see both values.
 There is no way around this limitation.
 That is, there is no way to write a macro-or a function for that matter-that will "splice in" its results to an arbitrary call.
-For example, the function `floor` returns two values (the quotient and remainder), as does i ntern (the symbol and whether or not the symbol already existed).
+For example, the function `floor` returns two values (the quotient and remainder), as does `intern` (the symbol and whether or not the symbol already existed).
 But we need a special form to capture these values.
 For example, compare:
 

@@ -1,19 +1,16 @@
 # Chapter 14
 ## Knowledge Representation and Reasoning
 
-> Knowledge itself is power.
->
+> *Knowledge itself is power.* \
 > -Francis Bacon (1561-1626)
->
-> The power resides in the knowledge.
->
-> -Edward Feigenbaum
->
+
+> *The power resides in the knowledge.* \
+> -Edward Feigenbaum \
 > Stanford University Heuristic Programming Project
->
-> Knowledge is Knowledge, and vice versa.
->
-> -Tee shirt<br>&nbsp; Stanford University Heuristic Programming Project
+
+> *Knowledge is Knowledge, and vice versa.* \
+> -Tee shirt \
+> Stanford University Heuristic Programming Project
 
 In the 1960s, much of AI concentrated on search techniques.
 In particular, a lot of work was concerned with *theorem proving:* stating a problem as a small set of axioms and searching for a proof of the problem.
@@ -124,23 +121,23 @@ It is this use that we will be concerned with.
 Predicate calculus makes it easy to start writing down facts about a domain.
 But the most straightforward version of predicate calculus suffers from a number of serious limitations:
 
-*   *Decidability-*given a set of axioms and a goal, it may be that neither the goal nor its negation can be derived from the axioms.
+* *Decidability* - given a set of axioms and a goal, it may be that neither the goal nor its negation can be derived from the axioms.
 
-*   *Tractability-even* when a goal is provable, it may take too long to find the proof using the available inferencing mechanisms.
+* *Tractability* - even when a goal is provable, it may take too long to find the proof using the available inferencing mechanisms.
 
-*   *Uncertainty-*it can be inconvenient to deal with relations that are probable to a degree but not known to be definitely true or false.
+* *Uncertainty* - it can be inconvenient to deal with relations that are probable to a degree but not known to be definitely true or false.
 
-*   *Monotonicity-*in pure predicate calculus, once a theorem is proved, it is true forever.
+* *Monotonicity* - in pure predicate calculus, once a theorem is proved, it is true forever.
 But we would like a way to derive tentative theorems that rely on assumptions, and be able to retract them when the assumptions prove false.
 
-*   *Consistency-*pure predicate calculus admits no contradictions.
+* *Consistency* - pure predicate calculus admits no contradictions.
 If by accident both *P* and &not;*P* are derived, then *any* theorem can be proved.
 In effect, a single contradiction corrupts the entire data base.
 
-*   *Omniscience-*it can be difficult to distinguish what is provable from what should be proved.
+* *Omniscience* - it can be difficult to distinguish what is provable from what should be proved.
 This can lead to the unfounded assumption that an agent believes all the consequences of the facts it knows.
 
-*   *Expressiveness-*the first-order predicate calculus makes it awkward to talk about certain things, such as the relations and propositions of the language itself.
+* *Expressiveness* - the first-order predicate calculus makes it awkward to talk about certain things, such as the relations and propositions of the language itself.
 
 The view held predominantly today is that it is best to approach these problems with a dual attack that is both within and outside of predicate calculus.
 It is considered a good idea to invent new notations to address the problems-both for convenience and to facilitate special-purpose reasoners that are more efficient than a general-purpose theorem prover.
@@ -912,9 +909,9 @@ Iterative deepening can also be used to guide the search in Prolog.
 It will insure that all valid answers are found eventually, but it won't turn an infinite search space into a finite one.
 
 In the interpreter, iterative deepening is implemented by passing an extra argument to `prove` and `prove-all` to indicate the depth remaining to be searched.
-When that argument is zero, the search is eut off, and the proof falls.
+When that argument is zero, the search is cut off, and the proof fails.
 On the next iteration the bounds will be increased and the proof may succeed.
-If the search is never eut off by a depth bound, then there is no reason to go on to the next iteration, because all proofs have already been found.
+If the search is never cut off by a depth bound, then there is no reason to go on to the next iteration, because all proofs have already been found.
 The special variable `*search-cut-off*` keeps track of this.
 
 ```lisp
@@ -964,7 +961,7 @@ Setting the initial and increment values to one will make the results come out i
 
 A new version of `top-level-prove` will be used to control the iteration.
 It calls `prove-all` for all depths from the starting depth to the maximum depth, increasing by the increment.
-However, it only proceeds to the next iteration if the search was eut off at some point in the previous iteration.
+However, it only proceeds to the next iteration if the search was cut off at some point in the previous iteration.
 
 ```lisp
 (defun top-level-prove (goals)
