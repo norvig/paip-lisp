@@ -222,11 +222,10 @@ If this environment were called `env`, then `(in-env-p 'f env)` would return `(0
             (lambda ,(rest name) . ,body)))))
 ```
 
-Finally, we have some auxiliary functions to print out the results, to distinguish bet
-ween labels and instructions, and to determine the index of a variable in an environme
-nt.
+Finally, we have some auxiliary functions to print out the results, to distinguish between labels and instructions, and to determine the index of a variable in an environment.
 Scheme functions now are implemented as structures, which must have a field for the code, and one for the environment.
-In addition, we provide a field for the name of the function and for the argument list; these are used only for debugging purposes, We'll adopt the convention that the `define` macro sets the function's name field, by calling `name` ! (which is not part of standard Scheme).
+In addition, we provide a field for the name of the function and for the argument list; these are used only for debugging purposes.
+We'll adopt the convention that the `define` macro sets the function's name field, by calling `name!` (which is not part of standard Scheme).
 
 ```lisp
 (defun name! (fn name)
@@ -661,7 +660,8 @@ Note I have extended the machine to include instructions for the most common con
 ```
 
 The remaining two functions are more complex.
-First consider `comp-if` . Rather than blindly generating code for the predicate and both branches, we will consider some special cases.
+First consider `comp-if`.
+Rather than blindly generating code for the predicate and both branches, we will consider some special cases.
 First, it is clear that `(if t x y)` can reduce to `x` and `(if nil x y)` can reduce to `y`.
 It is perhaps not as obvious that `(if p x x)` can reduce to `(begin p x)`, or that the comparison of equality between the two branches should be done on the object code, not the source code.
 Once these trivial special cases have been considered, we're left with three more cases: `(if p x nil), (if p nil y),` and `(if p x y)`.
@@ -732,7 +732,7 @@ For example, if we put the same expression inside a `begin` expression, we get s
         RETURN
 ```
 
-What happens here is that `(+ x y)` and `(* x y)`, when compiled in a context where the value is ignored, both resuit in no generated code.
+What happens here is that `(+ x y)` and `(* x y)`, when compiled in a context where the value is ignored, both result in no generated code.
 Thus, the `if` expression reduces to `(if p nil nil)`, which is compiled like `(begin p nil)`, which also generates no code when not evaluated for value, so the final code just references `z`.
 The compiler can only do this optimization because it knows that `+` and `*` are side-effect-free operations.
 Consider what happens when we replace + with `f` :
@@ -1636,7 +1636,7 @@ NIL
 (QUASIQUOTE (A (UNQUOTE B) (UNQUOTE-SPLICING C) D))
 ```
 
-The final step is to make quasi quote a macro that expands into the proper sequence of calls to `cons`, `list`, and `append`.
+The final step is to make `quasiquote` a macro that expands into the proper sequence of calls to `cons`, `list`, and `append`.
 The careful reader will keep track of the difference between the form returned by `scheme-read` (something starting with `quasiquote`), the expansion of this form with the Scheme macro `quasiquote` (which is implemented with the Common Lisp function `quasi-q`), and the eventual evaluation of the expansion.
 In an environment where `b` is bound to the number 2 and `c` is bound to the list `(c1 c2)`, we might have:
 
@@ -1779,16 +1779,16 @@ What time and space complexity does it have?
 
 ```lisp
 (define (sort-vector vector test)
-      (define (sort lo hi)
-          (if (>= lo hi)
-                  vector
-                  (let ((pivot (partition vector lo hi)))
-                        (if (> (- hi pivot) (- pivot lo))
-                                  (begin (sort lo pivot)
-                                                      (sort (+ pivot 1) hi))
-                                  (begin (sort (+ pivot 1) hi)
-                                                      (sort lo pivot))))))
-      (sort 0 (- (vector-length vector 1))))
+   (define (sort lo hi)
+     (if (>= lo hi)
+         vector
+         (let ((pivot (partition vector lo hi)))
+            (if (> (- hi pivot) (- pivot lo))
+                 (begin (sort lo pivot)
+                           (sort (+ pivot 1) hi))
+                 (begin (sort (+ pivot 1) hi)
+                           (sort lo pivot))))))
+   (sort 0 (- (vector-length vector 1))))
 ```
 
 The next three exercises describe extensions that are not part of the Scheme standard.
@@ -1878,10 +1878,8 @@ The following routines do this without consing.
 (defun sign-p (char) (find char "+-"))
 ```
 
-Actually, that's not quite good enough, because a Scheme complex number can have multiple signs in it, as in `3.
-4e- 5+6.
-7e+8i`, and it need not have two numbers, as in `3i` or `4+i` or just `+  i`.
-The other problem is that complex numbers can only have a lowercase `i`, but read does not distinguish between the symbols `3+4i` and `3+4I`.
+Actually, that's not quite good enough, because a Scheme complex number can have multiple signs in it, as in `3.4e-5+6.7e+8i`, and it need not have two numbers, as in `3i` or `4+i` or just `+i`.
+The other problem is that complex numbers can only have a lowercase `i`, but `read` does not distinguish between the symbols `3+4i` and `3+4I`.
 
 **Answer 23.4** Yes, it is possible to implement `begin` as a macro:
 
@@ -1891,7 +1889,7 @@ The other problem is that complex numbers can only have a lowercase `i`, but rea
 ```
 
 With some work we could also eliminate quote.
-Instead of `'x`, we could use `(string->symbol "X" )`, and instead of `'(1 2)`, wecoulduse something like `(list 1 2)`.
+Instead of `'x`, we could use `(string->symbol "X" )`, and instead of `'(1 2)`, we could use something like `(list 1 2)`.
 The problem is in knowing when to reuse the same list.
 Consider:
 
@@ -1930,7 +1928,7 @@ This has the disadvantage (compared to explicit use of many special forms) that 
 It has the advantage that the optimizations will be applied even when the user did not have a special construct in mind.
 Common Lisp attempts to get the advantages of both by allowing implementations to play loose with what they implement as macros and as special forms.
 
-**Answer 23.6** We define the predicate `always` and install it in two places in `comp-if` :
+**Answer 23.6** We define the predicate `always` and install it in two places in `comp-if`:
 
 ```lisp
 (defun always (pred env)
@@ -2028,7 +2026,7 @@ But to demonstrate that the right solution doesn't always appear the first time,
 Assuming a properly tail-recursive compiler, the modified version will never require more than *O*(log *n*) space, because at each step at least half of the vector is being sorted tail-recursively.
 
 **Answer 23.10** (1) `(defun (funcall fn . args) (apply fn args))` (2) Suppose you changed the piece of code `(+ . numbers)` to `(+ . (map sqrt numbers))`.
-The latter is the same expression as (+ `map sqrt numbers),` which is not the intended resuit at all.
+The latter is the same expression as (+ `map sqrt numbers),` which is not the intended result at all.
 So there would be an arbitrary restriction: the last argument in an apply form would have to be an atom.
 This kind of restriction goes against the grain of Scheme.
 

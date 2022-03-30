@@ -5,7 +5,7 @@
 
 > -Nicholas Murray Butler (1862-1947)
 
-In the 1970s there was terrifie interest in the area of *knowledge-based expert systems*.
+In the 1970s there was terrific interest in the area of *knowledge-based expert systems*.
 An expert system or knowledge-based system is one that solves problems by applying knowledge that has been garnered from one or more experts in a field.
 Since these experts will not in general be programmers, they will very probably express their expertise in terms that cannot immediately be translated into a program.
 It is the goal of expert-system research to come up with a representation that is flexible enough to handle expert knowledge, but still capable of being manipulated by a computer program to come up with solutions.
@@ -166,7 +166,7 @@ A and B => .9C
 to say that A and B imply C with .9 certainty.
 EMYCIN simply multiplies the rule's cf by the combined cf of the premise.
 So if A has cf .6 and B has cf .4, then the premise as a whole has cf .4 (the minimum of A and B), which is multiplied by .9 to get .36.
-The .36 is then combined with any exisiting cf for C.
+The .36 is then combined with any existing cf for C.
 If C is previously unknown, then combining .36 with 0 will give .36.
 If C had a prior cf of .76, then the new cf would be .36 + .76 - (.36 x .76) = .8464.
 
@@ -1259,7 +1259,7 @@ Eventually, the need arose for a rule that said, "If any of the organisms in a c
 Implement a mechanism that keeps track of the author and date of creation of each rule, and allows the author to add documentation explaining the rationale for the rule.
 
 **Exercise  16.16 [m]** It is difficult to come up with the perfect prompt for each parameter.
-One solution is not to insist that one promptfits all users, but rather to allow the expert to supply three different prompts: a normal prompt, a verbose prompt (or reprompt) for when the user replies with a ?, and a terse prompt for the experienced user.
+One solution is not to insist that one prompt fits all users, but rather to allow the expert to supply three different prompts: a normal prompt, a verbose prompt (or reprompt) for when the user replies with a ?, and a terse prompt for the experienced user.
 Modify `defparm` to accommodate this concept, add a command for the user to ask for the terse prompts, and change `ask-vals` to use the proper prompt.
 
 The remaining exercises cover three additional replies the user can make: `how`, `stop`, and `change`.
@@ -1317,5 +1317,4 @@ This suggests that the system should have some way of dealing with mutually excl
 One way would be to accept only yes responses for Boolean parameters, but have the input routine translate no to `(yes -1)` and `(no *cf*)` to `(yes 1-*cf*)`.
 Another possibility would be to have `update-cf check` to see if any certainty factor on a mutually exclusive value is 1, and if so, change the other values to -1.
 
-**Answer 16.18** Add the clause `(stop (throw 'stop nil))` to the case statement inask-valsandwrapa `(catch 'stop ...)` around the code in `emycin`.
-
+**Answer 16.18** Add the clause `(stop (throw 'stop nil))` to the `case` statement in `ask-vals` and wrap a `(catch 'stop ...)` around the code in `emycin`.

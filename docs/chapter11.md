@@ -874,7 +874,7 @@ Finally, the Lisp predicate `continue-p` asks the user if he or she wants to see
 This version works just as well as the previous version on finite problems.
 The only difference is that the user, not the system, types the semicolons.
 The advantage is that we can now use the system on infinite problems as well.
-First, we'll ask what lists 2 is a member of :
+First, we'll ask what lists 2 is a member of:
 
 ```lisp
 > (?- (member 2 ?list))
@@ -1101,30 +1101,30 @@ Consider constraint 2, "The Englishman lives in the `red` house." This is interp
 
 ```lisp
 (<- (zebra ?h ?w ?z)
-  ;; Each house is of the form:
-  ;; (house nationality pet cigarette drink house-color)
-  (= ?h ((house norwegian ? ? ? ?)                                    ;1,10
-                ?
-                (house ? ? ? milk ?) ? ?))                                  ; 9
-  (member (house englishman ? ? ? red) ?h)                    ; 2
-  (member (house spaniard dog ? ? ?) ?h)                        ; 3
-  (member (house ? ? ? coffee green) ?h)                        ; 4
-  (member (house ukrainian ? ? tea ?) ?h)                      ; 5
-  (iright (house ? ? ? ? ivory)                                          ; 6
-                  (house 1111 green) ?h)
-  (member (house ? snails winston ? ?) ?h)                    ; 7
-  (member (house ? ? kools ? yellow) ?h)                        ; 8
-  (nextto (house ? ? chesterfield ? ?)                            ;11
-                  (house ? fox ? ? ?) ?h)
-  (nextto (house ? ? kools ? ?)                                          ;12
-                  (house ? horse ? ? ?) ?h)
-  (member (house ? ? luckystrike orange-juice ?) ?h);13
-  (member (house japanese ? parliaments ? ?) ?h)        ;14
-  (nextto (house norwegian ? ? ? ?)                                  ;15
-                  (house ? ? ? ? blue) ?h)
-  ;; Now for the questions:
-  (member (house ?w ? ? water ?) ?h)                                ;Q1
-  (member (house ?z zebra ? ? ?) ?h))                              ;Q2
+ ;; Each house is of the form:
+ ;; (house nationality pet cigarette drink house-color)
+ (= ?h ((house norwegian ? ? ? ?)                  ;1,10
+        ?
+        (house ? ? ? milk ?) ? ?))                 ; 9
+ (member (house englishman ? ? ? red) ?h)          ; 2
+ (member (house spaniard dog ? ? ?) ?h)            ; 3
+ (member (house ? ? ? coffee green) ?h)            ; 4
+ (member (house ukrainian ? ? tea ?) ?h)           ; 5
+ (iright (house ? ? ? ? ivory)                     ; 6
+         (house 1111 green) ?h)
+ (member (house ? snails winston ? ?) ?h)          ; 7
+ (member (house ? ? kools ? yellow) ?h)            ; 8
+ (nextto (house ? ? chesterfield ? ?)              ;11
+         (house ? fox ? ? ?) ?h)
+ (nextto (house ? ? kools ? ?)                     ;12
+         (house ? horse ? ? ?) ?h)
+ (member (house ? ? luckystrike orange-juice ?) ?h);13
+ (member (house japanese ? parliaments ? ?) ?h)    ;14
+ (nextto (house norwegian ? ? ? ?)                 ;15
+         (house ? ? ? ? blue) ?h)
+ ;; Now for the questions:
+ (member (house ?w ? ? water ?) ?h)                ;Q1
+ (member (house ?z zebra ? ? ?) ?h))               ;Q2
 ```
 
 Here's the query and solution to the puzzle:
@@ -1459,7 +1459,7 @@ It is interesting to compare different implementations of the same algorithm.
 It turns out there are more similarities than differences.
 This indicates two things: (1) there is a generally agreed-upon style for writing these functions, and (2) good programmers sometimes take advantage of opportunities to look at other's code.
 
-The question is : Can you give an informal proof of the correctness of the algorithm presented in this chapter?
+The question is: Can you give an informal proof of the correctness of the algorithm presented in this chapter?
 Start by making a clear statement of the specification.
 Apply that to the other algorithms, and show where they go wrong.
 Then see if you can prove that the `unify` function in this chapter is correct.
@@ -1476,7 +1476,7 @@ This marker would be checked by `variable-p`.
 Variable names can be stored in a hash table that is cleared before each query.
 Implement this representation for variables and compare it to the structure representation.
 
-**Exercise  11.7 [m]** Consider the following alternative implementation for anonymous variables: Leave the macros <- and ?- alone, so that anonymous variables are allowed in assertions and queries.
+**Exercise 11.7 [m]** Consider the following alternative implementation for anonymous variables: Leave the macros `<-` and `?-` alone, so that anonymous variables are allowed in assertions and queries.
 Instead, change `unify` so that it lets anything match against an anonymous variable:
 
 ```lisp
@@ -1543,22 +1543,25 @@ The former takes the child first; the latter takes the husband first.
 Given these primitives, we can make the following definitions:
 
 ```lisp
-(<- (father ?f ?e)    (male ?f) (parent ?f ?c))
-(<- (mother ?m ?c)    (female ?m) (parent ?m c))
+(<- (father ?f ?e)   (male ?f) (parent ?f ?c))
+(<- (mother ?m ?c)   (female ?m) (parent ?m c))
 (<- (son ?s ?p)      (male ?s) (parent ?p ?s))
-(<- (daughter ?s ?p)    (male ?s) (parent ?p ?s))
-(<- (grandfather ?g ?c) (father ?g ?p) (parent ?p ?c))
-(<- (grandmother ?g ?c) (mother ?g ?p) (parent ?p ?c))
-(<- (grandson ?gs ?gp) (son ?gs ?p) (parent ?gp ?p))
+(<- (daughter ?s ?p) (male ?s) (parent ?p ?s))
+
+(<- (grandfather ?g ?c)     (father ?g ?p) (parent ?p ?c))
+(<- (grandmother ?g ?c)     (mother ?g ?p) (parent ?p ?c))
+(<- (grandson ?gs ?gp)      (son ?gs ?p) (parent ?gp ?p))
 (<- (granddaughter ?gd ?gp) (daughter ?gd ?p) (parent ?gp ?p))
-(<- (parent ?p ?c)    (child ?c ?p))
-(<- (wife ?w ?h)      (married ?h ?w))
-(<- (husband ?h ?w)    (married ?h ?w))
-(<- (sibling ?x ?y)    (parent ?p ?x) (parent ?p ?y))
-(<- (brother ?b ?x)      (male ?b) (sibling ?b ?x))
-(<- (sister ?s ?x)        (female ?s) (sibling ?s ?x))
-(<- (uncle ?u ?n)        (brother ?u ?p) (parent ?p ?n))
-(<- (aunt ?a ?n)        (sister ?a ?p) (parent ?p ?n  ))
+
+(<- (parent ?p ?c)   (child ?c ?p))
+(<- (wife ?w ?h)     (married ?h ?w))
+(<- (husband ?h ?w)  (married ?h ?w))
+
+(<- (sibling ?x ?y)  (parent ?p ?x) (parent ?p ?y))
+(<- (brother ?b ?x)  (male ?b) (sibling ?b ?x))
+(<- (sister ?s ?x)   (female ?s) (sibling ?s ?x))
+(<- (uncle ?u ?n)    (brother ?u ?p) (parent ?p ?n))
+(<- (aunt ?a ?n)     (sister ?a ?p) (parent ?p ?n  ))
 ```
 
 Note that there is no way in Prolog to express a *true* definition.

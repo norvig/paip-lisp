@@ -511,7 +511,7 @@ The function `dbg` provides this capability.
 `dbg` prints output in the same way as `format`, but it will only print when debugging output is desired.
 Each call to `dbg` is accompanied by an identifier that is used to specify a class of debugging messages.
 The functions `debug` and `undebug` are used to add or remove message classes to the list of classes that should be printed.
-In this chapter, all the debugging output will use the identifier :`gps`.
+In this chapter, all the debugging output will use the identifier `:gps`.
 Other programs will use other identifiers, and a complex program will use many identifiers.
 
 A call to `dbg` will result in output if the first argument to `dbg`, the identifier, is one that was specified in a call to `debug`.
@@ -521,7 +521,7 @@ In other words, we will write functions that include calls to `dbg` like:
 ```lisp
 (dbg :gps "The current goal is: ~a" goal)
 ```
-If we have turned on debugging with `(debug :gps)`, then calls to dbg with the identifier :`gps` will print output.
+If we have turned on debugging with `(debug :gps)`, then calls to `dbg` with the identifier `:gps` will print output.
 The output is turned off with `(undebug :gps)`.
 `debug` and `undebug` are designed to be similar to `trace` and `untrace`, in that they turn diagnostic output on and off.
 They also follow the convention that `debug` with no arguments returns the current list of identifiers, and that `undebug` with no arguments turns all debugging off.
@@ -1013,7 +1013,7 @@ We wanted GPS to return a list of the actions executed.
 However, in order to account for the case where the goal can be achieved with no action, I included `(START)` in the value returned by GPS.
 These examples include the `START` and `EXECUTING` forms but also a list of the form (AT *n*), for some *n*.
 This is the bug.
-If we go back and look at the function GPS, we find that it reports the resuit by removing all atoms from the state returned by `achieve-all`.
+If we go back and look at the function GPS, we find that it reports the result by removing all atoms from the state returned by `achieve-all`.
 This is a "pun"-we said remove atoms, when we really meant to remove all conditions except the `(START)` and `(EXECUTING *action*)` forms.
 Up to now, all these conditions were atoms, so this approach worked.
 The maze domain introduced conditions of the form (`AT` *n*), so for the first time there was a problem.

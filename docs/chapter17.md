@@ -10,7 +10,7 @@ Instead I think it is an elegant case study of a paradigm we can expect to see a
 
 This book touches only the areas of AI that deal with abstract reasoning.
 There is another side of AI, the field of *robotics,* that deals with interfacing abstract reasoning with the real world through sensors and motors.
-A robot receives input from cameras, microphones, sonar, and touch-sensitive devices, and produces "ouput" by moving its appendages or generating sounds.
+A robot receives input from cameras, microphones, sonar, and touch-sensitive devices, and produces "output" by moving its appendages or generating sounds.
 The real world is a messier place than the abstract worlds we have been covering.
 A robot must deal with noisy data, faulty components, and other agents and events in the world that can affect changes in the environment.
 
@@ -42,10 +42,10 @@ We will assume that this is not the case.
 Given a diagram that fits these three restrictions, our goal is to identify each line, placing it in one of three classes:
 
 1.  A convex line separates two visible faces of a polyhedron such that a line from one face to the other would lie inside the polyhedron.
-It will be marked with a plus sign:+.
+It will be marked with a plus sign: `+`.
 
 2.  A concave line separates two faces of two polyhedra such that a line between the two spaces would pass through empty space.
-It will be marked with a minus sign:-.
+It will be marked with a minus sign: `-`.
 
 3.  A boundary line denotes the same physical situation as a convex line, but the diagram is oriented in such a way that only one of the two faces of the polyhedron is visible.
 Thus, the line marks the boundary between the polyhedron and the background.
@@ -109,7 +109,7 @@ Keep going until the diagram is either unambiguous or inconsistent.
 
 That completes the sketch of the line-labeling algorithm.
 We are now ready to implement a labeling program.
-It's glossary is in [figure 17.5](#f0030).
+Its glossary is in [figure 17.5](#f0030).
 
 | []()                                                |
 |-----------------------------------------------------|
@@ -232,7 +232,7 @@ But since there are a finite number of labelings initially (no more than six per
 The function `consistent-labelings` is passed a vertex.
 It gets all the labels for this vertex from the neighboring vertexes, collecting them in `neighbor-labels`.
 It then checks all the labels on the current vertex, keeping only the ones that are consistent with all the neighbors' constraints.
-The auxiliary function `labels-for` finds the labels for a particular neighbor at a vertex, and reverse-1 abel accounts for the fact that L and R labels are interpreted with respect to the vertex they point at.
+The auxiliary function `labels-for` finds the labels for a particular neighbor at a vertex, and `reverse-label` accounts for the fact that L and R labels are interpreted with respect to the vertex they point at.
 
 ```lisp
 (defun consistent-labelings (vertex)
@@ -389,7 +389,7 @@ Here again is the `defdiagram` description for the cube shown in [figure 17.6](#
 
 The macro `defdiagram` calls `construct-diagram` to do the real work.
 It would be feasible to have `defdiagram` expand into a `defvar,` making the names be special variables.
-But then it would be the user`'s` responsibility to make copies of such a variable before passing it to a destructive function.
+But then it would be the user's responsibility to make copies of such a variable before passing it to a destructive function.
 Instead, I use `put-diagram` and `diagram` to put and get diagrams in a table, `diagram` retrieves the named diagram and makes a copy of it.
 Thus, the user cannot corrupt the original diagrams stored in the table.
 Another possibility would be to have `defdiagram` expand into a function definition for `name` that returns a copy of the diagram.

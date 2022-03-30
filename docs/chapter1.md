@@ -72,7 +72,7 @@ If we want, we can give + more than two arguments, and it will still add them al
 > (+ 1 2 3 4 5 6 7 8 9 10) => 55
 ```
 
-This time we try (9000 + 900 + 90  + 9) - (5000 + 500 + 50 + 5):
+This time we try (9000 + 900 + 90 + 9) - (5000 + 500 + 50 + 5):
 
 ```lisp
 > (- (+ 9000 900 90 9) (+ 5000 500 50 5)) => 4444
@@ -151,9 +151,9 @@ Here are some examples:
 
 > 2 => 2
 
-> '(+  2 2) => (+  2 2)
+> '(+ 2 2) => (+ 2 2)
 
-> (+  2 2) 4
+> (+ 2 2) 4
 
 > John => *Error: JOHN is not a bound variable*
 
@@ -236,8 +236,8 @@ First, Lisp's syntactic forms are always lists in which the first element is one
 Second, special forms are expressions that return a value.
 This is in contrast to statements in most languages, which have an effect but do not return a value.
 
-In evaluating an to expression *(ed note: ???)* like `(setf x (+  1 2)`), we set the variable named by the symbol `x` to the value of `(+  1 2)`, which is `3`.
-If `setf` were a normal function, we would evaluate both the symbol `x` and the expression `(+  1 2)` and do something with these two values, which is not what we want at all.
+In evaluating an expression like `(setf x (+ 1 2)`), we set the variable named by the symbol `x` to the value of `(+ 1 2)`, which is `3`.
+If `setf` were a normal function, we would evaluate both the symbol `x` and the expression `(+ 1 2)` and do something with these two values, which is not what we want at all.
 `setf` is called a special form because it does something special: if it did not exist, it would be impossible to write a function that assigns a value to a variable.
 The philosophy of Lisp is to provide a small number of special forms to do the things that could not otherwise be done, and then to expect the user to write everything else as functions.
 
@@ -246,7 +246,7 @@ In the book *Common LISPcraft,* Wilensky resolves the ambiguity by calling `setf
 This terminology implies that `setf` is just another function, but a special one in that its first argument is not evaluated.
 Such a view made sense in the days when Lisp was primarily an interpreted language.
 The modern view is that `setf` should not be considered some kind of abnormal function but rather a marker of special syntax that will be handled specially by the compiler.
-Thus, the special form `(setf x (+  2 1))` should be considered the equivalent of `x = 2 + 1` in `C`.
+Thus, the special form `(setf x (+ 2 1))` should be considered the equivalent of `x = 2 + 1` in `C`.
 When there is risk of confusion, we will call `setf` a *special form operator* and `(setf x 3)` a *special form expression.*
 
 It turns out that the quote mark is just an abbreviation for another special form.
@@ -715,7 +715,7 @@ The alternate definition of `mappend` shown in the following doesn't make use of
 > (funcall #'+ '(2 3)) => *Error: (2 3) is not a number.*
 ```
 
-These are equivalent to `(+  2 3), (+ 2 3)`,and`(+ '(2 3))`, respectively.
+These are equivalent to `(+ 2 3), (+ 2 3)`,and`(+ '(2 3))`, respectively.
 
 So far, every function we have used has been either predefined in Common Lisp or introduced with a `defun`, which pairs a function with a name.
 It is also possible to introduce a function without giving it a name, using the special syntax `lambda`.
@@ -828,14 +828,14 @@ Similarly, the notation `#'f` is an abbreviation for the special form expression
 
 defun twice (x) (+ x x)) => TWICE
 
-(if (=  2 3) (error) (+  5 6)) => 11
+(if (= 2 3) (error) (+ 5 6)) => 11
 ```
 
 *   A *function application* is evaluated by first evaluating the arguments (the rest of the list) and then finding the function named by the first element of the list and applying it to the list of evaluated arguments.
 
 ```lisp
-(+  2 3) => 5
-(- (+  90 9) (+  50 5 (length '(Pat Kim)))) => 42
+(+ 2 3) => 5
+(- (+ 90 9) (+ 50 5 (length '(Pat Kim)))) => 42
 ```
 
 Note that if `'(Pat Kim)` did not have the quote, it would betreated as a function application of the function `pat` to the value of the variable `kim.`
@@ -1204,7 +1204,7 @@ This list of symbols is not a legal Lisp assignment statement, but it is a Lisp 
 
 <a id="fn01-2"></a><sup>[2](#tfn01-2)</sup>
 The variable `*print-case*` controls how symbols will be printed.
-By default, the value of this variable is :`upcase`, but it can be changed to :`downcase` or `:capitalize`.
+By default, the value of this variable is `:upcase`, but it can be changed to `:downcase` or `:capitalize`.
 
 <a id="fn01-3"></a><sup>[3](#tfn01-3)</sup>
 Later we will see what happens when the second argument is not a list.

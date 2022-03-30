@@ -317,7 +317,7 @@ A doubly nested loop multiplies each coefficient of `p` and `q` and adds the `re
 
 Both `poly+poly` and `poly*poly` make use of the function `normalize-poly` to "normalize" the `result`.
 The idea is that `(- (^ 5) (^ x 5))` should return 0, not `#(x 0 0 0 0 0 0)`.
-Note that `normal` ize`-poly` is a destructive operation: it calls `delete,` which can actually alter its argument.
+Note that `normalize-poly` is a destructive operation: it calls `delete,` which can actually alter its argument.
 Normally this is a dangerous thing, but since `normalize-poly` is replacing something with its conceptual equal, no harm is done.
 
 ```lisp
@@ -396,7 +396,7 @@ Write a function to integrate polynomials and install it in `prefix->canon`.
 onerror="this.src='images/chapter15/si3_e.png'; this.onerror=null;"
 alt="\int_{a}^{b} y\, dx">.
 You will need to make up a suitable notation and properly install it in both `infix->prefix` and `prefix->canon`.
-A full implementation of this feature would have to consider infinity as a bound, as well as the problem of integrating over singularises.
+A full implementation of this feature would have to consider infinity as a bound, as well as the problem of integrating over singularities.
 You need not address these problems.
 
 ## 15.3 Converting between Infix and Prefix
@@ -538,8 +538,8 @@ How much faster is the polynomial-based code than the rule-based version?
 Unfortunately, we can't answer that question directly.
 We can time `(simp ' ( (1 + x + y + z) ^ 15)))`.
 This takes only a tenth of a second, but that is because it is doing no work at all-the answer is the same as the input!
-Alternately, we can take the expression computed by `(poly^n r 15)`, convert it to prefix, and pass that `to simplify.
-simplify` takes 27.8 seconds on this, so the rule-based version is much slower.
+Alternately, we can take the expression computed by `(poly^n r 15)`, convert it to prefix, and pass that to `simplify`.
+`simplify` takes 27.8 seconds on this, so the rule-based version is much slower.
 [Section 9.6](B9780080571157500091.xhtml#s0035) describes ways to speed up the rule-based program, and a comparison of timing data appears on [page 525](#p525).
 
 There are always surprises when it comes down to measuring timing data.
@@ -567,7 +567,7 @@ We took an existing function, poly^n, added a single cond clause, and changed it
 (This turned out to be a bad idea, but that's beside the point.
 It would be a good idea for raising integers to powers.)
 The reasoning that allows the change is simple: First, *p<sup>n</sup>* is certainly equal to (*p*<sup>*n*/2</sup>)<sup>2</sup> when *n* is even, so the change can't introduce any wrong answers.
-Second, the change continues the policy of decrementing *n* on every recursive call, so the function must eventually termina te (when *n =* 0).
+Second, the change continues the policy of decrementing *n* on every recursive call, so the function must eventually terminate (when *n* = 0).
 If it gives no wrong answers, and it terminates, then it must give the right answer.
 
 In contrast, making the change for an iterative algorithm is more complex.
@@ -751,9 +751,9 @@ Polynomials are not closed under division, so `poly/poly` will return a rational
 
 ## 15.6 Extending Rational Expressions
 
-Now that we can divide polynomials, the final step is to reinstate the logarithmic, exponential, and trigonometrie functions.
+Now that we can divide polynomials, the final step is to reinstate the logarithmic, exponential, and trigonometric functions.
 The problem is that if we allow all these functions, we get into problems with canonical form again.
-For example, the following three expressions are all equivalent  :
+For example, the following three expressions are all equivalent:
 
 <img src="images/chapter15/si7_e.svg"
 onerror="this.src='images/chapter15/si7_e.png'; this.onerror=null;"
@@ -782,7 +782,7 @@ A brief history of symbolic algebra systems is given in [chapter 8](B97800805711
 
 ## 15.8 Exercises
 
-**Exercise 15.7 [h]** Implement an extension of the rationals to include logarithmic, exponential, and trigonometrie functions.
+**Exercise 15.7 [h]** Implement an extension of the rationals to include logarithmic, exponential, and trigonometric functions.
 
 **Exercise 15.8 [m]** Modify `deriv` to handle the extended rational expressions.
 
