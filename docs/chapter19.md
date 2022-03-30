@@ -947,17 +947,14 @@ Your choice? 1
 
 ```
 > (all-parses '(1 to 5 without 3 and 7 repeat 2))
+Score  Semantics              (1 TO 5 WITHOUT 3 AND 7 REPEAT 2)
+=====  =========              ============================
+0.3    (1 2 4 5 7 1 2 4 5 7)  ((((1 TO 5) WITHOUT 3) AND 7) REPEAT 2)
+0.3    (1 2 4 5 7 7)          (((1 TO 5) WITHOUT 3) AND (7 REPEAT 2))
+-2.7   (1 2 4 5 1 2 4 5)      (((1 TO 5) WITHOUT (3 AND 7)) REPEAT 2)
+-2.7   (1 2 4 5)              ((1 TO 5) WITHOUT ((3 AND 7) REPEAT 2))
+-2.7   (1 2 4 5)              ((1 TO 5) WITHOUT (3 AND (7 REPEAT 2)))
 ```
-
-| []()         |                         |                                           |
-|--------------|-------------------------|-------------------------------------------|
-| `Score`      | `Semantics`             | `(1 TO 5 WITHOUT 3 AND 7 REPEAT 2)`       |
-| `==========` | `=========`             | `===========================`             |
-| `0.3`        | `(1 2 4 5 7 1 2 4 5 7)` | `((((1 TO 5) WITHOUT 3) AND 7) REPEAT 2)` |
-| `0.3`        | `(1 2 4 5 7 7)`         | `(((1 TO 5) WITHOUT 3) AND (7 REPEAT 2))` |
-| `-2.7`       | `(1 2 4 5 1 2 4 5)`     | `(((1 TO 5) WITHOUT (3 AND 7)) REPEAT 2)` |
-| `-2.7`       | `(1 2 4 5)`             | `((1 TO 5) WITHOUT ((3 AND 7) REPEAT 2))` |
-| `-2.7`       | `(1 2 4 5)`             | `((1 TO 5) WITHOUT (3 AND (7 REPEAT 2)))` |
 
 This last example points out a potential problem: I wasn't sure what was a good scoring function for "repeat", so I left it blank, it defaulted to 0, and we end up with two parses with the same score.
 This example suggests that "repeat" should probably involve `inv-span` like the other modifiers, but perhaps other factors should be involved as well.
