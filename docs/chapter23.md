@@ -735,7 +735,7 @@ For example, if we put the same expression inside a `begin` expression, we get s
 What happens here is that `(+ x y)` and `(* x y)`, when compiled in a context where the value is ignored, both result in no generated code.
 Thus, the `if` expression reduces to `(if p nil nil)`, which is compiled like `(begin p nil)`, which also generates no code when not evaluated for value, so the final code just references `z`.
 The compiler can only do this optimization because it knows that `+` and `*` are side-effect-free operations.
-Consider what happens when we replace + with `f` :
+Consider what happens when we replace `+` with `f`:
 
 ```
 > (comp-show '(begin (if p (f x) (* x x)) z))
@@ -1574,7 +1574,7 @@ This is similar to the `^D` convention in UNIX systems, and it can be quite hand
 So far the Scheme readtable is just a copy of the standard readtable.
 The next step in implementing `scheme-read` is to alter `*scheme-readtable*`, adding read macros for whatever characters are necessary.
 Here we define macros for `#t` and `#f` (the true and false values), for `#d` (decimal numbers) and for the backquote read macro (called quasiquote in Scheme).
-Note that the backquote and comma characters are defined as read macros, but the `@` in ,`@` is processed by reading the next character, not by a read macro on `@`.
+Note that the backquote and comma characters are defined as read macros, but the `@` in `,@` is processed by reading the next character, not by a read macro on `@`.
 
 ```lisp
 (set-dispatch-macro-character #\# #\t
@@ -1700,7 +1700,7 @@ We could write the Scheme function:
 
 ```lisp
 (define (extrema list)
-   ;; Given a list of numbers. return an a-list
+   ;; Given a list of numbers, return an a-list
    ;; with max and min values
    '((max ,(apply max list)) (min ,(apply min list))))
 ```
@@ -1748,9 +1748,9 @@ How could you make `scheme-read` account for this?
 
 **Exercise  23.6 [h]** In `comp-if` we included a special case for `(if t x y)` and `(if nil x y)`.
 But there are other cases where we know the value of the predicate.
-For example, `(if (*a b) x y)` can also reduce to `x`.
+For example, `(if (* a b) x y)` can also reduce to `x`.
 Arrange for these optimizations to be made.
-Note the `prim-always` field of the `prim structure` has been provided for this purpose.
+Note the `prim-always` field of the `prim` structure has been provided for this purpose.
 
 **Exercise  23.7 [m]** Consider the following version of the quicksort algorithm for sorting a vector:
 
@@ -2025,8 +2025,10 @@ But to demonstrate that the right solution doesn't always appear the first time,
 **Answer 23.7** The original version requires *O*(*n*) stack space for poorly chosen pivots.
 Assuming a properly tail-recursive compiler, the modified version will never require more than *O*(log *n*) space, because at each step at least half of the vector is being sorted tail-recursively.
 
-**Answer 23.10** (1) `(defun (funcall fn . args) (apply fn args))` (2) Suppose you changed the piece of code `(+ . numbers)` to `(+ . (map sqrt numbers))`.
-The latter is the same expression as (+ `map sqrt numbers),` which is not the intended result at all.
+
+**Answer 23.10** (1) `(defun (funcall fn . args) (apply fn args))`
+(2) Suppose you changed the piece of code `(+ . numbers)` to `(+ . (map sqrt numbers))`.
+The latter is the same expression as `(+ map sqrt numbers)`, which is not the intended result at all.
 So there would be an arbitrary restriction: the last argument in an apply form would have to be an atom.
 This kind of restriction goes against the grain of Scheme.
 

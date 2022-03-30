@@ -27,7 +27,7 @@ To avoid name conflicts, simply create your new symbols in another package, one 
 The easiest way to implement this is to split each system into at least two files-one to define the package that the system resides in, and the others for the system itself.
 For example, the `emycin` system should start with a file that defines the `emycin` package.
 The following form defines the `emycin` package to use the `lisp` package.
-That means that when the current package is `emycin`, you can still refer to ail the built-in Lisp symbols.
+That means that when the current package is `emycin`, you can still refer to all the built-in Lisp symbols.
 
 ```lisp
 (make-package "EMYCIN" :use '("LISP"))
@@ -43,7 +43,7 @@ Those files should start with the following call, which insures that all new sym
 Packages are used for information-hiding purposes as well as for avoiding name clashes.
 A distinction is made between *internal* and *external* symbols.
 External symbols are those that a user of a system would want to refer to, while internal symbols are those that help implement the system but are not needed by a user of the system.
-The symbol `rule` would probably be internai to both the `emycin` and `parser` package, but `defrule` would be external, because a user of the `emycin` system uses `defrule` to define new rules.
+The symbol `rule` would probably be internal to both the `emycin` and `parser` package, but `defrule` would be external, because a user of the `emycin` system uses `defrule` to define new rules.
 The designer of a system is responsible for advertising which symbols are external.
 The proper call is:
 
@@ -56,7 +56,7 @@ First, he or she can use the *package prefix* notation.
 To refer to the symbol `defrule` in the emycin package, type `emycin:defrule`.
 Second, the user can make `emycin` be the current package with `(in-package "EMYCIN").` Then, of course, we need only type `defrule`.
 Third, if we only need part of the functionality of a system, we can import specific symbols into the current package.
-For example, we could call `(import ' emycin:defrule)`.
+For example, we could call `(import 'emycin:defrule)`.
 From then on, typing `defrule` (in the current package) will refer to `emycin:defrule`.
 Fourth, if we want the full functionality of the system, we call `(use-package "EMYCIN")`.
 This makes all the external symbols of the `emycin` package accessible in the current package.
@@ -91,7 +91,7 @@ However, if the symbol is put to another use-perhaps as a variable or a data typ
 
 Common Lisp has at least seven name spaces.
 The two we think of most often are (1) for functions and macros and (2) for variables.
-We have seen that Scheme confiates these two name spaces, but Common Lisp keeps them separate, so that in a function application like `(f)` the function/macro name space is consulted for the value of `f`, but in `(+ f)`, f is treated as a variable name.
+We have seen that Scheme conflates these two name spaces, but Common Lisp keeps them separate, so that in a function application like `(f)` the function/macro name space is consulted for the value of `f`, but in `(+ f)`, f is treated as a variable name.
 Those who understand the scope and extent rules of Common Lisp know that (3) special variables form a distinct name space from lexical variables.
 So the `f` in `(+ f)` is treated as either a special or lexical variable, depending on if there is an applicable `special` declaration.
 There is also a name space (4) for data types.
@@ -235,7 +235,7 @@ Like pipes (see [section 9.3](B9780080571157500091.xhtml#s0015)), elements of a 
 So we can write `(scan-range :from 0)` to indicate the infinite series of integers starting from 0, but if we only use, say, the first five elements of this series, then only the first five elements will be generated.
 
 The series facility offers a convenient and efficient alternative to iterative loops and sequence functions.
-Although the series proposai has not yet been adopted as an official part of ANSI Common Lisp, its inclusion in the reference manual has made it increasingly popular.
+Although the series proposal has not yet been adopted as an official part of ANSI Common Lisp, its inclusion in the reference manual has made it increasingly popular.
 
 ## 24.5 The Loop Macro
 
@@ -444,7 +444,7 @@ Take the simpler keyword, `repeat`.
 To handle it, we generate a new variable that will count down the number of times to repeat.
 We call `add-var` to add that variable, with its initial value, to the loop structure.
 We also give this variable an update expression, which decrements the variable by one each time through the loop.
-Then ail we need to do is call `add-test` to insert code that will exit the loop when the variable reaches zero:
+Then all we need to do is call `add-test` to insert code that will exit the loop when the variable reaches zero:
 
 ```lisp
 (defloop repeat (l times)
@@ -822,7 +822,7 @@ and have the generated code be just what we want:
 ```
 
 You have now learned lesson number one of `once-only`: you know how macros differ from functions when it comes to arguments with side effects, and you now know how to handle this.
-Lesson number two comes when you try to write (or even understand) a definition of `once-only`-only when you truly understand the nature of macros will you be able to write a correct version.
+Lesson number two comes when you try to write (or even understand) a definition of `once-only` – only when you truly understand the nature of macros will you be able to write a correct version.
 As always, the first thing to determine is what a call to `once-only` should expand into.
 The generated code should test the variable to see if it is free of side effects, and if so, generate the body as is; otherwise it should generate code to bind a new variable, and use that variable in the body of the code.
 Here's roughly what we want:
@@ -855,7 +855,7 @@ Note that we have to account for the case where there is more than one variable 
 ```lisp
 (defmacro once-only (variables &rest body)
   "Returns the code built by BODY. If any of VARIABLES
-  might have side effects. they are evaluated once and stored
+  might have side effects, they are evaluated once and stored
   in temporary variables that are then passed to BODY."
   (assert (every #'symbolp variables))
   (let ((temps (loop repeat (length variables) collect (gensym))))
@@ -1090,7 +1090,7 @@ If `map-into` is declared `inline` and the compiler is reasonably good, then it 
 
 ### REDUCE with :key
 
-Another change in the ANSI proposal is to add a : key keyword to `reduce`.
+Another change in the ANSI proposal is to add a `:key` keyword to `reduce`.
 This is a useful addition-in fact, for years I had been using a `reduce-by` function that provided just this functionality.
 In this section we see how to add the : key keyword.
 
@@ -1240,9 +1240,9 @@ Either demonstrate such an *exp* or argue why none can exist.
 ```
 
 **Exercise  24.5** The object-oriented language Eiffel provides two interesting `loop` keywords: `invariant` and `variant`.
-The former takes a Boolean-valued expression that must remain true on every iteration of the loop, and the latter takes a integervalued expression that must decrease on every iteration, but never becomes negative.
+The former takes a Boolean-valued expression that must remain true on every iteration of the loop, and the latter takes a integer-valued expression that must decrease on every iteration, but never becomes negative.
 Errors are signaled if these conditions are violated.
-Use def `loop` to implement these two keywords.
+Use `defloop` to implement these two keywords.
 Make them generate code conditionally, based on a global flag.
 
 ## 24.8 Answers

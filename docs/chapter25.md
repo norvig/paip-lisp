@@ -75,7 +75,8 @@ Check the base case and loop variant on active functions and loops.
 
 **PROBLEM:** You redefined a variable, but the new value was ignored.
 
-**Diagnosis:** Altering a variable by editing and re-evaluating a `defvar` form will not change the variable's value, `defvar` only assigns an initial value when the variable is unbound.
+**Diagnosis:** Altering a variable by editing and re-evaluating a `defvar` form will not change the variable's value.
+`defvar` only assigns an initial value when the variable is unbound.
 
 **Remedy:** Use setf to update the variable, or change the `defvar` to a `defparameter`.
 
@@ -89,7 +90,7 @@ For example, consider:
   (mapcar #'check-op *ops*))
 ```
 
-If `check - ops` is called with a null argument, the `*ops*` that is a parameter of `check - ops` will be updated, but the global `*ops*` will not be, even if it is declared special.
+If `check-ops` is called with a null argument, the `*ops*` that is a parameter of `check-ops` will be updated, but the global `*ops*` will not be, even if it is declared special.
 
 **Remedy:** Don't shadow variables you want to update.
 Use a different name for the local variable.
@@ -137,7 +138,7 @@ Consider:
 
 Now suppose that the definitions of `score-fn`, `print-fn`, and `better` are all changed.
 Does any of the prior code have to be recompiled?
-The variable *`printer`* can stay as is.
+The variable `*printer*` can stay as is.
 When it is funcalled, the symbol `print-fn` will be consulted for the current functional value.
 Within `show`, the expression `#'better` is compiled into code that will get the current version of `better`, so it too is safe.
 However, the variable `*scorer*` must be changed.
@@ -249,13 +250,12 @@ A list beginning with `lambda` is just that: a list, not a closure.
 Therefore, it cannot capture lexical variables the way a closure does.
 
 **Remedy:** The correct way to create a closure is to evaluate a call to the special form `function`, or its abbreviation, `#'`.
-Here is a replacement for the code beginning with `'(lambda ....`
-Note that it is a closure, closed over `pred` and `c`.
+Here is a replacement for the code beginning with '(`lambda ...`. Note that it is a closure, closed over `pred` and `c`.
 Also note that it gets the `predicate` each time it is called; thus, it is safe to use even when predicates are being changed dynamically.
 The previous version would not work when a predicate is changed.
 
 ```lisp
-#'(lambda (obj)            ; *Do this instead.*
+#'(lambda (obj)            ; Do this instead.
       (and (funcall pred obj)
           (funcall (get c 'predicate) obj)))
 ```
@@ -456,7 +456,7 @@ The angry user thinks the implementation has erroneously ignored the `:start` ar
 
 The function `read-from-string` takes two optional arguments, `eof-errorp` and `eof-value`, in addition to the keyword arguments.
 Thus, in the expression above, `:start` is taken as the value of `eof-errorp`, with `2` as the value of `eof-value`.
-The correct answer is in fact to read from the start of the string and return the very first form, a.
+The correct answer is in fact to read from the start of the string and return the very first form, `a`.
 
 The functions `read-from-string` and `parse-namestring` are the only built-in functions that have this problem, because they are the only ones that have both optional and keyword arguments, with an even number of optional arguments.
 The functions `write-line` and `write-string` have keyword arguments and a single optional argument (the stream), so if the stream is accidently omitted, an error will be signaled.
@@ -596,8 +596,8 @@ A common mistake is to define macros that *do not* violate the usual evaluation 
 One recent book on AI programming suggests the following:
 
 ```lisp
-(defmacro binding-of (binding)    ; *Warning!*
-    '(cadr .binding))                          ; *Don't do this.*
+(defmacro binding-of (binding)      ; Warning!
+    '(cadr .binding))               ; Don't do this.
 ```
 
 The only possible reason for this macro is an unfounded desire for efficiency.
@@ -753,24 +753,24 @@ The five values give more control over the exact order in which expressions are 
 The five values are: (1) a list of temporary, local variables used in the code; (2) a list of values these variables should be bound to; (3) a list of one variable to hold the value specified in the call to `setf`; (4) code that will store the value in the proper place; (5) code that will access the value of the place.
 This is necessary for variations of `setf` like `inef` and `pop`, which need to both access and store.
 
-In the following `setf` method for `last`, then, we are defining the meaning of (`setf` (`last place`) `value`).
+In the following `setf` method for `last`, then, we are defining the meaning of `(setf (last place) value)`.
 We keep track of all the variables and values needed to evaluate `place`, and add to that three more local variables: `last2-var` will hold the last two elements of the list, `last2-p` will be true only if there are two or more elements in the list, and `last-var` will hold the form to access the last element of the list.
 We also make up a new variable, `result`, to hold the `value`.
-The code to store the value either modifies the cdr of `last2-var`, if the list is long enough, or it stores directly into `place`.
+The code to store the value either modifies the `cdr` of `last2-var`, if the list is long enough, or it stores directly into `place`.
 The code to access the value just retrieves `last-var`.
 
 ```lisp
 (define-setf-method last (place)
-  (multiple-value-bind (temps vais stores store-form access-form)
+  (multiple-value-bind (temps vals stores store-form access-form)
         (get-setf-method place)
     (let ((result (gensym))
           (last2-var (gensym))
           (last2-p (gensym))
           (last-var (gensym)))
-        ;; Return 5 vais: temps vais stores store-form access-form
+        ;; Return 5 vals: temps vals stores store-form access-form
         (values
           '(.@temps .last2-var .last2-p .last-var)
-          '(.@vais (last2 .access-form)
+          '(.@vals (last2 .access-form)
             (= (length .last2-var) 2)
             (if .last2-p (rest .last2-var) .access-form))
           (list result)
@@ -1009,7 +1009,7 @@ First we define the function `required` to signal an error, and then we use a ca
 While this book has covered topics that are more advanced than any other Lisp text available, it is still concerned only with programming in the small: a single project at a time, capable of being implemented by a single programmer.
 More challenging is the problem of programming in the large: building multiproject, multiprogrammer systems that interact well.
 
-This section briefly outlines an approach to organizing a larger project into man-ageable components, and how to place those components in files.
+This section briefly outlines an approach to organizing a larger project into manageable components, and how to place those components in files.
 
 Every system should have a separate file that defines the other files that comprise the system.
 I recommend defining any packages in that file, although others put package definitions in separate files.
@@ -1260,14 +1260,14 @@ It looks for the key in the a-list, and if the key is there, it modifies the cdr
 
 ```lisp
 (define-setf-method lookup (key alist-place)
-  (multiple-value-bind (temps vais stores store-form access-form)
+  (multiple-value-bind (temps vals stores store-form access-form)
       (get-setf-method alist-place)
   (let ((key-var (gensym))
           (pair-var (gensym))
           (result (gensym)))
       (values
         '(.key-var .@temps .pair-var)
-        '(.key .@vais (assoc .key-var ,access-form))
+        '(.key .@vals (assoc .key-var ,access-form))
         '(.result)
         '(if .pair-var
             (setf (cdr .pair-var) .result)

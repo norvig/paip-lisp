@@ -128,11 +128,11 @@ parser keeps only the parses with no remainder-that is, the parses that span all
   (find-all-if #'null parses :key #'parse-rem))
 ```
 
-The function parse looks at the first word and considers each category it could be.
-It makes a parse of the first word under each category, and calls extend - parse to try to continue to a complete parse.
-parse uses mapcan to append together all the resulting parses.
+The function `parse` looks at the first word and considers each category it could be.
+It makes a parse of the first word under each category, and calls `extend-parse` to try to continue to a complete parse.
+`parse` uses `mapcan` to append together all the resulting parses.
 As an example, suppose we are trying to parse "the man took the ball."
-`parse` would find the single lexical rule for "the" and call extend-parse with a parse with tree (Art the) and remainder "man took the ball," with no more categories needed.
+`parse` would find the single lexical rule for "the" and call `extend-parse` with a parse with tree `(Art the)` and remainder "man took the ball," with no more categories needed.
 
 `extend-parse` has two cases.
 If the partial parse needs no more categories to be complete, then it returns the parse itself, along with any parses that can be formed by extending parses starting with the partial parse.
@@ -187,12 +187,12 @@ Some examples of the parser in action are shown here:
 ((NP (ART THE) (NOUN TABLE)))
 > (parser '(the ball hit the table))
 ((SENTENCE (NP (ART THE) (NOUN BALL))
-                            (VP (VERB HIT)
-                                      (NP (ARTTHE) (NOUN TABLE)))))
+           (VP (VERB HIT)
+               (NP (ART THE) (NOUN TABLE)))))
 > (parser '(the noun took the verb))
 ((SENTENCE (NP (ART THE) (NOUN NOUN))
-                            (VP (VERB TOOK)
-                                      (NP (ARTTHE) (NOUN VERB)))))
+           (VP (VERB TOOK)
+               (NP (ART THE) (NOUN VERB)))))
 ```
 
 ## 19.2 Extending the Grammar and Recognizing Ambiguity
@@ -247,7 +247,8 @@ Here is the grammar:
 ```
 
 Now we can parse more interesting sentences, and we can see a phenomenon that was not present in the previous examples: ambiguous sentences.
-The sentence "The man hit the table with the ball" has two parses, one where the ball is the thing that hits the table, and the other where the ball is on or near the table, parser finds both of these parses (although of course it assigns no meaning to either parse):
+The sentence "The man hit the table with the ball" has two parses, one where the ball is the thing that hits the table, and the other where the ball is on or near the table.
+`parser` finds both of these parses (although of course it assigns no meaning to either parse):
 
 ```lisp
 > (parser '(The man hit the table with the ball))
@@ -308,7 +309,7 @@ But with context-free grammars we have a guarantee that the context cannot affec
 The call `(parse words)` must return all possible parses for the words.
 We are free to choose between the possibilities based on contextual information, but context can never supply a new interpretation that is not in the context-free list of parses.
 
-The function use is introduced to tell the table-lookup functions that they are out of date whenever the grammar changes:
+The function `use` is introduced to tell the table-lookup functions that they are out of date whenever the grammar changes:
 
 ```lisp
 (defun use (grammar)
@@ -329,7 +330,7 @@ Evaluation of (LENGTH (PARSER S 's)) took .13 Seconds of elapsed time.
 By memoizing `parse` we reduce the parse time from 33 to .13 seconds, a 250-fold speed-up.
 We can get a more systematic comparison by looking at a range of examples.
 For example, consider sentences of the form "The man hit the table [with the ball]\*" for zero or more repetitions of the PP "with the ball."
-In the following table we record N, the number of repetitions of the PP, along with the number of resulting parses,<a id="tfn19-2"></a><sup>[2](#fn19-2)</sup> and for both memoized and unmemoized versions of `parse`, the number of seconds to produce the parse, the number of parses per second (PPS), and the number of recursive calls to `parse`.
+In the following table we record N, the number of repetitions of the PP, along with the number of resulting parses,<a id="tfn19-2"></a><sup>[2](#fn19-2)</sup> and for both memoized and unmemoized versions of parse, the number of seconds to produce the parse, the number of parses per second (PPS), and the number of recursive calls to `parse`.
 The performance of the memoized version is quite acceptable; for N=5, a 20-word sentence is parsed into 132 possibilities in .68 seconds, as opposed to the 20 seconds it takes in the unmemoized version.
 
 |     |          | Memoized |       |         | Unmemoized |       |         |
@@ -410,8 +411,8 @@ If the program knew morphology-that a *y* at the end of a word often signais an 
 Syntactic parse trees of a sentence may be interesting, but by themselves they're not very useful.
 We use sentences to communicate ideas, not to display grammatical structures.
 To explore the idea of the semantics, or meaning, of a phrase, we need a domain to talk about.
-Imagine the scenario of a compact dise player capable of playing back selected songs based on their track number.
-Imagine further that this machine has buttons on the front panel indicating numbers, as well as words such as "play," "to," "and," and "without." If you then punch in the sequence of buttons "play 1 to 5 without 3," you could reasonably expect the machine to respond by playing tracks 1,2,4, and 5.
+Imagine the scenario of a compact disc player capable of playing back selected songs based on their track number.
+Imagine further that this machine has buttons on the front panel indicating numbers, as well as words such as "play," "to," "and," and "without." If you then punch in the sequence of buttons "play 1 to 5 without 3," you could reasonably expect the machine to respond by playing tracks 1, 2, 4, and 5.
 After a few such successful interactions, you might say that the machine "understands" a limited language.
 The important point is that the utility of this machine would not be enhanced much if it happened to display a parse tree of the input.
 On the other hand, you would be justifiably annoyed if it responded to "play 1 to 5 without 3" by playing 3 or skipping 4.
@@ -420,9 +421,9 @@ Now let's stretch the imagination one more time by assuming that this CD player 
 Let's first consider the relevant data structures.
 We need to add a component for the semantics to both the rule and tree structures.
 Once we've done that, it is clear that trees are nothing more than instances of rules, so their definitions should reflect that.
-Thus, I use an `:include` defstruct to define trees, and I specify no copier function, because copy-tree is already a Common Lisp function, and I don't want to redefine it.
-To maintain consistency with the old new-tree function (and to avoid having to put in all those keywords) I define the constructor new-tree.
-This option to `defstruct makes (new-tree a b c)` equivalent to `(make-tree :lhs a :sem b :rhs c)`.
+Thus, I use an `:include` defstruct to define trees, and I specify no copier function, because `copy-tree` is already a Common Lisp function, and I don't want to redefine it.
+To maintain consistency with the old new-tree function (and to avoid having to put in all those keywords) I define the constructor `new-tree`.
+This option to `defstruct` makes `(new-tree a b c)` equivalent to `(make-tree :lhs a :sem b :rhs c)`.
 
 ```lisp
 (defstruct (rule (:type list)) lhs -> rhs sem)
@@ -441,7 +442,7 @@ For example, given the rule
 (NP -> (NP CONJ NP) infix-funcall)
 ```
 
-then the semantics of the phrase "1 to 5 without 3" could be determined by first determining the semantics of "1 to 5" to be `(1 2 3 4 5)`, of "without" to be `set-difference`, and of "3" to be `(3)`.
+then the semantics of the phrase "1 to 5 without 3" could be determined by first determining the semantics of "1 to 5" to be `(1 2 3 4 5)`, of "without" to be `set-difference`, and of "3" to be (3).
 After these sub-constituents are determined, the rule is applied by calling the function `infix-funcall` with the three arguments `(1 2 3 4 5)`, `set-difference`, and `(3)`.
 Assuming that `infix-funcall` is defined to apply its second argument to the other two arguments, the result will be `(1 2 4 5)`.
 
@@ -475,9 +476,9 @@ The second rule says that a single noun (whose translation should be a number) t
 The third rule is similar to the first, but concerns joining Ns rather than NPs.
 The overall intent is that the translation of an NP will always be a list of integers, representing the songs to play.
 
-As for the lexical rules, the conjunction "and" translates to the union function, "without" translates to the function that subtracts one set from another, and "to" translates to the function that generates a list of integers between two end points.
+As for the lexical rules, the conjunction "and" translates to the `union` function, "without" translates to the function that subtracts one set from another, and "to" translates to the function that generates a list of integers between two end points.
 The numbers "0" to "9" translate to themselves.
-Note that both lexical rules like "`CONJ ->` and" and nonlexical rules like "`NP -> (N P N)`" can have functions as their semantic translations; in the first case, the function will just be returned as the semantic translation, whereas in the second case the function will be applied to the list of constituents.
+Note that both lexical rules like "`CONJ -> and`" and nonlexical rules like "`NP -> (N P N)`" can have functions as their semantic translations; in the first case, the function will just be returned as the semantic translation, whereas in the second case the function will be applied to the list of constituents.
 
 Only minor changes are needed to `parse` to support this kind of semantic processing.
 As we see in the following, we add a `sem` argument to `extend-parse` and arrange to pass the semantic components around properly.
@@ -543,19 +544,17 @@ We need to add some new functions to support this:
 
 Here are some examples of the meanings that the parser can extract:
 
-(meanings '(1 to 5 without 3))
-
+```
+> (meanings '(1 to 5 without 3))
 ((1 2 4 5))
 
-(meanings '(1 to 4 and 7 to 9))
-
+> (meanings '(1 to 4 and 7 to 9))
 ((1 2 3 4 7 8 9))
 
-(meanings '(1 to 6 without 3 and 4))
-
-((12 4 5 6)
-
-(1 2 5 6))
+> (meanings '(1 to 6 without 3 and 4))
+((1 2 4 5 6)
+ (1 2 5 6))
+```
 
 The example "(1 to 6 without 3 and 4)" is ambiguous.
 The first reading corresponds to "((1 to 6) without 3) and 4," while the second corresponds to "(1 to 6) without (3 and 4)." The syntactic ambiguity leads to a semantic ambiguity-the two meanings have different lists of numbers in them.
@@ -633,9 +632,9 @@ As with the sem component, this will be used to hold first a function to compute
                  (:constructor new-tree (lhs sem score rhs))))
 ```
 
-Note that we have added the constructor function rul e.
-The intent is that the sem and score component of grammar rules should be optional.
-The user does not have to supply them, but the function use will make sure that the function rul e is called to fill in the missing sem and score values with nil.
+Note that we have added the constructor function `rule`.
+The intent is that the `sem` and `score` component of grammar rules should be optional.
+The user does not have to supply them, but the function `use` will make sure that the function `rule` is called to fill in the missing `sem` and `score` values with nil.
 
 ```lisp
 (defun use (grammar)
@@ -753,24 +752,27 @@ I also added brackets to allow input that says explicitly how it should be parse
 ```
 
 The following scoring functions take trees as inputs and compute bonuses or penalties for those trees.
-The scoring function `prefer  <`, used for the word "to," gives a one-point penalty for reversed ranges: "5 to 1" gets a score of -1, while "1 to 5" gets a score of 0.
+The scoring function `prefer<`, used for the word "to," gives a one-point penalty for reversed ranges: "5 to 1" gets a score of -1, while "1 to 5" gets a score of 0.
 The scorer for "and," `prefer-disjoint`, gives a one-point penalty for intersecting lists: "1 to 3 and 7 to 9" gets a score of 0, while "1 to 4 and 2 to 5" gets -1.
 The "x without y" scorer, `prefer-subset`, gives a three-point penalty when the y list has elements that aren't in the x list.
 It also awards points in inverse proportion to the length (in words) of the x phrase.
 The idea is that we should prefer to bind "without" tightly to some small expression on the left.
-If the final scores corne out as positive or as nonintegers, then this scoring component is responsible, since all the other components are negative intgers.
+If the final scores come out as positive or as nonintegers, then this scoring component is responsible, since all the other components are negative intgers.
 The "x shuffled" scorer, `prefer-not-singleton`, is similar, except that there the penalty is for shuffling a list of less than two songs.
 
 ```lisp
 (defun prefer< (x y) (if (>= (sem x) (sem y)) -1))
+
 (defun prefer-disjoint (x y) (if (intersection (sem x) (sem y)) -1))
+
 (defun prefer-subset (x y)
   (+ (inv-span x) (if (subsetp (sem y) (sem x)) 0 -3)))
+
 (defun prefer-not-singleton (x)
   (+ (inv-span x) (if (< (length (sem x)) 2) -4 0)))
 ```
 
-The `infix-scorer` and `rev-scorer` functionsdon'taddanythingnew, they justassure that the previously mentioned scoring functions will get applied in the right place.
+The `infix-scorer` and `rev-scorer` functions don't add anything new, they just assure that the previously mentioned scoring functions will get applied in the right place.
 
 ```lisp
 (defun infix-scorer (arg1 scorer arg2)
@@ -896,7 +898,7 @@ It turns out that, in each case, all the interpretations with positive scores re
 Seeing all the scores in gory detail may be of academic interest, but what we really want is something to pick out the best interpretation.
 The following code is appropriate for many situations.
 It picks the top scorer, if there is a unique one, or queries the user if several interpretations tie for the best score, and it complains if there are no valid parses at all.
-The query-user function may be useful in many applications, but note that `meaning` uses it only as a default; a program that had some automatic way of deciding could supply another `tie-breaker` function to `meaning`.
+The `query-user` function may be useful in many applications, but note that `meaning` uses it only as a default; a program that had some automatic way of deciding could supply another `tie-breaker` function to `meaning`.
 
 ```lisp
 (defun meaning (words &optional (tie-breaker #'query-user))
@@ -962,7 +964,7 @@ There can be a complicated interplay between phrases, and it is not always clear
 For example, it doesn't make much sense to repeat a "without" phrase; that is, the bracketing `(x without (y repeat n))` is probably a bad one.
 But the scorer for "without" nearly handles that already.
 It assigns a penalty if its right argument is not a subset of its left.
-Unfortunately, repeated elements are not counted in sets, so for example, the list (1 2 3 1 2 3) is a subset of (1 2 3 4).
+Unfortunately, repeated elements are not counted in sets, so for example, the list `(1 2 3 1 2 3)` is a subset of `(1 2 3 4)`.
 However, we could change the scorer for "without" to test for `sub-bag-p` (not a built-in Common Lisp function) instead, and then "repeat" would not have to be concerned with that case.
 
 ## 19.7 The Problem with Context-Free Phrase-Structure Rules
@@ -1012,8 +1014,8 @@ It's up to you to design the grammar, but you should allow input something like 
 ```lisp
 > (meaning '(play 1 to 5 from CD shuffled and
              record 1 to 5 from CD and 1 and 3 and 7 from 1))
-(PROGN (PLAY '(15 2 3 4) :FROM 'CD)
-       (RECORD '(12345) :FROM 'CD)
+(PROGN (PLAY '(1 5 2 3 4) :FROM 'CD)
+       (RECORD '(1 2 3 4 5) :FROM 'CD)
        (RECORD '(1 3 7) :FROM '1))
 ```
 
@@ -1123,9 +1125,9 @@ Note that I was careful to exclude such rules in my grammars earlier.
 
 **Answer 19.5** If it were omitted, then `:test` would default to `#'eql`, and it would be possible to remove the "wrong" element from the list.
 Consider the list `(1.0 1.0)` in an implementation where floating-point numbers are `eql` but not `eq`.
-if `random-elt` chooses the first `1.0` first, then everything is satisfactory - the result list is the same as the input list.
-However, if `random-elt` chooses the second `1.0`, then the second `1.0` will be the first element of the answer, but `remove` will remove the wrong `1.0`!
-It will remove the first `1.0`, and the final answer will be a list with two pointers to the second `1.0` and none to the first.
+If `random-elt` chooses the first 1.0 first, then everything is satisfactory-the result list is the same as the input list.
+However, if `random-elt` chooses the second 1.0, then the second 1.0 will be the first element of the answer, but `remove` will remove the wrong 1.0!
+It will remove the first 1.0, and the final answer will be a list with two pointers to the second 1.0 and none to the first.
 In other words, we could have:
 
 ```lisp
@@ -1178,8 +1180,7 @@ Rarely, `rotatef` is used with more than two arguments, `(rotatef a b c)` is lik
 Some erroneous expressions are underspecified and may return different results in different implementations, but we will ignore that problem.
 
 <a id="fn19-2"></a><sup>[2](#tfn19-2)</sup>
-The number of parses of sentences of this kind is the same as the number of bracketings of an arithmetic expression, or the number of binary trees with a given number of leaves.
+The number of parses of sentences of this kind is the same as the number of bracketings of a arithmetic expression, or the number of binary trees with a given number of leaves.
 The resulting sequence (1, 2, 5, 14, 42, ...) is known as the Catalan Numbers.
-
 This kind of ambiguity is discussed by [Church and Patil (1982)](B9780080571157500285.xhtml#bb0200) in their article *Coping with Syntactic Ambiguity, or How to Put the Block in the Box on the Table.*
 

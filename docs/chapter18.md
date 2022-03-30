@@ -1580,7 +1580,7 @@ Everything else is unchanged, except that we get a new board by recycling the `*
       moves))
 ```
 
-Another experiment on a single game reveals that adding the killer heuristic to staticordering search (again at 6-ply) cuts the number of boards and evaluations, and the total time, all by about 20%.
+Another experiment on a single game reveals that adding the killer heuristic to static-ordering search (again at 6-ply) cuts the number of boards and evaluations, and the total time, all by about 20%.
 To summarize, alpha-beta search at 6 ply with random ordering takes 105 seconds per move (in our experiment), adding static-ordering cuts it to 66 seconds, and adding killer moves to that cuts it again to 52 seconds.
 This doesn't include the savings that alpha-beta cutoffs give over full minimax search.
 At 6 ply with a branching factor of 7, full minimax would take about nine times longer than static ordering with killers.
@@ -1622,7 +1622,7 @@ The following function computes both current and potential mobility for a player
 
 ```lisp
 (defun mobility (player board)
-  "Current Mobility is the number of legal moves.
+  "Current mobility is the number of legal moves.
   Potential mobility is the number of blank squares
   adjacent to an opponent that are not legal moves.
   Returns current and potential mobility for player."
@@ -1769,7 +1769,7 @@ Otherwise we first try leaving the current square blank, then try filling it wit
 
 The function `possible-edge-moves-value` searches through all possible moves to determine an edge value that is more accurate than a static evaluation.
 It loops through every empty square on the edge, calling `possible-edge-move` to return a (*probability value*) pair.
-Since it is also possible for a player not to make any move at all on an edge, the pair (`1.0`*current-value*) is also included.
+Since it is also possible for a player not to make any move at all on an edge, the pair (`1.0` *current-value*) is also included.
 
 ```lisp
 (defun possible-edge-moves-value (player board index)
@@ -1831,7 +1831,7 @@ Now we consider the probabilities.
 There are four cases.
 First, since we don't know anything about the interior of the board, we assume each player has a 50% chance of being able to play in an X-square.
 Second, if we can show that a move is legal (because it flips opponent pieces on the edge) then it has 100% probability.
-Third, for the corner squares, we assign a 90% chance if the opponent occupies the X-square, 10% if it is empty, and only .1 % if we occupy it.
+Third, for the corner squares, we assign a 90% chance if the opponent occupies the X-square, 10% if it is empty, and only .1% if we occupy it.
 Otherwise, the probability is determined by the two neighboring squares: if a square is next to one or more opponents it is more likely we can move there; if it is next to our pieces it is less likely.
 If it is legal for the opponent to move into the square, then the chances are cut in half (although we may still be able to move there, since we move first).
 
@@ -1938,7 +1938,7 @@ Finally, if either `p1` or `p2` is nil then the piece is stable, since it must b
              (t stable)))))))
 ```
 
-The edge table can now be built by a call to `init-edge-lable`.
+The edge table can now be built by a call to `init-edge-table`.
 After the table is built once, it is a good idea to save it so that we won't need to repeat the initialization.
 We could write simple routines to dump the table into a file and read it back in, but it is faster and easier to use existing tools that already do this job quite well: `compile-file` and `load`.
 All we have to do is create and compile a file containing the single line:
@@ -2162,7 +2162,7 @@ To increase the chances of this, it is a good idea to allow for mutations: rando
 
 ## 18.14 History and References
 
-[Lee and Mahajan (1986,](B9780080571157500285.xhtml#bb0710)[1990)](B9780080571157500285.xhtml#bb0715)present the current top Othello program, Bill.
+[Lee and Mahajan (1986,](B9780080571157500285.xhtml#bb0710)[1990)](B9780080571157500285.xhtml#bb0715) present the current top Othello program, Bill.
 Their description outlines all the techniques used but does not go into enough detail to allow the reader to reconstruct the program.
 Bill is based in large part on Rosenbloom's Iago program.
 Rosenbloom's article (1982) is more thorough.
@@ -2188,7 +2188,7 @@ The studies by [DeGroot (1965,](B9780080571157500285.xhtml#bb0305)[1966)](B97800
 It is based on the game of checkers.
 [Lee and Mahajan (1990)](B9780080571157500285.xhtml#bb0715) present an alternative learning mechanism, using Bayesian classification to learn an evaluation function that optimally distinguishes winning positions from losing positions.
 Genetic algorithms are discussed by L.
-[Davis (1987,](B9780080571157500285.xhtml#bb0280)[1991)](B9780080571157500285.xhtml#bb0285) and [Goldberg (1989)](B9780080571157500285.xhtml#bb0480).
+[Davis (1987,](B9780080571157500285.xhtml#bb0280) [1991)](B9780080571157500285.xhtml#bb0285) and [Goldberg (1989)](B9780080571157500285.xhtml#bb0480).
 
 ## 18.15 Exercises
 

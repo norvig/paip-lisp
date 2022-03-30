@@ -194,7 +194,7 @@ If everything is known, then the query must be false, but if there are facts tha
 This is hardly surprising; we can't expect a program to come up with answers using knowledge it doesn't have.
 But in this case, it causes problems.
 Given the previous two clauses and the query `(capital ?c NY)`, Prolog will go into an infinite loop.
-If we remove the first clause, Prolog would fall to prove that Albany is the capital, and hence conclude that NYC is.
+If we remove the first clause, Prolog would fail to prove that Albany is the capital, and hence conclude that NYC is.
 If we remove the second clause, the opposite conclusion would be drawn.
 
 The problem is that Prolog equates "not proven" with "false." Prolog makes what is called the *closed world assumption*-it assumes that it knows everything that is true.
@@ -208,11 +208,11 @@ As another example, consider the clauses:
 (<- (damned) (not (do)))
 ```
 
-With these rules, the query `(?
-(damned))` should logically be answered "yes." Furthermore, it should be possible to conclude `(damned)` without even investigating if `(do)` is provable or not.
+With these rules, the query `(? (damned))` should logically be answered "yes."
+Furthermore, it should be possible to conclude `(damned)` without even investigating if `(do)` is provable or not.
 What Prolog does is first try to prove `(do)`.
 If this succeeds, then `(damned)` is proved.
-Either way, Prolog then tries again to prove `(do)`, and this time if the proof falls, then `(damned)` is proved.
+Either way, Prolog then tries again to prove `(do)`, and this time if the proof fails, then `(damned)` is proved.
 So Prolog is doing the same proof twice, when it is unnecessary to do the proof at all.
 Introducing negation wrecks havoc on the simple Prolog evaluation scheme.
 It is no longer sufficient to consider a single clause at a time.
@@ -302,7 +302,8 @@ In predicate calculus or in Prolog we could write an implication for each case:
 ```
 
 These implications allow us to prove that any known lion, tiger, or bear is in fact an animal.
-However, they do not allow us to answer the question "What kinds of animals are there?" It is not hard to imagine extending Prolog so that the query
+However, they do not allow us to answer the question "What kinds of animals are there?"
+It is not hard to imagine extending Prolog so that the query
 
 ```lisp
 (?- (<- (animal ?x) ?proposition))
@@ -380,7 +381,7 @@ Happily, this particular type of example has an easy fix: just introduce two pre
 (<- (sibling ?x ?y) (sibling-fact ?y ?x))
 ```
 
-Another fix would be to change the interpreter to fall when a repeated goal was detected.
+Another fix would be to change the interpreter to fail when a repeated goal was detected.
 This was the approach taken in GPS.
 However, even if we eliminated repeated goals, Prolog can still get stuck in one branch of a depth-first search.
 Consider the example:
@@ -493,11 +494,11 @@ A wild card is a variable, but with the understanding that there is no variable 
 A predicate structure is a list whose first element is a nonvariable symbol.
 The discrimination tree supports three operations:
 
-*   `index`-add a key/value pair to the tree
+*   `index` - add a key/value pair to the tree
 
-*   `fetch`-find all values that potentially match a given key
+*   `fetch` - find all values that potentially match a given key
 
-*   `unindex`-remove all key/value pairs that match a given key
+*   `unindex` - remove all key/value pairs that match a given key
 
 To appreciate the problems, we need an example.
 Suppose we have the following six keys to index.
@@ -1377,7 +1378,7 @@ It shows that adding the single fact `(sub bear animal)` to the given data base 
 Another direction we can take is to provide an alternative syntax that will be easier to read and write.
 Many representation languages are based on the idea of *frames,* and their syntax reflects this.
 A frame is an object with slots.
-We will continue to use the same data base in the same format, but we will provide an alternative syntax that consider s the individuals and categories as frames, and the relations as slots.
+We will continue to use the same data base in the same format, but we will provide an alternative syntax that considers the individuals and categories as frames, and the relations as slots.
 
 Here is an example of the frame syntax for individuals, which uses the operator a.
 Note that it is more compact than the equivalent notation using the primitives.
@@ -1605,7 +1606,7 @@ The new function `nalist-push` adds a value to an nalist, either by inserting th
 
 ```lisp
 (defun nalist-push (key val nalist)
-  "Index val under key in a numbered al ist."
+  "Index val under key in a numbered alist."
   ;; An nalist is of the form (count (key val*)*)
   ;; Ex: (6 (nums 12 3) (letters a b c))
   (incf (car nalist))

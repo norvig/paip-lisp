@@ -263,7 +263,7 @@ Here's the `rule` macro:
 ```
 
 As an example of a rule function, the arrow `:-` will be used to represent normal Prolog clauses.
-That is, the form (`rule` *head :- body*) will be equivalent to `(<-` *head body).*
+That is, the form (`rule` *head* `:-` *body*) will be equivalent to (`<-` *head body*).
 
 ```lisp
 (setf (get ':- 'rule-function)
@@ -277,7 +277,7 @@ One would write:
 
 ```lisp
 s(Sem) --> np(Subj), vp(Pred),
-                  {combi ne(Subj,Pred,Sem)}.
+           {combine(Subj,Pred,Sem)}.
 ```
 
 where the idea is that `combine` is not a grammatical constituent, but rather a Prolog predicate that could do some calculations on `Subj` and `Pred` to arrive at the proper semantics, `Sem`.
@@ -737,7 +737,7 @@ This gives us the following parse for "Every man loves a woman":
         (and (love ?4 ?12) (exists ?12 (and (woman ?12) t))))
 ```
 
-If we simplified this, eliminating the ts and joining ands, we would get the desired representation:
+If we simplified this, eliminating the `t`s and joining `and`s, we would get the desired representation:
 
 ```lisp
 (and (all ?m (man ?m))
@@ -1041,11 +1041,11 @@ To make this work, :ex will have to be a macro:
 Each example is stored in a hash table indexed under the the category.
 Each example is transformed into a two-element list: the example phrase string itself and a call to the proper predicate with all arguments supplied.
 The function `add-examples` does this transformation and indexing, and `run-examples` retrieves the examples stored under a category, prints each phrase, and calls each goal.
-The auxiliary functions `get-examples` and `clear-exampl` es are provided to manipulate the example table, and `remove-punction, punctuation-p` and `string->list` are used to map from a string to a list of words.
+The auxiliary functions `get-examples` and `clear-examples` are provided to manipulate the example table, and `remove-punction, punctuation-p` and `string->list` are used to map from a string to a list of words.
 
 ```lisp
 (defvar *examples* (make-hash-table :test #'eq))
-(defun get-exampl es (category) (gethash category *examples*))
+(defun get-examples (category) (gethash category *examples*))
 (defun clear-examples () (clrhash *examples*))
 
 (defun add-examples (category args examples)

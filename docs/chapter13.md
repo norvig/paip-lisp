@@ -918,16 +918,16 @@ Although Simula is a general-purpose language, it provides special support for s
 The built-in class `simulation` allows a programmer to keep track of simulated time while running a set of processes as coroutines.
 
 In 1969 Alan Kay was a graduate student at the University of Utah.
-He became aware of Simula and realized that the object-oriented style was well suited to his research in graphies ([Kay 1969](B9780080571157500285.xhtml#bb0600)).
+He became aware of Simula and realized that the object-oriented style was well suited to his research in graphics ([Kay 1969](B9780080571157500285.xhtml#bb0600)).
 A few years later, at Xerox, he joined with Adele Goldberg and Daniel Ingalls to develop the Smalltalk language (see [Goldberg and Robinson 1983](B9780080571157500285.xhtml#bb0475)).
 While Simula can be viewed as an attempt to add object-oriented features to strongly typed Algol 60, Smalltalk can be seen as an attempt to use the dynamic, loosely typed features of Lisp, but with methods and objects replacing functions and s-expressions.
 In Simula, objects existed alongside traditional data types like numbers and strings; in Smalltalk, every datum is an object.
-This gave Smalltalk the feel of an integra ted Lisp environment, where the user can inspect, copy, or edit any part of the environment.
+This gave Smalltalk the feel of an integrated Lisp environment, where the user can inspect, copy, or edit any part of the environment.
 In fact, it was not the object-oriented features of Smalltalk per se that have made a lasting impression but rather the then-innovative idea that every user would have a large graphical display and could interact with the system using a mouse and menus rather than by typing commands.
 
 Guy Steele's *LAMBDA: The Ultimate Declarative* (1976a and b) was perhaps the first paper to demonstrate how object-oriented programming can be done in Lisp.
 As the title suggests, it was all done using `lambda,` in a similar way to our `define-class` example.
-Steele summarized the approach with the equation "Actors = Closures (mod Syntax)," refering to Cari Hewitt's "Actors" object-oriented formalism.
+Steele summarized the approach with the equation "Actors = Closures (mod Syntax)," refering to Carl Hewitt's "Actors" object-oriented formalism.
 
 In 1979, the MIT Lisp Machine group developed the Flavors system based on this approach but offering considerable extensions ([Cannon 1980](B9780080571157500285.xhtml#bb0155), [Weinreb 1980](B9780080571157500285.xhtml#bb1360), [Moon et al.
 1983](B9780080571157500285.xhtml#bb0860)).
@@ -945,7 +945,7 @@ Steve's offered a list of ice cream flavors every day but also offered to create
 For example, Steve's did not have chocolate-chip ice cream on the menu, but you could always order vanilla ice cream with chocolate chips mixed in.<a id="tfn13-3"></a><sup>[3](#fn13-3)</sup>
 
 This kind of "flavor hacking" appealed to the MIT Lisp Machine group, who adopted the metaphor for their object-oriented programming system.
-All flavors inherited from the top-mostflavor in the hierarchy: vanilla.
+All flavors inherited from the top-most flavor in the hierarchy: vanilla.
 In the window system, for example, the flavor `basic-window` was defined to support the minimal functionality of all windows, and then new flavors of window were defined by combining mix-in flavors such as `scroll-bar-mixin`, `label-mixin`, and `border-mixin`.
 These mix-in flavors were used only to define other flavors.
 Just as you couldn't go into Steve's and order "crushed Heath bars, hold the ice cream," there was a mechanism to prohibit instantiation of mix-ins.
@@ -953,7 +953,7 @@ Just as you couldn't go into Steve's and order "crushed Heath bars, hold the ice
 A complicated repetoire of *method combinations* was developed.
 The default method combination on Flavors was similar to CLOS: first do all the `:before` methods, then the most specific primary method, then the `:after` methods.
 But it was possible to combine methods in other ways as well.
-For example, consider the `inside-width` method, which returns the width in pixels of the usuable portion of a window.
+For example, consider the `inside-width` method, which returns the width in pixels of the usable portion of a window.
 A programmer could specify that the combined method for `inside-width` was to be computed by calling all applicable methods and summing them.
 Then an `inside-width` method for the `basic-window` flavor would be defined to return the width of the full window, and each mix-in would have a simple method to say how much of the width it consumed.
 For example, if borders are 8 pixels wide and scroll bars are 12 pixels wide, then the `inside-width` method for `border-mixin` returns `-8` and `scroll-bar-mixin` returns `-12`.

@@ -54,7 +54,7 @@ The relations are `population` and `capital,` and the objects that participate i
 ```
 
 We are using Lisp syntax, because we want a Prolog interpreter that can be embedded in Lisp.
-The actual Prolog notation would be `population` (`sf, 750000`).
+The actual Prolog notation would be `population(sf,750000)`.
 Here are some facts pertaining to the `likes` relation:
 
 ```lisp
@@ -392,7 +392,7 @@ Here are some examples of `unifier`:
 ((?A * 5 ^ 2) + (4 * 5) + 3)
 ```
 
-When *`occurs-check`* is false, we get the following answers:
+When `*occurs-check*` is false, we get the following answers:
 
 ```lisp
 > (unify '?x '(f ?x)) => ((?X F ?X))
@@ -404,7 +404,7 @@ When *`occurs-check`* is false, we get the following answers:
 
 The amazing thing about Prolog clauses is that they can be used to express relations that we would normally think of as "programs," not "data." For example, we can define the `member` relation, which holds between an item and a list that contains that item.
 More precisely, an item is a member of a list if it is either the first element of the list or a member of the rest of the list.
-This definition can be translated into Prolog almost Verbatim:
+This definition can be translated into Prolog almost verbatim:
 
 ```lisp
 (<- (member ?item (?item . ?rest)))
@@ -442,7 +442,7 @@ If we define or in Prolog, we would write a version that is clearly just a synta
 ```
 
 Let's see how the Prolog version of `member` works.
-Imagine that we have a Prolog interpreter that can be given a query using the macro ?-, and that the definition of `member` has been entered.
+Imagine that we have a Prolog interpreter that can be given a query using the macro `?-`, and that the definition of `member` has been entered.
 Then we would see:
 
 ```lisp
@@ -851,7 +851,7 @@ A primitive should either return `fail` or call `prove-all` to continue.
           (prove-all other-goals bindings)))
 ```
 
-Since primitives are represented as entries on the `clauses` property of predicate symbols, we have to register `show- prolog - vars` as a primitive like this:
+Since primitives are represented as entries on the `clauses` property of predicate symbols, we have to register `show-prolog-vars` as a primitive like this:
 
 ```lisp
 (setf (get 'show-prolog-vars 'clauses) 'show-prolog-vars)
@@ -916,18 +916,18 @@ Here are some queries showing that length can be used to find the second argumen
 
 ```lisp
 > (?- (length (a b c d) ?n))
-?N = (1 + (1 + (1 + (1 + 0))));
+?N = (1+ (1+ (1+ (1+ 0))));
 No.
-> (?- (length ?list (1 + (1 + 0))))
+> (?- (length ?list (1+ (1+ 0))))
 ?LIST = (?X3869 ?X3872);
 No.
 > (?- (length ?list ?n))
 ?LIST = NIL
 ?N = 0;
 ?LIST = (?X3918)
-?N = (1 + 0);
+?N = (1+ 0);
 ?LIST = (?X3918 ?X3921)
-?N = (1 + (1 + 0)).
+?N = (1+ (1+ 0)).
 No.
 ```
 
@@ -983,7 +983,7 @@ This means that the calling function(s) must be changed to expect a list of repl
 Again, the calling function(s) must be changed to expect a pipe.
 
 * Guess and save.
-Choose one possibility and return it, but record enough information to allow Computing the other possibilities later.
+Choose one possibility and return it, but record enough information to allow computing the other possibilities later.
 This requires saving the current state of the computation as well as some information on the remaining possibilities.
 
 The last alternative is the most desirable.
@@ -1204,7 +1204,8 @@ An alternative implementation is to change `unify` to a destructive operation.
 In this approach, there are no binding lists.
 Instead, each variable is represented as a structure that includes a field for its binding.
 When the variable is unified with another expression, the variable's binding field is modified to point to the expression.
-Such variables will be called `vars` to distinguish them from the implementation of variables as symbols starting with a question mark, `vars` are defined with the following code:
+Such variables will be called `vars` to distinguish them from the implementation of variables as symbols starting with a question mark.
+`vars` are defined with the following code:
 
 ```lisp
 (defconstant unbound "Unbound")
@@ -1311,7 +1312,7 @@ Just as it is easy to write a Lisp interpreter in Lisp, it is easy to write a Pr
 The following Prolog metainterpreter has three main relations.
 The relation clause is used to store clauses that make up the rules and facts that are to be interpreted.
 The relation `prove` is used to prove a goal.
-It calls `prove`-`all`, which attempts to prove a list of goals, `prove`-`all` succeeds in two ways: (1) if the list is empty, or (2) if there is some clause whose head matches the first goal, and if we can prove the body of that clause, followed by the remaining goals:
+It calls `prove-all`, which attempts to prove a list of goals, `prove-all` succeeds in two ways: (1) if the list is empty, or (2) if there is some clause whose head matches the first goal, and if we can prove the body of that clause, followed by the remaining goals:
 
 ```lisp
 (<- (prove ?goal) (prove-all (?goal)))
@@ -1344,30 +1345,37 @@ No.
 Many of the features that make Prolog a successful language for AI (and for program development in general) are the same as Lisp's features.
 Let's reconsider the list of features that make Lisp different from conventional languages (see page 25) and see what Prolog has to offer:
 
-*   *Built-in Support for Lists (and other data types).* New data types can be created easily using lists or structures (structures are preferred).
+* *Built-in Support for Lists (and other data types).*
+New data types can be created easily using lists or structures (structures are preferred).
 Support for reading, printing, and accessing components is provided automatically.
 Numbers, symbols, and characters are also supported.
 However, because logic variables cannot be altered, certain data structures and operations are not provided.
 For example, there is no way to update an element of a vector in Prolog.
 
-*   *Automatic Storage Management.* The programmer can allocate new objects without worrying about reclaiming them.
+* *Automatic Storage Management.*
+The programmer can allocate new objects without worrying about reclaiming them.
 Reclaiming is usually faster in Prolog than in Lisp, because most data can be stack-allocated instead of heap-allocated.
 
-*   *Dynamic Typing.* Declarations are not required.
+* *Dynamic Typing.*
+Declarations are not required.
 Indeed, there is no standard way to make type declarations, although some implementations allow for them.
 Some Prolog systems provide only fixnums, so that eliminates the need for a large class of declarations.
 
-*   *First-Class Functions.* Prolog has no equivalent of `lambda,` but the built-in predicate `call` allows a term-a piece of data-to be called as a goal.
+* *First-Class Functions.*
+Prolog has no equivalent of `lambda`, but the built-in predicate `call` allows a term - a piece of data - to be called as a goal.
 Although backtracking choice points are not first-class objects, they can be used in a way very similar to continuations in Lisp.
 
-*   *Uniform Syntax.* Like Lisp, Prolog has a uniform syntax for both programs and data.
+* *Uniform Syntax.*
+Like Lisp, Prolog has a uniform syntax for both programs and data.
 This makes it easy to write interpreters and compilers in Prolog.
 While Lisp's prefix-operator list notation is more uniform, Prolog allows infix and postfix operators, which may be more natural for some applications.
 
-*   *Interactive Environment.* Expressions can be immediately evaluated.
+* *Interactive Environment.*
+Expressions can be immediately evaluated.
 High-quality Prolog systems offer both a compiler and interpreter, along with a host of debugging tools.
 
-*   *Extensibility.* Prolog syntax is extensible.
+* *Extensibility.*
+Prolog syntax is extensible.
 Because programs and data share the same format, it is possible to write the equivalent of macros in Prolog and to define embedded languages.
 However, it can be harder to ensure that the resulting code will be compiled efficiently.
 The details of Prolog compilation are implementation-dependent.
@@ -1395,16 +1403,16 @@ This objection is countered by Prolog programmers who use the facilities provide
 
 Cordell [Green (1968)](B9780080571157500285.xhtml#bb0490) was the first to articulate the view that mathematical results on theorem proving could be used to make deductions and thereby answer queries.
 However, the major technique in use at the time, resolution theorem proving (see [Robinson 1965](B9780080571157500285.xhtml#bb0995)), did not adequately constrain search, and thus was not practical.
-The idea of goal-directed computing was developed in Carl Hewitt's work (1971) on the planner language for robot problem solving.
+The idea of goal-directed computing was developed in Carl Hewitt's work (1971) on the PLANNER language for robot problem solving.
 He suggested that the user provide explicit hints on how to control deduction.
 
 At about the same time and independently, Alain Colmerauer was developing a system to perform natural language analysis.
-His approach was to weaken the logical language so that computationally complex statements (such as logical dis-junctions) could not be made.
+His approach was to weaken the logical language so that computationally complex statements (such as logical disjunctions) could not be made.
 Colmerauer and his group implemented the first Prolog interpreter using Algol-W in the summer of 1972 (see [Roussel 1975](B9780080571157500285.xhtml#bb1005)).
 It was Roussel's wife, Jacqueline, who came up with the name Prolog as an abbreviation for "programmation en logique." The first large Prolog program was their natural language system, also completed that year ([Colmerauer et al.
 1973](B9780080571157500285.xhtml#bb0255)).
 For those who read English better than French, [Colmerauer (1985)](B9780080571157500285.xhtml#bb0245) presents an overview of Prolog.
-Robert Kowalski is generally considered the coinventer of Prolog.
+Robert Kowalski is generally considered the co-inventor of Prolog.
 His 1974 article outlines his approach, and his 1988 article is a historical review on the early logic programming work.
 
 There are now dozens of text books on Prolog.
@@ -1412,7 +1420,7 @@ In my mind, six of these stand out.
 Clocksin and Mellish's *Programming in Prolog* (1987) was the first and remains one of the best.
 Sterling and Shapiro's *The Art of Prolog* (1986) has more substantial examples but is not as complete as a reference.
 An excellent overview from a slightly more mathematical perspective is Pereira and Shieber's *Prolog and Natural-Language Analysis* (1987).
-The book is worthwhile for its coverage of Prolog alone, and it also provides a good introduction to the use of logic programming for language under-standing (see part V for more on this subject).
+The book is worthwhile for its coverage of Prolog alone, and it also provides a good introduction to the use of logic programming for language understanding (see part V for more on this subject).
 O'Keefe's *The Craft of Prolog* (1990) shows a number of advanced techniques.
 O'Keefe is certainly one of the most influential voices in the Prolog community.
 He has definite views on what makes for good and bad coding style and is not shy about sharing his opinions.

@@ -201,7 +201,7 @@ These correspond to the seven items in the specification above.
 In general, you shouldn't expect such a perfect fit between specification and implementation.
 There are two `defvar` forms, one `defstruct`, and four `defun` forms.
 These are the Common Lisp forms for defining variables, structures, and functions, respectively.
-They are the most common toplevel forms in Lisp, but there is nothing magic about them; they are just special forms that have the side effect of adding new definitions to the Lisp environment.
+They are the most common top-level forms in Lisp, but there is nothing magic about them; they are just special forms that have the side effect of adding new definitions to the Lisp environment.
 
 The two `defvar` forms, repeated below, declare special variables named `*state*` and `*ops*,` which can then be accessed from anywhere in the program.
 
@@ -243,7 +243,7 @@ expanded into the following definitions:
 (setf (documentation 'op 'structure) "An operation")
 ```
 Next in the GPS program are four function definitions.
-The main function `GPS`, is passed three arguments.
+The main function, `GPS`, is passed three arguments.
 The first is the current state of the world, the second the goal state, and the third a list of allowable operators.
 The body of the function says simply that if we can achieve every one of the goals we have been given, then the problem is solved.
 The unstated alternative is that otherwise, the problem is not solved.

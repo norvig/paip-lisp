@@ -26,7 +26,7 @@ Here is a partial list of the ways Scheme is simpler than Common Lisp:
 5.  Scheme functions can not have optional and keyword parameters.
 However, they can have the equivalent of a `&rest` parameter.
 
-6.  Scheme has no `block, return, go, orthrow`; a single function `(call/cc)` replaces all of these (and does much more).
+6.  Scheme has no `block`, `return`, `go`, or `throw`; a single function `(call/cc)` replaces all of these (and does much more).
 
 7.  Scheme has no packages.
 Lexical variables can be used to implement package-like structures.
@@ -214,7 +214,7 @@ Then we will interpret `( f 1 2 3 )` by interpreting the body of `f` with the en
 ```
 
 Scheme procedures are implemented as Common Lisp functions, and in fact all the Scheme data types are implemented by the corresponding Common Lisp types.
-Iinclude the function `init-scheme- interp` to initialize a few global values and repeat the definitions of `last1` and `length=1`:
+I include the function `init-scheme-interp` to initialize a few global values and repeat the definitions of `last1` and `length=1`:
 
 ```lisp
 (defun set-var! (var val env)
@@ -806,7 +806,7 @@ Then we could write succinct<a id="tfn22-2"></a><sup>[2](#fn22-2)</sup> backtrac
 ```
 
 If `prime?` is a predicate that returns true only when its argument is a prime number, then prime will always return some `prime` number, decided by generating random integers.
-While this looks like a major change to the language-adding backtracking and nondeterminism-it turns out that `amb` and `fail` can be implemented quite easily with `cal1/cc`.
+While this looks like a major change to the language-adding backtracking and nondeterminism-it turns out that `amb` and `fail` can be implemented quite easily with `call/cc`.
 First, we need to make `amb` be a macro:
 
 ```lisp
@@ -860,10 +860,7 @@ The following expression, evaluated at the top level, saves the appropriate cont
 
 **Exercise 22.3 [s]** Can you implement `amb` and `fail` in Common Lisp?
 
-**Exercise 22.4 [m]**`fail` could be written
-
-`(define (fail) ((pop backtrack-points)))` if we had the pop macro in Scheme.
-
+**Exercise 22.4 [m]** `fail` could be written `(define (fail) ((pop backtrack-points)))` if we had the pop macro in Scheme.
 Write `pop.`
 
 ## 22.5 An Interpreter Supporting Call/cc
@@ -1014,7 +1011,7 @@ The first compiler was for the Lisp 1.5 system ([McCarthy et al.
 1962](B9780080571157500285.xhtml#bb0815)).
 The compiler was written in Lisp; it was probably the first compiler written in its own language.
 
-Allen's *Anatomy of lisp* (1978) was one of the first overviews of Lisp implementation techniques, and it remains one of the best.
+Allen's *Anatomy of Lisp* (1978) was one of the first overviews of Lisp implementation techniques, and it remains one of the best.
 However, it concentrates on the dynamic-scoping Lisp dialects that were in use at the time.
 The more modern view of a lexically scoped Lisp was documented in an influential pair of papers by Guy Steele ([1976a](B9780080571157500285.xhtml#bb1130),[b](B9780080571157500285.xhtml#bb1135)).
 His papers "Lambda: the ultimate goto" and "Compiler optimization based on viewing lambda as rename plus goto" describe properly tail-recursive interpreters and compilers.
