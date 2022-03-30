@@ -26,7 +26,7 @@ Here is a partial list of the ways Scheme is simpler than Common Lisp:
 5.  Scheme functions can not have optional and keyword parameters.
 However, they can have the equivalent of a `&rest` parameter.
 
-6.  Scheme has no `block, return, go, orthrow`; a single function `(call/cc)` replaces all of these (and does much more).
+6.  Scheme has no `block`, `return`, `go`, or `throw`; a single function `(call/cc)` replaces all of these (and does much more).
 
 7.  Scheme has no packages.
 Lexical variables can be used to implement package-like structures.
@@ -35,14 +35,14 @@ Lexical variables can be used to implement package-like structures.
 
 9.  Scheme has no special forms for looping; instead it asks the user to use recursion and promises to implement the recursion efficiently.
 
-The five main special forms in Scheme are `quote` and `if`, which are just as in Common Lisp; `begin` and `set!`, which are just different spellings for `progn` and `setq`; and `lambda`, which is as in Common Lisp, except that it doesn't require a # 'before it.
+The five main special forms in Scheme are `quote` and `if`, which are just as in Common Lisp; `begin` and `set!`, which are just different spellings for `progn` and `setq`; and `lambda`, which is as in Common Lisp, except that it doesn't require a `#'` before it.
 In addition, Scheme allows variables, constants (numbers, strings, and characters), and function calls.
 The function call is different because the function itself is evaluated in the same way as the arguments.
 In Common Lisp, (`f x`) means to look up the function binding of `f` and apply that to the value of `x`.
 In Scheme, `(f x)` means to evaluate `f` (in this case by looking up the value of the variable `f` ), evaluate `x` (by looking up the value of the variable in exactly the same way) and then apply the function to the argument.
 Any expression can be in the function position, and it is evaluated just like the arguments.
 Another difference is that Scheme uses `#t` and `#f` for true and false, instead of `t` and `nil`.
-The empty list is denoted by `()`, and it is distinct from the false value, #f.
+The empty list is denoted by `()`, and it is distinct from the false value, `#f`.
 There are also minor lexical differences in the conventions for complex numbers and numbers in different bases, but these can be ignored for all the programs in this book.
 Also, in Scheme a single macro, `define`, serves to define both variables and functions.
 
@@ -214,7 +214,7 @@ Then we will interpret `( f 1 2 3 )` by interpreting the body of `f` with the en
 ```
 
 Scheme procedures are implemented as Common Lisp functions, and in fact all the Scheme data types are implemented by the corresponding Common Lisp types.
-Iinclude the function `init-scheme- interp` to initialize a few global values and repeat the definitions of `last1` and `length=1`:
+I include the function `init-scheme-interp` to initialize a few global values and repeat the definitions of `last1` and `length=1`:
 
 ```lisp
 (defun set-var! (var val env)
@@ -533,7 +533,7 @@ This also holds for the compiler, as we see in the next section.
 ## 22.3 A Properly Tail-Recursive Interpreter
 
 Unfortunately, the interpreter presented above can not lay claim to the name Scheme, because a true Scheme must be properly tail-recursive.
-Our interpreter is tail- recursive only when run in a Common Lisp that is tail-recursive.
+Our interpreter is tail-recursive only when run in a Common Lisp that is tail-recursive.
 To see the problem, consider the following Scheme procedure:
 
 ```lisp
@@ -577,7 +577,7 @@ The following is a properly tail-recursive interpreter.
 The macro `prog` sets up a `tagbody` within which we can use `go` statements to branch to labels, and it also sets up a `block` from which we can return a value.
 It can also bind variables like `let`, although in this usage, the variable list is empty.
 Any symbol within the body of a `prog` is considered a label.
-In this case, the label : `INTERP` is the target of the branch statements `(GO : INTERP)`.
+In this case, the label `:INTERP` is the target of the branch statements `(GO :INTERP)`.
 I use uppercase to indicate that go-to statements are being used, but this convention has not been widely adopted.
 
 ```lisp
@@ -806,7 +806,7 @@ Then we could write succinct<a id="tfn22-2"></a><sup>[2](#fn22-2)</sup> backtrac
 ```
 
 If `prime?` is a predicate that returns true only when its argument is a prime number, then prime will always return some `prime` number, decided by generating random integers.
-While this looks like a major change to the language-adding backtracking and nondeterminism-it turns out that `amb` and `fail` can be implemented quite easily with `cal1/cc`.
+While this looks like a major change to the language-adding backtracking and nondeterminism-it turns out that `amb` and `fail` can be implemented quite easily with `call/cc`.
 First, we need to make `amb` be a macro:
 
 ```lisp
@@ -860,10 +860,7 @@ The following expression, evaluated at the top level, saves the appropriate cont
 
 **Exercise 22.3 [s]** Can you implement `amb` and `fail` in Common Lisp?
 
-**Exercise 22.4 [m]**`fail` could be written
-
-`(define (fail) ((pop backtrack-points)))` if we had the pop macro in Scheme.
-
+**Exercise 22.4 [m]** `fail` could be written `(define (fail) ((pop backtrack-points)))` if we had the pop macro in Scheme.
 Write `pop.`
 
 ## 22.5 An Interpreter Supporting Call/cc
@@ -999,9 +996,8 @@ Once the working of `call/cc` is understood, the implementation is obvious:
 ## 22.6 History and References
 
 Lisp interpreters and AI have a long history together.
-MIT AI Lab Memo No.
-1 ([McCarthy 1958](B9780080571157500285.xhtml#bb0790)) was the first paper on Lisp.
-McCarthy's students were working on a Lisp compiler, had written certain routines-`read`, `print`, etc.-`in` assembly language, and were trying to develop a full Lisp interpreter in assembler.
+MIT AI Lab Memo No. 1 ([McCarthy 1958](B9780080571157500285.xhtml#bb0790)) was the first paper on Lisp.
+McCarthy's students were working on a Lisp compiler, had written certain routines-`read`, `print`, etc. - in assembly language, and were trying to develop a full Lisp interpreter in assembler.
 Sometime around the end of 1958, McCarthy wrote a theoretical paper showing that Lisp was powerful enough to write the universal function, `eval`.
 A programmer on the project, Steve Russell, saw the paper, and, according to McCarthy:
 
@@ -1015,7 +1011,7 @@ The first compiler was for the Lisp 1.5 system ([McCarthy et al.
 1962](B9780080571157500285.xhtml#bb0815)).
 The compiler was written in Lisp; it was probably the first compiler written in its own language.
 
-Allen's *Anatomy of lisp* (1978) was one of the first overviews of Lisp implementation techniques, and it remains one of the best.
+Allen's *Anatomy of Lisp* (1978) was one of the first overviews of Lisp implementation techniques, and it remains one of the best.
 However, it concentrates on the dynamic-scoping Lisp dialects that were in use at the time.
 The more modern view of a lexically scoped Lisp was documented in an influential pair of papers by Guy Steele ([1976a](B9780080571157500285.xhtml#bb1130),[b](B9780080571157500285.xhtml#bb1135)).
 His papers "Lambda: the ultimate goto" and "Compiler optimization based on viewing lambda as rename plus goto" describe properly tail-recursive interpreters and compilers.
@@ -1109,10 +1105,10 @@ The above definition is equivalent to:
 
 Make changes to the interpreter to allow this kind of internal definition.
 
-**Exercise  22.10** Scheme programmers are often disdainful of the `function` or `#`' notation in Common Lisp.
-Is it possible (without changing the compiler) to make Common Lisp accept `(lambda ( ) ... )` instead of `#` ' `(lambda ( ) ... )` and `fn` instead of `#`'`fn?`
+**Exercise 22.10** Scheme programmers are often disdainful of the `function` or `#'` notation in Common Lisp.
+Is it possible (without changing the compiler) to make Common Lisp accept `(lambda ( ) ... )` instead of `#'(lambda () ... )` and `fn` instead of `#'fn`?
 
-**Exercise  22.11 [m]** The top level of the continuation-passing version of `scheme` includes the call: `(interp (read)``nil` #'`print)`.
+**Exercise 22.11 [m]** The top level of the continuation-passing version of `scheme` includes the call: `(interp (read) nil #'print)`.
 Will this always result in some value being printed?
 Or is it possible that the expression read might call some escape function that ignores the value without printing anything?
 
@@ -1138,7 +1134,7 @@ Explain how this would be done both for the first version of the interpreter and
 **Answer 22.3** No.
 `fail` requires continuations with dynamic extent.
 
-**Answer 22.5** We need only modify `extend` - `env` to know about an atomic `vars` list.
+**Answer 22.5** We need only modify `extend-env` to know about an atomic `vars` list.
 While we're at it, we might as well add some error checking:
 
 ```lisp

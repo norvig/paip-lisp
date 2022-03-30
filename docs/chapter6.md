@@ -46,7 +46,8 @@ This is a considerable amount of work, but it is all handled by `read`.
 We would need a syntactic parser to assemble the lexical tokens into statements.
 `read` also handles this, but only because Lisp statements have trivial syntax: the syntax of lists and atoms.
 Thus `read` serves fine as a syntactic parser for Lisp, but would fail for Pascal.
-Next, we need the evaluation or interpretation part of the interpreter; `eval` does this nicely, and could handle Pascal just as well if we parsed Pascal syntax into Lisp expressions, `print` does much less work than `read` or `eval`, but is still quite handy.
+Next, we need the evaluation or interpretation part of the interpreter; `eval` does this nicely, and could handle Pascal just as well if we parsed Pascal syntax into Lisp expressions.
+`print` does much less work than `read` or `eval`, but is still quite handy.
 
 The important point is not whether one line of code can be considered an implementation of Lisp; it is to recognize common patterns of computation.
 Both `eliza` and `lisp` can be seen as interactive interpreters that read some input, transform or evaluate the input in some way, print the result, and then go back for more input.
@@ -197,23 +198,23 @@ It has to be listed as a segment pattern rather than a single pattern because it
 When the description of a problem gets this complicated, it is a good idea to attempt a more formal specification.
 The following table describes a grammar of patterns, using the same grammar rule format described in [chapter 2](B9780080571157500029.xhtml).
 
-| []()              |                        |                                                   |
-|-------------------|------------------------|---------------------------------------------------|
-| *pat*=>           | *var*                  | match any one expression                          |
-|                   | *Constant*             | match just this atom                              |
-|                   | *segment*-*pat*        | match something against a sequence                |
-|                   | *single*-*pat*         | match something against one expression            |
-|                   | (*pat* . *pat*)         | match the first and the rest                      |
-| *single*-*pat*=>  | (?is *var predicate*) | test predicate on one expression                  |
-|                   | (?or *pat*...)        | match any pattern on one expression               |
-|                   | (?and *pat*...)       | match every pattern on one expression             |
-|                   | (?not *pat*...)       | succeed if pattern(s) do not match                |
-| *segment*-*pat*=> | ( (?* *var*)...)       | match zero or more expressions                    |
-|                   | ( (?+ *var*) ... )     | match one or more expressions                     |
-|                   | ( ( ?? *var*) ... )    | match zero or one expression                      |
-|                   | ( ( ?if *exp* )...)   | test if exp (which may contain variables) is true |
-| *Var* =>          | ?*chars*               | a symbol starting with ?                          |
-| *constant* =>     | *atom*                 | any nonvariable atom                              |
+| []()            |                         |                                                   |
+|-----------------|-------------------------|---------------------------------------------------|
+| *pat*=>         | *var*                   | match any one expression                          |
+|                 | *constant*              | match just this atom                              |
+|                 | *segment-pat*           | match something against a sequence                |
+|                 | *single-pat*            | match something against one expression            |
+|                 | (*pat . pat*)           | match the first and the rest                      |
+| *single-pat*=>  | (`?is` *var predicate*) | test predicate on one expression                  |
+|                 | (`?or` *pat*...)        | match any pattern on one expression               |
+|                 | (`?and` *pat*...)       | match every pattern on one expression             |
+|                 | (`?not` *pat*...)       | succeed if pattern(s) do not match                |
+| *segment-pat*=> | ((`?*` *var*)...)       | match zero or more expressions                    |
+|                 | ((`?+` *var*) ... )     | match one or more expressions                     |
+|                 | ((`??` *var*) ... )     | match zero or one expression                      |
+|                 | ((`?if` *exp* )...)     | test if exp (which may contain variables) is true |
+| *var* =>        | `?`*chars*              | a symbol starting with ?                          |
+| *constant* =>   | *atom*                  | any nonvariable atom                              |
 
 Despite the added complexity, all patterns can still be classified into five cases.
 The pattern must be either a variable, constant, a (generalized) segment pattern, a (generalized) single-element pattern, or a cons of two patterns.
@@ -569,7 +570,7 @@ By default, we will use `pat-match`, but it should be possible to use other matc
 Once we have determined which rule to use, we have to determine what it means to use it.
 The default is just to substitute the bindings of the match into the then-part of the rule.
 
-The rule-based translater tool now looks like this:
+The rule-based translator tool now looks like this:
 
 ```lisp
 (defun rule-based-translator
@@ -650,8 +651,8 @@ Note that `tree-search` itself does not specify any particular searching strateg
 
 ```lisp
 (defun tree-search (states goal-p successors combiner)
-  "Find a state that satisfies goal-p.
-   Start with states,and search according to successors and combiner."
+  "Find a state that satisfies goal-p.  Start with states,
+  and search according to successors and combiner."
   (dbg :search "~&; ; Search: ~  a" states)
   (cond ((null states) fail)
       ((funcall goal-p (first states)) (first states))
@@ -932,17 +933,17 @@ Suppose we have a list of selected cities with airports, along with their positi
 (defstruct (city (:type list)) name long lat)
 
 (defparameter *cities*
-   '((Atlanta        84.23 33.45)      (Los Angeles       118.15 34.03)     
-   (Boston           71.05 42.21)      (Memphis           90.03 35.09)     
-   (Chicago          87.37 41.50)      (New York          73.58 40.47)     
-   (Denver           105.00 39.45)     (Oklahoma City     97.28 35.26)     
-   (Eugene           123.05 44.03)     (Pittsburgh        79.57 40.27)     
-   (Flagstaff        111.41 35.13)     (Quebec            71.11 46.49)     
-   (Grand Jet        108.37 39.05)     (Reno              119.49 39.30)    
-   (Houston          105.00 34.00)     (San Francisco     122.26 37.47)    
-   (Indianapolis     86.10 39.46)      (Tampa             82.27 27.57)     
-   (Jacksonville     81.40 30.22)      (Victoria          123.21 48.25)    
-   (Kansas City      94.35 39.06)      (Wilmington        77.57 34.14)))   
+   '((Atlanta        84.23 33.45)      (Los-Angeles       118.15 34.03)
+   (Boston           71.05 42.21)      (Memphis           90.03 35.09)
+   (Chicago          87.37 41.50)      (New-York          73.58 40.47)
+   (Denver           105.00 39.45)     (Oklahoma-City     97.28 35.26)
+   (Eugene           123.05 44.03)     (Pittsburgh        79.57 40.27)
+   (Flagstaff        111.41 35.13)     (Quebec            71.11 46.49)
+   (Grand-Jct        108.37 39.05)     (Reno              119.49 39.30)
+   (Houston          105.00 34.00)     (San-Francisco     122.26 37.47)
+   (Indianapolis     86.10 39.46)      (Tampa             82.27 27.57)
+   (Jacksonville     81.40 30.22)      (Victoria          123.21 48.25)
+   (Kansas-City      94.35 39.06)      (Wilmington        77.57 34.14)))
 ```
 
 This example introduces a new option to `defstruct`.
@@ -1110,14 +1111,14 @@ In the following examples, each call to the new version of `trip` returns a path
 
 ```lisp
 > (show-city-path (trip (city 'san-francisco) (city 'boston) 1))
-#<Path 4514.8  km: San-Francisco - Reno - Grand-Jet - Denver -
+#<Path 4514.8  km: San-Francisco - Reno - Grand-Jct - Denver -
   Kansas-City - Indianapolis - Pittsburgh - Boston  >
 > (show-city-path (trip (city 'boston) (city 'san-francisco) 1))
 #<Path 4577.3  km: Boston - Pittsburgh - Chicago - Kansas-City -
-  Denver - Grand-Jet - Reno - San-Francisco  >
+  Denver - Grand-Jct - Reno - San-Francisco  >
 > (show-city-path (trip (city 'boston) (city 'san-francisco) 3))
 #<Path 4514.8  km: Boston - Pittsburgh - Indianapolis -
-  Kansas-City - Denver - Grand-Jet - Reno - San-Francisco  >
+  Kansas-City - Denver - Grand-Jct - Reno - San-Francisco  >
 ```
 
 This example shows how search is susceptible to irregularities in the search space.
@@ -1363,7 +1364,7 @@ If we have a cost function, then the answer is easy: keep the path with the chea
 Best-first search of a graph removing duplicate states is called A* search.
 
 A* search is more complicated than `graph-search` because of the need both to add and to delete paths to the lists of current and old paths.
-For each new successor state, there are three possibilites.
+For each new successor state, there are three possibilities.
 The new state may be in the list of current paths, in the list of old paths, or in neither.
 Within the first two cases, there are two subcases.
 If the new path is more expensive than the old one, then ignore the new path - it can not lead to a better solution.

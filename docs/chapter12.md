@@ -231,10 +231,10 @@ If the body starts with a call to =, we compile a call to `unify!`.
 Otherwise, we compile a call to a function, passing in the appropriate continuation.
 
 However, it is worthwhile to think ahead at this point.
-If we want to treat = specially now, we will probably want to treat other goals specially later.
-So instead of explicitly checking for =, we will do a data-driven dispatch, looking for any predicate that has a `prolog-compiler-macro` property attached to it.
+If we want to treat `=` specially now, we will probably want to treat other goals specially later.
+So instead of explicitly checking for `=`, we will do a data-driven dispatch, looking for any predicate that has a `prolog-compiler-macro` property attached to it.
 Like Lisp compiler macros, the macro can decline to handle the goal.
-We will adopt the convention that returning `:pass` means the macro decided not to handle i t, and thus it should be compiled as a normal goal.
+We will adopt the convention that returning `:pass` means the macro decided not to handle it, and thus it should be compiled as a normal goal.
 
 ```lisp
 (defun compile-body (body cont)
@@ -359,13 +359,14 @@ There are some problems in this version of the compiler:
 
 *   We forgot to undo the bindings after each call to `unify!`.
 
-*   The definition of `undo-bindings` ! defined previously requires as an argument an index into the `*trail*` array.
+*   The definition of `undo-bindings!` defined previously requires as an argument an index into the `*trail*` array.
 So we will have to save the current top of the trail when we enter each function.
 
 *   Local variables, such as `?x`, were used without being introduced.
 They should be bound to new variables.
 
-Undoing the bindings is simple: we add a single line to `compile-predicate,` a call to the function `maybe-add-undo-bindings.` This function inserts a call to `undo-bindings!` after every failure.
+Undoing the bindings is simple: we add a single line to `compile-predicate,` a call to the function `maybe-add-undo-bindings`.
+This function inserts a call to `undo-bindings!` after every failure.
 If there is only one clause, no undoing is necessary, because the predicate higher up in the calling sequence will do it when it fails.
 If there are multiple clauses, the function wraps the whole function body in a let that captures the initial value of the trail's fill pointer, so that the bindings can be undone to the right point.
 Similarly, we can handle the unbound-variable problem by wrapping a call to `bind-unbound-vars` around each compiled clause:
@@ -456,9 +457,9 @@ With these improvements, here's the code we get for `likes` and `member`:
 
 This is fairly good, although there is still room for improvement.
 One minor improvement is to eliminate unneeded variables.
-For example, `?rest` in the first clause of `member` and `?x` in the second clause are bound to new variables-the result of the (?) call-and then only used once.
-The generated code could be made a little tighter by just putting (?) inline, rather than binding it to a variable and then referencing that variable.
-There are two parts to this change: updating `compile-arg` to compile an anonymous variable inline, and changing the <- macro so that it converts all variables that only appear once in a clause into anonymous variables:
+For example, `?rest` in the first clause of `member` and `?x` in the second clause are bound to new variables-the result of the `(?)` call-and then only used once.
+The generated code could be made a little tighter by just putting `(?)` inline, rather than binding it to a variable and then referencing that variable.
+There are two parts to this change: updating `compile-arg` to compile an anonymous variable inline, and changing the `<-` macro so that it converts all variables that only appear once in a clause into anonymous variables:
 
 ```lisp
 (defmacro <- (&rest clause)
@@ -530,7 +531,7 @@ Now `member` compiles into this:
 ## 12.4 Improving the Compilation of Unification
 
 Now we turn to the improvement of `compile-unify`.
-Recall that we want to elimina te certain calls to `unify!` so that, for example, the first clause of `member:`
+Recall that we want to eliminate certain calls to `unify!` so that, for example, the first clause of `member`:
 
 ```lisp
 (<- (member ?item (?item . ?rest)))
@@ -581,7 +582,7 @@ In addition, unification of two cons cells can be broken into components at comp
 We can even do some occurs checking at compile time: `(= ?x (f ?x))` should fail.
 
 The following table lists these improvements, along with a breakdown for the cases of unifying a bound `(?arg1)` or unbound `(?x)` variable agains another expression.
-The first column is the unification call, the second is the generated code, and the third is the bindings that will be added as a resuit of the call:
+The first column is the unification call, the second is the generated code, and the third is the bindings that will be added as a result of the call:
 
 |      | Unification         | Code                    | Bindings            |
 |------|---------------------|-------------------------|---------------------|
@@ -820,8 +821,9 @@ Finally, we can see the fruits of our efforts:
 ## 12.5 Further Improvements to Unification
 
 Could `compile-unify` be improved yet again?
-If we insist that it call `unify!,` it seems that it can't be made much better.
-However, we could improve it by in effect compiling `unify!.` This is a key idea in the Warren Abstract Machine, or WAM, which is the most commonly used model for Prolog compilers.
+If we insist that it call `unify!`, it seems that it can't be made much better.
+However, we could improve it by in effect compiling `unify!`.
+This is a key idea in the Warren Abstract Machine, or WAM, which is the most commonly used model for Prolog compilers.
 
 We call `unify!` in four cases (5, 6, 7, and 10), and in each case the first argument is a variable, and we know something about the second argument.
 But the first thing `unify!` does is redundantly test if the first argument is a variable.
@@ -863,7 +865,7 @@ For example, I had to use `find-anywhere` instead of `occur-check` for case 11, 
 But find-anywhere does not do as complete a job as `occur-check`.
 Write a version of `compile-unify` that returns three values: the code, a noncircular binding list, and a list of variables that are bound to unknown values.
 
-**Exercise  12.5 [h]** An alternative to the previous exercise is not to use binding lists at ail.
+**Exercise  12.5 [h]** An alternative to the previous exercise is not to use binding lists at all.
 Instead, we could pass in a list of equivalence classes-that is, a list of lists, where each sublist contains one or more elements that have been unified.
 In this approach, the initial equivalence class list would be `((?arg1) (?arg2))`.
 After unifying `?arg1` with `?x`, `?arg2` with `?y`, and `?x` with 4, the list would be ( `(4 ?arg1 ?x) (?arg2 ?y))`.
@@ -979,8 +981,7 @@ To continue, we call that function, but to fail, we throw to the catch point set
 With these definitions in place, we can invoke the compiler automatically just by making a query with the ? - macro.
 
 **Exercise 12.6 [m]** Suppose you define a predicate `p`, which calls `q`, and then define `q`.
-In some implementations of Lisp, when you make a query like `(?
-- (p ?x))`, you may get a warning message like `"function q/1 undefined"` before getting the correct answer.
+In some implementations of Lisp, when you make a query like `(?- (p ?x))`, you may get a warning message like `"function q/1 undefined"` before getting the correct answer.
 The problem is that each function is compiled separately, so warnings detected during the compilation of `p/1` will be printed right away, even if the function `q/1` will be defined later.
 In ANSI Common Lisp there is a way to delay the printing of warnings until a series of compilations are done: wrap the compilation with the macro `with-compilation-unit`.
 Even if your implementation does not provide this macro, it may provide the same functionality under a different name.
@@ -999,7 +1000,8 @@ Another popular benchmark is Lisp's reverse function, which we can code as the r
 (<- (concat (?x . ?a) ?b (?x . ?c)) (concat ?a ?b ?c))
 ```
 
-rev uses the relation concat, which stands for concatenation, (`concat ?a ?b ?c`)is true when `?a` concatenated to `?b` yields `?c`.
+`rev` uses the relation `concat`, which stands for concatenation.
+`(concat ?a ?b ?c)` is true when `?a` concatenated to `?b` yields `?c`.
 This relationlike name is preferred over more procedural names like append.
 But `rev` is very similar to the following Lisp definitions:
 
@@ -1112,11 +1114,11 @@ However, we could have simplified the compiler greatly by having a simple defini
 
 In fact, if we give our compiler the single clause:
 
-(<- (= ?x `?x))`
+`(<- (= ?x ?x))`
 
-it produces just this code for the definition of `=/ 2`.
+it produces just this code for the definition of `=/2`.
 There are other equality predicates to worry about.
-The predicate `= =/2` is more like equal in Lisp.
+The predicate `==/2` is more like equal in Lisp.
 It does no unification, but instead tests if two structures are equal with regard to their elements.
 A variable is considered equal only to itself.
 Here's an implementation:
@@ -1169,6 +1171,7 @@ Here are the logical connectives and and or:
 ```lisp
 (<- (or ?a ?b) (call ?a))
 (<- (or ?a ?b) (call ?b))
+
 (<- (and ?a ?b) (call ?a) (call ?b))
 ```
 
@@ -1177,7 +1180,7 @@ Also, this definition negates most of the advantage of compilation.
 The goals inside an and or or will be interpreted by `call`, rather than being compiled.
 
 We can also define `not,` or at least the normal Prolog `not,` which is quite distinct from the logical `not.`
-In fact, in some dialects, `not` is written \+, which is supposed to be &#x22AC;, that is, "can not be derived."
+In fact, in some dialects, `not` is written `\+`, which is supposed to be &#x22AC;, that is, "can not be derived."
 The interpretation is that if goal G can not be proved, then (`not G` ) is true.
 Logically, there is a difference between (`not G` ) being true and being unknown, but ignoring that difference makes Prolog a more practical programming language.
 See [Lloyd 1987](B9780080571157500285.xhtml#bb0745) for more on the formal semantics of negation in Prolog.
@@ -1234,10 +1237,10 @@ A *bag* is an unordered collection with duplicates allowed.
 For example, the bag {*a*, *b, a*} is the same as the bag {*a*, *a*, *b*}, but different from {*a*, *b*}.
 Bags stands in contrast to *sets,* which are unordered collections with no duplicates.
 The set {*a*, *b*} is the same as the set {*b*, *a*}.
-Here is an implementation of `bagof:`
+Here is an implementation of `bagof`:
 
 ```lisp
-(defun bagof/3 (exp goal resuit cont)
+(defun bagof/3 (exp goal result cont)
  "Find all solutions to GOAL, and for each solution,
  collect the value of EXP into the list RESULT."
  ;; Ex: Assume (p 1) (p 2) (p 3). Then:
@@ -1246,7 +1249,7 @@ Here is an implementation of `bagof:`
  (call/1 goal #'(lambda ()
    (push (deref-copy exp) answers)))
  (if (and (not (null answers))
-  (unify! resuit (nreverse answers)))
+  (unify! result (nreverse answers)))
  (funcall cont))))
  (defun deref-copy (exp)
  "Copy the expression, replacing variables with new ones.
@@ -1280,7 +1283,7 @@ No.
 Those who are disappointed with a bag containing multiple versions of the same answer may prefer the primitive `setof`, which does the same computation as `bagof` but then discards the duplicates.
 
 ```lisp
-(defun setof/3 (exp goal resuit cont)
+(defun setof/3 (exp goal result cont)
  "Find all unique solutions to GOAL, and for each solution,
  collect the value of EXP into the list RESULT."
  ;; Ex: Assume (p 1) (p 2) (p 3). Then:
@@ -1289,7 +1292,7 @@ Those who are disappointed with a bag containing multiple versions of the same a
  (call/1 goal #'(lambda ()
    (push (deref-copy exp) answers)))
  (if (and (not (null answers))
-  (unify! resuit (delete-duplicates
+  (unify! result (delete-duplicates
     answers
     :test #'deref-equal)))
  (funcall cont))))
@@ -1503,14 +1506,14 @@ I choose the latter:
 ```
 
 Another way to use the cut is in a *repeat/fail* loop.
-The predicate repeat is defined with the following two clauses:
+The predicate `repeat` is defined with the following two clauses:
 
 ```lisp
 (<- (repeat))
 (<- (repeat) (repeat))
 ```
 
-An alterna te definition as a primitive is:
+An alternate definition as a primitive is:
 
 ```lisp
 (defun repeat/0 (cont)
@@ -1684,7 +1687,7 @@ should be compiled as if it were:
 
 *   `atomic/1` True if the argument is a number or symbol (like Lisp's `atom`).
 
-*   <,>,=<,>= Arithmetic comparison; succeeds when the arguments are both instantiated to numbers and the comparison is true.
+*   `<`, `>`, `=<`, `>=` Arithmetic comparison; succeeds when the arguments are both instantiated to numbers and the comparison is true.
 
 *   `listing/0` Print out the clauses for all defined predicates.
 
@@ -1781,7 +1784,7 @@ The macro for `and` is trivial:
   (compile-body (append (args goal) body) cont bindings))
 ```
 
-The macro for or is trickier:
+The macro for `or` is trickier:
 
 ```lisp
 (def-prolog-compiler-macro or (goal body cont bindings)
@@ -1790,14 +1793,14 @@ The macro for or is trickier:
       (0 fail)
       (1 (compile-body (cons (first disjuncts) body) cont bindings))
       (t (let ((fn (gensym "F")))
-        '(fl&egrave;t ((,fn () ,(compile-body body cont bindings)))
+        '(flet ((,fn () ,(compile-body body cont bindings)))
           .,(maybe-add-undo-bindings
             (loop for g in disjuncts collect
               (compile-body (list g) '#',fn
                 bindings)))))))))
 ```
 
-**Answer 12.11**`true/0` is `funcall` : when a goal succeeds, we call the continuation, `fail/0` is `ignore`: when a goal fails, we ignore the continuation.
+**Answer 12.11** `true/0` is `funcall`: when a goal succeeds, we call the continuation, `fail/0` is `ignore`: when a goal fails, we ignore the continuation.
 We could also define compiler macros for these primitives:
 
 ```lisp

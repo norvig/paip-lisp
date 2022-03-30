@@ -1,10 +1,9 @@
 # Chapter 10
 ## Low-Level Efficiency Issues
 
-> There are only two qualities in the world: efficiency and inefficiency; and only two sorts of people: the efficient and the inefficient
-
-> -George Bernard Shaw
-
+> There are only two qualities in the world: efficiency and inefficiency; and only two sorts of people: the efficient and the inefficient.
+>
+> -George Bernard Shaw \
 > John Bull's Other Island (1904)
 
 The efficiency techniques of the previous chapter all involved fairly significant changes to an algorithm.
@@ -140,20 +139,17 @@ Here is the disassembled code for f from Allegro Common Lisp for a Motorola 6800
 ;; disassembling #<Function f @ #x83ef79  >
 ;; formals: x y
 ;; code vector @ #x83ef44
+0:      link    a6.#0
+4:      move.l  a2,-(a7)
+6:      move.l  a5,-(a7)
+8:      move.l  7(a2),a5
+12:     move.l  8(a6).d4 ; y
+16:     add.l   12(a6),d4 ; x
+20:     move.l  #1,d1
+22:     move.l  -8(a6),a5
+26:     unlk    a6
+28:     rtd     #8
 ```
-
-| []()  |          |                 |
-|-------|----------|-----------------|
-| `0:`  | `link`   | `a6.#0`         |
-| `4:`  | `move.l` | `a2,-(a7)`      |
-| `6:`  | `move.l` | `a5,-(a7)`      |
-| `8:`  | `move.l` | `7(a2),a5`      |
-| `12:` | `move.l` | `8(a6).d4 ; y`  |
-| `16:` | `add.l`  | `12(a6),d4 ; x` |
-| `20:` | `move.l` | `#1,d1`         |
-| `22:` | `move.l` | `-8(a6),a5`     |
-| `26:` | `unlk`   | `a6`            |
-| `28:` | `rtd`    | `#8`            |
 
 This may look intimidating at first glance, but you don't have to be an expert at 68000 assembler to gain some appreciation of what is going on here.
 The instructions labeled 0-8 (labels are in the leftmost column) comprise the typical function preamble for the 68000.
@@ -164,7 +160,7 @@ More recent versions of the compiler will omit these instructions.
 
 The heart of function `f` is the two-instruction sequence 12-16.
 Instruction 12 retrieves `y`, and 16 adds `y` to `x`, leaving the result in `d4`, which is the "result" register.
-Instruction 20 sets `dl`, the "number of values returned" register, to 1.
+Instruction 20 sets `d1`, the "number of values returned" register, to 1.
 
 Contrast this to the code for `g`, which has no declarations and is compiled at default speed and safety settings:
 
@@ -173,39 +169,36 @@ Contrast this to the code for `g`, which has no declarations and is compiled at 
 ;; disassembling #<Function g @ #x83dbd1  >
 ;; formals: x y
 ;; code vector @ #x83db64
+0:      add.l   #8,31(a2
+4:      sub.w   #2,dl
+6:      beq.s   12
+8:      jmp     16(a4)        ; wnaerr
+12:     link    a6,#0
+16:     move.l  a2,-(a7
+18:     move.l  a5,-(a7
+20:     move.l  7(a2),a5
+24:     tst.b   -  208(a4)    ; signal-hit
+28:     beq.s   34
+30:     jsr     872(a4)       ; process-sig
+34:     move.l  8(a6),d4      ; y
+38:     move.l  12(a6),d0     ; x
+42:     or.l    d4,d0
+44:     and.b   #7,d0
+48:     bne.s   62
+50:     add.l   12(a6),d4 ;   x
+54:     bvc.s   76
+56:     jsr     696(a4)       ; add-overflow
+60:     bra.s   76
+62:     move.l  12(a6),-(a7)  ; x
+66:     move.l  d4,-(a7
+68:     move.l  #2,d1
+70:     move.l  -304(a4),a0   ; +  _2op
+74:     jsr     (a4
+76:     move.l  #1,d1
+78:     move.l  -8(a6),a5
+82:     unlk    a6
+84:     rtd     #8
 ```
-
-| []()  |          |                |                  |
-|-------|----------|----------------|------------------|
-| `0:`  | `add.l`  | `#8,31(a2)`    |                  |
-| `4:`  | `sub.w`  | `#2,dl`        |                  |
-| `6:`  | `beq.s`  | `12`           |                  |
-| `8:`  | `jmp`    | `16(a4)`       | `; wnaerr`       |
-| `12:` | `link`   | `a6,#0`        |                  |
-| `16:` | `move.l` | `a2,-(a7)`     |                  |
-| `18:` | `move.l` | `a5,-(a7)`     |                  |
-| `20:` | `move.l` | `7(a2),a5`     |                  |
-| `24:` | `tst.b`  | `-  208(a4)`   | `; signal-hit`   |
-| `28`  | `beq.s`  | `34`           |                  |
-| `30:` | `jsr`    | `872(a4)`      | `; process-sig`  |
-| `34:` | `move.l` | `8(a6),d4`     | `; y`            |
-| `38:` | `move.l` | `12(a6),d0`    | `; x`            |
-| `42:` | `or.l`   | `d4,d0`        |                  |
-| `44:` | `and.b`  | `#7,d0`        |                  |
-| `48:` | `bne.s`  | `62`           |                  |
-| `50:` | `add.l`  | `12(a6),d4 ;`  | `x`              |
-| `54:` | `bvc.s`  | `76`           |                  |
-| `56:` | `jsr`    | `696(a4)`      | `; add-overflow` |
-| `60:` | `bra.s`  | `76`           |                  |
-| `62:` | `move.l` | `12(a6),-(a7)` | `; x`            |
-| `66:` | `move.l` | `d4,-(a7)`     |                  |
-| `68:` | `move.l` | `#2,d1`        |                  |
-| `70:` | `move.l` | `-304(a4),a0`  | `; +  _2op`      |
-| `74:` | `jsr`    | `(a4)`         |                  |
-| `76:` | `move.l` | `#1,d1`        |                  |
-| `78:` | `move.l` | `-8(a6),a5`    |                  |
-| `82:` | `unlk`   | `a6`           |                  |
-| `84:` | `rtd`    | `#8`           |                  |
 
 See how much more work is done.
 The first four instructions ensure that the right number of arguments have been passed to `g`.
@@ -223,13 +216,13 @@ Some low-quality compilers ignore declarations altogether.
 Other compilers don't need certain declarations, because they can rely on special instructions in the underlying architecture.
 On a Lisp Machine, both `f` and `g` compile into the same code:
 
-| []()       |           |       |
-|------------|-----------|-------|
-| `6 PUSH`   | `ARG|0`   | `; X` |
-| `7 +`      | `ARG|1`   | `; Y` |
-| `8 RETURN` | `PDL-POP` |       |
+```
+6 PUSH    ARG|0    ; X
+7 +       ARG|1    ; Y
+8 RETURN  PDL-POP
+```
 
-The Lisp Machine has a microcoded  +  instruction that simultaneously does a fixnum add and checks for non-fixnum arguments, branching to a subroutine if either argument is not a fixnum.
+The Lisp Machine has a microcoded `+` instruction that simultaneously does a fixnum add and checks for non-fixnum arguments, branching to a subroutine if either argument is not a fixnum.
 The hardware does the work that the compiler has to do on a conventional processor.
 This makes the Lisp Machine compiler simpler, so compiling a function is faster.
 However, on modern pipelined computers with instruction caches, there is little or no advantage to microcoding.
@@ -315,25 +308,21 @@ Let's look at some simple examples:
 
 We can see what these compile into for the TI Explorer, but remember that your compiler may be quite different.
 
-`> (disassemble 'reg)`
+```
+> (disassemble 'reg)
+    8 PUSH            ARG|0     ; A
+    9 PUSH            ARG|1     ; B
+   10 PUSH            ARG|2     ; C
+   11 PUSH            ARG|3     ; D
+   12 TAIL-REC CALL-4 FEF|3     ; #'LIST
 
-| []()                     |        |     |             |
-|--------------------------|--------|-----|-------------|
-| `      8 PUSH`           | `ARG   | 0`  | `; A`       |
-| `      9 PUSH`           | `ARG   | 1`  | `; B`       |
-| `    10 PUSH`            | `ARG   | 2`  | `; C`       |
-| `    11 PUSH`            | `ARG   | 3`  | `; D`       |
-| `    12 TAIL-REC CALL-4` | `FEF   | 3`  | `; #'LIST`  |
-
-`> (disassemble 'rst)`
-
-| []()                     |        |     |             |
-|--------------------------|--------|-----|-------------|
-| `      8 PUSH`           | `ARG   | 0`  | `; A`       |
-| `      9 PUSH`           | `ARG   | 1`  | `; B`       |
-| `    10 PUSH`            | `ARG   | 2`  | `; C`       |
-| `    11 PUSH`            | `LOCAL | 0`  | `; D`       |
-| `    12 RETURN CALL-4`   | `FEF   | 3`  | `; #'LIST*` |
+> (disassemble 'rst)
+    8 PUSH            ARG|0     ; A
+    9 PUSH            ARG|1     ; B
+   10 PUSH            ARG|2     ; C
+   11 PUSH            LOCAL|0   ; D
+   12 RETURN CALL-4   FEF|3     ; #'LIST*
+```
 
 With the regular argument list, we just push the four variables on the argument stack and branch to the list function.
 ([Chapter 22](B9780080571157500224.xhtml) explains why a tail-recursive call is just a branch statement.)
@@ -344,22 +333,20 @@ Let's compare with optional arguments:
 
 ```
 (defun opt (&optional a b (c 1) (d (sqrt a))) (list a b c d))
-  > (disassemble 'opt)
-```
 
-| []()                   |         |                                                  |
-|------------------------|---------|--------------------------------------------------|
-| `  24 DISPATCH`        | `FEF|5` | `; [0`=>`25;1`=>`25;2`=>`25;3`=>`27;ELSE`=>`30]` |
-| `  25 PUSH-NUMBER`     | `1`     |                                                  |
-| `  26 POP`             | `ARG|2` | ; `C`                                            |
-| `  27 PUSH`            | `ARG|0` | ; `A`                                            |
-| `  28 PUSH CALL-1`     | `FEF|3` | ; `#'SQRT`                                       |
-| `  29 POP`             | `ARG|3` | ; `D`                                            |
-| `  30 PUSH`            | `ARG|0` | ; `A`                                            |
-| `  31 PUSH`            | `ARG|1` | ; `B`                                            |
-| `  32 PUSH`            | `ARG|2` | ; `C`                                            |
-| `  33 PUSH`            | `ARG|3` | ; `D`                                            |
-| `  34 TAIL-REC CALL-4` | `FEF|4` | ; `#'LIST`                                       |
+> (disassemble 'opt)
+  24 DISPATCH       FEF|5     ; [0=>25;1=>25;2=>25;3=>27;ELSE=>30]
+  25 PUSH-NUMBER    1
+  26 POP            ARG|2     ; C
+  27 PUSH           ARG|0     ; A
+  28 PUSH CALL-1    FEF|3     ; #'SQRT
+  29 POP            ARG|3     ; D
+  30 PUSH           ARG|0     ; A
+  31 PUSH           ARG|1     ; B
+  32 PUSH           ARG|2     ; C
+  33 PUSH           ARG|3     ; D
+  34 TAIL-REC CALL-4  FEF|4   ; #'LIST
+```
 
 Although this assembly language may be harder to read, it turns out that optional arguments are handled very efficiently.
 The calling sequence stores the number of optional arguments on top of the stack, and the `DISPATCH` instruction uses this to index into a table stored at location `FEF|5` (an offset five words from the start of the function).
@@ -369,62 +356,55 @@ Unfortunately, keyword arguments don't fare as well:
 
 ```
 (defun key (&key a b` (`c 1`) `(d (sqrt a))) (list a b c d))
-  > (disassemble 'key)
+> (disassemble 'key)
+  14 PUSH-NUMBER    1
+  15 POP            LOCAL|3   ; C
+  16 PUSH           FEF|3     ; SYS:-.KEYWORD-GARBAGE
+  17 POP            LOCAL|4
+  18 TEST           LOCAL|0
+  19 BR-NULL    24
+  20 PUSH           FEF|4     ; '(:A :B :C :D)
+  21 SET-NIL        PDL-PUSH
+  22 PUSH-LOC       LOCAL|1   ; A
+  23 (AUX) %STORE-KEY-WORD-ARGS
+  24 PUSH           LOCAL|1   ; A
+  25 PUSH           LOCAL|2   ; B
+  26 PUSH           LOCAL|3   ; C
+  27 PUSH           |4
+  28 EQ             FEF|3     ; SYS::KEYWORD-GARBAGE
+  29 BR-NULL    33
+  30 PUSH           LOCAL|1   ; A
+  31 PUSH CALL-1    FEF|5     ; #'SQRT
+  32 RETURN CALL-4  FEF|6     ; #'LIST
+  33 PUSH           LOCAL|4
+  34 RETURN CALL-4  FEF|6     ; #'LIST
 ```
-
-
-| []()                              |           |                           |
-|-----------------------------------|-----------|---------------------------|
-| `  14 PUSH-NUMBER`                | `1`       |                           |
-| `  15 POP`                        | `LOCAL|3` | `; C`                     |
-| `  16 PUSH`                       | `FEF|3`   | `; SYS:-.KEYWORD-GARBAGE` |
-| `  17 POP`                        | `LOCAL|4` |                           |
-| `  18 TEST`                       | `LOCAL|0` |                           |
-| `  19 BR-NULL`                    | `24`      |                           |
-| `  20 PUSH`                       | `FEF|4`   | `; '(:A :B :C :D)`        |
-| `  21 SET-NIL`                    | `PDL-PUSH`|                           |
-| `  22 PUSH-LOC`                   | `LOCAL|1` | `; A`                     |
-| `  23 (AUX) %STORE-KEY-WORD-ARGS` |           |                           |
-| `  24 PUSH`                       | `LOCAL|1` | `; A`                     |
-| `  25 PUSH`                       | `LOCAL|2` | `; B`                     |
-| `  26 PUSH`                       | `LOCAL|3` | `; C`                     |
-| `  27 PUSH`                       | `|4`      |                           |
-| `  28 EQ`                         | `FEF|3`   | `; SYS::KEYWORD-GARBAGE`  |
-| `  29 BR-NULL`                    | `33`      |                           |
-| `  30 PUSH`                       | `LOCAL|1` | `; A`                     |
-| `  31 PUSH CALL-1`                | `FEF|5`   | `; #'SQRT`                |
-| `  32 RETURN CALL-4`              | `FEF|6`   | `; #'LIST`                |
-| `  33 PUSH`                       | `LOCAL|4` |                           |
-| `  34 RETURN CALL-4`              | `FEF|6`   | ;`#'LIST`                 |
 
 It is not important to be able to read all this assembly language.
 The point is that there is considerable overhead, even though this architecture has a specific instruction `(%STORE-KEY-WORD-ARGS)` to help deal with keyword arguments.
 
 Now let's look at the results on another system, the Allegro compiler for the 68000.
-First, here's the assembly code for reg, to give you an idea of the minimal calling sequence:<a id="tfn10-1"></a><sup>[1](#fn10-1)</sup>
+First, here's the assembly code for `reg`, to give you an idea of the minimal calling sequence:<a id="tfn10-1"></a><sup>[1](#fn10-1)</sup>
 
 ```
 > (disassemble 'reg)
 ;; disassembling #<Function reg @ #x83db59  >
 ;; formals: a b c d
 ;; code vector @ #x83dblc
+0:      link    a6,#0
+4:      move.l  a2,-(a7)
+6:      move.l  a5,-(a7)
+8:      move.l  7(a2),a5
+12:     move.l  20(a6),-(a7)    ; a
+16:     move.l  16(a6).-(a7)    ; b
+20:     move.l  12(a6),-(a7)    ; c
+24:     move.l  8(a6),-(a7)     ; d
+28:     move.l  #4,dl
+30:     jsr     848(a4)         ; list
+34:     move.l  -  8(a6),a5
+38:     unlk    a6
+40:     rtd     #10
 ```
-
-| []()  |          |                |          |
-|-------|----------|----------------|----------|
-| `0:`  | `link`   | `a6,#0`        |          |
-| `4:`  | `move.l` | `a2,-(a7)`     |          |
-| `6:`  | `move.l` | `a5,-(a7)`     |          |
-| `8:`  | `move.l` | `7(a2),a5`     |          |
-| `12:` | `move.l` | `20(a6),-(a7)` | `; a`    |
-| `16:` | `move.l` | `16(a6).-(a7)` | `; b`    |
-| `20:` | `move.l` | `12(a6),-(a7)` | `; c`    |
-| `24:` | `move.l` | `8(a6),-(a7)`  | `; d`    |
-| `28:` | `move.l` | `#4,dl`        |          |
-| `30:` | `jsr`    | `848(a4)`      | `; list` |
-| `34:` | `move.l` | `-  8(a6),a5`  |          |
-| `38:` | `unlk`   | `a6`           |          |
-| `40:` | `rtd`    | `#10`          |          |
 
 Now we see that `&rest` arguments take a lot more code in this system:
 
@@ -432,37 +412,34 @@ Now we see that `&rest` arguments take a lot more code in this system:
 > (disassemble 'rst)
 ;; disassembling #<Function rst @ #x83de89  >
 ;; formals: a b c &rest d
-code vector @ #x83de34
+;; code vector @ #x83de34
+0:      sub.w   #3,dl
+2:      bge.s   8
+4:      jmp     16(a4)          ; wnaerr
+8:      move.l  (a7)+,al
+10:     move.l  d3,-(a7)        ; nil
+12:     sub.w   #l,dl
+14:     bit.s   38
+16:     move.l  al, -52(a4)     ; c_protected-retaddr
+20:     jsr     40(a4)          ; cons
+24:     move.l  d4,-(a7)
+26:     dbra    dl,20
+30:     move.l  -52(a4),al      ; c_protected-retaddr
+34:     clr.l   -52(a4)         ; c_protected-retaddr
+38:     move.l  al, -(a7)
+40:     link    a6,#0
+44:     move.l  a2,-(a7)
+46:     move.l  a5,-(a7)
+48:     move.l  7(a2),a5
+52:     move.l  -332(a4),a0     ; list*
+56:     move.l  -8(a6),a5
+60:     unlk    a6
+62:     move.l  #4,dl
+64:     jmp     (a4)
 ```
 
-| []()  |          |                 |                         |
-|-------|----------|-----------------|-------------------------|
-| `0:`  | `sub.w`  | `#3,dl`         |                         |
-| `2:`  | `bge.s`  | `8`             |                         |
-| `4:`  | `jmp`    | `16(a4)`        | `; wnaerr`              |
-| `8:`  | `move.l` | `(a7)+,al`      |                         |
-| `10`: | `move.l` | `d3,-(a7)`      | `; nil`                 |
-| `12`: | `sub.w`  | `#l,dl`         |                         |
-| `14:` | `bit.s`  | `38`            |                         |
-| `16:` | `move.l` | `al, -  52(a4)` | `; c_protected-retaddr` |
-| `20:` | `jsr`    | `40(a4)`        | `; cons`                |
-| `24:` | `move.l` | `d4,-(a7)`      |                         |
-| `26:` | `dbra`   | `dl,20`         |                         |
-| `30:` | `move.l` | `-  52(a4),al`  | `; c_protected-retaddr` |
-| `34:` | `clr.l`  | `-  52(a4)`     | `; c_protected-retaddr` |
-| `38:` | `move.l` | `al,`           | `-(a7)`                 |
-| `40:` | `link`   | `a6,#0`         |                         |
-| `44:` | `move.l` | `a2,-(a7)`      |                         |
-| `46:` | `move.l` | `a5,-(a7)`      |                         |
-| `48:` | `move.l` | `7(a2),a5`      |                         |
-| `52:` | `move.l` | `-  332(a4),a0` | `; list*`               |
-| `56:` | `move.l` | `-  8(a6),a5`   |                         |
-| `60:` | `unlk`   | `a6`            |                         |
-| `62`: | `move.l` | `#4,dl`         |                         |
-| `64`  | `jmp`    | `(a4)`          |                         |
-
 The loop from 20-26 builds up the `&rest` list one cons at a time.
-Part of the difficulty is that cons could initiate a garbage collection at any time, so the list has to be built in a place that the garbage collector will know about.
+Part of the difficulty is that `cons` could initiate a garbage collection at any time, so the list has to be built in a place that the garbage collector will know about.
 The function with optional arguments is even worse, taking 34 instructions (104 bytes), and keywords are worst of all, weighing in at 71 instructions (178 bytes), and including a loop.
 The overhead for optional arguments is proportional to the number of optional arguments, while for keywords it is proportional to the product of the number of parameters allowed and the number of arguments actually supplied.
 
@@ -476,51 +453,42 @@ Consider:
 ```
 
 Here the function `key` is used as an interface to the function `no-key`, which does the real work.
-The inline proclamation should allow the compiler to compile a call to key as a call to `no-key` with the appropriate arguments:
+The inline proclamation should allow the compiler to compile a call to `key` as a call to `no-key` with the appropriate arguments:
 
 ```
 > (disassemble #'(lambda (x y) (key :b x :a y)))
+  10 PUSH           ARG|1     ; Y
+  11 PUSH           ARG|0     ; X
+  12 PUSH-NUMBER    1
+  13 PUSH           ARG|1     ; Y
+  14 PUSH CALL-1    FEF|3     ; #'SORT
+  15 TAIL-REC CALL-4  FEF|4   ; #'NO-KEY
 ```
-
-| []()                   |         |              |
-|------------------------|---------|--------------|
-| `  10 PUSH`            | `ARG|1` | `; Y`        |
-| `  11 PUSH`            | `ARG|0` | `; X`        |
-| `  12 PUSH-NUMBER`     | `1`     |              |
-| `  13 PUSH`            | `ARG|1` | `; Y`        |
-| `  14 PUSH CALL-1`     | `FEF|3` | `; #'SORT`   |
-| `  15 TAIL-REC CALL-4` | `FEF|4` | `; #'NO-KEY` |
 
 The overhead only comes into play when the keywords are not known at compile time.
 In the following example, the compiler is forced to call key, not `no-key`, because it doesn't know what the keyword `k` will be at run time:
 
 ```
 > (disassemble #'(lambda (k x y) (key k x :a y)))
+  10 PUSH             ARG|0   ;  K
+  11 PUSH             ARG|1   ;  X
+  12 PUSH             FEF|3   ; ':A
+  13 PUSH             ARG|2   ;  Y
+  14 TAIL-REC CALL-4  FEF|4   ;  #'KEY
 ```
-
-| []()                   |         |           |
-|------------------------|---------|-----------|
-| `  10 PUSH`            | `ARG|0` | ; `K`     |
-| `  11 PUSH`            | `ARG|1` | ; `X`     |
-| `  12 PUSH`            | `FEF|3` | `; ':A`   |
-| `  13 PUSH`            | `ARG|2` | ; `Y`     |
-| `  14 TAIL-REC CALL-4` | `FEF|4` | ; `#'KEY` |
 
 Of course, in this simple example I could have replaced `no-key` with `list`, but in general there will be some more complex processing.
 If I had proclaimed `no-key` inline as well, then I would get the following:
 
 ```
 > (disassemble #'(lambda (x y) (key :b x :a y)))
+  10 PUSH             ARG|1 ; Y
+  11 PUSH             ARG|0 ; X
+  12 PUSH-NUMBER      1
+  13 PUSH             ARG|1 ; Y
+  14 PUSH CALL-1      FEF|3 ; #'SORT
+  15 TAIL-REC CALL-4  FEF|4 ; #'LIST
 ```
-
-| []()                   |         |            |
-|------------------------|---------|------------|
-| `  10 PUSH`            | `ARG|1` | `; Y`      |
-| `  11 PUSH`            | `ARG|0` | `; X`      |
-| `  12 PUSH-NUMBER`     | `1`     |            |
-| `  13 PUSH`            | `ARG|1` | `; Y`      |
-| `  14 PUSH CALL-1`     | `FEF|3` | `; #'SORT` |
-| `  15 TAIL-REC CALL-4` | `FEF|4` | `; #'LIST` |
 
 If you like, you can define a macro to automatically define the interface to the keyword-less function:
 
@@ -553,8 +521,8 @@ If you like, you can define a macro to automatically define the interface to the
 (DEFUN REG (A B C D) (LIST A B C D))
 ```
 
-There is one disadvantage to this approach: a user who wants to declare key inline or not inline does not get the expected result.
-The user has to know that key is implemented with `key*no- key`, and declare `key*no- key` inline.
+There is one disadvantage to this approach: a user who wants to declare `key` inline or not inline does not get the expected result.
+The user has to know that `key` is implemented with `key*no-key`, and declare `key*no-key` inline.
 
 An alternative is just to proclaim the function that uses `&key` to be inline.
 Rob MacLachlan provides an example.
@@ -580,18 +548,18 @@ In CMU Lisp, the function `member` has the following definition, which is procla
  (return list)))))
 ```
 
-A call like `(member`[ch 1](B9780080571157500017.xhtml)`:key #'first-letter :test #'char =)` expands into the equivalent of the following code.
+A call like `(member ch 1 :key #'first-letter :test #'char =)` expands into the equivalent of the following code.
 Unfortunately, not all compilers are this clever with inline declarations.
 
 ```lisp
 (do ((list list (cdr list)))
    ((null list) nil)
   (let ((car (car list)))
-   (if (char = ch (first-letter car))
+   (if (char= ch (first-letter car))
     (return list))))
 ```
 
-This chapter is concerned with efficiency and so has taken a stand against the use of keyword parameter s in frequently used functions.
+This chapter is concerned with efficiency and so has taken a stand against the use of keyword parameters in frequently used functions.
 But when maintainability is considered, keyword parameters look much better.
 When a program is being developed, and it is not clear if a function will eventually need additional arguments, keyword parameters may be the best choice.
 
@@ -675,28 +643,52 @@ It turns out that Common Lisp has a built-in facility to do just this.
 When a vector is created, it can be given a *fill pointer*.
 This is a counter variable, but one that is conceptually stored inside the vector.
 Vectors with fill pointers act like a cross between a vector and a stack.
-You can push new elements onto the stack with the functions `vector - push` or `vector - push - extend`.
+You can push new elements onto the stack with the functions `vector-push` or `vector-push-extend`.
 The latter will automatically allocate a larger vector and copy over elements if necessary.
-You can remove elements with `vector - pop`, or you can explicitly look at the fill pointer with `fill - pointer`, or change it with a `setf`.
+You can remove elements with `vector-pop`, or you can explicitly look at the fill pointer with `fill-pointer`, or change it with a `setf`.
 Here are some examples (with `*print-array*` set to t so we can see the results):
 
 ```lisp
-> (setf a (make-array 5 :fill-pointer 0))`=> `#()
-> (vector-push 1 a)`=> `0
-> (vector-push 2 a)`=> `1
-> a`=> `#(1 2)
-> (vector-pop a)`=> `2
-> a`=> `#(1)
-> (dotimes (i 10) (vector-push-extend 'x a))`=> `NIL
-> a`=> `#(1 XXXXXXXXXX)
-> (fill- pointer a)`=> `11
-> (setf (fill-pointer a) 1)`=> `1
-> a`=> `#(1)
+> (setf a (make-array 5 :fill-pointer 0))
+#()
+
+> (vector-push 1 a)
+0
+
+> (vector-push 2 a)
+1
+
+> a
+#(1 2)
+
+> (vector-pop a)
+2
+
+> a
+#(1)
+
+> (dotimes (i 10) (vector-push-extend 'x a))
+NIL
+
+> a
+#(1 XXXXXXXXXX)
+
+> (fill-pointer a)
+11
+
+> (setf (fill-pointer a) 1)
+1
+
+> a
+#(1)
+
+> (find 'x a)
+NIL NIL         ; FIND can't find past the fill pointer
+
+> (aref a 2)
+X               ; But AREF can see beyond the fill pointer
 ```
 
-`> (find 'x a)`=> `NIL NIL ;`*FIND can't find past the fill pointer*
-
-`> (aref a 2)`=> `X` ; *But AREF can see beyond the fill pointer*
 
 Using vectors with fill pointers in `pat-match,` the total storage for binding lists is just twice the number of variables in the largest pattern.
 I have arbitrarily picked 10 as the maximum number of variables, but even this is not a hard limit, because `vector-push-extend` can increase it.
@@ -705,7 +697,8 @@ In any case, the total storage is small, fixed in size, and amortized over all c
 However, there is a grave danger with this approach: the value returned must be managed carefully.
 The new `pat-match` returns the value of `success` when it matches.
 `success` is bound to a cons of the variable and value vectors.
-These can be freely manipulated by the calling routine, but only up until the next call to `pat - match.` At that time, the contents of the two vectors can change.
+These can be freely manipulated by the calling routine, but only up until the next call to `pat-match`.
+At that time, the contents of the two vectors can change.
 Therefore, if any calling function needs to hang on to the returned value after another call to `pat-match,` it should make a copy of the returned value.
 So it is not quite right to say that this version of `pat-match` eliminates all consing.
 It will cons when `vector-push-extend` runs out of space, or when the user needs to make a copy of a returned value.
@@ -815,7 +808,8 @@ Here is a definition for a version of `remove` that uses `reuse-cons`:
 Of course, `reuse-cons` only works when you have candidate cons cells around.
 That is, (`reuse-cons a b c`) only saves space when `c` is (or might be) equal to (`cons a b`).
 For some applications, it is useful to have a version of `cons` that returns a unique cons cell without needing `c` as a hint.
-We will call this version `ucons` for "unique cons." `ucons` maintains a double hash table: `*uniq - cons - table*` is a hash table whose keys are the `cars` of cons cells.
+We will call this version `ucons` for "unique cons."
+`ucons` maintains a double hash table: `*uniq-cons-table*` is a hash table whose keys are the `cars` of cons cells.
 The value for each `car` is another hash table whose keys are the `cdrs` of cons cells.
 The value of each `cdr` in this second table is the original cons cell.
 So two different cons cells with the same `car` and `cdr` will retrieve the same value.
@@ -856,7 +850,7 @@ Besides `unique`, we also define `ulist` and uappend for convenience.
   whenever (equal x x2) and (equal y y2) are true."
   (ucons (unique x) (unique y)))
  (defun ulist (&rest args)
-  "A uni qui fied list."
+  "A uniquified list."
   (unique args))
  (defun uappend (x y)
   "A unique list equal to (append x y)."
@@ -868,7 +862,7 @@ Besides `unique`, we also define `ulist` and uappend for convenience.
 The above code works, but it can be improved.
 The problem is that when `unique` is applied to a tree, it always traverses the tree all the way to the leaves.
 The function `unique-cons` is like `ucons,` except that `unique-cons` assumes its arguments are not yet unique.
-We can modify `unique - cons` so that it first checks to see if its arguments are unique, by looking in the appropriate hash tables:
+We can modify `unique-cons` so that it first checks to see if its arguments are unique, by looking in the appropriate hash tables:
 
 ```lisp
 (defun unique-cons (x y)
@@ -894,7 +888,7 @@ An `eq` hash table for lists is almost as good as a property list on symbols.
 ### Avoid Consing: Multiple Values
 
 Parameters and multiple values can also be used to pass around values, rather than building up lists.
-For example, instead of :
+For example, instead of:
 
 ```lisp
 (defstruct point "A point in 3-D cartesian space." x y z)
@@ -1007,11 +1001,11 @@ This pattern of allocation and deallocation is so common that we can provide a m
            (,deallocate var)))))
 ```
 
-The macro allows for an optional argument that sets up an `unwind` - protect environment, so that the buffer gets deallocated even when the body is abnormally exited.
+The macro allows for an optional argument that sets up an `unwind-protect` environment, so that the buffer gets deallocated even when the body is abnormally exited.
 The following expansions should make this clearer:
 
 ```lisp
->(macroexpand '(with-resource (b buffer)
+> (macroexpand '(with-resource (b buffer)
                 "..." (process b) "..."))
 (let ((b (allocate-buffer)))
   "..."
@@ -1277,7 +1271,7 @@ There are a few subtleties in the implementation.
 First, we test for deleted entries with an `eq` comparison to a distinguished marker, the string `trie-deleted`.
 No other object will be `eq` to this string except `trie-deleted` itself, so this is a good test.
 We also use a distinguished marker, the string "." to mark cons cells.
-Components are implicitly compared against this marker with an `eql` test by the `associn follow - arc`.
+Components are implicitly compared against this marker with an `eql` test by the `assoc` in `follow-arc`.
 Maintaining the identity of this string is crucial; if, for example, you recompiled the definition of `find-trie` (without changing the definition at all), then you could no longer find keys that were indexed in an existing trie, because the ".
 " used by `find-trie` would be a different one from the ".
 " in the existing trie.
@@ -1295,22 +1289,21 @@ A dag is a tree where some of the subtrees are shared.
 Imagine you have a spelling corrector program with a list of some 50,000 or so words.
 You could put them into a trie, each word with the value t.
 But there would be many subtrees repeated in this trie.
-For example, given a word list containing *look*, *looks*, *looked*, and *looking* as well as *show*, *shows*, *showed*, and *showing*, there would be repetition of the subtree containing -s, - *ed* and -*ing*.
+For example, given a word list containing *look*, *looks*, *looked*, and *looking* as well as *show*, *shows*, *showed*, and *showing*, there would be repetition of the subtree containing *-s*, *-ed* and *-ing*.
 After the trie is built, we could pass the whole trie to un i que, and it would collapse the shared subtrees, saving storage.
 Of course, you can no longer add or delete keys from the dag without risking unintended side effects.
 
 This process was carried out for a 56,000 word list.
-The trie took up 3.2Mbytes, while the dag was 1 .IMbytes.
+The trie took up 3.2Mbytes, while the dag was 1.1Mbytes.
 This was still deemed unacceptable, so a more compact encoding of the dag was created, using a .2Mbytes vector.
 Encoding the same word list in a hash table took twice this space, even with a special format for encoding suffixes.
 
 Tries work best when neither the indexing key nor the retrieval key contains variables.
 They work reasonably well when the variables are near the end of the sequence.
-Consider looking up the pattern `"yello?
-"` in the dictionary, where the " ? " character indicates a match of any letter.
-Following the branches for `"yello"` leads quickly to the only possible match, `"yellow"`.
-In contrast, fetching with the pattern `"??llow"` is much less efficient.
-The table lookup function would have to search all 26 top-level branches, and for each of those consider all possible second letters, and for each of those consider the path `"llow"`.
+Consider looking up the pattern `yello?` in the dictionary, where the `?` character indicates a match of any letter.
+Following the branches for `yello` leads quickly to the only possible match, `yellow`.
+In contrast, fetching with the pattern `??llow` is much less efficient.
+The table lookup function would have to search all 26 top-level branches, and for each of those consider all possible second letters, and for each of those consider the path `llow`.
 Quite a bit of searching is required before arriving at the complete set of matches: bellow, billow, fallow, fellow, follow, hallow, hollow, mallow, mellow, pillow, sallow, tallow, wallow, willow, and yellow.
 
 We will return to the problem of discrimination nets with variables in [section 14.8](B9780080571157500145.xhtml#s0040), [page 472](B9780080571157500145.xhtml#p472).
@@ -1319,15 +1312,15 @@ We will return to the problem of discrimination nets with variables in [section 
 
 **Exercise 10.1 [h]** Define the macro `deftable,` such that `(deftable person assoc`) will act much like a `defstruct` - it will define a set of functions for manipulating a table of people: `get-person`, `put-person`, `clear-person,` and `map-person`.
 The table should be implemented as an association list.
-Later on, you can change the representation of the table simply by changing the form to (`deftable person hash` ), without having to change anything else in your code.
+Later on, you can change the representation of the table simply by changing the form to `(deftable person hash)`, without having to change anything else in your code.
 Other implementation options include property lists and vectors.
 `deftable` should also take three keyword arguments: `inline`, `size` and `test`.
 Here is a possible macroexpansion:
 
-`>(macroexpand '(deftableperson hash :-inline t :size 100))`=
+```
 
-```lisp
- (progn
+> (macroexpand '(deftableperson hash :-inline t :size 100))
+(progn
  (proclaim '(inline get-person put-person map-person))
  (defparameter *person-table*
   (make-hash-table :test #eql :size 100))
@@ -1341,11 +1334,11 @@ Here is a possible macroexpansion:
  'person)
 ```
 
-**Exercise 10.2 [m]** We can use the :`type` option to `defstruct` to define structures implemented as lists.
+**Exercise 10.2 [m]** We can use the `:type` option to `defstruct` to define structures implemented as lists.
 However, often we have a two-field structure that we would like to implement as a cons cell rather than a two-element list, thereby cutting storage in half.
 Since `defstruct` does not allow this, define a new macro that does.
 
-**Exercise 10.3 [m]** Use `reuse - cons` to write a version of `flatten` (see [page 329](B9780080571157500108.xhtml#p329)) that shares as much of its input with its output as possible.
+**Exercise 10.3 [m]** Use `reuse-cons` to write a version of `flatten` (see [page 329](B9780080571157500108.xhtml#p329)) that shares as much of its input with its output as possible.
 
 **Exercise 10.4 [h]** Consider the data type *set*.
 A set has two main operations: adjoin an element and test for membership.

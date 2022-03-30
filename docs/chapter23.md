@@ -41,29 +41,29 @@ As an example, the procedure
 
 should compile into the following instructions:
 
-| []()  |          |      |
-|-------|----------|------|
-|       | `ARGS`   | `0`  |
-|       | `GVAR`   | `X`  |
-|       | `GVAR`   | `Y`  |
-|       | `GVAR`   | `=`  |
-|       | `CALL`   | `2`  |
-|       | `FJUMP`  | `L1` |
-|       | `GVAR`   | `X`  |
-|       | `GVAR`   | `G`  |
-|       | `CALL`   | `1`  |
-|       | `GVAR`   | `F`  |
-|       | `CALL`   | `1`  |
-|       | `JUMP`   | `L2` |
-| `L1:` | `GVAR`   | `X`  |
-|       | `GVAR`   | `Y`  |
-|       | `CONST`  | `1`  |
-|       | `CONST`  | `2`  |
-|       | `GVAR`   | `H`  |
-|       | `CALL`   | `2`  |
-|       | `GVAR`   | `H`  |
-|       | `CALL`   | `3`  |
-| `L2:` | `RETURN` |      |
+```
+      ARGS    0
+      GVAR    X
+      GVAR    Y
+      GVAR    =
+      CALL    2
+      FJUMP   L1
+      GVAR    X
+      GVAR    G
+      CALL    1
+      GVAR    F
+      CALL    1
+      JUMP    L2
+L1:   GVAR    X
+      GVAR    Y
+      CONST   1
+      CONST   2
+      GVAR    H
+      CALL    2
+      GVAR    H
+      CALL    3
+L2:   RETURN
+```
 
 The first version of the Scheme compiler is quite simple.
 It mimics the structure of the Scheme evaluator.
@@ -222,11 +222,10 @@ If this environment were called `env`, then `(in-env-p 'f env)` would return `(0
             (lambda ,(rest name) . ,body)))))
 ```
 
-Finally, we have some auxiliary functions to print out the results, to distinguish bet
-ween labels and instructions, and to determine the index of a variable in an environme
-nt.
+Finally, we have some auxiliary functions to print out the results, to distinguish between labels and instructions, and to determine the index of a variable in an environment.
 Scheme functions now are implemented as structures, which must have a field for the code, and one for the environment.
-In addition, we provide a field for the name of the function and for the argument list; these are used only for debugging purposes, We'll adopt the convention that the `define` macro sets the function's name field, by calling `name` ! (which is not part of standard Scheme).
+In addition, we provide a field for the name of the function and for the argument list; these are used only for debugging purposes.
+We'll adopt the convention that the `define` macro sets the function's name field, by calling `name!` (which is not part of standard Scheme).
 
 ```lisp
 (defun name! (fn name)
@@ -661,7 +660,8 @@ Note I have extended the machine to include instructions for the most common con
 ```
 
 The remaining two functions are more complex.
-First consider `comp-if` . Rather than blindly generating code for the predicate and both branches, we will consider some special cases.
+First consider `comp-if`.
+Rather than blindly generating code for the predicate and both branches, we will consider some special cases.
 First, it is clear that `(if t x y)` can reduce to `x` and `(if nil x y)` can reduce to `y`.
 It is perhaps not as obvious that `(if p x x)` can reduce to `(begin p x)`, or that the comparison of equality between the two branches should be done on the object code, not the source code.
 Once these trivial special cases have been considered, we're left with three more cases: `(if p x nil), (if p nil y),` and `(if p x y)`.
@@ -708,21 +708,18 @@ First, a very simple example:
 
 ```
 > (comp-show '(if p (+ x y) (* x y)))
+        ARGS    0
+        GVAR    P
+        FJUMP   L1
+        GVAR    X
+        GVAR    Y
+        +
+        RETURN
+L1 :    GVAR    X
+        GVAR    Y
+        *
+        RETURN
 ```
-
-| []()   |          |      |
-|--------|----------|------|
-|        | `ARGS`   | `0`  |
-|        | `GVAR`   | `P`  |
-|        | `FJUMP`  | `L1` |
-|        | `GVAR`   | `X`  |
-|        | `GVAR`   | `Y`  |
-|        | `+`      |      |
-|        | `RETURN` |      |
-| `L1 :` | `GVAR`   | `X`  |
-|        | `GVAR`   | `Y`  |
-|        | `*`      |      |
-|        | `RETURN` |      |
 
 Each branch has its own `RETURN` instruction.
 But note that the code generated is sensitive to its context.
@@ -730,35 +727,29 @@ For example, if we put the same expression inside a `begin` expression, we get s
 
 ```
 > (comp-show '(begin (if p (+ x y) (* x y)) z))
+        ARGS   0
+        GVAR   Z
+        RETURN
 ```
 
-| []() |          |     |
-|------|----------|-----|
-|      | `ARGS`   | `0` |
-|      | `GVAR`   | `Z` |
-|      | `RETURN` |     |
-
-What happens here is that `(+ x y)` and `(* x y)`, when compiled in a context where the value is ignored, both resuit in no generated code.
+What happens here is that `(+ x y)` and `(* x y)`, when compiled in a context where the value is ignored, both result in no generated code.
 Thus, the `if` expression reduces to `(if p nil nil)`, which is compiled like `(begin p nil)`, which also generates no code when not evaluated for value, so the final code just references `z`.
 The compiler can only do this optimization because it knows that `+` and `*` are side-effect-free operations.
-Consider what happens when we replace + with `f` :
+Consider what happens when we replace `+` with `f`:
 
 ```
 > (comp-show '(begin (if p (f x) (* x x)) z))
+        ARGS    0
+        GVAR    P
+        FJUMP   L2
+        SAVE    K1
+        GVAR    X
+        GVAR    F
+        CALLJ   1
+K1:     POP
+L2:     GVAR    Z
+        RETURN
 ```
-
-| []()  |          |      |
-|-------|----------|------|
-|       | `ARGS`   | `0`  |
-|       | `GVAR`   | `P`  |
-|       | `FJUMP`  | `L2` |
-|       | `SAVE`   | `K1` |
-|       | `GVAR`   | `X`  |
-|       | `GVAR`   | `F`  |
-|       | `CALLJ`  | `1`  |
-| `K1:` | `POP`    |      |
-| `L2:` | `GVAR`   | `Z`  |
-|       | `RETURN` |      |
 
 Here we have to call `(f x)` if `p` is true (and then throw away the value returned), but we don't have to compute `(* x x)` when `p` is false.
 
@@ -929,59 +920,49 @@ Here are some more examples of the compiler at work:
 
 ```
 > (comp-show '(if (null? (car l)) (f (+ (* a x) b)) (g (/ x 2))))
+        ARGS    0
+        GVAR    L
+        CAR
+        FJUMP   L1
+        GVAR    X
+        2
+        /
+        GVAR    G
+        CALLJ   1
+L1:     GVAR    A
+        GVAR    X
+        *
+        GVAR    B
+        +
+        GVAR    F
+        CALLJ   1
 ```
-
-| []()  |         |         |     |
-|-------|---------|---------|-----|
-|       | `ARGS`  | `0`     |     |
-|       | `GVAR`  | `L`     |     |
-|       | `CAR`   |         |     |
-|       | `FJUMP` | `L1`    |     |
-|       | `GVAR`  | `X`     |     |
-|       | `2`     |         |     |
-|       | /       |         |     |
-|       | `GVAR`  | `G`     |     |
-|       | `CALLJ` | `1`     |     |
-| `L1:` | `GVAR`  | `A`     |     |
-|       |         | `GVAR`  | `X` |
-|       |         | `*`     |     |
-|       |         | `GVAR`  | `B` |
-|       |         | `+`     |     |
-|       |         | `GVAR`  | `F` |
-|       |         | `CALLJ` | `1` |
 
 There is no need to save any continuation points in this code, because the only calls to nonprimitive functions occur as the final values of the two branches of the function.
 
 ```lisp
 > (comp-show '(define (lastl l)
+                (if (null? (cdr l)) (car l)
+                    (last1 (cdr l)))))
+
+        ARGS    0
+        FN
+                ARGS    1
+                LVAR    0       0       ;       L
+                CDR
+                FJUMP   L1
+                LVAR    0       0       ;       L
+                CDR
+                GVAR    LAST1
+                CALLJ   1
+L1:             LVAR    0       0       ;       L
+                CAR
+                RETURN
+        GSET    LAST1
+        CONST   LAST1
+        NAME!
+        RETURN
 ```
-
-`                            (if (null?
-(cdr l)) (car l)`
-
-```lisp
-                                    (last1 (cdr l)))))
-```
-
-| []()  |          |          |     |     |     |     |
-|-------|----------|----------|-----|-----|-----|-----|
-|       | `ARGS`   | `0`      |     |     |     |     |
-|       | `FN`     |          |     |     |     |     |
-|       | `ARGS`   | `1`      |     |     |     |     |
-|       | `LVAR`   | `0`      | `0` | `;` | `L` |     |
-|       | `CDR`    |          |     |     |     |     |
-|       | `FJUMP`  | `L1`     |     |     |     |     |
-|       | `LVAR`   | `0`      | `0` | `;` | `L` |     |
-|       | `CDR`    |          |     |     |     |     |
-|       | `GVAR`   | `LAST1`  |     |     |     |     |
-|       | `CALLJ`  | `1`      |     |     |     |     |
-| `L1:` |          | `LVAR`   | `0` | `0` | `;` | `L` |
-|       |          | `CAR`    |     |     |     |     |
-|       |          | `RETURN` |     |     |     |     |
-|       | `GSET`   | `LAST1`  |     |     |     |     |
-|       | `CONST`  | `LAST1`  |     |     |     |     |
-|       | `NAME!`  |          |     |     |     |     |
-|       | `RETURN` |          |     |     |     |     |
 
 The top-level function just assigns the nested function to the global variable `last1`.
 Since `last1` is tail-recursive, it has only one return point, for the termination case, and just calls itself without saving continuations until that case is executed.
@@ -992,29 +973,26 @@ It is not tail-recursive because before it calls `length` recursively, it must s
 ```lisp
 > (comp-show '(define (length l)
                 (if (null? l) 0 (+ 1 (length (cdr l))))))
+        ARGS    0
+        FN
+                ARGS    1
+                LVAR    0       0       ;       L
+                FJUMP   L2
+                1
+                SAVE    K1
+                LVAR    0       0       ;       L
+                CDR
+                GVAR    LENGTH
+                CALLJ   1
+K1:             +
+                RETURN
+L2:             0
+                RETURN
+        GSET    LENGTH
+        CONST   LENGTH
+        NAME!
+        RETURN
 ```
-
-| []()  |          |          |          |     |     |     |
-|-------|----------|----------|----------|-----|-----|-----|
-|       | `ARGS`   | `0`      |          |     |     |     |
-|       | `FN`     |          |          |     |     |     |
-|       |          | `ARGS`   | `1`      |     |     |     |
-|       |          | `LVAR`   | `0`      | `0` | `;` | `L` |
-|       |          | `FJUMP`  | `L2`     |     |     |     |
-|       |          | `1`      |          |     |     |     |
-|       |          | `SAVE`   | `K1`     |     |     |     |
-|       |          | `LVAR`   | `0`      | `0` | `;` | `L` |
-|       |          | `CDR`    |          |     |     |     |
-|       |          | `GVAR`   | `LENGTH` |     |     |     |
-|       |          | `CALLJ`  | `1`      |     |     |     |
-| `K1:` |          | `+`      |          |     |     |     |
-|       |          | `RETURN` |          |     |     |     |
-| `L2`  |          | `0`      |          |     |     |     |
-|       |          | `RETURN` |          |     |     |     |
-|       | `GSET`   | `LENGTH` |          |     |     |     |
-|       | `CONST`  | `LENGTH` |          |     |     |     |
-|       | `NAME!`  |          |          |     |     |     |
-|       | `RETURN` |          |          |     |     |     |
 
 Of course, it is possible to write `length` in tail-recursive fashion:
 
@@ -1024,67 +1002,61 @@ Of course, it is possible to write `length` in tail-recursive fashion:
                               (if (null? l) n
                                   (len (rest l) (+ n l))))))
                 (len l 0))))
+        ARGS   0
+        FN
+               ARGS   1
+               NIL
+               FN
+                      ARGS      1
+                      FN
+                                ARGS    2
+                                LVAR    0       0       ;       L
+                                FJUMP   L2
+                                SAVE    K1
+                                LVAR    0       0       ;       L
+                                GVAR    REST
+                                CALLJ   1
+K1:                             LVAR    0       1       ;       N
+                                1
+                                +
+                                LVAR    1       0       ;       LEN
+                                CALLJ   2
+L2:                             LVAR    0       1       ;       N
+                                RETURN
+                      LSET      0       0       ;       LEN
+                      POP
+                      LVAR      1       0       ;       L
+                      0
+                      LVAR      0       0       ;       LEN
+                      CALLJ     2
+               CALLJ  1
+        GSET   LENGTH
+        CONST  LENGTH
+        NAME!
+        RETURN
 ```
-
-| []()  |          |          |         |          |        |     |       |       |
-|-------|----------|----------|---------|----------|--------|-----|-------|-------|
-|       | `ARGS`   | `0`      |         |          |        |     |       |       |
-|       | `FN`     |          |         |          |        |     |       |       |
-|       |          | `ARGS`   | `1`     |          |        |     |       |       |
-|       |          | `NIL`    |         |          |        |     |       |       |
-|       |          | `FN`     |         |          |        |     |       |       |
-|       |          |          | `ARGS`  | `1`      |        |     |       |       |
-|       |          |          | `FN`    |          |        |     |       |       |
-|       |          |          |         | `ARGS`   | `2`    |     |       |       |
-|       |          |          |         | `LVAR`   | `0`    | `0` | `;`   | `L`   |
-|       |          |          |         | `FJUMP`  | `L2`   |     |       |       |
-|       |          |          |         | `SAVE`   | `K1`   |     |       |       |
-|       |          |          |         | `LVAR`   | `0`    | `0` | `;`   | `L`   |
-|       |          |          |         | `GVAR`   | `REST` |     |       |       |
-|       |          |          |         | `CALLJ`  | `1`    |     |       |       |
-| `K1:` |          |          |         | `LVAR`   | `0`    | `1` | `;`   | `N`   |
-|       |          |          |         | `1`      |        |     |       |       |
-|       |          |          |         | `+`      |        |     |       |       |
-|       |          |          |         | `LVAR`   | `1`    | `0` | `;`   | `LEN` |
-|       |          |          |         | `CALLJ`  | `2`    |     |       |       |
-| `L2:` |          |          |         | `LVAR`   | `0`    | `1` | `;`   | `N`   |
-|       |          |          |         | `RETURN` |        |     |       |       |
-|       |          |          | `LSET`  | `0`      | `0`    | `;` | `LEN` |       |
-|       |          |          | `POP`   |          |        |     |       |       |
-|       |          |          | `LVAR`  | `1`      | `0`    | `;` | `L`   |       |
-|       |          |          | `0`     |          |        |     |       |       |
-|       |          |          | `LVAR`  | `0`      | `0`    | `;` | `LEN` |       |
-|       |          |          | `CALLJ` | `2`      |        |     |       |       |
-|       |          | `CALLJ`  | `1`     |          |        |     |       |       |
-|       | `GSET`   | `LENGTH` |         |          |        |     |       |       |
-|       | `CONST`  | `LENGTH` |         |          |        |     |       |       |
-|       | `NAME!`  |          |         |          |        |     |       |       |
-|       | `RETURN` |          |         |          |        |     |       |       |
 
 Let's look once again at an example with nested conditionals:
 
 ```
 > (comp-show '(if (not (and p q (not r))) x y))
+        ARGS    0
+        GVAR    P
+        FJUMP   L3
+        GVAR    Q
+        FJUMP   L1
+        GVAR    R
+        NOT
+        JUMP    L2
+L1:     NIL
+L2:     JUMP    L4
+L3:     NIL
+L4:     FJUMP   L5
+        GVAR    Y
+        RETURN
+L5:     GVAR    X
+        RETURN
 ```
-
-| []()  |          |      |
-|-------|----------|------|
-|       | `ARGS`   | `0`  |
-|       | `GVAR`   | `P`  |
-|       | `FJUMP`  | `L3` |
-|       | `GVAR`   | `Q`  |
-|       | `FJUMP`  | `L1` |
-|       | `GVAR`   | `R`  |
-|       | `NOT`    |      |
-|       | `JUMP`   | `L2` |
-| `L1:` | `NIL`    |      |
-| `L2:` | `JUMP`   | `L4` |
-| `L3:` | `NIL`    |      |
-| `L4:` | `FJUMP`  | `L5` |
-|       | `GVAR`   | `Y`  |
-|       | `RETURN` |      |
-| `L5:` | `GVAR`   | `X`  |
-|       | `RETURN` |      |
 
 Here the problem is with multiple `JUMP`s and with not recognizing negation.
 If `p` is false, then the and expression is false, and the whole predicate is true, so we should return `x`.
@@ -1092,19 +1064,19 @@ The code does in fact return `x`, but it first jumps to `L3`, loads `NIL`, and t
 Other branches have similar inefficiencies.
 A sufficiently clever compiler should be able to generate the following code:
 
-| []()  |          |      |
-|-------|----------|------|
-|       | `ARGS`   | `0`  |
-|       | `GVAR`   | `P`  |
-|       | `FJUMP`  | `L1` |
-|       | `GVAR`   | `Q`  |
-|       | `FJUMP`  | `L1` |
-|       | `GVAR`   | `R`  |
-|       | `TJUMP`  | `L1` |
-|       | `GVAR`   | `Y`  |
-|       | `RETURN` |      |
-| `L1:` | `GVAR X` |      |
-|       | `RETURN` |      |
+```
+        ARGS    0
+        GVAR    P
+        FJUMP   L1
+        GVAR    Q
+        FJUMP   L1
+        GVAR    R
+        TJUMP   L1
+        GVAR    Y
+        RETURN
+L1:     GVAR X
+        RETURN
+```
 
 ## 23.2 Introducing Call/cc
 
@@ -1409,18 +1381,15 @@ In the following example, `comp-if` has already done some source-level optimizat
 
 ```
 > (comp-show '(begin (if (if t 1 (f x)) (set! x 2)) x))
+   0: ARGS    0
+   1: 1
+   2: FJUMP   6
+   3: 2
+   4: GSET    X
+   5: POP
+   6: GVAR    X
+   7: RETURN
 ```
-
-| []() |          |     |
-|------|----------|-----|
-| `0:` | `ARGS`   | `0` |
-| 1:   | 1        |     |
-| `2:` | `FJUMP`  | `6` |
-| `3:` | `2`      |     |
-| `4:` | `GSET`   | `X` |
-| `5:` | `POP`    |     |
-| `6:` | `GVAR`   | `X` |
-| `7:` | `RETURN` |     |
 
 But the generated code could be made much better.
 This could be done with more source-level optimizations to transform the expression into `(set!
@@ -1430,14 +1399,11 @@ The optimizer presented in this section is capable of generating the following c
 
 ```
 > (comp-show '(begin (if (if t 1 (f x)) (set! x 2)) x))
+   0: ARGS    0
+   1: 2
+   2: GSET    X
+   3: RETURN
 ```
-
-| []() |          |     |
-|------|----------|-----|
-| `0:` | `ARGS`   | `0` |
-| 1:   | 2        |     |
-| `2:` | `GSET`   | `X` |
-| `3:` | `RETURN` |     |
 
 The function `optimize` is implemented as a data-driven function that looks at the opcode of each instruction and makes optimizations based on the following instructions.
 To be more specific, `optimize` takes a list of assembly language instructions and looks at each instruction in order, trying to apply an optimization.
@@ -1584,7 +1550,7 @@ The entry for `#\;` would be directions to ignore every character up to the end 
 
 Because the readtable is stored in a special variable, it is possible to alter completely the way read works just by dynamically rebinding this variable.
 
-The new function `scheme - read` temporarily changes the readtable to a new one, the Scheme readtable.
+The new function `scheme-read` temporarily changes the readtable to a new one, the Scheme readtable.
 It also accepts an optional argument, the stream to read from, and it returns a special marker on end of file.
 This can be tested for with the predicate `eof-object?`.
 Note that once `scheme-read` is installed as the value of the Scheme `symbol-read` we need do no more-`scheme-read` will always be called when appropriate (by the top level of Scheme, and by any user Scheme program).
@@ -1608,7 +1574,7 @@ This is similar to the `^D` convention in UNIX systems, and it can be quite hand
 So far the Scheme readtable is just a copy of the standard readtable.
 The next step in implementing `scheme-read` is to alter `*scheme-readtable*`, adding read macros for whatever characters are necessary.
 Here we define macros for `#t` and `#f` (the true and false values), for `#d` (decimal numbers) and for the backquote read macro (called quasiquote in Scheme).
-Note that the backquote and comma characters are defined as read macros, but the `@` in ,`@` is processed by reading the next character, not by a read macro on `@`.
+Note that the backquote and comma characters are defined as read macros, but the `@` in `,@` is processed by reading the next character, not by a read macro on `@`.
 
 ```lisp
 (set-dispatch-macro-character #\# #\t
@@ -1670,7 +1636,7 @@ NIL
 (QUASIQUOTE (A (UNQUOTE B) (UNQUOTE-SPLICING C) D))
 ```
 
-The final step is to make quasi quote a macro that expands into the proper sequence of calls to `cons`, `list`, and `append`.
+The final step is to make `quasiquote` a macro that expands into the proper sequence of calls to `cons`, `list`, and `append`.
 The careful reader will keep track of the difference between the form returned by `scheme-read` (something starting with `quasiquote`), the expansion of this form with the Scheme macro `quasiquote` (which is implemented with the Common Lisp function `quasi-q`), and the eventual evaluation of the expansion.
 In an environment where `b` is bound to the number 2 and `c` is bound to the list `(c1 c2)`, we might have:
 
@@ -1734,7 +1700,7 @@ We could write the Scheme function:
 
 ```lisp
 (define (extrema list)
-   ;; Given a list of numbers. return an a-list
+   ;; Given a list of numbers, return an a-list
    ;; with max and min values
    '((max ,(apply max list)) (min ,(apply min list))))
 ```
@@ -1782,9 +1748,9 @@ How could you make `scheme-read` account for this?
 
 **Exercise  23.6 [h]** In `comp-if` we included a special case for `(if t x y)` and `(if nil x y)`.
 But there are other cases where we know the value of the predicate.
-For example, `(if (*a b) x y)` can also reduce to `x`.
+For example, `(if (* a b) x y)` can also reduce to `x`.
 Arrange for these optimizations to be made.
-Note the `prim-always` field of the `prim structure` has been provided for this purpose.
+Note the `prim-always` field of the `prim` structure has been provided for this purpose.
 
 **Exercise  23.7 [m]** Consider the following version of the quicksort algorithm for sorting a vector:
 
@@ -1813,16 +1779,16 @@ What time and space complexity does it have?
 
 ```lisp
 (define (sort-vector vector test)
-      (define (sort lo hi)
-          (if (>= lo hi)
-                  vector
-                  (let ((pivot (partition vector lo hi)))
-                        (if (> (- hi pivot) (- pivot lo))
-                                  (begin (sort lo pivot)
-                                                      (sort (+ pivot 1) hi))
-                                  (begin (sort (+ pivot 1) hi)
-                                                      (sort lo pivot))))))
-      (sort 0 (- (vector-length vector 1))))
+   (define (sort lo hi)
+     (if (>= lo hi)
+         vector
+         (let ((pivot (partition vector lo hi)))
+            (if (> (- hi pivot) (- pivot lo))
+                 (begin (sort lo pivot)
+                           (sort (+ pivot 1) hi))
+                 (begin (sort (+ pivot 1) hi)
+                           (sort lo pivot))))))
+   (sort 0 (- (vector-length vector 1))))
 ```
 
 The next three exercises describe extensions that are not part of the Scheme standard.
@@ -1843,15 +1809,12 @@ One way to do that would be with a `setter` function for `set!`, for example:
 **Exercise  23.9 [m]** It is a curious asymmetry of Scheme that there is a special notation for lambda expressions within `define` expressions, but not within `let`.
 Thus, we see the following:
 
-`(define square (lambda (x) (* x x)))`*;is the same as*
-
 ```lisp
+(define square (lambda (x) (* x x)))      ; is the same as
 (define (square x) (* x x))
+(let ((square (lambda (x) (* x x)))) ...) ; is not the same as
+(let (((square x) (* x x))) ...)          ; <= illegal!
 ```
-
-`(let ((square (lambda (x) (* x x)))) ...) ;`*is not the same as*
-
-`(let (((square x) (* x x))) ...) ;`*                          <= illegal!*
 
 Do you think this last expression should be legal?
 If so, modify the macros for `let, let*`, and `letrec` to allow the new syntax.
@@ -1864,7 +1827,7 @@ Show a definition or explain why there can't be one.
 Would you ever have reason to use `funcall` in a Scheme program?
 (2) Scheme does define `apply`, as there is no syntax for an application.
 One might want to extend the syntax to make `(+ . numbers)` equivalent to `(apply + numbers)`.
-Would this bea good idea?
+Would this be a good idea?
 
 **Exercise  23.11 [d]** Write a compiler that translates Scheme to Common Lisp.
 This will involve changing the names of some procedures and special forms, figuring out a way to map Scheme's single name space into Common Lisp's distinct function and variable name spaces, and dealing with Scheme's continuations.
@@ -1873,7 +1836,7 @@ One possibility is to translate a `call/cc` into a `catch` and `throw`, and disa
 ## 23.8 Answers
 
 **Answer 23.2** We can save frames by making a resource for frames, as was done on page 337.
-Unfortunately, we can't just use the def resource macro as is, because we need a separate resource for each size frame.
+Unfortunately, we can't just use the `defresource` macro as is, because we need a separate resource for each size frame.
 Thus, a two-dimensional array or a vector of vectors is necessary.
 Furthermore, one must be careful in determining when a frame is no longer needed, and when it has been saved and may be used again.
 Some compilers will generate a special calling sequence for a tail-recursive call where the environment can be used as is, without discarding and then creating a new frame for the arguments.
@@ -1915,10 +1878,8 @@ The following routines do this without consing.
 (defun sign-p (char) (find char "+-"))
 ```
 
-Actually, that's not quite good enough, because a Scheme complex number can have multiple signs in it, as in `3.
-4e- 5+6.
-7e+8i`, and it need not have two numbers, as in `3i` or `4+i` or just `+  i`.
-The other problem is that complex numbers can only have a lowercase `i`, but read does not distinguish between the symbols `3+4i` and `3+4I`.
+Actually, that's not quite good enough, because a Scheme complex number can have multiple signs in it, as in `3.4e-5+6.7e+8i`, and it need not have two numbers, as in `3i` or `4+i` or just `+i`.
+The other problem is that complex numbers can only have a lowercase `i`, but `read` does not distinguish between the symbols `3+4i` and `3+4I`.
 
 **Answer 23.4** Yes, it is possible to implement `begin` as a macro:
 
@@ -1928,7 +1889,7 @@ The other problem is that complex numbers can only have a lowercase `i`, but rea
 ```
 
 With some work we could also eliminate quote.
-Instead of `'x`, we could use `(string->symbol "X" )`, and instead of `'(1 2)`, wecoulduse something like `(list 1 2)`.
+Instead of `'x`, we could use `(string->symbol "X" )`, and instead of `'(1 2)`, we could use something like `(list 1 2)`.
 The problem is in knowing when to reuse the same list.
 Consider:
 
@@ -1967,118 +1928,68 @@ This has the disadvantage (compared to explicit use of many special forms) that 
 It has the advantage that the optimizations will be applied even when the user did not have a special construct in mind.
 Common Lisp attempts to get the advantages of both by allowing implementations to play loose with what they implement as macros and as special forms.
 
-**Answer 23.6** We define the predicate `always` and install it in two places in `comp-if` :
+**Answer 23.6** We define the predicate `always` and install it in two places in `comp-if`:
 
 ```lisp
 (defun always (pred env)
-      "Does predicate always evaluate to true or false?"
-      (cond ((eq pred t) 'true)
-                        ((eq pred nil) 'false)
-                        ((symbolp pred) nil)
-                        ((atom pred) 'true)
-                        ((scheme-macro (first pred))
-                          (always (scheme-macro-expand pred) env))
-                        ((case (first pred)
-                                (QUOTE (if (null (second pred)) 'false 'true))
-                                (BEGIN (if (null (rest pred)) 'false
-                                                                    (always (last1 pred) env)))
-```
+  "Does predicate always evaluate to true or false?"
+  (cond ((eq pred t) 'true)
+        ((eq pred nil) 'false)
+        ((symbolp pred) nil)
+        ((atom pred) 'true)
+        ((scheme-macro (first pred))
+         (always (scheme-macro-expand pred) env))
+        ((case (first pred)
+          (QUOTE (if (null (second pred)) 'false 'true))
+          (BEGIN (if (null (rest pred)) 'false
+                     (always (last1 pred) env)))
+          (SET! (always (third pred) env))`
+          (IF (let ((test (always (second pred)) env)
+                    (then (always (third pred)) env)
+                    (else (always (fourth pred)) env))
+                (cond ((eq test 'true) then)
+                      ((eq test 'false) else)
+                      ((eq then else) then))))
+          (LAMBDA 'true)
+          (t (let ((prim (primitive-p (first pred) env
+                         (length (rest pred)))))
+               (if prim (prim-always prim))))))))
 
-`                                (SET!
-(always (third pred) env))`
-
-```lisp
-        (IF (let ((test (always (second pred)) env)
-            (then (always (third pred)) env)
-            (else (always (fourth pred)) env))
-                                (cond ((eq test 'true) then)
-                                                                    ((eq test 'false) else)
-                                                                    ((eq then else) then))))
-        (LAMBDA 'true)
-        (t (let ((prim (primitive-p (first pred) env
-                                              (length (rest pred)))))
-                      (if prim (prim-always prim))))))))
-```
-
-`(defun comp-if (pred then else env val?
-more?)`
-
-```lisp
-      (case (always pred env)
-          (true ; (if nil x y) = => y ; ***
-```
-
-`              (comp then env val?
-more?)) ; ***`
-
-```lisp
-          (false ; (if t x y) = => x ; ***
-```
-
-`              (comp else env val?
-more?)) ; ***`
-
-```lisp
-          (otherwise
-              (let ((pcode (comp pred env t t))
-```
-
-`                            (tcode (comp then env val?
-more?))`
-
-`                            (ecode (comp else env val?
-more?)))`
-
-```lisp
-              (cond
-                  ((and (listp pred) ; (if (not p) x y) ==> (if p y x)
-                                    (length=1 (rest pred))
-                                    (primitive-p (first pred) env 1)
-                                    (eq (prim-opcode (primitive-p (first pred) env 1))
-                                                  'not))
-```
-
-`                  (comp-if (second pred) else then env val?
-more?))`
-
-```lisp
-                ((equal tcode ecode) ; (if p x x) ==> (begin p x)
-                  (seq (comp pred env nil t) ecode))
-                ((null tcode) ; (if p nil y) ==> p (TJUMP L2) y L2:
-                  (let ((L2 (gen-label)))
-                          (seq pcode (gen 'TJUMP L2) ecode (list L2)
-```
-
-`                  (unless more?
-(gen 'RETURN)))))`
-
-```lisp
-            ((null ecode) ; (if p x) ==> p (FJUMP L1) x L1:
+(defun comp-if (pred then else env val? more?)
+  (case (always pred env)
+    (true ; (if nil x y) = => y  ; ***
+     (comp then env val? more?)) ; ***
+    (false ; (if t x y) = => x   ; ***
+     (comp else env val? more?)) ; ***`
+    (otherwise
+     (let ((pcode (comp pred env t t))
+           (tcode (comp then env val? more?))
+           (ecode (comp else env val? more?)))
+       (cond
+         ((and (listp pred) ; (if (not p) x y) ==> (if p y x)
+               (length=1 (rest pred))
+               (primitive-p (first pred) env 1)
+               (eq (prim-opcode (primitive-p (first pred) env 1))
+                   'not))
+          (comp-if (second pred) else then env val? more?))
+         ((equal tcode ecode) ; (if p x x) ==> (begin p x)
+          (seq (comp pred env nil t) ecode))
+         ((null tcode) ; (if p nil y) ==> p (TJUMP L2) y L2:
+          (let ((L2 (gen-label)))
+                   (seq pcode (gen 'TJUMP L2) ecode (list L2)
+                   (unless more? (gen 'RETURN)))))
+           ((null ecode) ; (if p x) ==> p (FJUMP L1) x L1:
             (let ((L1 (gen-label)))
-                    (seq pcode (gen TJUMP L1) tcode (list L1)
+              (seq pcode (gen TJUMP L1) tcode (list L1)
+                   (unless more? (gen 'RETURN)))))
+            (t                  ; (if p x y) ==> p (FJUMP L1) x L1: y
+                                ; or p (FJUMP L1) x (JUMP L2) L1: y L2:
+             (let ((L1 (gen-label))
+                   (L2 (if more? (gen-label))))
+               (seq pcode (gen 'FJUMP L1) tcode
+                    (if more? (gen 'JUMP L2))
+                    (list L1) ecode (if more? (list L2))))))))))
 ```
-
-`                                  (unless more?
-(gen 'RETURN)))))`
-
-```lisp
-            (t                                                             ; (if p x y) ==> p (FJUMP L1) x L1: y
-                                                                              ; or p (FJUMP L1) x (JUMP L2) L1: y L2:
-            (let ((L1 (gen-label))
-```
-
-`                          (L2 (if more?
-(gen-label))))`
-
-```lisp
-                (seq pcode (gen 'FJUMP L1) tcode
-```
-
-`                              (if more?
-(gen 'JUMP L2))`
-
-`                              (list L1) ecode (if more?
-(list L2))))))))))`
 
 Development note: originally, I had coded `always` as a predicate that took a Boolean value as input and returned true if the expression always had that value.
 Thus, you had to ask first if the predicate was always true, and then if it was always false.
@@ -2114,8 +2025,10 @@ But to demonstrate that the right solution doesn't always appear the first time,
 **Answer 23.7** The original version requires *O*(*n*) stack space for poorly chosen pivots.
 Assuming a properly tail-recursive compiler, the modified version will never require more than *O*(log *n*) space, because at each step at least half of the vector is being sorted tail-recursively.
 
-**Answer 23.10** (1) `(defun (funcall fn . args) (apply fn args))` (2) Suppose you changed the piece of code `(+ . numbers)` to `(+ . (map sqrt numbers))`.
-The latter is the same expression as (+ `map sqrt numbers),` which is not the intended resuit at all.
+
+**Answer 23.10** (1) `(defun (funcall fn . args) (apply fn args))`
+(2) Suppose you changed the piece of code `(+ . numbers)` to `(+ . (map sqrt numbers))`.
+The latter is the same expression as `(+ map sqrt numbers)`, which is not the intended result at all.
 So there would be an arbitrary restriction: the last argument in an apply form would have to be an atom.
 This kind of restriction goes against the grain of Scheme.
 
