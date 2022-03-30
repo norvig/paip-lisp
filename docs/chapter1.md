@@ -72,7 +72,7 @@ If we want, we can give + more than two arguments, and it will still add them al
 > (+ 1 2 3 4 5 6 7 8 9 10) => 55
 ```
 
-This time we try (9000 + 900 + 90  + 9) - (5000 + 500 + 50 + 5):
+This time we try (9000 + 900 + 90 + 9) - (5000 + 500 + 50 + 5):
 
 ```lisp
 > (- (+ 9000 900 90 9) (+ 5000 500 50 5)) => 4444
@@ -151,9 +151,9 @@ Here are some examples:
 
 > 2 => 2
 
-> '(+  2 2) => (+  2 2)
+> '(+ 2 2) => (+ 2 2)
 
-> (+  2 2) 4
+> (+ 2 2) 4
 
 > John => *Error: JOHN is not a bound variable*
 
@@ -236,8 +236,8 @@ First, Lisp's syntactic forms are always lists in which the first element is one
 Second, special forms are expressions that return a value.
 This is in contrast to statements in most languages, which have an effect but do not return a value.
 
-In evaluating an to expression *(ed note: ???)* like `(setf x (+  1 2)`), we set the variable named by the symbol `x` to the value of `(+  1 2)`, which is `3`.
-If `setf` were a normal function, we would evaluate both the symbol `x` and the expression `(+  1 2)` and do something with these two values, which is not what we want at all.
+In evaluating an expression like `(setf x (+ 1 2)`), we set the variable named by the symbol `x` to the value of `(+ 1 2)`, which is `3`.
+If `setf` were a normal function, we would evaluate both the symbol `x` and the expression `(+ 1 2)` and do something with these two values, which is not what we want at all.
 `setf` is called a special form because it does something special: if it did not exist, it would be impossible to write a function that assigns a value to a variable.
 The philosophy of Lisp is to provide a small number of special forms to do the things that could not otherwise be done, and then to expect the user to write everything else as functions.
 
@@ -246,11 +246,11 @@ In the book *Common LISPcraft,* Wilensky resolves the ambiguity by calling `setf
 This terminology implies that `setf` is just another function, but a special one in that its first argument is not evaluated.
 Such a view made sense in the days when Lisp was primarily an interpreted language.
 The modern view is that `setf` should not be considered some kind of abnormal function but rather a marker of special syntax that will be handled specially by the compiler.
-Thus, the special form `(setf x (+  2 1))` should be considered the equivalent of `x = 2 + 1` in `C`.
+Thus, the special form `(setf x (+ 2 1))` should be considered the equivalent of `x = 2 + 1` in `C`.
 When there is risk of confusion, we will call `setf` a *special form operator* and `(setf x 3)` a *special form expression.*
 
 It turns out that the quote mark is just an abbreviation for another special form.
-The expression '*x* is equivalent to `(quote *x*)`, a special form expression that evaluates to *x.*
+The expression '*x* is equivalent to `(quote x)`, a special form expression that evaluates to *x.*
 The special form operators used in this chapter are:
 
 | []()            |                                              |
@@ -385,11 +385,9 @@ The difference is that here we want to pick out the last name of any `name,` not
 
 In general, a function definition takes the following form (where the documentation string is optional, and all other parts are required):
 
-```lisp
-(defun *function-name* (*parameter...*)
-      "*documentation string*"
-      *function-body...*)
-```
+`(defun` *function-name* (*parameter...*)
+&nbsp;&nbsp;&nbsp;&nbsp;"*documentation string*"
+&nbsp;&nbsp;&nbsp;&nbsp;*function-body...*)
 
 The function name must be a symbol, the parameters are usually symbols (with some complications to be explained later), and the function body consists of one or more expressions that are evaluated when the function is called.
 The last expression is returned as the value of the function call.
@@ -425,11 +423,11 @@ This is a much easier task than hunting through a large program and changing the
   "Select the first name from a name represented as a list."
   (first name))
 
-> p => (JOHN Q PUBLIC)`
+> p => (JOHN Q PUBLIC)
 
-> (first-name p) => JOHN`
+> (first-name p) => JOHN
 
-> (first-name '(Wilma Flintstone)) => WILMA`
+> (first-name '(Wilma Flintstone)) => WILMA
 
 > (setf names '((John Q Public) (Malcolm X)
               (Admiral Grace Murray Hopper) (Spot) 
@@ -601,12 +599,10 @@ This two-part requirement is equivalent to the first one, but it makes it easier
 
 Next I show an abstract description of the `first-name` problem, to emphasize the design of the function and the fact that recursive solutions are not tied to Lisp in any way:
 
-```lisp
-function first-name(name):
-  if *the first element of name is a title*
-    then *do something complicated to get the first-name*
-    else *return the first element of the name*
-```
+`function first-name(name):`
+&nbsp;&nbsp;&nbsp;&nbsp;`if` *the first element of name is a title*
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`then` *do something complicated to get the first-name*
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`else` *return the first element of the name*
 
 This breaks up the problem into two cases.
 In the second case, we return an answer, and it is in fact the correct answer.
@@ -614,12 +610,10 @@ We have not yet specified what to do in the first case.
 But we do know that it has something to do with the rest of the name after the first element, and that what we want is to extract the first name out of those elements.
 The leap of faith is to go ahead and use `first-name`, even though it has not been fully defined yet:
 
-```lisp
-function first-name(name):
-  if *the first element of name is a title*
-    then *return the* first-name *of the rest of the name*
-    else *return the first element of the name*
-```
+`function first-name(name):`
+&nbsp;&nbsp;&nbsp;&nbsp;`if` *the first element of name is a title*
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`then` *return the* `first-name` *of the rest of the name*
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`else` *return the first element of the name*
 
 Now the first case in `first-name` is recursive, and the second case remains unchanged.
 We already agreed that the second case returns the correct answer, and the first case only returns what `first-name` returns.
@@ -716,12 +710,12 @@ The alternate definition of `mappend` shown in the following doesn't make use of
 ```lisp
 > (funcall #'+ 2 3) => 5
 
-> (apply #' + '(2 3)) => 5
+> (apply #'+ '(2 3)) => 5
 
-> (funcall #' + '(2 3)) => *Error: (2 3) is not a number.*
+> (funcall #'+ '(2 3)) => *Error: (2 3) is not a number.*
 ```
 
-These are equivalent to `(+  2 3), (+ 2 3)`,and`(+ '(2 3))`, respectively.
+These are equivalent to `(+ 2 3), (+ 2 3)`,and`(+ '(2 3))`, respectively.
 
 So far, every function we have used has been either predefined in Common Lisp or introduced with a `defun`, which pairs a function with a name.
 It is also possible to introduce a function without giving it a name, using the special syntax `lambda`.
@@ -828,20 +822,20 @@ The notation `'x` is actually an abbreviation for the special form expression `(
 Similarly, the notation `#'f` is an abbreviation for the special form expression `(function f)`.
 
 ```lisp
-'John = (quote John) => JOHN
+'John ≡ (quote John) => JOHN
 
 (setf p 'John) => JOHN
 
 defun twice (x) (+ x x)) => TWICE
 
-(if (=  2 3) (error) (+  5 6)) => 11
+(if (= 2 3) (error) (+ 5 6)) => 11
 ```
 
 *   A *function application* is evaluated by first evaluating the arguments (the rest of the list) and then finding the function named by the first element of the list and applying it to the list of evaluated arguments.
 
 ```lisp
-(+  2 3) => 5
-(- (+  90 9) (+  50 5 (length '(Pat Kim)))) => 42
+(+ 2 3) => 5
+(- (+ 90 9) (+ 50 5 (length '(Pat Kim)))) => 42
 ```
 
 Note that if `'(Pat Kim)` did not have the quote, it would betreated as a function application of the function `pat` to the value of the variable `kim.`
@@ -1079,7 +1073,8 @@ A (COND
 (SETQ RESTLIST (CONS (CONS TEMP
      (ADD1 DEPTH)) RESTLIST))
 ))))
-))))(GO A))
+))))
+(GO A))
 ```
 
 Note the use of the now-deprecated goto `(GO)` statement, and the lack of consistent indentation conventions.
@@ -1209,7 +1204,7 @@ This list of symbols is not a legal Lisp assignment statement, but it is a Lisp 
 
 <a id="fn01-2"></a><sup>[2](#tfn01-2)</sup>
 The variable `*print-case*` controls how symbols will be printed.
-By default, the value of this variable is :`upcase`, but it can be changed to :`downcase` or `:capitalize`.
+By default, the value of this variable is `:upcase`, but it can be changed to `:downcase` or `:capitalize`.
 
 <a id="fn01-3"></a><sup>[3](#tfn01-3)</sup>
 Later we will see what happens when the second argument is not a list.

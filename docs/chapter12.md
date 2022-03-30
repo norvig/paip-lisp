@@ -530,7 +530,7 @@ Now `member` compiles into this:
 ## 12.4 Improving the Compilation of Unification
 
 Now we turn to the improvement of `compile-unify`.
-Recall that we want to elimina te certain calls to `unify!` so that, for example, the first clause of `member:`
+Recall that we want to eliminate certain calls to `unify!` so that, for example, the first clause of `member:`
 
 ```lisp
 (<- (member ?item (?item . ?rest)))
@@ -581,7 +581,7 @@ In addition, unification of two cons cells can be broken into components at comp
 We can even do some occurs checking at compile time: `(= ?x (f ?x))` should fail.
 
 The following table lists these improvements, along with a breakdown for the cases of unifying a bound `(?arg1)` or unbound `(?x)` variable agains another expression.
-The first column is the unification call, the second is the generated code, and the third is the bindings that will be added as a resuit of the call:
+The first column is the unification call, the second is the generated code, and the third is the bindings that will be added as a result of the call:
 
 |      | Unification         | Code                    | Bindings            |
 |------|---------------------|-------------------------|---------------------|
@@ -1237,7 +1237,7 @@ The set {*a*, *b*} is the same as the set {*b*, *a*}.
 Here is an implementation of `bagof:`
 
 ```lisp
-(defun bagof/3 (exp goal resuit cont)
+(defun bagof/3 (exp goal result cont)
  "Find all solutions to GOAL, and for each solution,
  collect the value of EXP into the list RESULT."
  ;; Ex: Assume (p 1) (p 2) (p 3). Then:
@@ -1246,7 +1246,7 @@ Here is an implementation of `bagof:`
  (call/1 goal #'(lambda ()
    (push (deref-copy exp) answers)))
  (if (and (not (null answers))
-  (unify! resuit (nreverse answers)))
+  (unify! result (nreverse answers)))
  (funcall cont))))
  (defun deref-copy (exp)
  "Copy the expression, replacing variables with new ones.
@@ -1280,7 +1280,7 @@ No.
 Those who are disappointed with a bag containing multiple versions of the same answer may prefer the primitive `setof`, which does the same computation as `bagof` but then discards the duplicates.
 
 ```lisp
-(defun setof/3 (exp goal resuit cont)
+(defun setof/3 (exp goal result cont)
  "Find all unique solutions to GOAL, and for each solution,
  collect the value of EXP into the list RESULT."
  ;; Ex: Assume (p 1) (p 2) (p 3). Then:
@@ -1289,7 +1289,7 @@ Those who are disappointed with a bag containing multiple versions of the same a
  (call/1 goal #'(lambda ()
    (push (deref-copy exp) answers)))
  (if (and (not (null answers))
-  (unify! resuit (delete-duplicates
+  (unify! result (delete-duplicates
     answers
     :test #'deref-equal)))
  (funcall cont))))
@@ -1510,7 +1510,7 @@ The predicate repeat is defined with the following two clauses:
 (<- (repeat) (repeat))
 ```
 
-An alterna te definition as a primitive is:
+An alternate definition as a primitive is:
 
 ```lisp
 (defun repeat/0 (cont)
@@ -1684,7 +1684,7 @@ should be compiled as if it were:
 
 *   `atomic/1` True if the argument is a number or symbol (like Lisp's `atom`).
 
-*   <,>,=<,>= Arithmetic comparison; succeeds when the arguments are both instantiated to numbers and the comparison is true.
+*   `<`, `>`, `=<`, `>=` Arithmetic comparison; succeeds when the arguments are both instantiated to numbers and the comparison is true.
 
 *   `listing/0` Print out the clauses for all defined predicates.
 
@@ -1781,7 +1781,7 @@ The macro for `and` is trivial:
   (compile-body (append (args goal) body) cont bindings))
 ```
 
-The macro for or is trickier:
+The macro for `or` is trickier:
 
 ```lisp
 (def-prolog-compiler-macro or (goal body cont bindings)
@@ -1790,14 +1790,14 @@ The macro for or is trickier:
       (0 fail)
       (1 (compile-body (cons (first disjuncts) body) cont bindings))
       (t (let ((fn (gensym "F")))
-        '(fl&egrave;t ((,fn () ,(compile-body body cont bindings)))
+        '(flet ((,fn () ,(compile-body body cont bindings)))
           .,(maybe-add-undo-bindings
             (loop for g in disjuncts collect
               (compile-body (list g) '#',fn
                 bindings)))))))))
 ```
 
-**Answer 12.11**`true/0` is `funcall` : when a goal succeeds, we call the continuation, `fail/0` is `ignore`: when a goal fails, we ignore the continuation.
+**Answer 12.11** `true/0` is `funcall`: when a goal succeeds, we call the continuation, `fail/0` is `ignore`: when a goal fails, we ignore the continuation.
 We could also define compiler macros for these primitives:
 
 ```lisp

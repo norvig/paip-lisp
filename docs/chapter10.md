@@ -144,7 +144,7 @@ Here is the disassembled code for f from Allegro Common Lisp for a Motorola 6800
 4:      move.l  a2,-(a7)
 6:      move.l  a5,-(a7)
 8:      move.l  7(a2),a5
-12:     move.l  8(a6).d4  ; y
+12:     move.l  8(a6).d4 ; y
 16:     add.l   12(a6),d4 ; x
 20:     move.l  #1,d1
 22:     move.l  -8(a6),a5
@@ -549,7 +549,7 @@ In CMU Lisp, the function `member` has the following definition, which is procla
  (return list)))))
 ```
 
-A call like `(member`[ch 1](B9780080571157500017.xhtml)`:key #'first-letter :test #'char =)` expands into the equivalent of the following code.
+A call like `(member ch 1 :key #'first-letter :test #'char =)` expands into the equivalent of the following code.
 Unfortunately, not all compilers are this clever with inline declarations.
 
 ```lisp
@@ -560,7 +560,7 @@ Unfortunately, not all compilers are this clever with inline declarations.
     (return list))))
 ```
 
-This chapter is concerned with efficiency and so has taken a stand against the use of keyword parameter s in frequently used functions.
+This chapter is concerned with efficiency and so has taken a stand against the use of keyword parameters in frequently used functions.
 But when maintainability is considered, keyword parameters look much better.
 When a program is being developed, and it is not clear if a function will eventually need additional arguments, keyword parameters may be the best choice.
 
@@ -808,7 +808,8 @@ Here is a definition for a version of `remove` that uses `reuse-cons`:
 Of course, `reuse-cons` only works when you have candidate cons cells around.
 That is, (`reuse-cons a b c`) only saves space when `c` is (or might be) equal to (`cons a b`).
 For some applications, it is useful to have a version of `cons` that returns a unique cons cell without needing `c` as a hint.
-We will call this version `ucons` for "unique cons." `ucons` maintains a double hash table: `*uniq - cons - table*` is a hash table whose keys are the `cars` of cons cells.
+We will call this version `ucons` for "unique cons."
+`ucons` maintains a double hash table: `*uniq-cons-table*` is a hash table whose keys are the `cars` of cons cells.
 The value for each `car` is another hash table whose keys are the `cdrs` of cons cells.
 The value of each `cdr` in this second table is the original cons cell.
 So two different cons cells with the same `car` and `cdr` will retrieve the same value.
@@ -887,7 +888,7 @@ An `eq` hash table for lists is almost as good as a property list on symbols.
 ### Avoid Consing: Multiple Values
 
 Parameters and multiple values can also be used to pass around values, rather than building up lists.
-For example, instead of :
+For example, instead of:
 
 ```lisp
 (defstruct point "A point in 3-D cartesian space." x y z)
@@ -1334,7 +1335,7 @@ Here is a possible macroexpansion:
  'person)
 ```
 
-**Exercise 10.2 [m]** We can use the :`type` option to `defstruct` to define structures implemented as lists.
+**Exercise 10.2 [m]** We can use the `:type` option to `defstruct` to define structures implemented as lists.
 However, often we have a two-field structure that we would like to implement as a cons cell rather than a two-element list, thereby cutting storage in half.
 Since `defstruct` does not allow this, define a new macro that does.
 

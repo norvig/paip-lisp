@@ -10,7 +10,7 @@ Instead I think it is an elegant case study of a paradigm we can expect to see a
 
 This book touches only the areas of AI that deal with abstract reasoning.
 There is another side of AI, the field of *robotics,* that deals with interfacing abstract reasoning with the real world through sensors and motors.
-A robot receives input from cameras, microphones, sonar, and touch-sensitive devices, and produces "ouput" by moving its appendages or generating sounds.
+A robot receives input from cameras, microphones, sonar, and touch-sensitive devices, and produces "output" by moving its appendages or generating sounds.
 The real world is a messier place than the abstract worlds we have been covering.
 A robot must deal with noisy data, faulty components, and other agents and events in the world that can affect changes in the environment.
 
@@ -42,10 +42,10 @@ We will assume that this is not the case.
 Given a diagram that fits these three restrictions, our goal is to identify each line, placing it in one of three classes:
 
 1.  A convex line separates two visible faces of a polyhedron such that a line from one face to the other would lie inside the polyhedron.
-It will be marked with a plus sign:+.
+It will be marked with a plus sign: `+`.
 
 2.  A concave line separates two faces of two polyhedra such that a line between the two spaces would pass through empty space.
-It will be marked with a minus sign:-.
+It will be marked with a minus sign: `-`.
 
 3.  A boundary line denotes the same physical situation as a convex line, but the diagram is oriented in such a way that only one of the two faces of the polyhedron is visible.
 Thus, the line marks the boundary between the polyhedron and the background.
@@ -109,7 +109,7 @@ Keep going until the diagram is either unambiguous or inconsistent.
 
 That completes the sketch of the line-labeling algorithm.
 We are now ready to implement a labeling program.
-It's glossary is in [figure 17.5](#f0030).
+Its glossary is in [figure 17.5](#f0030).
 
 | []()                                                |
 |-----------------------------------------------------|
@@ -232,7 +232,7 @@ But since there are a finite number of labelings initially (no more than six per
 The function `consistent-labelings` is passed a vertex.
 It gets all the labels for this vertex from the neighboring vertexes, collecting them in `neighbor-labels`.
 It then checks all the labels on the current vertex, keeping only the ones that are consistent with all the neighbors' constraints.
-The auxiliary function `labels-for` finds the labels for a particular neighbor at a vertex, and reverse-1 abel accounts for the fact that L and R labels are interpreted with respect to the vertex they point at.
+The auxiliary function `labels-for` finds the labels for a particular neighbor at a vertex, and `reverse-label` accounts for the fact that L and R labels are interpreted with respect to the vertex they point at.
 
 ```lisp
 (defun consistent-labelings (vertex)
@@ -389,7 +389,7 @@ Here again is the `defdiagram` description for the cube shown in [figure 17.6](#
 
 The macro `defdiagram` calls `construct-diagram` to do the real work.
 It would be feasible to have `defdiagram` expand into a `defvar,` making the names be special variables.
-But then it would be the user`'s` responsibility to make copies of such a variable before passing it to a destructive function.
+But then it would be the user's responsibility to make copies of such a variable before passing it to a destructive function.
 Instead, I use `put-diagram` and `diagram` to put and get diagrams in a table, `diagram` retrieves the named diagram and makes a copy of it.
 Thus, the user cannot corrupt the original diagrams stored in the table.
 Another possibility would be to have `defdiagram` expand into a function definition for `name` that returns a copy of the diagram.
@@ -930,21 +930,21 @@ Repairing these bugs gives the diagram:
   (b L d a)      (q T P i r)
   (c Y a d g)    (r T j s q)
   (d Y c b m)    (s L r t)
-  (e L a f)      (t W u s k)        *;t-u not t-v*
-  (f T e g n)    (u L t 4)          *;u-4 not u-l*
+  (e L a f)      (t W u s k)    ;t-u not t-v
+  (f T e g n)    (u L t 4)      ;u-4 not u-l
   (g W h f c)    (v L 2 4)
   (h T g i o)    (w W x l y)
   (i T h j q)    (x L w z)
   (j T i k r)    (y Y w 2 z)
   (k T J l t)    (z W 3 x y)
-  (l T k m 4)    (1 T n o w)          *;l-4 not l-v*
+  (l T k m 4)    (1 T n o w)    ;l-4 not l-v
   (m L l d)      (2 W v 3 y)
   (n L f 1)      (3 L z 2)
   (o W P 1 h)    (4 T u l v))
 ```
 
-This time there arenoerrorsdetected by `check-diagram,` butrunning `print-labelings` again still does not give a solution.
-`To` get more information about which constraints are applied, `I` modified `propagate-constraints` to print out some information:
+This time there are no errors detected by `check-diagram,` but running `print-labelings` again still does not give a solution.
+To get more information about which constraints are applied, I modified `propagate-constraints` to print out some information:
 
 ```lisp
 (defun propagate-constraints (vertex)
@@ -1129,10 +1129,10 @@ Second, even when input checking is done, it is still up to the user to understa
 
 [Guzman (1968)](B9780080571157500285.xhtml#bb0500) was one of the first to consider the problem of interpreting line diagrams.
 He classified vertexes, and defined some heuristics for combining information from adjacent vertexes.
-[Huffman (1971)](B9780080571157500285.xhtml#bb0560) and [Clowes (1971)](B9780080571157500285.xhtml#bb0215) independently came up with more formai and complete analyses, and David [Waltz (1975)](B9780080571157500285.xhtml#bb1300) extended the analysis to handle shadows, and introduced the constraint propagation algorithm to eut down on the need for search.
+[Huffman (1971)](B9780080571157500285.xhtml#bb0560) and [Clowes (1971)](B9780080571157500285.xhtml#bb0215) independently came up with more formal and complete analyses, and David [Waltz (1975)](B9780080571157500285.xhtml#bb1300) extended the analysis to handle shadows, and introduced the constraint propagation algorithm to cut down on the need for search.
 The algorithm is sometimes called "Waltz filtering" in his honor.
 With shadows and nontrihedral angles, there are thousands of vertex labelings instead of 18, but there are also more constraints, so the constraint propagation actually does better than it does in our limited world.
-Waltz's approach and the Huf f man-Clowes labels are covered in most introductory AI books, including Rich and Knight 1990, [Charniak and McDermott 1985](B9780080571157500285.xhtml#bb0175), and [Winston 1984](B9780080571157500285.xhtml#bb1405).
+Waltz's approach and the Huffman-Clowes labels are covered in most introductory AI books, including Rich and Knight 1990, [Charniak and McDermott 1985](B9780080571157500285.xhtml#bb0175), and [Winston 1984](B9780080571157500285.xhtml#bb1405).
 Waltz's original paper appears in *The Psychology of Computer Vision* ([Winston 1975](B9780080571157500285.xhtml#bb1400)), an influential volume collecting early work done at MIT.
 He also contributed a summary article on Waltz filtering ([Waltz 1990](B9780080571157500285.xhtml#bb1305)).
 

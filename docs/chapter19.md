@@ -2,23 +2,23 @@
 ## Introduction to Natural Language
 
 > Language is everywhere.
-It permeates our thoughts mediates our relations with others, and even creeps into our dreams.
+It permeates our thoughts, mediates our relations with others, and even creeps into our dreams.
 The overwhelming bulk of human knowledge is stored and transmitted in language.
 Language is so ubiquitous that we take it for granted but without it, society as we know it would be impossible.
-
+>
 > -Ronand Langacker
-
+>
 > Language and its Structure (1967)
 
-Anatural language is a language spoken by people, such as English, German, or Tagalog.
+A natural language is a language spoken by people, such as English, German, or Tagalog.
 This is in opposition to artificial languages like Lisp, FORTRAN, or Morse code.
 Natural language processing is an important part of AI because language is intimately connected to thought.
 One measure of this is the number of important books that mention language and thought in the title: in AI, Schank and Colby's *Computer Models of Thought and Language;* in linguistics, Whorf's *Language, Thought, and Reality* (and Chomsky's *Language and Mind;)* in philosophy, Fodor's *The Language of Thought;* and in psychology, Vygotsky's *Thought and Language* and John Anderson's *Language, Memory, and Thought.* Indeed, language is the trait many think of as being the most characteristic of humans.
-Much controversy has been generated over the question of whether animais, especially primates and dolphins, can use and "understand" language.
+Much controversy has been generated over the question of whether animals, especially primates and dolphins, can use and "understand" language.
 Similar controversy surrounds the same question asked of computers.
 
 The study of language has been traditionally separated into two broad classes: syntax, or grammar, and semantics, or meaning.
-Historically, syntax has achieved the most attention, largely because on the surface it is more amenable to formai and semiformal methods.
+Historically, syntax has achieved the most attention, largely because on the surface it is more amenable to formal and semiformal methods.
 Although there is evidence that the boundary between the two is at best fuzzy, we still maintain the distinction for the purposes of these notes.
 We will cover the "easier" part, syntax, first, and then move on to semantics.
 
@@ -115,7 +115,7 @@ Compare this to the treatment on [page 40](B9780080571157500029.xhtml#p40).
 
 Now we're ready to define the parser.
 The main function parser takes a list of words to parse.
-It calls parse, which returns a list of all parses that parse some subsequence of the words, starting at the beginning.
+It calls `parse`, which returns a list of all parses that parse some subsequence of the words, starting at the beginning.
 parser keeps only the parses with no remainder-that is, the parses that span all the words.
 
 ```lisp
@@ -131,7 +131,8 @@ parser keeps only the parses with no remainder-that is, the parses that span all
 The function parse looks at the first word and considers each category it could be.
 It makes a parse of the first word under each category, and calls extend - parse to try to continue to a complete parse.
 parse uses mapcan to append together all the resulting parses.
-As an example, suppose we are trying to parse "the man took the ball." pa rse would find the single lexical rule for "the" and call extend-parse with a parse with tree (Art the) and remainder "man took the ball," with no more categories needed.
+As an example, suppose we are trying to parse "the man took the ball."
+`parse` would find the single lexical rule for "the" and call extend-parse with a parse with tree (Art the) and remainder "man took the ball," with no more categories needed.
 
 `extend-parse` has two cases.
 If the partial parse needs no more categories to be complete, then it returns the parse itself, along with any parses that can be formed by extending parses starting with the partial parse.
@@ -288,7 +289,7 @@ Evaluation of (LENGTH (PARSER S)) took 33.11 Seconds of elapsed time.
 The sentence S has 10 parses, since there are two ways to parse the subject NP and five ways to parse the VP.
 It took 33 seconds to discover these 10 parses with the parse function as it was written.
 
-We can improve this dramatically by memoizing parse (along with the table- lookup functions).
+We can improve this dramatically by memoizing `parse` (along with the table-lookup functions).
 Besides memoizing, the only change is to clear the memoization table within parser.
 
 ```lisp
@@ -303,7 +304,7 @@ Besides memoizing, the only change is to clear the memoization table within pars
 ```
 
 In normal human language use, memoization would not work very well, since the interpretation of a phrase depends on the context in which the phrase was uttered.
-But with context-f ree grammars we have a guarantee that the context cannot af f ect the interpretation.
+But with context-free grammars we have a guarantee that the context cannot affect the interpretation.
 The call `(parse words)` must return all possible parses for the words.
 We are free to choose between the possibilities based on contextual information, but context can never supply a new interpretation that is not in the context-free list of parses.
 
@@ -317,7 +318,7 @@ The function use is introduced to tell the table-lookup functions that they are 
   (length (setf *grammar* grammar)))
 ```
 
-Now we run the benchmark again with the memoized version of pa rse:
+Now we run the benchmark again with the memoized version of `parse`:
 
 ```lisp
 > (time (length (parser s)))
@@ -325,25 +326,24 @@ Evaluation of (LENGTH (PARSER S 's)) took .13 Seconds of elapsed time.
 10
 ```
 
-By memoizing p a r s e we reduce the parse time f rom 33 to.
-13 seconds, a 250-f old speed- up.
+By memoizing `parse` we reduce the parse time from 33 to .13 seconds, a 250-fold speed-up.
 We can get a more systematic comparison by looking at a range of examples.
-For example, consider sentences of the form "The man hit the table [with the ball]*" for zero or more repetitions of the PP "with the ball."
-In the following table we record N, the number of repetitions of the PP, along with the number of resulting parses,<a id="tfn19-2"></a><sup>[2](#fn19-2)</sup> and for both memoized and unmemoized versions of parse, the number of seconds to produce the parse, the number of parses per second (PPS), and the number of recursive calls to `parse`.
+For example, consider sentences of the form "The man hit the table [with the ball]\*" for zero or more repetitions of the PP "with the ball."
+In the following table we record N, the number of repetitions of the PP, along with the number of resulting parses,<a id="tfn19-2"></a><sup>[2](#fn19-2)</sup> and for both memoized and unmemoized versions of `parse`, the number of seconds to produce the parse, the number of parses per second (PPS), and the number of recursive calls to `parse`.
 The performance of the memoized version is quite acceptable; for N=5, a 20-word sentence is parsed into 132 possibilities in .68 seconds, as opposed to the 20 seconds it takes in the unmemoized version.
 
-|      |        | Memoized |     |       | Unmemoized |     |       |
-| N    | Parses | Secs     | PPS | Calls | Secs       | PPS | Calls |
-|------|--------|----------|-----|-------|------------|-----|-------|
-| 0    | 1      | 0.02     | 60  | 4     | 0.02       | 60  | 17    |
-| 1    | 2      | 0.02     | 120 | 11    | 0.07       | 30  | 96    |
-| 2    | 5      | 0.05     | 100 | 21    | 0.23       | 21  | 381   |
-| 3    | 14     | 0.10     | 140 | 34    | 0.85       | 16  | 1388  |
-| 4    | 42     | 0.23     | 180 | 50    | 3.17       | 13  | 4999  |
-| 5    | 132    | 0.68     | 193 | 69    | 20.77      | 6   | 18174 |
-| 6    | 429    | 1.92     | 224 | 91    | -          |     |       |
-| 7    | 1430   | 5.80     | 247 | 116   | -          |     |       |
-| 8    | 4862   | 20.47    | 238 | 144   | -          |     |       |
+|     |          | Memoized |       |         | Unmemoized |       |         |
+|-----|----------|----------|-------|---------|------------|-------|---------|
+| *N* | *Parses* | *Secs*   | *PPS* | *Calls* | *Secs*     | *PPS* | *Calls* |
+| 0   | 1        | 0.02     | 60    | 4       | 0.02       | 60    | 17      |
+| 1   | 2        | 0.02     | 120   | 11      | 0.07       | 30    | 96      |
+| 2   | 5        | 0.05     | 100   | 21      | 0.23       | 21    | 381     |
+| 3   | 14       | 0.10     | 140   | 34      | 0.85       | 16    | 1388    |
+| 4   | 42       | 0.23     | 180   | 50      | 3.17       | 13    | 4999    |
+| 5   | 132      | 0.68     | 193   | 69      | 20.77      | 6     | 18174   |
+| 6   | 429      | 1.92     | 224   | 91      | -          |       |         |
+| 7   | 1430     | 5.80     | 247   | 116     | -          |       |         |
+| 8   | 4862     | 20.47    | 238   | 144     | -          |       |         |
 
 **Exercise  19.1 [h]** It seems that we could be more efficient still by memoizing with a table consisting of a vector whose length is the number of words in the input (plus one).
 Implement this approach and see if it entails less overhead than the more general hash table approach.
@@ -366,7 +366,7 @@ This can be programmed very simply by having `lexical-rules` return a list of th
       (mapcar #'(lambda (cat) `(,cat -> ,word)) *open-categories*)))
 ```
 
-With memoization of lexical - rules, this means that the lexicon is expanded every time an unknown word is encountered.
+With memoization of `lexical-rules`, this means that the lexicon is expanded every time an unknown word is encountered.
 Let's try this out:
 
 ```lisp
@@ -420,7 +420,7 @@ Now let's stretch the imagination one more time by assuming that this CD player 
 Let's first consider the relevant data structures.
 We need to add a component for the semantics to both the rule and tree structures.
 Once we've done that, it is clear that trees are nothing more than instances of rules, so their definitions should reflect that.
-Thus, I use an : incl ude defstruct to define trees, and I specify no copier function, because copy-tree is already a Common Lisp function, and I don't want to redefine it.
+Thus, I use an `:include` defstruct to define trees, and I specify no copier function, because copy-tree is already a Common Lisp function, and I don't want to redefine it.
 To maintain consistency with the old new-tree function (and to avoid having to put in all those keywords) I define the constructor new-tree.
 This option to `defstruct makes (new-tree a b c)` equivalent to `(make-tree :lhs a :sem b :rhs c)`.
 
@@ -432,7 +432,7 @@ This option to `defstruct makes (new-tree a b c)` equivalent to `(make-tree :lhs
 ```
 
 We will adopt the convention that the semantics of a word can be any Lisp object.
-For example, the semantics of the word "1" could be the object 1, and the semantics of "without" could be the function set-di fference.
+For example, the semantics of the word "1" could be the object 1, and the semantics of "without" could be the function `set-difference`.
 The semantics of a tree is formed by taking the semantics of the rule that generated the tree and applying it (as a function) to the semantics of the constituents of the tree.
 Thus, the grammar writer must insure that the semantic component of rules are functions that expect the right number of arguments.
 For example, given the rule
@@ -441,9 +441,9 @@ For example, given the rule
 (NP -> (NP CONJ NP) infix-funcall)
 ```
 
-then the semantics of the phrase "1 to 5 without 3" could be determined by first determining the semantics of"1 to 5" tobe(l 2 3 4 5),of"without"tobe set-`difference`, and of "3" to be (3).
-After these sub-constituents are determined, the rule is applied by calling the function `infix-funcall` with the three arguments (1 2 3 4 5), `set-difference`, and (3).
-Assuming that `infix-funcall` is defined to apply its second argument to the other two arguments, the resuit will be (1 2 4 5).
+then the semantics of the phrase "1 to 5 without 3" could be determined by first determining the semantics of "1 to 5" to be `(1 2 3 4 5)`, of "without" to be `set-difference`, and of "3" to be `(3)`.
+After these sub-constituents are determined, the rule is applied by calling the function `infix-funcall` with the three arguments `(1 2 3 4 5)`, `set-difference`, and `(3)`.
+Assuming that `infix-funcall` is defined to apply its second argument to the other two arguments, the result will be `(1 2 4 5)`.
 
 This may make more sense if we look at a complete grammar for the CD player problem:
 
@@ -479,10 +479,10 @@ As for the lexical rules, the conjunction "and" translates to the union function
 The numbers "0" to "9" translate to themselves.
 Note that both lexical rules like "`CONJ ->` and" and nonlexical rules like "`NP -> (N P N)`" can have functions as their semantic translations; in the first case, the function will just be returned as the semantic translation, whereas in the second case the function will be applied to the list of constituents.
 
-Only minor changes are needed to pa rse to support this kind of semantic processing.
-As we see in the following, we add a sem argument to extend - parse and arrange to pass the semantic components around properly.
+Only minor changes are needed to `parse` to support this kind of semantic processing.
+As we see in the following, we add a `sem` argument to `extend-parse` and arrange to pass the semantic components around properly.
 When we have gathered all the right-hand-side components, we actually do the function application.
-All changes are marked with ***.
+All changes are marked with `***`.
 We adopt the convention that the semantic value `nil` indicates failure, and we discard all such parses.
 
 ```lisp
@@ -596,12 +596,16 @@ With this new grammar, we can get single interpretations out of most reasonable 
 ```lisp
 > (meanings '(1 to 6 without 3 and 4))
 ((1 2 5 6))
+
 > (meanings '(1 and 3 to 7 and 9 without 5 and 6))
-((13 4 7 9))
+((1 3 4 7 9))
+
 > (meanings '(1 and 3 to 7 and 9 without 5 and 2))
 ((1 3 4 6 7 9 2))
+
 > (meanings '(1 9 8 to 2 0 1))
 ((198 199 200 201))
+
 > (meanings '(1 2 3))
 (123 (123))
 ```
@@ -687,14 +691,14 @@ There are two places where we put the score into trees as we create them, and on
 ```
 
 Again we need some new functions to support this.
-Most important is appl y - scorer, which computes the score for a tree.
+Most important is `apply-scorer`, which computes the score for a tree.
 If the tree is a terminal (a word), then the function just looks up the score associated with that word.
 In this grammar all words have a score of 0, but in a grammar with ambiguous words it would be a good idea to give lower scores for infrequently used senses of ambiguous words.
 If the tree is a nonterminal, then the score is computed in two steps.
 First, all the scores of the constituents of the tree are added up.
 Then, this is added to a measure for the tree as a whole.
 The rule associated with each tree will have either a number attached to it, which is added to the sum, or a function.
-In the latter case, the function is applied to the tree, and the resuit is added to obtain the final score.
+In the latter case, the function is applied to the tree, and the result is added to obtain the final score.
 As a final special case, if the function returns nil, then we assume it meant to return zero.
 This will simplify the definition of some of the scoring functions.
 
@@ -839,69 +843,60 @@ We will need a way to show off the preference rankings:
 
 Now we can try some examples:
 
-```
+```lisp
 > (all-parses '(1 to 6 without 3 and 4))
+Score  Semantics         (1 TO 6 WITHOUT 3 AND 4)
+=====  ===========       ========================
+0.3    (12 5 6)          ((1 TO 6) WITHOUT (3 AND 4))
+-0.7   (12 4 5 6 4)      (((1 TO 6) WITHOUT 3) AND 4)
 ```
-
-| []()      |                |                                |
-|-----------|----------------|--------------------------------|
-| `Score`   | `Semantics`    | `(1 TO 6 WITHOUT 3 AND 4)`     |
-| `=======` | `===========`  | `========================`     |
-| `0.3`     | `(12 5 6)`     | `((1 TO 6) WITHOUT (3 AND 4))` |
-| `-0.7`    | `(12 4 5 6 4)` | `(((1 TO 6) WITHOUT 3) AND 4)` |
 
 ```
 > (all-parses '(1 and 3 to 7 and 9 without 5 and 6))
+Score  Semantics         (1 AND 3 TO 7 AND 9 WITHOUT 5 AND 6)
+=====  ===========       =================================
+0.2    (1 3 4 7 9)       (1 AND (((3 TO 7) AND 9) WITHOUT (5 AND 6)))
+0.1    (1 3 4 7 9)       (((1 AND (3 TO 7)) AND 9) WITHOUT (5 AND 6))
+0.1    (1 3 4 7 9)       ((1 AND ((3 TO 7) AND 9)) WITHOUT (5 AND 6))
+-0.8   (1 3 4 6 7 9 6)   ((1 AND (((3 TO 7) AND 9) WITHOUT 5)) AND 6)
+-0.8   (1 3 4 6 7 9 6)   (1 AND ((((3 TO 7) AND 9) WITHOUT 5) AND 6))
+-0.9   (1 3 4 6 7 9 6)   ((((1 AND (3 TO 7)) AND 9) WITHOUT 5) AND 6)
+-0.9   (1 3 4 6 7 9 6)   (((1 AND ((3 TO 7) AND 9)) WITHOUT 5) AND 6)
+-2.0   (1 3 4 5 6 7 9)   ((1 AND (3 TO 7)) AND (9 WITHOUT (5 AND 6)))
+-2.0   (1 3 4 5 6 7 9)   (1 AND ((3 TO 7) AND (9 WITHOUT (5 AND 6))))
+-3.0   (1 3 4 5 6 7 9 6) (((1 AND (3 TO 7)) AND (9 WITHOUT 5)) AND 6)
+-3.0   (1 3 4 5 6 7 9 6) ((1 AND (3 TO 7)) AND ((9 WITHOUT 5) AND 6))
+-3.0   (1 3 4 5 6 7 9 6) ((1 AND ((3 TO 7) AND (9 WITHOUT 5))) AND 6)
+-3.0   (1 3 4 5 6 7 9 6) (1 AND (((3 TO 7) AND (9 WITHOUT 5)) AND 6))
+-3.0   (1 3 4 5 6 7 9 6) (1 AND ((3 TO 7) AND ((9 WITHOUT 5) AND 6)))
 ```
 
-| []()      |                     |                                                |
-|-----------|---------------------|------------------------------------------------|
-| `Score`   | `Semantics`         | `(1 AND 3 T0 7 AND 9 WITHOUT 5 AND 6)`         |
-| `=======` | `===========`       | `=================================`            |
-| `0.2`     | `(1 3 4 7 9)`       | `(1 AND (((3 T0 7) AND 9) WITHOUT (5 AND 6)))` |
-| `0.1`     | `(1 3 4 7 9)`       | `(((1 AND (3 T0 7)) AND 9) WITHOUT (5 AND 6))` |
-| `0.1`     | `(1 3 4 7 9)`       | `((1 AND ((3 T0 7) AND 9)) WITHOUT (5 AND 6))` |
-| `-0.8`    | `(1 3 4 6 7 9 6)`   | `((1 AND (((3 T0 7) AND 9) WITHOUT 5)) AND 6)` |
-| `-0.8`    | `(1 3 4 6 7 9 6)`   | `(1 AND ((((3 T0 7) AND 9) WITHOUT 5) AND 6))` |
-| `-0.9`    | `(1 3 4 6 7 9 6)`   | `((((1 AND (3 T0 7)) AND 9) WITHOUT 5) AND 6)` |
-| `-0.9`    | `(1 3 4 6 7 9 6)`   | `(((1 AND ((3 T0 7) AND 9)) WITHOUT 5) AND 6)` |
-| `-2.0`    | `(1 3 4 5 6 7 9)`   | `((1 AND (3 TO 7)) AND (9 WITHOUT (5 AND 6)))` |
-| `-2.0`    | `(1 3 4 5 6 7 9)`   | `(1 AND ((3 TO 7) AND (9 WITHOUT (5 AND 6))))` |
-| `-3.0`    | `(1 3 4 5 6 7 9 6)` | `(((1 AND (3 TO 7)) AND (9 WITHOUT 5)) AND 6)` |
-| `-3.0`    | `(1 3 4 5 6 7 9 6)` | `((1 AND (3 TO 7)) AND ((9 WITHOUT 5) AND 6))` |
-| `-3.0`    | `(1 3 4 5 6 7 9 6)` | `((1 AND ((3 TO 7) AND (9 WITHOUT 5))) AND 6)` |
-| `-3.0`    | `(1 3 4 5 6 7 9 6)` | `(1 AND (((3 T0 7) AND (9 WITHOUT 5)) AND 6))` |
-| `-3.0`    | `(1 3 4 5 6 7 9 6)` | `(1 AND ((3 T0 7) AND ((9 WITHOUT 5) AND 6)))` |
-
 ```
-> (all -parses '(1 and 3 to 7 and 9 without 5 and 2))
+> (all-parses '(1 and 3 to 7 and 9 without 5 and 2))
+Score   Semantics         (1 AND 3 TO 7 AND 9 WITHOUT 5 AND 2)
+=====   ================  ===================================
+0.2     (1 3 4 6 7 9 2)   ((1 AND (((3 TO 7) AND 9) WITHOUT 5)) AND 2)
+0.2     (1 3 4 6 7 9 2)   (1 AND ((((3 TO 7) AND 9) WITHOUT 5) AND 2))
+0.1     (1 3 4 6 7 9 2)   ((((1 AND (3 TO 7)) AND 9) WITHOUT 5) AND 2)
+0.1     (1 3 4 6 7 9 2)   (((1 AND ((3 TO 7) AND 9)) WITHOUT 5) AND 2)
+-2.0    (1 3 4 5 6 7 9 2) (((1 AND (3 TO 7)) AND (9 WITHOUT 5)) AND 2)
+-2.0    (1 3 4 5 6 7 9 2) ((1 AND (3 TO 7)) AND ((9 WITHOUT 5) AND 2))
+-2.0    (1 3 4 5 6 7 9)   ((1 AND (3 TO 7)) AND (9 WITHOUT (5 AND 2)))
+-2.0    (1 3 4 5 6 7 9 2) ((1 AND ((3 TO 7) AND (9 WITHOUT 5))) AND 2)
+-2.0    (1 3 4 5 6 7 9 2) (1 AND (((3 TO 7) AND (9 WITHOUT 5)) AND 2))
+-2.0    (1 3 4 5 6 7 9 2) (1 AND ((3 TO 7) AND ((9 WITHOUT 5) AND 2)))
+-2.0    (1 3 4 5 6 7 9)   (1 AND ((3 TO 7) AND (9 WITHOUT (5 AND 2))))
+-2.8    (1 3 4 6 7 9)     (1 AND (((3 TO 7) AND 9) WITHOUT (5 AND 2)))
+-2.9    (1 3 4 6 7 9)     (((1 AND (3 TO 7)) AND 9) WITHOUT (5 AND 2))
+-2.9    (1 3 4 6 7 9)     ((1 AND ((3 TO 7) AND 9)) WITHOUT (5 AND 2))
 ```
-
-| []()     |                     |                                                |
-|----------|---------------------|------------------------------------------------|
-| `Score`  | `Semantics`         | `(1 AND 3 T0 7 AND 9 WITHOUT 5 AND 2)`         |
-| `======` | `================`  | `===================================`          |
-| `0.2`    | `(1 3 4 6 7 9 2)`   | `((1 AND (((3 T0 7) AND 9) WITHOUT 5)) AND 2)` |
-| `0.2`    | `(1 3 4 6 7 9 2)`   | `(1 AND ((((3 T0 7) AND 9) WITHOUT 5) AND 2))` |
-| `0.1`    | `(1 3 4 6 7 9 2)`   | `((((1 AND (3 T0 7)) AND 9) WITHOUT 5) AND 2)` |
-| `0.1`    | `(1 3 4 6 7 9 2)`   | `(((1 AND ((3 T0 7) AND 9)) WITHOUT 5) AND 2)` |
-| `-2.0`   | `(1 3 4 5 6 7 9 2)` | `(((1 AND (3 T0 7)) AND (9 WITHOUT 5)) AND 2)` |
-| `-2.0`   | `(1 3 4 5 6 7 9 2)` | `((1 AND (3 T0 7)) AND ((9 WITHOUT 5) AND 2))` |
-| `-2.0`   | `(1 3 4 5 6 7 9)`   | `((1 AND (3 T0 7)) AND (9 WITHOUT (5 AND 2)))` |
-| `-2.0`   | `(1 3 4 5 6 7 9 2)` | `((1 AND ((3 T0 7) AND (9 WITHOUT 5))) AND 2)` |
-| `-2.0`   | `(1 3 4 5 6 7 9 2)` | `(1 AND (((3 T0 7) AND (9 WITHOUT 5)) AND 2))` |
-| `-2.0`   | `(1 3 4 5 6 7 9 2)` | `(1 AND ((3 T0 7) AND ((9 WITHOUT 5) AND 2)))` |
-| `-2.0`   | `(1 3 4 5 6 7 9)`   | `(1 AND ((3 T0 7) AND (9 WITHOUT (5 AND 2))))` |
-| `-2.8`   | `(1 3 4 6 7 9)`     | `(1 AND (((3 T0 7) AND 9) WITHOUT (5 AND 2)))` |
-| `-2.9`   | `(1 3 4 6 7 9)`     | `(((1 AND (3 T0 7)) AND 9) WITHOUT (5 AND 2))` |
-| `-2.9`   | `(1 3 4 6 7 9)`     | `((1 AND ((3 T0 7) AND 9)) WITHOUT (5 AND 2))` |
 
 In each case, the preference rules are able to assign higher scores to more reasonable interpretations.
 It turns out that, in each case, all the interpretations with positive scores represent the same set of numbers, while interpretations with negative scores seem worse.
 Seeing all the scores in gory detail may be of academic interest, but what we really want is something to pick out the best interpretation.
 The following code is appropriate for many situations.
 It picks the top scorer, if there is a unique one, or queries the user if several interpretations tie for the best score, and it complains if there are no valid parses at all.
-The query-user function may be useful in many applications, but note that meani ng uses it only as a default; a program that had some automatic way of deciding could supply another `tie-breaker` function to meani ng.
+The query-user function may be useful in many applications, but note that `meaning` uses it only as a default; a program that had some automatic way of deciding could supply another `tie-breaker` function to `meaning`.
 
 ```lisp
 (defun meaning (words &optional (tie-breaker #'query-user))
@@ -1016,16 +1011,16 @@ It's up to you to design the grammar, but you should allow input something like 
 
 ```lisp
 > (meaning '(play 1 to 5 from CD shuffled and
-                          record 1 to 5 from CD and 1 and 3 and 7 from 1))
+             record 1 to 5 from CD and 1 and 3 and 7 from 1))
 (PROGN (PLAY '(15 2 3 4) :FROM 'CD)
-              (RECORD '(12345) :FROM 'CD)
-              (RECORD '(1 3 7) :FROM '1))
+       (RECORD '(12345) :FROM 'CD)
+       (RECORD '(1 3 7) :FROM '1))
 ```
 
-This assumes that the functions play and record take keyword arguments (with defaults) for : `from` and : `to`.
+This assumes that the functions `play` and `record` take keyword arguments (with defaults) for `:from` and `:to`.
 You could also extend the grammar to accommodate an automatic timer, with phrases like "at 3:00."
 
-**Exercise  19.5 [m]** In the definition of `permute`, repeated here, why is the :`test # ' eq needed?`
+**Exercise  19.5 [m]** In the definition of `permute`, repeated here, why is the `:test #'eq` needed?
 
 ```lisp
 (defun permute (bag)
@@ -1045,10 +1040,11 @@ Replace it by an *O*(*n*) algorithm.
 
 ```lisp
 (defun parser (words)
-      "Return all complete parses of a list of words."
-      (let* ((table (make-array (+ (length words) 1) :initial-element 0))
-                        (parses (parse words (length words) table)))
-          (mapcar #'parse-tree (complete-parses parses))))
+  "Return all complete parses of a list of words."
+  (let* ((table (make-array (+ (length words) 1) :initial-element 0))
+                (parses (parse words (length words) table)))
+    (mapcar #'parse-tree (complete-parses parses))))
+
 (defun parse (words num-words table)
    "Bottom-up parse. returning all parses of any prefix of words."
    (unless (null words)
@@ -1056,33 +1052,34 @@ Replace it by an *O*(*n*) algorithm.
        (if (not (eq ans 0))
            ans
            (setf (aref table num-words)
-                  (mapcan #'(lambda (rule)
-                              (extend-parse (rule-lhs rule)
-                                            (list (firstwords))
-                                            (rest words) nil
-                                            (- num-words 1) table))
-                            (lexical-rules (first words))))))))
+                (mapcan #'(lambda (rule)
+                             (extend-parse (rule-lhs rule)
+                                           (list (firstwords))
+                                           (rest words) nil
+                                           (- num-words 1) table))
+                         (lexical-rules (first words))))))))
+
 (defun extend-parse (lhs rhs rem needed num-words table)
-      "Look for the categories needed to complete the parse."
-      (if (null needed)
-            ;; If nothing is needed, return this parse and upward extensions
-            (let ((parse (make-parse :tree (new-tree lhs rhs) :rem rem)))
-                (cons parse
-                            (mapcan
-                          #'(lambda (rule)
-                                          (extend-parse (rule-lhs rule)
-                                                                      (list (parse-tree parse))
-                                                                        rem (rest (rule-rhs rule))
-                                                                        num-words table))
-                                  (rules-starting-with lhs))))
-              ;; otherwise try to extend rightward
+  "Look for the categories needed to complete the parse."
+  (if (null needed)
+      ;; If nothing is needed, return this parse and upward extensions
+      (let ((parse (make-parse :tree (new-tree lhs rhs) :rem rem)))
+        (cons parse
               (mapcan
-                  #'(lambda (p)
-                          (if (eq (parse-lhs p) (first needed))
-                                    (extend-parse lhs (appendl rhs (parse-tree p))
-                                                                (parse-rem p) (rest needed)
-                                                                (length (parse-rem p)) table)))
-                  (parse rem num-words table))))
+                #'(lambda (rule)
+                    (extend-parse (rule-lhs rule)
+                                  (list (parse-tree parse))
+                                  rem (rest (rule-rhs rule))
+                                  num-words table))
+                    (rules-starting-with lhs))))
+        ;; otherwise try to extend rightward
+        (mapcan
+          #'(lambda (p)
+              (if (eq (parse-lhs p) (first needed))
+                  (extend-parse lhs (appendl rhs (parse-tree p))
+                                (parse-rem p) (rest needed)
+                                (length (parse-rem p)) table)))
+          (parse rem num-words table))))
 ```
 
 It turns out that, for the Lisp system used in the timings above, this version is no faster than normal memoization.
@@ -1090,7 +1087,7 @@ It turns out that, for the Lisp system used in the timings above, this version i
 **Answer 19.3** Actually, the top-down parser is a little easier (shorter) than the bottom-up version.
 The problem is that the most straightforward way of implementing a top-down parser does not handle so-called *left recursive* rules-rules of the form `(X -> (X ...))`.
 This includes rules we've used, like `(NP -> (NP and NP))`.
-The problem is that the parser will postulate an NP, and then postulate that it is of the form `(NP and NP)`, and that the first NPof that expression is ofthe form `(NP and NP)`, and so on.
+The problem is that the parser will postulate an NP, and then postulate that it is of the form `(NP and NP)`, and that the first NP of that expression is of the form `(NP and NP)`, and so on.
 An infinite structure of NPs is explored before even the first word is considered.
 
 Bottom-up parsers are stymied by rules with null right-hand sides: `(X -> O)`.
@@ -1098,34 +1095,37 @@ Note that I was careful to exclude such rules in my grammars earlier.
 
 ```lisp
 (defun parser (words &optional (cat 's))
-      "Parse a list of words; return only parses with no remainder."
-      (mapcar #'parse-tree (compiete-parses (parse words cat))))
+  "Parse a list of words; return only parses with no remainder."
+  (mapcar #'parse-tree (complete-parses (parse words cat))))
+
 (defun parse (tokens start-symbol)
-      "Parse a list of tokens, return parse trees and remainders."
-      (if (eq (first tokens) start-symbol)
-              (list (make-parse :tree (first tokens) :rem (rest tokens)))
-              (mapcan #'(lambda (rule)
-                                      (extend-parse (lhs rule) nil tokens (rhs rule)))
-                                  (rules-for start-symbol))))
+  "Parse a list of tokens, return parse trees and remainders."
+  (if (eq (first tokens) start-symbol)
+      (list (make-parse :tree (first tokens) :rem (rest tokens)))
+      (mapcan #'(lambda (rule)
+                  (extend-parse (lhs rule) nil tokens (rhs rule)))
+              (rules-for start-symbol))))
+
 (defun extend-parse (lhs rhs rem needed)
-      "Parse the remaining needed symbols."
-      (if (null needed)
-              (list (make-parse :tree (cons lhs rhs) :rem rem))
-              (mapcan
-                  #'(lambda (p)
-                            (extend-parse lhs (append rhs (list (parse-tree p)))
-                                                            (parse-rem p) (rest needed)))
-                  (parse rem (first needed)))))
+  "Parse the remaining needed symbols."
+  (if (null needed)
+      (list (make-parse :tree (cons lhs rhs) :rem rem))
+      (mapcan
+        #'(lambda (p)
+            (extend-parse lhs (append rhs (list (parse-tree p)))
+                          (parse-rem p) (rest needed)))
+        (parse rem (first needed)))))
+
 (defun rules-for (cat)
-      "Return all the rules with category on lhs"
-      (find-all cat *grammar* :key #'rule-lhs))
+  "Return all the rules with category on lhs"
+  (find-all cat *grammar* :key #'rule-lhs))
 ```
 
-**Answer 19.5** If it were omitted, then : test would default `to #'eql`, and it would be possible to remove the "wrong" element from the list.
-Consider the list (1.0 1.0) in an implementation where floating-point numbers are `eql` but not `eq`.
-if `random-elt` chooses the first 1.0 first, then everything is satisfactory-the resuit list is the same as the input list.
-However, if `random-elt` chooses the second 1.0, then the second 1.0 will be the first element of the answer, but `remove` will remove the wrong 1.0!
-It will remove the first 1.0, and the final answer will be a list with two pointers to the second 1.0 and none to the first.
+**Answer 19.5** If it were omitted, then `:test` would default to `#'eql`, and it would be possible to remove the "wrong" element from the list.
+Consider the list `(1.0 1.0)` in an implementation where floating-point numbers are `eql` but not `eq`.
+if `random-elt` chooses the first `1.0` first, then everything is satisfactory - the result list is the same as the input list.
+However, if `random-elt` chooses the second `1.0`, then the second `1.0` will be the first element of the answer, but `remove` will remove the wrong `1.0`!
+It will remove the first `1.0`, and the final answer will be a list with two pointers to the second `1.0` and none to the first.
 In other words, we could have:
 
 ```lisp
@@ -1137,18 +1137,19 @@ In other words, we could have:
 
 ```lisp
 (defun permute (bag)
-   "Return a random permutation of the bag."
-   ;; It is done by converting the bag to a vector, but the
-   ;; resuit is always the same type as the input bag.
-   (let ((bag-copy (replace (make-array (length bag)) bag))
-         (bag-type (if (listp bag) 'list (type-of bag))))
-      (coerce (permute-vector! bag-copy) bag-type)))
+  "Return a random permutation of the bag."
+  ;; It is done by converting the bag to a vector, but the
+  ;; result is always the same type as the input bag.''
+  (let ((bag-copy (replace (make-array (length bag)) bag))
+        (bag-type (if (listp bag) 'list (type-of bag))))
+    (coerce (permute-vector! bag-copy) bag-type)))
+
 (defun permute-vector! (vector)
-   "Destructively permute (shuffle) the vector."
-   (loop for i from (length vector) downto 2 do
-         (rotatef (aref vector (- i 1))
-                  (aref vector (random i))))
-vector)
+  "Destructively permute (shuffle) the vector."
+  (loop for i from (length vector) downto 2 do
+        (rotatef (aref vector (- i 1))
+                 (aref vector (random i))))
+  vector)
 ```
 
 The answer uses `rotatef`, a relative of `setf` that swaps 2 or more values.
@@ -1156,19 +1157,19 @@ That is, `(rotatef a b)` is like:
 
 ```lisp
 (let ((temp a))
-      (setf a b)
-      (setf b temp)
-      nil)
+  (setf a b)
+  (setf b temp)
+  nil)
 ```
 
 Rarely, `rotatef` is used with more than two arguments, `(rotatef a b c)` is like:
 
 ```lisp
 (let ((temp a))
-      (setf a b)
-      (setf b c)
-      (setf c temp)
-      nil)
+  (setf a b)
+  (setf b c)
+  (setf c temp)
+  nil)
 ```
 
 ----------------------
@@ -1177,7 +1178,8 @@ Rarely, `rotatef` is used with more than two arguments, `(rotatef a b c)` is lik
 Some erroneous expressions are underspecified and may return different results in different implementations, but we will ignore that problem.
 
 <a id="fn19-2"></a><sup>[2](#tfn19-2)</sup>
-The number of parses of sentences of this kind is the same as the number of bracketings of a arithmetic expression, or the number of binary trees with a given number of leaves.
-The resulting sequence (1,2,5,14,42,...) is known as the Catalan Numbers.
+The number of parses of sentences of this kind is the same as the number of bracketings of an arithmetic expression, or the number of binary trees with a given number of leaves.
+The resulting sequence (1, 2, 5, 14, 42, ...) is known as the Catalan Numbers.
+
 This kind of ambiguity is discussed by [Church and Patil (1982)](B9780080571157500285.xhtml#bb0200) in their article *Coping with Syntactic Ambiguity, or How to Put the Block in the Box on the Table.*
 
