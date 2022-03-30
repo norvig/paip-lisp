@@ -1,19 +1,16 @@
 # Chapter 14
 ## Knowledge Representation and Reasoning
 
-> Knowledge itself is power.
->
+> *Knowledge itself is power.* \
 > -Francis Bacon (1561-1626)
->
-> The power resides in the knowledge.
->
-> -Edward Feigenbaum
->
+
+> *The power resides in the knowledge.* \
+> -Edward Feigenbaum \
 > Stanford University Heuristic Programming Project
->
-> Knowledge is Knowledge, and vice versa.
->
-> -Tee shirt<br>&nbsp; Stanford University Heuristic Programming Project
+
+> *Knowledge is Knowledge, and vice versa.* \
+> -Tee shirt \
+> Stanford University Heuristic Programming Project
 
 In the 1960s, much of AI concentrated on search techniques.
 In particular, a lot of work was concerned with *theorem proving:* stating a problem as a small set of axioms and searching for a proof of the problem.
@@ -124,23 +121,23 @@ It is this use that we will be concerned with.
 Predicate calculus makes it easy to start writing down facts about a domain.
 But the most straightforward version of predicate calculus suffers from a number of serious limitations:
 
-*   *Decidability-*given a set of axioms and a goal, it may be that neither the goal nor its negation can be derived from the axioms.
+* *Decidability* - given a set of axioms and a goal, it may be that neither the goal nor its negation can be derived from the axioms.
 
-*   *Tractability-even* when a goal is provable, it may take too long to find the proof using the available inferencing mechanisms.
+* *Tractability* - even when a goal is provable, it may take too long to find the proof using the available inferencing mechanisms.
 
-*   *Uncertainty-*it can be inconvenient to deal with relations that are probable to a degree but not known to be definitely true or false.
+* *Uncertainty* - it can be inconvenient to deal with relations that are probable to a degree but not known to be definitely true or false.
 
-*   *Monotonicity-*in pure predicate calculus, once a theorem is proved, it is true forever.
+* *Monotonicity* - in pure predicate calculus, once a theorem is proved, it is true forever.
 But we would like a way to derive tentative theorems that rely on assumptions, and be able to retract them when the assumptions prove false.
 
-*   *Consistency-*pure predicate calculus admits no contradictions.
+* *Consistency* - pure predicate calculus admits no contradictions.
 If by accident both *P* and &not;*P* are derived, then *any* theorem can be proved.
 In effect, a single contradiction corrupts the entire data base.
 
-*   *Omniscience-*it can be difficult to distinguish what is provable from what should be proved.
+* *Omniscience* - it can be difficult to distinguish what is provable from what should be proved.
 This can lead to the unfounded assumption that an agent believes all the consequences of the facts it knows.
 
-*   *Expressiveness-*the first-order predicate calculus makes it awkward to talk about certain things, such as the relations and propositions of the language itself.
+* *Expressiveness* - the first-order predicate calculus makes it awkward to talk about certain things, such as the relations and propositions of the language itself.
 
 The view held predominantly today is that it is best to approach these problems with a dual attack that is both within and outside of predicate calculus.
 It is considered a good idea to invent new notations to address the problems-both for convenience and to facilitate special-purpose reasoners that are more efficient than a general-purpose theorem prover.
@@ -374,7 +371,7 @@ No.
 
 We get the expected conclusions, but they are deduced repeatedly, because the commutative clause for siblings is applied over and over again.
 This is annoying, but not critical.
-Far worseis when we ask `(?- (sibling fred ?x))`.
+Far worse is when we ask `(?- (sibling fred ?x))`.
 This query loops forever.
 Happily, this particular type of example has an easy fix: just introduce two predicates, one for data-base level facts, and one at the level of axioms and queries:
 
@@ -1076,7 +1073,7 @@ To find out what individual animals of what kinds there are, use:
 (and (sub ?kind animal) (ind ?x ?kind))
 ```
 
-The implemention of this new language can be based directly on the previous implementation of dtrees.
+The implementation of this new language can be based directly on the previous implementation of dtrees.
 Each assertion is stored as a fact in a dtree, except that the components of an and assertion are stored separately.
 The function `add-fact` does this:
 
@@ -1547,7 +1544,7 @@ First, we could add multiple truth values beyond the simple "true" and "false." 
 Second, we could introduce the idea of *possible worlds.*
 That is, the truth of a proposition could be unknown in the current world, but true if we assume *p*, and false if we assume *q.*
 In the possible world approach, this is handled by calling the current world *W*, and then creating a new world *W*<sub>1</sub>, which is just like *W* except that *p* is true, and *W*<sub>2</sub>, which is just like *W* except that *q* is true.
-By doing reasoning in different worlds we can make predictions about the future, resolve ambiguitites about the current state, and do reasoning by cases.
+By doing reasoning in different worlds we can make predictions about the future, resolve ambiguities about the current state, and do reasoning by cases.
 
 For example, possible worlds allow us to solve Moore's communism/democracy problem ([page 466](#p466)).
 We create two new possible worlds, one where *E* is a democracy and one where it is communist.

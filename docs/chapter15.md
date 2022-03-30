@@ -538,8 +538,8 @@ How much faster is the polynomial-based code than the rule-based version?
 Unfortunately, we can't answer that question directly.
 We can time `(simp ' ( (1 + x + y + z) ^ 15)))`.
 This takes only a tenth of a second, but that is because it is doing no work at all-the answer is the same as the input!
-Alternately, we can take the expression computed by `(poly^n r 15)`, convert it to prefix, and pass that `to simplify.
-simplify` takes 27.8 seconds on this, so the rule-based version is much slower.
+Alternately, we can take the expression computed by `(poly^n r 15)`, convert it to prefix, and pass that to `simplify`.
+`simplify` takes 27.8 seconds on this, so the rule-based version is much slower.
 [Section 9.6](B9780080571157500091.xhtml#s0035) describes ways to speed up the rule-based program, and a comparison of timing data appears on [page 525](#p525).
 
 There are always surprises when it comes down to measuring timing data.
@@ -753,7 +753,7 @@ Polynomials are not closed under division, so `poly/poly` will return a rational
 
 Now that we can divide polynomials, the final step is to reinstate the logarithmic, exponential, and trigonometric functions.
 The problem is that if we allow all these functions, we get into problems with canonical form again.
-For example, the following three expressions are all equivalent  :
+For example, the following three expressions are all equivalent:
 
 <img src="images/chapter15/si7_e.svg"
 onerror="this.src='images/chapter15/si7_e.png'; this.onerror=null;"

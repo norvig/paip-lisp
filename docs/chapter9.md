@@ -189,7 +189,7 @@ We can solve this problem easily enough with the function `memoize`:
 ```lisp
 (defun memoize (fn-name &key (key #'first) (test #'eql))
   "Replace fn-name's global definition with a memoized version."
-  (clear-memoize fn-name)
+  (setf (symbol-function fn-name) (memo (symbol-function fn-name))))
 ```
 
 When passed a symbol that names a function, `memoize` changes the global definition of the function to a memo-function.

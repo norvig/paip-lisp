@@ -10,7 +10,7 @@ Instead I think it is an elegant case study of a paradigm we can expect to see a
 
 This book touches only the areas of AI that deal with abstract reasoning.
 There is another side of AI, the field of *robotics,* that deals with interfacing abstract reasoning with the real world through sensors and motors.
-A robot receives input from cameras, microphones, sonar, and touch-sensitive devices, and produces "ouput" by moving its appendages or generating sounds.
+A robot receives input from cameras, microphones, sonar, and touch-sensitive devices, and produces "output" by moving its appendages or generating sounds.
 The real world is a messier place than the abstract worlds we have been covering.
 A robot must deal with noisy data, faulty components, and other agents and events in the world that can affect changes in the environment.
 
@@ -109,7 +109,7 @@ Keep going until the diagram is either unambiguous or inconsistent.
 
 That completes the sketch of the line-labeling algorithm.
 We are now ready to implement a labeling program.
-It's glossary is in [figure 17.5](#f0030).
+Its glossary is in [figure 17.5](#f0030).
 
 | []()                                                |
 |-----------------------------------------------------|
@@ -389,7 +389,7 @@ Here again is the `defdiagram` description for the cube shown in [figure 17.6](#
 
 The macro `defdiagram` calls `construct-diagram` to do the real work.
 It would be feasible to have `defdiagram` expand into a `defvar,` making the names be special variables.
-But then it would be the user`'s` responsibility to make copies of such a variable before passing it to a destructive function.
+But then it would be the user's responsibility to make copies of such a variable before passing it to a destructive function.
 Instead, I use `put-diagram` and `diagram` to put and get diagrams in a table, `diagram` retrieves the named diagram and makes a copy of it.
 Thus, the user cannot corrupt the original diagrams stored in the table.
 Another possibility would be to have `defdiagram` expand into a function definition for `name` that returns a copy of the diagram.
@@ -938,14 +938,14 @@ Repairing these bugs gives the diagram:
   (b L d a)      (q T P i r)
   (c Y a d g)    (r T j s q)
   (d Y c b m)    (s L r t)
-  (e L a f)      (t W u s k)        *;t-u not t-v*
-  (f T e g n)    (u L t 4)          *;u-4 not u-l*
+  (e L a f)      (t W u s k)    ;t-u not t-v
+  (f T e g n)    (u L t 4)      ;u-4 not u-l
   (g W h f c)    (v L 2 4)
   (h T g i o)    (w W x l y)
   (i T h j q)    (x L w z)
   (j T i k r)    (y Y w 2 z)
   (k T J l t)    (z W 3 x y)
-  (l T k m 4)    (1 T n o w)          *;l-4 not l-v*
+  (l T k m 4)    (1 T n o w)    ;l-4 not l-v
   (m L l d)      (2 W v 3 y)
   (n L f 1)      (3 L z 2)
   (o W P 1 h)    (4 T u l v))
@@ -1005,36 +1005,36 @@ The initial diagram is:
   3/6 L: 3Z=[RL+L-R] 32=[LRR+L-]
   0/3 W: 0P=[L-+] 01=[R-+] 0H=[++-]
   4/4 T: 4U=[RRRR] 4 L=[LLLL] 4 V=[+-LR]
-For 2,888, 816, 545.234, 944,000 interpretations
-: P/2: (0/3 Q/4)        ((R L) (- L))
-: 0/1: (P/2 1/4 H/4)    ((L R +))
-: P/1: (0/1 Q/4)        ((R L))
-: 1/3: (N/6 0/1 W/3)    ((R L +) (R L -) (R L L))
-: N/2: (F/4 1/3)        ((R L) (- L))
-: F/2: (E/6 G/3 N/2)    ((R L -) (R L L))
-: E/2: (A/3 F/2)      ((R L) (- L))
-: A/2: (E/2 B/6 C/5)    ((L R +) (- - +))
-: B/3: (D/5 A/2)      ((R L) (- L) (R -))
-: D/3: (C/5 B/3 M/6)    ((- - -) (- L R) (R - L))
-: W/1: (X/l 1/3 Y/5)    ((L R +))
-: 1/1: (N/2 0/1 W/l)    ((R L L))
-: Y/1: (W/l 2/3 Z/3)    ((+ + +))
-: 2/2: (V/6 3/6 Y/1)    ((L R +) (- - +))
-: V/3: (2/2 4/4)      ((R L) (- L) (R -))
-: 4/2: (U/6 L/4 V/3)    ((R L -) (R L R))
-: U/2: (T/3 4/2)      ((R L) (- L))
-: T/2: (U/2 S/6 K/4)    ((L R +) (- - +))
-: S/2: (R/4 T/2)      ((R L) (R -))
-: K/1: (J/4 L/4 T/2)    ((R L +))
-: J/1: (1/4 K/1 R/4)    ((R L L))
-: I/1: (H/4 J/1 Q/4)    ((R L R))
-: L/1: (K/l M/6 4/2)    ((R L R))
-: M/2: (L/1 D/3)      ((R L) (R -))
-: 3/3: (Z/3 2/2)      ((R L) (- L) (R -))
-: Z/1 : (3/3 X/1 Y/1)    ((- - +))
-: 3/1: (Z/l 2/2)    ((- L))
-: 2/1: (V/3 3/1 Y/1)    ((L R +))
-: V/2: (2/1 4/2)      ((R L) (R -))
+For 2,888,816,545,234,944,000 interpretations
+; P/2: (0/3 Q/4)        ((R L) (- L))
+; 0/1: (P/2 1/4 H/4)    ((L R +))
+; P/1: (0/1 Q/4)        ((R L))
+; 1/3: (N/6 0/1 W/3)    ((R L +) (R L -) (R L L))
+; N/2: (F/4 1/3)        ((R L) (- L))
+; F/2: (E/6 G/3 N/2)    ((R L -) (R L L))
+; E/2: (A/3 F/2)      ((R L) (- L))
+; A/2: (E/2 B/6 C/5)    ((L R +) (- - +))
+; B/3: (D/5 A/2)      ((R L) (- L) (R -))
+; D/3: (C/5 B/3 M/6)    ((- - -) (- L R) (R - L))
+; W/1: (X/l 1/3 Y/5)    ((L R +))
+; 1/1: (N/2 0/1 W/l)    ((R L L))
+; Y/1: (W/l 2/3 Z/3)    ((+ + +))
+; 2/2: (V/6 3/6 Y/1)    ((L R +) (- - +))
+; V/3: (2/2 4/4)      ((R L) (- L) (R -))
+; 4/2: (U/6 L/4 V/3)    ((R L -) (R L R))
+; U/2: (T/3 4/2)      ((R L) (- L))
+; T/2: (U/2 S/6 K/4)    ((L R +) (- - +))
+; S/2: (R/4 T/2)      ((R L) (R -))
+; K/1: (J/4 L/4 T/2)    ((R L +))
+; J/1: (1/4 K/1 R/4)    ((R L L))
+; I/1: (H/4 J/1 Q/4)    ((R L R))
+; L/1: (K/l M/6 4/2)    ((R L R))
+; M/2: (L/1 D/3)      ((R L) (R -))
+; 3/3: (Z/3 2/2)      ((R L) (- L) (R -))
+; Z/1 : (3/3 X/1 Y/1)    ((- - +))
+; 3/1: (Z/l 2/2)    ((- L))
+; 2/1: (V/3 3/1 Y/1)    ((L R +))
+; V/2: (2/1 4/2)      ((R L) (R -))
 After constraint propagation the diagram is:
   A/0 W:
   P/l L: P0=[R] PQ=CL]
@@ -1072,9 +1072,9 @@ From the diagram after constraint propagation we can see that the vertexes A,B,C
 From the trace generated by `propagate-constraints` (the lines beginning with a semicolon), we see that constraint propagation started at P and after seven propagations reached some of the suspect vertexes:
 
 ```lisp
-: A/2: (E/2 B/6 C/5)    ((L R +) (- - + ))
-: B/3: (D/5 A/2)        ((R L) (- L) (R -))
-: D/3: (C/5 B/3 M/6)    ((- - -) (- L R) (R - L))
+; A/2: (E/2 B/6 C/5)    ((L R +) (- - + ))
+; B/3: (D/5 A/2)        ((R L) (- L) (R -))
+; D/3: (C/5 B/3 M/6)    ((- - -) (- L R) (R - L))
 ```
 
 A and B look acceptable, but look at the entry for vertex D.

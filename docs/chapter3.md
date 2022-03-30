@@ -201,20 +201,20 @@ Here is a table of equivalences:
 | `(unless` *test x y*)            | `(if (not` *test*) `(progn` *x y*)) | `(cond ((not` *test*) *x y*))      |
 | `(and` *a b c*)                  | `(if` *a* `(if` *b c*))             | `(cond` (*a* `(cond` (*b c*))))    |
 | `(or` *a b c*)                   | `(if` *a a* `(if` *b b c*))         | `(cond (a)` (*b*) (*c*))           |
-| `(*case*` *a* (*b c*) `*(t x*))` | `(if (eql` *a 'b*) *c x*)           | `(cond ((eql `*a 'b*) *c*) (*tx*)) |
+| `(*case*` *a* (*b c*) `*(t x*))` | `(if (eql` *a 'b*) *c x*)           | `(cond ((eql` *a 'b*) *c*) (*tx*)) |
 
 It is considered poor style to use `and` and `or` for anything other than testing a logical condition, `when`, `unless,` and `if` can all be used for taking conditional action.
 For example:
 
 ```lisp
 (and (> n 100)
-     (princ "N is large."))    ; Bad style!
+     (princ "N is large."))   ; Bad style!
 (or (<= n 100)
     (princ "N is large."))    ; Even worse style!
-(cond ((> n 100)        ; OK, but not MY preference
+(cond ((> n 100)              ; OK, but not MY preference
       (princ "N is large."))
 (when (> n 100)
-  (princ "N is large."))    ; Good style.
+  (princ "N is large."))      ; Good style.
 ```
 
 When the main purpose is to return a value rather than take action, `cond` and `if` (with explicit `nil` in the else case) are preferred over `when` and `unless`, which implicitly return `nil` in the else case, `when` and `unless` are preferred when there is only one possibility, `if` (or, for some people, `cond)` when there are two, and `cond` when there are more than two:
@@ -350,8 +350,8 @@ If `list` is the name of a location that holds a list, then (`push` *x* `list`) 
 `push` and `pop` are equivalent to the following expressions:
 
 ```lisp
-(push x list) = (setf list (cons x list))
-(pop list)    = (let ((result (first list)))
+(push x list) ≡ (setf list (cons x list))
+(pop list)    ≡ (let ((result (first list)))
                  (setf list (rest list))
                  result)
 ```
@@ -363,8 +363,8 @@ For those who know C, (`incf x`) is equivalent to `++x`, and (`incf x 2`) is equ
 In Lisp the equivalence is:
 
 ```lisp
-(incf x) = (incf x 1) = (setf x (+ x 1))
-(decf x) = (decf x 1) = (setf x (- x 1))
+(incf x) ≡ (incf x 1) ≡ (setf x (+ x 1))
+(decf x) ≡ (decf x 1) ≡ (setf x (- x 1))
 ```
 
 When the location is a complex form rather than a variable, Lisp is careful to expand into code that does not evaluate any subform more than once.
@@ -597,8 +597,8 @@ The first table lists functions that work on any number of lists but do not acce
 
 | []()                |                  |                                                  |
 |---------------------|------------------|--------------------------------------------------|
-| `(every #' oddp y)` | => `nil`         | test if every element satisfies a predicate      |
-| `(some #' oddp y)`  | => `t`           | test if some element satisfies predicate         |
+| `(every #'oddp y)` | => `nil`         | test if every element satisfies a predicate      |
+| `(some #'oddp y)`  | => `t`           | test if some element satisfies predicate         |
 | `(mapcar #'- y)`    | => `(-1 -2 -3)`  | apply function to each element and return result |
 | `(mapc #'print y)`  | *prints* `1 2 3` | perform operation on each element                |
 
@@ -696,10 +696,9 @@ This is done with the special form `labels`:
 In general, a `labels` form (or the similar `flet` form) can be used to introduce one or more local functions.
 It has the following syntax:
 
-```lisp
-(labels ((function-name (parameter...) function-body)...)
- body-of-labels)
-```
+`(labels`
+&nbsp;&nbsp;&nbsp;&nbsp;((*function-name* (*parameter...*) *function-body*)...)
+&nbsp;&nbsp;&nbsp;&nbsp;*body-of-labels*)
 
 ### Other Special Forms
 
@@ -721,10 +720,15 @@ I can only think of three places where a `progn` is justified.
 First, to implement side effects in a branch of a two-branched conditional, one could use either an `if` with a `progn,` or a `cond`:
 
 ```lisp
-(if (> x 100)                             (cond ((> x 100)
-    (progn (print "too big")                     (print "too big")
-           (setf x 100))                         (setf x 100))
-    x)                                          (t x))
+(if (> x 100)
+    (progn (print "too big")
+           (setf x 100))
+    x)
+
+(cond ((> x 100)
+       (print "too big")
+       (setf x 100))
+      (t x))
 ```
 
 If the conditional had only one branch, then `when` or `unless` should be used, since they allow an implicit `progn`.
@@ -1055,8 +1059,8 @@ To get the value, we just take the `cdr` of the result returned by `assoc`.
 If we want to search the table by value rather than by key, we can use rassoc:
 
 ```lisp
-> (rassoc 'Arizona table) => (AZ . ARIZONA)
-> (car (rassoc 'Arizona table)) => AZ
+> (rassoc 'Arizona state-table) => (AZ . ARIZONA)
+> (car (rassoc 'Arizona state-table)) => AZ
 ```
 
 Managing a table with `assoc` is simple, but there is one drawback: we have to search through the whole list one element at a time.
@@ -1091,9 +1095,10 @@ A third way to represent table is with *property lists.*
 A property list is a list of alternating key/value pairs.
 Property lists (sometimes called p-lists or plists) and association lists (sometimes called a-lists or alists) are similar:
 
-`a-list: ((`*key*<sub>1</sub> . *val*<sub>1</sub>) (*key*<sub>2</sub> .
+`a-list`: ((*key*<sub>1</sub> . *val*<sub>1</sub>) (*key*<sub>2</sub> .
 *val*<sub>2</sub>) ... (*key<sub>n</sub> . val<sub>n</sub>*))
-`p-list: (`*key*<sub>1</sub> *val*<sub>1</sub> *key*<sub>2</sub> *val*<sub>2</sub> ... *key<sub>n</sub> val<sub>n</sub>*)
+
+`p-list`: (*key*<sub>1</sub> *val*<sub>1</sub> *key*<sub>2</sub> *val*<sub>2</sub> ... *key<sub>n</sub> val<sub>n</sub>*)
 
 Given this representation, there is little to choose between a-lists and p-lists.
 They are slightly different permutations of the same information.
@@ -1214,7 +1219,7 @@ There are quite a few other numeric functions that have been omitted.
 | `(> 100 99)`   | => `t`   | greater than (also `>=`, greater than or equal to)             |
 | `(= 100 100)`  | => `t`   | equal (also `/=`, not equal)                                   |
 | `(< 99 100)`   | => `t`   | less than (also `<=`, less than or equal to)                   |
-| `(random 100)` | `=> 42`  | random integer from 0 to 99                                    |
+| `(random 100)` | => `42`  | random integer from 0 to 99                                    |
 | `(expt 4 2)`   | => `16`  | exponentiation (also exp, *e<sup>x</sup>* and `log`)           |
 | `(sin pi)`     | => `0.0` | sine function (also `cos`, `tan,` etc.)                        |
 | `(asin 0)`     | => `0.0` | arcsine or sin<sup>-1</sup> function (also `acos, atan`, etc.) |
@@ -1222,7 +1227,7 @@ There are quite a few other numeric functions that have been omitted.
 | `(abs -3)`     | => `3`   | absolute value                                                 |
 | `(sqrt 4)`     | => `2`   | square root                                                    |
 | `(round 4.1)`  | => `4`   | round off (also `truncate, floor, ceiling`)                    |
-| `(rem 11 5)`   | => 1     | remainder (also `mod`)                                         |
+| `(rem 11 5)`   | => `1`   | remainder (also `mod`)                                         |
 
 ## 3.9 Functions on Sets
 
@@ -1597,7 +1602,7 @@ If all you want is a symbol's documentation string, the function `documentation`
 
 ```lisp
 > (documentation 'first 'function) => "Return the first element of LIST."
-> (documentation 'pi 'variable) =$> "pi"
+> (documentation 'pi 'variable) => "pi"
 ```
 
 If you want to look at and possibly alter components of a complex structure, then `inspect` is the tool.
@@ -1774,10 +1779,10 @@ For example:
 
 ```lisp
 > (defun f (n) (dotimes (i n) nil)) => F
-> (time (f 10000)) NIL
+> (time (f 10000)) => NIL
 Evaluation of (F 10000) took 4.347272 Seconds of elapsed time, including 0.0 seconds of paging time for 0 faults, Consed 27 words.
 
-> (compile 'f) F
+> (compile 'f) => F
 
 > (time (f 10000)) => NIL
 Evaluation of (F 10000) took 0.011518 Seconds of elapsed time, including 0.0 seconds of paging time for 0 faults, Consed 0 words.
@@ -1803,7 +1808,7 @@ The following five forms are equivalent:
 > (funcall #'+ 1 2 3 4)   => 10
 > (apply #'+ '(1 2 3 4))  => 10
 > (apply #'+ 1 2 '(3 4))  => 10
-> (eval '(+  123 4))      => 10
+> (eval '(+ 1 2 3 4))      => 10
 ```
 
 In the past, `eval` was seen as the key to Lisp's flexibility.
@@ -1979,7 +1984,7 @@ Throughout this book we have spoken of "the value returned by a function."
 Historically, Lisp was designed so that every function returns a value, even those functions that are more like procedures than like functions.
 But sometimes we want a single function to return more than one piece of information.
 Of course, we can do that by making up a list or structure to hold the information, but then we have to go to the trouble of defining the structure, building an instance each time, and then taking that instance apart to look at the pieces.
-Consider the function `round.`
+Consider the function `round`.
 One way it can be used is to round off a floating-point number to the nearest integer.
 So (`round 5.1`) is 5.
 Sometimes, though not always, the programmer is also interested in the fractional part.
@@ -2000,7 +2005,7 @@ If you want to get at multiple values, you have to use a special form, such as `
       (round x)
     (format t "~f = ~d + ~f" x int rem)))
 
->(show-both 5.1)
+> (show-both 5.1)
 5.1 = 5 + 0.1
 ```
 
@@ -2116,32 +2121,27 @@ Just to make things a little more confusing, the symbols `&optional, &rest,` and
 Unlike the colon in real keywords, the `&` in lambda-list keywords has no special significance.
 Consider these annotated examples:
 
-
-`> :xyz => :XYZ`        *; keywords are self-evaluating*
-
-`> &optional =>`        *; lambda-list keywords are normal symbols  
-Error: the symbol &optional has no value*
-
 ```lisp
+> :xyz => :XYZ                            ; keywords are self-evaluating
+
+> &optional =>                            ; lambda-list keywords are normal symbols 
+Error: the symbol &optional has no value     
+
 > '&optional => &OPTIONAL
-```
-`> (defun f (&xyz) (+ &xyz &xyz)) F` *;& has no significance*
 
-```lisp
+> (defun f (&xyz) (+ &xyz &xyz)) => F     ;& has no significance
+
 > (f 3) => 6
-> (defun f (:xyz) (+ :xyz :xyz)) =>
-```
-*Error: the keyword :xyz appears in a variable list.  
-Keywords are constants, and so cannot be used as names of variables.*
 
-```lisp
+> (defun f (:xyz) (+ :xyz :xyz)) =>
+Error: the keyword :xyz appears in a variable list.  
+Keywords are constants, and so cannot be used as names of variables.
+
 > (defun g (&key x y) (list x y)) => G
-```
-```
-> (let ((key s '(:x :y :z)))
+
+> (let ((keys '(:x :y :z)))              ; keyword args can be computed
    (g (second keys) 1 (first keys) 2)) => (2 1)
 ```
-*; keyword args can be computed*
 
 Many of the functions presented in this chapter take keyword arguments that make them more versatile.
 For example, remember the function `find`, which can be used to look for a particular element in a sequence:
@@ -2213,7 +2213,7 @@ For example, finding all elements that are equal to 1 in a list is equivalent to
 ```lisp
 > (setf nums '(1 2 3 2 1)) => (1 2 3 2 1)
 
-> (find-all 1 nums :test #'=) = (remove 1 nums :test #'/=) => (1 1)
+> (find-all 1 nums :test #'=) ≡ (remove 1 nums :test #'/=) => (1 1)
 ```
 
 Now what we need is a higher-order function that returns the complement of a function.

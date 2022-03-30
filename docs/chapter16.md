@@ -166,7 +166,7 @@ A and B => .9C
 to say that A and B imply C with .9 certainty.
 EMYCIN simply multiplies the rule's cf by the combined cf of the premise.
 So if A has cf .6 and B has cf .4, then the premise as a whole has cf .4 (the minimum of A and B), which is multiplied by .9 to get .36.
-The .36 is then combined with any exisiting cf for C.
+The .36 is then combined with any existing cf for C.
 If C is previously unknown, then combining .36 with 0 will give .36.
 If C had a prior cf of .76, then the new cf would be .36 + .76 - (.36 x .76) = .8464.
 
@@ -1260,7 +1260,7 @@ Eventually, the need arose for a rule that said, "If any of the organisms in a c
 Implement a mechanism that keeps track of the author and date of creation of each rule, and allows the author to add documentation explaining the rationale for the rule.
 
 **Exercise  16.16 [m]** It is difficult to come up with the perfect prompt for each parameter.
-One solution is not to insist that one promptfits all users, but rather to allow the expert to supply three different prompts: a normal prompt, a verbose prompt (or reprompt) for when the user replies with a ?, and a terse prompt for the experienced user.
+One solution is not to insist that one prompt fits all users, but rather to allow the expert to supply three different prompts: a normal prompt, a verbose prompt (or reprompt) for when the user replies with a ?, and a terse prompt for the experienced user.
 Modify `defparm` to accommodate this concept, add a command for the user to ask for the terse prompts, and change `ask-vals` to use the proper prompt.
 
 The remaining exercises cover three additional replies the user can make: `how`, `stop`, and `change`.
@@ -1319,4 +1319,3 @@ One way would be to accept only yes responses for Boolean parameters, but have t
 Another possibility would be to have `update-cf` check to see if any certainty factor on a mutually exclusive value is 1, and if so, change the other values to -1.
 
 **Answer 16.18** Add the clause `(stop (throw 'stop nil))` to the case statement in `ask-vals` and wrap a `(catch 'stop ...)` around the code in `emycin`.
-

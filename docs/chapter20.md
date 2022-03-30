@@ -262,8 +262,8 @@ Here's the `rule` macro:
   (funcall (get arrow 'rule-function) head body))
 ```
 
-As an example of a rule function, the arrow : - will be used to represent normal Prolog clauses.
-That is, the form (`rule` *head : - body*) will be equivalent to (<- *head body).*
+As an example of a rule function, the arrow `:-` will be used to represent normal Prolog clauses.
+That is, the form (`rule` *head* `:-` *body*) will be equivalent to (`<-` *head body*).
 
 ```lisp
 (setf (get ':- 'rule-function)
@@ -347,7 +347,7 @@ The function `make-dcg` inserts variables to keep track of the strings that are 
                (make-dcg-body (rest body) (+ n 1))))))))
 ```
 
-**Exercise  20.1 [m]**`make-dcg` violates one of the cardinal rules of macros.
+**Exercise  20.1 [m]** `make-dcg` violates one of the cardinal rules of macros.
 What does it do wrong?
 How would you fix it?
 
@@ -526,9 +526,9 @@ They must come from the determiners, "every" and "a." Also, it seems that `all` 
 So the determiners will have translations looking like this:
 
 ```lisp
-(rule (Det ?any ?x ?p ?q (the ?x (and ?p ?q)))     --> (:word the))
+(rule (Det ?any ?x ?p ?q (the ?x (and ?p ?q)))   --> (:word the))
 (rule (Det 3sg ?x ?p ?q (exists ?x (and ?p ?q))) --> (:word a))
-(rule (Det 3sg ?x ?p ?q (all ?x (-> ?p ?q)))         --> (:word every))
+(rule (Det 3sg ?x ?p ?q (all ?x (-> ?p ?q)))     --> (:word every))
 ```
 
 Once we have accepted these translations of the determiners, everything else follows.
@@ -643,23 +643,26 @@ With this grammar, we get the following correspondence between sentences and log
 ```lisp
 Every picture paints a story.
 (ALL ?3 (-> (PICTURE ?3)
-                     (EXISTS ?14 (AND (STORY ?14) (PAINT ?3 ?14)))))
+            (EXISTS ?14 (AND (STORY ?14) (PAINT ?3 ?14)))))
+
 Every boy that paints a picture sleeps.
 (ALL ?3 (-> (AND (AND (YOUNG ?3) (MALE ?3) (HUMAN ?3))
-                              (EXISTS ?19 (AND (PICTURE ?19)
-                                                            (PAINT ?3 ?19))))
-                  (SLEEP ?3)))
+                 (EXISTS ?19 (AND (PICTURE ?19)
+                                  (PAINT ?3 ?19))))
+            (SLEEP ?3)))
+
 Every boy that sleeps paints a picture.
 (ALL ?3 (-> (AND (AND (YOUNG ?3) (MALE ?3) (HUMAN ?3))
-                                (SLEEP ?3))
-                    (EXISTS ?22 (AND (PICTURE ?22) (PAINT ?3 ?22)))))
+                 (SLEEP ?3))
+            (EXISTS ?22 (AND (PICTURE ?22) (PAINT ?3 ?22)))))
+
 Every boy that paints a picture that sells
 paints a picture that stinks.
 (ALL ?3 (-> (AND (AND (YOUNG ?3) (MALE ?3) (HUMAN ?3))
-                              (EXISTS ?19 (AND (AND (PICTURE ?19) (SELLS ?19))
-                                                    (PAINT ?3 ?19))))
-                    (EXISTS ?39 (AND (AND (PICTURE ?39) (STINKS ?39))
-                                                  (PAINT ?3 ?39)))))
+                 (EXISTS ?19 (AND (AND (PICTURE ?19) (SELLS ?19))
+                                  (PAINT ?3 ?19))))
+            (EXISTS ?39 (AND (AND (PICTURE ?39) (STINKS ?39))
+                             (PAINT ?3 ?39)))))
 ```
 
 ## 20.5 Preserving Quantifier Scope Ambiguity
@@ -742,7 +745,7 @@ If we simplified this, eliminating the `t`s and joining `and`s, we would get the
         (loves ?m ?w))
 ```
 
-From there, we could use what we know about syntax, in addition to what we know about men, woman, and loving, to determine the most likely final interpretation.
+From there, we could use what we know about syntax, in addition to what we know about men, women, and loving, to determine the most likely final interpretation.
 This will be covered in the next chapter.
 
 ## 20.6 Long-Distance Dependencies
@@ -950,7 +953,7 @@ That is, we will get parses like "spaghetti and (meatballs and salad)" not "(spa
 Still, it can be argued that it is best to produce a single canonical parse, and then let the semantic interpretation functions worry about rearranging the parse in the right order.
 We will not attempt to resolve this debate but will provide the automatic conjunction mechanism as a tool that can be convenient but has no cost for the user who prefers a different solution.
 
-We are now ready to implement the extended DCG rule formalism that handles `:sem, :ex,` and automatie conjunctions.
+We are now ready to implement the extended DCG rule formalism that handles `:sem, :ex,` and automatic conjunctions.
 The function `make-augmented-dcg,` stored under the arrow `==>`, will be used to implement the formalism:
 
 ```lisp
