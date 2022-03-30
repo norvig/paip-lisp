@@ -403,8 +403,10 @@ For example, instead of the list `(a woman took a ball)`, we want to get the nes
 
 This corresponds to the tree that linguists draw as in figure 2.1.
 
-![Figure 2.1: Sentence Parse Tree](images/chapter2/f02-01.jpg)
-**Figure 2.1: Sentence Parse Tree**
+| <a id="fig-02-01"></a>[]() |
+|---|
+| <img src="images/chapter2/fig-02-01.svg" onerror="this.src='images/chapter2/fig-02-01.png'; this.onerror=null;" alt="Figure 2.1"> |
+| **Figure 2.1: Sentence Parse Tree** |
 
 Using the "straightforward functions" approach we would be stuck; we'd have to rewrite every function to generate the additional structure.
 With the "new notation" approach we could keep the grammar as it is and just write one new function: a version of `generate` that produces nested lists.
