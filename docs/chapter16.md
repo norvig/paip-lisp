@@ -118,7 +118,7 @@ combine (A, B) =
 onerror="this.src='images/chapter16/si1_e.png'; this.onerror=null;"
 alt="A+B$-$AB; & A,B &gt; 0 \\
 A+B+AB;   & A,B &lt; 0 \\
-$\dfrac {A + B} {1 - \textup{min}( \lvert A \rvert, \lvert B \rvert )}$; & otherwise \\">
+$\dfrac {A + B} {1 - \textup{min}( \lvert A \rvert, \lvert B \rvert )}$; & otherwise \\" />
 
 According to this formula, combine(.60,.40) = .76, which is a compromise between the extremes of .60 and 1.00.
 It is the same as the probability p(A or B), assuming that A and B are independent.
@@ -492,7 +492,7 @@ The context tree is shown in [figure 16.2](#fig-16-02).
 
 | <a id="fig-16-02"></a>[]() |
 |---|
-| <img src="images/chapter16/fig-16-02.svg" onerror="this.src='images/chapter16/fig-16-02.png'; this.onerror=null;" alt="Figure 16.2"> |
+| <img src="images/chapter16/fig-16-02.svg" onerror="this.src='images/chapter16/fig-16-02.png'; this.onerror=null;" alt="Figure 16.2" /> |
 | **Figure 16.2: A Context Tree** |
 
 ```lisp

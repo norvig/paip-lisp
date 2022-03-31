@@ -953,7 +953,7 @@ All proper lists have a last cons cell whose rest field is nil.
 <a id="fig-03-01"></a>
 | []() |
 |---|
-| <img src="images/chapter3/fig-03-01.svg" onerror="this.src='images/chapter3/fig-03-01.png'; this.onerror=null;" alt="Figure 3.1: Cons Cell Diagrams"> |
+| <img src="images/chapter3/fig-03-01.svg" onerror="this.src='images/chapter3/fig-03-01.png'; this.onerror=null;" alt="Figure 3.1: Cons Cell Diagrams" /> |
 | **Figure 3.1: Cons Cell Diagrams** |
 
 &#9635; **Exercise 3.2 [s]** The function cons can be seen as a special case of one of the other functions listed previously.
@@ -981,13 +981,13 @@ This is because `read` calls `cons` to build up the list, and each call to `cons
 <a id="fig-03-02"></a>
 | []() |
 |---|
-| <img src="images/chapter3/fig-03-02.svg" onerror="this.src='images/chapter3/fig-03-02.png'; this.onerror=null;" alt="Figure 3.2: Equal But Nonidentical Lists"> |
+| <img src="images/chapter3/fig-03-02.svg" onerror="this.src='images/chapter3/fig-03-02.png'; this.onerror=null;" alt="Figure 3.2: Equal But Nonidentical Lists" /> |
 | **Figure 3.2: Equal But Nonidentical Lists** |
 
 <a id="fig-03-03"></a>
 | []() |
 |---|
-| <img src="images/chapter3/fig-03-03.svg" onerror="this.src='images/chapter3/fig-03-03.png'; this.onerror=null;" alt="Figure 3.3: Parts of Lists"> |
+| <img src="images/chapter3/fig-03-03.svg" onerror="this.src='images/chapter3/fig-03-03.png'; this.onerror=null;" alt="Figure 3.3: Parts of Lists" /> |
 | **Figure 3.3: Parts of Lists** |
 
 When two mathematically equal numbers are read (or computed) in two places, they may or may not be the same, depending on what the designers of your implementation felt was more efficient.
@@ -1192,7 +1192,7 @@ In that respect, `tree-equal` is similar to `equal`, but `tree-equal` is more po
 <a id="fig-03-04"></a>
 | []() |
 |---|
-| <img src="images/chapter3/fig-03-04.svg" onerror="this.src='images/chapter3/fig-03-04.png'; this.onerror=null;" alt="Figure 3.4: Cons Cell Diagram of a Tree"> |
+| <img src="images/chapter3/fig-03-04.svg" onerror="this.src='images/chapter3/fig-03-04.png'; this.onerror=null;" alt="Figure 3.4: Cons Cell Diagram of a Tree" /> |
 | **Figure 3.4: Cons Cell Diagram of a Tree** |
 
 There are also two functions for substituting a new expression for an old one anywhere within a tree.

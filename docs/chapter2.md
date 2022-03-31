@@ -405,7 +405,7 @@ This corresponds to the tree that linguists draw as in figure 2.1.
 
 | <a id="fig-02-01"></a>[]() |
 |---|
-| <img src="images/chapter2/fig-02-01.svg" onerror="this.src='images/chapter2/fig-02-01.png'; this.onerror=null;" alt="Figure 2.1"> |
+| <img src="images/chapter2/fig-02-01.svg" onerror="this.src='images/chapter2/fig-02-01.png'; this.onerror=null;" alt="Figure 2.1" /> |
 | **Figure 2.1: Sentence Parse Tree** |
 
 Using the "straightforward functions" approach we would be stuck; we'd have to rewrite every function to generate the additional structure.

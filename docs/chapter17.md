@@ -28,7 +28,7 @@ For example, given the nine lines in [figure 17.1](#fig-17-01), how can we inter
 
 | <a id="fig-17-01"></a>[]() |
 |---|
-| <img src="images/chapter17/fig-17-01.svg" onerror="this.src='images/chapter17/fig-17-01.png'; this.onerror=null;" alt="Figure 17.1"> |
+| <img src="images/chapter17/fig-17-01.svg" onerror="this.src='images/chapter17/fig-17-01.png'; this.onerror=null;" alt="Figure 17.1" /> |
 | **Figure 17.1:  A Cube** |
 
 Before we can arrive at an interpretation, we have to agree on what the candidates are.
@@ -61,7 +61,7 @@ The remaining lines are boundary lines, indicating that there is no physical con
 
 | <a id="fig-17-02"></a>[]() |
 |---|
-| <img src="images/chapter17/fig-17-02.svg" onerror="this.src='images/chapter17/fig-17-02.png'; this.onerror=null;" alt="Figure 17.2"> |
+| <img src="images/chapter17/fig-17-02.svg" onerror="this.src='images/chapter17/fig-17-02.png'; this.onerror=null;" alt="Figure 17.2" /> |
 | **Figure 17.2: A Line-labeled Cube** |
 
 The line-labeling technique developed in this chapter is based on a simple idea.
@@ -75,7 +75,7 @@ For example, in a W vertex, the middle line can be labeled with a + or -, but no
 
 | <a id="fig-17-03"></a>[]() |
 |---|
-| <img src="images/chapter17/fig-17-03.svg" onerror="this.src='images/chapter17/fig-17-03.png'; this.onerror=null;" alt="Figure 17.3"> |
+| <img src="images/chapter17/fig-17-03.svg" onerror="this.src='images/chapter17/fig-17-03.png'; this.onerror=null;" alt="Figure 17.3" /> |
 | **Figure 17.3: The Possible Vertexes and Labels** |
 
 Each line connects two vertexes, so it must satisfy both constraints.
@@ -100,7 +100,7 @@ Soon, the whole cube will be uniquely labeled.
 
 | <a id="fig-17-04"></a>[]() |
 |---|
-| <img src="images/chapter17/fig-17-04.svg" onerror="this.src='images/chapter17/fig-17-04.png'; this.onerror=null;" alt="Figure 17.4"> |
+| <img src="images/chapter17/fig-17-04.svg" onerror="this.src='images/chapter17/fig-17-04.png'; this.onerror=null;" alt="Figure 17.4" /> |
 | **Figure 17.4: Propagating Constraints** |
 
 Many diagrams will be labeled uniquely by this constraint propagation process.
@@ -377,7 +377,7 @@ Here again is the `defdiagram` description for the cube shown in [figure 17.6](#
 <!-- 17.6 is a copy of 17.1 -->
 | <a id="fig-17-06"></a>[]() |
 |---|
-| <img src="images/chapter17/fig-17-01.svg" onerror="this.src='images/chapter17/fig-17-01.png'; this.onerror=null;" alt="Figure 17.6"> |
+| <img src="images/chapter17/fig-17-01.svg" onerror="this.src='images/chapter17/fig-17-01.png'; this.onerror=null;" alt="Figure 17.6" /> |
 | **Figure 17.6: A Cube** |
 
 ```lisp
@@ -537,7 +537,7 @@ The function ground takes a diagram and modifies it by making one or more lines 
 
 | <a id="fig-17-07"></a>[]() |
 |---|
-| <img src="images/chapter17/fig-17-07.svg" onerror="this.src='images/chapter17/fig-17-07.png'; this.onerror=null;" alt="Figure 17.7"> |
+| <img src="images/chapter17/fig-17-07.svg" onerror="this.src='images/chapter17/fig-17-07.png'; this.onerror=null;" alt="Figure 17.7" /> |
 | **Figure 17.7: Four Interpretations of the Cube** |
 
 ```lisp
@@ -588,12 +588,12 @@ The grounded version yields the unique solution shown in the following output an
 
 | <a id="fig-17-08"></a>[]() |
 |---|
-| <img src="images/chapter17/fig-17-08.svg" onerror="this.src='images/chapter17/fig-17-08.png'; this.onerror=null;" alt="Figure 17.8"> |
+| <img src="images/chapter17/fig-17-08.svg" onerror="this.src='images/chapter17/fig-17-08.png'; this.onerror=null;" alt="Figure 17.8" /> |
 | **Figure 17.8: Cube on a Plate** |
 
 | <a id="fig-17-09"></a>[]() |
 |---|
-| <img src="images/chapter17/fig-17-09.svg" onerror="this.src='images/chapter17/fig-17-09.png'; this.onerror=null;" alt="Figure 17.9"> |
+| <img src="images/chapter17/fig-17-09.svg" onerror="this.src='images/chapter17/fig-17-09.png'; this.onerror=null;" alt="Figure 17.9" /> |
 | **Figure 17.9: Labeled Cube on a Plate** |
 
 ```lisp
@@ -800,17 +800,17 @@ The example is taken from Charniak and McDermott's *Introduction to Artificial I
 
 | <a id="fig-17-10"></a>[]() |
 |---|
-| <img src="images/chapter17/fig-17-10.svg" onerror="this.src='images/chapter17/fig-17-10.png'; this.onerror=null;" alt="Figure 17.10"> |
+| <img src="images/chapter17/fig-17-10.svg" onerror="this.src='images/chapter17/fig-17-10.png'; this.onerror=null;" alt="Figure 17.10" /> |
 | **Figure 17.10: An Impossible Figure (A Poiuyt)** |
 
 | <a id="fig-17-11"></a>[]() |
 |---|
-| <img src="images/chapter17/fig-17-11.svg" onerror="this.src='images/chapter17/fig-17-11.png'; this.onerror=null;" alt="Figure 17.11"> |
+| <img src="images/chapter17/fig-17-11.svg" onerror="this.src='images/chapter17/fig-17-11.png'; this.onerror=null;" alt="Figure 17.11" /> |
 | **Figure 17.11: A Tower** |
 
 | <a id="fig-17-12"></a>[]() |
 |---|
-| <img src="images/chapter17/fig-17-12.svg" onerror="this.src='images/chapter17/fig-17-12.png'; this.onerror=null;" alt="Figure 17.12"> |
+| <img src="images/chapter17/fig-17-12.svg" onerror="this.src='images/chapter17/fig-17-12.png'; this.onerror=null;" alt="Figure 17.12" /> |
 | **Figure 17.12: Diagram of an arch** |
 
 ```lisp

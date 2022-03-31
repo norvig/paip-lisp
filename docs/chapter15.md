@@ -41,7 +41,7 @@ We will speak of a polynomial's *main variable, coefficients,* and *degree.* In 
 
 <img src="images/chapter15/si1_e.svg"
 onerror="this.src='images/chapter15/si1_e.png'; this.onerror=null;"
-alt="5 \times x^{3} +b \times x^{2} +c \times x + 1">
+alt="5 \times x^{3} +b \times x^{2} +c \times x + 1" />
 
 the main variable is *x,* the degree is 3 (the highest power of *x*), and the coefficients are 5, *b, c* and 1.
 We can define an input format for polynomials as follows:
@@ -387,14 +387,14 @@ For example:
 
 <img src="images/chapter15/si2_e.svg"
 onerror="this.src='images/chapter15/si2_e.png'; this.onerror=null;"
-alt="\int ax^{2} + bx\, dx = \frac {ax^{3}}{3} + \frac {bx^{2}}{2} + c.">
+alt="\int ax^{2} + bx\, dx = \frac {ax^{3}}{3} + \frac {bx^{2}}{2} + c." />
 
 Write a function to integrate polynomials and install it in `prefix->canon`.
 
 **Exercise  15.2 [m]** Add support for *definite* integrals, such as
 <img src="images/chapter15/si3_e.svg"
 onerror="this.src='images/chapter15/si3_e.png'; this.onerror=null;"
-alt="\int_{a}^{b} y\, dx">.
+alt="\int_{a}^{b} y\, dx" />.
 You will need to make up a suitable notation and properly install it in both `infix->prefix` and `prefix->canon`.
 A full implementation of this feature would have to consider infinity as a bound, as well as the problem of integrating over singularities.
 You need not address these problems.
@@ -608,13 +608,13 @@ The binomial theorem states that
 
 <img src="images/chapter15/si4_e.svg"
 onerror="this.src='images/chapter15/si4_e.png'; this.onerror=null;"
-alt="( a + b ) ^{n} = \sum_{i=0}^{n} \frac {n!}{i! (n-i)!)} a^{i} b^{n-i}">
+alt="( a + b ) ^{n} = \sum_{i=0}^{n} \frac {n!}{i! (n-i)!)} a^{i} b^{n-i}" />
 
 for example,
 
 <img src="images/chapter15/si5_e.svg"
 onerror="this.src='images/chapter15/si5_e.png'; this.onerror=null;"
-alt="(a+b)^{3} = b^{3} + 3ab^{2} + 3a^{2}b + a^{3}">
+alt="(a+b)^{3} = b^{3} + 3ab^{2} + 3a^{2}b + a^{3}" />
 
 We can use this theorem to compute a power of a polynomial all at once, instead of computing it by repeated multiplication or squaring.
 Of course, a polynomial will in general be a sum of more than two components, so we have to decide how to split it into the *a* and *b* pieces.
@@ -759,7 +759,7 @@ For example, the following three expressions are all equivalent:
 onerror="this.src='images/chapter15/si7_e.png'; this.onerror=null;"
 alt="\sin{(x)},
 \cos{\left (x - \frac {\pi}{2} \right ) },
-\frac {e^{ix} - e^{-ix}} {2i}">
+\frac {e^{ix} - e^{-ix}} {2i}" />
 
 If we are interested in assuring we have a canonical form, the safest thing is to allow only *e<sup>x</sup>* and log(*x*).
 All the other functions can be defined in terms of these two.

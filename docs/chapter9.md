@@ -1862,14 +1862,14 @@ Thus, *T<sub>n</sub>* is roughly proportional to *F<sub>n</sub>*:
 
 <img src="images/chapter9/si1_e.svg"
 onerror="this.src='images/chapter9/si1_e.png'; this.onerror=null;"
-alt="T_{n}=F_{n}\frac{T_{i}}{F_{i}}">
+alt="T_{n}=F_{n}\frac{T_{i}}{F_{i}}" />
 
 We could use some small value of *T<sub>i</sub>* to calculate *T*<sub>100</sub> if we knew *F*<sub>100</sub>.
 Fortunately, we can use the equation:
 
 <img src="images/chapter9/si2_e.svg"
 onerror="this.src='images/chapter9/si2_e.png'; this.onerror=null;"
-alt="F_{n} \alpha \phi^{n}">
+alt="F_{n} \alpha \phi^{n}" />
 
 Where &phi; = (1 + &radic;(5))/2 &asymp; 1.618.
 This equation was derived by de Moivre in 1718 (see Knuth, Donald E.
@@ -1882,7 +1882,7 @@ Putting history aside, given *T*<sub>25</sub> &asymp; 1.1 *sec* we can now calcu
 
 <img src="images/chapter9/si3_e.svg"
 onerror="this.src='images/chapter9/si3_e.png'; this.onerror=null;"
-alt="T_{100} \approx \phi^{100}\frac{1.1 \text{sec}}{\phi^{25}} \approx 5 \times 10^{15} \text{sec}">
+alt="T_{100} \approx \phi^{100}\frac{1.1 \text{sec}}{\phi^{25}} \approx 5 \times 10^{15} \text{sec}" />
 
 which is roughly 150 million years.
 We can also see that the timing data in the table fits the equation fairly well.
