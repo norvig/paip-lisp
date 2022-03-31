@@ -568,5 +568,6 @@ Now we can use the `cross-product` in other ways as well:
 ```
 
 ----------------------
+
 <a id="fn02-1"></a><sup>[1](#tfn02-1)</sup>
 We will soon see "Kleene plus" notation, wherein *PP+* denotes one or more repetition of *PP*.
