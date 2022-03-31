@@ -204,8 +204,8 @@ Cover [chapters 11](chapter11.md) and [13](chapter13.md) if similar material is 
 *   *For the Professional Lisp Programmer:* Read as much of the book as possible, and refer back to it often.
 Part III and [chapter 25](chapter25.md) are particularly important.
 
-<a name="page-xiii"></a>
 ## Supplementary Texts and Reference Books
+<a name="page-xiii"></a>
 
 The definitive reference source is [Steele](https://en.wikipedia.org/wiki/Guy_L._Steele_Jr.)'s [*Common Lisp the Language*](https://www.cs.cmu.edu/Groups/AI/html/cltl/cltl2.html).
 From 1984 to 1990, this unambiguously defined the language Common Lisp.
