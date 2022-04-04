@@ -75,12 +75,53 @@ This section presents the compiler summarized in [figure 12.1](#f0010).
 At the top level is the function `prolog-compile`, which takes a symbol, looks at the clauses defined for that symbol, and groups the clauses by arity.
 Each symbol/arity is compiled into a separate Lisp function by `compile-predicate`.
 
-| []()                                          |
-|-----------------------------------------------|
-| ![f12-01](images/chapter12/f12-01.jpg)        |
-| Figure 12.1: Glossary for the Prolog Compiler |
+| Function                    | Description                                                |
+|-----------------------------|------------------------------------------------------------|
+|                             | **Top-Level Functions**                                    |
+| `?-`                        | Make a query, but compile everything first.                |
+|                             | **Special Variables**                                      |
+| `*trail*`                   | A list of all bindings made so far.                        |
+|                             | **Major Functions**                                        |
+| `top-level-prove`           | New version compiles everything first.                     |
+| `run-prolog`                | Compile everything and call a Prolog function.             |
+| `prolog-compile-symbols`    | Compile a list of Prolog symbols.                          |
+| `prolog-compile`            | Compile a symbol; make a separate function for each arity. |
+| `compile-predicate`         | Compile all the clauses for a given symbol/arity.          |
+| `compile-clause`            | Transform away the head and compile the resulting body.    |
+| `compile-body`              | Compile the body of a clause.                              |
+| `compile-call`              | Compile a call to a Prolog predicate.                      |
+| `compile-arg`               | Generate code for an argument to a goal in the body.       |
+| `compile-unify`             | Return code that tests if var and term unify.              |
+|                             | **Auxiliary Functions**                                    |
+| `clauses-with-arity`        | Return all clauses whose head has a given arity.           |
+| `relation-arity`            | The number of arguments to a relation.                     |
+| `args`                      | The arguments of a relation.                               |
+| `make-parameters`           | Build a list of parameters.                                |
+| `make-predicate`            | Build a symbol of the form name/arity.                     |
+| `make-=`                    | Build a unification relation.                              |
+| `def-prolog-compiler-macro` | Define a compiler macro for Prolog.                        |
+| `prolog-compiler-macro`     | Fetch the compiler macro for a Prolog predicate.           |
+| `has-variable-p`            | Is there a variable anywhere in the expression `x`?        |
+| `proper-listp`              | Is `x` a proper (non-dotted) list?                         |
+| `maybe-add-undo-bindings`   | Undo any bindings that need undoing.                       |
+| `bind-unbound-vars`         | Add a `let` if needed.                                     |
+| `make-anonymous`            | Replace variables that are only used once with `?`.        |
+| `anonymous-variables-in`    | A list of anonymous variables.                             |
+| `compile-if`                | Compile an IF form.  No `else`-part allowed.               |
+| `compile-unify-variable`    | Compile the unification of a `var`.                        |
+| `bind-variables-in`         | Bind all variables in `exp` to themselves.                 |
+| `follow-binding`            | Get the ultimate binding of `var` according to bindings.   |
+| `bind-new-variables`        | Extend bindings to include any unbound variables.          |
+| `ignore`                    | Do nothing---ignore the arguments.                         |
+|                             | **Previously Defined Functions**                           |
+| `unify!`                    | Destructive unification (see section 11.6)                 |
+| `undo-bindings!`            | Use the trail to backtrack, undoing bindings.              |
+| `binding-val`               | Pick out the value part of a var/val binding.              |
+| `symbol`                    | Create or find an interned symbol.                         |
+| `new-symbol`                | Create a new uninterned symbol.                            |
+| `find-anywhere`             | Does item occur anywhere in tree?                          |
 
-(ed: this should be a markdown table)
+Figure 12.1: Glossary for the Prolog Compiler
 
 ```lisp
 (defun prolog-compile (symbol &optional
