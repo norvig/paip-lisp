@@ -71,7 +71,7 @@ where we would need a suitable let binding for the variable `?x`.
 
 ## 12.1 A Prolog Compiler
 
-This section presents the compiler summarized in [figure  12.1](#f0010).
+This section presents the compiler summarized in [figure 12.1](#f0010).
 At the top level is the function `prolog-compile`, which takes a symbol, looks at the clauses defined for that symbol, and groups the clauses by arity.
 Each symbol/arity is compiled into a separate Lisp function by `compile-predicate`.
 
