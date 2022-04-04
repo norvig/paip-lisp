@@ -1924,4 +1924,3 @@ The definition of `prolog-trace` is:
     (values seen-once seen-more))
     (t (values (cons tree seen-once) seen-more))))
 ```
-
