@@ -46,7 +46,8 @@ This is a considerable amount of work, but it is all handled by `read`.
 We would need a syntactic parser to assemble the lexical tokens into statements.
 `read` also handles this, but only because Lisp statements have trivial syntax: the syntax of lists and atoms.
 Thus `read` serves fine as a syntactic parser for Lisp, but would fail for Pascal.
-Next, we need the evaluation or interpretation part of the interpreter; `eval` does this nicely, and could handle Pascal just as well if we parsed Pascal syntax into Lisp expressions, `print` does much less work than `read` or `eval`, but is still quite handy.
+Next, we need the evaluation or interpretation part of the interpreter; `eval` does this nicely, and could handle Pascal just as well if we parsed Pascal syntax into Lisp expressions.
+`print` does much less work than `read` or `eval`, but is still quite handy.
 
 The important point is not whether one line of code can be considered an implementation of Lisp; it is to recognize common patterns of computation.
 Both `eliza` and `lisp` can be seen as interactive interpreters that read some input, transform or evaluate the input in some way, print the result, and then go back for more input.
@@ -197,23 +198,23 @@ It has to be listed as a segment pattern rather than a single pattern because it
 When the description of a problem gets this complicated, it is a good idea to attempt a more formal specification.
 The following table describes a grammar of patterns, using the same grammar rule format described in [chapter 2](B9780080571157500029.xhtml).
 
-| []()              |                        |                                                   |
-|-------------------|------------------------|---------------------------------------------------|
-| *pat*=>           | *var*                  | match any one expression                          |
-|                   | *Constant*             | match just this atom                              |
-|                   | *segment*-*pat*        | match something against a sequence                |
-|                   | *single*-*pat*         | match something against one expression            |
-|                   | (*pat* . *pat*)         | match the first and the rest                      |
-| *single*-*pat*=>  | (?is *var predicate*) | test predicate on one expression                  |
-|                   | (?or *pat*...)        | match any pattern on one expression               |
-|                   | (?and *pat*...)       | match every pattern on one expression             |
-|                   | (?not *pat*...)       | succeed if pattern(s) do not match                |
-| *segment*-*pat*=> | ( (?* *var*)...)       | match zero or more expressions                    |
-|                   | ( (?+ *var*) ... )     | match one or more expressions                     |
-|                   | ( ( ?? *var*) ... )    | match zero or one expression                      |
-|                   | ( ( ?if *exp* )...)   | test if exp (which may contain variables) is true |
-| *Var* =>          | ?*chars*               | a symbol starting with ?                          |
-| *constant* =>     | *atom*                 | any nonvariable atom                              |
+| []()            |                         |                                                   |
+|-----------------|-------------------------|---------------------------------------------------|
+| *pat*=>         | *var*                   | match any one expression                          |
+|                 | *constant*              | match just this atom                              |
+|                 | *segment-pat*           | match something against a sequence                |
+|                 | *single-pat*            | match something against one expression            |
+|                 | (*pat . pat*)           | match the first and the rest                      |
+| *single-pat*=>  | (`?is` *var predicate*) | test predicate on one expression                  |
+|                 | (`?or` *pat*...)        | match any pattern on one expression               |
+|                 | (`?and` *pat*...)       | match every pattern on one expression             |
+|                 | (`?not` *pat*...)       | succeed if pattern(s) do not match                |
+| *segment-pat*=> | ((`?*` *var*)...)       | match zero or more expressions                    |
+|                 | ((`?+` *var*) ... )     | match one or more expressions                     |
+|                 | ((`??` *var*) ... )     | match zero or one expression                      |
+|                 | ((`?if` *exp* )...)     | test if exp (which may contain variables) is true |
+| *var* =>        | `?`*chars*              | a symbol starting with ?                          |
+| *constant* =>   | *atom*                  | any nonvariable atom                              |
 
 Despite the added complexity, all patterns can still be classified into five cases.
 The pattern must be either a variable, constant, a (generalized) segment pattern, a (generalized) single-element pattern, or a cons of two patterns.
@@ -569,7 +570,7 @@ By default, we will use `pat-match`, but it should be possible to use other matc
 Once we have determined which rule to use, we have to determine what it means to use it.
 The default is just to substitute the bindings of the match into the then-part of the rule.
 
-The rule-based translater tool now looks like this:
+The rule-based translator tool now looks like this:
 
 ```lisp
 (defun rule-based-translator
@@ -630,7 +631,10 @@ Some graphs will have a regular structure, while others will appear random.
 We will start by considering only trees-that is, graphs where a state can be reached by only one unique sequence of successor links.
 Here is a tree:
 
-![u06-01](images/chapter6/u06-01.jpg)
+<a id="diagram-06-01"></a>
+<img src="images/chapter6/diagram-06-01.svg"
+  onerror="this.src='images/chapter6/diagram-06-01.png'; this.onerror=null;"
+  alt="Diagram 6.1">
 
 ### Searching Trees
 
@@ -647,8 +651,8 @@ Note that `tree-search` itself does not specify any particular searching strateg
 
 ```lisp
 (defun tree-search (states goal-p successors combiner)
-  "Find a state that satisfies goal-p.
-   Start with states,and search according to successors and combiner."
+  "Find a state that satisfies goal-p.  Start with states,
+  and search according to successors and combiner."
   (dbg :search "~&; ; Search: ~  a" states)
   (cond ((null states) fail)
       ((funcall goal-p (first states)) (first states))
@@ -929,17 +933,17 @@ Suppose we have a list of selected cities with airports, along with their positi
 (defstruct (city (:type list)) name long lat)
 
 (defparameter *cities*
-   '((Atlanta        84.23 33.45)      (Los Angeles       118.15 34.03)     
-   (Boston           71.05 42.21)      (Memphis           90.03 35.09)     
-   (Chicago          87.37 41.50)      (New York          73.58 40.47)     
-   (Denver           105.00 39.45)     (Oklahoma City     97.28 35.26)     
-   (Eugene           123.05 44.03)     (Pittsburgh        79.57 40.27)     
-   (Flagstaff        111.41 35.13)     (Quebec            71.11 46.49)     
-   (Grand Jet        108.37 39.05)     (Reno              119.49 39.30)    
-   (Houston          105.00 34.00)     (San Francisco     122.26 37.47)    
-   (Indianapolis     86.10 39.46)      (Tampa             82.27 27.57)     
-   (Jacksonville     81.40 30.22)      (Victoria          123.21 48.25)    
-   (Kansas City      94.35 39.06)      (Wilmington        77.57 34.14)))   
+   '((Atlanta        84.23 33.45)      (Los-Angeles       118.15 34.03)
+   (Boston           71.05 42.21)      (Memphis           90.03 35.09)
+   (Chicago          87.37 41.50)      (New-York          73.58 40.47)
+   (Denver           105.00 39.45)     (Oklahoma-City     97.28 35.26)
+   (Eugene           123.05 44.03)     (Pittsburgh        79.57 40.27)
+   (Flagstaff        111.41 35.13)     (Quebec            71.11 46.49)
+   (Grand-Jct        108.37 39.05)     (Reno              119.49 39.30)
+   (Houston          105.00 34.00)     (San-Francisco     122.26 37.47)
+   (Indianapolis     86.10 39.46)      (Tampa             82.27 27.57)
+   (Jacksonville     81.40 30.22)      (Victoria          123.21 48.25)
+   (Kansas-City      94.35 39.06)      (Wilmington        77.57 34.14)))
 ```
 
 This example introduces a new option to `defstruct`.
@@ -952,17 +956,16 @@ Instead of just giving the name of the structure, it is also possible to use:
 For city, the option :type is specified as `list`.
 This means that cities will be implemented as lists of three elements, as they are in the initial value for `*cities*`.
 
-The cities are shown on the map in [figure  6.1](#f0010), which has connections between all cities within the 1000 kilometer range of each other.<a id="tfn06-5"></a><sup>[5](#fn06-5)</sup>
+The cities are shown on the map in [figure 6.1](#fig-06-01), which has connections between all cities within the 1000 kilometer range of each other.<a id="tfn06-5"></a><sup>[5](#fn06-5)</sup>
 This map was drawn with the help of `air-distance`, a function that returns the distance in kilometers between two cities "as the crow flies."
 It will be defined later.
 Two other useful functions are `neighbors`, which finds all the cities within 1000 kilometers, and `city`, which maps from a name to a city.
 The former uses `find-all-if`, which was defined on [page 101](B9780080571157500030.xhtml#p101) as a synonym for `remove-if-not`.
 
-
-| []()                                  |
-|---------------------------------------|
-| ![f06-01](images/chapter6/f06-01.jpg) |
-| Figure 6.1: A Map of Some Cities      |
+| <a id="fig-06-01"></a>[]() |
+|---|
+| <img src="images/chapter6/fig-06-01.svg" onerror="this.src='images/chapter6/fig-06-01.png'; this.onerror=null;" alt="Figure 6.1"> |
+| **Figure 6.1: A Map of Some Cities** |
 
 ```lisp
 (defun neighbors (city)
@@ -1108,26 +1111,26 @@ In the following examples, each call to the new version of `trip` returns a path
 
 ```lisp
 > (show-city-path (trip (city 'san-francisco) (city 'boston) 1))
-#<Path 4514.8  km: San-Francisco - Reno - Grand-Jet - Denver -
+#<Path 4514.8  km: San-Francisco - Reno - Grand-Jct - Denver -
   Kansas-City - Indianapolis - Pittsburgh - Boston  >
 > (show-city-path (trip (city 'boston) (city 'san-francisco) 1))
 #<Path 4577.3  km: Boston - Pittsburgh - Chicago - Kansas-City -
-  Denver - Grand-Jet - Reno - San-Francisco  >
+  Denver - Grand-Jct - Reno - San-Francisco  >
 > (show-city-path (trip (city 'boston) (city 'san-francisco) 3))
 #<Path 4514.8  km: Boston - Pittsburgh - Indianapolis -
-  Kansas-City - Denver - Grand-Jet - Reno - San-Francisco  >
+  Kansas-City - Denver - Grand-Jct - Reno - San-Francisco  >
 ```
 
 This example shows how search is susceptible to irregularities in the search space.
 It was easy to find the correct path from west to east, but the return trip required more search, because Flagstaff is a falsely promising step.
 In general, there may be even worse dead ends lurking in the search space.
 Look what happens when we limit the airplane's range to 700 kilometers.
-The map is shown in [figure 6.2](#f0015).
+The map is shown in [figure 6.2](#fig-06-02).
 
-| []()                                      |
-|-------------------------------------------|
-| ![f06-02](images/chapter6/f06-02.jpg)     |
-| Figure 6.2: A Map of Cities within 700 km |
+| <a id="fig-06-02"></a>[]() |
+|---|
+| <img src="images/chapter6/fig-06-02.svg" onerror="this.src='images/chapter6/fig-06-02.png'; this.onerror=null;" alt="Figure 6.2"> |
+| **Figure 6.2: A Map of Cities within 700 km** |
 
 If we try to plan a trip from Tampa to Quebec, we can run into problems with the dead end at Wilmington, North Carolina.
 With a beam width of 1, the path to Jacksonville and then Wilmington will be tried first.
@@ -1275,18 +1278,19 @@ We will see it again in [chapters 11](B978008057115750011X.xhtml) and [18](B9780
 So far, `tree-search` has been the workhorse behind all the searching routines.
 This is curious, when we consider that the city problem involves a graph that is not a tree at all.
 The reason `tree-search` works is that any graph can be treated as a tree, if we ignore the fact that certain nodes are identical.
-For example, the graph in [figure 6.3](#f0020) can be rendered as a tree.
+For example, the graph in [figure 6.3](#fig-06-03) can be rendered as a tree.
 [Figure 6.4](#f0025) shows only the top four levels of the tree; each of the bottom nodes (except the 6s) needs to be expanded further.
 
-| []()                                  |
-|---------------------------------------|
-| ![f06-03](images/chapter6/f06-03.jpg) |
-| Figure 6.3: A Graph with Six Nodes    |
 
-| []()                                  |
-|---------------------------------------|
-| ![f06-04](images/chapter6/f06-04.jpg) |
-| Figure 6.4: The Corresponding Tree    |
+| <a id="fig-06-03"></a>[]() |
+|---|
+| <img src="images/chapter6/fig-06-03.svg" onerror="this.src='images/chapter6/fig-06-03.png'; this.onerror=null;" alt="Figure 6.3"> |
+| **Figure 6.3: A Graph with Six Nodes** |
+
+| <a id="fig-06-04"></a>[]() |
+|---|
+| <img src="images/chapter6/fig-06-04.svg" onerror="this.src='images/chapter6/fig-06-04.png'; this.onerror=null;" alt="Figure 6.4"> |
+| **Figure 6.4: The Corresponding Tree** |
 
 In searching for paths through the graph of cities, we were implicitly turning the graph into a tree.
 That is, if `tree-search` found two paths from Pittsburgh to Kansas City (via Chicago or Indianapolis), then it would treat them as two independent paths, just as if there were two distinct Kansas Cities.
@@ -1360,7 +1364,7 @@ If we have a cost function, then the answer is easy: keep the path with the chea
 Best-first search of a graph removing duplicate states is called A* search.
 
 A* search is more complicated than `graph-search` because of the need both to add and to delete paths to the lists of current and old paths.
-For each new successor state, there are three possibilites.
+For each new successor state, there are three possibilities.
 The new state may be in the list of current paths, in the list of old paths, or in neither.
 Within the first two cases, there are two subcases.
 If the new path is more expensive than the old one, then ignore the new path - it can not lead to a better solution.
@@ -1436,7 +1440,7 @@ Here are the three auxiliary functions:
             (path-states (path-previous path)))))
 ```
 
-Below we use `a*-search` to search for 6 in the graph previously shown in [figure 6.3](#f0020).
+Below we use `a*-search` to search for 6 in the graph previously shown in [figure 6.3](#fig-06-03).
 The cost function is a constant 1 for each step.
 In other words, the total cost is the length of the path.
 The heuristic evaluation function is just the difference from the goal.
@@ -1486,12 +1490,12 @@ Here is a function that finds all solutions, using beam search:
 The GPS program can be seen as a problem in search.
 For example, in the three-block blocks world, there are only 13 different states.
 They could be arranged in a graph and searched just as we searched for a route between cities.
-[Figure 6.5](#f0030) shows this graph.
+[Figure 6.5](#fig-06-05) shows this graph.
 
-| []()                                    |
-|-----------------------------------------|
-| ![f06-05](images/chapter6/f06-05.jpg)   |
-| Figure 6.5: The Blocks World as a Graph |
+| <a id="fig-06-05"></a>[]() |
+|---|
+| <img src="images/chapter6/fig-06-05.svg" onerror="this.src='images/chapter6/fig-06-05.png'; this.onerror=null;" alt="Figure 6.5"> |
+| **Figure 6.5: The Blocks World as a Graph** |
 
 The function `search-gps` does just that.
 Like the gps function on [page 135](B9780080571157500042.xhtml#p135), it computes a final state and then picks out the actions that lead to that state.

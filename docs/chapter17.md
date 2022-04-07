@@ -10,7 +10,7 @@ Instead I think it is an elegant case study of a paradigm we can expect to see a
 
 This book touches only the areas of AI that deal with abstract reasoning.
 There is another side of AI, the field of *robotics,* that deals with interfacing abstract reasoning with the real world through sensors and motors.
-A robot receives input from cameras, microphones, sonar, and touch-sensitive devices, and produces "ouput" by moving its appendages or generating sounds.
+A robot receives input from cameras, microphones, sonar, and touch-sensitive devices, and produces "output" by moving its appendages or generating sounds.
 The real world is a messier place than the abstract worlds we have been covering.
 A robot must deal with noisy data, faulty components, and other agents and events in the world that can affect changes in the environment.
 
@@ -23,33 +23,34 @@ This chapter covers one small aspect of high-level vision.
 ## 17.1 The Line-Labeling Problem
 
 In this chapter we look at the line-diagram labeling problem: Given a list of lines and the vertexes at which they intersect, how can we determine what the lines represent?
-For example, given the nine lines in [figure 17.1](#f0010), how can we interpret the diagram as a cube?
+For example, given the nine lines in [figure 17.1](#fig-17-01), how can we interpret the diagram as a cube?
 
-| []()                                   |
-|----------------------------------------|
-| ![f17-01](images/chapter17/f17-01.jpg) |
-| Figure 17.1: A Cube                    |
+
+| <a id="fig-17-01"></a>[]() |
+|---|
+| <img src="images/chapter17/fig-17-01.svg" onerror="this.src='images/chapter17/fig-17-01.png'; this.onerror=null;" alt="Figure 17.1"> |
+| **Figure 17.1:  A Cube** |
 
 Before we can arrive at an interpretation, we have to agree on what the candidates are.
-After all, [figure 17.1](#f0010) could be just a hexagon with three lines in the middle.
+After all, [figure 17.1](#fig-17-01) could be just a hexagon with three lines in the middle.
 For the purposes of this chapter, we will consider only diagrams that depict one or more *polyhedra-*three-dimensional solid figures whose surfaces are flat faces bounded by straight lines.
 In addition, we will only allow *trihedral* vertexes.
 That is, each vertex must be formed by the intersection of three faces, as in the corner of a cube, where the top, front, and side of the cube come together.
 A third restriction on diagrams is that no so-called *accidental* vertexes are allowed.
-For example, [figure 17.1](#f0010) might be a picture of three different cubes hanging in space, which just happen to line up so that the edge of one is aligned with the edge of another from our viewpoint.
+For example, [figure 17.1](#fig-17-01) might be a picture of three different cubes hanging in space, which just happen to line up so that the edge of one is aligned with the edge of another from our viewpoint.
 We will assume that this is not the case.
 
 Given a diagram that fits these three restrictions, our goal is to identify each line, placing it in one of three classes:
 
 1.  A convex line separates two visible faces of a polyhedron such that a line from one face to the other would lie inside the polyhedron.
-It will be marked with a plus sign:+.
+It will be marked with a plus sign: `+`.
 
 2.  A concave line separates two faces of two polyhedra such that a line between the two spaces would pass through empty space.
-It will be marked with a minus sign:-.
+It will be marked with a minus sign: `-`.
 
 3.  A boundary line denotes the same physical situation as a convex line, but the diagram is oriented in such a way that only one of the two faces of the polyhedron is visible.
 Thus, the line marks the boundary between the polyhedron and the background.
-It will be marked with an arrow:&rarr;.
+It will be marked with an arrow: &rarr;.
 Traveling along the line from the tail to the point of the arrow, the polyhedron is on the right, and the background is on the left.
 
 [Figure 17.2](#f0015) shows a labeling of the cube using these conventions.
@@ -57,24 +58,25 @@ Vertex A is the near corner of the cube, and the three lines coming out of it ar
 Lines GD and DF are concave lines, indicating the junction between the cube and the surface on which it is resting.
 The remaining lines are boundary lines, indicating that there is no physical connection between the cube and the background there, but that there are other sides of the cube that cannot be seen.
 
-| []()                                   |
-|----------------------------------------|
-| ![f17-02](images/chapter17/f17-02.jpg) |
-| Figure 17.2: A Line-labeled Cube       |
+
+| <a id="fig-17-02"></a>[]() |
+|---|
+| <img src="images/chapter17/fig-17-02.svg" onerror="this.src='images/chapter17/fig-17-02.png'; this.onerror=null;" alt="Figure 17.2"> |
+| **Figure 17.2: A Line-labeled Cube** |
 
 The line-labeling technique developed in this chapter is based on a simple idea.
 First we enumerate all the possible vertexes, and all the possible labelings for each vertex.
 It turns out there are only four different vertex types in the trihedral polygon world.
 We call them L, Y, W, and T vertexes, because of their shape.
 The Y and W vertexes are also known as forks and arrows, respectively.
-The vertexes are listed in [figure 17.3](#f0020).
+The vertexes are listed in [figure 17.3](#fig-17-03).
 Each vertex imposes some constraints on the lines that compose it.
 For example, in a W vertex, the middle line can be labeled with a + or -, but not with an arrow.
 
-| []()                                          |
-|-----------------------------------------------|
-| ![f17-03](images/chapter17/f17-03.jpg)        |
-| Figure 17.3: The Possible Vertexes and Labels |
+| <a id="fig-17-03"></a>[]() |
+|---|
+| <img src="images/chapter17/fig-17-03.svg" onerror="this.src='images/chapter17/fig-17-03.png'; this.onerror=null;" alt="Figure 17.3"> |
+| **Figure 17.3: The Possible Vertexes and Labels** |
 
 Each line connects two vertexes, so it must satisfy both constraints.
 This suggests a simple algorithm for labeling a diagram based on constraint propagation: First, label each vertex with all the possible labelings for the vertex type.
@@ -88,17 +90,18 @@ We adjust N and V's possible labelings accordingly.
 Every time we add a constraint at a vertex, we repeat the whole process for all the neighboring vertexes, to give the constraint a chance to propagate as far as possible.
 When every vertex has been visited at least once and there are no more constraints to propagate, then we are done.
 
-[Figure 17.4](#f0025) illustrates this process.
+[Figure 17.4](#fig-17-04) illustrates this process.
 On the left we start with a cube.
 All vertexes have all possible labelings, except that we know line GD is concave (-), indicating that the cube is resting on a surface.
 This constrains vertex D in such a way that line DA must be convex (+).
 In the middle picture the constraint on vertex D has propagated to vertex A, and in the right-hand picture it propagates to vertex B.
 Soon, the whole cube will be uniquely labeled.
 
-| []()                                   |
-|----------------------------------------|
-| ![f17-04](images/chapter17/f17-04.jpg) |
-| Figure 17.4: Propagating Constraints   |
+
+| <a id="fig-17-04"></a>[]() |
+|---|
+| <img src="images/chapter17/fig-17-04.svg" onerror="this.src='images/chapter17/fig-17-04.png'; this.onerror=null;" alt="Figure 17.4"> |
+| **Figure 17.4: Propagating Constraints** |
 
 Many diagrams will be labeled uniquely by this constraint propagation process.
 Some diagrams, however, are ambiguous.
@@ -109,7 +112,7 @@ Keep going until the diagram is either unambiguous or inconsistent.
 
 That completes the sketch of the line-labeling algorithm.
 We are now ready to implement a labeling program.
-Its glossary is in [figure 17.5](#f0030).
+Its glossary is in [figure 17.5](#fig-17-05).
 
 | []()                                                |
 |-----------------------------------------------------|
@@ -118,10 +121,10 @@ Its glossary is in [figure 17.5](#f0030).
 
 *(ed: should be a markdown table)*
 
-The two main data structures are the di agram and the vertex.
+The two main data structures are the `diagram` and the `vertex`.
 It would have been possible to implement a data type for `lines`, but it is not necessary: lines are defined implicitly by the two vertexes at their end points.
 
-A diagram is completely specified by its list of vertexes, so the structure di agram needs only one slot.
+A diagram is completely specified by its list of vertexes, so the structure `diagram` needs only one slot.
 A vertex, on the other hand, is a more complex structure.
 Each vertex has an identifying name (usually a single letter), a vertex type (L, Y, W, or T), a list of neighboring vertexes, and a list of possible labelings.
 A labeling is a list of line labels.
@@ -205,11 +208,11 @@ If the number of consistent labelings is less than the number before we started,
 The function returns nil and thus immediately stops the propagation if there is an impossible vertex.
 Otherwise, propagation continues until there are no more changes to the labelings.
 
-The whole propagation algorithm is started by a call to `every in print-labelings,` which propagates constraints from each vertex in the diagram.
+The whole propagation algorithm is started by a call to `every` in `print-labelings`, which propagates constraints from each vertex in the diagram.
 But it is not obvious that this is all that is required.
 After propagating from each vertex once, couldn't there be another vertex that needs relabeling?
 The only vertex that could possibly need relabeling would be one that had a neighbor changed since its last update.
-But any such vertex would have been visited by `propagate-constraint,` since we propagate to all neighbors.
+But any such vertex would have been visited by `propagate-constraint`, since we propagate to all neighbors.
 Thus, a single pass through the vertexes, compounded with recursive calls, will find and apply all possible constraints.
 
 The next question worth asking is if the algorithm is guaranteed to terminate.
@@ -232,7 +235,7 @@ But since there are a finite number of labelings initially (no more than six per
 The function `consistent-labelings` is passed a vertex.
 It gets all the labels for this vertex from the neighboring vertexes, collecting them in `neighbor-labels`.
 It then checks all the labels on the current vertex, keeping only the ones that are consistent with all the neighbors' constraints.
-The auxiliary function `labels-for` finds the labels for a particular neighbor at a vertex, and reverse-1 abel accounts for the fact that L and R labels are interpreted with respect to the vertex they point at.
+The auxiliary function `labels-for` finds the labels for a particular neighbor at a vertex, and `reverse-label` accounts for the fact that `L` and `R` labels are interpreted with respect to the vertex they point at.
 
 ```lisp
 (defun consistent-labelings (vertex)
@@ -252,11 +255,11 @@ The auxiliary function `labels-for` finds the labels for a particular neighbor a
 
 Constraint propagation is often sufficient to yield a unique interpretation.
 But sometimes the diagram is still underconstrained, and we will have to search for solutions.
-The function `search-solutions` first checks to see if the diagram is ambiguous, by seeing if it has an ambiguous vertex, v.
-If the diagram is unambiguous, then it is a solution, and we return it (in a list, `since search-solutions` is designed to return a list of all solutions).
+The function `search-solutions` first checks to see if the diagram is ambiguous, by seeing if it has an ambiguous vertex, `v`.
+If the diagram is unambiguous, then it is a solution, and we return it (in a list, since `search-solutions` is designed to return a list of all solutions).
 Otherwise, for each of the possible labelings for the ambiguous vertex, we create a brand new copy of the diagram and set v's labeling in the copy to one of the possible labelings.
 In effect, we are guessing that a labeling is a correct one.
-We call `propagate-constraints;` if it falls, then we have guessed wrong, so there are no solutions with this labeling.
+We call `propagate-constraints`; if it fails, then we have guessed wrong, so there are no solutions with this labeling.
 But if it succeeds, then we call `search-solutions` recursively to give us the list of solutions generated by this labeling.
 
 ```lisp
@@ -303,8 +306,8 @@ Here are three of them:
 Here are the printing functions.
 `print-vertex` prints a vertex in short form.
 It obeys the `print` convention of returning the first argument.
-The functions `show-vertex` and `show-diagram` print more de tailed forms.
-They obey the convention f or `describe`-like functions of returning no values at all.
+The functions `show-vertex` and `show-diagram` print more detailed forms.
+They obey the convention for `describe`-like functions of returning no values at all.
 
 ```lisp
 (defun print-vertex (vertex stream depth)
@@ -369,12 +372,13 @@ But since there is not yet a Common Lisp standard for interacting with such devi
 The macro `defdiagram` defines and names a diagram.
 The name is followed by a list of vertex descriptions.
 Each description is a list consisting of the name of a vertex, the vertex type (Y, A, L, or T), and the names of the neighboring vertexes.
-Here again is the `defdiagram` description for the cube shown in [figure 17.6](#f0035).
+Here again is the `defdiagram` description for the cube shown in [figure 17.6](#fig-17-06).
 
-| []()                                   |
-|----------------------------------------|
-| ![f17-06](images/chapter17/f17-06.jpg) |
-| Figure 17.6: A Cube                    |
+<!-- 17.6 is a copy of 17.1 -->
+| <a id="fig-17-06"></a>[]() |
+|---|
+| <img src="images/chapter17/fig-17-01.svg" onerror="this.src='images/chapter17/fig-17-01.png'; this.onerror=null;" alt="Figure 17.6"> |
+| **Figure 17.6: A Cube** |
 
 ```lisp
 (defdiagram cube
@@ -389,7 +393,7 @@ Here again is the `defdiagram` description for the cube shown in [figure 17.6](#
 
 The macro `defdiagram` calls `construct-diagram` to do the real work.
 It would be feasible to have `defdiagram` expand into a `defvar,` making the names be special variables.
-But then it would be the user`'s` responsibility to make copies of such a variable before passing it to a destructive function.
+But then it would be the user's responsibility to make copies of such a variable before passing it to a destructive function.
 Instead, I use `put-diagram` and `diagram` to put and get diagrams in a table, `diagram` retrieves the named diagram and makes a copy of it.
 Thus, the user cannot corrupt the original diagrams stored in the table.
 Another possibility would be to have `defdiagram` expand into a function definition for `name` that returns a copy of the diagram.
@@ -477,6 +481,7 @@ The initial diagram is:
  F/6 L: FD=[RL+L-R] FC=[LRR+L-]
  G/6 L: GB=[RL+L-R] GD=[LRR+L-]
 For 29,160 interpretations.
+
 After constraint propagation the diagram is:
  A/1 Y: AB=[+] AC=[+] AD=[+]
  B/2 W: BG=[L-] BE=[R-] BA=[++]
@@ -486,6 +491,7 @@ After constraint propagation the diagram is:
  F/3 L: FD=[R-R] FC=[LL-]
  G/3 L: GB=[R-R] GD=[LL-]
 For 216 interpretations.
+
 There are four solutions:
 Diagram:
   A/1 Y: AB=[+] AC=[+] AD=[+]
@@ -495,7 +501,8 @@ Diagram:
   E/l L: EC=[R] EB=[L]
   F/1 L: FD=[R] FC=[L]
   G/1 L: GB=[R] GD=[L]
-  Diagram:
+
+Diagram:
   A/1 Y: AD=[+] AC=[+] AD=[+]
   B/1 W: BG=[L] BE=[R] BA=[+]
   C/l W: CE=[L] CF=[R] CA=[+]
@@ -503,6 +510,7 @@ Diagram:
   E/l L: EC=[R] EB=[L]
   F/1 L: FD=[-] FC=[L]
   G/1 L: GB=[R] GD=[-]
+
 Diagram:
   A/1 Y: AB=[+] AC=[+] AD=[+]
   B/1 W: BG=[L] BE=[R] BA=[+]
@@ -511,6 +519,7 @@ Diagram:
   E/l L: EC=[-] EB=[L]
   F/1 L: FD=[R] FC=[-]
   G/1 L: GB=[R] GD=[L]
+
 Diagram:
   A/1 Y: AB=[+] AC=[+] AD=[+]
   B/1 W: BG=[-] BE=[-] BA=[+]
@@ -522,14 +531,14 @@ Diagram:
 ```
 
 The four interpretations correspond, respectively, to the cases where the cube is free floating, attached to the floor (GD and DF = -), attached to a wall on the right (EC and CF = -), or attached to a wall on the left (BG and BE = -).
-These are shown in [figure 17.7](#f0040).
+These are shown in [figure 17.7](#fig-17-07).
 It would be nice if we could supply information about where the cube is attached, and see if we can get a unique interpretation.
 The function ground takes a diagram and modifies it by making one or more lines be grounded lines-lines that have a concave (-) label, corresponding to a junction with the ground.
 
-| []()                                          |
-|-----------------------------------------------|
-| ![f17-07](images/chapter17/f17-07.jpg)        |
-| Figure 17.7: Four Interpretations of the Cube |
+| <a id="fig-17-07"></a>[]() |
+|---|
+| <img src="images/chapter17/fig-17-07.svg" onerror="this.src='images/chapter17/fig-17-07.png'; this.onerror=null;" alt="Figure 17.7"> |
+| **Figure 17.7: Four Interpretations of the Cube** |
 
 ```lisp
 (defun ground (diagram vertex-a vertex-b)
@@ -558,12 +567,13 @@ The initial diagram is:
  F/6 L: FD=[RL+L-R] FC=[LRR+L-]
  G/1 L: GB=[R] GD=[-]
 For 4,860 interpretations.
+
 After constraint propagation the diagram is:
  A/1 Y: AB=[+] AC=[+] AD=[+]
- B/l W: BG=[L] BE=[R] BA=[+]
- C/l W: CE=[L] CF=[R] CA=[C +]
- D/l W: DF=[-] DG=[-] DA=[+]
- E/l L: EC=[R] EB=[L]
+ B/1 W: BG=[L] BE=[R] BA=[+]
+ C/1 W: CE=[L] CF=[R] CA=[C +]
+ D/1 W: DF=[-] DG=[-] DA=[+]
+ E/1 L: EC=[R] EB=[L]
  F/1 L: FD=[-] FC=[L]
  G/1 L: GB=[R] GD=[-]
 ```
@@ -574,17 +584,17 @@ Similarly, in programming `ground-line`, we only had to update one of the vertex
 The rest is done by constraint propagation.
 
 The next example yields the same four interpretations, in the same order (free floating, attached at bottom, attached at right, and attached at left) when interpreted ungrounded.
-The grounded version yields the unique solution shown in the following output and in [figure 17.9](#f0050).
+The grounded version yields the unique solution shown in the following output and in [figure 17.9](#fig-17-09).
 
-| []()                                   |
-|----------------------------------------|
-| ![f17-08](images/chapter17/f17-08.jpg) |
-| Figure 17.8: Cube on a Plate           |
+| <a id="fig-17-08"></a>[]() |
+|---|
+| <img src="images/chapter17/fig-17-08.svg" onerror="this.src='images/chapter17/fig-17-08.png'; this.onerror=null;" alt="Figure 17.8"> |
+| **Figure 17.8: Cube on a Plate** |
 
-| []()                                   |
-|----------------------------------------|
-| ![f17-09](images/chapter17/f17-09.jpg) |
-| Figure 17.9: Labeled Cube on a Plate   |
+| <a id="fig-17-09"></a>[]() |
+|---|
+| <img src="images/chapter17/fig-17-09.svg" onerror="this.src='images/chapter17/fig-17-09.png'; this.onerror=null;" alt="Figure 17.9"> |
+| **Figure 17.9: Labeled Cube on a Plate** |
 
 ```lisp
 (defdiagram cube-on-plate
@@ -601,6 +611,7 @@ The grounded version yields the unique solution shown in the following output an
   (k W m l j)
   (l L h k)
   (m L k i))
+
 > (print-labelings (ground (diagram 'cube-on-plate) 'k 'm))
 The initial diagram is:
  A/5 Y: AB=[+-L-R] AC=[+-RL-] AD=[+--RL]
@@ -617,6 +628,7 @@ The initial diagram is:
  L/6 L: LH=[RL+L-R] LK=[LRR+L-]
  M/6 L: MK=[RL+L-R] MI=[LRR+L-]
 For 32.805.000 interpretations.
+
 After constraint propagation the diagram is
   A/1 Y: AB=[+] AC=[+] AD=[+]
   B/2 W: BG=[L-] BE=[R-] BA=[++]
@@ -650,7 +662,8 @@ It turns out the algorithm correctly finds no interpretation for this well-known
   (j L k b)
   (k W j i f)
   (l W h g c))
-> (print-1 abel ings (diagram 'poiuyt))
+
+> (print-labelings (diagram 'poiuyt))
 The initial diagram is:
  A/6 L: AB=[RL+L-R] AG=[LRR+L-]
  B/6 L: BJ=[RL+L-R] BA=[LRR+L-]
@@ -664,7 +677,8 @@ The initial diagram is:
  J/6 L: JK=[RL+L-R] JB=[LRR+L-]
  K/3 W: KJ=[L-+] KI=[R-+] KF=[++-]
  L/3 W: LH=[L-+] LG=[R-+] LC=[++-]
-For 544,195.584 interpretations.
+For 544,195,584 interpretations.
+
 After constraint propagation the diagram is:
  A/5 L: AB=[RL+-R] AG=[LRRL-]
  B/5 L: BJ=[RLL-R] BA=[LR+L-]
@@ -679,6 +693,7 @@ After constraint propagation the diagram is:
  K/3 W: KJ=[L-+] KI=[R-+] KF=[++-]
  L/3 W: LH=[L-+] LG=[R-+] LC=[++-]
 For 2,073,600 interpretations.
+
 There are zero solutions:
 ```
 
@@ -699,6 +714,7 @@ Now we try a more complex diagram:
   (k W m l j)    (x Y r u t)
   (l L h k)      (y Y v u o)
   (m L k i)      (z Y t u v))
+
 > (print-labelings (ground (diagram 'tower) 'l 'k))
 The initial diagram is:
   A/5 Y: AB=[+-L-R] AC=[+-RL-] AD=[+--RL]
@@ -720,11 +736,7 @@ The initial diagram is:
   Q/3 W: QN=[L-+] QS=[R-+] QW=[++-]
   R/3 W: RS=[L-+] RP=[R-+] RX=[++-]
   S/6 L: SR=[RL+L-R] SQ=[LRR+L-]
-```
-
-`  T/3 W:` TW=[L-+] `TX=[R-+] TZ=[++-]`
-
-```lisp
+  T/3 W: TW=[L-+] TX=[R-+] TZ=[++-]
   U/3 W: UX=[L-+] UY=[R-+] UZ=[++-]
   V/3 W: VY=[L-+] VW=[R-+] VZ=[++-]
   W/5 Y: WT=[+-L-R] WV=[+-RL-] WQ=[+--RL]
@@ -738,31 +750,31 @@ After constraint propagation the diagram is:
 
 ```lisp
   A/1 Y: AB=[+] AC=[+] AD=[+]
-  B/l W: BG=[L] BE=[R] BA=[+]
+  B/1 W: BG=[L] BE=[R] BA=[+]
   C/1 W: CE=[L] CF=[R] CA=[+]
-  D/l W: DF=[-] DG=[-] DA=[+]
+  D/1 W: DF=[-] DG=[-] DA=[+]
   E/1 L: EC=[R] EB=[L]
   F/1 Y: FD=[-] FC=[L] FI=[R]
   G/1 Y: GB=[R] GD=[-]GH=[L]
   H/1 W: HL=[L] HG=[R] HJ=[+]
   I/1 W: IF=[L] IM=[R] IP=[+]
-  J/l Y: JH=[+] JO=[+] JK=[+]
-  K/l W: KM=[-] KL=[-] KJ=[+]
-  L/l L: LH=[R] LK=[-]
+  J/1 Y: JH=[+] JO=[+] JK=[+]
+  K/1 W: KM=[-] KL=[-] KJ=[+]
+  L/1 L: LH=[R] LK=[-]
   M/1 L: MK=[-] MI=[L]
-  N/l L: NQ=[R] NO[-]
-  O/l W: OY=[+] OJ=[+] ON=[-]
-  P/l L: PR=[L] PI=[+]
+  N/1 L: NQ=[R] NO[-]
+  O/1 W: OY=[+] OJ=[+] ON=[-]
+  P/1 L: PR=[L] PI=[+]
   Q/1 W: QN=[L] QS=[R] QW=[+]
   R/1 W: RS=[L] RP=[R] RX=[+]
   S/1 L: SR=[R] SQ=[L]
   T/1 W: TW=[+] TX=[+] TZ=[-]
   U/1 W: UX=[+] UY=[+] UZ=[-]
-  V/l W: VY=[+] VW=[+] VZ=[-]
-  W/l Y: WT=[+] WV=[+] WQ=[+]
+  V/1 W: VY=[+] VW=[+] VZ=[-]
+  W/1 Y: WT=[+] WV=[+] WQ=[+]
   X/1 Y: XR=[+] XU=[+] XT=[+]
   Y/1 Y: YV=[+] YU=[+] YO=[+]
-  Z/l Y: ZT=[-] ZU=[-] ZV=[-]
+  Z/1 Y: ZT=[-] ZU=[-] ZV=[-]
 ```
 
 We see that the algorithm was able to arrive at a single interpretation.
@@ -784,22 +796,22 @@ It is interesting that the same fact that makes the processing of the poiuyt tak
 ## 17.4 Checking Diagrams for Errors
 
 This section considers one more example, and considers what to do when there are apparent errors in the input.
-The example is taken from Charniak and McDermott's *Introduction to Artificial Intelligence*, page 138, and shown in [figure 17.12](#f0065).
+The example is taken from Charniak and McDermott's *Introduction to Artificial Intelligence*, page 138, and shown in [figure 17.12](#fig-17-12).
 
-| []()                                          |
-|-----------------------------------------------|
-| ![f17-10](images/chapter17/f17-10.jpg)        |
-| Figure 17.10: An Impossible Figure (A Poiuyt) |
+| <a id="fig-17-10"></a>[]() |
+|---|
+| <img src="images/chapter17/fig-17-10.svg" onerror="this.src='images/chapter17/fig-17-10.png'; this.onerror=null;" alt="Figure 17.10"> |
+| **Figure 17.10: An Impossible Figure (A Poiuyt)** |
 
-| []()                                   |
-|----------------------------------------|
-| ![f17-11](images/chapter17/f17-11.jpg) |
-| Figure 17.11: A Tower                  |
+| <a id="fig-17-11"></a>[]() |
+|---|
+| <img src="images/chapter17/fig-17-11.svg" onerror="this.src='images/chapter17/fig-17-11.png'; this.onerror=null;" alt="Figure 17.11"> |
+| **Figure 17.11: A Tower** |
 
-| []()                                   |
-| ---------------------------------------|
-| ![f17-12](images/chapter17/f17-12.jpg) |
-| Figure 17.12: Diagram of an arch       |
+| <a id="fig-17-12"></a>[]() |
+|---|
+| <img src="images/chapter17/fig-17-12.svg" onerror="this.src='images/chapter17/fig-17-12.png'; this.onerror=null;" alt="Figure 17.12"> |
+| **Figure 17.12: Diagram of an arch** |
 
 ```lisp
 (defdiagram arch
@@ -930,21 +942,21 @@ Repairing these bugs gives the diagram:
   (b L d a)      (q T P i r)
   (c Y a d g)    (r T j s q)
   (d Y c b m)    (s L r t)
-  (e L a f)      (t W u s k)        *;t-u not t-v*
-  (f T e g n)    (u L t 4)          *;u-4 not u-l*
+  (e L a f)      (t W u s k)    ;t-u not t-v
+  (f T e g n)    (u L t 4)      ;u-4 not u-l
   (g W h f c)    (v L 2 4)
   (h T g i o)    (w W x l y)
   (i T h j q)    (x L w z)
   (j T i k r)    (y Y w 2 z)
   (k T J l t)    (z W 3 x y)
-  (l T k m 4)    (1 T n o w)          *;l-4 not l-v*
+  (l T k m 4)    (1 T n o w)    ;l-4 not l-v
   (m L l d)      (2 W v 3 y)
   (n L f 1)      (3 L z 2)
   (o W P 1 h)    (4 T u l v))
 ```
 
-This time there arenoerrorsdetected by `check-diagram,` butrunning `print-labelings` again still does not give a solution.
-`To` get more information about which constraints are applied, `I` modified `propagate-constraints` to print out some information:
+This time there are no errors detected by `check-diagram`, but running `print-labelings` again still does not give a solution.
+To get more information about which constraints are applied, I modified `propagate-constraints` to print out some information:
 
 ```lisp
 (defun propagate-constraints (vertex)
@@ -997,36 +1009,36 @@ The initial diagram is:
   3/6 L: 3Z=[RL+L-R] 32=[LRR+L-]
   0/3 W: 0P=[L-+] 01=[R-+] 0H=[++-]
   4/4 T: 4U=[RRRR] 4 L=[LLLL] 4 V=[+-LR]
-For 2,888, 816, 545.234, 944,000 interpretations
-: P/2: (0/3 Q/4)        ((R L) (- L))
-: 0/1: (P/2 1/4 H/4)    ((L R +))
-: P/1: (0/1 Q/4)        ((R L))
-: 1/3: (N/6 0/1 W/3)    ((R L +) (R L -) (R L L))
-: N/2: (F/4 1/3)        ((R L) (- L))
-: F/2: (E/6 G/3 N/2)    ((R L -) (R L L))
-: E/2: (A/3 F/2)      ((R L) (- L))
-: A/2: (E/2 B/6 C/5)    ((L R +) (- - +))
-: B/3: (D/5 A/2)      ((R L) (- L) (R -))
-: D/3: (C/5 B/3 M/6)    ((- - -) (- L R) (R - L))
-: W/1: (X/l 1/3 Y/5)    ((L R +))
-: 1/1: (N/2 0/1 W/l)    ((R L L))
-: Y/1: (W/l 2/3 Z/3)    ((+ + +))
-: 2/2: (V/6 3/6 Y/1)    ((L R +) (- - +))
-: V/3: (2/2 4/4)      ((R L) (- L) (R -))
-: 4/2: (U/6 L/4 V/3)    ((R L -) (R L R))
-: U/2: (T/3 4/2)      ((R L) (- L))
-: T/2: (U/2 S/6 K/4)    ((L R +) (- - +))
-: S/2: (R/4 T/2)      ((R L) (R -))
-: K/1: (J/4 L/4 T/2)    ((R L +))
-: J/1: (1/4 K/1 R/4)    ((R L L))
-: I/1: (H/4 J/1 Q/4)    ((R L R))
-: L/1: (K/l M/6 4/2)    ((R L R))
-: M/2: (L/1 D/3)      ((R L) (R -))
-: 3/3: (Z/3 2/2)      ((R L) (- L) (R -))
-: Z/1 : (3/3 X/1 Y/1)    ((- - +))
-: 3/1: (Z/l 2/2)    ((- L))
-: 2/1: (V/3 3/1 Y/1)    ((L R +))
-: V/2: (2/1 4/2)      ((R L) (R -))
+For 2,888,816,545,234,944,000 interpretations
+; P/2: (0/3 Q/4)        ((R L) (- L))
+; 0/1: (P/2 1/4 H/4)    ((L R +))
+; P/1: (0/1 Q/4)        ((R L))
+; 1/3: (N/6 0/1 W/3)    ((R L +) (R L -) (R L L))
+; N/2: (F/4 1/3)        ((R L) (- L))
+; F/2: (E/6 G/3 N/2)    ((R L -) (R L L))
+; E/2: (A/3 F/2)      ((R L) (- L))
+; A/2: (E/2 B/6 C/5)    ((L R +) (- - +))
+; B/3: (D/5 A/2)      ((R L) (- L) (R -))
+; D/3: (C/5 B/3 M/6)    ((- - -) (- L R) (R - L))
+; W/1: (X/l 1/3 Y/5)    ((L R +))
+; 1/1: (N/2 0/1 W/l)    ((R L L))
+; Y/1: (W/l 2/3 Z/3)    ((+ + +))
+; 2/2: (V/6 3/6 Y/1)    ((L R +) (- - +))
+; V/3: (2/2 4/4)      ((R L) (- L) (R -))
+; 4/2: (U/6 L/4 V/3)    ((R L -) (R L R))
+; U/2: (T/3 4/2)      ((R L) (- L))
+; T/2: (U/2 S/6 K/4)    ((L R +) (- - +))
+; S/2: (R/4 T/2)      ((R L) (R -))
+; K/1: (J/4 L/4 T/2)    ((R L +))
+; J/1: (1/4 K/1 R/4)    ((R L L))
+; I/1: (H/4 J/1 Q/4)    ((R L R))
+; L/1: (K/l M/6 4/2)    ((R L R))
+; M/2: (L/1 D/3)      ((R L) (R -))
+; 3/3: (Z/3 2/2)      ((R L) (- L) (R -))
+; Z/1 : (3/3 X/1 Y/1)    ((- - +))
+; 3/1: (Z/l 2/2)    ((- L))
+; 2/1: (V/3 3/1 Y/1)    ((L R +))
+; V/2: (2/1 4/2)      ((R L) (R -))
 After constraint propagation the diagram is:
   A/0 W:
   P/l L: P0=[R] PQ=CL]
@@ -1064,9 +1076,9 @@ From the diagram after constraint propagation we can see that the vertexes A,B,C
 From the trace generated by `propagate-constraints` (the lines beginning with a semicolon), we see that constraint propagation started at P and after seven propagations reached some of the suspect vertexes:
 
 ```lisp
-: A/2: (E/2 B/6 C/5)    ((L R +) (- - + ))
-: B/3: (D/5 A/2)        ((R L) (- L) (R -))
-: D/3: (C/5 B/3 M/6)    ((- - -) (- L R) (R - L))
+; A/2: (E/2 B/6 C/5)    ((L R +) (- - + ))
+; B/3: (D/5 A/2)        ((R L) (- L) (R -))
+; D/3: (C/5 B/3 M/6)    ((- - -) (- L R) (R - L))
 ```
 
 A and B look acceptable, but look at the entry for vertex D.
@@ -1129,10 +1141,10 @@ Second, even when input checking is done, it is still up to the user to understa
 
 [Guzman (1968)](B9780080571157500285.xhtml#bb0500) was one of the first to consider the problem of interpreting line diagrams.
 He classified vertexes, and defined some heuristics for combining information from adjacent vertexes.
-[Huffman (1971)](B9780080571157500285.xhtml#bb0560) and [Clowes (1971)](B9780080571157500285.xhtml#bb0215) independently came up with more formai and complete analyses, and David [Waltz (1975)](B9780080571157500285.xhtml#bb1300) extended the analysis to handle shadows, and introduced the constraint propagation algorithm to eut down on the need for search.
+[Huffman (1971)](B9780080571157500285.xhtml#bb0560) and [Clowes (1971)](B9780080571157500285.xhtml#bb0215) independently came up with more formal and complete analyses, and David [Waltz (1975)](B9780080571157500285.xhtml#bb1300) extended the analysis to handle shadows, and introduced the constraint propagation algorithm to cut down on the need for search.
 The algorithm is sometimes called "Waltz filtering" in his honor.
 With shadows and nontrihedral angles, there are thousands of vertex labelings instead of 18, but there are also more constraints, so the constraint propagation actually does better than it does in our limited world.
-Waltz's approach and the Huf f man-Clowes labels are covered in most introductory AI books, including Rich and Knight 1990, [Charniak and McDermott 1985](B9780080571157500285.xhtml#bb0175), and [Winston 1984](B9780080571157500285.xhtml#bb1405).
+Waltz's approach and the Huffman-Clowes labels are covered in most introductory AI books, including Rich and Knight 1990, [Charniak and McDermott 1985](B9780080571157500285.xhtml#bb0175), and [Winston 1984](B9780080571157500285.xhtml#bb1405).
 Waltz's original paper appears in *The Psychology of Computer Vision* ([Winston 1975](B9780080571157500285.xhtml#bb1400)), an influential volume collecting early work done at MIT.
 He also contributed a summary article on Waltz filtering ([Waltz 1990](B9780080571157500285.xhtml#bb1305)).
 
@@ -1160,4 +1172,5 @@ Consult [Waltz 1975](B9780080571157500285.xhtml#bb1300).
 **Exercise  17.4 [d]** Implement a program to recognize lines from pixels.
 
 **Exercise  17.5 [d]** If you have access to a workstation with a graphical interface, implement a program to allow a user to draw diagrams with a mouse.
-Have the program generate output in the form expected by `construct-diagram`
+Have the program generate output in the form expected by `construct-diagram`.
+

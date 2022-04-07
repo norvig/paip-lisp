@@ -120,7 +120,7 @@ The original GPS allowed more flexibility in the specification of effects, but f
 
 *   A complete problem is described to GPS in terms of a starting state, a goal state, and a set of known operators.
 Thus, GPS will be a function of three arguments.
-For example, a sample call might be: `(GPS '(unknown poor)'(rich famous) list-of-ops)` In other words, starting from the state of being poor and unknown, achieve the state of being rich and famous, using any combination of the known operators.
+For example, a sample call might be: `(GPS '(unknown poor) '(rich famous) list-of-ops)` In other words, starting from the state of being poor and unknown, achieve the state of being rich and famous, using any combination of the known operators.
 GPS should return a true value only if it solves the problem, and it should print a record of the actions taken.
 The simplest approach is to go through the conditions in the goal state one at a time and try to achieve each one.
 If they can all be achieved, then the problem is solved.
@@ -155,7 +155,7 @@ The specification is complete enough to lead directly to a complete Common Lisp 
 | `appropriate-p`    | Decide if an operator is appropriate for a goal.      |
 | `apply-op`         | Apply operator to current state.                      |
 |                    | **Selected Common Lisp Functions**                    |
-| `member`           | Test if an elementis a member of a list. (p.78)       |
+| `member`           | Test if an element is a member of a list. (p.78)       |
 | `set-difference`   | All elements in one set but not the other.            |
 | `union`            | All elements in either of the two sets.               |
 | `every`            | Test if every element of a list passes a test. (p. 62)|
@@ -201,7 +201,7 @@ These correspond to the seven items in the specification above.
 In general, you shouldn't expect such a perfect fit between specification and implementation.
 There are two `defvar` forms, one `defstruct`, and four `defun` forms.
 These are the Common Lisp forms for defining variables, structures, and functions, respectively.
-They are the most common toplevel forms in Lisp, but there is nothing magic about them; they are just special forms that have the side effect of adding new definitions to the Lisp environment.
+They are the most common top-level forms in Lisp, but there is nothing magic about them; they are just special forms that have the side effect of adding new definitions to the Lisp environment.
 
 The two `defvar` forms, repeated below, declare special variables named `*state*` and `*ops*,` which can then be accessed from anywhere in the program.
 
@@ -243,7 +243,7 @@ expanded into the following definitions:
 (setf (documentation 'op 'structure) "An operation")
 ```
 Next in the GPS program are four function definitions.
-The main function `GPS`, is passed three arguments.
+The main function, `GPS`, is passed three arguments.
 The first is the current state of the world, the second the goal state, and the third a list of allowable operators.
 The body of the function says simply that if we can achieve every one of the goals we have been given, then the problem is solved.
 The unstated alternative is that otherwise, the problem is not solved.
@@ -511,7 +511,7 @@ The function `dbg` provides this capability.
 `dbg` prints output in the same way as `format`, but it will only print when debugging output is desired.
 Each call to `dbg` is accompanied by an identifier that is used to specify a class of debugging messages.
 The functions `debug` and `undebug` are used to add or remove message classes to the list of classes that should be printed.
-In this chapter, all the debugging output will use the identifier :`gps`.
+In this chapter, all the debugging output will use the identifier `:gps`.
 Other programs will use other identifiers, and a complex program will use many identifiers.
 
 A call to `dbg` will result in output if the first argument to `dbg`, the identifier, is one that was specified in a call to `debug`.
@@ -521,7 +521,7 @@ In other words, we will write functions that include calls to `dbg` like:
 ```lisp
 (dbg :gps "The current goal is: ~a" goal)
 ```
-If we have turned on debugging with `(debug :gps)`, then calls to dbg with the identifier :`gps` will print output.
+If we have turned on debugging with `(debug :gps)`, then calls to `dbg` with the identifier `:gps` will print output.
 The output is turned off with `(undebug :gps)`.
 `debug` and `undebug` are designed to be similar to `trace` and `untrace`, in that they turn diagnostic output on and off.
 They also follow the convention that `debug` with no arguments returns the current list of identifiers, and that `undebug` with no arguments turns all debugging off.
@@ -953,7 +953,10 @@ We just used a different set of operators.
 Now we will consider another "classic" problem, maze searching.
 We will assume a particular maze, diagrammed here.
 
-![u04-01](images/chapter4/u04-01.jpg)
+<a id="diagram-04-01"></a>
+<img src="images/chapter4/diagram-04-01.svg"
+  onerror="this.src='images/chapter4/diagram-04-01.png'; this.onerror=null;"
+  alt="Diagram 4.1">
 
 It is much easier to define some functions to help build the operators for this domain than it would be to type in all the operators directly.
 The following code defines a set of operators for mazes in general, and for this maze in particular:
@@ -1013,7 +1016,7 @@ We wanted GPS to return a list of the actions executed.
 However, in order to account for the case where the goal can be achieved with no action, I included `(START)` in the value returned by GPS.
 These examples include the `START` and `EXECUTING` forms but also a list of the form (AT *n*), for some *n*.
 This is the bug.
-If we go back and look at the function GPS, we find that it reports the resuit by removing all atoms from the state returned by `achieve-all`.
+If we go back and look at the function GPS, we find that it reports the result by removing all atoms from the state returned by `achieve-all`.
 This is a "pun"-we said remove atoms, when we really meant to remove all conditions except the `(START)` and `(EXECUTING *action*)` forms.
 Up to now, all these conditions were atoms, so this approach worked.
 The maze domain introduced conditions of the form (`AT` *n*), so for the first time there was a problem.
@@ -1102,7 +1105,10 @@ We will create an operator for each possible block move.
 Now we try these operators out on some problems.
 The simplest possible problem is stacking one block on another:
 
-![u04-02](images/chapter4/u04-02.jpg)
+<a id="diagram-04-02"></a>
+<img src="images/chapter4/diagram-04-02.svg"
+  onerror="this.src='images/chapter4/diagram-04-02.png'; this.onerror=null;"
+  alt="Diagram 4.2">
 
 `> (use (make-block-ops '(a b)))`=> `4`
 
@@ -1117,7 +1123,10 @@ The simplest possible problem is stacking one block on another:
 Here is a slightly more complex problem: inverting a stack of two blocks.
 This time we show the debugging output.
 
-![u04-03](images/chapter4/u04-03.jpg)
+<a id="diagram-04-03"></a>
+<img src="images/chapter4/diagram-04-03.svg"
+  onerror="this.src='images/chapter4/diagram-04-03.png'; this.onerror=null;"
+  alt="Diagram 4.3">
 
 `> (debug :gps)`=> `(:GPS)`
 
@@ -1146,7 +1155,10 @@ Sometimes it matters what order you try the conjuncts in.
 For example, you can't have your cake and eat it too, but you can take a picture of your cake and eat it too, as long as you take the picture *before* eating it.
 In the blocks world, we have:
 
-![u04-04](images/chapter4/u04-04.jpg)
+<a id="diagram-04-04"></a>
+<img src="images/chapter4/diagram-04-04.svg"
+  onerror="this.src='images/chapter4/diagram-04-04.png'; this.onerror=null;"
+  alt="Diagram 4.4">
 
 ```lisp
 > (use (make-block-ops '(a b c))) 18
@@ -1199,7 +1211,10 @@ Another possibility would be to consider all possible permutations of the goals,
 Another consideration is the efficiency of solutions.
 Consider the simple task of getting block C on the table in the following diagram:
 
-![u04-05](images/chapter4/u04-05.jpg)
+<a id="diagram-04-05"></a>
+<img src="images/chapter4/diagram-04-05.svg"
+  onerror="this.src='images/chapter4/diagram-04-05.png'; this.onerror=null;"
+  alt="Diagram 4.5">
 
 ```lisp
 > (gps '((c on a) (a on table) (b on table)
@@ -1216,7 +1231,10 @@ So the first operator is tried, and it succeeds provided C is on B.
 Thus, the two-step solution is found before the one-step solution is ever considered.
 The following example takes four steps when it could be done in two:
 
-![u04-06](images/chapter4/u04-06.jpg)
+<a id="diagram-04-06"></a>
+<img src="images/chapter4/diagram-04-06.svg"
+  onerror="this.src='images/chapter4/diagram-04-06.png'; this.onerror=null;"
+  alt="Diagram 4.6">
 
 ```lisp
 > (gps '((c on a) (a on table) (b on table)
@@ -1258,7 +1276,11 @@ To implement this approach, we change `achieve`:
 
 Now we get the solutions we wanted:
 
-![u04-07](images/chapter4/u04-07.jpg)
+<!-- 4.7 is a copy of 4.6 -->
+<a id="diagram-04-07"></a>
+<img src="images/chapter4/diagram-04-06.svg"
+  onerror="this.src='images/chapter4/diagram-04-06.png'; this.onerror=null;"
+  alt="Diagram 4.6">
 
 ```lisp
 > (gps '((c on a) (a on table) (b on table)
@@ -1269,7 +1291,11 @@ Now we get the solutions we wanted:
   (EXECUTING (MOVE A FROM TABLE TO B)))
 ```
 
-![u04-08](images/chapter4/u04-08.jpg)
+<!-- 4.8 is a copy of 4.4 -->
+<a id="diagram-04-08"></a>
+<img src="images/chapter4/diagram-04-04.svg"
+  onerror="this.src='images/chapter4/diagram-04-04.png'; this.onerror=null;"
+  alt="Diagram 4.8">
 
 ```lisp
 (gps '((a on b) (b on c) (c on table) (space on a) (space on table))
@@ -1291,7 +1317,10 @@ Now we get the solutions we wanted:
 Surprisingly, there are problems that can't be solved by *any* reordering of goals.
 Consider:
 
-![u04-09](images/chapter4/u04-09.jpg)
+<a id="diagram-04-09"></a>
+<img src="images/chapter4/diagram-04-09.svg"
+  onerror="this.src='images/chapter4/diagram-04-09.png'; this.onerror=null;"
+  alt="Diagram 4.9">
 
 This doesn't look too hard, so let's see how our GPS handles it:
 
@@ -1521,7 +1550,7 @@ The program should never undo a goal that has been achieved, but it should allow
 In this way, the program will solve the Sussman anomaly and similar problems.
 
 **Exercise  4.6 [d]** *The Lack of Descriptive Power Problem*.
-Read [chapters 5](B9780080571157500054.xhtml) and [6](B9780080571157500066.xhtml) tolearn about pattern matching.
+Read [chapters 5](B9780080571157500054.xhtml) and [6](B9780080571157500066.xhtml) to learn about pattern matching.
 Write a version of GPS that uses the pattern matching tools, and thus allows variables in the operators.
 Apply it to the maze and blocks world domains.
 Your program will be more efficient if, like Chapman's Tweak program, you allow for the possibility of variables that remain unbound as long as possible.
@@ -1563,16 +1592,16 @@ The sophisticated Lisp programmer should also see the exercise on [page 680](B97
 
 ----------------------
 
-<a id="fn04-1"</a><sup>[1](#tfn04-1)</sup>
+<a id="fn04-1"></a><sup>[1](#tfn04-1)</sup>
 Strips is the Stanford Research Institute Problem Solver, designed by [Richard Fikes and Nils Nilsson (1971)](B9780080571157500285.xhtml#bb0405).
 
-<a id="fn04-2"</a><sup>[2](#tfn04-2)</sup>
+<a id="fn04-2"></a><sup>[2](#tfn04-2)</sup>
 Gerald Sussman, in his book *A Computer Model of Skill Acquisition,* uses the term "prerequisite clobbers brother goal" or PCBG.
 I prefer to be gender neutral, even at the risk of being labeled a historical revisionist.
 
-<a id="fn04-3"</a><sup>[3](#tfn04-3)</sup>
+<a id="fn04-3"></a><sup>[3](#tfn04-3)</sup>
 Originally posed by [Saul Amarel (1968)](B9780080571157500285.xhtml#bb0045).
 
-<a id="fn04-4"</a><sup>[4](#tfn04-4)</sup>
+<a id="fn04-4"></a><sup>[4](#tfn04-4)</sup>
 A footnote in Waldinger 1977 says, "This problem was proposed by Allen Brown.
 Perhaps many children thought of it earlier but did not recognize that it was hard." The problem is named after Gerald Sussman because he popularized it in Sussman 1973.

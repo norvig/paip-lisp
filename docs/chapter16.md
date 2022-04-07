@@ -5,7 +5,7 @@
 
 > -Nicholas Murray Butler (1862-1947)
 
-In the 1970s there was terrifie interest in the area of *knowledge-based expert systems*.
+In the 1970s there was terrific interest in the area of *knowledge-based expert systems*.
 An expert system or knowledge-based system is one that solves problems by applying knowledge that has been garnered from one or more experts in a field.
 Since these experts will not in general be programmers, they will very probably express their expertise in terms that cannot immediately be translated into a program.
 It is the goal of expert-system research to come up with a representation that is flexible enough to handle expert knowledge, but still capable of being manipulated by a computer program to come up with solutions.
@@ -166,7 +166,7 @@ A and B => .9C
 to say that A and B imply C with .9 certainty.
 EMYCIN simply multiplies the rule's cf by the combined cf of the premise.
 So if A has cf .6 and B has cf .4, then the premise as a whole has cf .4 (the minimum of A and B), which is multiplied by .9 to get .36.
-The .36 is then combined with any exisiting cf for C.
+The .36 is then combined with any existing cf for C.
 If C is previously unknown, then combining .36 with 0 will give .36.
 If C had a prior cf of .76, then the new cf would be .36 + .76 - (.36 x .76) = .8464.
 
@@ -194,8 +194,8 @@ But if we only used the certainty factors `true` and `false`, then EMYCIN would 
 It is only when we provide fractional certainty factors that the additional EMYCIN mechanism makes a difference.
 
 Truth values actually serve two purposes in Prolog.
-They determine the final answer, yes, but they also determine when to eut off search: if any one of the premises of a rule is false, then there is no sense looking at the other premises.
-If in EMYCIN we only eut off the search when one of the premises was absolutely false, then we might have to search through a lot of rules, only to yield answers with very low certainty factors.
+They determine the final answer, yes, but they also determine when to cut off search: if any one of the premises of a rule is false, then there is no sense looking at the other premises.
+If in EMYCIN we only cut off the search when one of the premises was absolutely false, then we might have to search through a lot of rules, only to yield answers with very low certainty factors.
 Instead, EMYCIN arbitrarily cuts off the search and considers a premise false when it has a certainty factor below .2.
 The following functions support this arbitrary cutoff point:
 
@@ -243,7 +243,7 @@ On the other hand, each microscopic organism has an `identity` parameter that is
 Applying the rules will lead to several possible values for this parameter, each with its own certainty factor.
 In general, then, the data base will have keys of the form (*parameter instance*) with values of the form ((*val*<sub>1</sub>*cf*<sub>1</sub>) (*val*<sub>2</sub>*cf*<sub>2</sub>)...).
 In the following code, `get-vals` returns the list of value/cf pairs for a given parameter and instance, `get-cf` returns the certainty factor for a parameter/instance/value triplet, and `update-cf` changes the certainty factor by combining the old one with a new one.
-Note that the first time `update-cf` is called on a given parameter/instance/value triplet, `get-cf` will return un known (zero).
+Note that the first time `update-cf` is called on a given parameter/instance/value triplet, `get-cf` will return `unknown` (zero).
 Combining that with the given `cf` yields `cf` itself.
 Also note that the data base has to be an equal hash table, because the keys may include freshly consed lists.
 
@@ -258,7 +258,7 @@ Also note that the data base has to be an equal hash table, because the keys may
       unknown))
 
 (defun update-cf (parm inst val cf)
-  "Change the certianty factor for (parm inst is val),
+  "Change the certainty factor for (parm inst is val),
   by combining the given cf with the old."
   (let ((new-cf (cf-or cf (get-cf parm inst val))))
     (put-db (list parm inst)
@@ -330,9 +330,10 @@ The functions `print-why`, `parm-type`, and `check-reply` will be defined shortl
                              Type ? to see legal ones."))))))))
 ```
 
-The following is `prompt-and-read-vals,` the function that actually asks the query and reads the reply.
+The following is `prompt-and-read-vals`, the function that actually asks the query and reads the reply.
 It basically calls `format` to print a prompt and `read` to get the reply, but there are a few subtleties.
-First, it calls `finish-output.` Some Lisp implementations buffer output on a line-by-line basis.
+First, it calls `finish-output`.
+Some Lisp implementations buffer output on a line-by-line basis.
 Since the prompt may not end in a newline, `finish-output` makes sure the output is printed before the reply is read.
 
 So far, all the code that refers to a `parm` is really referring to the name of a parameter-a symbol.
@@ -359,7 +360,7 @@ The macro `defparm` (shown here) provides a way to define prompts and readers fo
       inst))
 ```
 
-The function `check-reply` uses `parse - reply` to convert the user's reply into a canonical form, and then checks that each value is of the right type, and that each certainty factor is valid.
+The function `check-reply` uses `parse-reply` to convert the user's reply into a canonical form, and then checks that each value is of the right type, and that each certainty factor is valid.
 If so, the data base is updated to reflect the new certainty factors.
 
 ```lisp
@@ -387,8 +388,8 @@ If so, the data base is updated to reflect the new certainty factors.
 
 Parameters are implemented as structures with six slots: the name (a symbol), the context the parameter is for, the prompt used to ask for the parameter's value, a Boolean that tells if we should ask the user before or after using rules, a type restriction describing the legal values, and finally, the function used to read the value of the parameter.
 
-Parameters are stored on the property list of their names under the pa rm property, so getting the `parm-type` of a name requires first getting the parm structure, and then selecting the type restriction field.
-By default, a parameter is given type t, meaning that any value is valid for that type.
+Parameters are stored on the property list of their names under the `parm` property, so getting the `parm-type` of a name requires first getting the parm structure, and then selecting the type restriction field.
+By default, a parameter is given type `t`, meaning that any value is valid for that type.
 We also define the type `yes/no`, which comes in handy for Boolean parameters.
 
 We want the default prompt to be "What is the PARM of the INST?" But most user-defined prompts will want to print the inst, and not the parm.
@@ -486,12 +487,13 @@ The contexts form a tree.
 In our example, the `patient` context is the root of the tree, and the current patient is stored in the data base under the key `patient.` The next level of the tree is for cultures taken from the patient; the current culture is stored under the `culture` key.
 Finally, there is a level for organisms found in each culture.
 The current organism is stored under both the `organism` and `current-instance` keys.
-The context tree is shown in [figure  16.2](#f0015).
+The context tree is shown in [figure 16.2](#fig-16-02).
 
-| []()                                   |
-|----------------------------------------|
-| ![f16-02](images/chapter16/f16-02.jpg) |
-| Figure 16.2: A Context Tree            |
+
+| <a id="fig-16-02"></a>[]() |
+|---|
+| <img src="images/chapter16/fig-16-02.svg" onerror="this.src='images/chapter16/fig-16-02.png'; this.onerror=null;" alt="Figure 16.2"> |
+| **Figure 16.2: A Context Tree** |
 
 ```lisp
 (defun new-instance (context)
@@ -515,7 +517,7 @@ In Prolog, a goal can be any expression, and appropriate rules are those whose h
 If any appropriate rule succeeds, then the goal is known to be true.
 In EMYCIN, a rule might give a goal a certainty of .99, but we still have to consider all the other rules that are appropriate to the goal, because they might bring the certainty down below the cutoff threshold.
 Thus, EMYCIN always gathers all evidence relating to a parameter/instance pair first, and only evaluates the goal after all the evidence is in.
-For example, if the goal was (`temp patient  > 98.6`), Emycin would first evaluate all rules with conclusions about the current patient's temperature, and only then compare the temperature to 98.6.
+For example, if the goal was (`temp patient  > 98.6`), EMYCIN would first evaluate all rules with conclusions about the current patient's temperature, and only then compare the temperature to 98.6.
 
 Another way of looking at it is that Prolog has the luxury of searching depth-first, because the semantics of Prolog rules is such that if any rule says a goal is true, then it is true.
 EMYCIN must search breadth-first, because a goal with certainty of .99 might turn out to be false when more evidence is considered.
@@ -886,7 +888,7 @@ We are now ready to apply the shell to a specific domain, yielding the beginning
 
 ## 16.8 **MYCIN**, A Medical Expert System
 
-This section applies `emycin` to Mycin's original domain: infectious blood disease.
+This section applies `emycin` to MYCIN's original domain: infectious blood disease.
 In our version of MYCIN, there are three contexts: first we consider a patient, then any cultures that have been grown from samples taken from the patient, and finally any infectious organisms in the cultures.
 The goal is to determine the identity of each organism.
 The real MYCIN was more complex, taking into account any drugs or operations the patient may previously have had.
@@ -1036,7 +1038,7 @@ In this hypothetical case, the organism is in fact aerobic:
 ```lisp
 What is the AEROBICITY of ORGANISM-1? aerobic
 Is Sylvia Fischer a compromised host? yes
-Is Sylvia Fischer a burn patient? If so. mild or serious? why
+Is Sylvia Fischer a burn patient? If so, mild or serious? why
 [Why is the value of BURN being asked for?]
 It is known that:
       1) THE SITE OF THE CULTURE IS BLOOD
@@ -1087,7 +1089,7 @@ Is there another CULTURE? (Y or N) N
 Is there another PATIENT? (Y or N) N
 ```
 
-The set of rules listed above do not demonstrate two important features of the system: the ability to backward-chain, and the ability to use operators other than i s in premises.
+The set of rules listed above do not demonstrate two important features of the system: the ability to backward-chain, and the ability to use operators other than is in premises.
 
 If we add the following three rules and repeat the case shown above, then evaluating rule 75 will back-chain to rule 1, 2, and finally 3 trying to determine if the patient is a compromised host.
 Note that the question asked will be "What is Sylvia Fischer's white blood cell count?" and not "Is the white blood cell count of Sylvia Fischer < 2.5?" The latter question would suffice for the premise at hand, but it would not be as useful for other rules that might refer to the WBC.
@@ -1128,7 +1130,7 @@ Instead of representing an event by a single probability or certainty, Dempster-
 Instead of a single number like .5, Dempster-Shafer theory would have an interval like [.4,.6] to represent a range of probabilities.
 A complete lack of knowledge would be represented by the range [0,1].
 A great deal of effort in the late 1970s and early 1980s was invested in these and other nonprobabilistic theories.
-Another example is Zadeh's fuzzy set theory, which is also based on intervais.
+Another example is Zadeh's fuzzy set theory, which is also based on intervals.
 
 There is ample evidence that people have difficulty with problems involving probability.
 In a very entertaining and thought-provoking series of articles, Tversky and Kahneman ([1974](B9780080571157500285.xhtml#bb1245), [1983](B9780080571157500285.xhtml#bb1250), [1986](B9780080571157500285.xhtml#bb1255)) show how people make irrational choices when faced with problems that are quite simple from a mathematical viewpoint.
@@ -1140,7 +1142,7 @@ Adrian and Dominique are to be married.
 Adrian goes for a routine blood test and is told that the results are positive for a rare genetic disorder, one that strikes only 1 in 10,000 people.
 The doctor says that the test is 99% accurate-it gives a false positive reading in only 1 in 100 cases.
 Adrian is despondent, being convinced that the probability of actually having the disease is 99%.
-Fortunately, Dominique happens to be a Bayesian, and quickly reassures Adrian that the chance is more like 1 %.
+Fortunately, Dominique happens to be a Bayesian, and quickly reassures Adrian that the chance is more like 1%.
 The reasoning is as follows: Take 10,001 people at random.
 Of these, only 1 is expected to have the disease.
 That person could certainly expect to test positive for the disease.
@@ -1259,7 +1261,7 @@ Eventually, the need arose for a rule that said, "If any of the organisms in a c
 Implement a mechanism that keeps track of the author and date of creation of each rule, and allows the author to add documentation explaining the rationale for the rule.
 
 **Exercise  16.16 [m]** It is difficult to come up with the perfect prompt for each parameter.
-One solution is not to insist that one promptfits all users, but rather to allow the expert to supply three different prompts: a normal prompt, a verbose prompt (or reprompt) for when the user replies with a ?, and a terse prompt for the experienced user.
+One solution is not to insist that one prompt fits all users, but rather to allow the expert to supply three different prompts: a normal prompt, a verbose prompt (or reprompt) for when the user replies with a ?, and a terse prompt for the experienced user.
 Modify `defparm` to accommodate this concept, add a command for the user to ask for the terse prompts, and change `ask-vals` to use the proper prompt.
 
 The remaining exercises cover three additional replies the user can make: `how`, `stop`, and `change`.
@@ -1272,16 +1274,16 @@ It will require storing additional information in the data base.
 **Exercise  16.18 [m]** There was also a stop command that immediately halted the session.
 Implement it.
 
-**Exercise  16.19 [d]** The original EMYCIN also had a change command to allow the user to change the answer to certain questions without starting all over.
+**Exercise  16.19 [d]** The original EMYCIN also had a `change` command to allow the user to change the answer to certain questions without starting all over.
 Each question was assigned a number, which was printed before the prompt.
-The command change, followed by a list of numbers, causes the system to look up the questions associated with each number and delete the answer to these questions.
+The command `change`, followed by a list of numbers, causes the system to look up the questions associated with each number and delete the answer to these questions.
 The system also throws away the entire context tree and all derived parameter values.
 At that point the entire consultation is restarted, using only the data obtained from the unchanged questions.
 Although it may seem wasteful to start over from the beginning, it will not be wasteful of the user's time, since correct answers will not be asked again.
 
 Identify what needs to be altered to implement change and make the alterations.
 
-**Exercise  16.20 [h]** Change the definition of `cf`-and and `cf-or` to use fuzzy set theory instead of certainty factors.
+**Exercise  16.20 [h]** Change the definition of `cf-and` and `cf-or` to use fuzzy set theory instead of certainty factors.
 Do the same for Dempster-Shafer theory.
 
 ## 16.12 Answers
@@ -1308,14 +1310,13 @@ Then any rule that uses an undefined parameter will automatically generate a war
 ```lisp
 (defrule 4
   if (sex patient is male)
-  then -  1 (pregnant patient is yes))
+  then -1 (pregnant patient is yes))
 ```
 
 **Answer 16.7** Logically, there should be no difference, but to EMYCIN there is a big difference.
 EMYCIN would not complain if you answered `(yes 1 no 1)`.
 This suggests that the system should have some way of dealing with mutually exclusive answers.
-One way would be to accept only yes responses for Boolean parameters, but have the input routine translate no to `(yes -1)` and `(no *cf*)` to `(yes 1-*cf*)`.
-Another possibility would be to have `update-cf check` to see if any certainty factor on a mutually exclusive value is 1, and if so, change the other values to -1.
+One way would be to accept only yes responses for Boolean parameters, but have the input routine translate no to `(yes -1)` and `(no` *cf*) to `(yes 1-`*cf*).
+Another possibility would be to have `update-cf` check to see if any certainty factor on a mutually exclusive value is 1, and if so, change the other values to -1.
 
-**Answer 16.18** Add the clause `(stop (throw 'stop nil))` to the case statement inask-valsandwrapa `(catch 'stop ...)` around the code in `emycin`.
-
+**Answer 16.18** Add the clause `(stop (throw 'stop nil))` to the case statement in `ask-vals` and wrap a `(catch 'stop ...)` around the code in `emycin`.

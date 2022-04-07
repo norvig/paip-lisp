@@ -138,13 +138,13 @@ Suppose we wanted to allow noun phrases to be modified by an indefinite number o
 In grammatical notation, we might have the following rules:
 
 > *Noun-Phrase => Article + Adj\* + Noun + PP\*  
-> Adj\* => 0&#x0338;, Adj + Adj\*  
-> PP\* => 0&#x0338;, PP + PP\*  
+> Adj\* => &#x2205;, Adj + Adj\*  
+> PP\* => &#x2205;, PP + PP\*  
 > PP => Prep + Noun-Phrase  
 > Adj => big, little, blue, green, ...  
 > Prep => to, in, by, with, ...*
 
-In this notation, 0&#x0338; indicates a choice of nothing at all, a comma indicates a choice of several alternatives, and the asterisk is nothing special-as in Lisp, it's just part of the name of a symbol.
+In this notation, &#x2205; indicates a choice of nothing at all, a comma indicates a choice of several alternatives, and the asterisk is nothing special-as in Lisp, it's just part of the name of a symbol.
 However, the convention used here is that names ending in an asterisk denote zero or more repetitions of the underlying name.
 That is, *PP\** denotes zero or more repetitions of *PP*.
 <a id="tfn02-1"></a>
@@ -242,11 +242,11 @@ We will need three functions: one to get the right-hand side of a rule, one for 
 
 ```lisp
 (defun rule-lhs (rule)
-  "The left hand side of a rule."
+  "The left-hand side of a rule."
   (first rule))
 
 (defun rule-rhs (rule)
-  "The right hand side of a rule."
+  "The right-hand side of a rule."
   (rest (rest rule)))
 
 (defun rewrites (category)
@@ -403,8 +403,10 @@ For example, instead of the list `(a woman took a ball)`, we want to get the nes
 
 This corresponds to the tree that linguists draw as in figure 2.1.
 
-![Figure 2.1: Sentence Parse Tree](images/chapter2/f02-01.jpg)
-**Figure 2.1: Sentence Parse Tree**
+| <a id="fig-02-01"></a>[]() |
+|---|
+| <img src="images/chapter2/fig-02-01.svg" onerror="this.src='images/chapter2/fig-02-01.png'; this.onerror=null;" alt="Figure 2.1"> |
+| **Figure 2.1: Sentence Parse Tree** |
 
 Using the "straightforward functions" approach we would be stuck; we'd have to rewrite every function to generate the additional structure.
 With the "new notation" approach we could keep the grammar as it is and just write one new function: a version of `generate` that produces nested lists.

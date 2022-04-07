@@ -27,7 +27,7 @@ These possibilities can be broken down further into four cases:
 An expression can be incomplete because you have left off a right parenthesis (or inserted an extra left parenthesis).
 Or you may have started a string, atom, or comment without finishing it.
 This is particularly hard to spot when the error spans multiple lines.
-A string begins and ends with double-quotes: `"string"`; an atom containing unusual characters can be delimited by vertical bars: `| AN ATOM |` ; and a comment can be of the form `# | a comment | #`.
+A string begins and ends with double-quotes: `"string"`; an atom containing unusual characters can be delimited by vertical bars: `| AN ATOM |`; and a comment can be of the form `# | a comment | #`.
 Here are four incomplete expressions:
 
 ```lisp
@@ -75,7 +75,8 @@ Check the base case and loop variant on active functions and loops.
 
 **PROBLEM:** You redefined a variable, but the new value was ignored.
 
-**Diagnosis:** Altering a variable by editing and re-evaluating a `defvar` form will not change the variable's value, `defvar` only assigns an initial value when the variable is unbound.
+**Diagnosis:** Altering a variable by editing and re-evaluating a `defvar` form will not change the variable's value.
+`defvar` only assigns an initial value when the variable is unbound.
 
 **Remedy:** Use setf to update the variable, or change the `defvar` to a `defparameter`.
 
@@ -89,7 +90,7 @@ For example, consider:
   (mapcar #'check-op *ops*))
 ```
 
-If `check - ops` is called with a null argument, the `*ops*` that is a parameter of `check - ops` will be updated, but the global `*ops*` will not be, even if it is declared special.
+If `check-ops` is called with a null argument, the `*ops*` that is a parameter of `check-ops` will be updated, but the global `*ops*` will not be, even if it is declared special.
 
 **Remedy:** Don't shadow variables you want to update.
 Use a different name for the local variable.
@@ -135,27 +136,27 @@ Consider:
       (reduce #'better values)))
 ```
 
-Now suppose that the definitions of `score - fn, print - fn`, and `better` are all changed.
+Now suppose that the definitions of `score-fn`, `print-fn`, and `better` are all changed.
 Does any of the prior code have to be recompiled?
-The variable *`printer`* can stay as is.
+The variable `*printer*` can stay as is.
 When it is funcalled, the symbol `print-fn` will be consulted for the current functional value.
-Within show, the expression # ' `better` is compiled into code that will get the current version of `better`, so it too is safe.
-However, the variable *`scorer`* must be changed.
+Within `show`, the expression `#'better` is compiled into code that will get the current version of `better`, so it too is safe.
+However, the variable `*scorer*` must be changed.
 Its value is the old definition of `score-fn`.
 
-**Remedy:** Re-evaluate the definition of *`scorer`*.
+**Remedy:** Re-evaluate the definition of `*scorer*`.
 It is unfortunate, but this problem encourages many programmers to use symbols where they really mean functions.
 Symbols will be coerced to the global function they name when passed to `funcall` or `apply`, but this can be the source of another error.
-In the following example, the symbol `local - fn` will not refer to the locally bound function.
-One needs to use `#'local - fn` to refer to it.
+In the following example, the symbol `local-fn` will not refer to the locally bound function.
+One needs to use `#'local-fn` to refer to it.
 
 ```lisp
 (flet ((local-fn (x) ...))
   (mapcar 'local-fn list))
 ```
 
-**Diagnosis:** If you changed the name of a function, did you change the name every-where?
-For example, if you decide to change the name of `print-fn` to `print-function` but forget to change the value of *`printer`*, then the old function will be called.
+**Diagnosis:** If you changed the name of a function, did you change the name everywhere?
+For example, if you decide to change the name of `print-fn` to `print-function` but forget to change the value of `*printer*`, then the old function will be called.
 
 **Remedy:** Use your editor's global replace command.
 To be even safer, redefine obsolete functions to call `error`.
@@ -221,7 +222,7 @@ Let's fix the problem by changing `labels` to `flet` and naming the local functi
 ```
 
 Annoyingly, this version still doesn't work!
-This time, the problem is carelessness; we changed the `replace- ? - vars to recurse` in two places, but not in the two calls in the body of `recurse`.
+This time, the problem is carelessness; we changed the `replace-?-vars` to `recurse` in two places, but not in the two calls in the body of `recurse`.
 
 **Remedy:** In general, the lesson is to make sure you call the right function.
 If there are two functions with similar effects and you call the wrong one, it can be hard to see.
@@ -248,19 +249,19 @@ But in either version, it is a bad idea to do so.
 A list beginning with `lambda` is just that: a list, not a closure.
 Therefore, it cannot capture lexical variables the way a closure does.
 
-**Remedy:** The correct way to create a closure is to evaluate a call to the special form `function`, or its abbreviation, # '.
-Here is a replacement for the code beginning with '(`lambda ....` Note that it is a closure, closed over `pred` and `c`.
+**Remedy:** The correct way to create a closure is to evaluate a call to the special form `function`, or its abbreviation, `#'`.
+Here is a replacement for the code beginning with '(`lambda ...`. Note that it is a closure, closed over `pred` and `c`.
 Also note that it gets the `predicate` each time it is called; thus, it is safe to use even when predicates are being changed dynamically.
 The previous version would not work when a predicate is changed.
 
 ```lisp
-#'(lambda (obj)            ; *Do this instead.*
+#'(lambda (obj)            ; Do this instead.
       (and (funcall pred obj)
           (funcall (get c 'predicate) obj)))
 ```
 
-It is important to remember that `function` (and thus # ') is a special form, and thus only returns the right value when it is evaluated.
-A common error is to use # ' notation in positions that are not evaluated:
+It is important to remember that `function` (and thus `#'`) is a special form, and thus only returns the right value when it is evaluated.
+A common error is to use `#'` notation in positions that are not evaluated:
 
 ```lisp
 (defvar *obscure-fns* '(#'cis #'cosh #'ash #'bit-orc2)) ; *wrong*
@@ -277,11 +278,11 @@ The first assures that each function special form is evaluated, and the second u
 (defvar *obscure-fns* '(cis cosh ash bit-orc2))
 ```
 
-Another common `error` is to expect # ' `if` or # ' `or` to return a function.
+Another common `error` is to expect `#'if` or `#'or` to return a function.
 This is an error because special forms are just syntactic markers.
 There is no function named `if` or `or`; they should be thought of as directives that tell the compiler what to do with a piece of code.
 
-By the way, the function `make` - `specialization` above is bad not only for its lack of `function` but also for its use of backquote.
+By the way, the function `make-specialization` above is bad not only for its lack of `function` but also for its use of backquote.
 The following is a better use of backquote:
 
 ```lisp
@@ -380,7 +381,7 @@ Suppose I had:
     ...)
 ```
 
-Now, if I become curious as to what `mv -1` returns, I might change this code to:
+Now, if I become curious as to what `mv-1` returns, I might change this code to:
 
 ```lisp
 (multiple-value-bind (a b c)
@@ -426,7 +427,7 @@ It runs in under a second on a SPARCstation, which is slower than optimized C, b
       (setf (aref arr i j) 0.0))))
 ```
 
-Another common error is to use something like (`simple-vector fixnum`) asatype specifier.
+Another common error is to use something like `(simple-vector fixnum)` as a type specifier.
 It is a quirk of Common Lisp that the `simple-vector` type specifier only accepts a size, not a type, while the `array, vector` and `simple-array` specifiers all accept an optional type followed by an optional size or list of sizes.
 To specify a simple vector of fixnums, use (`simple-array fixnum (*)`).
 
@@ -434,7 +435,7 @@ To be precise, `simple-vector` means (`simple-array t (*)`).
 This means that `simple-vector` cannot be used in conjunction with any other type specifier.
 A common mistake is to think that the type (`and simple-vector (vector fixnum)`) is equivalent to (`simple-array fixnum (*)`), a simple, one-dimensional vector of fixnums.
 Actually, it is equivalent to (`simple-array t (*)`), a simple one-dimensional array of any type elements.
-To eliminate this problem, avoid `simple- vector` altogether.
+To eliminate this problem, avoid `simple-vector` altogether.
 
 ## 25.8 My Lisp Does the Wrong Thing
 
@@ -442,7 +443,7 @@ When all else fails, it is tempting to shift the blame for an error away from yo
 It is certainly true that errors are found in existing implementations.
 But it is also true that most of the time, Common Lisp is merely doing something the user did not expect rather than something that is in error.
 
-For example, a common "bug report" is to complain about read - `from- string`.
+For example, a common "bug report" is to complain about `read-from-string`.
 A user might write:
 
 ```lisp
@@ -451,15 +452,15 @@ A user might write:
 
 expecting the expression to start reading at position `2` and thus return `b`.
 In fact, this expression returns a.
-The angry user thinks the implementation has erroneously ignored the :`start` argument and files a bug report,<a id="tfn25-1"></a><sup>[1](#fn25-1)</sup> only to get back the following explanation:
+The angry user thinks the implementation has erroneously ignored the `:start` argument and files a bug report,<a id="tfn25-1"></a><sup>[1](#fn25-1)</sup> only to get back the following explanation:
 
 The function `read-from-string` takes two optional arguments, `eof-errorp` and `eof-value`, in addition to the keyword arguments.
-Thus, in the expression above, : `start` is taken as the value of `eof-errorp`, with `2` as the value of `eof-value`.
-The correct answer is in fact to read from the start of the string and return the very first form, a.
+Thus, in the expression above, `:start` is taken as the value of `eof-errorp`, with `2` as the value of `eof-value`.
+The correct answer is in fact to read from the start of the string and return the very first form, `a`.
 
 The functions `read-from-string` and `parse-namestring` are the only built-in functions that have this problem, because they are the only ones that have both optional and keyword arguments, with an even number of optional arguments.
 The functions `write-line` and `write-string` have keyword arguments and a single optional argument (the stream), so if the stream is accidently omitted, an error will be signaled.
-(If you type (`write-line str :start 4`), the system will complain either that : `start` is not a stream or that 4 is not a keyword.)
+(If you type (`write-line str :start 4`), the system will complain either that `:start` is not a stream or that 4 is not a keyword.)
 
 The moral is this: functions that have both optional and keyword arguments are confusing.
 Take care when using existing functions that have this problem, and abstain from using both in your own functions.
@@ -483,10 +484,10 @@ But I can turn to Lisp itself and ask:
 
 ```lisp
 > (apropos "push")
-PUSH                              Macro          (VALUE PLACE), plist
-PUSHNEW                        Macro          (VALUE PLACE &KEY ...), plist
-VECTOR-PUSH                function    (NEW-ELEMENT VECTOR), plist
-VECTOR-PUSH-EXTEND  function    (DATA VECTOR &OPTIONAL ...), plist
+PUSH               Macro     (VALUE PLACE), plist
+PUSHNEW            Macro     (VALUE PLACE &KEY ...), plist
+VECTOR-PUSH        function  (NEW-ELEMENT VECTOR), plist
+VECTOR-PUSH-EXTEND function  (DATA VECTOR &OPTIONAL ...), plist
 ```
 
 This should be enough to remind me that `vector-push` is the answer.
@@ -595,13 +596,13 @@ A common mistake is to define macros that *do not* violate the usual evaluation 
 One recent book on AI programming suggests the following:
 
 ```lisp
-(defmacro binding-of (binding)    ; *Warning!*
-    '(cadr .binding))                          ; *Don't do this.*
+(defmacro binding-of (binding)      ; Warning!
+    '(cadr .binding))               ; Don't do this.
 ```
 
 The only possible reason for this macro is an unfounded desire for efficiency.
 Always use an `inline` function instead of a macro for such cases.
-That way you get the efficiency gain, you have not introduced a spurious macro, and you gain the ability to `apply` or `map` the function # ' `binding - of`, something you could not do with a macro:
+That way you get the efficiency gain, you have not introduced a spurious macro, and you gain the ability to `apply` or `map` the function `#'binding-of`, something you could not do with a macro:
 
 ```lisp
 (proclaim '(inline binding-of))
@@ -632,7 +633,7 @@ For example, here is the syntax of a macro to iterate over the leaves of a tree 
 
 There are a number of things to watch out for in figuring out how to expand a macro.
 First, make sure you don't shadow local variables.
-Consider the following definition for `pop - end`, a function to pop off and return the last element of a list, while updating the list to no longer contain the last element.
+Consider the following definition for `pop-end`, a function to pop off and return the last element of a list, while updating the list to no longer contain the last element.
 The definition uses `last1`, which was defined on page 305 to return the last element of a list, and the built-in function `nbutlast` returns all but the last element of a list, destructively altering the list.
 
 ```lisp
@@ -752,24 +753,24 @@ The five values give more control over the exact order in which expressions are 
 The five values are: (1) a list of temporary, local variables used in the code; (2) a list of values these variables should be bound to; (3) a list of one variable to hold the value specified in the call to `setf`; (4) code that will store the value in the proper place; (5) code that will access the value of the place.
 This is necessary for variations of `setf` like `inef` and `pop`, which need to both access and store.
 
-In the following `setf` method for `last`, then, we are defining the meaning of (`setf` (`last place`) `value`).
-We keep track of all the variables and values needed to evaluate `place`, and add to that three more local variables: `last2`-var will hold the last two elements of the list, `last2`-p will be true only if there are two or more elements in the list, and `last-var` will hold the form to access the last element of the list.
+In the following `setf` method for `last`, then, we are defining the meaning of `(setf (last place) value)`.
+We keep track of all the variables and values needed to evaluate `place`, and add to that three more local variables: `last2-var` will hold the last two elements of the list, `last2-p` will be true only if there are two or more elements in the list, and `last-var` will hold the form to access the last element of the list.
 We also make up a new variable, `result`, to hold the `value`.
-The code to store the value either modifies the cdr of `last2-var`, if the list is long enough, or it stores directly into `place`.
-The code to access the value just retrieves `last - var`.
+The code to store the value either modifies the `cdr` of `last2-var`, if the list is long enough, or it stores directly into `place`.
+The code to access the value just retrieves `last-var`.
 
 ```lisp
 (define-setf-method last (place)
-  (multiple-value-bind (temps vais stores store-form access-form)
+  (multiple-value-bind (temps vals stores store-form access-form)
         (get-setf-method place)
     (let ((result (gensym))
           (last2-var (gensym))
           (last2-p (gensym))
           (last-var (gensym)))
-        ;; Return 5 vais: temps vais stores store-form access-form
+        ;; Return 5 vals: temps vals stores store-form access-form
         (values
           '(.@temps .last2-var .last2-p .last-var)
-          '(.@vais (last2 .access-form)
+          '(.@vals (last2 .access-form)
             (= (length .last2-var) 2)
             (if .last2-p (rest .last2-var) .access-form))
           (list result)
@@ -783,23 +784,23 @@ The code to access the value just retrieves `last - var`.
 It should be mentioned that `setf` methods are very useful and powerful things.
 It is often better to provide a `setf` method for an arbitrary function, `f`, than to define a special setting function, say, `set-f`.
 The advantage of the `setf` method is that it can be used in idioms like `incf` and `pop`, in addition to `setf` itself.
-Also, in ANSI Common Lisp, it is permissible to name a function with # ' (`setf f`), so you can also use map or apply the `setf` method.
+Also, in ANSI Common Lisp, it is permissible to name a function with `#'(setf f)`, so you can also use map or apply the `setf` method.
 Most `setf` methods are for functions that just access data, but it is permissible to define `setf` methods for functions that do any computation whatsoever.
 As a rather fanciful example, here is a `setf` method for the square-root function.
 It makes (`setf (sqrt x) 5`) be almost equivalent to (`setf x (* 5 5)`) ; the difference is that the first returns 5 while the second returns 25.
 
 ```lisp
 (define-setf-method sqrt (num)
-  (multiple-value-bind (temps vals stores store-form access-form)
-        (get-setf-method num)
-    (let ((store (gensym)))
-        (values temps
-                    vals
-                    (list store)
-                    '(let ((,(first stores) (* .store .store)))
-                        ,store-form
-                        ,store)
-                    '(sqrt .access-form)))))
+ (multiple-value-bind (temps vals stores store-form access-form)
+    (get-setf-method num)
+  (let ((store (gensym)))
+    (values temps
+          vals
+          (list store)
+          '(let ((,(first stores) (* .store .store)))
+            ,store-form
+            ,store)
+          '(sqrt .access-form)))))
 ```
 
 Turning from `setf` methods back to macros, another hard part about writing portable macros is anticipating what compilers might warn about.
@@ -866,16 +867,14 @@ If by this the beginner wants a macro that just *does* two things, the answer is
 There will be no efficiency problem, even if the progn forms are nested.
 That is, if macro-expansion results in code like:
 
-```lisp
-(progn (progn (progn *a b*) c) (progn *d e))*
-```
+> `(progn (progn (progn` *a b) c*) `(progn` *d e*))
 
-the compiler will treat it the same as `(progn *abc de).*`
+the compiler will treat it the same as `(progn` *a b c d e).*
 
-On the other hand, if the beginner wants a macro that *returns* two values, the proper form is val ues, but it must be understood that the calling function needs to arrange specially to see both values.
+On the other hand, if the beginner wants a macro that *returns* two values, the proper form is `values`, but it must be understood that the calling function needs to arrange specially to see both values.
 There is no way around this limitation.
 That is, there is no way to write a macro-or a function for that matter-that will "splice in" its results to an arbitrary call.
-For example, the function `floor` returns two values (the quotient and remainder), as does i ntern (the symbol and whether or not the symbol already existed).
+For example, the function `floor` returns two values (the quotient and remainder), as does `intern` (the symbol and whether or not the symbol already existed).
 But we need a special form to capture these values.
 For example, compare:
 
@@ -976,7 +975,7 @@ Use parser: `print-tree` instead of `parser-print-tree`.
 A variable named `last-node` could have two meanings; use `previous` -`node` or `final` - `node` instead.
 
 14.  A name like `propagate-constraints-to-neighboring-vertexes` is too long, while `prp-con` is too short.
-In deciding on length, consider how the name will be used: `propagate-constraints` is just right, because a typical call will be `(propagate-const rai nts vertex)`, so it will be obvious what the constraints are propagating to.
+In deciding on length, consider how the name will be used: `propagate-constraints` is just right, because a typical call will be `(propagate-constraints vertex)`, so it will be obvious what the constraints are propagating to.
 
 ### Deciding on the Order of Parameters
 
@@ -1010,7 +1009,7 @@ First we define the function `required` to signal an error, and then we use a ca
 While this book has covered topics that are more advanced than any other Lisp text available, it is still concerned only with programming in the small: a single project at a time, capable of being implemented by a single programmer.
 More challenging is the problem of programming in the large: building multiproject, multiprogrammer systems that interact well.
 
-This section briefly outlines an approach to organizing a larger project into man-ageable components, and how to place those components in files.
+This section briefly outlines an approach to organizing a larger project into manageable components, and how to place those components in files.
 
 Every system should have a separate file that defines the other files that comprise the system.
 I recommend defining any packages in that file, although others put package definitions in separate files.
@@ -1034,7 +1033,7 @@ We will soon create the `project-x package`, and it will be used in all subseque
 5.  We want to define the Project-X system as a collection of files.
 Unfortunately, Common Lisp provides no way to do that, so we have to load our own system-definition functions explicitly with a call to `load`.
 
-6.  The call to `define - system` specifies the files that make up Project-X.
+6.  The call to `define-system` specifies the files that make up Project-X.
 We provide a name for the system, a directory for the source and object files, and a list of *modules* that make up the system.
 Each module is a list consisting of the module name (a symbol) followed by a one or more files (strings or pathnames).
 We have used keywords as the module names to eliminate any possible name conflicts, but any symbol could be used.
@@ -1079,13 +1078,13 @@ Now we need to provide the system-definition functions, `define-system` and `mak
 The idea is that `define-system` is used to define the files that make up a system, the modules that the system is comprised of, and the files that make up each module.
 It is necessary to group files into modules because some files may depend on others.
 For example, all macros, special variables, constants, and inline functions need to be both compiled and loaded before any other files that reference them are compiled.
-In Project-X, all `defvar, defparameter, defconstant,` and `defstruct`<a id="tfn25-3"></a><sup>[3](#fn25-3)</sup> forms are put in the file header, and all defmacro forms are put in the file macros.
-Together these two files form the first module, named : macros, which will be loaded before the other two modules (: `main` and :`windows`) are compiled and loaded.
+In Project-X, all `defvar, defparameter, defconstant,` and `defstruct`<a id="tfn25-3"></a><sup>[3](#fn25-3)</sup> forms are put in the file header, and all `defmacro` forms are put in the file `macros`.
+Together these two files form the first module, named `:macros`, which will be loaded before the other two modules (`:main` and `:windows`) are compiled and loaded.
 
-define-system also provides a place to specify a directory where the source and object files will reside.
-For larger systems spread across multiple directories, `define - system` will not be adequate.
+`define-system` also provides a place to specify a directory where the source and object files will reside.
+For larger systems spread across multiple directories, `define-system` will not be adequate.
 
-Here is the first part of the file `defsys.lisp`, showing the definition of `define-system` and the structure sys.
+Here is the first part of the file `defsys.lisp`, showing the definition of `define-system` and the structure `sys`.
 
 ```lisp
 ;;; -*- Mode: Lisp; Syntax: Common-Lisp; Package: User -*-
@@ -1114,11 +1113,11 @@ and add the new one.`
 name)
 ```
 
-The function `make` - `systemis` used to compile and/or load a previously defined system.
+The function `make-system` is used to compile and/or load a previously defined system.
 The name supplied is used to look up the definition of a system, and one of three actions is taken on the system.
-The keyword : `cload` means to compile and then load files.
-: `load` means to load files; if there is an object (compiled) file and it is newer than the source file, then it will be loaded, otherwise the source file will be loaded.
-Finally, : `update` means to compile just those source files that have been changed since their corresponding source files were last altered, and to load the new compiled version.
+The keyword `:cload` means to compile and then load files.
+`:load` means to load files; if there is an object (compiled) file and it is newer than the source file, then it will be loaded, otherwise the source file will be loaded.
+Finally, `:update` means to compile just those source files that have been changed since their corresponding source files were last altered, and to load the new compiled version.
 
 ```lisp
 (defun make-system (&key (module : al 1 ) (action :cload)
@@ -1194,8 +1193,8 @@ An implementation would be within its right to return 1, or any other number or 
 An unsuspecting programmer may code an expression that is an error but still computes reasonable results in his or her implementation.
 A common example is applying get to a non-symbol.
 This is an error, but many implementations will just return nil, so the programmer may write (`get x ' prop`) when `(if ( symbol p x) (get x 'prop) nil`) is actually needed for portable code.
-Another common problem is with subseq and the sequence functions that take : end keywords.
-It is an error if the : end parameter is not an integer less than the length of the sequence, but many implementations will not complain if : end is nil or is an integer greater than the length of the sequence.
+Another common problem is with subseq and the sequence functions that take `:end` keywords.
+It is an error if the `:end` parameter is not an integer less than the length of the sequence, but many implementations will not complain if `:end` is nil or is an integer greater than the length of the sequence.
 
 The Common Lisp specification often places constraints on the result that a function must compute, without fully specifying the result.
 For example, both of the following are valid results:
@@ -1224,8 +1223,8 @@ The programmer must be careful not to use such extensions in portable code.
 
 ## 25.18 Exercises
 
-**Exercise  251 [h]** On your next programming project, keep a log of each bug you detect and its eventual cause and remedy.
-Classify each one according to the taxon-omy given in this chapter.
+**Exercise 25.1 [h]** On your next programming project, keep a log of each bug you detect and its eventual cause and remedy.
+Classify each one according to the taxonomy given in this chapter.
 What kind of mistakes do you make most often?
 How could you correct that?
 
@@ -1261,14 +1260,14 @@ It looks for the key in the a-list, and if the key is there, it modifies the cdr
 
 ```lisp
 (define-setf-method lookup (key alist-place)
-  (multiple-value-bind (temps vais stores store-form access-form)
+  (multiple-value-bind (temps vals stores store-form access-form)
       (get-setf-method alist-place)
   (let ((key-var (gensym))
           (pair-var (gensym))
           (result (gensym)))
       (values
         '(.key-var .@temps .pair-var)
-        '(.key .@vais (assoc .key-var ,access-form))
+        '(.key .@vals (assoc .key-var ,access-form))
         '(.result)
         '(if .pair-var
             (setf (cdr .pair-var) .result)

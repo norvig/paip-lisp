@@ -211,7 +211,7 @@ See [exercise 8.8](#st0045) for a more complete treatment of this.
 ```
 
 We are now ready to go ahead and write the simplifier.
-The main function, `simplifier` will repeatedly print a prompt, read an input, and print it in simplified form.
+The main function, `simplifier`, will repeatedly print a prompt, read an input, and print it in simplified form.
 Input and output is in infix and the computation is in prefix, so we need to convert accordingly; the function `simp` does this, and the function `simplify` takes care of a single prefix expression.
 It is summarized in [figure 8.1](#f0010).
 
@@ -277,7 +277,8 @@ Here is the program:
 
 The function `simplify` assures that any compound expression will be simplified by first simplifying the arguments and then calling `simplify-exp`.
 This latter function searches through the simplification rules, much like `use-eliza-rules` and `translate-to-expression`.
-When it finds a match, `simplify-exp` substitutes in the proper variable values and calls `simplify` on the result, `simplify-exp` also has the ability to call `eval` to simplify an arithmetic expression to a number.
+When it finds a match, `simplify-exp` substitutes in the proper variable values and calls `simplify` on the result.
+`simplify-exp` also has the ability to call `eval` to simplify an arithmetic expression to a number.
 As in STUDENT, it is for the sake of this `eval` that we require expressions to be represented as lists in prefix notation.
 Numeric evaluation is done *after* checking the rules so that the rules can intercept expressions like `(/ 1 0)` and simplify them to `undefined`.
 If we did the numeric evaluation first, these expressions would yield an error when passed to `eval`.
@@ -725,7 +726,7 @@ In `factorize` we made use of the auxiliary function `length=1`.
 The function call `(length=1 x)` is faster than `(= (length x) 1)` because the latter has to compute the length of the whole list, while the former merely has to see if the list has a `rest` element or not.
 
 ```lisp
-(defun length=l (x)
+(defun length=1 (x)
   "Is X a list of length 1?"
   (and (consp x) (null (rest x))))
 ```
@@ -956,7 +957,7 @@ Implement this approach.
 **Exercise 8.6 [d]** A more complicated approach is to try to decide which ways of breaking up the original expression are promising and which are not.
 Derive some heuristics for making this division, and reimplement `integrate` to include a search component, using the search tools of [chapter 6](B9780080571157500066.xhtml).
 
-Look in a calculus textbook to see how &int;*sin<sup>2</sup>(x)dx is evaluated by two integrations by parts and a division.
+Look in a calculus textbook to see how &int;sin<sup>2</sup>*(x)dx* is evaluated by two integrations by parts and a division.
 Implement this technique as well.
 
 **Exercise 8.7 [m]** Write simplification rules for predicate calculus expressions.

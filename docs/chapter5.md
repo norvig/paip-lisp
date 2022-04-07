@@ -20,7 +20,7 @@ On the other hand, we shall see that this intelligence is largely an illusion, a
 
 ELIZA was one of the first programs to feature English output as well as input.
 The program was named after the heroine of *Pygmalion,* who was taught to speak proper English by a dedicated teacher.
-ELIZA'S principal developer, MIT professor Joseph Weizenbaum, published a paper on ELIZA in the January 1966 issue of the *Communications of the Association for Computing Machinery.*
+ELIZA's principal developer, MIT professor Joseph Weizenbaum, published a paper on ELIZA in the January 1966 issue of the *Communications of the Association for Computing Machinery.*
 The introduction to that paper is reproduced in its entirety here:
 
 > *It is said that to explain is to explain away.
@@ -39,7 +39,7 @@ In fact it had several scripts, including ones in German and Welsh.
 But the only script that was used to any extent was in English, and it made ELIZA emulate a Rogerian psychoanalyst.
 Rogerians are "nondirective"-they try to let the patient reveal himself.
 This is an easy script for ELIZA to follow, because it involves being passive and reacting, rather than volunteering new information.
-In the listing that follows, the user's input is in mixed case, and ELIZA'S response is in capitals:
+In the listing that follows, the user's input is in mixed case, and ELIZA's response is in capitals:
 
 ```text
 Men are all alike.
