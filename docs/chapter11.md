@@ -477,12 +477,47 @@ We will build a single uniform data base of clauses, without distinguishing rule
 The simplest representation of clauses is as a cons cell holding the head and the body.
 For facts, the body will be empty.
 
-| []()                                             |
-|--------------------------------------------------|
-| ![f11-01](images/chapter11/f11-01.jpg)           |
-| Figure 11.1: Glossary for the Prolog Interpreter |
+| Function                  | Description                                                 |
+|---------------------------|-------------------------------------------------------------|
+|                           | **Top-Level Macros**                                        |
+| `<-`                      | Add a clause to the database.                               |
+| `?-`                      | Prove a query and print answer(s).                          |
+|                           | **Special Variables**                                       |
+| `*db-predicates*`         | A list of all predicates.                                   |
+| `*occurs-check*`          | Should we check for circular unifications?                  |
+|                           | **Data Types**                                              |
+| `clause`                  | Consists of a head and a body.                              |
+| `variable`                | A symbol starting with a `?`.                               |
+|                           | **Major Functions**                                         |
+| `add-clause`              | Add a clause to the data base.                              |
+| `prove`                   | Return a list of possible solutions to goal.                |
+| `prove-all`               | Return a list of solutions to the conjunction of goals.     |
+| `top-level-prove`         | Prove the goals, and print variables readably.              |
+|                           | **Auxiliary Functions**                                     |
+| `get-clauses`             | Find all the clauses for a predicate.                       |
+| `predicate`               | Pick out the predicate from a relation.                     |
+| `clear-db`                | Remove all clauses (for all predicates) from the data base. |
+| `clear-predicate`         | Remove the clauses for a single predicate.                  |
+| `rename-variables`        | Replace all variables in `x` with new ones.                 |
+| `unique-find-anywhere-if` | Find all unique leaves satisfying predicate.                |
+| `show-prolog-solutions`   | Print the variables in each of the solutions.               |
+| `show-prolog-vars`        | Print each variable with its binding.                       |
+| `variables-in`            | Return a list of all the variables in an expression.        |
+|                           | **Previously Defined Constants**                            |
+| `fail`                    | An indication that unification has failed.                  |
+| `no-bindings`             | A successful unification with no variables.                 |
+|                           | **Previously Defined Functions**                            |
+| `unify`                   | Return bindings that unify two expressions (section 11.2).  |
+| `unify-variable`          | Unify a variable against an expression.                     |
+| `occurs-check`            | See if a particular variable occurs inside an expression.   |
+| `subst-bindings`          | Substitute bindings into an expression.                     |
+| `get-binding`             | Get the `(var . val)` binding for a variable.               |
+| `lookup`                  | Get the value for a variable.                               |
+| `extend-bindings`         | Add a new variable/value pair to a binding list.            |
+| `variable-p`              | Is the argument a variable?                                 |
+| `reuse-cons`              | Like `cons`, except will reuse an old value if possible.    |
 
-(ed: this should be a markdown table)
+Figure 11.1: Glossary for the Prolog Interpreter
 
 ```lisp
 ;; Clauses are represented as (head . body) cons cells

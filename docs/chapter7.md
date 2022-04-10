@@ -29,7 +29,7 @@ The description of STUDENT is:
 
 1.  Break the input into phrases that will represent equations.
 
-2.  Break each phrase into a pair of phrases on either side of the  =  sign.
+2.  Break each phrase into a pair of phrases on either side of the = sign.
 
 3.  Break these phrases down further into sums and products, and so on, until finally we bottom out with numbers and variables.
 (By "variable" here, I mean "mathematical variable," which is distinct from the idea of a "pattern-matching variable" as used in `pat-match` in [chapter 6](B9780080571157500066.xhtml)).
@@ -115,14 +115,43 @@ The special meaning of these characters to the Lisp reader can be escaped either
 The main section of STUDENT will search through the list of rules for a response, just as ELIZA did.
 The first point of deviation is that before we substitute the values of the `pat-match` variables into the response, we must first recursively translate the value of each variable, using the same list of pattern-response rules.
 The other difference is that once we're done, we don't just print the response; instead we have to solve the set of equations and print the answers.
-The program is summarized in [figure 7.1](#f0010).
+The program is summarized in figure 7.1.
 
-| []()                                         |
-|----------------------------------------------|
-| ![f07-01](images/chapter7/f07-01.jpg)        |
-| Figure 7.1: Glossary for the STUDENT Program |
+| Function                   | Description                                                          |
+|----------------------------|----------------------------------------------------------------------|
+|                            | **Top-Level Function**                                               |
+| `student`                  | Solve certain algebra word problems.                                 |
+|                            | **Special Variables**                                                |
+| `*student-rules*`          | A list of pattern/response pairs.                                    |
+|                            | **Data Types**                                                       |
+| `exp`                      | An operator and its arguments.                                       |
+| `rule`                     | A pattern and response.                                              |
+|                            | **Major Functions**                                                  |
+| `translate-to-expression`  | Translate an English phrase into an equation or expression.          |
+| `translate-pair`           | Translate the value part of the pair into an equation or expression. |
+| `create-list-of-equations` | Separate out equations embedded in nested parens.                    |
+| `solve-equations`          | Print the equations and their solution.                              |
+| `solve`                    | Solve a system of equations by constrain propagation.                |
+|                            | **Auxiliary Functions**                                              |
+| `isolate`                  | Isolate the lone variable on the left-hand side of an expression.    |
+| `noise-word-p`             | Is this a low-content word that can be safely ignored?               |
+| `make-variable`            | Create a variable name based on the given list of words.             |
+| `print-equations`          | Print a list of equations.                                           |
+| `inverse-op`               | For example, the inverse of `+` is `-`.                              |
+| `unknown-p`                | Is the argument an unknown (variable)?                               |
+| `in-exp`                   | True if `x` appears anywhere in exp.                                 |
+| `no-unknown`               | Returns true if there are no unknowns in exp.                        |
+| `one-unknown`              | Returns the single unknown in exp, if there is exactly one.          |
+| `commutative-p`            | Is the operator commutative?                                         |
+| `solve-arithmetic`         | Perform arithmetic on rhs of an equation.                            |
+| `binary-exp-p`             | Is this a binary expression?                                         |
+| `prefix->infix`            | Translate prefix to infix expressions.                               |
+| `mkexp`                    | Make an expression.                                                  |
+|                            | **Previously Defined Functions**                                     |
+| `pat-match`                | Match pattern against an input. (p. 180)                             |
+| `rule-based-translator`    | Apply a set of rules. (p. 189)                                       |
 
-(ed: this should be a markdown table)
+Figure 7.1: Glossary for the STUDENT Program
 
 Before looking carefully at the program, let's try a sample problem: "If z is 3, what is twice z?" Applying the rules to the input gives the following trace:
 
@@ -334,7 +363,7 @@ However, we don't have to go to that effort, since the function already exists.
 The data structure exp was carefully selected to be the same structure (lists with prefix functions) used by Lisp itself for its own expressions.
 So Lisp will find the right-hand side to be an acceptable expression, one that could be evaluated if typed in to the top level.
 Lisp evaluates expressions by calling the function `eval`, so we can call `eval` directly and have it return a number.
-The function `solve-arithmetic` returns an equation of the form (=  *var number*).
+The function `solve-arithmetic` returns an equation of the form (= *var number*).
 
 Auxiliary functions for `solve` are shown below.
 Most are straightforward, but I will remark on a few of them.
@@ -741,4 +770,3 @@ The function `find-one-unknown` has four cases: (1) If we have already found two
 
 <a id="fn07-1"></a><sup>[1](#tfn07-1)</sup>
 Page 316 of *Common Lisp the Language* says, "Because a constructor of this type operates By Order of Arguments, it is sometimes known as a BOA constructor."
-
