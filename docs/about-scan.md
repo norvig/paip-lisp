@@ -16,7 +16,7 @@ This is a scanned copy of the 4th printing, 1998.
 It's shared for reading, and for improving the Markdown copy in our Github repo.
 
 ### How it was made
-I had the spine / binding removed and I fed the pages through a scanner.
+@pronoiac had the spine / binding removed and fed the pages through a scanner.
 Steps and software used:
 
 * scanner gave 600dpi grayscale, as 3.6 gigabytes of png files
