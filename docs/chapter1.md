@@ -224,7 +224,7 @@ For example, `append` and `length` are symbols that name functions but have no v
 ## 1.3 Special Forms
 
 The careful reader will note that `setf` violates the evaluation rule.
-We said earlier that functions like `+`, - and `append` work by first evaluating all their arguments and then applying the function to the result.
+We said earlier that functions like `+`, `-` and `append` work by first evaluating all their arguments and then applying the function to the result.
 But `setf` doesn't follow that rule, because `setf` is not a function at all.
 Rather, it is part of the basic syntax of Lisp.
 Besides the syntax of atoms and function calls, Lisp has a small number of syntactic expressions.
