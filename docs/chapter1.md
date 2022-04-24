@@ -80,7 +80,7 @@ This time we try (9000 + 900 + 90 + 9) - (5000 + 500 + 50 + 5):
 
 This example shows that expressions can be nested.
 The arguments to the - function are parenthesized lists, while the arguments to each `+` are atoms.
-The Lisp notation may look unusual compared to standard mathematical notation, but there are advantages to this notation; since Lisp expressions can consist of a function followed by any number of arguments, we don't have to keep repeating the `"+."` More important than the notation is the rule for evaluation.
+The Lisp notation may look unusual compared to standard mathematical notation, but there are advantages to this notation; since Lisp expressions can consist of a function followed by any number of arguments, we don't have to keep repeating the "`+`". More important than the notation is the rule for evaluation.
 In Lisp, lists are evaluated by first evaluating all the arguments, then applying the function to the arguments, thereby computing the result.
 This rule is much simpler than the rule for evaluating normal mathematical expressions, where there are many conventions to remember, such as doing multiplications and divisions before sums and differences.
 We will see below that the actual Lisp evaluation rule is a little more complicated, but not much.
@@ -162,11 +162,11 @@ Here are some examples:
 
 Note that `'2` evaluates to `2` because it is a quoted expression, and `2` evaluates to `2` because numbers evaluate to themselves.
 Same result, different reason.
-In contrast, '`John` evaluates to `John` because it is a quoted expression, but evaluating `John` leads to an error, because evaluating a symbol means getting the value of the symbol, and no value has been assigned to `John.`
+In contrast, `'John` evaluates to `John` because it is a quoted expression, but evaluating `John` leads to an error, because evaluating a symbol means getting the value of the symbol, and no value has been assigned to `John`.
 
 Symbolic computations can be nested and even mixed with numeric computations.
 The following expression builds a list of names in a slightly different way than we saw before, using the built-in function `list`.
-We then see how to find the number of elements in the list, using the built-in function `length:`
+We then see how to find the number of elements in the list, using the built-in function `length`:
 
 ```lisp
 > (append '(Pat Kim) (list '(John Q Public) 'Sandy))
@@ -183,14 +183,14 @@ For example, we naturally think of (`Robin Sandy`) as a list of two first names,
 Lisp has no such preconceptions.
 To Lisp, both `Robin` and `xyzzy` are perfectly good symbols.
 
-*   Second, to do the computations above, we had to know that `append, length`, and + are defined functions in Common Lisp.
+*   Second, to do the computations above, we had to know that `append`, `length`, and `+` are defined functions in Common Lisp.
 Learning a language involves remembering vocabulary items (or knowing where to look them up) as well as learning the basic rules for forming expressions and determining what they mean.
 Common Lisp provides over 700 built-in functions.
 At some point the reader should flip through a reference text to see what's there, but most of the important functions are presented in part I of this book.
 
 *   Third, note that symbols in Common Lisp are not case sensitive.
 <a id="tfn01-2"></a>
-By that I mean that the inputs `John, john,` and `jOhN` all refer to the same symbol, which is normally printed as `JOHN.`<sup>[2](#fn01-2)</sup>
+By that I mean that the inputs `John`, `john`, and `jOhN` all refer to the same symbol, which is normally printed as `JOHN`.<sup>[2](#fn01-2)</sup>
 
 *   Fourth, note that a wide variety of characters are allowed in symbols: numbers, letters, and other punctuation marks like `'+'` or `'!'`
 The exact rules for what constitutes a symbol are a little complicated, but the normal convention is to use symbols consisting mostly of letters, with words separated by a dash `(-)`, and perhaps with a number at the end.
