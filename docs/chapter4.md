@@ -956,7 +956,7 @@ We will assume a particular maze, diagrammed here.
 <a id="diagram-04-01"></a>
 <img src="images/chapter4/diagram-04-01.svg"
   onerror="this.src='images/chapter4/diagram-04-01.png'; this.onerror=null;"
-  alt="Diagram 4.1">
+  alt="Diagram 4.1" />
 
 It is much easier to define some functions to help build the operators for this domain than it would be to type in all the operators directly.
 The following code defines a set of operators for mazes in general, and for this maze in particular:
@@ -1108,7 +1108,7 @@ The simplest possible problem is stacking one block on another:
 <a id="diagram-04-02"></a>
 <img src="images/chapter4/diagram-04-02.svg"
   onerror="this.src='images/chapter4/diagram-04-02.png'; this.onerror=null;"
-  alt="Diagram 4.2">
+  alt="Diagram 4.2" />
 
 `> (use (make-block-ops '(a b)))`=> `4`
 
@@ -1126,7 +1126,7 @@ This time we show the debugging output.
 <a id="diagram-04-03"></a>
 <img src="images/chapter4/diagram-04-03.svg"
   onerror="this.src='images/chapter4/diagram-04-03.png'; this.onerror=null;"
-  alt="Diagram 4.3">
+  alt="Diagram 4.3" />
 
 `> (debug :gps)`=> `(:GPS)`
 
@@ -1158,7 +1158,7 @@ In the blocks world, we have:
 <a id="diagram-04-04"></a>
 <img src="images/chapter4/diagram-04-04.svg"
   onerror="this.src='images/chapter4/diagram-04-04.png'; this.onerror=null;"
-  alt="Diagram 4.4">
+  alt="Diagram 4.4" />
 
 ```lisp
 > (use (make-block-ops '(a b c))) 18
@@ -1214,7 +1214,7 @@ Consider the simple task of getting block C on the table in the following diagra
 <a id="diagram-04-05"></a>
 <img src="images/chapter4/diagram-04-05.svg"
   onerror="this.src='images/chapter4/diagram-04-05.png'; this.onerror=null;"
-  alt="Diagram 4.5">
+  alt="Diagram 4.5" />
 
 ```lisp
 > (gps '((c on a) (a on table) (b on table)
@@ -1234,7 +1234,7 @@ The following example takes four steps when it could be done in two:
 <a id="diagram-04-06"></a>
 <img src="images/chapter4/diagram-04-06.svg"
   onerror="this.src='images/chapter4/diagram-04-06.png'; this.onerror=null;"
-  alt="Diagram 4.6">
+  alt="Diagram 4.6" />
 
 ```lisp
 > (gps '((c on a) (a on table) (b on table)
@@ -1280,7 +1280,7 @@ Now we get the solutions we wanted:
 <a id="diagram-04-07"></a>
 <img src="images/chapter4/diagram-04-06.svg"
   onerror="this.src='images/chapter4/diagram-04-06.png'; this.onerror=null;"
-  alt="Diagram 4.6">
+  alt="Diagram 4.6" />
 
 ```lisp
 > (gps '((c on a) (a on table) (b on table)
@@ -1295,7 +1295,7 @@ Now we get the solutions we wanted:
 <a id="diagram-04-08"></a>
 <img src="images/chapter4/diagram-04-04.svg"
   onerror="this.src='images/chapter4/diagram-04-04.png'; this.onerror=null;"
-  alt="Diagram 4.8">
+  alt="Diagram 4.8" />
 
 ```lisp
 (gps '((a on b) (b on c) (c on table) (space on a) (space on table))
@@ -1320,7 +1320,7 @@ Consider:
 <a id="diagram-04-09"></a>
 <img src="images/chapter4/diagram-04-09.svg"
   onerror="this.src='images/chapter4/diagram-04-09.png'; this.onerror=null;"
-  alt="Diagram 4.9">
+  alt="Diagram 4.9" />
 
 This doesn't look too hard, so let's see how our GPS handles it:
 

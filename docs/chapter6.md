@@ -634,7 +634,7 @@ Here is a tree:
 <a id="diagram-06-01"></a>
 <img src="images/chapter6/diagram-06-01.svg"
   onerror="this.src='images/chapter6/diagram-06-01.png'; this.onerror=null;"
-  alt="Diagram 6.1">
+  alt="Diagram 6.1" />
 
 ### Searching Trees
 
@@ -964,7 +964,7 @@ The former uses `find-all-if`, which was defined on [page 101](B9780080571157500
 
 | <a id="fig-06-01"></a>[]() |
 |---|
-| <img src="images/chapter6/fig-06-01.svg" onerror="this.src='images/chapter6/fig-06-01.png'; this.onerror=null;" alt="Figure 6.1"> |
+| <img src="images/chapter6/fig-06-01.svg" onerror="this.src='images/chapter6/fig-06-01.png'; this.onerror=null;" alt="Figure 6.1" /> |
 | **Figure 6.1: A Map of Some Cities** |
 
 ```lisp
@@ -1129,7 +1129,7 @@ The map is shown in [figure 6.2](#fig-06-02).
 
 | <a id="fig-06-02"></a>[]() |
 |---|
-| <img src="images/chapter6/fig-06-02.svg" onerror="this.src='images/chapter6/fig-06-02.png'; this.onerror=null;" alt="Figure 6.2"> |
+| <img src="images/chapter6/fig-06-02.svg" onerror="this.src='images/chapter6/fig-06-02.png'; this.onerror=null;" alt="Figure 6.2" /> |
 | **Figure 6.2: A Map of Cities within 700 km** |
 
 If we try to plan a trip from Tampa to Quebec, we can run into problems with the dead end at Wilmington, North Carolina.
@@ -1284,12 +1284,12 @@ For example, the graph in [figure 6.3](#fig-06-03) can be rendered as a tree.
 
 | <a id="fig-06-03"></a>[]() |
 |---|
-| <img src="images/chapter6/fig-06-03.svg" onerror="this.src='images/chapter6/fig-06-03.png'; this.onerror=null;" alt="Figure 6.3"> |
+| <img src="images/chapter6/fig-06-03.svg" onerror="this.src='images/chapter6/fig-06-03.png'; this.onerror=null;" alt="Figure 6.3" /> |
 | **Figure 6.3: A Graph with Six Nodes** |
 
 | <a id="fig-06-04"></a>[]() |
 |---|
-| <img src="images/chapter6/fig-06-04.svg" onerror="this.src='images/chapter6/fig-06-04.png'; this.onerror=null;" alt="Figure 6.4"> |
+| <img src="images/chapter6/fig-06-04.svg" onerror="this.src='images/chapter6/fig-06-04.png'; this.onerror=null;" alt="Figure 6.4" /> |
 | **Figure 6.4: The Corresponding Tree** |
 
 In searching for paths through the graph of cities, we were implicitly turning the graph into a tree.
@@ -1494,7 +1494,7 @@ They could be arranged in a graph and searched just as we searched for a route b
 
 | <a id="fig-06-05"></a>[]() |
 |---|
-| <img src="images/chapter6/fig-06-05.svg" onerror="this.src='images/chapter6/fig-06-05.png'; this.onerror=null;" alt="Figure 6.5"> |
+| <img src="images/chapter6/fig-06-05.svg" onerror="this.src='images/chapter6/fig-06-05.png'; this.onerror=null;" alt="Figure 6.5" /> |
 | **Figure 6.5: The Blocks World as a Graph** |
 
 The function `search-gps` does just that.

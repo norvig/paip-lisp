@@ -99,7 +99,7 @@ This is easy to show: assuming the computer's memory has *n* bits, and the equat
 
 <img src="images/chapter14/si1_e.svg"
 onerror="this.src='images/chapter14/si1_e.png'; this.onerror=null;"
-alt="b_{0}=0 \wedge b_{1}=0 \wedge b_{2}=1 ... \wedge b_{n}=0">
+alt="b_{0}=0 \wedge b_{1}=0 \wedge b_{2}=1 ... \wedge b_{n}=0" />
 
 Once we can represent a state of the computer, it becomes possible to represent any computer program in predicate calculus as a set of axioms that map one state onto another.
 Thus, predicate calculus is shown to be a *sufficient* language for representing anything that goes on inside a computer-it can be used as a tool for analyzing any program from the outside.
@@ -112,7 +112,7 @@ For example, we may want to manipulate numbers inside the computer by using the 
 
 <img src="images/chapter14/si2_e.svg"
 onerror="this.src='images/chapter14/si2_e.png'; this.onerror=null;"
-alt="\sqrt{x} = y \Rightarrow y \times y = x">
+alt="\sqrt{x} = y \Rightarrow y \times y = x" />
 
 Predicate calculus also serves another purpose: as a tool that can be used *by* a program rather than *on* a program.
 All programs need to manipulate data, and some programs will manipulate data that is considered to be in predicate calculus notation.
@@ -226,7 +226,7 @@ Suppose that a certain Eastern European country, *E*, has just decided if it wil
 <a id="diagram-14-02"></a>
 <img src="images/chapter14/diagram-14-02.svg"
   onerror="this.src='images/chapter4/diagram-14-02.png'; this.onerror=null;"
-  alt="Diagram 14.2">
+  alt="Diagram 14.2" />
 
 The question is: Is there a communist country next to a democracy?
 Moore points out that the answer is "yes," but discovering this requires reasoning by cases.
@@ -534,7 +534,7 @@ At each position in the tree, we create an index of the keys that have either an
 
 | <a id="fig-14-01"></a>[]() |
 |---|
-| <img src="images/chapter14/fig-14-01.svg" onerror="this.src='images/chapter14/fig-14-01.png'; this.onerror=null;" alt="Figure 14.1"> |
+| <img src="images/chapter14/fig-14-01.svg" onerror="this.src='images/chapter14/fig-14-01.png'; this.onerror=null;" alt="Figure 14.1" /> |
 | **Figure 14.1: Discrimination Tree with Six Keys** |
 
 Consider the query `(p ?y c)`.

@@ -484,8 +484,7 @@ The new version of the compiler also makes use of a different function calling s
 As the name implies, `SAVE` saves a return address on the stack.
 The `CALLJ` instruction no longer saves anything; it can be seen as an unconditional jump-hence the `J` in its name.
 
-<a id="figure-23-3"></a>
-| Function           | Description                                                |
+| Function           | Description <a id="figure-23-3"></a>                       |
 |--------------------|------------------------------------------------------------|
 |                    | **Top-Level Functions**                                    |
 | `scheme`           | A read-compile-execute-print loop.                         |

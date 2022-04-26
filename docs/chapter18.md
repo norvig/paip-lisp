@@ -55,12 +55,12 @@ This usually happens because there are no empty squares left, but it occasionall
 
 | <a id="fig-18-01"></a>[]() |
 |---|
-| <img src="images/chapter18/fig-18-01.svg" onerror="this.src='images/chapter18/fig-18-01.png'; this.onerror=null;" alt="Figure 18.1"> |
+| <img src="images/chapter18/fig-18-01.svg" onerror="this.src='images/chapter18/fig-18-01.png'; this.onerror=null;" alt="Figure 18.1" /> |
 | **Figure 18.1: The Othello Board** |
 
 | <a id="fig-18-02"></a>[]() |
 |---|
-| <img src="images/chapter18/fig-18-02.svg" onerror="this.src='images/chapter18/fig-18-02.png'; this.onerror=null;" alt="Figure 18.2"> |
+| <img src="images/chapter18/fig-18-02.svg" onerror="this.src='images/chapter18/fig-18-02.png'; this.onerror=null;" alt="Figure 18.2" /> |
 | **Figure 18.2: Legal Othello Moves** |
 
 ## 18.2 Representation Choices
@@ -489,7 +489,7 @@ The `weighted-squares` evaluation function reflects this.
 
 | <a id="fig-18-04"></a>[]() |
 |---|
-| <img src="images/chapter18/fig-18-04.svg" onerror="this.src='images/chapter18/fig-18-04.png'; this.onerror=null;" alt="Figure 18.4"> |
+| <img src="images/chapter18/fig-18-04.svg" onerror="this.src='images/chapter18/fig-18-04.png'; this.onerror=null;" alt="Figure 18.4" /> |
 | **Figure 18.4: Names for Edge Squares** |
 
 ```lisp
@@ -540,7 +540,7 @@ Another way to look at the `maximizer` function is as a search function that sea
 <a id="diagram-18-01"></a>
 <img src="images/chapter18/diagram-18-01.svg"
   onerror="this.src='images/chapter18/diagram-18-01.png'; this.onerror=null;"
-  alt="Diagram 18.1">
+  alt="Diagram 18.1" />
 
 The top of the tree is the current board position, and the squares below that indicate possible moves.
 The `maximizer` function evaluates each of these and picks the best move, which is underlined in the diagram.
@@ -552,7 +552,7 @@ Suppose we get the following values:
 <a id="diagram-18-02"></a>
 <img src="images/chapter18/diagram-18-02.svg"
   onerror="this.src='images/chapter18/diagram-18-02.png'; this.onerror=null;"
-  alt="Diagram 4.1">
+  alt="Diagram 18.2" />
 
 Each position is shown as having two possible legal moves, which is unrealistic but makes the diagram fit on the page.
 In a real game, five to ten legal moves per position is typical.
@@ -566,14 +566,14 @@ Thus, the opponent's choices would be the 10- and 9-valued positions, avoiding t
 <a id="diagram-18-03"></a>
 <img src="images/chapter18/diagram-18-03.svg"
   onerror="this.src='images/chapter18/diagram-18-03.png'; this.onerror=null;"
-  alt="Diagram 18.3">
+  alt="Diagram 18.3" />
 
 Now it is our turn to move again, so we apply `maximizer` once again to get the final value of the top-level position:
 
 <a id="diagram-18-04"></a>
 <img src="images/chapter18/diagram-18-04.svg"
   onerror="this.src='images/chapter18/diagram-18-04.png'; this.onerror=null;"
-  alt="Diagram 18.4">
+  alt="Diagram 18.4" />
 
 If the opponent plays as expected, we will always follow the left branch of the tree and end up at the position with value 10.
 If the opponent plays otherwise, we will end up at a position with a better value.
@@ -695,7 +695,7 @@ Let's go back to our familiar search tree:
 <a id="diagram-18-05"></a>
 <img src="images/chapter18/diagram-18-05.svg"
   onerror="this.src='images/chapter18/diagram-18-05.png'; this.onerror=null;"
-  alt="Diagram 18.5">
+  alt="Diagram 18.5" />
 
 Here we have marked certain positions with question marks.
 The idea is that the whole search tree evaluates to 10 regardless of the value of the positions labeled ?<sub>*i*</sub>.

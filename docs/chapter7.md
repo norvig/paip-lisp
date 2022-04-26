@@ -131,7 +131,7 @@ The program is summarized in figure 7.1.
 | `translate-pair`           | Translate the value part of the pair into an equation or expression. |
 | `create-list-of-equations` | Separate out equations embedded in nested parens.                    |
 | `solve-equations`          | Print the equations and their solution.                              |
-| `solve`                    | Solve a system of equations by constrain propagation.                |
+| `solve`                    | Solve a system of equations by constraint propagation.               |
 |                            | **Auxiliary Functions**                                              |
 | `isolate`                  | Isolate the lone variable on the left-hand side of an expression.    |
 | `noise-word-p`             | Is this a low-content word that can be safely ignored?               |
@@ -767,5 +767,6 @@ The function `find-one-unknown` has four cases: (1) If we have already found two
 ```
 
 ----------------------
+
 <a id="fn07-1"></a><sup>[1](#tfn07-1)</sup>
 Page 316 of *Common Lisp the Language* says, "Because a constructor of this type operates By Order of Arguments, it is sometimes known as a BOA constructor."
