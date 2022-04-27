@@ -128,7 +128,7 @@ This expression appends together two lists of names.
 The rule for evaluating this expression is the same as the rule for numeric calculations: apply the function (in this case append) to the value of the arguments.
 
 The unusual part is the quote mark `(')`, which serves to block the evaluation of the following expression, returning it literally.
-If we just had the expression `(Pat Kim),` it would be evaluated by considering `Pat` as a function and applying it to the value of the expression `Kim`.
+If we just had the expression `(Pat Kim)`, it would be evaluated by considering `Pat` as a function and applying it to the value of the expression `Kim`.
 This is not what we had in mind.
 The quote mark instructs Lisp to treat the list as a piece of data rather than as a function call:
 
@@ -266,7 +266,7 @@ The special form operators used in this chapter are:
 
 ## 1.4 Lists
 
-So far we have seen two functions that operate on lists: `append` and `length.` Since lists are important, let's look at some more list processing functions:
+So far we have seen two functions that operate on lists: `append` and `length`. Since lists are important, let's look at some more list processing functions:
 
 ```lisp
 > p => (JOHN Q PUBLIC)
@@ -284,7 +284,7 @@ So far we have seen two functions that operate on lists: `append` and `length.` 
 > (length p) => 3
 ```
 
-The functions `first, second, third,` and `fourth` are aptly named: `first` returns the first element of a list, `second` gives you the second element, and so on.
+The functions `first`, `second`, `third`, and `fourth` are aptly named: `first` returns the first element of a list, `second` gives you the second element, and so on.
 The function `rest` is not as obvious; its name stands for "the rest of the list after the first element." The symbol `nil` and the form `()` are completely synonymous; they are both representations of the empty list.
 `nil` is also used to denote the "false" value in Lisp.
 Thus, `(fourth p)` is `nil` because there is no fourth element of `p`.
@@ -343,8 +343,8 @@ It takes as arguments an element and a list,<sup>[3](#fn01-3)</sup> and construc
 We've already seen `append`, which is similar to `list`; it takes as arguments any number of lists and appends them all together, forming one big list.
 Thus, the arguments to `append` must be lists, while the arguments to `list` may be lists or atoms.
 It is important to note that these functions create new lists; they don't modify old ones.
-When we say `(append p q)`, the effect is to create a brand new list that starts with the same elements that were in `p.
-p` itself remains unchanged.
+When we say `(append p q)`, the effect is to create a brand new list that starts with the same elements that were in `p`.
+`p` itself remains unchanged.
 
 Now let's move away from abstract functions on lists, and consider a simple problem: given a person's name in the form of a list, how might we extract the family name?
 For `(JOHN Q PUBLIC)` we could just use the function `third`, but that wouldn't work for someone with no middle name.
@@ -376,12 +376,12 @@ It is used here to define a new function called `last-name`:
   (first (last name)))
 ```
 
-We give our new function the name `last-name.` It has a *parameter list* consisting of a single parameter: (`name`).
+We give our new function the name `last-name`. It has a *parameter list* consisting of a single parameter: (`name`).
 This means that the function takes one argument, which we will refer to as `name`.
 It also has a *documentation string* that states what the function does.
 This is not used in any computation, but documentation strings are crucial tools for debugging and understanding large systems.
 The body of the definition is `(first (last name))`, which is what we used before to pick out the last name of `p`.
-The difference is that here we want to pick out the last name of any `name,` not just of the particular name `p`.
+The difference is that here we want to pick out the last name of any `name`, not just of the particular name `p`.
 
 In general, a function definition takes the following form (where the documentation string is optional, and all other parts are required):
 
@@ -392,7 +392,7 @@ In general, a function definition takes the following form (where the documentat
 The function name must be a symbol, the parameters are usually symbols (with some complications to be explained later), and the function body consists of one or more expressions that are evaluated when the function is called.
 The last expression is returned as the value of the function call.
 
-Once we have defined `last-name,` we can use it just like any other Lisp function:
+Once we have defined `last-name`, we can use it just like any other Lisp function:
 
 ```lisp
 > (last-name p) => PUBLIC
@@ -442,7 +442,7 @@ This is a much easier task than hunting through a large program and changing the
 ```
 
 In the last expression we used the function `first` to pick out the first element in a list of names, and then the function `first-name` to pick out the first name of that element.
-We could also have said `(first (first names))` or even `(first (first-name names))` and still have gotten `JOHN,` but we would not be accurately representing what is being considered a name and what is being considered a list of names.
+We could also have said `(first (first names))` or even `(first (first-name names))` and still have gotten `JOHN`, but we would not be accurately representing what is being considered a name and what is being considered a list of names.
 
 ## 1.6 Using Functions
 
@@ -561,17 +561,17 @@ The special forms `trace` and `untrace` are used for this purpose.
 JOHN
 ```
 
-When `first-name` is called, the definition is entered with the single argument, `name,` taking on the value `(JOHN Q PUBLIC)`.
+When `first-name` is called, the definition is entered with the single argument, `name`, taking on the value `(JOHN Q PUBLIC)`.
 The value returned is `JOHN`.
 Trace prints two lines indicating entry and exit from the function, and then Lisp, as usual, prints the final result, `JOHN`.
 
 The next example is more complicated.
 The function `first-name` is used four times.
-First, it is entered with `name` bound to `(Madam Major General Paula Jones).`
-The first element of this list is `Madam,` and since this is a member of the list of titles, the result is computed by calling `first-name` again on the rest of the name-`(Major General Paula Jones).`
+First, it is entered with `name` bound to `(Madam Major General Paula Jones)`.
+The first element of this list is `Madam`, and since this is a member of the list of titles, the result is computed by calling `first-name` again on the rest of the name-`(Major General Paula Jones)`.
 This process repeats two more times, and we finally enter `first-name` with name bound to (`Paula Jones`).
-Since `Paula` is not a title, it becomes the result of this call to `first-name,` and thus the result of all four calls, as trace shows.
-Once we are happy with the workings of `first-name,` the special form `untrace` turns off tracing.
+Since `Paula` is not a title, it becomes the result of this call to `first-name`, and thus the result of all four calls, as trace shows.
+Once we are happy with the workings of `first-name`, the special form `untrace` turns off tracing.
 
 ```lisp
 > (first-name '(Madam Major General Paula Jones)) =>
@@ -628,7 +628,7 @@ Programmers who learn to think this way find recursion to be a valuable tool rat
 Functions in Lisp can not only be "called," or applied to arguments, they can also be manipulated just like any other kind of object.
 A function that takes another function as an argument is called a *higher-order function.*
 `mapcar` is an example.
-To demonstrate the higher-order-function style of programming, we will define a new function called `mappend.` It takes two arguments, a function and a list.
+To demonstrate the higher-order-function style of programming, we will define a new function called `mappend`. It takes two arguments, a function and a list.
 `mappend` maps the function over each element of the list and appends together all the results.
 The first definition follows immediately from the description and the fact that the function `apply` can be used to apply a function to a list of arguments.
 
@@ -838,7 +838,7 @@ defun twice (x) (+ x x)) => TWICE
 (- (+ 90 9) (+ 50 5 (length '(Pat Kim)))) => 42
 ```
 
-Note that if `'(Pat Kim)` did not have the quote, it would betreated as a function application of the function `pat` to the value of the variable `kim.`
+Note that if `'(Pat Kim)` did not have the quote, it would be treated as a function application of the function `pat` to the value of the variable `kim`.
 
 *   Every atom is either a *symbol* or a *nonsymbol.*
 
@@ -1121,7 +1121,7 @@ For example: `(count-atoms '(a (b) c)) = 3`.
 Notice that there is something of an ambiguity in this: should (`a nil c`) count as three atoms, or as two, because it is equivalent to (`a () c`)?
 
 &#9635; **Exercise  1.4 [m]** Write a function that counts the number of times an expression occurs anywhere within another expression.
-Example: `(count-anywhere 'a '(a ((a) b) a)) => 3.`
+Example: `(count-anywhere 'a '(a ((a) b) a)) => 3`.
 
 &#9635; **Exercise  1.5 [m]** Write a function to compute the dot product of two sequences of numbers, represented as lists.
 The dot product is computed by multiplying corresponding elements and then adding up the resulting products.
