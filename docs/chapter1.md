@@ -826,7 +826,7 @@ Similarly, the notation `#'f` is an abbreviation for the special form expression
 
 (setf p 'John) => JOHN
 
-defun twice (x) (+ x x)) => TWICE
+(defun twice (x) (+ x x)) => TWICE
 
 (if (= 2 3) (error) (+ 5 6)) => 11
 ```
