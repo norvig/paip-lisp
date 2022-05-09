@@ -743,7 +743,7 @@ The forms `trace` and `untrace` are used to control debugging information about 
 ```lisp
 > (trace length9) => (LENGTH9)
 > (length9 '(a b c))=>
-(1 ENTER LENGTH9: (ABC))
+(1 ENTER LENGTH9: (A B C))
   (2 ENTER LENGTH9: (B C))
     (3 ENTER LENGTH9: (C))
       (4 ENTER LENGTH9: NIL)
