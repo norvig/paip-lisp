@@ -301,7 +301,7 @@ Let's look at some simple examples:
 
 ```lisp
 (defun reg (a b c d) (list a b c d))
-(defun rst (abc &rest d) (list* a b c d))
+(defun rst (a b c &rest d) (list* a b c d))
 (defun opt (&optional a b (c 1) (d (sqrt a))) (list a b c d))
 (defun key (&key a b (c 1) (d (sqrt a))) (list a b c d))
 ```
