@@ -1577,7 +1577,7 @@ Iterative deepening was first presented by [Korf (1985)](B9780080571157500285.xh
 
 ## 6.7 Exercises
 
-**Exercise  6**.**3** [**m**] Write a version of `interaetive-interpreter` that is more general than the one defined in this chapter.
+**Exercise  6**.**3** [**m**] Write a version of `interactive-interpreter` that is more general than the one defined in this chapter.
 Decide what features can be specified, and provide defaults for them.
 
 **Exercise  6**.**4** [**m**] Define a version of `compose` that allows any number of arguments, not just two.
