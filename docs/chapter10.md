@@ -281,7 +281,7 @@ This guide applies to most Common Lisp systems, but you should look in the imple
 Common Lisp provides functions with great generality, but someone must pay the price for this generality.
 For example, if you write `(elt x 0)`, different machine instruction will be executed depending on if x is a list, string, or vector.
 Without declarations, checks will have to be done at runtime.
-You can either provide declarations, as in `(elt (the list x) 0)`, or use a more specific function, such as `(first x)` in the case of lists, `(char x 0)` for strings, `(aref x0)` for vectors, and `(svref x 0)` for simple vectors.
+You can either provide declarations, as in `(elt (the list x) 0)`, or use a more specific function, such as `(first x)` in the case of lists, `(char x 0)` for strings, `(aref x 0)` for vectors, and `(svref x 0)` for simple vectors.
 Of course, generic functions are useful-I wrote `random-elt` as shown following to work on lists, when I could have written the more efficient `random-mem` instead.
 The choice paid off when `I` wanted a function to choose a random character from a string-`random-elt` does the job unchanged, while `random-mem` does not.
 
