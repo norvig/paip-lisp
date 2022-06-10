@@ -1586,7 +1586,7 @@ Hint: You may want to use the function `reduce`.
 **Exercise  6**.**5** [**m**] Define a version of `compose` that allows any number of arguments but is more efficient than the answer to the previous exercise.
 Hint: try to make decisions when `compose` is called to build the resulting function, rather than making the same decisions over and over each time the resulting function is called.
 
-**Exercise  6**.**6** [**m**] One problem with `pat-match` is that it gives special significance to symbols starting with ?, which means that they can not be used to match a literal pattern.
+**Exercise  6**.**6** [**m**] One problem with `pat-match` is that it gives special significance to symbols starting with `?`, which means that they can not be used to match a literal pattern.
 Define a pattern that matches the input literally, so that such symbols can be matched.
 
 **Exercise  6**.**7** [**m**] Discuss the pros and cons of data-driven programming compared to the conventional approach.

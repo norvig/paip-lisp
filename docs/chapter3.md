@@ -2257,7 +2257,7 @@ The definition is:
 The only hard part about this definition is understanding the parameter list.
 The `&rest` accumulates all the keyword/value pairs in the variable `keyword-args`.
 In addition to the `&rest` parameter, two specific keyword parameters, `:test` and `:test-not`, are specified.
-Any time you put a `&key` in a parameter list, you need an `&allow-other- keys` if, in fact, other keywords are allowed.
+Any time you put a `&key` in a parameter list, you need an `&allow-other-keys` if, in fact, other keywords are allowed.
 In this case we want to accept keywords like `:start` and `:key` and pass them on to `remove`.
 
 All the keyword/value pairs will be accumulated in the list `keyword-args`, including the `:test` or `:test-not` values.

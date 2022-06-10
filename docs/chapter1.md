@@ -1004,7 +1004,7 @@ There are two answers to this objection.
 First, consider the alternative: in a language with "conventional" syntax, Lisp's parentheses pairs would be replaced either by an implicit operator precedence rule (in the case of arithmetic and logical expressions) or by a `begin/end` pair (in the case of control structures).
 But neither of these is necessarily an advantage.
 Implicit precedence is notoriously error-prone, and `begin/end` pairs clutter up the page without adding any content.
-Many languages are moving away from `begin/end: C` uses { and }, which are equivalent to parentheses, and several modern functional languages (such as Haskell) use horizontal blank space, with no explicit grouping at all.
+Many languages are moving away from `begin/end`: `C` uses `{` and `}`, which are equivalent to parentheses, and several modern functional languages (such as Haskell) use horizontal blank space, with no explicit grouping at all.
 Second, many Lisp programmers *have* considered the alternative.
 There have been a number of preprocessors that translate from "conventional" syntax into Lisp.
 None of these has caught on.

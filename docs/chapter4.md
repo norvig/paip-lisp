@@ -401,7 +401,7 @@ We will call this the "prerequisite clobbers sibling goal" problem.<a id="tfn04-
 That is, `have-money` and `son-at-school` are sibling goals, one of the prerequisites for the plan for `son-at-school` is `car-works`, and achieving that goal clobbers the `have-money` goal.
 
 Modifying the program to recognize the "prerequisite clobbers sibling goal" problem is straightforward.
-First note that we call (`every #`'`achieve`*something*) twice within the program, so let's replace those two forms with ( `achieve-all`*something*).
+First note that we call (`every #'achieve` *something*) twice within the program, so let's replace those two forms with ( `achieve-all` *something*).
 We can then define `achieve-all` as follows:
 
 ```lisp
@@ -591,7 +591,7 @@ The glossary for the new version is in [figure 4.2](#f0015).
 | `use`              | Use a list of operators.                              |
 | `member-equal`     | Test if an element is equal to a member of a list.    |
 |                    | **Selected Common Lisp Functions**                    |
-| `member`           | Test if an elementis a member of a list. (p.78)       |
+| `member`           | Test if an element is a member of a list. (p.78)      |
 | `set-difference`   | All elements in one set but not the other.            |
 | `subsetp`          | Is one set wholly contained in another?               |
 | `union`            | All elements in either of the two sets.               |
