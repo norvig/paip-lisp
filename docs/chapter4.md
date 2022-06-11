@@ -398,7 +398,7 @@ The "bug" is that GPS uses the expression (`every #'achieve goals`) to achieve a
 If this expression returns true, it means that every one of the goals has been achieved in sequence, but it doesn't mean they are all still true at the end.
 In other words, the goal (`have-money son-at-school`), which we intended to mean "end up in a state where both have-money and son-at-school are true," was interpreted by GPS to mean "first achieve `have-money`, and then achieve `son-at-school`." Sometimes achieving one goal can undo another, previously achieved goal.
 We will call this the "prerequisite clobbers sibling goal" problem.<a id="tfn04-2"></a><sup>[2](#fn04-2)</sup>
-That is, `have-money` and `son-at-school` are sibling goals, one of the prerequisites for the plan for `son-at-school` is `car-works`, and achieving that goal clobbers the `have-money goal`.
+That is, `have-money` and `son-at-school` are sibling goals, one of the prerequisites for the plan for `son-at-school` is `car-works`, and achieving that goal clobbers the `have-money` goal.
 
 Modifying the program to recognize the "prerequisite clobbers sibling goal" problem is straightforward.
 First note that we call (`every #`'`achieve`*something*) twice within the program, so let's replace those two forms with ( `achieve-all`*something*).
