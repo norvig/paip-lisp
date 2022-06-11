@@ -66,7 +66,7 @@ Here are some facts pertaining to the `likes` relation:
 
 These facts could be interpreted as meaning that Kim likes Robin, Sandy likes both Lee and Kim, and Robin likes cats.
 We need some way of telling Lisp that these are to be interpreted as Prolog facts, not a Lisp function call.
-We will use the macro <- to mark facts.
+We will use the macro `<-` to mark facts.
 Think of this as an assignment arrow which adds a fact to the data base:
 
 ```lisp
@@ -94,7 +94,7 @@ This can be read in two ways.
 Viewed as a logical assertion, it is read, "For any x, Sandy likes x if x likes cats." This is a *declarative* interpretation.
 Viewed as a piece of a Prolog program, it is read, "If you ever want to show that Sandy likes some x, one way to do it is to show that x likes cats." This is a *procedural* interpretation.
 It is called a *backward-chaining* interpretation, because one reasons backward from the goal (Sandy likes x) to the premises (x likes cats).
-The symbol <- is appropriate for both interpretations: it is an arrow indicating logical implication, and it points backwards to indicate backward chaining.
+The symbol `<-` is appropriate for both interpretations: it is an arrow indicating logical implication, and it points backwards to indicate backward chaining.
 
 It is possible to give more than one procedural interpretation to a declarative form.
 (We did that in [chapter 1](B9780080571157500017.xhtml), where grammar rules were used to generate both strings of words and parse trees.) The rule above could have been interpreted procedurally as "If you ever find out that some `x` likes cats, then conclude that Sandy likes `x`." This would be *forward chaining:* reasoning from a premise to a conclusion.
@@ -541,9 +541,9 @@ Since the data base is now distributed across the property list of various symbo
 ```
 
 Now we need a way of adding a new clause.
-The work is split up into the macro <-, which provides the user interface, and a function, add-clause, that does the work.
+The work is split up into the macro `<-`, which provides the user interface, and a function, add-clause, that does the work.
 It is worth defining a macro to add clauses because in effect we are defining a new language: Prolog-In-Lisp.
-This language has only two syntactic constructs: the <- macro to add clauses, and the ?- macro to make queries.
+This language has only two syntactic constructs: the `<-` macro to add clauses, and the `?-` macro to make queries.
 
 ```lisp
 (defmacro <- (&rest clause)
@@ -614,7 +614,7 @@ The function `rename-variables` does this:<a id="tfn11-3"></a><sup>[3](#fn11-3)<
           x))
 ```
 
-`Rename - variables` makes use of `gensym,` a function that generates a new symbol each time it is called.
+`Rename-variables` makes use of `gensym`, a function that generates a new symbol each time it is called.
 The symbol is not interned in any package, which means that there is no danger of a programmer typing a symbol of the same name.
 The predicate `variables-in` and its auxiliary function are defined here:
 
@@ -773,7 +773,7 @@ The next section shows how to write a new interpreter that fixes this problem.
 However, for relations with no arguments, some people prefer to write `(<- p q r)` rather than `(<- (p) (q) (r))`.
 Make changes so that either form is acceptable.
 
-**Exercise  11.2 [m]** Some people find the < - notation difficult to read.
+**Exercise  11.2 [m]** Some people find the `<-` notation difficult to read.
 Define macros `rule` and `fact` so that we can write:
 
 ```lisp
@@ -966,8 +966,8 @@ No.
 No.
 ```
 
-The next two queries show the two lists of length two with a as a member.
-Both queries give the correct answer, a two-element list that either starts or ends with a.
+The next two queries show the two lists of length two with `a` as a member.
+Both queries give the correct answer, a two-element list that either starts or ends with `a`.
 However, the behavior after generating these two solutions is quite different.
 
 ```lisp
@@ -981,10 +981,10 @@ No.
 ```
 
 In the first query, length only generates one possible solution, the list with two unbound elements.
-`member` takes this solution and instantiates either the first or the second element to a.
+`member` takes this solution and instantiates either the first or the second element to `a`.
 
 In the second query, `member` keeps generating potential solutions.
-The first two partial solutions, where a is the first or second member of a list of unknown length, are extended by `length` to yield the solutions where the list has length two.
+The first two partial solutions, where `a` is the first or second member of a list of unknown length, are extended by `length` to yield the solutions where the list has length two.
 After that, `member` keeps generating longer and longer lists, which `length` keeps rejecting.
 It is implicit in the definition of `member` that subsequent solutions will be longer, but because that is not explicitly known, they are all generated anyway and then explicitly tested and rejected by `length.`
 

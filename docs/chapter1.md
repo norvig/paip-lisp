@@ -715,7 +715,7 @@ The alternate definition of `mappend` shown in the following doesn't make use of
 > (funcall #'+ '(2 3)) => *Error: (2 3) is not a number.*
 ```
 
-These are equivalent to `(+ 2 3), (+ 2 3)`,and`(+ '(2 3))`, respectively.
+These are equivalent to `(+ 2 3)`, `(+ 2 3)`, and `(+ '(2 3))`, respectively.
 
 So far, every function we have used has been either predefined in Common Lisp or introduced with a `defun`, which pairs a function with a name.
 It is also possible to introduce a function without giving it a name, using the special syntax `lambda`.
@@ -769,7 +769,7 @@ For example:
 Here are some more examples of the correct use of functions:
 
 ```lisp
->(mapcar #'(lambda (x) (+ x x))
+> (mapcar #'(lambda (x) (+ x x))
          '(1 2 3 4 5)) =>
 (2 4 6 8 10)
 
@@ -1072,7 +1072,6 @@ A (COND
 (SETQ RESTLIST (CONS(CONS LIST DEPTH) RESTLIST))))
 (SETQ RESTLIST (CONS (CONS TEMP
      (ADD1 DEPTH)) RESTLIST))
-))))
 ))))
 (GO A))
 ```

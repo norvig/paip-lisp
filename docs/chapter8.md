@@ -168,7 +168,7 @@ They are repeated here:
 
 We also use `rule-based-translator` ([page 188](B9780080571157500066.xhtml#p188)) once again, this time on a list of simplification rules.
 A reasonable list of simplification rules is shown below.
-This list covers the four arithmetic operators, addition, subtraction, multiplication, and division, as well as exponentiation (raising to a power), denoted by the symbol "^"
+This list covers the four arithmetic operators, addition, subtraction, multiplication, and division, as well as exponentiation (raising to a power), denoted by the symbol `^`.
 
 Again, it is important to note that the rules are ordered, and that later rules will be applied only when earlier rules do not match.
 So, for example, 0 / 0 simplifies to `undefined`, and not to 1 or 0, because the rule for 0 / 0 comes before the other rules.
@@ -292,21 +292,21 @@ First we show that it can be used as a calculator; then we show more advanced pr
 
 ```lisp
 >(simplifier)
-SIMPLIFIER > (2 + 2)
+SIMPLIFIER> (2 + 2)
 4
-SIMPLIFIER > (5 * 20 + 30 + 7)
+SIMPLIFIER> (5 * 20 + 30 + 7)
 137
-SIMPLIFIER > (5 * x - (4 + 1) * x)
+SIMPLIFIER> (5 * x - (4 + 1) * x)
 0
-SIMPLIFIER > (y / z * (5 * x - (4 + 1) * x))
+SIMPLIFIER> (y / z * (5 * x - (4 + 1) * x))
 0
-SIMPLIFIER > ((4-3) * x + (y / y - 1) * z)
+SIMPLIFIER> ((4 - 3) * x + (y / y - 1) * z)
 X
-SIMPLIFIER > (1 * f(x) + 0)
+SIMPLIFIER> (1 * f(x) + 0)
 (F X)
-SIMPLIFIER > (3 * 2 * X)
+SIMPLIFIER> (3 * 2 * X)
 (3 * (2 * X))
-SIMPLIFIER > [Abort]
+SIMPLIFIER> [Abort]
 >
 ```
 
@@ -316,8 +316,8 @@ In the next section, we will correct that problem.
 
 ## 8.3 Associativity and Commutativity
 
-We could easily add a rule to rewrite `(3 * (2 *X))` as `((3 * 2) * X)` and hence `(6 * X)`.
-The problem is that this rule would also rewrite `(X*(2*3))` as `((X*2)*3)`, unless we had a way to limit the rule to apply only when it would group numbers together.
+We could easily add a rule to rewrite `(3 * (2 * X))` as `((3 * 2) * X)` and hence `(6 * X)`.
+The problem is that this rule would also rewrite `(X * (2 * 3))` as `((X * 2) * 3)`, unless we had a way to limit the rule to apply only when it would group numbers together.
 Fortunately, `pat-match` does provide just this capability, with the `?is` pattern.
 We could write this rule:
 
@@ -330,9 +330,9 @@ Unfortunately, the problem is not as simple as that.
 We also want to simplify `((2 * x) * (y * 3))` to `(6 *(x * y))`.
 We can do a better job of gathering numbers together by adopting three conventions.
 First, make numbers first in products: change `x * 3` to `3 * x`.
-Second, combine numbers in an outer expression with a number in an inner expression: change `3 *(5 * x)` to `(3 * 5)* x`.
-Third, move numbers out of inner expressions whenever possible: change `(3 * x) *y` to `3 *(x * y)`.
-We adopt similar conventions for addition, except that we prefer numbers last there: `x + 1` instead of `l + x`.
+Second, combine numbers in an outer expression with a number in an inner expression: change `3 * (5 * x)` to `(3 * 5) * x`.
+Third, move numbers out of inner expressions whenever possible: change `(3 * x) * y` to `3 * (x * y)`.
+We adopt similar conventions for addition, except that we prefer numbers last there: `x + 1` instead of `1 + x`.
 
 ```lisp
 ;; Define n and m as numbers; s as a non-number:

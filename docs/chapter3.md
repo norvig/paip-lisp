@@ -195,13 +195,13 @@ The `and` form tests whether every one of a list of conditions is true, and `or`
 Both evaluate the arguments left to right, and stop as soon as the final result can be determined.
 Here is a table of equivalences:
 
-| **conditional**                  | `if` **form**                       | `cond` **form**                    |
-|----------------------------------|-------------------------------------|------------------------------------|
-| `(when` *test a b c*)            | `(if` *test* `(progn` *a  b c*))    | `(cond` (*test a b c*))            |
-| `(unless` *test x y*)            | `(if (not` *test*) `(progn` *x y*)) | `(cond ((not` *test*) *x y*))      |
-| `(and` *a b c*)                  | `(if` *a* `(if` *b c*))             | `(cond` (*a* `(cond` (*b c*))))    |
-| `(or` *a b c*)                   | `(if` *a a* `(if` *b b c*))         | `(cond (a)` (*b*) (*c*))           |
-| `(*case*` *a* (*b c*) `*(t x*))` | `(if (eql` *a 'b*) *c x*)           | `(cond ((eql` *a 'b*) *c*) (*t x*))|
+| **conditional**                  | `if` **form**                       | `cond` **form**                       |
+|----------------------------------|-------------------------------------|---------------------------------------|
+| `(when` *test a b c*)            | `(if` *test* `(progn` *a  b c*))    | `(cond` (*test a b c*))               |
+| `(unless` *test x y*)            | `(if (not` *test*) `(progn` *x y*)) | `(cond ((not` *test*) *x y*))         |
+| `(and` *a b c*)                  | `(if` *a* `(if` *b c*))             | `(cond` (*a* `(cond` (*b c*))))       |
+| `(or` *a b c*)                   | `(if` *a a* `(if` *b b c*))         | `(cond (a)` (*b*) (*c*))              |
+| `(*case*` *a* (*b c*) `*(t x*))` | `(if (eql` *a 'b*) *c x*)           | `(cond ((eql` *a 'b*) *c*) (`t` *x*)) |
 
 It is considered poor style to use `and` and `or` for anything other than testing a logical condition, `when`, `unless,` and `if` can all be used for taking conditional action.
 For example:
@@ -1476,12 +1476,12 @@ The final `read` hits the end of file, and so returns the specified value, `eof`
 ```lisp
 > (with-open-file (stream "test.text" :direction :output)
     (print '(hello there) stream)
-    (princ 'goodbye stream))=>
-GOODBYE        :*and creates the file test.text
+    (princ 'goodbye stream)) =>
+GOODBYE        ; and creates the file test.text
 
 > (with-open-file (stream "test.text" :direction :input)
     (list (read stream) (read-char stream) (read stream)
-          (read stream nil 'eof)))=>
+          (read stream nil 'eof))) =>
 ((HELLO THERE) #\G OODBYE EOF)
 ```
 
@@ -2063,7 +2063,7 @@ Here is the program:
 
 (defun problem (x op y)
   "Ask a math problem, read a reply, and say if it is correct."
-  (format t "~&How much is ~d ~a ~d? " x op y)
+  (format t "~&How much is ~d ~a ~d?" x op y)
   (if (eql (read) (funcall op x y))
       (princ "Correct!")
       (princ "Sorry, that's not right.")))
