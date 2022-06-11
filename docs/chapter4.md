@@ -498,7 +498,7 @@ The reasoning is as follows: we want the shop to know about the problem with the
 One way to get in communication is to phone, but we don't have a phone book to look up the number.
 We could ask them their phone number, but this requires being in communication with them.
 As Aristotle put it, "If we are to be always deliberating, we shall have to go on to infinity." We will call this the "recursive subgoal" problem: trying to solve a problem in terms of itself.
-One way to avoid the problem is to have achieve keep track of all the goals that are being worked on and give up if it sees a loop in the goal stack.
+One way to avoid the problem is to have `achieve` keep track of all the goals that are being worked on and give up if it sees a loop in the goal stack.
 
 ## 4.10 The Lack of Intermediate Information Problem
 
