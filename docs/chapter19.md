@@ -83,7 +83,7 @@ To emphasize this, I include "noun" and "verb" as nouns in the grammar `*grammar
 ```
 
 I also define the data types `rule, parse`, and `tree`, and some functions for getting at the rules.
-Rules are defined as structures of type list with three slots: the left-hand side, the arrow (which should always be represented as the literal ->) and the right-hand side.
+Rules are defined as structures of type list with three slots: the left-hand side, the arrow (which should always be represented as the literal `->`) and the right-hand side.
 Compare this to the treatment on [page 40](B9780080571157500029.xhtml#p40).
 
 ```lisp
@@ -114,9 +114,9 @@ Compare this to the treatment on [page 40](B9780080571157500029.xhtml#p40).
 ```
 
 Now we're ready to define the parser.
-The main function parser takes a list of words to parse.
+The main function `parser` takes a list of words to parse.
 It calls `parse`, which returns a list of all parses that parse some subsequence of the words, starting at the beginning.
-parser keeps only the parses with no remainder-that is, the parses that span all the words.
+`parser` keeps only the parses with no remainder - that is, the parses that span all the words.
 
 ```lisp
 (defun parser (words)
@@ -172,7 +172,7 @@ This gets extended as a sentence with a VP needed, and eventually we get a parse
         (parse rem))))
 ```
 
-This makes use of the auxiliary function append1:
+This makes use of the auxiliary function `append1`:
 
 ```lisp
 (defun append1 (items item)
@@ -567,7 +567,7 @@ Note that this also means that an empty list, such as "3 to 2," will also fail.
 
 The previous grammar only allowed for the numbers 0 to 9.
 We can allow larger numbers by stringing together digits.
-So now we have two rules for numbers: a number is either a single digit, in which case the value is the digit itself (the i denti ty function), or it is a number followed by another digit, in which case the value is 10 times the number plus the digit.
+So now we have two rules for numbers: a number is either a single digit, in which case the value is the digit itself (the `identity` function), or it is a number followed by another digit, in which case the value is 10 times the number plus the digit.
 We could alternately have specified a number to be a digit followed by a number, or even a number followed by a number, but either of those formulations would require a more complex semantic interpretation.
 
 ```lisp

@@ -137,23 +137,25 @@ A glossary for the canonical simplifier program is given in [figure 15.1](#f0010
 Figure 15.1: Glossary for the Symbolic Manipulation Program
 
 The functions defining the type `polynomial` follow.
-Because we are concerned with efficiency, we proclaim certain short functions to be compiled inline, use the specific function `svref` (simple-vector reference) rather than the more general aref, and provide declarations for the polynomials using the special form the.
+Because we are concerned with efficiency, we proclaim certain short functions to be compiled inline, use the specific function `svref` (simple-vector reference) rather than the more general `aref`, and provide declarations for the polynomials using the special form `the`.
 More details on efficiency issues are given in [Chapter 9](B9780080571157500091.xhtml).
 
 ```lisp
 (proclaim '(inline main-var degree coef
-       var= var> poly make-poly))
+                   var= var> poly make-poly))
+
 (deftype polynomial () 'simple-vector)
+
 (defun main-var (p) (svref (the polynomial p) 0))
-(defun coef (p i) (svref (the polynomial p) (+ i 1)))
-(defun degree (p) (-(length (the polynomial p)) 2))
+(defun coef (p i)   (svref (the polynomial p) (+ i 1)))
+(defun degree (p)   (-(length (the polynomial p)) 2))
 ```
 
 We had to make another design decision in defining `coef`, the function to extract a coefficient from a polynomial.
 As stated above, the *i*th coefficient of a polynomial is in element *i* + 1 of the vector.
-If we required the caller of coef to pass in *i* + 1 to get *i,* we might be able to save a few addition operations.
+If we required the caller of `coef` to pass in *i* + 1 to get *i,* we might be able to save a few addition operations.
 The design decision was that this would be too confusing and error prone.
-Thus, coef expects to be passed *i* and does the addition itself.
+Thus, `coef` expects to be passed *i* and does the addition itself.
 
 For our format, we will insist that main variables be symbols, while coefficients can be numbers or other polynomials.
 A "production" version of the program might have to account for main variables like `(sin x)`, as well as other complications like + and * with more than two arguments, and noninteger powers.
@@ -243,7 +245,7 @@ The operators + and - need interface functions that handle both unary and binary
 ```
 
 The function `prefix->canon` accepts inputs that were not part of our definition of polynomials: unary positive and negation operators and binary subtraction and differentiation operators.
-These are permissible because they can all be reduced to the elementary + and * operations.
+These are permissible because they can all be reduced to the elementary `+` and `*` operations.
 
 Remember that our problems with canonical form all began with the inability to decide which was simpler: `(+ x y)` or `(+ y x)`.
 In this system, we define a canonical form by imposing an ordering on variables (we use alphabetic ordering as defined by `string>`).
@@ -380,7 +382,7 @@ First, the exponentiation function:
 
 ## 15.2 Differentiating Polynomials
 
-The differentiation routine is easy, mainly because there are only two operators (+ and \*) to deal with:
+The differentiation routine is easy, mainly because there are only two operators (`+` and `*`) to deal with:
 
 ```lisp
 (defun deriv-poly (p x)

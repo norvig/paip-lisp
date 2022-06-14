@@ -1071,7 +1071,9 @@ One was to have variables as structures, and provide a read macro and print func
 
 ```lisp
 (defstruct (variable (:print-function print-variable)) name)
+
 (defvar *vars* (make-hash-table))
+
 (set-macro-character #\?
  #'(lambda (stream char)
    ;; Find an old var, or make a new one with the given name
@@ -1079,14 +1081,15 @@ One was to have variables as structures, and provide a read macro and print func
    (let ((name (read stream t nil t)))
     (or (gethash name *vars*)
      (setf (gethash name *vars*) (make-variable :name name))))))
+
 (defun print-variable (var stream depth)
- (declare (ignore depth))
- (format stream "?~a" (var-name var)))
+  (declare (ignore depth))
+  (format stream "?~a" (var-name var)))
 ```
 
 It turned out that, on all three Lisps tested, structures were slower than keywords or symbols.
-Another alternative is to have the ? read macro return a cons whose first is, say, `:var`.
-This requires a special output routine to translate back to the ? notation.
+Another alternative is to have the `?` read macro return a cons whose first is, say, `:var`.
+This requires a special output routine to translate back to the `?` notation.
 Yet another alternative, which turned out to be the fastest of all, was to implement variables as negative integers.
 Of course, this means that the user cannot use negative integers elsewhere in patterns, but that turned out to be acceptable for the application at hand.
 The moral is to know which features are done well in your particular implementation and to go out of your way to use them in critical situations, but to stick with the most straightforward implementation in noncritical sections.

@@ -679,7 +679,7 @@ If this price is 15% less than the marked price, find the marked price.
 The number of guns they have is 7000.
 What is the number of soldiers they have?
 
-(c)  If the number of customers Tom gets is twice the square of 20 % of the number of advertisements he runs, and the number of advertisements is 45, and the profit Tom receives is 10 times the number of customers he gets, then what is the profit?
+(c)  If the number of customers Tom gets is twice the square of 20% of the number of advertisements he runs, and the number of advertisements is 45, and the profit Tom receives is 10 times the number of customers he gets, then what is the profit?
 
 (d)  The average score is 73.
 The maximum score is 97.
@@ -688,7 +688,7 @@ What is the square of the difference between the average and the maximum?
 (e)  Tom is twice Mary's age, and Jane's age is half the difference between Mary and Tom.
 If Mary is 18 years old, how old is Jane?
 
-(f)  What is 4 +  5 * 14 / 7?
+(f)  What is 4 + 5 * 14 / 7?
 
 (g)  *x &times; b = c + d.
 b &times; c = x.

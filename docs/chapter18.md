@@ -166,7 +166,7 @@ A glossary for a second version of the program is on [page 623](#p623).
 *(ed: this should be a markdown table)*
 
 What follows is the code for directions and pieces.
-We explicitly define the type `piece` to be a number from `empty` to `outer` (0 to 3), and define the function `name-of` to map from a piece number to a character: a dot for empty, `@` for black, 0 for white, and a question mark (which should never be printed) for `outer`.
+We explicitly define the type `piece` to be a number from `empty` to `outer` (0 to 3), and define the function `name-of` to map from a piece number to a character: a dot for empty, `@` for black, `0` for white, and a question mark (which should never be printed) for `outer`.
 
 ```lisp
 (defconstant all-directions '(-11 -10 -9 -1 1 9 10 11))
@@ -417,19 +417,19 @@ Here we define two simple strategies:
 
 ```lisp
 (defun human (player board)
-    "A human player for the game of Othello"
-    (declare (ignore board))
-    (format t "~&~c to move: " (name-of player))
-    (read))
+  "A human player for the game of Othello"
+  (declare (ignore board))
+  (format t "~&~c to move: " (name-of player))
+  (read))
 
 (defun random-strategy (player board)
-    "Make any legal move."
-    (random-elt (legal-moves player board)))
+  "Make any legal move."
+  (random-elt (legal-moves player board)))
 
 (defun legal-moves (player board)
-    "Returns a list of legal moves for player"
-    (loop for move in all-squares
-        when (legal-p move player board) collect move))
+  "Returns a list of legal moves for player"
+  (loop for move in all-squares
+     when (legal-p move player board) collect move))
 ```
 
 We are now in a position to play the game.
@@ -1637,7 +1637,7 @@ The following function computes both current and potential mobility for a player
 
 ```lisp
 (defun mobility (player board)
-  "Current mobility is the number of legal moves.
+  "Current Mobility is the number of legal moves.
   Potential mobility is the number of blank squares
   adjacent to an opponent that are not legal moves.
   Returns current and potential mobility for player."

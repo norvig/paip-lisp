@@ -165,7 +165,7 @@ The expression (`memo #'fib`) will produce a function that remembers its results
 With `fib` traced, it would look like this:
 
 ```lisp
-> (setf memo-fib (memo #'fib)) => #  <  CLOSURE -  67300731  >
+> (setf memo-fib (memo #'fib)) => #<CLOSURE -67300731>
 > (funcall memo-fib 3) =>
 (1 ENTER FIB: 3)
   (2 ENTER FIB: 2)
@@ -239,7 +239,7 @@ This time, each computation is done only once.
 Furthermore, when the computation of `(fib 5)` is repeated, the answer is returned immediately with no intermediate computation, and a further call to `(fib 6)` can make use of the value of `(fib 5)`.
 
 ```lisp
-> (memoize 'fib) => #  <  CLOSURE 76626607  >
+> (memoize 'fib) => #<CLOSURE 76626607>
 > (fib 5) =>
 (1 ENTER FIB: 5)
   (2 ENTER FIB: 4)

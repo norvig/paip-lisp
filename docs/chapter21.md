@@ -496,7 +496,7 @@ The relation `slot-constituent` maps between the slot notation used for compleme
 There are eight types of complements, five of which can appear in gap lists: noun phrases, clauses, prepositional phrases, the word "it" (as in "it is raining"), and adverbial phrases.
 The three phrases that are allowed only as complements are verb phrases, particles (such as "up" in "look up the number"), and adjectives.
 Here is the mapping between the two notations.
-The *** indicates no mapping:
+The `***` indicates no mapping:
 
 ```lisp
 (<- (slot-constituent (?role ?n (NP ?x))
@@ -706,7 +706,8 @@ Here are the rules for the remaining word classes:
 The lexicon itself consists of a large number of entries in the `word` relation, and it would certainly be possible to ask the lexicon writer to make a long list of `word` facts.
 But to make the lexicon easier to read and write, we adopt three useful tools.
 First, we introduce a system of abbreviations.
-Common expressions can be abbreviated with a symbol that will be expanded by `word.` Second, we provide the macros verb and `noun` to cover the two most complex word classes.
+Common expressions can be abbreviated with a symbol that will be expanded by `word`.
+Second, we provide the macros `verb` and `noun` to cover the two most complex word classes.
 Third, we provide a macro `word` that makes entries into a hash table.
 This is more efficient than compiling a `word` relation consisting of hundreds of Prolog clauses.
 
@@ -987,7 +988,7 @@ The common articles are listed here:
 
 ### Cardinal and Ordinal Numbers
 
-We can take advantage of `format's` capabilities to fill up the lexicon.
+We can take advantage of `format`'s capabilities to fill up the lexicon.
 To go beyond 20, we would need a subgrammar of numbers.
 
 ```lisp
@@ -1022,7 +1023,8 @@ Here is a fairly complete list of prepositions:
 
 ## 21.12 Supporting the Lexicon
 
-This section describes the implementation of the macros `word`, `verb, noun`, and `abbrev.` Abbreviations are stored in a hash table.
+This section describes the implementation of the macros `word`, `verb`, `noun`, and `abbrev`.
+Abbreviations are stored in a hash table.
 The macro `abbrev` and the functions `get-abbrev` and `clear-abbrevs` define the interface.
 We will see how to expand abbreviations later.
 
@@ -1058,7 +1060,7 @@ When used as an index into the hash table, each word returns a list of entries, 
 (defun kwote (x) (list 'quote x))
 ```
 
-The function `expand-abbrevs-and-variables` expands abbreviations and substitutes variable structures for symbols beginning with ?.
+The function `expand-abbrevs-and-variables` expands abbreviations and substitutes variable structures for symbols beginning with `?`.
 This makes it easier to make a copy of the structure, which will be needed later.
 
 ```lisp

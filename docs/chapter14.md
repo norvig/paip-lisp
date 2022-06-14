@@ -408,7 +408,7 @@ One approach would be this:
 
 These rules say that 0 is an integer, and any *n* is an integer if *n* + 1 is, and *n* + 1 is if *n* is.
 While these rules are correct in a logical sense, they don't work as a Prolog program.
-Asking `(integer *x*)` will result in an endless series of ever-increasing queries: `(integer (1  + *x*)), (integer (1  + (1  + *x*)))`, and so on.
+Asking `(integer` *x*`)` will result in an endless series of ever-increasing queries: `(integer (1 +` *x*`))`, `(integer (1 + (1 +` *x*`)))`, and so on.
 Each goal is different, so no check can stop the recursion.
 
 The occurs check may or may not introduce problems into Prolog, depending on your interpretation of infinite trees.
@@ -1053,7 +1053,7 @@ The following table gives some examples, along with English translations:
 | `(rel birthday animal date)` | The birthday relation holds between each animal and some date. |
 | `(ind fido dog)`             | The individual Fido is categorized as a dog.                   |
 | `(val birthday fido july-1)` | The birthday of Fido is July-1.                                |
-| `(and *AB*)`                 | Both *A* and *B* are true.                                     |
+| `(and *A B*)`                | Both *A* and *B* are true.                                     |
 
 For those who feel more comfortable with predicate calculus, the following table gives the formal definition of each primitive.
 The most complicated definition is for rel.
@@ -1383,7 +1383,7 @@ Many representation languages are based on the idea of *frames,* and their synta
 A frame is an object with slots.
 We will continue to use the same data base in the same format, but we will provide an alternative syntax that considers the individuals and categories as frames, and the relations as slots.
 
-Here is an example of the frame syntax for individuals, which uses the operator a.
+Here is an example of the frame syntax for individuals, which uses the operator `a`.
 Note that it is more compact than the equivalent notation using the primitives.
 
 ```lisp
@@ -1738,11 +1738,8 @@ First, in `W0` we see that the facts from `test-index` are still in the data bas
 
 ```lisp
 > *world* => W0
-```
 
-`> (retrieve-bagof-in-world '(p ?z c))`=>
-
-```lisp
+> (retrieve-bagof-in-world '(p ?z c)) =>
 ((P A C) (P A C) (P B C))
 ```
 

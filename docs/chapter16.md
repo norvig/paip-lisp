@@ -88,12 +88,12 @@ A glossary of the program is in [figure  16.1](#f0010).
 ## 16.1 Dealing with Uncertainty
 
 EMYCIN deals with uncertainty by replacing the two boolean values, true and false, with a range of values called *certainty factors*.
-These are numbers from -  1 (false) to +  1 (true), with 0 representing a complete unknown.
+These are numbers from -1 (false) to +1 (true), with 0 representing a complete unknown.
 In Lisp:
 
 ```lisp
-(defconstant true +  1.0)
-(defconstant false -  1.0)
+(defconstant true   +1.0)
+(defconstant false  -1.0)
 (defconstant unknown 0.0)
 ```
 
@@ -127,7 +127,7 @@ However, it should be clear that certainty factors are not the same thing as pro
 Certainty factors attempt to deal with disbelief as well as belief, but they do not deal with dependence and independence.
 The EMYCIN combination function has a number of desirable properties:
 
-*   It always computes a number between -  1 and +  1.
+*   It always computes a number between -1 and +1.
 
 *   Combining unknown (zero) with anything leaves it unchanged.
 
@@ -287,7 +287,7 @@ The system also makes sure that the same question is never asked twice.
 The following function `ask-vals` prints a query that asks for the parameter of an instance, and reads from the user the value or a list of values with associated certainty factors.
 The function first looks at the data base to make sure the question has not been asked before.
 It then checks each value and certainty factor to see if each is of the correct type, and it also allows the user to ask certain questions.
-A ? reply will show what type answer is expected.
+A `?` reply will show what type answer is expected.
 `Rule` will show the current rule that the system is working on.
 `Why` also shows the current rule, but it explains in more detail what the system knows and is trying to find out.
 Finally, `help` prints the following summary:
@@ -517,7 +517,7 @@ In Prolog, a goal can be any expression, and appropriate rules are those whose h
 If any appropriate rule succeeds, then the goal is known to be true.
 In EMYCIN, a rule might give a goal a certainty of .99, but we still have to consider all the other rules that are appropriate to the goal, because they might bring the certainty down below the cutoff threshold.
 Thus, EMYCIN always gathers all evidence relating to a parameter/instance pair first, and only evaluates the goal after all the evidence is in.
-For example, if the goal was (`temp patient  > 98.6`), EMYCIN would first evaluate all rules with conclusions about the current patient's temperature, and only then compare the temperature to 98.6.
+For example, if the goal was (`temp patient > 98.6`), EMYCIN would first evaluate all rules with conclusions about the current patient's temperature, and only then compare the temperature to 98.6.
 
 Another way of looking at it is that Prolog has the luxury of searching depth-first, because the semantics of Prolog rules is such that if any rule says a goal is true, then it is true.
 EMYCIN must search breadth-first, because a goal with certainty of .99 might turn out to be false when more evidence is considered.
@@ -535,26 +535,21 @@ If we did not have this check, then the system could start asking the user quest
 So we waste some of the program's time (checking each premise twice) to save the more valuable user time.
 (The function `eval-condition` takes an optional argument specifying if we should recursively ask questions in trying to accept or reject a condition.)
 
-If no premise can be rejected, then evaluate each premise in turn with `evaluate-condition`, keeping track of the accumulated certainty factor with `cf`-and (which is currently just `min`), and cutting off evaluation when the certainty factor drops below threshold.
+If no premise can be rejected, then evaluate each premise in turn with `evaluate-condition`, keeping track of the accumulated certainty factor with `cf-and` (which is currently just `min`), and cutting off evaluation when the certainty factor drops below threshold.
 If the premises evaluate true, then add the conclusions to the data base.
 The calling sequence looks like this.
 Note that the recursive call to `find-out` is what enables chaining to occur:
 
-`find-out`                 ;  To find out a parameter for an instance:
-
-`  get-db`                 ;    See if it is cached in the data base
-
-`  ask-vals`               ;    See if the user knows the answer
-
-`  use-rules`              ;    See if there is a rule for it:
-
-`      reject-premise`    ;      See if the rule is outright false
-
-`      satisfy-premises`  ;      Or see if each condition is true:
-
-`          eval-condition` ;        Evaluate each condition
-
-`            find-out`      ;          By finding the parameter's values
+```lisp
+find-out                  ;  To find out a parameter for an instance:
+  get-db                  ;    See if it is cached in the data base
+  ask-vals                ;    See if the user knows the answer
+  use-rules               ;    See if there is a rule for it:
+      reject-premise      ;      See if the rule is outright false
+      satisfy-premises    ;      Or see if each condition is true:
+          eval-condition  ;        Evaluate each condition
+            find-out      ;          By finding the parameter's values
+```
 
 Before showing the interpreter, here is the structure definition for rules, along with the functions to maintain a data base of rules:
 
@@ -631,7 +626,7 @@ The function `eval-condition` evaluates a single condition, returning its certai
 If `find-out-p` is true, it first calls `find-out`, which may either query the user or apply appropriate rules.
 If `find-out-p` is false, it evaluates the condition using the current state of the data base.
 It does this by looking at each stored value for the parameter/instance pair and evaluating the operator on it.
-For example, if the condition is (`temp patient > 98.6`) and the values for `temp` for the current patient are (`(98 .3) (99 .6) (100 .1)`), then `eval-condition` will test each of the values 98, 99, and 100 against 98.6 using the > operator.
+For example, if the condition is `(temp patient > 98.6)`) and the values for `temp` for the current patient are `((98 .3) (99 .6) (100 .1))`, then `eval-condition` will test each of the values 98, 99, and 100 against 98.6 using the `>` operator.
 This test will succeed twice, so the resulting certainty factor is .6 + .1 = .7.
 
 The function `reject-premise` is designed as a quick test to eliminate a rule.
@@ -668,7 +663,8 @@ Note that `is` is the only operator allowed in conclusions, `is` is just an alia
 ```
 
 All conditions are of the form: (*parameter instance operator value*).
-For example: `(morphology organism is rod).` The function `parse-condition` turns a list of this form into four values.
+For example: `(morphology organism is rod)`.
+The function `parse-condition` turns a list of this form into four values.
 The trick is that it uses the data base to return the current instance of the context, rather than the context name itself:
 
 ```lisp
@@ -1146,7 +1142,7 @@ Fortunately, Dominique happens to be a Bayesian, and quickly reassures Adrian th
 The reasoning is as follows: Take 10,001 people at random.
 Of these, only 1 is expected to have the disease.
 That person could certainly expect to test positive for the disease.
-But if the other 10,000 people all took the blood test, then 1 % of them, or 100 people would also test positive.
+But if the other 10,000 people all took the blood test, then 1% of them, or 100 people would also test positive.
 Thus, the chance of actually having the disease given that one tests positive is 1/101.
 Doctors are trained in this kind of analysis, but unfortunately many of them continue to reason more like Adrian than Dominique.
 
@@ -1193,7 +1189,7 @@ Was it easier to develop your system with EMYCIN than it would have been without
 **Exercise  16.6 [s]** It is said that an early version of MYCIN asked if the patient was pregnant, even though the patient was male.
 Write a rule that would fix this problem.
 
-**Exercise  16.7 [m]** To a yes/no question, what is the difference between yes and `(no-1)` ? What does this suggest?
+**Exercise  16.7 [m]** To a yes/no question, what is the difference between `yes` and `(no-1)`? What does this suggest?
 
 **Exercise  16.8 [m]** What happens if the user types `why` to the prompt about the patient's name?
 What happens if the expert wants to have more than one context with a name parameter?
@@ -1271,7 +1267,7 @@ The user can ask how the value of a particular parameter/instance pair was deter
 Implement this mechanism.
 It will require storing additional information in the data base.
 
-**Exercise  16.18 [m]** There was also a stop command that immediately halted the session.
+**Exercise  16.18 [m]** There was also a `stop` command that immediately halted the session.
 Implement it.
 
 **Exercise  16.19 [d]** The original EMYCIN also had a `change` command to allow the user to change the answer to certain questions without starting all over.
@@ -1299,7 +1295,7 @@ A more sophisticated reasoner would realize that multiple copies of a newspaper 
 298
 ```
 
-**Answer 16.2** The `defrule` expandsto (`make-rule :number '101 :cf true ...`); that is, the certainty factor is unquoted, so it is already legal to use true as a certainty factor!
+**Answer 16.2** The `defrule` expands to `(make-rule :number '101 :cf true ...)`; that is, the certainty factor is unquoted, so it is already legal to use `true` as a certainty factor!
 To support `probably` and other hedges, just define new constants.
 
 **Answer 16.4** Just make the default parameter type be `nil` (by changing `t` to `nil` in `parm-type`).

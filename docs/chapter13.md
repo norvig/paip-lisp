@@ -154,7 +154,7 @@ The advantage of this approach is that account objects are completely encapsulat
 We have a guarantee that no other code can manipulate the information in the account in any other way.<a id="tfn13-1"></a><sup>[1](#fn13-1)</sup>
 
 The function `get-method` finds the method that implements a message for a given object.
-The function send gets the method and applies it to a list of arguments.
+The function `send` gets the method and applies it to a list of arguments.
 The name send comes from the Flavors object-oriented system, which is discussed in the history section ([page 456](#p456)).
 
 ```lisp
@@ -188,8 +188,8 @@ Random Customer"`
 
 ## 13.3 Generic Functions
 
-The send syntax is awkward, as it is different from the normal Lisp function-calling syntax, and it doesn't fit in with the other Lisp tools.
-For example, we might like to say (`mapcar 'balance accounts`), but with messages we would have to write that as:
+The `send` syntax is awkward, as it is different from the normal Lisp function-calling syntax, and it doesn't fit in with the other Lisp tools.
+For example, we might like to say `(mapcar 'balance accounts)`, but with messages we would have to write that as:
 
 ```lisp
 (mapcar #'(lambda (acct) (send acct 'balance)) accounts)
@@ -506,7 +506,8 @@ With CLOS it is easy to define a `limited-account` as a subclass of `account`, a
 ```
 
 Note the use of `call-next-method` to invoke the `withdraw` method for the `account` class.
-Also note that all the other methods for accounts automatically work on instances of the class limited-account, because it is defined to inherit from `account.` In the following example, we show that the `name` method is inherited, that the `withdraw` method for `limited-account` is invoked first, and that the `withdraw` method for `account` is invoked by the `call-next-method` function:
+Also note that all the other methods for accounts automatically work on instances of the class limited-account, because it is defined to inherit from `account`.
+In the following example, we show that the `name` method is inherited, that the `withdraw` method for `limited-account` is invoked first, and that the `withdraw` method for `account` is invoked by the `call-next-method` function:
 
 ```lisp
 > (setf a2 (make-instance 'limited-account
@@ -521,7 +522,8 @@ Also note that all the other methods for accounts automatically work on instance
 In general, there may be several methods appropriate to a given message.
 In that case, all the appropriate methods are gathered together and sorted, most specific first.
 The most specific method is then called.
-That is why the method for `limited-account` is called first rather than the method for `account.` The function `call-next-method` can be used within the body of a method to call the next most specific method.
+That is why the method for `limited-account` is called first rather than the method for `account`.
+The function `call-next-method` can be used within the body of a method to call the next most specific method.
 
 The complete story is actually even more complicated than this.
 As one example of the complication, consider the class `audited-account`, which prints and keeps a trail of all deposits and withdrawals.
@@ -543,7 +545,7 @@ In general, there might be several of each kind of method.
 In that case, all the `:before` methods are called in order, most specific first.
 Then the most specific primary method is called.
 It may choose to invoke `call-next-method` to get at the other methods.
-(It is an error for a `:before` or `:after` method to use `call-next-method.)`
+(It is an error for a `:before` or `:after` method to use `call-next-method`.)
 Finally, all the `:after` methods are called, least specific first.
 
 The values from the `:before` and `:after` methods are ignored, and the value from the primary method is returned.
@@ -630,7 +632,7 @@ It is a `:before` method because we want to see the output before carrying out t
  (dbg 'search ";; Search: ~a" (problem-states prob)))
 ```
 
-The generic functions that remain to be defined are `goal-p, probl em-combiner,` and `problem-successors`.
+The generic functions that remain to be defined are `goal-p`, `problem-combiner`, and `problem-successors`.
 We will address `goal-p` first, by recognizing that for many problems we will be searching for a state that is `eql` to a specified goal state.
 We define the class `eql-problem` to refer to such problems, and specify `goal-p` for that class.
 Note that we make it possible to specify the goal when a problem is created, but not to change the goal:
@@ -769,7 +771,7 @@ The applications programmer then just picks what is needed from the library.
 From the following we see that it is not too difficult to pick out the right code to define a trip-planning searcher.
 Compare this with the definition of `trip` on page 198 to see if you prefer CLOS in this case.
 The main difference is that here we say that the cost function is `air-distance` and the successors are the `neighbors` by defining methods; in `trip` we did it by passing parameters.
-The latter is a little more succint, but the former may be more clear, especially as the number of parameters grows.
+The latter is a little more succinct, but the former may be more clear, especially as the number of parameters grows.
 
 ```lisp
 (defclass trip-problem (binary-tree-eql-best-beam-problem)

@@ -1123,10 +1123,10 @@ They are closely related to `member,` which is repeated here.
 
 (<- `(= ?x ?x))`
 
-We also defined the identity relation, =.
+We also defined the identity relation, `=`.
 It has a single clause that says that any x is equal to itself.
-One might think that this implements eq or equal.
-Actually, since Prolog uses unification to see if the two arguments of a goal each unify with `?x`, this means that = is unification.
+One might think that this implements `eq` or `equal`.
+Actually, since Prolog uses unification to see if the two arguments of a goal each unify with `?x`, this means that `=` is unification.
 
 Now we are ready to define the zebra puzzle with a single (long) clause.
 The variable `?h` represents the list of five houses, and each house is represented by a term of the form (house *nationality pet cigarette drink color*).
@@ -1177,11 +1177,11 @@ No.
 ```
 
 This took 278 seconds, and profiling (see page 288) reveals that the function prove was called 12,825 times.
-A call to prove has been termed a *logical inference, so* our system is performing 12825/278 = 46 logical inferences per second, or LIPS.
+A call to prove has been termed a *logical inference,* so our system is performing 12825/278 = 46 logical inferences per second, or LIPS.
 Good Prolog systems perform at 10,000 to 100,000 LIPS or more, so this is barely limping along.
 
 Small changes to the problem can greatly affect the search time.
-For example, the relation nextto holds when the first house is immediately right of the second, or when the second is immediately right of the first.
+For example, the relation `nextto` holds when the first house is immediately right of the second, or when the second is immediately right of the first.
 It is arbitrary in which order these clauses are listed, and one might think it would make no difference in which order they were listed.
 In fact, if we reverse the order of these two clauses, the execution time is roughly cut in half.
 
@@ -1323,7 +1323,7 @@ Now, for backtracking purposes, we want to make `set-binding!` keep track of the
 
 Now we need a way of making new variables, where each one is distinct.
 That could be done by `gensym-ing` a new name for each variable, but a quicker solution is just to increment a counter.
-The constructor function ? is defined to generate a new variable with a name that is a new integer.
+The constructor function `?` is defined to generate a new variable with a name that is a new integer.
 This is not strictly necessary; we could have just used the automatically provided constructor `make-var`.
 However, I thought that the operation of providing new anonymous variable was different enough from providing a named variable that it deserved its own function.
 Besides, `make-var` may be less efficient, because it has to process the keyword arguments.

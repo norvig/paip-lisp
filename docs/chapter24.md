@@ -803,7 +803,7 @@ But it doesn't work as well here:
 
 The problem is that `i` will get incremented twice, not once, and two different values will get printed, not one.
 We need to bind `(print (incf i))` to a local variable before doing the multiplication.
-On the other hand, it would be superfluous to bind z to a local variable in the previous example.
+On the other hand, it would be superfluous to bind `z` to a local variable in the previous example.
 This is where `once-only` comes in.
 It allows us to write macro definitions like this:
 
@@ -894,7 +894,7 @@ Here we see the expansion of the call to `once-only` and a repeat of the expansi
 ```
 
 This output was produced with `*print-gensym*` set to `nil`.
-When this variable is non-nil, uninterned symbols are printed with a prefix `#`:,as in `#:G3811`.
+When this variable is non-nil, uninterned symbols are printed with a prefix `#:`, as in `#:G3811`.
 This insures that the symbol will not be interned by a subsequent read.
 
 It is worth noting that Common Lisp automatically handles problems related to multiple evaluation of subforms in setf methods.
@@ -931,7 +931,7 @@ which would expand into:
     ((SETQ THAT (ASSOC ITEM A-LIST)) (PROCESS (CDR THAT)))))
 ```
 
-This was a convenient feature (compare it to the => feature of Scheme's cond, as discussed on [page 778](B9780080571157500224.xhtml#p778)), but it backfired often enough that I eventually gave up on my version of `if`.
+This was a convenient feature (compare it to the `=>` feature of Scheme's cond, as discussed on [page 778](B9780080571157500224.xhtml#p778)), but it backfired often enough that I eventually gave up on my version of `if`.
 Here's why.
 I would write code like this:
 

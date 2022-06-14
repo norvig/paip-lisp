@@ -380,7 +380,7 @@ Here's another example:
 | `RETURN` |     |
 
 In this expression, if we can be assured that + and * refer to the normal arithmetic functions, then we can compile this as if it were `(begin (f x) x)`.
-Furthermore, it is reasonable to assume that + and * will be instructions in our machine that can be invoked inline, rather than having to call out to a function.
+Furthermore, it is reasonable to assume that `+` and `*` will be instructions in our machine that can be invoked inline, rather than having to call out to a function.
 Many compilers spend a significant portion of their time optimizing arithmetic operations, by taking into account associativity, commutativity, distributivity, and other properties.
 
 Besides arithmetic, compilers often have expertise in conditional expressions.
@@ -471,7 +471,7 @@ The code is indented to show nested functions.
 The top-level function loads the constant 4 and an anonymous function, and calls the function.
 This function loads the constant 3 and the local variable `x`, which is the first (0th) element in the top (0th) frame.
 It then calls the double-nested function on these two arguments.
-This function loads `x, y`, and `z: x` is now the 0th element in the next-to-top (1st) frame, and `y` and `z` are the 0th and 1st elements of the top frame.
+This function loads `x`, `y`, and `z`: `x` is now the 0th element in the next-to-top (1st) frame, and `y` and `z` are the 0th and 1st elements of the top frame.
 With all the arguments in place, the function `f` is finally called.
 Note that no continuations are stored-`f` can return directly to the caller of this function.
 
@@ -921,7 +921,7 @@ We can enforce that by altering `gen-set` to preserve them as constants:
 
 Now an expression like `(+ x 1)` will be properly compiled using the + instruction rather than a subroutine call, and an expression like `(set ! + *)` will be flagged as an error when + is a global variable, but allowed when it has been locally bound.
 However, we still need to be able to handle expressions like `(set ! add +)` and then `(add x y)`.
-Thus, we need some function object that + will be globally bound to, even if the compiler normally optimizes away references to that function.
+Thus, we need some function object that `+` will be globally bound to, even if the compiler normally optimizes away references to that function.
 The function `init-scheme-comp` takes care of this requirement:
 
 ```lisp
@@ -1614,7 +1614,7 @@ The Lisp function `read` is driven by an object called the *readtable,* which is
 The entry in the readtable for the character `#\(`, for example, would be directions to read a list.
 The entry for `#\;` would be directions to ignore every character up to the end of the line.
 
-Because the readtable is stored in a special variable, it is possible to alter completely the way read works just by dynamically rebinding this variable.
+Because the readtable is stored in a special variable, it is possible to alter completely the way `read` works just by dynamically rebinding this variable.
 
 The new function `scheme-read` temporarily changes the readtable to a new one, the Scheme readtable.
 It also accepts an optional argument, the stream to read from, and it returns a special marker on end of file.
@@ -1859,11 +1859,9 @@ What time and space complexity does it have?
 
 The next three exercises describe extensions that are not part of the Scheme standard.
 
-**Exercise  23.8 [h]** The set!
-special form is defined only when its first argument is a symbol.
+**Exercise  23.8 [h]** The `set!` special form is defined only when its first argument is a symbol.
 Extend `set!` to work like `setf` when the first argument is a list.
-That is, `(set!
-(car x) y)` should expand into something like `((setter car) y x)`, where `(setter car)` evaluates to the primitive procedure `set-car!`.
+That is, `(set! (car x) y)` should expand into something like `((setter car) y x)`, where `(setter car)` evaluates to the primitive procedure `set-car!`.
 You will need to add some new primitive functions, and you should also provide a way for the user to define new `set!` procedures.
 One way to do that would be with a `setter` function for `set!`, for example:
 
