@@ -868,13 +868,11 @@ Within this list of forms, the variables will be bound to the values that satisf
 The syntax was chosen to be the same as `multiple-value-bind`.
 Here we see a typical use of `query-bind`, its result, and its macro-expansion:
 
+## code block
+
 ```lisp
 > (query-bind (?x ?fn) '(p ?x (?fn c))
-```
-
-`  (format t "~&P holds between ~a and ~a of c." ?x ?fn))`=>
-
-```lisp
+  (format t "~&P holds between ~a and ~a of c." ?x ?fn)) =>
 P holds between B and F of c.
 P holds between A and F of c.
 P holds between A and ?FN of c.
@@ -1244,7 +1242,7 @@ If not, it indexes the fact and calls `run-attached-fn` to do additional checkin
   (retrieve fact))
 ```
 
-The attached functions are stored on the operator's property list under the indicator `attached-fn:`
+The attached functions are stored on the operator's property list under the indicator `attached-fn`:
 
 ```lisp
 (defun run-attached-fn (fact)
@@ -1754,15 +1752,13 @@ Two new facts are added to this new world:
 
 We see that the two new facts are accessible in this world:
 
-`> (retrieve-bagof-in-world '(p ?z c))`=>
+## code block
 
 ```lisp
+> (retrieve-bagof-in-world '(p ?z c)) =>
 ((P A C) (P A C) (P B C) (P NEW C))
-```
 
-`> (retrieve-bagof-in-world '(~p ?x ?y))`=>
-
-```lisp
+> (retrieve-bagof-in-world '(~p ?x ?y)) =>
 ((~P B B))
 ```
 
@@ -1777,15 +1773,11 @@ Now we create another world as an alternative to the current one by first switch
 
 Here we see that the facts entered in `W7031` are not accessible, but the facts in the new world and in `W0` are:
 
-`> (retrieve-bagof-in-world '(p ?z c))`=>
-
 ```lisp
+> (retrieve-bagof-in-world '(p ?z c)) =>
 ((P A C) (P A C) (P B C) (P NEWEST C))
-```
 
-`> (retrieve-bagof-in-world '(~p ?x ?y))`=>
-
-```lisp
+> (retrieve-bagof-in-world '(~p ?x ?y)) =>
 ((~P C NEWEST))
 ```
 

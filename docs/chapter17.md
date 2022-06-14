@@ -841,12 +841,8 @@ Worse, when we try to ground the diagram on the line XZ and call `print-labeling
 The function expected a fixnum >= zero.
 While in the function LABELS-FOR <= CONSISTENT-LABELINGS
 Debugger entered while in the following function:
-```
 
-`LABELS-FOR (P.C.
-= 23)`
-
-```lisp
+LABELS-FOR (P.C. = 23)
   Arg 0 (VERTEX): U/6
   Arg 1 (FROM): 4/4
 ```

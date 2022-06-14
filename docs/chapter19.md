@@ -67,7 +67,7 @@ For the `generate` program it was fine to have them all together, because that m
 Later on we will want to add more information to each rule, like the semantics of the assembled left-hand side, and constraints between constituents on the right-hand side, so the rules would become quite large indeed if we didn't split up the alternatives.
 I also take this opportunity to clear up the confusion between words and category symbols.
 The convention is that a right-hand side can be either an atom, in which case it is a word, or a list of symbols, which are then all interpreted as categories.
-To emphasize this, I include "noun" and "verb" as nouns in the grammar `*grammar3*`, which is otherwise equivalent to the previous `*grammarl*`.
+To emphasize this, I include "noun" and "verb" as nouns in the grammar `*grammar3*`, which is otherwise equivalent to the previous `*grammar1*`.
 
 ```lisp
 (defparameter *grammar3*
@@ -82,7 +82,7 @@ To emphasize this, I include "noun" and "verb" as nouns in the grammar `*grammar
 (setf *grammar* *grammar3*)
 ```
 
-I also define the data types `rule, parse`, and `tree`, and some functions for getting at the rules.
+I also define the data types `rule`, `parse`, and `tree`, and some functions for getting at the rules.
 Rules are defined as structures of type list with three slots: the left-hand side, the arrow (which should always be represented as the literal `->`) and the right-hand side.
 Compare this to the treatment on [page 40](B9780080571157500029.xhtml#p40).
 
@@ -1089,8 +1089,8 @@ It turns out that, for the Lisp system used in the timings above, this version i
 **Answer 19.3** Actually, the top-down parser is a little easier (shorter) than the bottom-up version.
 The problem is that the most straightforward way of implementing a top-down parser does not handle so-called *left recursive* rules-rules of the form `(X -> (X ...))`.
 This includes rules we've used, like `(NP -> (NP and NP))`.
-The problem is that the parser will postulate an NP, and then postulate that it is of the form `(NP and NP)`, and that the first NP of that expression is of the form `(NP and NP)`, and so on.
-An infinite structure of NPs is explored before even the first word is considered.
+The problem is that the parser will postulate an `NP`, and then postulate that it is of the form `(NP and NP)`, and that the first `NP` of that expression is of the form `(NP and NP)`, and so on.
+An infinite structure of `NP`s is explored before even the first word is considered.
 
 Bottom-up parsers are stymied by rules with null right-hand sides: `(X -> O)`.
 Note that I was careful to exclude such rules in my grammars earlier.

@@ -185,7 +185,7 @@ Contrast this to the code for `g`, which has no declarations and is compiled at 
 42:     or.l    d4,d0
 44:     and.b   #7,d0
 48:     bne.s   62
-50:     add.l   12(a6),d4 ;   x
+50:     add.l   12(a6),d4     ; x
 54:     bvc.s   76
 56:     jsr     696(a4)       ; add-overflow
 60:     bra.s   76

@@ -1131,7 +1131,7 @@ Actually, since Prolog uses unification to see if the two arguments of a goal ea
 Now we are ready to define the zebra puzzle with a single (long) clause.
 The variable `?h` represents the list of five houses, and each house is represented by a term of the form (house *nationality pet cigarette drink color*).
 The variable `?w` is the water drinker, and `?z` is the zebra owner.
-Each of the 15 constraints in the puzzle is listed in the `body` of `zebra,` although constraints 9 and 10 have been combined into the first one.
+Each of the 15 constraints in the puzzle is listed in the body of `zebra`, although constraints 9 and 10 have been combined into the first one.
 Consider constraint 2, "The Englishman lives in the `red` house." This is interpreted as "there is a house whose nationality is Englishman and whose color is `red,` and which is a member of the list of houses": in other words, `(member (house englishman ? ? ? red) ?h).` The other constraints are similarly straightforward.
 
 ```lisp

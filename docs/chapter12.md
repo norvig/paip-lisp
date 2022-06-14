@@ -1097,8 +1097,8 @@ This benchmark is too small to be conclusive, but on these examples the Prolog c
 This suggests that the Prolog interpreter cannot be used as a practical programming tool, but the Prolog compiler can.
 
 Before moving on, it is interesting to note that Prolog provides for optional arguments automatically.
-Although there is no special syntax for optional arguments, an often-used convention is to have two versions of a relation, one with *n* arguments and one with *n -* 1.
-A single clause for the *n -* 1 case provides the missing, and therefore "optional," argument.
+Although there is no special syntax for optional arguments, an often-used convention is to have two versions of a relation, one with *n* arguments and one with *n* - 1.
+A single clause for the *n* - 1 case provides the missing, and therefore "optional," argument.
 In the following example, `irev/2` can be considered as a version of `irev/3` where the missing optional argument is ().
 
 ```lisp

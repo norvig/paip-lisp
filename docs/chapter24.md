@@ -214,11 +214,16 @@ Unfortunately, it is inefficient: both `find-all-if` and `mapcar` cons up interm
 The following two versions using `loop` and `dolist` are efficient but not as pretty:
 
 ```lisp
-;; Using Loop           ;; Using dolist
-(loop for num in nums   (let ((sum 0))
-  when (plusp num)        (dolist (num nums sum)
-  sum (sqrt num))            (when (plusp num)
-                                                            (incf sum num))))
+;; Using Loop
+(loop for num in nums
+      when (plusp num)
+      sum (sqrt num))
+
+;; Using dolist
+(let ((sum 0))
+  (dolist (num nums sum)
+     (when (plusp num)
+       (incf sum num))))
 ```
 
 A compromise between the two approaches is provided by the *series* facility, defined in appendix A of *Common Lisp the Language*, 2d edition.
@@ -670,9 +675,8 @@ However, sometimes you want to make, say, a `collect` conditional on some test.
 In that case, loop conditionals are acceptable.
 The clauses covered here are:
 
-(`LOOP WHEN test ... CELSE ...]) ; IF` is asynonym for `WHEN`
-
 ```lisp
+(LOOP WHEN test ... [ELSE ...])   ; IF is a synonym for WHEN
 (LOOP UNLESS test ... [ELSE ...])
 ```
 
@@ -683,10 +687,10 @@ Here is an example of `when`:
      when (oddp x)
          collect x
      else collect (- x))
-(1 -2 3 -4 5- 6 7 -8 9 -10)
+(1 -2 3 -4 5 -6 7 -8 9 -10)
 ```
 
-Of course, we could have said `collect (if (oddp x ) x ( - x ) )` and done without the conditional.
+Of course, we could have said `collect (if (oddp x ) x (- x ))` and done without the conditional.
 There is one extra feature in loop's conditionals: the value of the test is stored in the variable it for subsequent use in the THEN or ELSE parts.
 (This is just the kind of feature that makes some people love `loop` and others throw up their hands in despair.) Here is an example:
 

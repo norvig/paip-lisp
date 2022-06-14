@@ -195,13 +195,13 @@ The `and` form tests whether every one of a list of conditions is true, and `or`
 Both evaluate the arguments left to right, and stop as soon as the final result can be determined.
 Here is a table of equivalences:
 
-| **conditional**                  | `if` **form**                       | `cond` **form**                       |
-|----------------------------------|-------------------------------------|---------------------------------------|
-| `(when` *test a b c*)            | `(if` *test* `(progn` *a  b c*))    | `(cond` (*test a b c*))               |
-| `(unless` *test x y*)            | `(if (not` *test*) `(progn` *x y*)) | `(cond ((not` *test*) *x y*))         |
-| `(and` *a b c*)                  | `(if` *a* `(if` *b c*))             | `(cond` (*a* `(cond` (*b c*))))       |
-| `(or` *a b c*)                   | `(if` *a a* `(if` *b b c*))         | `(cond (a)` (*b*) (*c*))              |
-| `(*case*` *a* (*b c*) `*(t x*))` | `(if (eql` *a 'b*) *c x*)           | `(cond ((eql` *a 'b*) *c*) (`t` *x*)) |
+| conditional                    | `if` form                           | `cond` form                        |
+|--------------------------------|-------------------------------------|------------------------------------|
+| `(when` *test a b c*)          | `(if` *test* `(progn` *a  b c*))    | `(cond` (*test a b c*))            |
+| `(unless` *test x y*)          | `(if (not` *test*) `(progn` *x y*)) | `(cond ((not` *test*) *x y*))      |
+| `(and` *a b c*)                | `(if` *a* `(if` *b c*))             | `(cond` (*a* `(cond` (*b c*))))    |
+| `(or` *a b c*)                 | `(if` *a a* `(if` *b b c*))         | `(cond (a)` (*b*) (*c*))           |
+| `(case` *a* (*b c*) (`t` *x*)) | `(if (eql` *a 'b*) *c x*)           | `(cond ((eql` *a 'b*) *c*) (`t` *x*)) |
 
 It is considered poor style to use `and` and `or` for anything other than testing a logical condition, `when`, `unless,` and `if` can all be used for taking conditional action.
 For example:
@@ -1465,7 +1465,7 @@ For example, the string `"hello there"` would print as `"hello there".`
 The function `princ` is used to print in a human-readable format.
 The string in question would print as `hello there` with `princ`-the quote marks are not printed.
 This means that `read` cannot recover the original form; `read` would interpret it as two symbols, not one string.
-The function `write` accepts eleven different keyword arguments that control whether it acts like `prin1` or `princ,` among other things.
+The function `write` accepts eleven different keyword arguments that control whether it acts like `prin1` or `princ`, among other things.
 
 The output functions also take a stream as an optional argument.
 In the following, we create the file `test.text` and print two expressions to it.

@@ -806,9 +806,9 @@ Now let's see how version 2 performs.
 We use the list of operators that includes the "asking the shop their phone number" operator.
 First we make sure it will still do the examples version 1 did:
 
-`> (use *school-ops*)`=> `7`
-
 ```lisp
+> (use *school-ops*) => 7
+
 > (gps '(son-at-home car-needs-battery have-money have-phone-book)
       '(son-at-school))
 ((START)
@@ -818,11 +818,9 @@ First we make sure it will still do the examples version 1 did:
   (EXECUTING GIVE-SHOP-MONEY)
   (EXECUTING SHOP-INSTALLS-BATTERY)
   (EXECUTING DRIVE-SON-TO-SCHOOL))
-```
 
-`> (debug :gps)`=> `(:GPS)`
+> (debug :gps) => (:GPS)
 
-```lisp
 > (gps '(son-at-home car-needs-battery have-money have-phone-book)
       '(son-at-school))
 Goal: SON-AT-SCHOOL
@@ -856,11 +854,9 @@ Action: DRIVE-SON-TO-SCHOOL
   (EXECUTING GIVE-SHOP-MONEY)
   (EXECUTING SHOP-INSTALLS-BATTERY)
   (EXECUTING DRIVE-SON-TO-SCHOOL))
-```
 
-`> (undebug)`=> `NIL`
+> (undebug) => NIL
 
-```lisp
 > (gps '(son-at-home car-works)
       '(son-at-school))
 ((START)

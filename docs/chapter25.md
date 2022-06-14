@@ -1097,12 +1097,7 @@ Here is the first part of the file `defsys.lisp`, showing the definition of `def
   name source-dir object-dir modules)
 (defun define-system (&key name source-dir object-dir modules)
   "Define a new system."
-```
-
-`  ;; Delete any old system of this name.
-and add the new one.`
-
-```lisp
+  ;; Delete any old system of this name, and add the new one.
   (setf *systems* (delete name *systems* :test #'string-equal
       :key #'sys-name))
   (push (make-sys
@@ -1166,12 +1161,7 @@ This is not hard to do, since Common Lisp provides the function `file-write-date
   (>-num (if (probe-file filel) (file-write-date filel))
   (if (probe-file file2) (file-write-date file2))))
 (defun >-num (x y)
-```
-
-`  "True if x and y are numbers.
-and x > y."`
-
-```lisp
+  "True if x and y are numbers, and x > y."
   (and (numberp x) (numberp y) (> x y)))
 ```
 

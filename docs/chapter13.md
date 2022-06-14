@@ -116,7 +116,8 @@ First, the program is written in traditional procedural style:
            (account-balance account))))
 ```
 
-We can create new bank accounts with `make-account` and modify them with `account-withdraw, account-deposit,` and `account-interest.` This is a simple problem, and this simple solution suffices.
+We can create new bank accounts with `make-account` and modify them with `account-withdraw`, `account-deposit`, and `account-interest`.
+This is a simple problem, and this simple solution suffices.
 Problems appear when we change the specification of the problem, or when we envision ways that this implementation could be inadvertently used in error.
 For example, suppose a programmer looks at the `account` structure and decides to use `(decf (account-balance account)`) directly instead of going through the `account-withdraw` function.
 This could lead to negative account balances, which were not intended.
@@ -170,19 +171,16 @@ The name send comes from the Flavors object-oriented system, which is discussed 
 
 Here is an example of the use of `new-account` and `send`:
 
-`> (setf acct (new-account "J.
-Random Customer" 1000.00))`=>
-
 ```lisp
+> (setf acct (new-account "J. Random Customer" 1000.00)) =>
 #<CLOSURE 23652465>
+
 > (send acct 'withdraw 500.00) => 500.0
+
 > (send acct 'deposit 123.45) => 623.45
-```
 
-`> (send acct 'name) => "J.
-Random Customer"`
+> (send acct 'name) => "J. Random Customer"
 
-```lisp
 > (send acct 'balance) => 623.45
 ```
 
@@ -679,7 +677,7 @@ Naturally, this gets represented as a class:
 ```
 
 Now suppose we want to solve a binary-tree problem with breadth-first search, searching for a particular goal.
-Simply create a class that mixes in `binary-tree-problem, eql-problem` and `bfs-problem,` create an instance of that class, and call `searcher` on that instance:
+Simply create a class that mixes in `binary-tree-problem`, `eql-problem` and `bfs-problem,` create an instance of that class, and call `searcher` on that instance:
 
 ```lisp
 (defclass binary-tree-eql-bfs-problem
