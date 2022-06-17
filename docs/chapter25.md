@@ -39,7 +39,7 @@ Here are four incomplete expressions:
     x)
 ```
 
-**Remedy:** Add a ), ", `|`, and `| #`, respectively.
+**Remedy:** Add a `)`, `"`, `|`, and `|#`, respectively.
 Or hit the interrupt key and type the input again.
 
 **Diagnosis:** Your program may be waiting for input.
@@ -586,6 +586,7 @@ In [section 3.2](B9780080571157500030.xhtml#s0015) we described a four-part appr
 *   Figure out what the macro should expand into.
 
 *   Use `defmacro` to implement the syntax/expansion correspondence.
+
 This section shows the problems that can arise in each part, starting with the first:
 
 *   Decide if the macro is really necessary.
@@ -837,7 +838,7 @@ To make matters worse, a conscientious user might write:
 The designer of a new macro must decide if declarations are allowed and must make sure that compiler warnings will not be generated unless they are warranted.
 
 Macros have the full power of Lisp at their disposal, but the macro designer must remember the purpose of a macro is to translate macro code into primitive code, and not to do any computations.
-Consider the following macro, which assumes that `translate - rule-body` is defined elsewhere:
+Consider the following macro, which assumes that `translate-rule-body` is defined elsewhere:
 
 ```lisp
 (defmacro defrule (name &body body)  ; Warning! buggy!
@@ -947,9 +948,9 @@ Some of the conventions are listed here:
 2.  You can introduce an abbreviation if you are consistent: `get-dtree`, `dtree-fetch`.
 For example, this book uses `fn` consistently as the abbreviation for "function."
 
-3.  Predicates end in - `p` (or ? in Scheme), unless the name is already a predicate: `variable-p`, `occurs-in`.
+3.  Predicates end in `-p` (or `?` in Scheme), unless the name is already a predicate: `variable-p`, `occurs-in`.
 
-4.  Destructive functions start with n (or end in ! in Scheme): nreverse.
+4.  Destructive functions start with `n` (or end in `!` in Scheme): `nreverse`.
 
 5.  Generalized variable-setting macros end in `f`: `setf`, `incf`.
 (`Push` is an exception.)
@@ -1182,7 +1183,7 @@ Some implementations may signal an error, but others may not.
 An implementation would be within its right to return 1, or any other number or non-number as the result.
 
 An unsuspecting programmer may code an expression that is an error but still computes reasonable results in his or her implementation.
-A common example is applying get to a non-symbol.
+A common example is applying `get` to a non-symbol.
 This is an error, but many implementations will just return nil, so the programmer may write (`get x ' prop`) when `(if ( symbol p x) (get x 'prop) nil`) is actually needed for portable code.
 Another common problem is with `subseq` and the sequence functions that take `:end` keywords.
 It is an error if the `:end` parameter is not an integer less than the length of the sequence, but many implementations will not complain if `:end` is nil or is an integer greater than the length of the sequence.

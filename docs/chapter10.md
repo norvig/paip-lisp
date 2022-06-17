@@ -235,7 +235,7 @@ Numbers declared as fixnums or floating-point numbers can be handled directly by
 On some systems, `float` by itself is not enough; you have to say `single-float` or `double-float`.
 Other numeric declarations will probably be ignored.
 For example, declaring a variable as integer does not help the compiler much, because bignums are integers.
-The code to add bignums is too complex to put inline, so the compiler will branch to a general-purpose routine (like  `+  _2op` in Allegro), the same routine it would use if no declarations were given.
+The code to add bignums is too complex to put inline, so the compiler will branch to a general-purpose routine (like `+_2op` in Allegro), the same routine it would use if no declarations were given.
 
 *   `list and array`.
 Many Lisp systems provide separate functions for the list- and array- versions of commonly used sequence functions.
@@ -623,7 +623,7 @@ Some garbage-collection algorithms have been optimized to deal particularly well
 If your system has an *ephemeral* or *generational* garbage collector, you need not be so concerned with short-lived objects.
 Instead, it will be the medium-aged objects that cause problems.
 The other problem with such systems arises when an object in an old generation is changed to point to an object in a newer generation.
-This is to be avoided, and it may be that reverse is actually faster than nreverse in such cases.
+This is to be avoided, and it may be that `reverse` is actually faster than `nreverse` in such cases.
 To decide what works best on your particular system, design some test cases and time them.
 
 As an example of efficient use of storage, here is a version of `pat-match` that eliminates (almost) all consing.
@@ -646,7 +646,7 @@ Vectors with fill pointers act like a cross between a vector and a stack.
 You can push new elements onto the stack with the functions `vector-push` or `vector-push-extend`.
 The latter will automatically allocate a larger vector and copy over elements if necessary.
 You can remove elements with `vector-pop`, or you can explicitly look at the fill pointer with `fill-pointer`, or change it with a `setf`.
-Here are some examples (with `*print-array*` set to t so we can see the results):
+Here are some examples (with `*print-array*` set to `t` so we can see the results):
 
 ```lisp
 > (setf a (make-array 5 :fill-pointer 0))
@@ -826,9 +826,9 @@ Here is an implementation of `ucons`:
     (setf (gethash y car-table) (cons x y)))))
 ```
 
-`ucons`, unlike `cons`, is a true function: it will always return the same value, given the same arguments, where "same" is measured by eq.
-However, if `ucons` is given arguments that are equal but not eq, it will not return a unique result.
-For that we need the function unique.
+`ucons`, unlike `cons`, is a true function: it will always return the same value, given the same arguments, where "same" is measured by `eq`.
+However, if `ucons` is given arguments that are `equal` but not `eq`, it will not return a unique result.
+For that we need the function `unique`.
 It has the property that `(unique x)` is eq to `(unique y)` whenever `x` and `y` are equal.
 `unique` uses a hash table for atoms in addition to the double hash table for conses.
 This is necessary because strings and arrays can be equal without being eq.
@@ -1292,7 +1292,7 @@ Imagine you have a spelling corrector program with a list of some 50,000 or so w
 You could put them into a trie, each word with the value `t`.
 But there would be many subtrees repeated in this trie.
 For example, given a word list containing *look*, *looks*, *looked*, and *looking* as well as *show*, *shows*, *showed*, and *showing*, there would be repetition of the subtree containing *-s*, *-ed* and *-ing*.
-After the trie is built, we could pass the whole trie to un i que, and it would collapse the shared subtrees, saving storage.
+After the trie is built, we could pass the whole trie to `unique`, and it would collapse the shared subtrees, saving storage.
 Of course, you can no longer add or delete keys from the dag without risking unintended side effects.
 
 This process was carried out for a 56,000 word list.

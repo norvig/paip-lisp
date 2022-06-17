@@ -1049,7 +1049,7 @@ Here is the basic code for `profile` and `unprofile:`
             ',fn-names)))))
 ```
 
-The idiom `' ',fn-names` deserves comment, since it is common but can be confusing at first.
+The idiom `'',fn-names` deserves comment, since it is common but can be confusing at first.
 It may be easier to understand when written in the equivalent form `'(quote ,fn-names)`.
 As always, the backquote builds a structure with both constant and evaluated components.
 In this case, the `quote` is constant and the variable `fn-names` is evaluated.

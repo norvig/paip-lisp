@@ -8,8 +8,8 @@ The simplest compiler need not be much more complex than an interpreter.
 One thing that makes a compiler more complex is that we have to describe the output of the compiler: the instruction set of the machine we are compiling for.
 For the moment let's assume a stack-based machine.
 The calling sequence on this machine for a function call with *n* arguments is to push the *n* arguments onto the stack and then push the function to be called.
-A `"CALL *n*"` instruction saves the return point on the stack and goes to the first instruction of the called function.
-By convention, the first instruction of a function will always be `"ARGS *n*"`, which pops *n* arguments off the stack, putting them in the new function's environment, where they can be accessed by `LVAR` and `LSET` instructions.
+A "`CALL` *n*" instruction saves the return point on the stack and goes to the first instruction of the called function.
+By convention, the first instruction of a function will always be "`ARGS` *n*", which pops *n* arguments off the stack, putting them in the new function's environment, where they can be accessed by `LVAR` and `LSET` instructions.
 The function should return with a `RETURN` instruction, which resets the program counter and the environment to the point of the original `CALL` instruction.
 
 In addition, our machine has three `JUMP` instructions; one that branches unconditionally, and two that branch depending on if the top of the stack is nil or non-nil.
@@ -379,7 +379,7 @@ Here's another example:
 | `GVAR`   | `X` |
 | `RETURN` |     |
 
-In this expression, if we can be assured that + and * refer to the normal arithmetic functions, then we can compile this as if it were `(begin (f x) x)`.
+In this expression, if we can be assured that `+` and `*` refer to the normal arithmetic functions, then we can compile this as if it were `(begin (f x) x)`.
 Furthermore, it is reasonable to assume that `+` and `*` will be instructions in our machine that can be invoked inline, rather than having to call out to a function.
 Many compilers spend a significant portion of their time optimizing arithmetic operations, by taking into account associativity, commutativity, distributivity, and other properties.
 
@@ -1610,7 +1610,8 @@ This chapter has shown how to evaluate a language with Lisp-like syntax, by writ
 In this section we see how to make the `read` part slightly more general.
 We still read Lisp-like syntax, but the lexical conventions can be slightly different.
 
-The Lisp function `read` is driven by an object called the *readtable,* which is stored in the special variable `*readtable*.` This table associates some action to take with each of the possible characters that can be read.
+The Lisp function `read` is driven by an object called the *readtable,* which is stored in the special variable `*readtable*`.
+This table associates some action to take with each of the possible characters that can be read.
 The entry in the readtable for the character `#\(`, for example, would be directions to read a list.
 The entry for `#\;` would be directions to ignore every character up to the end of the line.
 
@@ -1653,7 +1654,7 @@ Note that the backquote and comma characters are defined as read macros, but the
 
 (set-dispatch-macro-character #\# #\d
   ;; In both Common Lisp and Scheme,
-  ;; #x, #o and #b are hexidecimal, octal, and binary,
+  ;; #x, #o and #b are hexadecimal, octal, and binary,
   ;; e.g. #xff = #o377 = #b11111111 = 255
   ;; In Scheme only, #d255 is decimal 255.
   #'(lambda (stream &rest ignore)

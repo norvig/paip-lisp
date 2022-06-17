@@ -70,7 +70,7 @@ In general, the notation (`:constructor` *fn args*) creates a constructor functi
 
 We ignored commas and periods in ELIZA, but they are crucial for STUDENT, so we must make allowances for them.
 The problem is that a `","` in Lisp normally can be used only within a backquote construction, and a `"."` normally can be used only as a decimal point or in a dotted pair.
-The special meaning of these characters to the Lisp reader can be escaped either by preceding the character with a backslash (\,) or by surrounding the character by vertical bars (| , |).
+The special meaning of these characters to the Lisp reader can be escaped either by preceding the character with a backslash (`\,`) or by surrounding the character by vertical bars (`|,|`).
 
 ```lisp
 (pat-match-abbrev '?x* '(?* ?x))
@@ -667,7 +667,7 @@ It probably only helps in conjunction with a solution to the previous exercise.
 **Exercise  7.5 [h]** Change `student` so that it prints values only for those variables that are being asked for in the problem.
 That is, given the problem "X is 3.
 Y is 4.
-How much is X  +  Y ?" it should not print values for X and Y.
+How much is X + Y?" it should not print values for X and Y.
 
 **Exercise  7.6 [m]** Try STUDENT on the following examples.
 Make sure you handle special characters properly:
@@ -695,9 +695,9 @@ b &times; c = x.
 x = b + b.
 b = 5.*
 
-**Exercise  7.7 [h]**`Student's` infix-to-prefix rules account for the priority of operators properly, but they don't handle associativity in the standard fashion.
+**Exercise  7.7 [h]** `Student's` infix-to-prefix rules account for the priority of operators properly, but they don't handle associativity in the standard fashion.
 For example, (`12 - 6 - 3`) translates to (`- 12 (- 6 3)`) or `9`, when the usual convention is to interpret this as (`- (- 12 6) 3`) or `3`.
-Fix student to handle this convention.
+Fix `student` to handle this convention.
 
 **Exercise  7.8 [d]** Find a mathematically oriented domain that is sufficiently limited so that STUDENT can solve problems in it.
 The chemistry of solutions (calculating pH concentrations) might be an example.

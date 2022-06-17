@@ -541,7 +541,7 @@ Since the data base is now distributed across the property list of various symbo
 ```
 
 Now we need a way of adding a new clause.
-The work is split up into the macro `<-`, which provides the user interface, and a function, add-clause, that does the work.
+The work is split up into the macro `<-`, which provides the user interface, and a function, `add-clause`, that does the work.
 It is worth defining a macro to add clauses because in effect we are defining a new language: Prolog-In-Lisp.
 This language has only two syntactic constructs: the `<-` macro to add clauses, and the `?-` macro to make queries.
 
@@ -1105,23 +1105,19 @@ The questions to be answered are: who drinks water and who owns the zebra?
 To solve this puzzle, we first define the relations `nextto` (for "next to") and `iright` (for "immediately to the right of").
 They are closely related to `member,` which is repeated here.
 
-(<- `(member ?item (?item . ?rest)))`
-
-(<- `(member ?item (?x . ? rest)) (member ?item ?rest))`
-
-(<- `(nextto ?x ?y ?list) (iright ?x ?y ?list))`
-
-(<- `(nextto ?x ?y ?list) (iright ?y ?x ?list))`
-
-(<- `(iright ?left ?right (?left ?right . ?rest)))`
-
-(<- `(iright ?left ?right (?x . ?rest))`
-
-```lisp
-      (iright ?left ?right ?rest))
 ```
+(<- (member ?item (?item . ?rest)))
+(<- (member ?item (?x . ? rest)) (member ?item ?rest))
 
-(<- `(= ?x ?x))`
+(<- (nextto ?x ?y ?list) (iright ?x ?y ?list))
+(<- (nextto ?x ?y ?list) (iright ?y ?x ?list))
+
+(<- (iright ?left ?right (?left ?right . ?rest)))
+(<- (iright ?left ?right (?x . ?rest))
+    (iright ?left ?right ?rest))
+
+(<- (= ?x ?x))
+```
 
 We also defined the identity relation, `=`.
 It has a single clause that says that any x is equal to itself.
@@ -1192,7 +1188,7 @@ It makes it easy to implement a *generate-and-test* strategy, where possible sol
 But generate-and-test is only feasible when the space of possible solutions is small.
 
 In the zebra puzzle, there are five attributes for each of the five houses.
-Thus there are 5!5, or over 24 billion candidate solutions, far too many to test one at a time.
+Thus there are 5!<sup>5</sup>, or over 24 billion candidate solutions, far too many to test one at a time.
 It is the concept of unification (with the corresponding notion of a logic variable) that makes generate-and-test feasible on this puzzle.
 Instead of enumerating complete candidate solutions, unification allows us to specify *partial* candidates.
 We start out knowing that there are five houses, with the Norwegian living on the far left and the milk drinker in the middle.
@@ -1248,7 +1244,7 @@ Such variables will be called `vars` to distinguish them from the implementation
 (defun bound-p (var) (not (eq (var-binding var) unbound)))
 ```
 
-The macro deref gets at the binding of a variable, returning its argument when it is an unbound variable or a non-variable expression.
+The macro `deref` gets at the binding of a variable, returning its argument when it is an unbound variable or a non-variable expression.
 It includes a loop because a variable can be bound to another variable, which in turn is bound to the ultimate value.
 
 Normally, it would be considered bad practice to implement deref as a macro, since it could be implemented as an inline function, provided the caller was willing to write `(setf x (deref x))` instead of `(deref x)`.
@@ -1327,7 +1323,7 @@ The constructor function `?` is defined to generate a new variable with a name t
 This is not strictly necessary; we could have just used the automatically provided constructor `make-var`.
 However, I thought that the operation of providing new anonymous variable was different enough from providing a named variable that it deserved its own function.
 Besides, `make-var` may be less efficient, because it has to process the keyword arguments.
-The function ? has no arguments; it just assigns the default values specified in the slots of the `var` structure.
+The function `?` has no arguments; it just assigns the default values specified in the slots of the `var` structure.
 
 ```lisp
 (defvar *var-counter* 0)

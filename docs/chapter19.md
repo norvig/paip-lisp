@@ -404,7 +404,7 @@ Things are not always so straightforward, unfortunately, as the following exampl
         (PP (P ON) (NP (D THE) (N WABE)))))
 ```
 
-If the program knew morphology-that a *y* at the end of a word often signais an adjective, an *s* a plural noun, and an *ed* a past-tense verb-then it could do much better.
+If the program knew morphology-that a *y* at the end of a word often signals an adjective, an *s* a plural noun, and an *ed* a past-tense verb-then it could do much better.
 
 ## 19.5 Parsing into a Semantic Representation
 
@@ -621,7 +621,7 @@ To get the "best" interpretation out of an arbitrary input, we will not only nee
 In other words, we will assign each interpretation a numeric score, and then pick the interpretation with the highest score.
 
 We start by once again modifying the rule and tree data types to include a score component.
-As with the sem component, this will be used to hold first a function to compute a score and then eventually the score itself.
+As with the `sem` component, this will be used to hold first a function to compute a score and then eventually the score itself.
 
 ```lisp
 (defstruct (rule (:type list)
@@ -982,7 +982,7 @@ For example, consider solving the subject-predicate agreement problem.
 It is possible to do this with a context-free language including categories like singular-NP, plural-NP, singular-VP, and plural-VP, but it is far easier to augment the grammatical formalism to allow passing features between constituents.
 
 It should be noted that context-free phrase-structure rules turned out to be very useful for describing programming languages.
-Starting with Algol 60, the formalism has been used under the name *Backus-NaurForm* (BNF) by computer scientists.
+Starting with Algol 60, the formalism has been used under the name *Backus-Naur Form* (BNF) by computer scientists.
 In this book we are more interested in natural languages, so in the next chapter we will see a more powerful formalism known as *unification grammar* that can handle the problem of agreement, as well as other difficulties.
 Furthermore, *unification grammars* allow a natural way of attaching semantics to a parse.
 

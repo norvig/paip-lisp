@@ -391,7 +391,7 @@ Consider the example:
 
 ```lisp
 (<- (natural 0))
-(<- (natural (1  + ?n)) (natural ?n))
+(<- (natural (1+ ?n)) (natural ?n))
 ```
 
 These rules define the natural numbers (the non-negative integers).
@@ -402,13 +402,13 @@ One approach would be this:
 
 ```lisp
 (<- (integer 0))
-(<- (integer ?n) (integer (1  + ?n)))
-(<- (integer (1  + ?n)) (integer ?n))
+(<- (integer ?n) (integer (1+ ?n)))
+(<- (integer (1+ ?n)) (integer ?n))
 ```
 
 These rules say that 0 is an integer, and any *n* is an integer if *n* + 1 is, and *n* + 1 is if *n* is.
 While these rules are correct in a logical sense, they don't work as a Prolog program.
-Asking `(integer` *x*`)` will result in an endless series of ever-increasing queries: `(integer (1 +` *x*`))`, `(integer (1 + (1 +` *x*`)))`, and so on.
+Asking `(integer` *x*`)` will result in an endless series of ever-increasing queries: `(integer (1+` *x*`))`, `(integer (1+ (1+` *x*`)))`, and so on.
 Each goal is different, so no check can stop the recursion.
 
 The occurs check may or may not introduce problems into Prolog, depending on your interpretation of infinite trees.
@@ -562,8 +562,8 @@ Because of these problems, we make a design choice: we will first build a data b
 We are ready for a more complete specification of the indexing strategy:
 
 *   The value will be indexed under each non-nil nonvariable atom in the key, with a separate index for each position.
-For example, given the preceding data base, the atom a in the first argument position would index values 1,2,3, and 6, while the atom b in the second argument position would index value 4 and 5.
-The atom p in the predicate position would index all six values.
+For example, given the preceding data base, the atom `a` in the first argument position would index values 1,2,3, and 6, while the atom `b` in the second argument position would index value 4 and 5.
+The atom `p` in the predicate position would index all six values.
 
 *   In addition, we will maintain a separate index for variables at each position.
 For example, value 3 would be stored under the index "variable in second argument position."
@@ -1004,6 +1004,7 @@ The infinite loop is avoided, and the first four solutions are found.
 ```lisp
 (<- (natural 0))
 (<- (natural (1  + ?n)) (natural ?n))
+
 > (?- (natural ?n))
 ?N = 0;
 ?N = (1  + 0);
@@ -1075,7 +1076,7 @@ To find out what individual animals of what kinds there are, use:
 ```
 
 The implementation of this new language can be based directly on the previous implementation of dtrees.
-Each assertion is stored as a fact in a dtree, except that the components of an and assertion are stored separately.
+Each assertion is stored as a fact in a dtree, except that the components of an `and` assertion are stored separately.
 The function `add-fact` does this:
 
 ```lisp
@@ -1526,10 +1527,10 @@ The following table shows the possibilities for the propositions "Jan likes Dean
 
 | Approach | True Prop.                 | False Prop.                |
 |----------|----------------------------|----------------------------|
-| 1)       | `(likes Jan Dean) -- true` | `(likes Jan Ian) -- false` |
+| (1)      | `(likes Jan Dean) -- true` | `(likes Jan Ian) -- false` |
 | (2a)     | `(likes true Jan Dean)`    | `(likes false Jan Ian)`    |
 | (2b)     | `(likes Jan Dean)`         | `(not (likes Jan Dean))`   |
-| (2c)     | `(likes Jan Dean)`         | `(~  likes Jan Dean)`      |
+| (2c)     | `(likes Jan Dean)`         | `(~likes Jan Dean)`        |
 
 The difference between (1) and (2) shows up when we want to make a query.
 With (1), we make the single query `(likes Jan Dean)` (or perhaps `(likes Jan ?x))`, and the answers will tell us who Jan does and does not like.

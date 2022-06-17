@@ -1009,7 +1009,7 @@ A GRAM must be of type (MEMBER ACID-FAST POS NEG)
 The gram stain of ORGANISM-1: neg
 ```
 
-The user typed ? to see the list of valid responses.
+The user typed `?` to see the list of valid responses.
 The dialog continues:
 
 ```lisp
@@ -1085,7 +1085,7 @@ Is there another CULTURE? (Y or N) N
 Is there another PATIENT? (Y or N) N
 ```
 
-The set of rules listed above do not demonstrate two important features of the system: the ability to backward-chain, and the ability to use operators other than is in premises.
+The set of rules listed above do not demonstrate two important features of the system: the ability to backward-chain, and the ability to use operators other than `is` in premises.
 
 If we add the following three rules and repeat the case shown above, then evaluating rule 75 will back-chain to rule 1, 2, and finally 3 trying to determine if the patient is a compromised host.
 Note that the question asked will be "What is Sylvia Fischer's white blood cell count?" and not "Is the white blood cell count of Sylvia Fischer < 2.5?" The latter question would suffice for the premise at hand, but it would not be as useful for other rules that might refer to the WBC.

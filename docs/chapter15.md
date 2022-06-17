@@ -554,7 +554,7 @@ The modified version was used by Richard Gabriel in his suite of Common Lisp ben
 The benchmark program is called `frpoly`, because it deals with polynomials and was originally written in the dialect Franz Lisp.
 The `frpoly` benchmark encodes polynomials as lists rather than vectors, and goes to great lengths to be efficient.
 Otherwise, it is similar to the algorithms used here (although the code itself is quite different, using progs and gos and other features that have fallen into disfavor in the intervening decades).
-The particular benchmark we will use here is raising 1 ***+** x + y + z* to the 15th power:
+The particular benchmark we will use here is raising 1 + *x* + *y* + *z* to the 15th power:
 
 ```lisp
 (defun r15-test ()

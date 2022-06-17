@@ -436,7 +436,7 @@ We are now in a position to play the game.
 The expression
 
 `(othello #'human #'human)` will let two people play against each other.
-Alternately, `(othello #' random-strategy #'human)` will allow us to match our wits against a particularly poor strategy.
+Alternately, `(othello #'random-strategy #'human)` will allow us to match our wits against a particularly poor strategy.
 The rest of this chapter shows how to develop a better strategy.
 
 ## 18.3 Evaluating Positions
@@ -1071,7 +1071,7 @@ The clock is passed to `get-move` and `print-board` but is otherwise unused.
 I could have complicated the main game loop by adding tests for forfeits because of expired time and, as we shall see later, resignation by either player.
 However, I felt that would add a great deal of complexity for rarely used options.
 Instead, I wrap the whole game loop, along with the computation of the final score, in a `catch` special form.
-Then, if get-move encounters a forfeit or resignation, it can `throw` an appropriate final score: 64 or -64, depending on which player forfeits.
+Then, if `get-move` encounters a forfeit or resignation, it can `throw` an appropriate final score: 64 or -64, depending on which player forfeits.
 
 ```lisp
 (defvar *move-number* 1 "The number of the move to be played")

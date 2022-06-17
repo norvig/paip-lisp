@@ -156,7 +156,7 @@ An error handler is much like a `catch`, and signaling an error is like a `throw
 In fact, in many systems `catch` and `throw` are implemented with the error-condition system.
 
 The simplest way of handling an error is with the macro `ignore-errors`.
-If noerror occurs, `ignore-errors` is just like `progn`.
+If no error occurs, `ignore-errors` is just like `progn`.
 But if an error does occur, `ignore-errors` will return `nil` as its first value and `t` as its second, to indicate that an error has occurred but without doing anything else:
 
 ```lisp
@@ -915,9 +915,7 @@ Before `if` was a standard part of Lisp, I defined my own version of `if`.
 Unlike the simple `if`, my version took any number of test/result pairs, followed by an optional else result.
 In general, the expansion was:
 
-```lisp
-(if *a b c d...x)* => (cond *(a b)* (*c d*) ... (T *x*))
-```
+`(if` *a b c d ... x*) => (`cond` *(a b) (c d)* ... (`T` *x*))
 
 My `if` also had one more feature: the symbol `'that'` could be used to refer to the value of the most recent test.
 For example, I could write:
@@ -990,7 +988,7 @@ Here's a version that generates less garbage:
 
 There are three problems with this definition.
 First, it wastes space: mapcar creates a new argument list each time, only to have the list be discarded.
-Second, it wastes time: doing a `setf` of the ith element of a list makes the algorithm *O*(*n<sup>2</sup>*) instead of *O*(*n*), where *n* is the length of the list.
+Second, it wastes time: doing a `setf` of the *i*th element of a list makes the algorithm *O*(*n<sup>2</sup>*) instead of *O*(*n*), where *n* is the length of the list.
 Third, it is subtly wrong: if `result-sequence` is a vector with a fill pointer, then `map-into` is supposed to ignore `result-sequence's` current length and extend the fill pointer as needed.
 The following version fixes those problems:
 
@@ -1042,7 +1040,7 @@ There are several things worth noticing here.
 First, I split the main loop into two versions, one where the result is a list, and the other where it is a vector.
 Rather than duplicate code, the local functions `do-one-call` and `do-result` are defined.
 The former is declared inline because it it called often, while the latter is not.
-The arguments are computed by looking at each sequence in turn, taking the ith element if it is a vector, and popping the sequence if it is a list.
+The arguments are computed by looking at each sequence in turn, taking the *i*th element if it is a vector, and popping the sequence if it is a list.
 The arguments are stored into the list `arglist`, which has been preallocated to the correct size.
 All in all, we compute the answer fairly efficiently, without generating unnecessary garbage.
 
@@ -1096,7 +1094,7 @@ If `map-into` is declared `inline` and the compiler is reasonably good, then it 
 
 Another change in the ANSI proposal is to add a `:key` keyword to `reduce`.
 This is a useful addition-in fact, for years I had been using a `reduce-by` function that provided just this functionality.
-In this section we see how to add the : key keyword.
+In this section we see how to add the `:key` keyword.
 
 At the top level, I define reduce as an interface to the keywordless function `reduce*`.
 They are both proclaimed inline, so there will be no overhead for the keywords in normal uses of reduce.

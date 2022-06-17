@@ -38,7 +38,7 @@ Person and number agreement is propagated in the variable `?agr`, and we also ke
 English has three cases that are reflected in certain pronouns.
 In the first person singular, "I" is the *nominative* or *subjective* case, "me" is the *accusative* or *objective* case, and "my" is the *genitive* case.
 To distinguish them from the genitive, we refer to the nominative and the objective cases as the *common* cases.
-Accordingly, the three cases will be marked by the expressions `(common nom), (common obj),` and gen, respectively.
+Accordingly, the three cases will be marked by the expressions `(common nom)`, `(common obj)`, and `gen`, respectively.
 Many languages of the world have suffixes that mark nouns as being one case or another, but English does not.
 Thus, we use the expression `(common ?)` to mark nouns.
 
@@ -240,7 +240,9 @@ For example, `(a ?x (dog ?x) )` or `((number 3) ?x (dog ?x))`.
 These are the most important determiner types, but there are others, and there are pre- and postdeterminers that combine in restricted combinations.
 Predeterminers include all, both, half, double, twice, and such.
 Postdeterminers include every, many, several, and few.
-Thus, we can say "all her many good ideas" or "all the King's men." But we can not say "*all much ideas" or "*the our children." The details are complicated and are omitted from this grammar.
+Thus, we can say "all her many good ideas" or "all the King's men."
+But we can not say "\*all much ideas" or "\*the our children."
+The details are complicated and are omitted from this grammar.
 
 ## 21.5 Verb Phrases
 
@@ -1459,7 +1461,7 @@ In connection to the previous exercise, note that it is rare if not impossible f
 **Exercise  21.4 [m]** Add rules to `advp` to allow for adverbs to modify other adverbs, as in "extremely likely" or "very strongly."
 
 **Exercise  21.5 [h]** Allow adverbs to modify adjectives, as in "very good" or "really delicious." The syntax will be easy, but it is harder to get a reasonable semantics.
-While you're at it, make sure that you can handle adjectives with so-called *noninter- sective* semantics.
+While you're at it, make sure that you can handle adjectives with so-called *nonintersective* semantics.
 Some adjectives can be handled by intersective semantics: a red circle is something that is red and is a circle.
 But for other adjectives, this model does not work: a former senator is not something that is former and is a senator-a former senator is not a senator at all.
 Similarly, a toy elephant is not an elephant.

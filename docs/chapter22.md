@@ -1154,7 +1154,7 @@ While we're at it, we might as well add some error checking:
 ```
 
 **Answer 22.6** Storing the environment as an association list, `((*var val*)...)`, makes it easy to look up variables with `assoc`.
-We could save one cons cell per variable just by changing to `((*var* . *val*)...)`.
+We could save one cons cell per variable just by changing to ((*var* . *val*)...).
 But even better is to switch to a different representation, one presented by Steele and Sussman in *The Art of the Interpreter* (1978).
 In this representation we switch from a single list of var/val pairs to a list of frames, where each frame is a var-list/val-list pair.
 It looks like this:
@@ -1175,8 +1175,7 @@ Now `extend-env` is trivial:
 
 The advantage of this approach is that in most cases we already have a list of variables (the procedure's parameter list) and values (from the `mapcar` of `interp` over the arguments).
 So it is cheaper to just cons these two lists together, rather than arranging them into pairs.
-Of course, `get-var` and `set-var`!
-become more complex.
+Of course, `get-var` and `set-var!` become more complex.
 
 **Answer 22.7** One answer is to destructively alter the source code as it is macro-expanded, so that the next time the source code is interpreted, it will already be expanded.
 The following code takes care of that:
