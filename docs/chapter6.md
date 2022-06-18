@@ -81,7 +81,7 @@ This function could then be used in writing each new interpreter:
 ```lisp
 (defun lisp ()
   (interactive-interpreter '> #'eval))
-  
+
 (defun eliza ()
   (interactive-interpreter 'eliza>
     #'(lambda (x) (flatten (use-eliza-rules x)))))
@@ -93,7 +93,7 @@ Or, with the help of the higher-order function compose:
 (defun compose (f g)
   "Return the function that computes (f (g x))."
   #'(lambda (x) (funcall f (funcall g x))))
-  
+
 (defun eliza ()
   (interactive-interpreter 'eliza>
     (compose #'flatten #'use-eliza-rules)))
@@ -126,16 +126,16 @@ The function `prompt-generator`, for example, returns a function that will print
    "Read an expression, transform it, and print the result."
    (loop
       (handler-case
-	  (progn
-	    (if (stringp prompt)
-		(print prompt)
-		(funcall prompt))
-	    (print (funcall transformer (read))))
-	;; In case of error, do this:
-	(error (condition)
-	  (format t "~&;; Error ~a ignored, back to top level."
-		  condition)))))
-          
+      (progn
+        (if (stringp prompt)
+        (print prompt)
+        (funcall prompt))
+        (print (funcall transformer (read))))
+    ;; In case of error, do this:
+    (error (condition)
+      (format t "~&;; Error ~a ignored, back to top level."
+          condition)))))
+
 (defun prompt-generator (&optional (num 0) (ctl-string "[~d] "))
   "Return a function that prints prompts like [l], [2], etc."
   #'(lambda () (format t ctl-string (incf num))))
@@ -167,7 +167,7 @@ This would look like:
 Since patterns are like boolean expressions, it makes sense to allow boolean operators on them.
 Following the question-mark convention, we will use `?and`, `?or` and `?not` for the operators.<a id="tfn06-2"></a><sup>[2](#fn06-2)</sup>
 Here is a pattern to match a relational expression with one of three relations.
-It succeeds because the < matches one of the three possibilities specified by `(?or < = >).`
+It succeeds because the `<` matches one of the three possibilities specified by `(?or < = >).`
 
 ```lisp
 > (pat-match '(?x (?or < = >) ?y) '(3 < 4)) => ((?Y . 4) (?X . 3))
@@ -245,11 +245,11 @@ For completeness, we repeat here the necessary constants and low-level functions
 
 (defconstant no-bindings '((t . t))
   "Indicates pat-match success, with no variables.")
-  
+
 (defun variable-p (x)
   "Is x a variable (a symbol beginning with '?')?"
   (and (symbolp x) (equal (elt (symbol-name x) 0) #\?)))
-  
+
 (defun get-binding (var bindings)
   "Find a (variable . value) pair in a binding list."
   (assoc var bindings))
@@ -257,17 +257,17 @@ For completeness, we repeat here the necessary constants and low-level functions
 (defun binding-var (binding)
   "Get the variable part of a single binding."
   (car binding))
-  
+
 (defun binding-val (binding)
   "Get the value part of a single binding."
   (cdr binding))
-  
+
 (defun make-binding (var val) (cons var val))
 
 (defun lookup (var bindings)
   "Get the value part (for var) from a binding list."
   (binding-val (get-binding var bindings)))
-  
+
 (defun extend-bindings (var val bindings)
   "Add a (var . value) pair to a binding list."
   (cons (make-binding var val)
@@ -276,7 +276,7 @@ For completeness, we repeat here the necessary constants and low-level functions
     (if (eq bindings no-bindings)
       nil
       bindings)))
-      
+
 (defun match-variable (var input bindings)
   "Does VAR match input? Uses (or updates) and returns bindings."
   (let ((binding (get-binding var bindings)))
@@ -328,28 +328,28 @@ A function that looks up a data-driven function and calls it (such as `segment-m
   (and (consp pattern) (consp (first pattern))
     (symbolp (first (first pattern)))
     (segment-match-fn (first (first pattern)))))
-    
+
 (defun single-pattern-p (pattern)
-  "Is this a single-matching pattern? 
+  "Is this a single-matching pattern?
   E.g. (?is x predicate) (?and . patterns) (?or . patterns)."
   (and (consp pattern)
       (single-match-fn (first pattern))))
-      
+
 (defun segment-matcher (pattern input bindings)
   "Call the right function for this kind of segment pattern."
   (funcall (segment-match-fn (first (first pattern)))
         pattern input bindings))
-	
+
 (defun single-matcher (pattern input bindings)
   "Call the right function for this kind of single pattern."
   (funcall (single-match-fn (first pattern))
         (rest pattern) input bindings))
-	
+
 (defun segment-match-fn (x)
   "Get the segment-match function for x,
   if it is a symbol that has one."
   (when (symbolp x) (get x 'segment-match)))
-  
+
 (defun single-match-fn (x)
   "Get the single-match function for x,
   if it is a symbol that has one."
@@ -370,7 +370,7 @@ First, the single-pattern matching functions:
         (not (funcall pred input)))
       fail
       new-bindings)))
-      
+
 (defun match-and (patterns input bindings)
   "Succeed if all the patterns match the input."
   (cond ((eq bindings fail) fail)
@@ -378,7 +378,7 @@ First, the single-pattern matching functions:
       (t (match-and (rest patterns) input
               (pat-match (first patterns) input
                   bindings)))))
-		  
+
 (defun match-or (patterns input bindings)
   "Succeed if any one of the patterns match the input."
   (if (null patterns)
@@ -388,7 +388,7 @@ First, the single-pattern matching functions:
         (if (eq new-bindings fail)
           (match-or (rest patterns) input bindings)
           new-bindings))))
-	  
+
 (defun match-not (patterns input bindings)
   "Succeed if none of the patterns match the input
   This will never bind any variables."
@@ -423,14 +423,14 @@ If it is not a constant, then we just return the first possible starting positio
               (if (eq b2 fail)
                 (segment-match pattern input bindings (+ pos 1))
                 b2)))))))
-		
+
  (defun first-match-pos (pat1 input start)
    "Find the first position that pat1 could possibly match input,
    starting at position start. If pat1 is non-constant, then just  return start."
    (cond ((and (atom pat1) (not (variable-p pat1)))
-	  (position pat1 input :start start :test #'equal))
-	 ((<= start (length input)) start)
-	 (t nil)))
+      (position pat1 input :start start :test #'equal))
+     ((<= start (length input)) start)
+     (t nil)))
 ```
 
 In the first example below, the segment variable `?x` matches the sequence (`b c`).
@@ -513,7 +513,7 @@ We will only allow symbols to be macros, so it is reasonable to store the expans
   "Define symbol as a macro standing for a pat-match pattern."
   (setf (get symbol 'expand-pat-match-abbrev)
     (expand-pat-match-abbrev expansion))
-    
+
 (defun expand-pat-match-abbrev (pat)
   "Expand out all pattern matching abbreviations in pat."
   (cond ((and (symbolp pat) (get pat 'expand-pat-match-abbrev)))
@@ -585,7 +585,7 @@ The rule-based translator tool now looks like this:
         (if (not (eq result fail))
           (funcall action result (funcall rule-then rule)))))
     rules))
-    
+
 (defun use-eliza-rules (input)
   "Find some rule with which to transform the input."
   (rule-based-translator input *eliza-rules*
@@ -810,12 +810,12 @@ Be careful - `sort` is a destructive function.)
 (defun diff (num)
   "Return the function that finds the difference from num."
   #'(lambda (x) (abs (- x num))))
-  
+
 (defun sorter (cost-fn)
   "Return a combiner function that sorts according to cost-fn."
   #'(lambda (new old)
       (sort (append new old) #'< :key cost-fn)))
-      
+
 (defun best-first-search (start goal-p successors cost-fn)
   "Search lowest cost states first until goal is reached."
   (tree-search (list start) goal-p successors (sorter cost-fn)))
@@ -848,7 +848,7 @@ It makes the "mistake" of searching 7 before 6 (because 7 is closer to 12), but 
   #'(lambda (x) (if (> x price)
               most-positive-fixnum
               (- price x))))
-	      
+
 > (best-first-search 1 (is 12) #'binary-tree (price-is-right 12)) ;; Search: (1)
 ;; Search: (3 2)
 ;; Search: (7 6 2)
@@ -974,7 +974,7 @@ The former uses `find-all-if`, which was defined on [page 101](B9780080571157500
           (and (not (eq c city))
               (< (air-distance c city) 1000.0)))
         *cities*))
-	
+
 (defun city (name)
   "Find the city with this name."
   (assoc name *cities*))
@@ -1083,7 +1083,7 @@ Since this is a problem in solid geometry, not AI, the code is presented without
     ;; d is the straight-line chord between the two cities,
     ;; The length of the subtending arc is given by:
     (* earth-diameter (asin (/ d 2)))))
-    
+
 (defun xyz-coords (city)
   "Returns the x,y,z coordinates of a point on a sphere.
   The center is (0 0 0) and the north pole is (0 0 1)."
@@ -1092,13 +1092,13 @@ Since this is a problem in solid geometry, not AI, the code is presented without
       (list (* (cos psi) (cos phi))
             (* (cos psi) (sin phi))
             (sin psi))))
-	    
+
 (defun distance (point1 point2)
   "The Euclidean distance between two points.
   The points are coordinates in n-dimensional space."
   (sqrt (reduce #'+ (mapcar #'(lambda (a b) (expt (- a b) 2))
                 point1 point2))))
-		
+
 (defun deg->radians (deg)
   "Convert degrees and minutes to radians."
   (* (+ (truncate deg) (* (rem  deg 1) 100/60)) pi 1/180))
@@ -1182,14 +1182,14 @@ We also define `map-path` to iterate over a path, collecting values:
   (declare (ignore depth))
   (format stream "#<Path to ~a cost ~,lf>"
         (path-state path) (path-total-cost path)))
-	
+
 (defun show-city-path (path &optional (stream t))
   "Show the length of a path, and the cities along it."
   (format stream "#<Path ~,lf km: ~{~:(~a~)~^- ~}>"
         (path-total-cost path)
         (reverse (map-path #'city-name path)))
   (values))
-  
+
 (defun map-path (fn path)
   "Call fn on each state in the path, collecting results."
   (if (null path)
@@ -1318,7 +1318,7 @@ The difference between `graph-search` and `tree-search` is in the call to `new-s
             goal-p successors combiner state=
             (adjoin (first states) old-states
                       :test state=)))))
-		      
+
 (defun new-states (states successors state= old-states)
   "Generate successor states that have not been seen before."
   (remove-if
@@ -1422,16 +1422,16 @@ Here are the three auxiliary functions:
 (defun find-path (state paths state=)
   "Find the path with this state among a list of paths."
   (find state paths :key #'path-state :test state=))
-  
+
 (defun better-path (pathl path2)
   "Is path1 cheaper than path2?"
   (< (path-total-cost path1) (path-total-cost path2)))
-  
+
 (defun insert-path (path paths)
   "Put path into the right position, sorted by total cost."
   ;; MERGE is a built-in function
   (merge 'list (list path) paths #'< :key #'path-total-cost))
-  
+
 (defun path-states (path)
   "Collect the states along this path."
   (if (null path)
@@ -1662,9 +1662,9 @@ Here is another version that does all of the above and also handles multiple val
       (setf - (funcall read input)
           vals (multiple-value-list (funcall eval -)))
       ;; Now update the history variables
-   (setf +++ ++     /// //     *** (first ///)   
-         ++ +       // /       ** (first //)     
-         + -        / vals     * (first /)) 
+   (setf +++ ++     /// //     *** (first ///)
+         ++ +       // /       ** (first //)
+         + -        / vals     * (first /))
       ;; Finally print the computed value(s)
       (dolist (value vals)
         (funcall print value output)))))
@@ -1675,7 +1675,7 @@ Here is another version that does all of the above and also handles multiple val
 ```lisp
 (defun compose (&rest functions)
   "Return the function that is the composition of all the args. i.e.
-(compose f g h) = (lambda (x) (f (g (h x))))." 
+(compose f g h) = (lambda (x) (f (g (h x))))."
 #'(lambda (x)
       (reduce #'funcall functions :from-end t :initial-value x)))
 ```
