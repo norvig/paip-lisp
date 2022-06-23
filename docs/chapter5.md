@@ -126,16 +126,16 @@ and the function `pat-match`, which is extended to handle pattern-matching varia
    (if (or (atom x) (atom y))
        (eql x y)
        (and (simple-equal (first x) (first y))
-        (simple-equal (rest x) (rest y)))))
+	    (simple-equal (rest x) (rest y)))))
 
 (defun pat-match (pattern input)
   "Does pattern match input? Any variable can match anything."
   (if (variable-p pattern)
       t
       (if (or (atom pattern) (atom input))
-      (eql pattern input)
+	  (eql pattern input)
           (and (pat-match (first pattern) (first input))
-           (pat-match (rest pattern) (rest input))))))
+	       (pat-match (rest pattern) (rest input))))))
 ```
 
 &#9635; **Exercise 5.1 [s]** Would it be a good idea to replace the complex and form in `pat-match` with the simpler `(every #'pat-match pattern input)?`
@@ -195,9 +195,9 @@ Here's a first attempt:
    (if (variable-p pattern)
        (list (cons pattern input))
        (if (or (atom pattern) (atom input))
-       (eql pattern input)
-       (append (pat-match (first pattern) (first input))
-           (pat-match (rest pattern) (rest input))))))
+	   (eql pattern input)
+	   (append (pat-match (first pattern) (first input))
+		   (pat-match (rest pattern) (rest input))))))
 ```
 
 This implementation looks reasonable: it returns an a-list of one element if the pattern is a variable, and it appends alists if the pattern and input are both lists.
@@ -263,21 +263,21 @@ If none of these four cases succeeds, then the match fails.
 (defun pat-match (pattern input &optional (bindings no-bindings))
    "Match pattern against input in the context of the bindings"
    (cond ((eq bindings fail) fail)
-     ((variable-p pattern)
-      (match-variable pattern input bindings))
-     ((eql pattern input) bindings)
-     ((and (consp pattern) (consp input))
-      (pat-match (rest pattern) (rest input)
-             (pat-match (first pattern) (first input)
-                bindings)))
-     (t fail)))
+	 ((variable-p pattern)
+	  (match-variable pattern input bindings))
+	 ((eql pattern input) bindings)
+	 ((and (consp pattern) (consp input))
+	  (pat-match (rest pattern) (rest input)
+		     (pat-match (first pattern) (first input)
+				bindings)))
+	 (t fail)))
 
 (defun match-variable (var input bindings)
   "Does VAR match input? Uses (or updates) and returns bindings."
   (let ((binding (get-binding var bindings)))
     (cond ((not binding) (extend-bindings var input bindings))
-      ((equal input (binding-val binding)) bindings)
-      (t fail))))
+	  ((equal input (binding-val binding)) bindings)
+	  (t fail))))
 ```
 
 We can now test `pat-match` and see how it works:
@@ -295,11 +295,11 @@ It does no real harm, but we can eliminate it by making `extend-bindings` a litt
 (defun extend-bindings (var val bindings)
    "Add a (var . value) pair to a binding list. "
    (cons (cons var val)
-     ;; Once we add a "real" binding,
-     ;; we can get rid of the dummy no-bindings
-     (if (eq bindings no-bindings)
-         nil
-         bindings)))
+	 ;; Once we add a "real" binding,
+	 ;; we can get rid of the dummy no-bindings
+	 (if (eq bindings no-bindings)
+	     nil
+	     bindings)))
 
 > (sublis (pat-match ' (i need a ?X) ' (i need a vacation))
           '(what would it mean to you if you got a ?X ?))
@@ -354,16 +354,16 @@ Defining the predicate to test for segment variables is also easy:
  (defun pat-match (pattern input &optional (bindings no-bindings))
    "Match pattern against input in the context of the bindings"
    (cond ((eq bindings fail) fail)
-     ((variable-p pattern)
-      (match-variable pattern input bindings))
-     ((eql pattern input) bindings)
-     ((segment-pattern-p pattern)                ; ***
-      (segment-match pattern input bindings))    ; ***
-     ((and (consp pattern) (consp input))
-      (pat-match (rest pattern) (rest input)
-             (pat-match (first pattern) (first input)
-                bindings)))
-     (t fail)))
+	 ((variable-p pattern)
+	  (match-variable pattern input bindings))
+	 ((eql pattern input) bindings)
+	 ((segment-pattern-p pattern)                ; ***
+	  (segment-match pattern input bindings))    ; ***
+	 ((and (consp pattern) (consp input))
+	  (pat-match (rest pattern) (rest input)
+		     (pat-match (first pattern) (first input)
+				bindings)))
+	 (t fail)))
 
 (defun segment-pattern-p (pattern)
   "Is this a segment matching pattern: ((?* var) . pat)"
@@ -392,21 +392,21 @@ Notice that this policy rules out the possibility of any kind of variable follow
 (defun segment-match (pattern input bindings &optional (start 0))
    "Match the segment pattern ((?* var) . pat) against input."
    (let ((var (second (first pattern)))
-     (pat (rest pattern)))
+	 (pat (rest pattern)))
      (if (null pat)
-     (match-variable var input bindings)
-     ;; We assume that pat starts with a constant
-     ;; In other words, a pattern can't have 2 consecutive vars
-     (let ((pos (position (first pat) input
-                  :start start :test #'equal)))
-       (if (null pos)
-           fail
-           (let ((b2 (pat-match pat (subseq input pos) bindings)))
-         ;; If this match failed, try another longer one
-         ;; If it worked, check that the variables match
-         (if (eq b2 fail)
-             (segment-match pattern input bindings (+ pos 1))
-             (match-variable var (subseq input 0 pos) b2))))))))
+	 (match-variable var input bindings)
+	 ;; We assume that pat starts with a constant
+	 ;; In other words, a pattern can't have 2 consecutive vars
+	 (let ((pos (position (first pat) input
+			      :start start :test #'equal)))
+	   (if (null pos)
+	       fail
+	       (let ((b2 (pat-match pat (subseq input pos) bindings)))
+		 ;; If this match failed, try another longer one
+		 ;; If it worked, check that the variables match
+		 (if (eq b2 fail)
+		     (segment-match pattern input bindings (+ pos 1))
+		     (match-variable var (subseq input 0 pos) b2))))))))
 ```
 
 Some examples of segment matching follow:
@@ -440,23 +440,23 @@ The fix is to call `match-variable` before testing whether the `b2` fails, so th
 (defun segment-match (pattern input bindings &optional (start 0))
    "Match the segment pattern ((?* var) . pat) against input."
    (let ((var (second (first pattern)))
-     (pat (rest pattern)))
+	 (pat (rest pattern)))
      (if (null pat)
-     (match-variable var input bindings)
-     ;; We assume that pat starts with a constant
-     ;; In other words, a pattern can't have 2 consecutive vars
-     (let ((pos (position (first pat) input
-                  :start start :test #'equal)))
-       (if (null pos)
-           fail
-           (let ((b2 (pat-match
-              pat (subseq input pos)
-              (match-variable var (subseq input 0 pos)
-                      bindings))))
-         ;; If this match failed, try another longer one
-         (if (eq b2 fail)
-             (segment-match pattern input bindings (+ pos 1))
-             b2)))))))
+	 (match-variable var input bindings)
+	 ;; We assume that pat starts with a constant
+	 ;; In other words, a pattern can't have 2 consecutive vars
+	 (let ((pos (position (first pat) input
+			      :start start :test #'equal)))
+	   (if (null pos)
+	       fail
+	       (let ((b2 (pat-match
+			  pat (subseq input pos)
+			  (match-variable var (subseq input 0 pos)
+					  bindings))))
+		 ;; If this match failed, try another longer one
+		 (if (eq b2 fail)
+		     (segment-match pattern input bindings (+ pos 1))
+		     b2)))))))
 ```
 
 Now we see that the match goes through:
@@ -573,11 +573,11 @@ Here is the complete program:
  (defun use-eliza-rules (input)
    "Find some rule with which to transform the input."
    (some #'(lambda (rule)
-         (let ((result (pat-match (rule-pattern rule) input)))
-           (if (not (eq result fail))
-           (sublis (switch-viewpoint result)
-               (random-elt (rule-responses rule))))))
-     *eliza-rules*))
+	     (let ((result (pat-match (rule-pattern rule) input)))
+	       (if (not (eq result fail))
+		   (sublis (switch-viewpoint result)
+			   (random-elt (rule-responses rule))))))
+	 *eliza-rules*))
 
 (defun switch-viewpoint (words)
   "Change I to you and vice versa, and so on."
@@ -785,9 +785,9 @@ This could also be done by altering the readtable, as in section 23.5, page 821.
    (loop
       (print 'eliza>)
       (let* ((input (read-line-no-punct))
-          (response (flatten (use-eliza-rules input))))
-       (print-with-spaces response)
-       (if (equal response '(good bye)) (RETURN)))))
+	      (response (flatten (use-eliza-rules input))))
+	   (print-with-spaces response)
+	   (if (equal response '(good bye)) (RETURN)))))
 
 (defun print-with-spaces (list)
   (mapc #'(lambda (x) (prin1 x) (princ " ")) list))

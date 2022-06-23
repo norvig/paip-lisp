@@ -126,15 +126,15 @@ The function `prompt-generator`, for example, returns a function that will print
    "Read an expression, transform it, and print the result."
    (loop
       (handler-case
-      (progn
-        (if (stringp prompt)
-        (print prompt)
-        (funcall prompt))
-        (print (funcall transformer (read))))
-    ;; In case of error, do this:
-    (error (condition)
-      (format t "~&;; Error ~a ignored, back to top level."
-          condition)))))
+	  (progn
+	    (if (stringp prompt)
+		(print prompt)
+		(funcall prompt))
+	    (print (funcall transformer (read))))
+	;; In case of error, do this:
+	(error (condition)
+	  (format t "~&;; Error ~a ignored, back to top level."
+		  condition)))))
 
 (defun prompt-generator (&optional (num 0) (ctl-string "[~d] "))
   "Return a function that prints prompts like [l], [2], etc."
@@ -428,9 +428,9 @@ If it is not a constant, then we just return the first possible starting positio
    "Find the first position that pat1 could possibly match input,
    starting at position start. If pat1 is non-constant, then just  return start."
    (cond ((and (atom pat1) (not (variable-p pat1)))
-      (position pat1 input :start start :test #'equal))
-     ((<= start (length input)) start)
-     (t nil)))
+	  (position pat1 input :start start :test #'equal))
+	 ((<= start (length input)) start)
+	 (t nil)))
 ```
 
 In the first example below, the segment variable `?x` matches the sequence (`b c`).

@@ -7,9 +7,6 @@
 ;;; The basic are in auxfns.lisp; look for "PATTERN MATCHING FACILITY"
 
 ;; New version of pat-match with segment variables
-;(requires "eliza1")
-(load "auxfns")
-
 
 (defun variable-p (x)
   "Is x a variable (a symbol beginning with `?')?"
@@ -146,7 +143,6 @@
 (defun random-elt (choices)
   "Choose an element from a list at random."
   (elt choices (random (length choices))))
-
 
 ;;; ==============================
 
