@@ -742,7 +742,7 @@ If none of them work, we return an expression indicating that the integral is un
   ;; First try some trivial cases
   (cond
     ((free-of exp x) `(* ,exp x))          ; Int c dx = c*x
-    ((starts-with exp '+)                  ; Int f + g  = 
+    ((starts-with exp '+)                  ; Int f + g  =
      `(+ ,(integrate (exp-lhs exp) x)      ;   Int f + Int g
          ,(integrate (exp-rhs exp) x)))
     ((starts-with exp '-)
