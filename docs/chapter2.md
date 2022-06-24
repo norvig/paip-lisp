@@ -1,12 +1,10 @@
 # Chapter 2
 ## A Simple Lisp Program
 
-> *Certum quod factum.*
-
+> *Certum quod factum.* \
 > (One is certain of only what one builds.)
 
-> -Giovanni Battista Vico (1668-1744)
-
+> -Giovanni Battista Vico (1668-1744) \
 > Italian royal historiographer
 
 You will never become proficient in a foreign language by studying vocabulary lists.
@@ -21,11 +19,11 @@ If you can learn how to do that, then acquiring the remaining vocabulary of Lisp
 The program we will develop in this chapter generates random English sentences.
 Here is a simple grammar for a tiny portion of English:
 
-> *Sentence* => *Noun-Phrase + Verb-Phrase*  
-> *Noun-Phrase* => *Article + Noun*  
-> *Verb-Phrase* => *Verb + Noun-Phrase*  
-> *Article* => *the, a,...*  
-> *Noun* => *man, ball, woman, table...*  
+> *Sentence* => *Noun-Phrase + Verb-Phrase* \
+> *Noun-Phrase* => *Article + Noun* \
+> *Verb-Phrase* => *Verb + Noun-Phrase* \
+> *Article* => *the, a,...* \
+> *Noun* => *man, ball, woman, table...* \
 > *Verb* => *hit, took, saw, liked...*
 
 To be technical, this description is called a *context-free phrase-structure grammar*, and the underlying paradigm is called *generative syntax*.
@@ -137,11 +135,11 @@ This problem will be compounded as we consider more complex rules.
 Suppose we wanted to allow noun phrases to be modified by an indefinite number of adjectives and an indefinite number of prepositional phrases.
 In grammatical notation, we might have the following rules:
 
-> *Noun-Phrase => Article + Adj\* + Noun + PP\*  
-> Adj\* => &#x2205;, Adj + Adj\*  
-> PP\* => &#x2205;, PP + PP\*  
-> PP => Prep + Noun-Phrase  
-> Adj => big, little, blue, green, ...  
+> *Noun-Phrase => Article + Adj\* + Noun + PP\* \
+> Adj\* => &#x2205;, Adj + Adj\* \
+> PP\* => &#x2205;, PP + PP\* \
+> PP => Prep + Noun-Phrase \
+> Adj => big, little, blue, green, ... \
 > Prep => to, in, by, with, ...*
 
 In this notation, &#x2205; indicates a choice of nothing at all, a comma indicates a choice of several alternatives, and the asterisk is nothing special-as in Lisp, it's just part of the name of a symbol.
@@ -193,11 +191,11 @@ If we wanted to develop a larger grammar, the problem could get worse, because t
 An alternative implementation of this program would concentrate on making it easy to write grammar rules and would worry later about how they will be processed.
 Let's look again at the original grammar rules:
 
-> *Sentence => Noun-Phrase + Verb-Phrase  
-> Noun-Phrase => Article + Noun  
-> Verb-Phrase => Verb + Noun-Phrase  
-> Article => the, a, ...  
-> Noun => man, ball, woman, table...  
+> *Sentence => Noun-Phrase + Verb-Phrase \
+> Noun-Phrase => Article + Noun \
+> Verb-Phrase => Verb + Noun-Phrase \
+> Article => the, a, ... \
+> Noun => man, ball, woman, table... \
 > Verb => hit, took, saw, liked...*
 
 Each rule consists of an arrow with a symbol on the left-hand side and something on the right-hand side.

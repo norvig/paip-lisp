@@ -1,5 +1,5 @@
 
-# *Paradigms of Artificial Intelligence Programming* 
+# *Paradigms of Artificial Intelligence Programming*
 
 ![PAIP](https://norvig.com/paip-cover.gif)
 

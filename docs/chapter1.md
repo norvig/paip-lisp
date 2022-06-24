@@ -3,7 +3,7 @@
 
 > You think you know when you learn, are more sure when you can write, even more when you can teach, but certain when you can program.
 >
-> -Alan Perlis  
+> -Alan Perlis \
 > Yale University computer scientist
 
 This chapter is for people with little or no experience in Lisp.
@@ -418,7 +418,7 @@ The computer will perform the same operation in each case, but we as programmers
 Another advantage of defining specific functions like `first-name` is that if we decide to change the representation of names we will only have to change the definition of `first-name`.
 This is a much easier task than hunting through a large program and changing the uses of `first` that refer to names, while leaving other uses alone.
 
-```lisp 
+```lisp
 (defun first-name (name)
   "Select the first name from a name represented as a list."
   (first name))
@@ -430,9 +430,9 @@ This is a much easier task than hunting through a large program and changing the
 > (first-name '(Wilma Flintstone)) => WILMA
 
 > (setf names '((John Q Public) (Malcolm X)
-              (Admiral Grace Murray Hopper) (Spot) 
+              (Admiral Grace Murray Hopper) (Spot)
               (Aristotle) (A A Milne) (Z Z Top)
-              (Sir Larry Olivier) (Miss Scarlet))) => 
+              (Sir Larry Olivier) (Miss Scarlet))) =>
 
 ((JOHN Q PUBLIC) (MALCOLM X) (ADMIRAL GRACE MURRAY HOPPER)
  (SPOT) (ARISTOTLE) (A A MILNE) (Z Z TOP) (SIR LARRY OLIVIER)

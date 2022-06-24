@@ -172,22 +172,22 @@ Here is the complete GPS program itself:
 
 (defstruct op "An operation"
   (action nil) (preconds nil) (add-list nil) (del-list nil))
-  
+
 (defun GPS (*state* goals *ops*)
   "General Problem Solver: achieve all goals using *ops*."
   (if (every #'achieve goals) 'solved))
-  
+
 (defun achieve (goal)
   "A goal is achieved if it already holds,
   or if there is an appropriate op for it that is applicable."
   (or (member goal *state*)
     (some #'apply-op
       (find-all goal *ops* :test #'appropriate-p))))
-      
+
 (defun appropriate-p (goal op)
   "An op is appropriate to a goal if it is in its add list."
   (member goal (op-add-list op)))
-  
+
 (defun apply-op (op)
   "Print a message and update *state* if op is applicable."
   (when (every #'achieve (op-preconds op))
@@ -239,7 +239,7 @@ expanded into the following definitions:
 
 (defun op-p (op)
   (and (vectorp op) (eq (elt op 0) 'op)))
-  
+
 (setf (documentation 'op 'structure) "An operation")
 ```
 Next in the GPS program are four function definitions.
@@ -398,7 +398,7 @@ The "bug" is that GPS uses the expression (`every #'achieve goals`) to achieve a
 If this expression returns true, it means that every one of the goals has been achieved in sequence, but it doesn't mean they are all still true at the end.
 In other words, the goal (`have-money son-at-school`), which we intended to mean "end up in a state where both have-money and son-at-school are true," was interpreted by GPS to mean "first achieve `have-money`, and then achieve `son-at-school`." Sometimes achieving one goal can undo another, previously achieved goal.
 We will call this the "prerequisite clobbers sibling goal" problem.<a id="tfn04-2"></a><sup>[2](#fn04-2)</sup>
-That is, `have-money` and `son-at-school` are sibling goals, one of the prerequisites for the plan for `son-at-school` is `car-works`, and achieving that goal clobbers the `have-money goal`.
+That is, `have-money` and `son-at-school` are sibling goals, one of the prerequisites for the plan for `son-at-school` is `car-works`, and achieving that goal clobbers the `have-money` goal.
 
 Modifying the program to recognize the "prerequisite clobbers sibling goal" problem is straightforward.
 First note that we call (`every #`'`achieve`*something*) twice within the program, so let's replace those two forms with ( `achieve-all`*something*).
@@ -498,13 +498,13 @@ The reasoning is as follows: we want the shop to know about the problem with the
 One way to get in communication is to phone, but we don't have a phone book to look up the number.
 We could ask them their phone number, but this requires being in communication with them.
 As Aristotle put it, "If we are to be always deliberating, we shall have to go on to infinity." We will call this the "recursive subgoal" problem: trying to solve a problem in terms of itself.
-One way to avoid the problem is to have achieve keep track of all the goals that are being worked on and give up if it sees a loop in the goal stack.
+One way to avoid the problem is to have `achieve` keep track of all the goals that are being worked on and give up if it sees a loop in the goal stack.
 
 ## 4.10 The Lack of Intermediate Information Problem
 
 When GPS fails to find a solution, it just returns `nil`.
 This is annoying in cases where the user expected a solution to be found, because it gives no information about the cause of failure.
-The user could always trace some function, as we traced achieve above, but the output from trace is rarely exactly the information desired.
+The user could always trace some function, as we traced `achieve` above, but the output from trace is rarely exactly the information desired.
 It would be nice to have a general debugging output tool where the programmer could insert print statements into his code and have them selectively printed, depending on the information desired.
 
 The function `dbg` provides this capability.
@@ -530,7 +530,7 @@ If you use only keywords and integers for identifiers, then you won't notice the
 
 Two new built-in features are introduced here.
 First, `*debug-io*` is the stream normally used for debugging input/output.
-In all previous calls to `format` we have used t as the stream argument, which causes output to go to the `*standard-output*` stream.
+In all previous calls to `format` we have used `t` as the stream argument, which causes output to go to the `*standard-output*` stream.
 Sending different types of output to different streams allows the user some flexibility.
 For example, debugging output could be directed to a separate window, or it could be copied to a file.
 Second, the function `fresh-line` advances to the next line of output, unless the output stream is already at the start of the line.
@@ -543,11 +543,11 @@ Second, the function `fresh-line` advances to the next line of output, unless th
   (when (member id *dbg-ids*)
     (fresh-line *debug-io*)
     (apply #'format *debug-io* format-string args)))
-    
+
 (defun debug (&rest ids)
   "Start dbg output on the given ids."
   (setf *dbg-ids* (union ids *dbg-ids*)))
-  
+
 (defun undebug (&rest ids)
  "Stop dbg on the ids. With no ids, stop dbg altogether."
   (setf *dbg-ids* (if (null ids) nil
@@ -606,30 +606,30 @@ The most important change is that, instead of printing a message when each opera
 A list of "messages" in each state indicates what actions have been taken.
 Each message is actually a condition, a list of the form (executing *operator*).
 This solves the "running around the block" problem: we could call `GPS` with an initial goal of `((executing run-around-block))`, and it would execute the `run-around-block` operator, thereby satisfying the goal.
-The following code defines a new function, op, which builds operators that include the message in their add-list.
+The following code defines a new function, `op`, which builds operators that include the message in their add-list.
 
 ```lisp
 (defun executing-p (x)
   "Is x of the form: (executing ...) ?"
   (starts-with x 'executing))
-  
+
 (defun starts-with (list x)
   "Is this a list whose first element is x?"
   (and (consp list) (eql (first list) x)))
-  
+
 (defun convert-op (op)
   "Make op conform to the (EXECUTING op) convention."
   (unless (some #'executing-p (op-add-list op))
     (push (list 'executing (op-action op)) (op-add-list op)))
   op)
-  
+
 (defun op (action &key preconds add-list del-list)
   "Make a new operator that obeys the (EXECUTING op) convention."
   (convert-op
     (make-op :action action :preconds preconds
           :add-list add-list :del-list del-list)))
 ```
-Operators built by op will be correct, but we can convert existing operators using `convert-op` directly:
+Operators built by `op` will be correct, but we can convert existing operators using `convert-op` directly:
 
 ```lisp
 (mapc #'convert-op *school-ops*)
@@ -637,8 +637,8 @@ Operators built by op will be correct, but we can convert existing operators usi
 
 This is an example of exploratory programming: instead of starting all over when we discover a limitation of the first version, we can use Lisp to alter existing data structures for the new version of the program.
 
-The definition of the variable `*ops*` and the structure op are exactly the same as before, and the rest of the program consists of five functions we have already seen: `GPS`, `achieve-all`, `achieve`, `appropriate-p`, and `apply-op`.
-At the top level, the function `GPS` calls `achieve-all`, which returns either nil or a valid state.
+The definition of the variable `*ops*` and the structure `op` are exactly the same as before, and the rest of the program consists of five functions we have already seen: `GPS`, `achieve-all`, `achieve`, `appropriate-p`, and `apply-op`.
+At the top level, the function `GPS` calls `achieve-all`, which returns either `nil` or a valid state.
 From this we remove all the atoms, which leaves only the elements of the final state that are lists-in other words, the actions of the form (`executing` *operator*).
 Thus, the value of `GPS` itself is the list of actions taken to arrive at the final state.
 `GPS` no longer returns `SOLVED` when it finds a solution, but it still obeys the convention of returning nil for failure, and non-nil for success.
@@ -649,7 +649,7 @@ In general, it is a good idea to have a program return a meaningful value rather
 
 (defstruct op "An operation"
   (action nil) (preconds nil) (add-list nil) (del-list nil))
-  
+
 (defun GPS (state goals &optional (*ops* *ops*))
   "General Problem Solver: from state, achieve goals using *ops*."
   (remove-if #'atom (achieve-all (cons '(start) state) goals nil)))
@@ -663,14 +663,14 @@ They also must still obey the convention of returning nil when they fail.
 
 Thus we have a potential ambiguity: does nil represent failure, or does it represent a valid state that happens to have no conditions?
 We resolve the ambiguity by adopting the convention that all states must have at least one condition.
-This convention is enforced by the function GPS.
-Instead of calling (`achieve-all state goals nil`), GPS calls `(achieve-all (cons '(start) state) goals nil)`.
-So even if the user passes GPS a null initial state, it will pass on a state containing `(start)` to `achieve-all`.
+This convention is enforced by the function `GPS`.
+Instead of calling (`achieve-all state goals nil`), `GPS` calls `(achieve-all (cons '(start) state) goals nil)`.
+So even if the user passes `GPS` a null initial state, it will pass on a state containing `(start)` to `achieve-all`.
 From then on, we are guaranteed that no state will ever become nil, because the only function that builds a new state is `apply-op`, and we can see by looking at the last line of `apply-op` that it always appends something onto the state it is returning.
-(An add-list can never be nil, because if it were, the operator would not be appropriate.
+(An `add-list` can never be nil, because if it were, the operator would not be appropriate.
 Besides, every operator includes the (executing ...) condition.)
 
-Note that the final value we return from GPS has all the atoms removed, so we end up reporting only the actions performed, since they are represented by conditions of the form (`executing *action*`).
+Note that the final value we return from `GPS` has all the atoms removed, so we end up reporting only the actions performed, since they are represented by conditions of the form (`executing *action*`).
 Adding the `(start)` condition at the beginning also serves to differentiate between a problem that cannot be solved and one that is solved without executing any actions.
 Failure returns nil, while a solution with no steps will at least include the `(start)` condition, if nothing else.
 
@@ -678,7 +678,7 @@ Functions that return nil as an indication of failure and return some useful val
 They are error prone in just these cases where nil might be construed as a useful value.
 Be careful when defining and using semipredicates: (1) Decide if nil could ever be a meaningful value.
 (2) Insure that the *user* can't corrupt the program by supplying nil as a value.
-In this program, GPS is the only function the user should call, so once we have accounted for it, we're covered.
+In this program, `GPS` is the only function the user should call, so once we have accounted for it, we're covered.
 (3) Insure that the *program* can't supply nil as a value.
 We did this by seeing that there was only one place in the program where new states were constructed, and that this new state was formed by appending a one-element list onto another state.
 By following this three-step procedure, we have an informal proof that the semipredicates involving states will function properly.
@@ -706,7 +706,7 @@ Otherwise, `achieve` looks through the list of operators, trying to find one app
           goals)
         (subsetp goals current-state :test #'equal))
       current-state)))
-      
+
 (defun achieve (state goal goal-stack)
   "A goal is achieved if it already holds,
   or if there is an appropriate op for it that is applicable."
@@ -720,7 +720,7 @@ Otherwise, `achieve` looks through the list of operators, trying to find one app
 The goal `( (executing run-around-block) )` is a list of one condition, where the condition happens to be a two-element list.
 Allowing lists as conditions gives us more flexibility, but we also have to be careful.
 The problem is that not all lists that look alike actually are the same.
-The predicate equal essentially tests to see if its two arguments look alike, while the predicate `eql` tests to see if its two arguments actually are identical.
+The predicate `equal` essentially tests to see if its two arguments look alike, while the predicate `eql` tests to see if its two arguments actually are identical.
 Since functions like `member` use `eql` by default, we have to specify with a `:test` keyword that we want `equal` instead.
 Since this is done several times, we introduce the function `member-equal`.
 In fact, we could have carried the abstraction one step further and defined `member-situation`, a function to test if a condition is true in a situation.
@@ -748,7 +748,7 @@ If it is possible to arrive at such a state, then `apply-op` returns a new state
             (member-equal x (op-del-list op)))
           state2)
         (op-add-list op)))))
-        
+
 (defun appropriate-p (goal op)
   "An op is appropriate to a goal if it is in its add-list."
   (member-equal goal (op-add-list op)))
@@ -786,7 +786,7 @@ Clearly, the idiom of binding a special variable is more concise, and while it c
 (defun GPS (state goals &optional (*ops* *ops*))
   "General Problem Solver: from state, achieve goals using *ops*."
   (remove-if #'atom (achieve-all (cons '(start) state) goals nil)))
-  
+
 (defun GPS (state goals &optional (ops *ops*))
   "General Problem Solver: from state, achieve goals using *ops*."
   (let ((old-ops *ops*))
@@ -902,27 +902,27 @@ For now, assume we define the operators as follows:
       :preconds '(chair-at-middle-room at-middle-room on-floor)
       :add-list '(at-bananas on-chair)
       :del-list '(at-middle-room on-floor))
-    (op 
+    (op
       'push-chair-from-door-to-middle-room
       :preconds '(chair-at-door at-door)
       :add-list '(chair-at-middle-room at-middle-room)
       :del-list '(chair-at-door at-door))
-    (op 
+    (op
       'walk-from-door-to-middle-room
       :preconds '(at-door on-floor)
       :add-list '(at-middle-room)
       :del-list '(at-door))
-    (op 
+    (op
       'grasp-bananas
       :preconds '(at-bananas empty-handed)
       :add-list '(has-bananas)
       :del-list '(empty-handed))
-    (op 
+    (op
       'drop-ball
       :preconds '(has-ball)
       :add-list '(empty-handed)
       :del-list '(has-ball))
-    (op 
+    (op
       'eat-bananas
       :preconds '(has-bananas)
       :add-list '(empty-handed not-hungry)
@@ -968,7 +968,7 @@ The following code defines a set of operators for mazes in general, and for this
       (make-maze-op (second pair) (first pair))))
 (defun make-maze-op (here there)
   "Make an operator to move between two places"
-  (op 
+  (op
     '(move from ,here to ,there)
     :preconds '((at ,here))
     :add-list '((at ,there))
@@ -1016,7 +1016,7 @@ We wanted GPS to return a list of the actions executed.
 However, in order to account for the case where the goal can be achieved with no action, I included `(START)` in the value returned by GPS.
 These examples include the `START` and `EXECUTING` forms but also a list of the form (AT *n*), for some *n*.
 This is the bug.
-If we go back and look at the function GPS, we find that it reports the result by removing all atoms from the state returned by `achieve-all`.
+If we go back and look at the function `GPS`, we find that it reports the result by removing all atoms from the state returned by `achieve-all`.
 This is a "pun"-we said remove atoms, when we really meant to remove all conditions except the `(START)` and `(EXECUTING *action*)` forms.
 Up to now, all these conditions were atoms, so this approach worked.
 The maze domain introduced conditions of the form (`AT` *n*), so for the first time there was a problem.
@@ -1091,7 +1091,7 @@ We will create an operator for each possible block move.
     ops))
 (defun move-op (a b c)
   "Make an operator to move A from B to C."
-  (op 
+  (op
       '(move ,a from ,b to ,c)
       :preconds '((space on ,a) (space on ,c) (,a on ,b))
       :add-list (move-ons a b c)
@@ -1184,7 +1184,7 @@ That is, we could change `achieve-all` as follows:
   "Achieve each goal, trying several orderings."
   (some #'(lambda (goals) (achieve-each state goals goal-stack))
       (orderings goals)))
-      
+
 (defun achieve-each (state goals goal-stack)
   "Achieve each goal, and make sure they still hold at the end."
   (let ((current-state state))
@@ -1194,7 +1194,7 @@ That is, we could change `achieve-all` as follows:
           goals)
         (subsetp goals current-state :test #'equal))
       current-state)))
-      
+
 (defun orderings (l)
   (if (> (length l) l)
       (list l (reverse l))
@@ -1263,7 +1263,7 @@ To implement this approach, we change `achieve`:
       ((member-equal goal goal-stack) nil)
       (t (some #'(lambda (op) (apply-op state goal op goal-stack))
           (appropriate-ops goal state))))) ;***
-          
+
 (defun appropriate-ops (goal state)
   "Return a list of appropriate operators,
   sorted by the number of unfulfilled preconditions."
@@ -1417,7 +1417,7 @@ Similarly, we have defined an operator where the monkey pushes the chair from th
 The conclusion is that we would like to have variables in the operators, so we could say something like:
 
 ```lisp
-(op 
+(op
   '(push X from A to B)
   :preconds '((monkey at A) (X at A) (pushable X) (path A B))
   :add-list '((monkey at B) (X at B))
@@ -1485,7 +1485,7 @@ For a theoretical computer scientist, discovering that a problem is NP-hard is a
 But for an AI worker, it means that the wrong question is being asked.
 Many problems are NP-hard when we insist on the optimal solution but are much easier when we accept a solution that might not be the best.
 
-The input to GPS is essentially a program, and the execution of GPS is the execution of that program.
+The input to `GPS` is essentially a program, and the execution of GPS is the execution of that program.
 If GPS's input language is general enough to express any program, then there will be problems that can't be solved, either because they take too long to execute or because they have no solution.
 Modern problem-solving programs recognize this fundamental limitation, and either limit the class of problems they try to solve or consider ways of finding approximate or partial solutions.
 Some problem solvers also monitor their own execution time and know enough to give up when a problem is too hard.

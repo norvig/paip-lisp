@@ -631,8 +631,8 @@ In most implementations, this will be faster than alternatives such as hash tabl
 (defun get-dtree (predicate)
   "Fetch (or make) the dtree for this predicate."
   (cond ((get predicate 'dtree))
-	(t (push predicate *predicates*)
-	   (setf (get predicate 'dtree) (make-dtree)))))
+        (t (push predicate *predicates*)
+           (setf (get predicate 'dtree) (make-dtree)))))
 
 (defun clear-dtrees ()
   "Remove all the dtrees for all the predicates."

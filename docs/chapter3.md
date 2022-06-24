@@ -232,7 +232,7 @@ When the main purpose is to return a value rather than take action, `cond` and `
 If there are several tests comparing an expression to constants, then case is appropriate.
 A `case` form looks like:
 
-> `(case` *expression*  
+> `(case` *expression* \
       (*match result*...)...)
 
 The *expression* is evaluated and compared to each successive *match*.
@@ -303,7 +303,7 @@ It is also possible to introduce local variables using the special form `let`.
 Following are the general `let` form, along with an example.
 Each variable is bound to the corresponding value, and then the body is evaluated:
 
-> `(let` ((*variable value*)...)  
+> `(let` ((*variable value*)...) \
 > *body*...)
 
 ```lisp
@@ -1964,7 +1964,7 @@ A special variable has indefinite scope and dynamic extent.
 The function call (`symbol-value` *var*), where *var* evaluates to a symbol, can be used to get at the current value of a special variable.
 To set a special variable, the following two forms are completely equivalent:
 
-> `(setf (symbol-value` *var*) *value*)  
+> `(setf (symbol-value` *var*) *value*) \
 > `(set` *var value*)
 
 where both *var* and *value* are evaluated.
@@ -2132,8 +2132,8 @@ Consider these annotated examples:
 ```lisp
 > :xyz => :XYZ                            ; keywords are self-evaluating
 
-> &optional =>                            ; lambda-list keywords are normal symbols 
-Error: the symbol &optional has no value     
+> &optional =>                            ; lambda-list keywords are normal symbols
+Error: the symbol &optional has no value
 
 > '&optional => &OPTIONAL
 
@@ -2142,7 +2142,7 @@ Error: the symbol &optional has no value
 > (f 3) => 6
 
 > (defun f (:xyz) (+ :xyz :xyz)) =>
-Error: the keyword :xyz appears in a variable list.  
+Error: the keyword :xyz appears in a variable list.
 Keywords are constants, and so cannot be used as names of variables.
 
 > (defun g (&key x y) (list x y)) => G
