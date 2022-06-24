@@ -130,7 +130,7 @@ The following rules implement these four cases:
 (rule (modifiers ? ? ? () ? ?g1 ?g1 t) ==> )
 ```
 
-We need to say more about the list of complements, or slots, that can be associated with words in the lexcion.
+We need to say more about the list of complements, or slots, that can be associated with words in the lexicon.
 Each slot is a list of the form (*role number form),* where the role refers to some semantic relation, the number indicates the ordering of the complements, and the form is the type of constituent expected: noun phrase, verb phrase, or whatever.
 The details will be covered in the following section on verb phrases, and `complement` will be covered in the section on XPs.
 For now, we give a single example.

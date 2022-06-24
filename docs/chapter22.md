@@ -689,12 +689,12 @@ A more representative example is:
 ```
 
 Here `print-table` calls `print-sqrt-abs`, which calls `must-be-number`.
-The first three times all is fine and the values 1,2,3 get printed.
+The first three times all is fine and the values 1, 2, 3 get printed.
 The next time `x` is not a number, so the value `"huh?"` gets thrown to the tag `not-a-number` established by `catch` in `f`.
 The throw bypasses the pending calls to `abs`, `sqrt`, and `print`, as well as the rest of the call to `mapcar`.
 
-This kind of control is provided in Scheme with a very general and powerful procedure, `call-with-current-continuation`, which is often abbreviated `call/cc.
-call/cc` is a normal procedure (not a special form like `throw` and `catch`) that takes a single argument.
+This kind of control is provided in Scheme with a very general and powerful procedure, `call-with-current-continuation`, which is often abbreviated `call/cc`.
+`call/cc` is a normal procedure (not a special form like `throw` and `catch`) that takes a single argument.
 Let's call the argument `computation`.
 `computation` must be a procedure of one argument.
 When `call/cc` is invoked, it calls `computation`, and whatever `computation` returns is the value of the call to `call/cc`.
@@ -704,16 +704,16 @@ Here are some examples:
 
 ```lisp
 > (scheme)
-=> (+  1 (call/cc (lambda (cc) (+  20 300))))
+=> (+ 1 (call/cc (lambda (cc) (+ 20 300))))
 321
 ```
 
-This example ignores `cc` and just computes `(+ 1 (+ 20 300 ))`.
+This example ignores `cc` and just computes `(+ 1 (+ 20 300))`.
 More precisely, it is equivalent to:
 
 ```lisp
 ((lambda (val) (+ 1 val))
-  (+  20 300))
+  (+ 20 300))
 ```
 
 The next example does make use of `cc`:
@@ -737,7 +737,7 @@ or to:
 ```lisp
 ((lambda (val) (+ 1 val))
   (catch 'cc
-    ((lambda (v) (+  20 v))
+    ((lambda (v) (+ 20 v))
       (throw 'cc 300))))
 ```
 
@@ -773,6 +773,7 @@ Consider a slight variation:
            (set! old-cc cc)
            (+ 20 (cc 300)))))
 301
+
 => (old-cc 500)
 501
 ```
@@ -782,8 +783,9 @@ Afterward, calling `(old-cc 500)` returns (for the second time) to the point in 
 The equivalent Common Lisp code leads to an error:
 
 ```lisp
-> (+  1 (catch 'tag (+  20 (throw 'tag 300))))
+> (+ 1 (catch 'tag (+ 20 (throw 'tag 300))))
 301
+
 > (throw 'tag 500)
 *Error*: *there was no pending CATCH for the tag TAG*
 ```

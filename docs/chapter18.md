@@ -1268,11 +1268,7 @@ In the following, the weighted-squares strategy wins 4 out of 10 games against t
         (alpha-beta-searcher 2#'modified-weighted-squares)
         5)
 4
-```
-
--  `76`
-
-```lisp
+-76
 (-8 -40 22 -30 10 -10 12 -18 4 -18)
 ```
 

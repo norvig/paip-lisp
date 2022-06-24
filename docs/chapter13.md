@@ -454,7 +454,7 @@ The class-options are rarely used.
         :reader interest-rate)))
 ```
 
-In the definition of account, we see that the list of superclasses is empty, because account does not inherit from any classes.
+In the definition of `account`, we see that the list of superclasses is empty, because `account` does not inherit from any classes.
 There are three slot specifiers, for the `name`, `balance`, and `interest-rate` slots.
 Each slot name can be followed by optional keyword/value pairs defining how the slot is used.
 The `name` slot has an `:initarg` option, which says that the name can be specified when a new account is created with `make-instance`.
@@ -476,7 +476,7 @@ Here we see the creation of an object, and the application of the automatically 
 
 CLOS differs from most object-oriented systems in that methods are defined separately from classes.
 To define a method (besides the ones defined automatically by `:reader`, `:writer`, or `:accessor` options) we use the `defmethod` macro.
-It is similar to defun in form:
+It is similar to `defun` in form:
 
 `(defmethod` *method-name* (*parameter...*) *body...*)
 
@@ -590,7 +590,7 @@ The basic class, `problem`, contains a single-instance variable to hold the unex
 ```
 
 The function searcher is similar to the function `tree-search` of [section 6.4](B9780080571157500066.xhtml#s0025).
-The main difference is that searcher uses generic functions instead of passing around functional arguments.
+The main difference is that `searcher` uses generic functions instead of passing around functional arguments.
 
 ```lisp
 (defmethod searcher ((prob problem))
@@ -606,7 +606,7 @@ The main difference is that searcher uses generic functions instead of passing a
       (searcher prob))))
 ```
 
-searcher does not assume that the problem states are organized in a list; rather, it uses the generic function `no-states-p` to test if there are any states, `pop-state` to remove and return the first state, and `current-state` to access the first state.
+`searcher` does not assume that the problem states are organized in a list; rather, it uses the generic function `no-states-p` to test if there are any states, `pop-state` to remove and return the first state, and `current-state` to access the first state.
 For the basic `problem` class, we will in fact implement the states as a list, but another class of problem is free to use another representation.
 
 ```lisp
@@ -725,7 +725,7 @@ The following is a `cost-fn` that is reasonable for any `eql-problem` dealing wi
 
 Beam search is a modification of best-first search where all but the best *b* states are thrown away on each iteration.
 A beam search problem is represented by a class where the instance variable `beam-width` holds the parameter *b*.
-If this nil, then full best-first search is done.
+If this is nil, then full best-first search is done.
 Beam search is implemented by an `:around` method on `problem-combiner`.
 It calls the next method to get the list of states produced by best-first search, and then extracts the first *b* elements.
 
@@ -867,7 +867,7 @@ len(L.N). NI is N+1.
 Bertrand Meyer, in his book on the object-oriented language Eiffel (1988), lists five qualities that contribute to software quality:
 
 *   *Correctness*.
-Clearly, a correct program is of the upmost importance.
+Clearly, a correct program is of the utmost importance.
 
 *   *Robustness*.
 Programs should continue to function in a reasonable manner even for input that is beyond the original specifications.

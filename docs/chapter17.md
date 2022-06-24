@@ -147,7 +147,7 @@ We chose L as the default value for the `type` slot at random, but note that it 
 An ambiguous vertex will have several labelings, while an unambiguous vertex has exactly one, and a vertex with no labelings indicates an impossible diagram.
 Initially we don't know which vertexes are what, so they all start with several possible labelings.
 Note that a labeling is a list, not a set: the order of the labels is significant and matches the order of the neighboring vertexes.
-The function possible-labelings gives a list of all possible labelings for each vertex type.
+The function `possible-labelings` gives a list of all possible labelings for each vertex type.
 We use R and L instead of arrows as labels, because the orientation of the arrows is significant.
 An R means that as you travel from the vertex to its neighbor, the polyhedron is on the right and the background object is on the left.
 Thus, an R is equivalent to an arrow pointing away from the vertex.

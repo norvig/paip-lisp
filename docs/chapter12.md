@@ -233,8 +233,8 @@ we transform it to the equivalent:
 ```
 
 Now the arguments in the head of the clause match the arguments in the function `likes/2`, so there is no need to generate any code for the head.
-This makes things simpler by eliminating `compile-head`, and it is a better decomposition for another reason: instead of adding optimizations to `compile-head`, we will add them to the code in `compile`-`body` that handles =.
-That way, we can optimize calls that the user makes to =, in addition to the calls introduced by the source-code transformation.
+This makes things simpler by eliminating `compile-head`, and it is a better decomposition for another reason: instead of adding optimizations to `compile-head`, we will add them to the code in `compile-body` that handles `=`.
+That way, we can optimize calls that the user makes to `=`, in addition to the calls introduced by the source-code transformation.
 
 To get an overview, the calling sequence of functions will turn out to be as follows:
 
@@ -268,7 +268,7 @@ Here then is our first version of `compile-clause`:
 The bulk of the work is in `compile-body`, which is a little more complicated.
 There are three cases.
 If there is no body, we just call the continuation.
-If the body starts with a call to =, we compile a call to `unify!`.
+If the body starts with a call to `=`, we compile a call to `unify!`.
 Otherwise, we compile a call to a function, passing in the appropriate continuation.
 
 However, it is worthwhile to think ahead at this point.
@@ -600,9 +600,10 @@ Either `compile-unify` can modify a global state variable, or it can return mult
 On the grounds that global variables are messy, we make the second choice: `compile-unify` will take a binding list as an extra argument and will return two values, the actual code and an updated binding list.
 We will expect that other related functions will have to be modified to deal with these multiple values.
 
-When `compile-unify` is first called in our example clause, it is asked to unify `?argl` and `?item`.
-We want it to return no code (or more precisely, the trivially true test, t).
-For the second value, it should return a new binding list, with `?item` bound to `?arg1.` That binding will be used to replace `?item` with `?arg1` in subsequent code.
+When `compile-unify` is first called in our example clause, it is asked to unify `?arg1` and `?item`.
+We want it to return no code (or more precisely, the trivially true test, `t`).
+For the second value, it should return a new binding list, with `?item` bound to `?arg1`.
+That binding will be used to replace `?item` with `?arg1` in subsequent code.
 
 How do we know to bind `?item` to `?arg1` rather than the other way around?
 Because `?arg1` is already bound to something-the value passed in to `member.` We don't know what this value is, but we can't ignore it.
@@ -1034,11 +1035,12 @@ Find out if `with-compilation-unit` is already defined in your implementation, o
 
 Our compiled Prolog code runs the zebra puzzle in 17.4 seconds, a 16-fold speed-up over the interpreted version, for a rate of 740 LIPS.
 
-Another popular benchmark is Lisp's reverse function, which we can code as the rev relation:
+Another popular benchmark is Lisp's `reverse` function, which we can code as the `rev` relation:
 
 ```lisp
 (<- (rev () ()))
 (<- (rev (?x . ?a) ?b) (rev ?a ?c) (concat ?c (?x) ?b))
+
 (<- (concat () ?1 ?1)
 (<- (concat (?x . ?a) ?b (?x . ?c)) (concat ?a ?b ?c))
 ```
@@ -1400,7 +1402,7 @@ Write a Prolog compiler macro for `solve`.
 Notice that even when you have defined a compiler macro, you still need the underlying primitive, because the predicate might be invoked through a `call/1`.
 The same thing happens in Lisp: even when you supply a compiler macro, you still need the actual function, in case of a `funcall` or `apply`.
 
-**Exercise  12.9 [h]** Which of the predicates `call`, and, `or`, `not`, or `repeat` could benefit from compiler macros?
+**Exercise  12.9 [h]** Which of the predicates `call`, `and`, `or`, `not`, or `repeat` could benefit from compiler macros?
 Write compiler macros for those predicates that could use one.
 
 **Exercise  12.10 [m]** You might have noticed that `call/1` is inefficient in two important ways.
@@ -1746,7 +1748,7 @@ Terms like `atom` have one meaning in Prolog and another in Lisp.
 Also, in Prolog the normal notation is `\=` and `\==`, not `/=` and `/==`.
 For Prolog-In-Lisp, you need to decide which notations to use: Prolog's or Lisp's.
 
-**Exercise  12.18 [s]** In Lisp, we are used to writing n-ary calls like `(<  1 n 10 ) or (= x y z )`.
+**Exercise  12.18 [s]** In Lisp, we are used to writing n-ary calls like `(< 1 n 10 )` or `(= x y z)`.
 Write compiler macros that expand n-ary calls into a series of binary calls.
 For example, `(< 1 n 10)` should expand into `(and (< 1 n) (< n 10))`.
 
@@ -1758,7 +1760,7 @@ Add procedures `p-trace` and `p-untrace` to trace and untrace Prolog predicates.
 Add code to the compiler to generate calls to a printing procedure for goals that are traced.
 In Lisp, we have to trace procedures when they are called and when they return.
 In Prolog, there are four cases to consider: the call, successful completion, backtrack into subsequent clauses, and failure with no more clauses.
-We will call these four `cases call`, `exit`, `redo,` and `fail`, respectively.
+We will call these four cases `call`, `exit`, `redo,` and `fail`, respectively.
 If we traced `member,` we would expect tracing output to look something like this:
 
 ```lisp

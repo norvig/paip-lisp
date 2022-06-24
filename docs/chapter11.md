@@ -104,7 +104,7 @@ Many expert systems use forward chaining exclusively, and some systems use a mix
 The leftmost expression in a clause is called the *head*, and the remaining ones are called the *body.* In this view, a fact is just a rule that has no body; that is, a fact is true no matter what.
 In general, then, the form of a clause is:
 
-(<- *head body*...)
+`(<-` *head body*...)
 
 A clause asserts that the head is true only if all the goals in the body are true.
 For example, the following clause says that Kim likes anyone who likes both Lee and Kim:
@@ -151,10 +151,10 @@ For example, if we have two equations, *a* + *a* = 0 and *x* + *y* = *y,* and if
 The version of `unify` we will define shows this result by binding `?y` to `0`, `?x` to `?y`, and `?a` to `?x`.
 We will also define the function `unifier`, which shows the structure that results from unifying two structures.
 
-`> (unify '(?a + ?a = 0) '(?x + ?y = ?y))`=>
-
-```lisp
+```
+> (unify '(?a + ?a = 0) '(?x + ?y = ?y)) =>
 ((?Y . 0) (?X . ?Y) (?A . ?X))
+
 > (unifier '(?a + ?a = 0) '(?x + ?y = ?y)) => (0 + 0 = 0)
 ```
 
@@ -666,9 +666,9 @@ To ask whom Sandy likes, we would use:
 (((?WHO . LEE))
   ((?WHO . KIM))
   ((?X2856 . ROBIN) (?WHO .?X2856))
-  ((?X2860 . CATS) (?X2857 CATS) (?X2856 . SANDAY) (?WHO ?X2856)
+  ((?X2860 . CATS) (?X2857 CATS) (?X2856 . SANDY) (?WHO ?X2856)
   ((?X2865 . CATS) (?X2856 ?X2865)((?WHO . ?X2856))
-  (?WHO . SANDY) (?X2867 . SANDAY)))
+  (?WHO . SANDY) (?X2867 . SANDY)))
 ```
 
 Perhaps surprisingly, there are six answers.
@@ -1128,7 +1128,7 @@ Now we are ready to define the zebra puzzle with a single (long) clause.
 The variable `?h` represents the list of five houses, and each house is represented by a term of the form (house *nationality pet cigarette drink color*).
 The variable `?w` is the water drinker, and `?z` is the zebra owner.
 Each of the 15 constraints in the puzzle is listed in the body of `zebra`, although constraints 9 and 10 have been combined into the first one.
-Consider constraint 2, "The Englishman lives in the `red` house." This is interpreted as "there is a house whose nationality is Englishman and whose color is `red,` and which is a member of the list of houses": in other words, `(member (house englishman ? ? ? red) ?h).` The other constraints are similarly straightforward.
+Consider constraint 2, "The Englishman lives in the red house." This is interpreted as "there is a house whose nationality is Englishman and whose color is red, and which is a member of the list of houses": in other words, `(member (house englishman ? ? ? red) ?h).` The other constraints are similarly straightforward.
 
 ```lisp
 (<- (zebra ?h ?w ?z)
@@ -1172,7 +1172,7 @@ Here's the query and solution to the puzzle:
 No.
 ```
 
-This took 278 seconds, and profiling (see page 288) reveals that the function prove was called 12,825 times.
+This took 278 seconds, and profiling (see page 288) reveals that the function `prove` was called 12,825 times.
 A call to prove has been termed a *logical inference,* so our system is performing 12825/278 = 46 logical inferences per second, or LIPS.
 Good Prolog systems perform at 10,000 to 100,000 LIPS or more, so this is barely limping along.
 
@@ -1348,10 +1348,10 @@ It calls `prove-all`, which attempts to prove a list of goals, `prove-all` succe
 ```lisp
 (<- (prove ?goal) (prove-all (?goal)))
 (<- (prove-all nil))
-(<- (prove-all (?goal . !!!(char) îgoals))
-        (clause (<- ?goal . ?body))
-        (concat ?body ?goals ?new-goals)
-        (prove-all ?new-goals))
+(<- (prove-all (?goal . ?goals))
+    (clause (<- ?goal . ?body))
+    (concat ?body ?goals ?new-goals)
+    (prove-all ?new-goals))
 ```
 
 Now we add two clauses to the data base to define the member relation:

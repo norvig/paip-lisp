@@ -50,7 +50,7 @@ We can define an input format for polynomials as follows:
 
 2.  Any Lisp symbol is a polynomial.
 
-3.  If *p* and *q* are polynomials, so are (*p + q*) and (*p * q*).
+3.  If *p* and *q* are polynomials, so are (*p + q*) and (*p \* q*).
 
 4.  If *p* is a polynomial and *n* is a positive integer, then (*p* ^ *n*) is a polynomial.
 

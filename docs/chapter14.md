@@ -188,7 +188,7 @@ Fortunately, the assertion "Either NYC or Albany is the capital of NY" can be re
 (<- (capital NYC NY) (not (capital Albany NY)))
 ```
 
-Unfortunately, Prolog's not is different from logic's `not`.
+Unfortunately, Prolog's `not` is different from logic's `not`.
 When Prolog answers "no" to a query, it means the query cannot be proven from the known facts.
 If everything is known, then the query must be false, but if there are facts that are not known, the query may in fact be true.
 This is hardly surprising; we can't expect a program to come up with answers using knowledge it doesn't have.
@@ -338,7 +338,7 @@ However, Patrick Hayes has shown that when the proper choices are made, predicat
 The details are in Hayes 1985.
 
 The need to define categories is a more difficult problem.
-Predicate calculus works very well for crisp, mathematical categories: a; is a triangle if and only if *x* is a polygon with three sides.
+Predicate calculus works very well for crisp, mathematical categories: *x* is a triangle if and only if *x* is a polygon with three sides.
 Unfortunately, most categories that humans deal with in everyday life are not defined so rigorously.
 The category *friend* refers to someone you have mostly positive feelings for, whom you can usually trust, and so on.
 This "definition" is not a set of necessary and sufficient conditions but rather is an open-ended list of ill-defined qualities that are highly correlated with the category *friend.* We have a prototype for what an ideal friend should be, but no clear-cut boundaries that separate *friend* from, say, *acquaintance.* Furthermore, the boundaries seem to vary from one situation to another: a person you describe as a good friend in your work place might be only an acquaintance in the context of your home life.
@@ -562,7 +562,7 @@ Because of these problems, we make a design choice: we will first build a data b
 We are ready for a more complete specification of the indexing strategy:
 
 *   The value will be indexed under each non-nil nonvariable atom in the key, with a separate index for each position.
-For example, given the preceding data base, the atom `a` in the first argument position would index values 1,2,3, and 6, while the atom `b` in the second argument position would index value 4 and 5.
+For example, given the preceding data base, the atom `a` in the first argument position would index values 1, 2, 3, and 6, while the atom `b` in the second argument position would index value 4 and 5.
 The atom `p` in the predicate position would index all six values.
 
 *   In addition, we will maintain a separate index for variables at each position.
@@ -1288,13 +1288,13 @@ But we want to be sure the data base stays consistent even if facts are asserted
 The most complicated attached function is for `sub`.
 Adding a fact such as `(sub bear animal)` causes the following to happen:
 
-*   All of `animal`'s supercategories (such as `living-thing)` become supercategories of all of `bear`'s subcategories (such as `polar-bear)`.
+*   All of `animal`'s supercategories (such as `living-thing)` become supercategories of all of `bear`'s subcategories (such as `polar-bear`).
 
 *   `animal` itself becomes a supercategory all of `bear`'s subcategories.
 
-*   bear itself becomes a subcategory of all of `animal`'s supercategories.
+*   `bear` itself becomes a subcategory of all of `animal`'s supercategories.
 
-*   All of the individuals of bear become individuals of `animal` and its supercategories.
+*   All of the individuals of `bear` become individuals of `animal` and its supercategories.
 
 The following accomplishes these four tasks.
 It does it with four calls to `index-new-fact`, which is used instead of `add-fact` because we don't need to run the attached function on the new facts.

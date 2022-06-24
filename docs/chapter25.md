@@ -451,7 +451,7 @@ A user might write:
 ```
 
 expecting the expression to start reading at position `2` and thus return `b`.
-In fact, this expression returns a.
+In fact, this expression returns `a`.
 The angry user thinks the implementation has erroneously ignored the `:start` argument and files a bug report,<a id="tfn25-1"></a><sup>[1](#fn25-1)</sup> only to get back the following explanation:
 
 The function `read-from-string` takes two optional arguments, `eof-errorp` and `eof-value`, in addition to the keyword arguments.
@@ -477,7 +477,7 @@ However, I was reminded of the function `butlast`, which is also similar to the 
 The index directed me to page 422 for `butlast`, and on the same page I found `ldiff`, which was exactly the desired function.
 It might have been easier to find (and remember) if it were called `list-difference`, but the methodology of browsing near similar functions paid off.
 
-If you think you know part of the name of the desired function, then you can use apropos to find it.
+If you think you know part of the name of the desired function, then you can use `apropos` to find it.
 For example, suppose I thought there was a function to push a new element onto the front of an array.
 Looking under `array`, `push-array`, and `array-push` in the index yields nothing.
 But I can turn to Lisp itself and ask:
@@ -640,7 +640,7 @@ The definition uses `last1`, which was defined on page 305 to return the last el
 ```lisp
 (defmacro pop-end (place)    ; Warning! Buggy!
   "Pop and return last element of the list in PLACE."
-  '(let ((result (lastl .place)))
+  '(let ((result (last1 .place)))
       (setf .place (nbutlast .place))
       result))
 ```
@@ -660,12 +660,12 @@ The solution is to use a brand new local variable that could not possibly be use
 There is still the problem of shadowing local *functions.* For example, a user who writes:
 
 ```lisp
-(flet ((lastl (x) (sqrt x)))
+(flet ((last1 (x) (sqrt x)))
   (pop-end list)
   ...)
 ```
 
-will be in for a surprise, pop-end will expand into code that calls `lastl`, but since `lastl` has been locally defined to be something else, the code won't work.
+will be in for a surprise, `pop-end` will expand into code that calls `last1`, but since `last1` has been locally defined to be something else, the code won't work.
 Thus, the expansion of the macro violates referential transparency.
 To be perfectly safe, we could try:
 
@@ -673,7 +673,7 @@ To be perfectly safe, we could try:
 (defmacro pop-end (place)    ; Less buggy
   "Pop and return last element of the list in PLACE."
   (let ((result (gensym)))
-    '(let ((.result (funcall .#'lastl .place)))
+    '(let ((.result (funcall .#'last1 .place)))
       (setf .place (funcall .#'nbutlast .place))
         ,result)))
 ```

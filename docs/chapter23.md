@@ -430,7 +430,7 @@ Consider the following:
 |      | `CALL`   | `1` |
 |      | `RETURN` |     |
 
-Here we call `g` and when `g` returns we call `f` , and when `f` returns we return from this function.
+Here we call `g` and when `g` returns we call `f`, and when `f` returns we return from this function.
 But this last return is wasteful; we push a return address on the stack, and then pop it off, and return to the next return address.
 An alternative function-calling protocol involves pushing the return address before calling `g,` but then not pushing a return address before calling `f;` when `f` returns, it returns directly to the calling function, whatever that is.
 
@@ -867,7 +867,7 @@ The `prim` data type has five slots.
 The first holds the name of a symbol that is globally bound to a primitive operation.
 The second, `n-args`, is the number of arguments that the primitive requires.
 We have to take into account the number of arguments to each function because we want `(+ x y)` to compile into a primitive addition instruction, while `(+ x y z)` should not.
-It will compile into a call to the + function instead.
+It will compile into a call to the `+` function instead.
 The `opcode` slot gives the opcode that is used to implement the primitive.
 The `always` field is true if the primitive always returns non-nil, `false` if it always returns nil, and nil otherwise.
 It is used in exercise 23.6.
@@ -919,7 +919,7 @@ We can enforce that by altering `gen-set` to preserve them as constants:
             (gen 'GSET var)))))
 ```
 
-Now an expression like `(+ x 1)` will be properly compiled using the + instruction rather than a subroutine call, and an expression like `(set ! + *)` will be flagged as an error when + is a global variable, but allowed when it has been locally bound.
+Now an expression like `(+ x 1)` will be properly compiled using the `+` instruction rather than a subroutine call, and an expression like `(set ! + *)` will be flagged as an error when `+` is a global variable, but allowed when it has been locally bound.
 However, we still need to be able to handle expressions like `(set ! add +)` and then `(add x y)`.
 Thus, we need some function object that `+` will be globally bound to, even if the compiler normally optimizes away references to that function.
 The function `init-scheme-comp` takes care of this requirement:
@@ -1180,7 +1180,7 @@ The most important architectural feature of the Lisp Machine was the inclusion o
 Also important was microcode to implement certain frequently used generic operations.
 For example, in the Symbolics 3600 Lisp Machine, the microcode for addition simultaneously did an integer add, a floating-point add, and a check of the tag bits.
 If both arguments turned out to be either integers or floating-point numbers, then the appropriate result was taken.
-Otherwise, a trap was signaled, and a converison routine was entered.
+Otherwise, a trap was signaled, and a conversion routine was entered.
 This approach makes the compiler relatively simple, but the trend in architecture is away from highly microcoded processors toward simpler (RISC) processors.
 
 **Software.** We can remove many of these problems with a technique known as *byte-code assembly.* Here we translate the instructions into a vector of bytes and then interpret the bytes with a byte-code interpreter.

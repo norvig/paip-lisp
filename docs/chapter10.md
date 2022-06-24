@@ -169,13 +169,13 @@ Contrast this to the code for `g`, which has no declarations and is compiled at 
 ;; disassembling #<Function g @ #x83dbd1  >
 ;; formals: x y
 ;; code vector @ #x83db64
-0:      add.l   #8,31(a2
+0:      add.l   #8,31(a2)
 4:      sub.w   #2,dl
 6:      beq.s   12
 8:      jmp     16(a4)        ; wnaerr
 12:     link    a6,#0
-16:     move.l  a2,-(a7
-18:     move.l  a5,-(a7
+16:     move.l  a2,-(a7)
+18:     move.l  a5,-(a7)
 20:     move.l  7(a2),a5
 24:     tst.b   -  208(a4)    ; signal-hit
 28:     beq.s   34
@@ -190,10 +190,10 @@ Contrast this to the code for `g`, which has no declarations and is compiled at 
 56:     jsr     696(a4)       ; add-overflow
 60:     bra.s   76
 62:     move.l  12(a6),-(a7)  ; x
-66:     move.l  d4,-(a7
+66:     move.l  d4,-(a7)
 68:     move.l  #2,d1
 70:     move.l  -304(a4),a0   ; +  _2op
-74:     jsr     (a4
+74:     jsr     (a4)
 76:     move.l  #1,d1
 78:     move.l  -8(a6),a5
 82:     unlk    a6
@@ -239,7 +239,7 @@ The code to add bignums is too complex to put inline, so the compiler will branc
 
 *   `list and array`.
 Many Lisp systems provide separate functions for the list- and array- versions of commonly used sequence functions.
-For example, `(delete  x  (the list 1 ))` compiles into `(sys: delete-list-eql x 1)` on a TI Explorer Lisp Machine.
+For example, `(delete x (the list l))` compiles into `(sys: delete-list-eql x l)` on a TI Explorer Lisp Machine.
 Another function, `sys:delete-vector`, is used for arrays, and the generic function `delete` is used only when the compiler can't tell what type the sequence is.
 So if you know that the argument to a generic function is either a `list` or an `array`, then declare it as such.
 

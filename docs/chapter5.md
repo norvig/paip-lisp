@@ -186,7 +186,7 @@ In terms of the example above, we would use:
 (WHAT WOULD IT MEAN TO YOU IF YOU GOT A VACATION ?)
 ```
 
-Now we need to arrange for `pat-match` to return an a-list, rather than just T for success.
+Now we need to arrange for `pat-match` to return an a-list, rather than just `T` for success.
 Here's a first attempt:
 
 ```lisp

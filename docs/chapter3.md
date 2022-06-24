@@ -996,7 +996,7 @@ Next, `eql` tests for objects that are either `eq` or are equivalent numbers.
 `equal` tests for objects that are either `eql` or are lists or strings with `eql` elements.
 Finally, `equalp` is like `equal` except it also matches upper- and lowercase characters and numbers of different types.
 The following table summarizes the results of applying each of the four predicates to various values of *x* and *y*.
-The ? value means that the result depends on your implementation: two integers that are `eql` may or may not be `eq`.
+The `?` value means that the result depends on your implementation: two integers that are `eql` may or may not be `eq`.
 
 | *x*     | *y*     | `eq`  | `eql` | `equal` | `equalp` |
 |---------|---------|-------|-------|---------|----------|
@@ -1572,14 +1572,14 @@ All output, including the symbols <= and => are printed by the stepper itself; I
 133/4
 ```
 
-The functions `describe`, `inspect, documentation,` and `apropos` provide information about the state of the current program.
+The functions `describe`, `inspect`, `documentation,` and `apropos` provide information about the state of the current program.
 `apropos` prints information about all symbols whose name matches the argument:
 
 ```lisp
 > (apropos 'string)
 MAKE-STRING            function (LENGTH &KEY INITIAL-ELEMENT)
-PRIN1-T0-STRING        function (OBJECT)
-PRINC-T0-STRING        function (OBJECT)
+PRIN1-TO-STRING        function (OBJECT)
+PRINC-TO-STRING        function (OBJECT)
 STRING                 function (X)
 ...
 ```

@@ -155,7 +155,7 @@ A and B => C
 
 Combining A and B in this case is quite different from combining them when they are in separate rules.
 EMYCIN chooses to combine conjunctions by taking the minimum of each conjunct's certainty factor.
-If certainty factors were probabilities, this would be equivalent to assumming dependence between conjuncts in a rule.
+If certainty factors were probabilities, this would be equivalent to assuming dependence between conjuncts in a rule.
 (If the conjuncts were independent, then the product of the probabilities would be the correct answer.) So EMYCIN is making the quite reasonable (but sometimes incorrect) assumption that conditions that are tied together in a single rule will be dependent on one another, while conditions in separate rules are independent.
 
 The final complication is that rules themselves may be uncertain.
@@ -1122,7 +1122,7 @@ The argument made by [Shortliffe and Buchanan (1975)](B9780080571157500285.xhtml
 They argued that certainty factors were intuitively easier to deal with.
 Other researchers of the time shared this view.
 Shafer, with later refinements by Dempster, created a theory of belief functions that, like certainty factors, represented a combination of the belief for and against an event.
-Instead of representing an event by a single probability or certainty, Dempster-Shafer theory maintains two numbers, which are analagous to the lower and upper bound on the probability.
+Instead of representing an event by a single probability or certainty, Dempster-Shafer theory maintains two numbers, which are analogous to the lower and upper bound on the probability.
 Instead of a single number like .5, Dempster-Shafer theory would have an interval like [.4,.6] to represent a range of probabilities.
 A complete lack of knowledge would be represented by the range [0,1].
 A great deal of effort in the late 1970s and early 1980s was invested in these and other nonprobabilistic theories.
@@ -1257,7 +1257,7 @@ Eventually, the need arose for a rule that said, "If any of the organisms in a c
 Implement a mechanism that keeps track of the author and date of creation of each rule, and allows the author to add documentation explaining the rationale for the rule.
 
 **Exercise  16.16 [m]** It is difficult to come up with the perfect prompt for each parameter.
-One solution is not to insist that one prompt fits all users, but rather to allow the expert to supply three different prompts: a normal prompt, a verbose prompt (or reprompt) for when the user replies with a ?, and a terse prompt for the experienced user.
+One solution is not to insist that one prompt fits all users, but rather to allow the expert to supply three different prompts: a normal prompt, a verbose prompt (or reprompt) for when the user replies with a `?`, and a terse prompt for the experienced user.
 Modify `defparm` to accommodate this concept, add a command for the user to ask for the terse prompts, and change `ask-vals` to use the proper prompt.
 
 The remaining exercises cover three additional replies the user can make: `how`, `stop`, and `change`.
@@ -1312,7 +1312,7 @@ Then any rule that uses an undefined parameter will automatically generate a war
 **Answer 16.7** Logically, there should be no difference, but to EMYCIN there is a big difference.
 EMYCIN would not complain if you answered `(yes 1 no 1)`.
 This suggests that the system should have some way of dealing with mutually exclusive answers.
-One way would be to accept only yes responses for Boolean parameters, but have the input routine translate no to `(yes -1)` and `(no` *cf*) to `(yes 1-`*cf*).
+One way would be to accept only yes responses for Boolean parameters, but have the input routine translate `no` to `(yes -1)` and `(no` *cf*) to `(yes 1-`*cf*).
 Another possibility would be to have `update-cf` check to see if any certainty factor on a mutually exclusive value is 1, and if so, change the other values to -1.
 
 **Answer 16.18** Add the clause `(stop (throw 'stop nil))` to the case statement in `ask-vals` and wrap a `(catch 'stop ...)` around the code in `emycin`.

@@ -691,7 +691,7 @@ Here is an example of `when`:
 ```
 
 Of course, we could have said `collect (if (oddp x ) x (- x ))` and done without the conditional.
-There is one extra feature in loop's conditionals: the value of the test is stored in the variable it for subsequent use in the THEN or ELSE parts.
+There is one extra feature in loop's conditionals: the value of the test is stored in the variable `it` for subsequent use in the THEN or ELSE parts.
 (This is just the kind of feature that makes some people love `loop` and others throw up their hands in despair.) Here is an example:
 
 ```lisp
@@ -739,7 +739,7 @@ Here is the code:
 
 ### Unconditional Execution (26.11)
 
-The unconditional execution keywords are do and return:
+The unconditional execution keywords are `do` and `return`:
 
 ```lisp
 (defloop do (l exp exps)
@@ -933,7 +933,7 @@ which would expand into:
     ((SETQ THAT (ASSOC ITEM A-LIST)) (PROCESS (CDR THAT)))))
 ```
 
-This was a convenient feature (compare it to the `=>` feature of Scheme's cond, as discussed on [page 778](B9780080571157500224.xhtml#p778)), but it backfired often enough that I eventually gave up on my version of `if`.
+This was a convenient feature (compare it to the `=>` feature of Scheme's `cond`, as discussed on [page 778](B9780080571157500224.xhtml#p778)), but it backfired often enough that I eventually gave up on my version of `if`.
 Here's why.
 I would write code like this:
 
@@ -987,9 +987,9 @@ Here's a version that generates less garbage:
 ```
 
 There are three problems with this definition.
-First, it wastes space: mapcar creates a new argument list each time, only to have the list be discarded.
+First, it wastes space: `mapcar` creates a new argument list each time, only to have the list be discarded.
 Second, it wastes time: doing a `setf` of the *i*th element of a list makes the algorithm *O*(*n<sup>2</sup>*) instead of *O*(*n*), where *n* is the length of the list.
-Third, it is subtly wrong: if `result-sequence` is a vector with a fill pointer, then `map-into` is supposed to ignore `result-sequence's` current length and extend the fill pointer as needed.
+Third, it is subtly wrong: if `result-sequence` is a vector with a fill pointer, then `map-into` is supposed to ignore `result-sequence`'s current length and extend the fill pointer as needed.
 The following version fixes those problems:
 
 ```lisp
@@ -1045,7 +1045,7 @@ The arguments are stored into the list `arglist`, which has been preallocated to
 All in all, we compute the answer fairly efficiently, without generating unnecessary garbage.
 
 The application could be done more efficiently, however.
-Think what apply must do: scan down the argument list, and put each argument into the location expected by the function-calling conventions, and then branch to the function.
+Think what `apply` must do: scan down the argument list, and put each argument into the location expected by the function-calling conventions, and then branch to the function.
 Some implementations provide a better way of doing this.
 For example, the TI Lisp Machine provides two low-level primitive functions, `%push` and `%call`, that compile into single instructions to put the arguments into the right locations and branch to the function.
 With these primitives, the body of `do-one-call` would be:

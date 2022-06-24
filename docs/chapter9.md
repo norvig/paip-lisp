@@ -1314,7 +1314,7 @@ Thus, the result of simplifying 2*x* would be `((* simp) 2 x)`.
 Then, when the simplifier was called recursively on this expression, it would notice the `simp` marker and return the expression as is.
 
 The idea of associating memoization information with the data instead of with the function will be more efficient unless there are many functions that all want to place their marks on the same data.
-The data-oriented approach has two drawbacks: it doesn't identify structures that are `equal` but not `eq`, and, because it requires explicitly altering the data, it requires every other operation that manipulates the data to know about the marker s.
+The data-oriented approach has two drawbacks: it doesn't identify structures that are `equal` but not `eq`, and, because it requires explicitly altering the data, it requires every other operation that manipulates the data to know about the markers.
 The beauty of the hash table approach is that it is transparent; no code needs to know that memoization is taking place.
 
 #### Indexing

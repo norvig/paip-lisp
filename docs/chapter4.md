@@ -525,6 +525,7 @@ In other words, we will write functions that include calls to `dbg` like:
 ```lisp
 (dbg :gps "The current goal is: ~a" goal)
 ```
+
 If we have turned on debugging with `(debug :gps)`, then calls to `dbg` with the identifier `:gps` will print output.
 The output is turned off with `(undebug :gps)`.
 `debug` and `undebug` are designed to be similar to `trace` and `untrace`, in that they turn diagnostic output on and off.
@@ -1326,14 +1327,14 @@ This doesn't look too hard, so let's see how our GPS handles it:
 
 ```lisp
 > (setf start '((c on a) (a on table) (b on table) (space on c)
-        (space on b) (space on table)))
+                (space on b) (space on table)))
 ((C ON A) (A ON TABLE) (B ON TABLE) (SPACE ON C)
-  (SPACE ON B) (SPACE ON TABLE))
+ (SPACE ON B) (SPACE ON TABLE))
+
+> (gps start '((a on b) (b on c))) => NIL
+
+> (gps start '((b on c) (a on b))) => NIL
 ```
-
-`> (gps start '((a on b) (b on c)))`=> `NIL`
-
-`> (gps start '((b on c) (a on b)))`=> `NIL`
 
 There is a "prerequisite clobbers sibling goal" problem regardless of which way we order the conjuncts!
 In other words, no combination of plans for the two individual goals can solve the conjunction of the two goals.
