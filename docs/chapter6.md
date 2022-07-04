@@ -687,7 +687,7 @@ The `binary-tree` function generates an infinite tree of which the first 15 node
 (defun binary-tree (x) (list (* 2 x) (+  1 (* 2 x))))
 ```
 
-To make it easier to specify a goal, we define the function is as a function that returns a predicate that tests for a particular value.
+To make it easier to specify a goal, we define the function `is` as a function that returns a predicate that tests for a particular value.
 Note that is does not do the test itself.
 Rather, it returns a function that can be called to perform tests:
 
