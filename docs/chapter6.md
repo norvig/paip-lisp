@@ -116,7 +116,7 @@ The following version of `interactive-interpreter` adds two new features.
 First, it uses the macro `handler-case`<a id="tfn06-1"></a><sup>[1](#fn06-1)</sup> to handle errors.
 This macro evaluates its first argument, and normally just returns that value.
 However, if an error occurs, the subsequent arguments are checked for an error condition that matches the error that occurred.
-In this use, the case `error` matches all errors, and the action taken is to prints the error condition and continue.
+In this use, the case `error` matches all errors, and the action taken is to print the error condition and continue.
 
 This version also allows the prompt to be either a string or a function of no arguments that will be called to print the prompt.
 The function `prompt-generator`, for example, returns a function that will print prompts of the form [1], [2], and so forth.
