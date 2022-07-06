@@ -861,7 +861,7 @@ We could go back and edit `simplify-exp` to change the convention, but instead I
           (integrate (exp-lhs exp) (exp-rhs exp))))
 ```
 
-Here are some examples, taken from [chapters 8](#c0040) and [9](B9780080571157500091.xhtml) of *Calculus* ([Loomis 1974](B9780080571157500285.xhtml#bb0750)):
+Here are some examples, taken from chapters 8 and 9 of *Calculus* ([Loomis 1974](bibliography.md#bb0750)):
 
 ```lisp
 SIMPLIFIER > (Int x * sin(x ^ 2) d x)

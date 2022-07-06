@@ -872,7 +872,7 @@ A brief history of symbolic algebra systems is given in [chapter 8](chapter8.md)
 ----------------------
 
 <a id="fn15-1"></a><sup>[1](#tfn15-1)</sup>
-In fact, the algebraic properties of polynomial arithmetic and its generalizations fit so well with ideas in data abstraction that an extended example (in Scheme) on this topic is provided in *Structure and Interpretation of Computer Programs* by Abelson and Sussman (see section 2.4.3, [pages 153](B9780080571157500054.xhtml#p153)-[166](B9780080571157500054.xhtml#p166)).
+In fact, the algebraic properties of polynomial arithmetic and its generalizations fit so well with ideas in data abstraction that an extended example (in Scheme) on this topic is provided in *Structure and Interpretation of Computer Programs* by Abelson and Sussman (see section 2.4.3, pages 153-166).
 We'll pursue a slightly different approach here.
 
 <a id="fn15-2"></a><sup>[2](#tfn15-2)</sup>

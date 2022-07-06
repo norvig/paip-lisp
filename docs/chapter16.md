@@ -1201,7 +1201,7 @@ If there is a problem, fix it.
 
 The remaining exercises discuss extensions that were in the original EMYCIN, but were not implemented in our version.
 Implementing all the extensions will result in a system that is very close to the full power of EMYCIN.
-These extensions are discussed in [chapter 3](B9780080571157500030.xhtml) of [Buchanan and Shortliffe 1984](B9780080571157500285.xhtml#bb0145).
+These extensions are discussed in chapter 3 of [Buchanan and Shortliffe 1984](bibliography.md#bb0145).
 
 **Exercise  16.9 [h]** Add a spelling corrector to `ask-vals`.
 If the user enters an invalid reply, and the parameter type is a `member` expression, check if the reply is "close" in spelling to one of the valid values, and if so, use that value.

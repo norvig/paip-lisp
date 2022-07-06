@@ -838,7 +838,7 @@ Here's roughly what we want:
 
 where `g001` is a new symbol, to avoid conflicts with the `x` or with symbols in the body.
 Normally, we generate macro bodies using backquotes, but if the macro body itself has a backquote, then what?
-It is possible to nest backquotes (and [appendix C](B9780080571157500273.xhtml) of *Common Lisp the Language*, 2d edition has a nice discussion of doubly and triply nested backquotes), but it certainly is not trivial to understand.
+It is possible to nest backquotes (and appendix C of *Common Lisp the Language*, 2d edition has a nice discussion of doubly and triply nested backquotes), but it certainly is not trivial to understand.
 I recommend replacing the inner backquote with its equivalent using `list` and `quote`:
 
 ```lisp
