@@ -28,7 +28,7 @@ The rule says that a given string of words `?s` is a sentence if there is a stri
 Logically, this is fine, and it would work as a program to generate random sentences.
 However, it is a very inefficient program for parsing sentences.
 It will consider all possible noun phrases and verb phrases, without regard to the input words.
-Only when it gets to the concat goal (defined on [page 411](chapter12.md#p411)) will it test to see if the two constituents can be concatenated together to make up the input string.
+Only when it gets to the `concat` goal (defined on [page 411](chapter12.md#p411)) will it test to see if the two constituents can be concatenated together to make up the input string.
 Thus, a better order of evaluation for parsing is:
 
 ```lisp

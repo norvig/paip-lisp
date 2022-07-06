@@ -42,7 +42,7 @@ In general, there may be several possible derivations, in which case we say the 
 In certain circles, the term "parse" means to arrive at an understanding of a sentence's meaning, not just its grammatical form.
 We will attack that more difficult question later.
 
-We start with the grammar defined on [page 39](chapter2.md#p39) for the generate program:
+We start with the grammar defined on [page 39](chapter2.md#p39) for the `generate` program:
 
 ```lisp
 (defvar *grammar* nil "The grammar used by GENERATE.")

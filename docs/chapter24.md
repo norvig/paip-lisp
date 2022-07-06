@@ -933,8 +933,7 @@ which would expand into:
     ((SETQ THAT (ASSOC ITEM A-LIST)) (PROCESS (CDR THAT)))))
 ```
 
-
-This was a convenient feature (compare it to the => feature of Scheme's cond, as discussed on [page 778](chapter22.md#p778)), but it backfired often enough that I eventually gave up on my version of `if`.
+This was a convenient feature (compare it to the `=>` feature of Scheme's `cond`, as discussed on [page 778](chapter22.md#p778)), but it backfired often enough that I eventually gave up on my version of `if`.
 Here's why.
 I would write code like this:
 
