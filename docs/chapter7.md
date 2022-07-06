@@ -3,7 +3,7 @@
 
 > *[This] is an example par excellence* of the power of using meaning to solve linguistic problems.
 >
-> -[Marvin Minsky (1968)](B9780080571157500285.xhtml#bb0845)
+> -[Marvin Minsky (1968)](bibliography.md#bb0845)
 >
 > MIT computer scientist
 
@@ -32,7 +32,7 @@ The description of STUDENT is:
 2.  Break each phrase into a pair of phrases on either side of the = sign.
 
 3.  Break these phrases down further into sums and products, and so on, until finally we bottom out with numbers and variables.
-(By "variable" here, I mean "mathematical variable," which is distinct from the idea of a "pattern-matching variable" as used in `pat-match` in [chapter 6](B9780080571157500066.xhtml)).
+(By "variable" here, I mean "mathematical variable," which is distinct from the idea of a "pattern-matching variable" as used in `pat-match` in [chapter 6](chapter6.md)).
 
 4.  Translate each English phrase into a mathematical expression.
 We use the idea of a rule-based translator as developed for ELIZA.
@@ -629,11 +629,11 @@ That is why the STUDENT approach was abandoned as a research topic.
 
 Bobrow's Ph.D.
 thesis contains a complete description of STUDENT.
-It is reprinted in [Minsky 1968](B9780080571157500285.xhtml#bb0845).
+It is reprinted in [Minsky 1968](bibliography.md#bb0845).
 Since then, there have been several systems that address the same task, with increased sophistication in both their mathematical and linguistic ability.
-[Wong (1981)](B9780080571157500285.xhtml#bb1420) describes a system that uses its understanding of the problem to get a better linguistic analysis.
+[Wong (1981)](bibliography.md#bb1420) describes a system that uses its understanding of the problem to get a better linguistic analysis.
 [Sterling et al.
-(1982)](B9780080571157500285.xhtml#bb1195) present a much more powerful equation solver, but it does not accept natural language input.
+(1982)](bibliography.md#bb1195) present a much more powerful equation solver, but it does not accept natural language input.
 Certainly Bobrow's language analysis techniques were not very sophisticated by today's measures.
 But that was largely the point: if you know that the language is describing an algebraic problem of a certain type, then you don't need to know very much linguistics to get the right answer most of the time.
 

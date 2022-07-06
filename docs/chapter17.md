@@ -1139,19 +1139,19 @@ Second, even when input checking is done, it is still up to the user to understa
 
 ## 17.5 History and References
 
-[Guzman (1968)](B9780080571157500285.xhtml#bb0500) was one of the first to consider the problem of interpreting line diagrams.
+[Guzman (1968)](bibliography.md#bb0500) was one of the first to consider the problem of interpreting line diagrams.
 He classified vertexes, and defined some heuristics for combining information from adjacent vertexes.
-[Huffman (1971)](B9780080571157500285.xhtml#bb0560) and [Clowes (1971)](B9780080571157500285.xhtml#bb0215) independently came up with more formal and complete analyses, and David [Waltz (1975)](B9780080571157500285.xhtml#bb1300) extended the analysis to handle shadows, and introduced the constraint propagation algorithm to cut down on the need for search.
+[Huffman (1971)](bibliography.md#bb0560) and [Clowes (1971)](bibliography.md#bb0215) independently came up with more formal and complete analyses, and David [Waltz (1975)](bibliography.md#bb1300) extended the analysis to handle shadows, and introduced the constraint propagation algorithm to cut down on the need for search.
 The algorithm is sometimes called "Waltz filtering" in his honor.
 With shadows and nontrihedral angles, there are thousands of vertex labelings instead of 18, but there are also more constraints, so the constraint propagation actually does better than it does in our limited world.
-Waltz's approach and the Huffman-Clowes labels are covered in most introductory AI books, including Rich and Knight 1990, [Charniak and McDermott 1985](B9780080571157500285.xhtml#bb0175), and [Winston 1984](B9780080571157500285.xhtml#bb1405).
-Waltz's original paper appears in *The Psychology of Computer Vision* ([Winston 1975](B9780080571157500285.xhtml#bb1400)), an influential volume collecting early work done at MIT.
-He also contributed a summary article on Waltz filtering ([Waltz 1990](B9780080571157500285.xhtml#bb1305)).
+Waltz's approach and the Huffman-Clowes labels are covered in most introductory AI books, including Rich and Knight 1990, [Charniak and McDermott 1985](bibliography.md#bb0175), and [Winston 1984](bibliography.md#bb1405).
+Waltz's original paper appears in *The Psychology of Computer Vision* ([Winston 1975](bibliography.md#bb1400)), an influential volume collecting early work done at MIT.
+He also contributed a summary article on Waltz filtering ([Waltz 1990](bibliography.md#bb1305)).
 
-Many introductory AI texts give vision short coverage, but [Charniak and McDermott (1985)](B9780080571157500285.xhtml#bb0175) and [Tanimoto (1990)](B9780080571157500285.xhtml#bb1220) provide good overviews of the field.
-[Zucker (1990)](B9780080571157500285.xhtml#bb1450) provides an overview of low-level vision.
+Many introductory AI texts give vision short coverage, but [Charniak and McDermott (1985)](bibliography.md#bb0175) and [Tanimoto (1990)](bibliography.md#bb1220) provide good overviews of the field.
+[Zucker (1990)](bibliography.md#bb1450) provides an overview of low-level vision.
 
-[Ramsey and Barrett (1987)](B9780080571157500285.xhtml#bb0975) give an implementation of a line-recognition program.
+[Ramsey and Barrett (1987)](bibliography.md#bb0975) give an implementation of a line-recognition program.
 It would make a good project to connect their program to the one presented in this chapter, and thereby go all the way from pixels to 3-D descriptions.
 
 ## 17.6 Exercises
@@ -1167,7 +1167,7 @@ Write a function that takes a list of faces and a diagram and produces a list of
 
 **Exercise  17.3 [d]** Extend the system to include quad-hedral vertexes and/or shadows.
 There is no conceptual difficulty in this, but it is a very demanding task to find all the possible vertex types and labelings for them.
-Consult [Waltz 1975](B9780080571157500285.xhtml#bb1300).
+Consult [Waltz 1975](bibliography.md#bb1300).
 
 **Exercise  17.4 [d]** Implement a program to recognize lines from pixels.
 

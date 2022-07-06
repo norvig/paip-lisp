@@ -61,7 +61,7 @@ Other quantities that can be optimized are `compilation-speed, space` and in ANS
 Quantities can be given a number from 0 to 3 indicating how important they are; 3 is most important and is the default if the number is left out.
 
 The (`inline square`) declaration allows the compiler to generate the multiplication specified by `square` right in the loop, without explicitly making a function call to square.
-The compiler will create a local variable for (`svref vect i`) and will not execute the reference twice-inline functions do not have any of the problems associated with macros as discussed on [page 853](B9780080571157500248.xhtml#p853).
+The compiler will create a local variable for (`svref vect i`) and will not execute the reference twice-inline functions do not have any of the problems associated with macros as discussed on [page 853](chapter24.md#p853).
 However, there is one drawback: when you redefine an inline function, you may need to recompile all the functions that call it.
 
 You should declare a function `inline` when it is short and the function-calling overhead will thus be a significant part of the total execution time.
@@ -291,7 +291,7 @@ The choice paid off when `I` wanted a function to choose a random character from
 ```
 
 This example was simple, but in more complicated cases you can make your sequence functions more efficient by having them explicitly check if their arguments are lists or vectors.
-See the definition of `map-into` on [page 857](B9780080571157500248.xhtml#p857).
+See the definition of `map-into` on [page 857](chapter24.md#p857).
 
 ## 10.3 Avoid Complex Argument Lists
 
@@ -325,7 +325,7 @@ We can see what these compile into for the TI Explorer, but remember that your c
 ```
 
 With the regular argument list, we just push the four variables on the argument stack and branch to the list function.
-([Chapter 22](B9780080571157500224.xhtml) explains why a tail-recursive call is just a branch statement.)
+([Chapter 22](chapter22.md) explains why a tail-recursive call is just a branch statement.)
 
 With a rest argument, things are almost as easy.
 It turns out that on this machine, the microcode for the calling sequence automatically handles rest arguments, storing them in local variable 0.
@@ -580,7 +580,7 @@ Or use vectors instead of lists, and reuse values rather than creating copies.
 As usual, this gain in efficiency may lead to errors that can be difficult to debug.
 However, the most common kind of unnecessary copying can be eliminated by simple reorganization of your code.
 Consider the following version of `flatten`, which returns a list of all the atoms in its input, preserving order.
-Unlike the version in [chapter 5](B9780080571157500054.xhtml), this version returns a single list of atoms, with no embedded lists.
+Unlike the version in [chapter 5](chapter5.md), this version returns a single list of atoms, with no embedded lists.
 
 ```lisp
 (defun flatten (input)
@@ -627,7 +627,7 @@ This is to be avoided, and it may be that reverse is actually faster than nrever
 To decide what works best on your particular system, design some test cases and time them.
 
 As an example of efficient use of storage, here is a version of `pat-match` that eliminates (almost) all consing.
-The original version of `pat-match,` as used in ELIZA ([page 180](B9780080571157500066.xhtml#p180)), used an association list of variable/value pairs to represent the binding list.
+The original version of `pat-match,` as used in ELIZA ([page 180](chapter6.md#p180)), used an association list of variable/value pairs to represent the binding list.
 This version uses two sequences: a sequence of variables and a sequence of values.
 The sequences are implemented as vectors instead of lists.
 In general, vectors take half as much space as lists to store the same information, since half of every list is just pointing to the next element.
@@ -705,7 +705,7 @@ It will cons when `vector-push-extend` runs out of space, or when the user needs
 
 Here is the new definition of `pat-match.` It is implemented by closing the definition of `pat-match` and its two auxiliary functions inside a `let` that establishes the bindings of `vars, vals`, and `success`, but that is not crucial.
 Those three variables could have been implemented as global variables instead.
-Note that it does not support segment variables, or any of the other options implemented in the `pat-match` of [chapter 6](B9780080571157500066.xhtml).
+Note that it does not support segment variables, or any of the other options implemented in the `pat-match` of [chapter 6](chapter6.md).
 
 ```lisp
 (let* ((vars (make-array 10 :fill-pointer 0 :adjustable t))
@@ -1277,7 +1277,7 @@ Maintaining the identity of this string is crucial; if, for example, you recompi
 " in the existing trie.
 
 *Artificial Intelligence Programming* ([Charniak et al.
-1987](B9780080571157500285.xhtml#bb0180)) discusses variations on the trie, particularly in the indexing scheme.
+1987](bibliography.md#bb0180)) discusses variations on the trie, particularly in the indexing scheme.
 If we always use proper lists (no non-null `cdrs`), then a more efficient encoding is possible.
 As usual, the best type of indexing depends on the data to be indexed.
 It should be noted that Charniak et al.
@@ -1306,7 +1306,7 @@ In contrast, fetching with the pattern `??llow` is much less efficient.
 The table lookup function would have to search all 26 top-level branches, and for each of those consider all possible second letters, and for each of those consider the path `llow`.
 Quite a bit of searching is required before arriving at the complete set of matches: bellow, billow, fallow, fellow, follow, hallow, hollow, mallow, mellow, pillow, sallow, tallow, wallow, willow, and yellow.
 
-We will return to the problem of discrimination nets with variables in [section 14.8](B9780080571157500145.xhtml#s0040), [page 472](B9780080571157500145.xhtml#p472).
+We will return to the problem of discrimination nets with variables in [section 14.8](chapter14.md#s0040), [page 472](chapter14.md#p472).
 
 ## 10.6 Exercises
 
@@ -1338,14 +1338,14 @@ Here is a possible macroexpansion:
 However, often we have a two-field structure that we would like to implement as a cons cell rather than a two-element list, thereby cutting storage in half.
 Since `defstruct` does not allow this, define a new macro that does.
 
-**Exercise 10.3 [m]** Use `reuse-cons` to write a version of `flatten` (see [page 329](B9780080571157500108.xhtml#p329)) that shares as much of its input with its output as possible.
+**Exercise 10.3 [m]** Use `reuse-cons` to write a version of `flatten` (see [page 329](chapter10.md#p329)) that shares as much of its input with its output as possible.
 
 **Exercise 10.4 [h]** Consider the data type *set*.
 A set has two main operations: adjoin an element and test for membership.
 It is convenient to also add a map-over-elements operation.
 With these primitive operations it is possible to build up more complex operations like union and intersection.
 
-As mentioned in [section 3.9](B9780080571157500030.xhtml#s0095), Common Lisp provides several implementations of sets.
+As mentioned in [section 3.9](chapter3.md#s0095), Common Lisp provides several implementations of sets.
 The simplest uses lists as the underlying representation, and provides the functions `adjoin, member, union, intersection`, and `set-difference`.
 Another uses bit vectors, and a similar one uses integers viewed as bit sequences.
 Analyze the time complexity of each implementation for each operation.

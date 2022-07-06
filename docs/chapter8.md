@@ -67,7 +67,7 @@ The first is fully parenthesized infix, the second makes use of operator precede
 The fourth requires a lexical analyzer to break Lisp symbols into pieces.
 
 Suppose we only wanted to handle the fully parenthesized case.
-To write `infix->prefix`, one might first look at `prefix->infix` (on [page 228](B9780080571157500078.xhtml#p228)) trying to adapt it to our new purposes.
+To write `infix->prefix`, one might first look at `prefix->infix` (on [page 228](chapter7.md#p228)) trying to adapt it to our new purposes.
 In doing so, the careful reader might discover a surprise: `infix->prefix` and `prefix->infix` are in fact the exact same function!
 Both leave atoms unchanged, and both transform three-element lists by swapping the `exp-op` and `exp-lhs`.
 Both apply themselves recursively to the (possibly rearranged) input list.
@@ -141,7 +141,7 @@ Because we are doing mathematics in this chapter, we adopt the mathematical conv
 ## 8.2 Simplification Rules
 
 Now we are ready to define the simplification rules.
-We use the definition of the data types rule and exp ([page 221](B9780080571157500078.xhtml#p221)) and `prefix->infix` ([page 228](B9780080571157500078.xhtml#p228)) from STUDENT.
+We use the definition of the data types rule and exp ([page 221](chapter7.md#p221)) and `prefix->infix` ([page 228](chapter7.md#p228)) from STUDENT.
 They are repeated here:
 
 ```lisp
@@ -166,7 +166,7 @@ They are repeated here:
   (and (exp-p x) (= (length (exp-args x)) 2)))
 ```
 
-We also use `rule-based-translator` ([page 188](B9780080571157500066.xhtml#p188)) once again, this time on a list of simplification rules.
+We also use `rule-based-translator` ([page 188](chapter6.md#p188)) once again, this time on a list of simplification rules.
 A reasonable list of simplification rules is shown below.
 This list covers the four arithmetic operators, addition, subtraction, multiplication, and division, as well as exponentiation (raising to a power), denoted by the symbol "^"
 
@@ -565,7 +565,7 @@ SIMPLIFIER > (3 * x + y + x + 4 * x)
 ```
 
 We would want `(3 * x)` to sort to the same place as `x` and `(4 * x )` so that they could all be combined to `(8 * x)`.
-In [chapter 15](B9780080571157500157.xhtml), we develop a new version of the program that handles this problem.
+In [chapter 15](chapter15.md), we develop a new version of the program that handles this problem.
 
 ## 8.6 Integration
 
@@ -904,21 +904,21 @@ A brief history is given in the introduction to this chapter.
 An interesting point is that the history of Lisp and of symbolic algebraic manipulation are deeply intertwined.
 It is not too gross an exaggeration to say that Lisp was invented by John McCarthy to express the symbolic differentiation algorithm.
 And the development of the first high-quality Lisp system, MacLisp, was driven largely by the needs of MACSYMA, one of the first large Lisp systems.
-See [McCarthy 1958](B9780080571157500285.xhtml#bb0790) for early Lisp history and the differentiation algorithm, and [Martin and Fateman 1971](B9780080571157500285.xhtml#bb0775) and [Moses (1975)](B9780080571157500285.xhtml#bb0875) for more details on MACSYMA.
-A comprehensive book on computer algebra systems is [Davenport 1988](B9780080571157500285.xhtml#bb0270).
+See [McCarthy 1958](bibliography.md#bb0790) for early Lisp history and the differentiation algorithm, and [Martin and Fateman 1971](bibliography.md#bb0775) and [Moses (1975)](bibliography.md#bb0875) for more details on MACSYMA.
+A comprehensive book on computer algebra systems is [Davenport 1988](bibliography.md#bb0270).
 It covers the MACSYMA and REDUCE systems as well as the algorithms behind those systems.
 
-Because symbolic differentiation is historically important, it is presented in a number of text books, from the original Lisp 1.5 Primer ([Weissman 1967](B9780080571157500285.xhtml#bb1370)) and Allen's influential [*Anatomy of Lisp* (1978)](B9780080571157500285.xhtml#bb0040) to recent texts like [Brooks 1985](B9780080571157500285.xhtml#bb0135), [Hennessey 1989](B9780080571157500285.xhtml#bb0530), and [Tanimoto 1990](B9780080571157500285.xhtml#bb1220).
+Because symbolic differentiation is historically important, it is presented in a number of text books, from the original Lisp 1.5 Primer ([Weissman 1967](bibliography.md#bb1370)) and Allen's influential [*Anatomy of Lisp* (1978)](bibliography.md#bb0040) to recent texts like [Brooks 1985](bibliography.md#bb0135), [Hennessey 1989](bibliography.md#bb0530), and [Tanimoto 1990](bibliography.md#bb1220).
 Many of these books use rules or data-driven programming, but each treats differentiation as the main task, with simplification as a separate problem.
 None of them use the approach taken here, where differentiation is just another kind of simplification.
 
-The symbolic integration programs SAINT and SIN are covered in [Slagle 1963](B9780080571157500285.xhtml#bb1115) and [Moses 1967](B9780080571157500285.xhtml#bb0870), respectively.
-The mathematical solution to the problem of integration in closed term is addressed in [Risch 1969](B9780080571157500285.xhtml#bb0985), but be warned; this paper is not for the mathematically naive, and it has no hints on programming the algorithm.
+The symbolic integration programs SAINT and SIN are covered in [Slagle 1963](bibliography.md#bb1115) and [Moses 1967](bibliography.md#bb0870), respectively.
+The mathematical solution to the problem of integration in closed term is addressed in [Risch 1969](bibliography.md#bb0985), but be warned; this paper is not for the mathematically naive, and it has no hints on programming the algorithm.
 A better reference is [Davenport et al.
-1988](B9780080571157500285.xhtml#bb0270).
+1988](bibliography.md#bb0270).
 
-In this book, techniques for improving the efficiency of algebraic manipulation are covered in [sections 9.6](B9780080571157500091.xhtml#s0035) and [10.4](B9780080571157500108.xhtml#s0025).
-[Chapter 15](B9780080571157500157.xhtml) presents a reimplementation that does not use pattern-matching, and is closer to the techniques used in MACSYMA.
+In this book, techniques for improving the efficiency of algebraic manipulation are covered in [sections 9.6](chapter9.md#s0035) and [10.4](chapter10.md#s0025).
+[Chapter 15](chapter15.md) presents a reimplementation that does not use pattern-matching, and is closer to the techniques used in MACSYMA.
 
 ## 8.8 Exercises
 
@@ -955,7 +955,7 @@ One simple control rule is to allow integration by parts only at the top level, 
 Implement this approach.
 
 **Exercise 8.6 [d]** A more complicated approach is to try to decide which ways of breaking up the original expression are promising and which are not.
-Derive some heuristics for making this division, and reimplement `integrate` to include a search component, using the search tools of [chapter 6](B9780080571157500066.xhtml).
+Derive some heuristics for making this division, and reimplement `integrate` to include a search component, using the search tools of [chapter 6](chapter6.md).
 
 Look in a calculus textbook to see how &int;sin<sup>2</sup>*(x)dx* is evaluated by two integrations by parts and a division.
 Implement this technique as well.

@@ -251,7 +251,7 @@ The unstated alternative is that otherwise, the problem is not solved.
 The function achieve is given as an argument a single goal.
 The function succeeds if that goal is already true in the current state (in which case we don't have to do anything) or if we can apply an appropriate operator.
 This is accomplished by first building the list of appropriate operators and then testing each in turn until one can be applied.
-`achieve` calls `find-all`, which we defined on [page 101](B9780080571157500030.xhtml#p101).
+`achieve` calls `find-all`, which we defined on [page 101](chapter3.md#p101).
 In this use, `find-all` returns a list of operators that match the current goal, according to the predicate `appropriate-p`.
 
 The function `appropriate-p` tests if an operator is appropriate for achieving a goal.
@@ -284,7 +284,7 @@ Clearly, it would be easier to describe the components.
 In this chapter we stick with the hyphenated atoms because it is simpler, and we do not need to describe the whole world.
 Subsequent chapters take knowledge representation more seriously.
 
-With this operator as a model, we can define other operators corresponding to Newell and Simon's quote on [page 109](B9780080571157500042.xhtml#p109).
+With this operator as a model, we can define other operators corresponding to Newell and Simon's quote on [page 109](chapter4.md#p109).
 There will be an operator for installing a battery, telling the repair shop the problem, and telephoning the shop.
 We can fill in the "and so on" by adding operators for looking up the shop's phone number and for giving the shop money:
 
@@ -981,7 +981,7 @@ The following code defines a set of operators for mazes in general, and for this
 ```
 
 Note the backquote notation, ( ' ).
-It is covered in [section 3.2](B9780080571157500030.xhtml#s0020), [page 67](B9780080571157500030.xhtml#p67).
+It is covered in [section 3.2](chapter3.md#s0020), [page 67](chapter3.md#p67).
 
 We can now use this list of operators to solve several problems with this maze.
 And we could easily create another maze by giving another list of connections.
@@ -1249,7 +1249,7 @@ The following example takes four steps when it could be done in two:
 
 How could we find shorter solutions?
 One way would be to do a full-fledged search: shorter solutions are tried first, temporarily abandoned when something else looks more promising, and then reconsidered later on.
-This approach is taken up in [chapter 6](B9780080571157500066.xhtml), using a general searching function.
+This approach is taken up in [chapter 6](chapter6.md), using a general searching function.
 A less drastic solution is to do a limited rearrangement of the order in which operators are searched: the ones with fewer unfulfilled preconditions are tried first.
 In particular, this means that operators with all preconditions filled would always be tried before other operators.
 To implement this approach, we change `achieve`:
@@ -1338,7 +1338,7 @@ This doesn't look too hard, so let's see how our GPS handles it:
 There is a "prerequisite clobbers sibling goal" problem regardless of which way we order the conjuncts!
 In other words, no combination of plans for the two individual goals can solve the conjunction of the two goals.
 This is a surprising fact, and the example has come to be known as "the Sussman anomaly."<a id="tfn04-4"></a><sup>[4](#fn04-4)</sup>
-We will return to this problem in [chapter 6](B9780080571157500066.xhtml).
+We will return to this problem in [chapter 6](chapter6.md).
 
 ## 4.15 Stage 5 Repeated: Analysis of Version 2
 
@@ -1402,7 +1402,7 @@ But in the taxi example, no amount of plan repair can get the money back once it
 
 There are two ways around this problem.
 The first approach is to examine all possible solutions, not just the first solution that achieves each subgoal.
-The language Prolog, to be discussed in [chapter 11](B978008057115750011X.xhtml), does just that.
+The language Prolog, to be discussed in [chapter 11](chapter11.md), does just that.
 The second approach is to have achieve and `achieve-all` keep track of a list of goals that must be *protected*.
 In the taxi example, we would trivially achieve the `have-money` goal and then try to achieve `son-at-school`, while protecting the goal `have-money`.
 An operator would only be appropriate if it didn't delete any protected goals.
@@ -1550,7 +1550,7 @@ The program should never undo a goal that has been achieved, but it should allow
 In this way, the program will solve the Sussman anomaly and similar problems.
 
 **Exercise  4.6 [d]** *The Lack of Descriptive Power Problem*.
-Read [chapters 5](B9780080571157500054.xhtml) and [6](B9780080571157500066.xhtml) to learn about pattern matching.
+Read [chapters 5](chapter5.md) and [6](chapter6.md) to learn about pattern matching.
 Write a version of GPS that uses the pattern matching tools, and thus allows variables in the operators.
 Apply it to the maze and blocks world domains.
 Your program will be more efficient if, like Chapman's Tweak program, you allow for the possibility of variables that remain unbound as long as possible.
@@ -1570,7 +1570,7 @@ The `"~?"` is the indirection operator: use the next argument as a format string
 ```
 
 **Answer 4.2** Here is one solution.
-The sophisticated Lisp programmer should also see the exercise on [page 680](B9780080571157500194.xhtml#p680).
+The sophisticated Lisp programmer should also see the exercise on [page 680](chapter19.md#p680).
 
 ```lisp
 (defun permutations (bag)
@@ -1593,14 +1593,14 @@ The sophisticated Lisp programmer should also see the exercise on [page 680](B97
 ----------------------
 
 <a id="fn04-1"></a><sup>[1](#tfn04-1)</sup>
-Strips is the Stanford Research Institute Problem Solver, designed by [Richard Fikes and Nils Nilsson (1971)](B9780080571157500285.xhtml#bb0405).
+Strips is the Stanford Research Institute Problem Solver, designed by [Richard Fikes and Nils Nilsson (1971)](bibliography.md#bb0405).
 
 <a id="fn04-2"></a><sup>[2](#tfn04-2)</sup>
 Gerald Sussman, in his book *A Computer Model of Skill Acquisition,* uses the term "prerequisite clobbers brother goal" or PCBG.
 I prefer to be gender neutral, even at the risk of being labeled a historical revisionist.
 
 <a id="fn04-3"></a><sup>[3](#tfn04-3)</sup>
-Originally posed by [Saul Amarel (1968)](B9780080571157500285.xhtml#bb0045).
+Originally posed by [Saul Amarel (1968)](bibliography.md#bb0045).
 
 <a id="fn04-4"></a><sup>[4](#tfn04-4)</sup>
 A footnote in Waldinger 1977 says, "This problem was proposed by Allen Brown.

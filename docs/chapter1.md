@@ -978,7 +978,7 @@ In Lisp, one `sort` fits all.
 One way to appreciate this kind of flexibility is to see how hard it is to achieve in other languages.
 It is impossible in Pascal; in fact, the language Modula was invented primarily to fix this problem in Pascal.
 The language Ada was designed to allow flexible generic functions, and a book by Musser and Stepanov (1989) describes an Ada package that gives some of the functionality of Common Lisp's sequence functions.
-But the Ada solution is less than ideal: it takes a 264-page book to duplicate only part of the functionality of the 20-page chapter 14 from Steele (1990), and Musser and Stepanov went through five Ada compilers before they found one that would correctly compile their package.
+But the Ada solution is less than ideal: it takes a 264-page book to duplicate only part of the functionality of the 20-page chapter 14 from [Steele (1990)](bibliography.md#bb1160), and Musser and Stepanov went through five Ada compilers before they found one that would correctly compile their package.
 Also, their package is considerably less powerful, since it does not handle vectors or optional keyword parameters.
 In Common Lisp, all this functionality comes for free, and it is easy to add more.
 On the other hand, dynamic typing means that some errors will go undetected until run time.

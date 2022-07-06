@@ -1453,7 +1453,7 @@ The search is the same except that nodes are passed around instead of boards, an
 ```
 
 (Note the use of the function `map-into`.
-This is part of ANSI Common Lisp, but if it is not a part of your implementation, a definition is provided on [page 857](B9780080571157500248.xhtml#p857).)
+This is part of ANSI Common Lisp, but if it is not a part of your implementation, a definition is provided on [page 857](chapter24.md#p857).)
 
 The following table compares the performance of the random-ordering strategy, the sorted-ordering strategy and the static-ordering strategy in the course of a single game.
 All strategies search 6 ply deep.
@@ -1606,7 +1606,7 @@ The times for full minimax are estimates based on the number of boards per secon
 
 The algorithm in this section just keeps track of one killer move.
 It is of course possible to keep track of more than one.
-The Othello program Bill ([Lee and Mahajan 1990b](B9780080571157500285.xhtml#bb0715)) merges the idea of killer moves with legal move generation: it keeps a list of possible moves at each level, sorted by their value.
+The Othello program Bill ([Lee and Mahajan 1990b](bibliography.md#bb0715)) merges the idea of killer moves with legal move generation: it keeps a list of possible moves at each level, sorted by their value.
 The legal move generator then goes down this list in sorted order.
 
 It should be stressed once again that all this work on alpha-beta cutoffs, ordering, and killer moves has not made any change at all in the moves that are selected.
@@ -1618,9 +1618,10 @@ As mentioned in the introduction, the unpredictability of Othello makes it a dif
 In fact, in 1981 the reigning champion, Jonathan Cerf, proclaimed "In my opinion the top programs ... are now equal (if not superior) to the best human players." In discussing Rosenbloom's Iago program (1982), Cerf went on to say "I understand Paul Rosenbloom is interested in arranging a match against me.
 Unfortunately my schedule is very full, and I'm going to see that it remains that way for the foreseeable future."
 
-In 1989, another program, Bill ([Lee and Mahajan 1990](B9780080571157500285.xhtml#bb0715)) beat the highest rated American Othello player, Brian Rose, by a score of 56-8.
+In 1989, another program, Bill ([Lee and Mahajan 1990](bibliography.md#bb0715)) beat the highest rated American Othello player, Brian Rose, by a score of 56-8.
 Bill's evaluation function is fast enough to search 6-8 ply under tournament conditions, yet it is so accurate that it beats its creator, Kai-Fu Lee, searching only 1 ply.
-(However, Lee is only a novice Othello player; his real interest is in speech recognition; see [Waibel and Lee 1991](B9780080571157500285.xhtml#bb1285).) There are other programs that also play at a high level, but they have not been written up in the AI literature as Iago and Bill have.
+(However, Lee is only a novice Othello player; his real interest is in speech recognition; see [Waibel and Lee 1991](bibliography.md#bb1285).)
+There are other programs that also play at a high level, but they have not been written up in the AI literature as Iago and Bill have.
 
 In this section we present an evaluation function based on Iago's, although it also contains elements of Bill, and of an evaluation function written by Eric Wefald in 1989.
 The evaluation function makes use of two main features: *mobility and edge stability*.
@@ -1970,7 +1971,7 @@ It will be able to store this more compactly and `load` it back in more quickly 
 
 Now we have a measure of the three factors: current mobility, potential mobility, and edge stability.
 All that remains is to find a good way to combine them into a single evaluation metric.
-The combination function used by [Rosenbloom (1982)](B9780080571157500285.xhtml#bb1000) is a linear combination of the three factors, but each factor's coefficient is dependent on the move number.
+The combination function used by [Rosenbloom (1982)](bibliography.md#bb1000) is a linear combination of the three factors, but each factor's coefficient is dependent on the move number.
 Rosenbloom's features are normalized to the range [-1000, 1000]; we normalize to the range [-1, 1] by doing a division after multiplying by the coefficient.
 That allows us to use fixnums for the coefficients.
 Since our three factors are not calculated in quite the same way as Rosenbloom's, it is not surprising that his coefficients are not the best for our program.
@@ -2023,7 +2024,7 @@ Most of the following techniques were incorporated, or at least considered and r
 We have seen that the average branching factor for Othello is about 10.
 This means that searching to depth *n* + 1 takes roughly 10 times longer than search to depth *n*.
 Thus, we should be willing to go to a lot of overhead before we search one level deeper, to assure two things: that search will be done efficiently, and that we won't forfeit due to running out of time.
-A by-now familiar technique, iterative deepening (see [chapters 6](B9780080571157500066.xhtml) and [14](B9780080571157500145.xhtml)), serves both these goals.
+A by-now familiar technique, iterative deepening (see [chapters 6](chapter6.md) and [14](chapter14.md)), serves both these goals.
 
 Iterative deepening is used as follows.
 The strategy determines how much of the remaining time to allocate to each move.
@@ -2073,7 +2074,7 @@ If the actual value is not in the range, then the value returned will reflect th
 This is called aspiration search, because we aspire to find a value within a given window.
 If the window is chosen well, then often we will succeed and will have saved some search time.
 
-[Pearl (1984)](B9780080571157500285.xhtml#bb0930) suggests an alternative called zero-window search.
+[Pearl (1984)](bibliography.md#bb0930) suggests an alternative called zero-window search.
 At each level, the first possible move, which we'll call *m*, is searched using a reasonably wide window to determine its exact value, which we'll call *v*.
 Then the remaining possible moves are searched using *v* as both the lower and upper bounds of the window.
 Thus, the result of the search will tell if each subsequent move is better or worse than *m*, but won't tell how much better or worse.
@@ -2101,7 +2102,7 @@ It can consider more than one move by the opponent, depending on how much time i
 ### Hashing and Opening Book Moves
 
 We have been treating the search space as a tree, but in general it is a directed acyclic graph (dag): there may be more than one way to reach a particular position, but there won't be any loops, because every move adds a new piece.
-This raises the question we explored briefly in [section 6.4](B9780080571157500066.xhtml#s0025): should we treat the search space as a tree or a graph?
+This raises the question we explored briefly in [section 6.4](chapter6.md#s0025): should we treat the search space as a tree or a graph?
 By treating it as a graph we eliminate duplicate evaluations, but we have the overhead of storing all the previous positions, and of checking to see if a new position has been seen before.
 The decision must be based on the proportion of duplicate positions that are actually encountered in play.
 One compromise solution is to store in a hash table a partial encoding of each position, encoded as, say, a single fixnum (one word) instead of the seven or so words needed to represent a full board.
@@ -2132,7 +2133,7 @@ That is, at every tick of the clock, we need to decide if it is better to stop a
 It will be better to compute more only in the case where we eventually choose a better move; it will be better to stop and play only in the case where we would otherwise forfeit due to time constraints, or be forced to make poor choices later in the game.
 An algorithm that includes computation as a possible move is called a metareasoning system, because it reasons about how much to reason.
 
-[Russell and Wefald (1989)](B9780080571157500285.xhtml#bb1025) present an approach based on this view.
+[Russell and Wefald (1989)](bibliography.md#bb1025) present an approach based on this view.
 In addition to an evaluation function, they assume a variance function, which gives an estimate of how much a given position's true value is likely to vary from its static value.
 At each step, their algorithm compares the value and variance of the best move computed so far and the second best move.
 If the best move is clearly better than the second best (taking variance into account), then there is no point computing any more.
@@ -2149,7 +2150,7 @@ The metareasoning algorithm is predicated on devoting time to just this case.
 ### Learning
 
 From the earliest days of computer game playing, it was realized that a championship program would need to learn to improve itself.
-[Samuel (1959)](B9780080571157500285.xhtml#bb1040) describes a program that plays checkers and learns to improve its evaluation function.
+[Samuel (1959)](bibliography.md#bb1040) describes a program that plays checkers and learns to improve its evaluation function.
 The evaluation function is a linear combination of features, such as the number of pieces for each player, the number of kings, the number of possible forks, and so on.
 Learning is done by a hill-climbing search procedure: change one of the coefficients for one of the features at random, and then see if the changed evaluation function is better than the original one.
 
@@ -2177,7 +2178,7 @@ To increase the chances of this, it is a good idea to allow for mutations: rando
 
 ## 18.14 History and References
 
-[Lee and Mahajan (1986,](B9780080571157500285.xhtml#bb0710)[1990)](B9780080571157500285.xhtml#bb0715) present the current top Othello program, Bill.
+[Lee and Mahajan (1986,](bibliography.md#bb0710)[1990)](bibliography.md#bb0715) present the current top Othello program, Bill.
 Their description outlines all the techniques used but does not go into enough detail to allow the reader to reconstruct the program.
 Bill is based in large part on Rosenbloom's Iago program.
 Rosenbloom's article (1982) is more thorough.
@@ -2186,24 +2187,24 @@ The presentation in this chapter is based largely on this article, although it a
 The journal *Othello Quarterly* is the definitive source for reports on both human and computer Othello games and strategies.
 
 The most popular game for computer implementation is chess.
-[Shannon (1950a,](B9780080571157500285.xhtml#bb1070)[b)](B9780080571157500285.xhtml#bb1075) speculated that a computer might play chess.
+[Shannon (1950a,](bibliography.md#bb1070)[b)](bibliography.md#bb1075) speculated that a computer might play chess.
 In a way, this was one of the boldest steps in the history of AI.
 Today, writing a chess program is a challenging but feasible project for an undergraduate.
 But in 1950, even suggesting that such a program might be possible was a revolutionary step that changed the way people viewed these arithmetic calculating devices.
 Shannon introduced the ideas of a game tree search, minimaxing, and evaluation functions-ideas that remain intact to this day.
-[Marsland (1990)](B9780080571157500285.xhtml#bb0770) provides a good short introduction to computer chess, and David Levy has two books on the subject (1976, 1988).
+[Marsland (1990)](bibliography.md#bb0770) provides a good short introduction to computer chess, and David Levy has two books on the subject (1976, 1988).
 It was Levy, an international chess master, who in 1968 accepted a bet from John McCarthy, Donald Michie, and others that a computer chess program would not beat him in the next ten years.
 Levy won the bet.
 Levy's *Heuristic Programming* (1990) and *Computer Games* (1988) cover a variety of computer game playing programs.
-The studies by [DeGroot (1965,](B9780080571157500285.xhtml#bb0305)[1966)](B9780080571157500285.xhtml#bb0310) give a fascinating insight into the psychology of chess masters.
+The studies by [DeGroot (1965,](bibliography.md#bb0305)[1966)](bibliography.md#bb0310) give a fascinating insight into the psychology of chess masters.
 
-[Knuth and Moore (1975)](B9780080571157500285.xhtml#bb0630) analyze the alpha-beta algorithm, and Pearl's book *Heuristics* (1984) covers all kinds of heuristic search, games included.
+[Knuth and Moore (1975)](bibliography.md#bb0630) analyze the alpha-beta algorithm, and Pearl's book *Heuristics* (1984) covers all kinds of heuristic search, games included.
 
-[Samuel (1959)](B9780080571157500285.xhtml#bb1040) is the classic work on learning evaluation function parameters.
+[Samuel (1959)](bibliography.md#bb1040) is the classic work on learning evaluation function parameters.
 It is based on the game of checkers.
-[Lee and Mahajan (1990)](B9780080571157500285.xhtml#bb0715) present an alternative learning mechanism, using Bayesian classification to learn an evaluation function that optimally distinguishes winning positions from losing positions.
+[Lee and Mahajan (1990)](bibliography.md#bb0715) present an alternative learning mechanism, using Bayesian classification to learn an evaluation function that optimally distinguishes winning positions from losing positions.
 Genetic algorithms are discussed by L.
-[Davis (1987,](B9780080571157500285.xhtml#bb0280) [1991)](B9780080571157500285.xhtml#bb0285) and [Goldberg (1989)](B9780080571157500285.xhtml#bb0480).
+[Davis (1987,](bibliography.md#bb0280) [1991)](bibliography.md#bb0285) and [Goldberg (1989)](bibliography.md#bb0480).
 
 ## 18.15 Exercises
 
@@ -2223,8 +2224,8 @@ What other efficiency measures can you take?
 
 **Exercise  18.7 [h]** Implement zero-window search, as described in [section 18.13](#s0085).
 
-**Exercise  18.8 [d]** Read the references on Bill ([Lee and Mahajan 1990](B9780080571157500285.xhtml#bb0715), and [1986](B9780080571157500285.xhtml#bb0710) if you can get it), and reimplement Bill's evaluation function as best you can, using the table-based approach.
-It will also be helpful to read [Rosenbloom 1982](B9780080571157500285.xhtml#bb1000).
+**Exercise  18.8 [d]** Read the references on Bill ([Lee and Mahajan 1990](bibliography.md#bb0715), and [1986](bibliography.md#bb0710) if you can get it), and reimplement Bill's evaluation function as best you can, using the table-based approach.
+It will also be helpful to read [Rosenbloom 1982](bibliography.md#bb1000).
 
 **Exercise  18.9 [d]** Improve the evaluation function by tuning the parameters, using one of the techniques described in [section 18.13](#s0085).
 

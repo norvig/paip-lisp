@@ -42,7 +42,7 @@ Examples of object-oriented languages are Simula, C++, and CLOS, the Common Lisp
 This chapter will first introduce object-oriented programming in general, and then concentrate on the Common Lisp Object System.
 
 Many people are promoting object-oriented programming as the solution to the software development problem, but it is hard to get people to agree on just what object-orientation means.
-[Peter Wegner 1987](B9780080571157500285.xhtml#bb1355) proposes the following formula as a definition:
+[Peter Wegner 1987](bibliography.md#bb1355) proposes the following formula as a definition:
 
 *Object-orientation = Objects + Classes + Inheritance*
 
@@ -570,7 +570,7 @@ But once the writer function is defined it can be used anywhere, so an unscrupul
 ## 13.8 A CLOS Example: Searching Tools
 
 CLOS is most appropriate whenever there are several types that share related behavior.
-A good example of an application that fits this description is the set of searching tools defined in [section 6.4](B9780080571157500066.xhtml#s0025).
+A good example of an application that fits this description is the set of searching tools defined in [section 6.4](chapter6.md#s0025).
 There we defined functions for breadth-first, depth-first, and best-first search, as well as tree- and graph-based search.
 We also defined functions to search in particular domains, such as planning a route between cities.
 
@@ -589,7 +589,7 @@ The basic class, `problem`, contains a single-instance variable to hold the unex
  ((states :initarg :states :accessor problem-states)))
 ```
 
-The function searcher is similar to the function `tree-search` of [section 6.4](B9780080571157500066.xhtml#s0025).
+The function searcher is similar to the function `tree-search` of [section 6.4](chapter6.md#s0025).
 The main difference is that searcher uses generic functions instead of passing around functional arguments.
 
 ```lisp
@@ -666,7 +666,7 @@ But Lisp provides such nice list-manipulation primitives that it is difficult to
 Of course, the user who defines a new implementation for `problem-states` could just redefine `problem-combiner` for the offending classes, but this is precisely what object-oriented programming is designed to avoid: specializing one abstraction (states) should not force us to change anything in another abstraction (search strategy).
 
 The last step is to define a class that represents a particular domain, and define `problem-successors` for that domain.
-As the first example, consider the simple binary tree search from [section 6.4](B9780080571157500066.xhtml#s0025).
+As the first example, consider the simple binary tree search from [section 6.4](chapter6.md#s0025).
 Naturally, this gets represented as a class:
 
 ```lisp
@@ -761,7 +761,7 @@ As usual, we have to make up another class to represent this type of problem:
 ```
 
 So far the case for CLOS has not been compelling.
-The code in this section duplicates the functionality of code in [section 6.4](B9780080571157500066.xhtml#s0025), but the CLOS code tends to be more verbose, and it is somewhat disturbing that we had to make up so many long class names.
+The code in this section duplicates the functionality of code in [section 6.4](chapter6.md#s0025), but the CLOS code tends to be more verbose, and it is somewhat disturbing that we had to make up so many long class names.
 However, this verbosity leads to flexibility, and it is easier to extend the CLOS code by adding new specialized classes.
 It is useful to make a distinction between the systems programmer and the applications programmer.
 The systems programmer would supply a library of classes like `dfs-problem` and generic functions like `searcher`.
@@ -909,7 +909,7 @@ Thus, an object-oriented program will probably be compatible with other programs
 
 ## 13.11 History and References
 
-The first object-oriented language was Simula, which was designed by Ole-Johan Dahl and Krysten Nygaard ([1966](B9780080571157500285.xhtml#bb0265), [Nygaard and Dahl 1981](B9780080571157500285.xhtml#bb0920)) as an extension of Algol 60.
+The first object-oriented language was Simula, which was designed by Ole-Johan Dahl and Krysten Nygaard ([1966](bibliography.md#bb0265), [Nygaard and Dahl 1981](bibliography.md#bb0920)) as an extension of Algol 60.
 It is still in use today, mostly in Norway and Sweden.
 Simula provides the ability to define classes with single inheritance.
 Methods can be inherited from a superclass or overridden by a subclass.
@@ -918,8 +918,8 @@ Although Simula is a general-purpose language, it provides special support for s
 The built-in class `simulation` allows a programmer to keep track of simulated time while running a set of processes as coroutines.
 
 In 1969 Alan Kay was a graduate student at the University of Utah.
-He became aware of Simula and realized that the object-oriented style was well suited to his research in graphics ([Kay 1969](B9780080571157500285.xhtml#bb0600)).
-A few years later, at Xerox, he joined with Adele Goldberg and Daniel Ingalls to develop the Smalltalk language (see [Goldberg and Robinson 1983](B9780080571157500285.xhtml#bb0475)).
+He became aware of Simula and realized that the object-oriented style was well suited to his research in graphics ([Kay 1969](bibliography.md#bb0600)).
+A few years later, at Xerox, he joined with Adele Goldberg and Daniel Ingalls to develop the Smalltalk language (see [Goldberg and Robinson 1983](bibliography.md#bb0475)).
 While Simula can be viewed as an attempt to add object-oriented features to strongly typed Algol 60, Smalltalk can be seen as an attempt to use the dynamic, loosely typed features of Lisp, but with methods and objects replacing functions and s-expressions.
 In Simula, objects existed alongside traditional data types like numbers and strings; in Smalltalk, every datum is an object.
 This gave Smalltalk the feel of an integrated Lisp environment, where the user can inspect, copy, or edit any part of the environment.
@@ -929,8 +929,8 @@ Guy Steele's *LAMBDA: The Ultimate Declarative* (1976a and b) was perhaps the fi
 As the title suggests, it was all done using `lambda,` in a similar way to our `define-class` example.
 Steele summarized the approach with the equation "Actors = Closures (mod Syntax)," refering to Carl Hewitt's "Actors" object-oriented formalism.
 
-In 1979, the MIT Lisp Machine group developed the Flavors system based on this approach but offering considerable extensions ([Cannon 1980](B9780080571157500285.xhtml#bb0155), [Weinreb 1980](B9780080571157500285.xhtml#bb1360), [Moon et al.
-1983](B9780080571157500285.xhtml#bb0860)).
+In 1979, the MIT Lisp Machine group developed the Flavors system based on this approach but offering considerable extensions ([Cannon 1980](bibliography.md#bb0155), [Weinreb 1980](bibliography.md#bb1360), [Moon et al.
+1983](bibliography.md#bb0860)).
 "Flavor" was a popular jargon word for "type" or "kind" at MIT, so it was natural that it became the term for what we call classes.
 
 The Flavor system was the first to support multiple inheritance.
@@ -967,27 +967,27 @@ This system was known as New Flavors.
 It had a strong influence on the eventual CLOS design.
 
 The other strong influence on CLOS was the CommonLoops system developed at Xerox PARC.
-(See [Bobrow 1982](B9780080571157500285.xhtml#bb0095), [Bobrow et al.
-1986](B9780080571157500285.xhtml#bb0105), [Stefik and Bobrow 1986](B9780080571157500285.xhtml#bb1185).) CommonLoops continued the New Flavors trend away from message passing by introducing *multimethods*: methods that specialize on more than one argument.
+(See [Bobrow 1982](bibliography.md#bb0095), [Bobrow et al.
+1986](bibliography.md#bb0105), [Stefik and Bobrow 1986](bibliography.md#bb1185).) CommonLoops continued the New Flavors trend away from message passing by introducing *multimethods*: methods that specialize on more than one argument.
 
 As of summer 1991, CLOS itself is in a state of limbo.
 It was legitimized by its appearance in *Common Lisp the Language*, 2d edition, but it is not yet official, and an important part, the metaobject protocol, is not yet complete.
-A tutorial on CLOS is [Keene 1989](B9780080571157500285.xhtml#bb0620).
+A tutorial on CLOS is [Keene 1989](bibliography.md#bb0620).
 
 We have seen how easy it is to build an object-oriented system on top of Lisp, using `lambda` as the primary tool.
 An interesting alternative is to build Lisp on top of an object-oriented system.
-That is the approach taken in the Oaklisp system of [Lang and Perlmutter (1988)](B9780080571157500285.xhtml#bb0695).
+That is the approach taken in the Oaklisp system of [Lang and Perlmutter (1988)](bibliography.md#bb0695).
 Instead of defining methods using `lambda` as the primitive, Oaklisp has `add-method` as a primitive and defines `lambda` as a macro that adds a method to an anonymous, empty operation.
 
 Of course, object-oriented systems are thriving outside the Lisp world.
 With the success of UNIX-based workstations, C has become one of the most widely available programming languages.
 C is a fairly low-level language, so there have been several attempts to use it as a kind of portable assembly language.
-The most successful of these attempts is C++, a language developed by Bjarne Stroustrup of AT&T Bell Labs ([Stroustrup 1986](B9780080571157500285.xhtml#bb1210)).
+The most successful of these attempts is C++, a language developed by Bjarne Stroustrup of AT&T Bell Labs ([Stroustrup 1986](bibliography.md#bb1210)).
 C++ provides a number of extensions, including the ability to define classes.
 However, as an add-on to an existing language, it does not provide as many features as the other languages discussed here.
 Crucially, it does not provide garbage collection, nor does it support fully generic functions.
 
-Eiffel ([Meyer 1988](B9780080571157500285.xhtml#bb0830)) is an attempt to define an object-oriented system from the ground up rather than tacking it on to an existing language.
+Eiffel ([Meyer 1988](bibliography.md#bb0830)) is an attempt to define an object-oriented system from the ground up rather than tacking it on to an existing language.
 Eiffel supports multiple inheritance and garbage collection and a limited amount of dynamic dispatching.
 
 So-called modern languages like Ada and Modula support information-hiding through generic functions and classes, but they do not provide inheritance, and thus can not be classified as true object-oriented languages.

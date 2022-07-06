@@ -42,7 +42,7 @@ Common Lisp implementations have compilers, so this is no longer a problem.
 While Lisp is (primarily) no longer an interpreted language, it is still an *interactive* language, so it retains its flexibility.
 
 *   Lisp has often been used to write interpreters for embedded languages, thereby compounding the problem.
-Consider this quote from [Cooper and Wogrin's (1988)](B9780080571157500285.xhtml#bb0260) book on the rule-based programming language OPS5:
+Consider this quote from [Cooper and Wogrin's (1988)](bibliography.md#bb0260) book on the rule-based programming language OPS5:
 
 > The efficiency of implementations that compile rules into executable code compares favorably to that of programs written in most sequential languages such as FORTRAN or Pascal Implementations that compile rules into data structures to be interpreted, as do many Lisp-based ones, could be noticeably slower.
 
@@ -53,7 +53,7 @@ This book is the first that concentrates on using Lisp as both the implementatio
 
 *   Lisp encourages a style with lots of function calls, particularly recursive calls.
 In some older systems, function calls were expensive.
-But it is now understood that a function call can be compiled into a simple branch instruction, and that many recursive calls can be made no more expensive than an equivalent iterative loop (see [chapter 22](B9780080571157500224.xhtml)).
+But it is now understood that a function call can be compiled into a simple branch instruction, and that many recursive calls can be made no more expensive than an equivalent iterative loop (see [chapter 22](chapter22.md)).
 It is also possible to instruct a Common Lisp compiler to compile certain functions inline, so there is no calling overhead at all.
 On the other hand, many Lisp systems require two fetches instead of one to find the code for a function, and thus will be slower.
 This extra level of indirection is the price paid for the freedom of being able to redefine functions without reloading the whole program.
@@ -64,10 +64,10 @@ For example, we can write `(+ x y)` without bothering to declare if `x` and `y` 
 This is very convenient, but it means that type checks must be made at run time, so the generic  +  will be slower than, say, a 16-bit integer addition with no check for overflow.
 If efficiency is important, Common Lisp allows the programmer to include declarations that can eliminate run-time checks.
 In fact, once the proper declarations are added, Lisp can be as fast or faster than conventional languages.
-[Fateman (1973)](B9780080571157500285.xhtml#bb0375) compared the FORTRAN cube root routine on the PDP-10 to a MacLisp transliteration.
+[Fateman (1973)](bibliography.md#bb0375) compared the FORTRAN cube root routine on the PDP-10 to a MacLisp transliteration.
 The MacLisp version produced almost identical numerical code, but was 18% faster overall, due to a superior function-calling sequence.<a id="tfn09-1"></a><sup>[1](#fn09-1)</sup>
 The epigraph at the beginning of this chapter is from this article.
-[Berlin and Weise (1990)](B9780080571157500285.xhtml#bb0085) show that with a special compilation technique called *partial evaluation*, speeds 7 to 90 times faster than conventionally compiled code can be achieved.
+[Berlin and Weise (1990)](bibliography.md#bb0085) show that with a special compilation technique called *partial evaluation*, speeds 7 to 90 times faster than conventionally compiled code can be achieved.
 Of course, partial evaluation could be used in any language, but it is very easy to do in Lisp.
 The fact remains that Lisp objects must somehow represent their type, and even with declarations, not all of this overhead can be eliminated.
 Most Lisp implementations optimize access to lists and fixnums but pay the price for the other, less commonly used data types.
@@ -91,7 +91,7 @@ Some recent compilers support this option, but it is not widely available yet.
 In general, the problem is not that an efficient encoding is impossible but that it is difficult to arrive at that efficient encoding.
 In a language like C, the experienced programmer has a pretty good idea how each statement will compile into assembly language instructions.
 But in Lisp, very similar statements can compile into widely different assembly-level instructions, depending on subtle interactions between the declarations given and the capabilities of the compiler.
-[Page 318](B9780080571157500108.xhtml#p318) gives an example where adding a declaration speeds up a trivial function by 40 times.
+[Page 318](chapter10.md#p318) gives an example where adding a declaration speeds up a trivial function by 40 times.
 Nonexperts do not understand when such declarations are necessary and are frustrated by the seeming inconsistencies.
 With experience, the expert Lisp programmer eventually develops a good "efficiency model," and the need for such declarations becomes obvious.
 Recent compilers such as CMU's Python provide feedback that eases this learning process.
@@ -123,7 +123,7 @@ It then addresses the important problem of *instrumentation*.
 The chapter concludes with a case study of the simplify program.
 The techniques outlined here result in a 130-fold speed-up in this program.
 
-[Chapter 10](B9780080571157500108.xhtml) concentrates on lower-level "tricks" for improving efficiency further.
+[Chapter 10](chapter10.md) concentrates on lower-level "tricks" for improving efficiency further.
 
 ## 9.1 Caching Results of Previous Computations: Memoization
 
@@ -330,7 +330,7 @@ The notation *O*(*f*(*n*)) is used to describe the complexity.
 For example, the memoized version `fib` is an *O*(*n*) algorithm because the computation time is bounded by some constant times *n*, for any value of *n*.
 The unmemoized version, it turns out, is *O*(1.7*<sup>n</sup>*), meaning computing `fib` of `n+1` can take up to 1.7 times as long as `fib` of *n*.
 In simpler terms, the memoized version has *linear* complexity, while the unmemoized version has *exponential* complexity.
-[Exercise 9.4](B9780080571157500091.xhtml#p4655) ([page 308](B9780080571157500091.xhtml#p308)) describes where the 1.7 comes from, and gives a tighter bound on the complexity.
+[Exercise 9.4](chapter9.md#p4655) ([page 308](chapter9.md#p308)) describes where the 1.7 comes from, and gives a tighter bound on the complexity.
 
 The version of `memo` presented above is inflexible in several ways.
 First, it only works for functions of one argument.
@@ -379,7 +379,7 @@ Note that if the key is a list of arguments, then you will have to use `equal` h
 
 ## 9.2 Compiling One Language into Another
 
-In [chapter 2](B9780080571157500029.xhtml) we defined a new language-the language of grammar rules-which was processed by an interpreter designed especially for that language.
+In [chapter 2](chapter2.md) we defined a new language-the language of grammar rules-which was processed by an interpreter designed especially for that language.
 An *interpreter* is a program that looks at some data structure representing a "program" or sequence of rules of some sort and interprets or evaluates those rules.
 This is in contrast to a *compiler*, which translates some set of rules in one language into a program in another language.
 
@@ -389,7 +389,7 @@ Interpreting these rules is straightforward, but the process is somewhat ineffic
 A compiler for this rule-language would take each rule and translate it into a function.
 These functions could then call each other with no need to search through the `*grammar*`.
 We implement this approach with the function `compile-rule`.
-It makes use of the auxiliary functions `one-of` and `rule-lhs` and `rule-rhs` from [page 40](B9780080571157500029.xhtml#p40), repeated here:
+It makes use of the auxiliary functions `one-of` and `rule-lhs` and `rule-rhs` from [page 40](chapter2.md#p40), repeated here:
 
 ```lisp
 (defun rule-lhs (rule)
@@ -486,7 +486,7 @@ We can see the Lisp code generated by `compile-rule` in two ways: by passing it 
 ```
 
 or by macroexpanding a `defrule` expression.
-The compiler was designed to produce the same code we were writing in our first approach to the generation problem (see [page 35](B9780080571157500029.xhtml#p35)).
+The compiler was designed to produce the same code we were writing in our first approach to the generation problem (see [page 35](chapter2.md#p35)).
 
 ```lisp
 > (macroexpand '(defrule Adj* -> () Adj (Adj Adj*)))
@@ -549,7 +549,7 @@ The grammar writer has to make sure he or she is not using the name of an existi
 Even worse, if more than one grammar is being developed at the same time, they cannot have any functions in common.
 If they do, the user will have to recompile with every switch from one grammar to another.
 This may make it difficult to compare grammars.
-The best away around this problem is to use the Common Lisp idea of *packages*, but for small exercises name clashes can be avoided easily enough, so we will not explore packages until [section 24.1](B9780080571157500248.xhtml#s0010).
+The best away around this problem is to use the Common Lisp idea of *packages*, but for small exercises name clashes can be avoided easily enough, so we will not explore packages until [section 24.1](chapter24.md#s0010).
 
 The major advantage of a compiler is speed of execution, when that makes a difference.
 For identical grammars running in one particular implementation of Common Lisp on one machine, our interpreter generates about 75 sentences per second, while the compiled approach turns out about 200.
@@ -604,7 +604,7 @@ With another compiler that didn't know about such optimizations, I would have to
 
 ## 9.3 Delaying Computation
 
-Back on [page 45](B9780080571157500029.xhtml#p45), we saw a program to generate all strings derivable from a grammar.
+Back on [page 45](chapter2.md#p45), we saw a program to generate all strings derivable from a grammar.
 One drawback of this program was that some grammars produce an infinite number of strings, so the program would not terminate on those grammars.
 
 It turns out that we often want to deal with infinite sets.
@@ -667,7 +667,7 @@ An infinite set will be considered a special case of what we will call a *pipe*:
 Pipes have also been called delayed lists, generated lists, and (most commonly) streams.
 We will use the term *pipe* because *stream* already has a meaning in Common Lisp.
 The book *Artificial Intelligence Programming* ([Charniak et al.
-1987](B9780080571157500285.xhtml#bb0180)) also calls these structures pipes, reserving streams for delayed structures that do not cache computed results.
+1987](bibliography.md#bb0180)) also calls these structures pipes, reserving streams for delayed structures that do not cache computed results.
 
 To distinguish pipes from lists, we will use the accessors `head` and `tail` instead of `first` and `rest`.
 We will also use `empty-pipe` instead of `nil, make-pipe` instead of `cons`, and `pipe-elt` instead of `elt`.
@@ -854,7 +854,7 @@ First we're going to need some more utility functions:
 
 Now we can rewrite `generate-all` and `combine-all` to use pipes instead of lists.
 
-Everything else is the same as on [page 45](B9780080571157500029.xhtml#p45).
+Everything else is the same as on [page 45](chapter2.md#p45).
 
 ```lisp
 (defun generate-all (phrase)
@@ -879,7 +879,7 @@ Everything else is the same as on [page 45](B9780080571157500029.xhtml#p45).
    ypipe))
 ```
 
-With these definitions, here's the pipe of all sentences from `*grammar2*` (from [page 43](B9780080571157500029.xhtml#p43)):
+With these definitions, here's the pipe of all sentences from `*grammar2*` (from [page 43](chapter2.md#p43)):
 
 ```lisp
 > (setf ss (generate-all 'sentence)) =>
@@ -910,7 +910,7 @@ For example, if the expansion for `Adj*` had been `(Adj* -> (Adj* Adj) ())` inst
 
 We have used delays and pipes for two main purposes: to put off until later computations that may not be needed at all, and to have an explicit representation of large or infinite sets.
 It should be mentioned that the language Prolog has a different solution to the first problem (but not the second).
-As we shall see in [chapter 11](B978008057115750011X.xhtml), Prolog generates solutions one at a time, automatically keeping track of possible backtrack points.
+As we shall see in [chapter 11](chapter11.md), Prolog generates solutions one at a time, automatically keeping track of possible backtrack points.
 Where pipes allow us to represent an infinite number of alternatives in the data, Prolog allows us to represent those alternatives in the program itself.
 
 **Exercise 9.1 [h]** When given a function `f` and a pipe `p`, `mappend-pipe` returns a new pipe that will eventually enumerate all of `(f (first p))`, then all of `(f (second p))`, and so on.
@@ -931,7 +931,7 @@ Picking the right data structure and algorithm is as important in Lisp as it is 
 Even though Lisp offers a wide variety of data structures, it is often worthwhile to spend some effort on building just the right data structure for frequently used data.
 For example, Lisp's hash tables are very general and thus can be inefficient.
 You may want to build your own hash tables if, for example, you never need to delete elements, thus making open hashing an attractive possibility.
-We will see an example of efficient indexing in [section 9.6](#s0035) ([page 297](B9780080571157500091.xhtml#p297)).
+We will see an example of efficient indexing in [section 9.6](#s0035) ([page 297](chapter9.md#p297)).
 
 ## 9.5 Instrumentation: Deciding What to Optimize
 
@@ -1133,7 +1133,7 @@ With an `inline` function, the body of the function is compiled in line at the p
 Thus, there is no overhead for setting up the argument list and branching to the definition.
 An `inline` declaration can appear anywhere any other declaration can appear.
 In this case, the function `proclaim` is used to register a global declaration.
-Inline declarations are discussed in more depth on [page 317](B9780080571157500108.xhtml#p317).
+Inline declarations are discussed in more depth on [page 317](chapter10.md#p317).
 
 ```lisp
 (proclaim '(inline profile-enter profile-exit inc-profile-time))
@@ -1214,9 +1214,9 @@ But if an error occurs during the evaluation of the first argument and computati
 
 ## 9.6 A Case Study in Efficiency: The SIMPLIFY Program
 
-Suppose we wanted to speed up the `simplify` program of [chapter 8](B978008057115750008X.xhtml).
+Suppose we wanted to speed up the `simplify` program of [chapter 8](chapter8.md).
 This section shows how a combination of general techniques-memoizing, indexing, and compiling-can be used to speed up the program by a factor of 130.
-[Chapter 15](B9780080571157500157.xhtml) will show another approach: replace the algorithm with an entirely different one.
+[Chapter 15](chapter15.md) will show another approach: replace the algorithm with an entirely different one.
 
 The first step to a faster program is defining a *benchmark*, a test suite representing a typical work load.
 The following is a short list of test problems (and their answers) that are typical of the `simplify` task.
@@ -1746,18 +1746,18 @@ The idea of memoization was introduced by Donald Michie 1968.
 He proposed using a list of values rather than a hash table, so the savings was not as great.
 In mathematics, the field of dynamic programming is really just the study of how to compute values in the proper order so that partial results will already be cached away when needed.
 
-A large part of academic computer science covers compilation; [Aho and Ullman 1972](B9780080571157500285.xhtml#bb0015) is just one example.
+A large part of academic computer science covers compilation; [Aho and Ullman 1972](bibliography.md#bb0015) is just one example.
 The technique of compiling embedded languages (such as the language of pattern-matching rules) is one that has achieved much more attention in the Lisp community than in the rest of computer science.
-See [Emanuelson and Haraldsson 1980](B9780080571157500285.xhtml#bb0365), for an example.
+See [Emanuelson and Haraldsson 1980](bibliography.md#bb0365), for an example.
 
-Choosing the right data structure, indexing it properly, and defining algorithms to operate on it is another important branch of computer science; [Sedgewick 1988](B9780080571157500285.xhtml#bb1065) is one example, but there are many worthy texts.
+Choosing the right data structure, indexing it properly, and defining algorithms to operate on it is another important branch of computer science; [Sedgewick 1988](bibliography.md#bb1065) is one example, but there are many worthy texts.
 
 Delaying computation by packaging it up in a `lambda` expression is an idea that goes back to Algol's use of *thunks*-a mechanism to implement call-by-name parameters, essentially by passing functions of no arguments.
 The name *thunk* comes from the fact that these functions can be compiled: the system does not have to think about them at run time, because the compiler has already thunk about them.
-Peter [Ingerman 1961](B9780080571157500285.xhtml#bb0570) describes thunks in detail.
-[Abelson and Sussman 1985](B9780080571157500285.xhtml#bb0010) cover delays nicely.
+Peter [Ingerman 1961](bibliography.md#bb0570) describes thunks in detail.
+[Abelson and Sussman 1985](bibliography.md#bb0010) cover delays nicely.
 The idea of eliminating unneeded computation is so attractive that entire languages have built around the concept of *lazy evaluation*-don't evaluate an expression until its value is needed.
-See [Hughes 1985](B9780080571157500285.xhtml#bb0565) or [Field and Harrison 1988](B9780080571157500285.xhtml#bb0400).
+See [Hughes 1985](bibliography.md#bb0565) or [Field and Harrison 1988](bibliography.md#bb0400).
 
 ## 9.8 Exercises
 
@@ -1816,7 +1816,7 @@ The function should take as argument a function representing a strategy for play
 Read the definition of the function `random` and describe how a player could cheat.
 Then describe a countermeasure.
 
-**Exercise 9.10 [m]** On [page 292](B9780080571157500091.xhtml#p292) we saw the use of the read-time conditionals, `#+` and `#-`, where `#+` is the read-time equivalent of when, and `#-` is the read-time equivalent of unless.
+**Exercise 9.10 [m]** On [page 292](chapter9.md#p292) we saw the use of the read-time conditionals, `#+` and `#-`, where `#+` is the read-time equivalent of when, and `#-` is the read-time equivalent of unless.
 Unfortunately, there is no read-time equivalent of case.
 Implement one.
 

@@ -769,7 +769,7 @@ It also checks that conclusions use only the operator `is`:
 ```
 
 The real EMYCIN had an interactive environment that prompted the expert for each context, parameter, and rule.
-Randall Davis ([1977](B9780080571157500285.xhtml#bb0290), [1979](B9780080571157500285.xhtml#bb0295), [Davis and Lenat 1982](B9780080571157500285.xhtml#bb0300)) describes the TEIRESIAS program, which helped experts enter and debug rules.
+Randall Davis ([1977](bibliography.md#bb0290), [1979](bibliography.md#bb0295), [Davis and Lenat 1982](bibliography.md#bb0300)) describes the TEIRESIAS program, which helped experts enter and debug rules.
 
 ## 16.7 Interacting with the Client
 
@@ -943,7 +943,7 @@ Each parameter is given a type, and most are given prompts to improve the natura
 ```
 
 Now we need some rules to help determine the identity of the organisms.
-The following rules are taken from [Shortliffe 1976](B9780080571157500285.xhtml#bb1100).
+The following rules are taken from [Shortliffe 1976](bibliography.md#bb1100).
 The rule numbers refer to the pages on which they are listed.
 The real MYCIN had about 400 rules, dealing with a much wider variety of premises and conclusions.
 
@@ -1122,7 +1122,7 @@ Before MYCIN, most reasoning with uncertainty was done using probability theory.
 The laws of probability-in particular, Bayes's law-provide a well-founded mathematical formalism that is not subject to the inconsistencies of certainty factors.
 Indeed, probability theory can be shown to be the only formalism that leads to rational behavior, in the sense that if you have to make a series of bets on some uncertain events, combining information with probability theory will give you the highest expected value for your bets.
 Despite this, probability theory was largely set aside in the mid-1970s.
-The argument made by [Shortliffe and Buchanan (1975)](B9780080571157500285.xhtml#bb1105) was that probability theory required too many conditional probabilities, and that people were not good at estimating these.
+The argument made by [Shortliffe and Buchanan (1975)](bibliography.md#bb1105) was that probability theory required too many conditional probabilities, and that people were not good at estimating these.
 They argued that certainty factors were intuitively easier to deal with.
 Other researchers of the time shared this view.
 Shafer, with later refinements by Dempster, created a theory of belief functions that, like certainty factors, represented a combination of the belief for and against an event.
@@ -1133,7 +1133,7 @@ A great deal of effort in the late 1970s and early 1980s was invested in these a
 Another example is Zadeh's fuzzy set theory, which is also based on intervals.
 
 There is ample evidence that people have difficulty with problems involving probability.
-In a very entertaining and thought-provoking series of articles, Tversky and Kahneman ([1974](B9780080571157500285.xhtml#bb1245), [1983](B9780080571157500285.xhtml#bb1250), [1986](B9780080571157500285.xhtml#bb1255)) show how people make irrational choices when faced with problems that are quite simple from a mathematical viewpoint.
+In a very entertaining and thought-provoking series of articles, Tversky and Kahneman ([1974](bibliography.md#bb1245), [1983](bibliography.md#bb1250), [1986](bibliography.md#bb1255)) show how people make irrational choices when faced with problems that are quite simple from a mathematical viewpoint.
 They liken these errors in choice to errors in visual perception caused by optical illusions.
 Even trained doctors and statisticians are subject to these errors.
 
@@ -1151,23 +1151,23 @@ Thus, the chance of actually having the disease given that one tests positive is
 Doctors are trained in this kind of analysis, but unfortunately many of them continue to reason more like Adrian than Dominique.
 
 In the late 1980s, the tide started to turn back to subjective Bayesian probability theory.
-[Cheeseman (1985)](B9780080571157500285.xhtml#bb0185) showed that, while Dempster-Shafer theory looks like it can, in fact it cannot help you make better decisions than probability theory.
-[Heckerman (1986)](B9780080571157500285.xhtml#bb0525) re-examined MYCIN's certainty factors, showing how they could be interpreted as probabilities.
-Judea [Pearl's 1988](B9780080571157500285.xhtml#bb0935) book is an eloquent defense of probability theory.
+[Cheeseman (1985)](bibliography.md#bb0185) showed that, while Dempster-Shafer theory looks like it can, in fact it cannot help you make better decisions than probability theory.
+[Heckerman (1986)](bibliography.md#bb0525) re-examined MYCIN's certainty factors, showing how they could be interpreted as probabilities.
+Judea [Pearl's 1988](bibliography.md#bb0935) book is an eloquent defense of probability theory.
 He shows that there are efficient algorithms for combining and propagating probabilities, as long as the network of interdependencies does not contain loops.
 It seems likely that uncertain reasoning in the 1990s will be based increasingly on Bayesian probability theory.
 
 ## 16.10 History and References
 
-The MYCIN project is well documented in [Buchanan and Shortliffe 1984](B9780080571157500285.xhtml#bb0145).
-An earlier book, [Shortliffe 1976](B9780080571157500285.xhtml#bb1100), is interesting mainly for historical purposes.
-Good introductions to expert systems in general include [Weiss and Kulikowski 1984](B9780080571157500285.xhtml#bb1365), [Waterman 1986](B9780080571157500285.xhtml#bb1345), [Luger and Stubblefield 1989](B9780080571157500285.xhtml#bb0760), and [Jackson 1990](B9780080571157500285.xhtml#bb0580).
+The MYCIN project is well documented in [Buchanan and Shortliffe 1984](bibliography.md#bb0145).
+An earlier book, [Shortliffe 1976](bibliography.md#bb1100), is interesting mainly for historical purposes.
+Good introductions to expert systems in general include [Weiss and Kulikowski 1984](bibliography.md#bb1365), [Waterman 1986](bibliography.md#bb1345), [Luger and Stubblefield 1989](bibliography.md#bb0760), and [Jackson 1990](bibliography.md#bb0580).
 
-Dempster-Shafer evidence theory is presented enthusiastically in [Gordon and Shortliffe 1984](B9780080571157500285.xhtml#bb0485) and in a critical light in [Pearl 1989](B9780080571157500285.xhtml#bb0940)/1978.
-Fuzzy set theory is presented in Zadeh 1979 and [Dubois and Prade 1988](B9780080571157500285.xhtml#bb0350).
+Dempster-Shafer evidence theory is presented enthusiastically in [Gordon and Shortliffe 1984](bibliography.md#bb0485) and in a critical light in [Pearl 1989](bibliography.md#bb0940)/1978.
+Fuzzy set theory is presented in Zadeh 1979 and [Dubois and Prade 1988](bibliography.md#bb0350).
 
-[Pearl (1988)](B9780080571157500285.xhtml#bb0935) captures most of the important points that lead to the renaissance of probability theory.
-[Shafer and Pearl 1990](B9780080571157500285.xhtml#bb1090) is a balanced collection of papers on all kinds of uncertain reasoning.
+[Pearl (1988)](bibliography.md#bb0935) captures most of the important points that lead to the renaissance of probability theory.
+[Shafer and Pearl 1990](bibliography.md#bb1090) is a balanced collection of papers on all kinds of uncertain reasoning.
 
 ## 16.11 Exercises
 

@@ -286,7 +286,7 @@ Here is a table of corresponding assignment forms in Lisp and Pascal:
 `setf` can be used to set a component of a structure as well as to set a variable.
 In languages like Pascal, the expressions that can appear on the left-hand side of an assignment statement are limited by the syntax of the language.
 In Lisp, the user can extend the expressions that are allowed in a `setf` form using the special forms `defsetf` or `define-setf-method`.
-These are introduced on [pages 514](B9780080571157500157.xhtml#p514) and [884](B978008057115750025X.xhtml#p884) respectively.
+These are introduced on [pages 514](chapter15.md#p514) and [884](chapter25.md#p884) respectively.
 
 There are also some built-in functions that modify places.
 For example, (`rplacd list nil`) has the same effect as (`setf` (`rest list`) `nil`), except that it returns `list` instead of `nil`.
@@ -734,9 +734,9 @@ First, to implement side effects in a branch of a two-branched conditional, one 
 If the conditional had only one branch, then `when` or `unless` should be used, since they allow an implicit `progn`.
 If there are more than two branches, then `cond` should be used.
 
-Second, `progn` is sometimes needed in macros that expand into more than one top-level form, as in the `defun*` macro on page 326, [section 10.3](B9780080571157500108.xhtml#s0020).
+Second, `progn` is sometimes needed in macros that expand into more than one top-level form, as in the `defun*` macro on page 326, [section 10.3](chapter10.md#s0020).
 Third, a progn is sometimes needed in an `unwind-protect`, an advanced macro.
-An example of this is the `with-resource` macro on [page 338](B9780080571157500108.xhtml#p338), [section 10.4](B9780080571157500108.xhtml#s0025).
+An example of this is the `with-resource` macro on [page 338](chapter10.md#p338), [section 10.4](chapter10.md#s0025).
 
 The forms `trace` and `untrace` are used to control debugging information about entry and exit to a function:
 
@@ -846,7 +846,7 @@ We can see what this macro expands into by using `macroexpand`, and see how it r
 NIL
 ```
 
-[Section 24.6](B9780080571157500248.xhtml) (page 853) describes a more complicated macro and some details on the pitfalls of writing complicated macros (page 855).
+[Section 24.6](chapter24.md) (page 853) describes a more complicated macro and some details on the pitfalls of writing complicated macros (page 855).
 
 ### Backquote Notation
 
@@ -867,7 +867,7 @@ The need to build up code (and noncode data) from components is so frequent that
 The backquote character ``"`"`` is similar to the quote character `"'"`.
 A backquote indicates that what follows is *mostly* a literal expression but may contain some components that are to be evaluated.
 Anything marked by a leading comma `","` is evaluated and inserted into the structure, and anything marked with a leading `",@"` must evaluate to a list that is spliced into the structure: each element of the list is inserted, without the top-level parentheses.
-The notation is covered in more detail in [section 23.5](B9780080571157500236.xhtml#s0030).
+The notation is covered in more detail in [section 23.5](chapter23.md#s0030).
 Here we use the combination of backquote and comma to rewrite `while`:
 
 ```lisp
@@ -1433,7 +1433,7 @@ The following table shows a number of more specialized data types that are not u
 
 In addition, there are even more specialized types, such as `short-float`, `compiled-function`, and `bit-vector`.
 It is also possible to construct more exact types, such as (`vector (integer 0 3) 100`), which represents a vector of 100 elements, each of which is an integer from 0 to 3, inclusive.
-[Section 10.1](B9780080571157500108.xhtml#s0010) gives more information on types and their use.
+[Section 10.1](chapter10.md#s0010) gives more information on types and their use.
 
 While almost every type has a predicate, it is also true that there are predicates that are not type recognizers but rather recognize some more general condition.
 For example, `oddp` is true only of odd integers, and `string-greaterp` is true if one string is alphabetically greater than another.
@@ -1765,7 +1765,7 @@ Calling the consistency checker is the fastest way to help isolate bugs in the d
 
 In addition, it is a good idea to keep a list of difficult test cases on hand.
 That way, when the program is changed, it will be easy to see if the change reintroduces a bug that had been previously removed.
-This is called *regression testing,* and [Waters (1991)](B9780080571157500285.xhtml#bb1350) presents an interesting tool for maintaining a suite of regression tests.
+This is called *regression testing,* and [Waters (1991)](bibliography.md#bb1350) presents an interesting tool for maintaining a suite of regression tests.
 But it is simple enough to maintain an informal test suite with a function that calls assert on a series of examples:
 
 ```lisp
