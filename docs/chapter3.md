@@ -573,7 +573,7 @@ Second, many of the functions accept keywords that allow the user to vary the te
 
 > (remove 1 '(1 2 3 2 1 0 -1) :test #'<) => (1 1 0 -1)
 
-> (remove 1 '(1 2 3 2 1 0 -1) : start 4) => (1 2 3 2 0 -1)
+> (remove 1 '(1 2 3 2 1 0 -1) :start 4) => (1 2 3 2 0 -1)
 ```
 
 Third, some have corresponding functions ending in `-if` or `-if-not` that take a predicate rather than an element to match against:
