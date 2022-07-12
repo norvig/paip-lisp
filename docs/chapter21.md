@@ -1422,7 +1422,7 @@ A disambiguation procedure should be equipped to weed out such duplicates.
 
 ## 21.15 History and References
 
-[Chapter 20](B9780080571157500200.xhtml) provides some basic references on natural language.
+[Chapter 20](chapter20.md) provides some basic references on natural language.
 Here we will concentrate on references that provide:
 
 1.  A comprehensive grammar of English.
@@ -1430,20 +1430,20 @@ Here we will concentrate on references that provide:
 2.  A complete implementation.
 
 There are a few good textbooks that partially address both issues.
-Both [Winograd (1983)](B9780080571157500285.xhtml#bb1395) and [Allen (1987)](B9780080571157500285.xhtml#bb0030) do a good job of presenting the major grammatical features of English and discuss implementation techniques, but they do not provide actual code.
+Both [Winograd (1983)](bibliography.md#bb1395) and [Allen (1987)](bibliography.md#bb0030) do a good job of presenting the major grammatical features of English and discuss implementation techniques, but they do not provide actual code.
 
 There are also a few textbooks that concentrate on the second issue.
-[Ramsey and Barrett (1987)](B9780080571157500285.xhtml#bb0975) and [Walker et al.
-(1990)](B9780080571157500285.xhtml#bb1295) provide chapter-length implementations at about the same level of detail as this chapter.
+[Ramsey and Barrett (1987)](bibliography.md#bb0975) and [Walker et al.
+(1990)](bibliography.md#bb1295) provide chapter-length implementations at about the same level of detail as this chapter.
 Both are recommended.
-[Pereira and Shieber 1987](B9780080571157500285.xhtml#bb0945) and [Gazdar and Mellish 1989](B9780080571157500285.xhtml#bb0445) are book-length treatments, but because they cover a variety of parsing techniques rather than concentrating on one in depth, they are actually less comprehensive.
+[Pereira and Shieber 1987](bibliography.md#bb0945) and [Gazdar and Mellish 1989](bibliography.md#bb0445) are book-length treatments, but because they cover a variety of parsing techniques rather than concentrating on one in depth, they are actually less comprehensive.
 
 Several linguists have made serious attempts at addressing the first issue.
 The largest is the aptly named A *Comprehensive Grammar of Contemporary English* by Quirk, Greenbaum, Leech and Svartik (1985).
 More manageable (although hardly concise) is their abridged edition, *A Concise Grammar of Contemporary English.* Both editions contain a gold mine of examples and facts about the English langauge, but the authors do not attempt to write rigorous rules.
-[Harris (1982)](B9780080571157500285.xhtml#bb0510) and [Huddleston (1984)](B9780080571157500285.xhtml#bb0555) offer less complete grammars with greater linguistic rigor.
+[Harris (1982)](bibliography.md#bb0510) and [Huddleston (1984)](bibliography.md#bb0555) offer less complete grammars with greater linguistic rigor.
 
-Naomi [Sager (1981)](B9780080571157500285.xhtml#bb1035) presents the most complete computerized grammar ever published.
+Naomi [Sager (1981)](bibliography.md#bb1035) presents the most complete computerized grammar ever published.
 The grammar is separated into a simple, neat, context-free component and a rather baroque augmentation that manipulates features.
 
 ## 21.16 Exercises

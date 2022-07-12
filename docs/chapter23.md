@@ -127,7 +127,7 @@ The difference is that each case generates code rather than evaluating a subexpr
 
 ```
 
-The compiler `comp` has the same nine cases-in fact the exact same structure-as the interpreter `interp` from [chapter 22](B9780080571157500224.xhtml).
+The compiler `comp` has the same nine cases-in fact the exact same structure-as the interpreter `interp` from [chapter 22](chapter22.md).
 Each case is slightly more complex, so the three main cases have been made into separate functions: `comp-begin`, `comp-if`, and `comp-lambda.` A `begin` expression is compiled by compiling each argument in turn but making sure to pop each value but the last off the stack after it is computed.
 The last element in the `begin` stays on the stack as the value of the whole expression.
 Note that the function `gen` generates a single instruction (actually a list of one instruction), and `seq` makes a sequence of instructions out of two or more subsequences.
@@ -437,7 +437,7 @@ An alternative function-calling protocol involves pushing the return address bef
 Such an optimization looks like a small gain; we basically eliminate a single instruction.
 In fact, the implications of this new protocol are enormous: we can now invoke a recursive function to an arbitrary depth without growing the stack at all-as long as the recursive call is the last statement in the function (or in a branch of the function when there are conditionals).
 A function that obeys this constraint on its recursive calls is known as a *properly tail-recursive* function.
-This subject was discussed in [section 22.3.](B9780080571157500224.xhtml#s0020)
+This subject was discussed in [section 22.3.](chapter22.md#s0020)
 
 All the examples so far have only dealt with global variables.
 Here's an example using local variables:
@@ -1163,8 +1163,8 @@ There are several paths we could pursue: we could implement the machine in hardw
 Each of these approaches has been taken in the past.
 
 **Hardware.** If the abstract machine is simple enough, it can be implemented directly in hardware.
-The Scheme-79 and Scheme-81 Chips ([Steele and Sussman 1980](B9780080571157500285.xhtml#bb1180); [Batali et al.
-1982](B9780080571157500285.xhtml#bb0070)) were VLSI implementations of a machine designed specifically to run Scheme.
+The Scheme-79 and Scheme-81 Chips ([Steele and Sussman 1980](bibliography.md#bb1180); [Batali et al.
+1982](bibliography.md#bb0070)) were VLSI implementations of a machine designed specifically to run Scheme.
 
 **Macro-Assembler.** In the translation or macro-assembler approach, each instruction in the abstract machine language is translated into one or more instructions in the host computer's instruction set.
 This can be done either directly or by generating assembly code and passing it to the host computer's assembler.
@@ -1795,13 +1795,13 @@ Those who do define local functions tend not to use already established names li
 ## 23.6 History and References
 
 Guy Steele's 1978 MIT master's thesis on the language Scheme, rewritten as Steele 1983, describes an innovative and influential compiler for Scheme, called RABBIT.<a id="tfn23-2"></a><sup>[2](#fn23-2)</sup>
-A good article on an "industrial-strength" Scheme compiler based on this approach is described in [Kranz et al.'s 1986](B9780080571157500285.xhtml#bb0675) paper on ORBIT, the compiler for the T dialect of Scheme.
+A good article on an "industrial-strength" Scheme compiler based on this approach is described in [Kranz et al.'s 1986](bibliography.md#bb0675) paper on ORBIT, the compiler for the T dialect of Scheme.
 
 Abelson and Sussman's *Structure and Interpretation of Computer Programs* (1985) contains an excellent chapter on compilation, using slightly different techniques and compiling into a somewhat more confusing machine language.
-Another good text is [John Allen's *Anatomy of Lisp* (1978)](B9780080571157500285.xhtml#bb0040).
+Another good text is [John Allen's *Anatomy of Lisp* (1978)](bibliography.md#bb0040).
 It presents a very clear, simple compiler, although it is for an older, dynamically scoped dialect of Lisp and it does not address tail-recursion or `call/cc`.
 
-The peephole optimizer described here is based on the one in [Masinter and Deutsch 1980](B9780080571157500285.xhtml#bb0780).
+The peephole optimizer described here is based on the one in [Masinter and Deutsch 1980](bibliography.md#bb0780).
 
 ## 23.7 Exercises
 
@@ -1811,7 +1811,7 @@ How could you make `scheme-read` account for this?
 
 **Exercise  23.4 [m]** Is it possible to make the core Scheme language even smaller, by eliminating any of the five special forms `(quote, begin, set!, if, lambda)` and replacing them with macros?
 
-**Exercise  23.5 [m]** Add the ability to recognize internal defines (see [page 779](B9780080571157500224.xhtml#p779)).
+**Exercise  23.5 [m]** Add the ability to recognize internal defines (see [page 779](chapter22.md#p779)).
 
 **Exercise  23.6 [h]** In `comp-if` we included a special case for `(if t x y)` and `(if nil x y)`.
 But there are other cases where we know the value of the predicate.

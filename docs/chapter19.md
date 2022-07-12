@@ -42,7 +42,7 @@ In general, there may be several possible derivations, in which case we say the 
 In certain circles, the term "parse" means to arrive at an understanding of a sentence's meaning, not just its grammatical form.
 We will attack that more difficult question later.
 
-We start with the grammar defined on [page 39](B9780080571157500029.xhtml#p39) for the generate program:
+We start with the grammar defined on [page 39](chapter2.md#p39) for the generate program:
 
 ```lisp
 (defvar *grammar* nil "The grammar used by GENERATE.")
@@ -82,9 +82,10 @@ To emphasize this, I include "noun" and "verb" as nouns in the grammar `*grammar
 (setf *grammar* *grammar3*)
 ```
 
-I also define the data types `rule`, `parse`, and `tree`, and some functions for getting at the rules.
-Rules are defined as structures of type list with three slots: the left-hand side, the arrow (which should always be represented as the literal `->`) and the right-hand side.
-Compare this to the treatment on [page 40](B9780080571157500029.xhtml#p40).
+
+I also define the data types `rule, parse`, and `tree`, and some functions for getting at the rules.
+Rules are defined as structures of type list with three slots: the left-hand side, the arrow (which should always be represented as the literal ->) and the right-hand side.
+Compare this to the treatment on [page 40](chapter2.md#p40).
 
 ```lisp
 (defstruct (rule (:type list)) lhs -> rhs sem)
@@ -989,13 +990,13 @@ Furthermore, *unification grammars* allow a natural way of attaching semantics t
 ## 19.8 History and References
 
 There is a class of parsing algorithms known as *chart parsers* that explicitly cache partial parses and reuse them in constructing larger parses.
-Earley's algorithm (1970) is the first example, and Martin [Kay (1980)](B9780080571157500285.xhtml#bb0605) gives a good overview of the field and introduces a data structure, the *chart*, for storing substrings of a parse.
-[Winograd (1983)](B9780080571157500285.xhtml#bb1395) gives a complex (five-page) specification of a chart parser.
+Earley's algorithm (1970) is the first example, and Martin [Kay (1980)](bibliography.md#bb0605) gives a good overview of the field and introduces a data structure, the *chart*, for storing substrings of a parse.
+[Winograd (1983)](bibliography.md#bb1395) gives a complex (five-page) specification of a chart parser.
 None of these authors have noticed that one can achieve the same results by augmenting a simple (one-page) parser with memoization.
 In fact, it is possible to write a top-down parser that is even more succinct.
 (See [exercise 19.3](#p2455) below.)
 
-For a general overview of natural language processing, my preferences (in order) are [Allen 1987](B9780080571157500285.xhtml#bb0030), [Winograd 1983](B9780080571157500285.xhtml#bb1395) or [Gazdar and Mellish 1989](B9780080571157500285.xhtml#bb0445).
+For a general overview of natural language processing, my preferences (in order) are [Allen 1987](bibliography.md#bb0030), [Winograd 1983](bibliography.md#bb1395) or [Gazdar and Mellish 1989](bibliography.md#bb0445).
 
 ## 19.9 Exercises
 
@@ -1182,5 +1183,5 @@ Some erroneous expressions are underspecified and may return different results i
 <a id="fn19-2"></a><sup>[2](#tfn19-2)</sup>
 The number of parses of sentences of this kind is the same as the number of bracketings of a arithmetic expression, or the number of binary trees with a given number of leaves.
 The resulting sequence (1, 2, 5, 14, 42, ...) is known as the Catalan Numbers.
-This kind of ambiguity is discussed by [Church and Patil (1982)](B9780080571157500285.xhtml#bb0200) in their article *Coping with Syntactic Ambiguity, or How to Put the Block in the Box on the Table.*
+This kind of ambiguity is discussed by [Church and Patil (1982)](bibliography.md#bb0200) in their article *Coping with Syntactic Ambiguity, or How to Put the Block in the Box on the Table.*
 

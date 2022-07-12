@@ -6,10 +6,12 @@ Intelligence Programming: Case Studies in Common Lisp* by Peter Norvig (1992), a
 
 The book is available in these formats:
 
-* pdf, 4th edition: [see releases](https://github.com/norvig/paip-lisp/releases/tag/v1.2) (this is a better scan than that of the 6th edition)
-* pdf, 6th edition: [see releases](https://github.com/norvig/paip-lisp/releases/tag/v1.0)
+* we're generating ebooks - epub and pdf - from the markdown files, see [Releases](https://github.com/norvig/paip-lisp/releases)
+* [scanned pdfs](https://github.com/norvig/paip-lisp/releases/tag/v1.3)
+  * 4th edition, 1998: higher resolution, better OCR, smaller file thanks to better compression
+  * 6th edition, 2001: newer printing
 * text: [PAIP.txt](https://github.com/norvig/paip-lisp/blob/master/PAIP.txt) (from OCR'ing the scanned pdf, containing many errors)
-* epub: [see releases](https://github.com/norvig/paip-lisp/releases/tag/1.1) for a cleaned up version downloaded from Safari (much cleaner than the scanned versions)
+* a source epub: [see releases](https://github.com/norvig/paip-lisp/releases/tag/1.1) for a cleaned up version downloaded from Safari (much cleaner than the scanned versions)
 * and `chapter?.md` markdown files:
 
 # Table of Contents

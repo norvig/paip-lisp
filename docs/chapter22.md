@@ -366,7 +366,7 @@ The final three syntactic extensions are unique to Scheme:
 In its first form, it assigns a value to a variable.
 Since there are no special variables in Scheme, this is no different than using `set!`.
 (There is a difference when the `define` is nested inside another definition, but that is not yet considered.) In the second form, it defines a function.
-`delay` is used to delay evaluation, as described in [section 9.3](B9780080571157500091.xhtml#s0020), page 281.
+`delay` is used to delay evaluation, as described in [section 9.3](chapter9.md#s0020), page 281.
 `letrec` is similar to `let`.
 The difference is that all the *init* forms are evaluated in an environment that includes all the *vars*.
 Thus, `letrec` can be used to define local recursive functions, just as `labels` does in Common Lisp.
@@ -1001,7 +1001,7 @@ Once the working of `call/cc` is understood, the implementation is obvious:
 ## 22.6 History and References
 
 Lisp interpreters and AI have a long history together.
-MIT AI Lab Memo No. 1 ([McCarthy 1958](B9780080571157500285.xhtml#bb0790)) was the first paper on Lisp.
+MIT AI Lab Memo No. 1 ([McCarthy 1958](bibliography.md#bb0790)) was the first paper on Lisp.
 McCarthy's students were working on a Lisp compiler, had written certain routines-`read`, `print`, etc. - in assembly language, and were trying to develop a full Lisp interpreter in assembler.
 Sometime around the end of 1958, McCarthy wrote a theoretical paper showing that Lisp was powerful enough to write the universal function, `eval`.
 A programmer on the project, Steve Russell, saw the paper, and, according to McCarthy:
@@ -1013,26 +1013,26 @@ That is, he compiled the `eval` in my paper into 704 machine code fixing bugs an
 
 So the first Lisp interpreter was the result of a programmer ignoring his boss's advice.
 The first compiler was for the Lisp 1.5 system ([McCarthy et al.
-1962](B9780080571157500285.xhtml#bb0815)).
+1962](bibliography.md#bb0815)).
 The compiler was written in Lisp; it was probably the first compiler written in its own language.
 
 Allen's *Anatomy of Lisp* (1978) was one of the first overviews of Lisp implementation techniques, and it remains one of the best.
 However, it concentrates on the dynamic-scoping Lisp dialects that were in use at the time.
-The more modern view of a lexically scoped Lisp was documented in an influential pair of papers by Guy Steele ([1976a](B9780080571157500285.xhtml#bb1130),[b](B9780080571157500285.xhtml#bb1135)).
+The more modern view of a lexically scoped Lisp was documented in an influential pair of papers by Guy Steele ([1976a](bibliography.md#bb1130),[b](bibliography.md#bb1135)).
 His papers "Lambda: the ultimate goto" and "Compiler optimization based on viewing lambda as rename plus goto" describe properly tail-recursive interpreters and compilers.
 
 The Scheme dialect was invented by Gerald Sussman and Guy Steele around 1975 (see their MIT AI Memo 349).
 The *Revised*<sup>4</sup> *Report on the Algorithmic Language Scheme* ([Clinger et al.
-1991](B9780080571157500285.xhtml#bb0205)) is the definitive reference manual for the current version of Scheme.
+1991](bibliography.md#bb0205)) is the definitive reference manual for the current version of Scheme.
 
-[Abelson and Sussman (1985)](B9780080571157500285.xhtml#bb0010) is probably the best introduction to computer science ever written.
+[Abelson and Sussman (1985)](bibliography.md#bb0010) is probably the best introduction to computer science ever written.
 It may or may not be a coincidence that it uses Scheme as the programming language.
 It includes a Scheme interpreter.
 Winston and Horn's *Lisp* (1989) also develops a Lisp interpreter.
 
-The `amb` operator for nondeterministic choice was proposed by [John McCarthy (1963)](B9780080571157500285.xhtml#bb0800) and used in SCHEMER ([Zabih et al.
-1987](B9780080571157500285.xhtml#bb1440)), a nondeterministic Lisp.
-[Ruf and Weise (1990)](B9780080571157500285.xhtml#bb1015) present another implementation of backtracking in Scheme that incorporates all of logic programming.
+The `amb` operator for nondeterministic choice was proposed by [John McCarthy (1963)](bibliography.md#bb0800) and used in SCHEMER ([Zabih et al.
+1987](bibliography.md#bb1440)), a nondeterministic Lisp.
+[Ruf and Weise (1990)](bibliography.md#bb1015) present another implementation of backtracking in Scheme that incorporates all of logic programming.
 
 ## 22.7 Exercises
 
@@ -1277,4 +1277,4 @@ However, `defstruct` concatenates `-p` in all its predicates, regardless of the 
 although inefficient
 
 <a id="fn22-3"></a><sup>[3](#tfn22-3)</sup>
-McCarthy's words from a talk on the history of Lisp, 1974, recorded by [Stoyan (1984)](B9780080571157500285.xhtml#bb1205).
+McCarthy's words from a talk on the history of Lisp, 1974, recorded by [Stoyan (1984)](bibliography.md#bb1205).

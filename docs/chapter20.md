@@ -28,7 +28,7 @@ The rule says that a given string of words `?s` is a sentence if there is a stri
 Logically, this is fine, and it would work as a program to generate random sentences.
 However, it is a very inefficient program for parsing sentences.
 It will consider all possible noun phrases and verb phrases, without regard to the input words.
-Only when it gets to the concat goal (defined on [page 411](B9780080571157500121.xhtml#p411)) will it test to see if the two constituents can be concatenated together to make up the input string.
+Only when it gets to the concat goal (defined on [page 411](chapter12.md#p411)) will it test to see if the two constituents can be concatenated together to make up the input string.
 Thus, a better order of evaluation for parsing is:
 
 ```lisp
@@ -71,7 +71,8 @@ A sample query would be `(?- (S (The boy ate the apple) ())).` With suitable def
 
 Another way of reading the goal `(NP ?s0 ?sl)`, for example, is as "`IS` the list `?s0` minus the list `?sl` a noun phrase?" In this case, `?s0` minus `?sl` is the list `(The boy)`.
 The combination of two arguments, an input list and an output list, is often called a *difference list*, to emphasize this interpretation.
-More generally, the combination of an input parameter and output parameter is called an *accumulator.* Accumulators, particularly difference lists, are an important technique throughout logic programming and are also used in functional programming, as we saw on [page 63](B9780080571157500030.xhtml#p63).
+More generally, the combination of an input parameter and output parameter is called an *accumulator.*
+Accumulators, particularly difference lists, are an important technique throughout logic programming and are also used in functional programming, as we saw on [page 63](chapter3.md#p63).
 
 In our rule for `S`, the concatenation of difference lists was implicit.
 If we prefer, we could define a version of `concat` for difference lists and call it explicitly:
@@ -1170,18 +1171,18 @@ His *metamorphosis grammar* formalism was more expressive but much less efficien
 The grammar in [section 20.4](#s0025) is essentially the same as the one presented in Fernando Pereira and David H.
 D.
 Warren's 1980 paper, which introduced the Definite Clause Grammar formalism as it is known today.
-The two developed a much more substantial grammar and used it in a very influential question-answering system called Chat-80 ([Warren and Pereira, 1982](B9780080571157500285.xhtml#bb1340)).
+The two developed a much more substantial grammar and used it in a very influential question-answering system called Chat-80 ([Warren and Pereira, 1982](bibliography.md#bb1340)).
 Pereira later teamed with Stuart Shieber on an excellent book covering logic grammars in more depth: *Prolog and Natural-Language Analysis* (1987).
 The book has many strong points, but unfortunately it does not present a grammar anywhere near as complete as the Chat-80 grammar.
 
 The idea of a compositional semantics based on mathematical logic owes much to the work of the late linguist Richard Montague.
-The introduction by [Dowty, Wall, and Peters (1981)](B9780080571157500285.xhtml#bb0335) and the collection by [Rich Thomason (1974)](B9780080571157500285.xhtml#bb1235) cover Montague's approach.
+The introduction by [Dowty, Wall, and Peters (1981)](bibliography.md#bb0335) and the collection by [Rich Thomason (1974)](bibliography.md#bb1235) cover Montague's approach.
 
 The grammar in [section 20.5](#s0030) is based loosely on Michael McCord's modular logic grammar, as presented in [Walker et al.
-1990](B9780080571157500285.xhtml#bb1295).
+1990](bibliography.md#bb1295).
 
 It should be noted that logic grammars are by no means the only approach to natural language processing.
-[Woods (1970)](B9780080571157500285.xhtml#bb1425) presents an approach based on the *augmented transition network*, or ATN.
+[Woods (1970)](bibliography.md#bb1425) presents an approach based on the *augmented transition network*, or ATN.
 A transition network is like a context-free grammar.
 The *augmentation* is a way of manipulating features and semantic values.
 This is just like the extra arguments in DCGs, except that the basic operations are setting and testing variables rather than unification.
@@ -1189,7 +1190,7 @@ So the choice between ATNs and DCGs is largely a matter of what programming appr
 My feeling is that unification is a more suitable primitive than assignment, so I chose to present DCGs, even though this required bringing in Prolog's backtracking and unification mechanisms.
 
 In either approach, the same linguistic problems must be addressed-agreement, long-distance dependencies, topicalization, quantifier-scope ambiguity, and so on.
-Comparing [Woods's (1970)](B9780080571157500285.xhtml#bb1425) ATN grammar to [Pereira and Warren's (1980)](B9780080571157500285.xhtml#bb0950) DCG grammar, the careful reader will see that the solutions have much in common.
+Comparing [Woods's (1970)](bibliography.md#bb1425) ATN grammar to [Pereira and Warren's (1980)](bibliography.md#bb0950) DCG grammar, the careful reader will see that the solutions have much in common.
 The analysis is more important than the notation, as it should be.
 
 ## 20.9 Exercises

@@ -9,7 +9,7 @@ Lisp is the major language for AI work, but it is by no means the only one.
 The other strong contender is Prolog, whose name derives from "programming in logic."<a id="tfn11-1"></a><sup>[1](#fn11-1)</sup>
 The idea behind logic programming is that the programmer should state the relationships that describe a problem and its solution.
 These relationships act as constraints on the algorithms that can solve the problem, but the system itself, rather than the programmer, is responsible for the details of the algorithm.
-The tension between the "programming" and "logic" will be covered in [chapter 14](B9780080571157500145.xhtml), but for now it is safe to say that Prolog is an approximation to the ideal goal of logic programming.
+The tension between the "programming" and "logic" will be covered in [chapter 14](chapter14.md), but for now it is safe to say that Prolog is an approximation to the ideal goal of logic programming.
 Prolog has arrived at a comfortable niche between a traditional programming language and a logical specification language.
 It relies on three important ideas:
 
@@ -97,7 +97,9 @@ It is called a *backward-chaining* interpretation, because one reasons backward 
 The symbol `<-` is appropriate for both interpretations: it is an arrow indicating logical implication, and it points backwards to indicate backward chaining.
 
 It is possible to give more than one procedural interpretation to a declarative form.
-(We did that in [chapter 1](B9780080571157500017.xhtml), where grammar rules were used to generate both strings of words and parse trees.) The rule above could have been interpreted procedurally as "If you ever find out that some `x` likes cats, then conclude that Sandy likes `x`." This would be *forward chaining:* reasoning from a premise to a conclusion.
+(We did that in [chapter 1](chapter1.md), where grammar rules were used to generate both strings of words and parse trees.)
+The rule above could have been interpreted procedurally as "If you ever find out that some `x` likes cats, then conclude that Sandy likes `x`."
+This would be *forward chaining:* reasoning from a premise to a conclusion.
 It turns out that Prolog does backward chaining exclusively.
 Many expert systems use forward chaining exclusively, and some systems use a mixture of the two.
 
@@ -167,7 +169,7 @@ The following example makes it clear that unification treats the symbol + only a
 > (unifier '(?a + ?a = 2) '(?x + ?y = ?y)) => (2 + 2 = 2)
 ```
 
-Before developing the code for `unify`, we repeat here the code taken from the pattern-matching utility ([chapter 6](B9780080571157500066.xhtml)):
+Before developing the code for `unify`, we repeat here the code taken from the pattern-matching utility ([chapter 6](chapter6.md)):
 
 ```lisp
 (defconstant fail nil "Indicates pat-match failure")
@@ -303,7 +305,7 @@ Now let's try a new problem:
 Here `((?X F ?X))` really means `((?X . ((F ?X))))`, so `?X` is bound to (`F ?X`).
 This represents a circular, infinite unification.
 Some versions of Prolog, notably Prolog II ([Giannesini et al.
-1986](B9780080571157500285.xhtml#bb0460)), provide an interpretation for such structures, but it is tricky to define the semantics of infinite structures.
+1986](bibliography.md#bb0460)), provide an interpretation for such structures, but it is tricky to define the semantics of infinite structures.
 
 The easiest way to deal with such infinite structures is just to ban them.
 This ban can be realized by modifying the unifier so that it fails whenever there is an attempt to unify a variable with a structure containing that variable.
@@ -798,11 +800,11 @@ In this section we implement an incremental Prolog interpreter.
 One approach would be to modify the interpreter of the last section to use pipes rather than lists.
 With pipes, unnecessary computation is delayed, and even infinite lists can be expressed in a finite amount of time and space.
 We could change to pipes simply by changing the `mapcan` in `prove` and `prove-all` to `mappend-pipe` (page 286).
-The books by [Winston and Horn (1988)](B9780080571157500285.xhtml#bb1410) and by [Abelson and Sussman (1985)](B9780080571157500285.xhtml#bb0010) take this approach.
+The books by [Winston and Horn (1988)](bibliography.md#bb1410) and by [Abelson and Sussman (1985)](bibliography.md#bb0010) take this approach.
 We take a different one.
 
 The first step is a version of `prove` and `prove-all` that return a single solution rather than a list of all possible solutions.
-This should be reminiscent of `achieve` and `achieve-all` from `gps` ([chapter 4](B9780080571157500042.xhtml)).
+This should be reminiscent of `achieve` and `achieve-all` from `gps` ([chapter 4](chapter4.md)).
 Unlike `gps`, recursive subgoals and clobbered sibling goals are not checked for.
 However, `prove` is required to search systematically through all solutions, so it is passed an additional parameter: a list of other goals to achieve after achieving the first goal.
 This is equivalent to passing a continuation to `prove`.
@@ -1014,7 +1016,7 @@ This means changing the calling function(s) to provide the additional informatio
 * Return a list.
 This means that the calling function(s) must be changed to expect a list of replies.
 
-* Return a *pipe,* as defined in [section 9.3](B9780080571157500091.xhtml#s0020).
+* Return a *pipe,* as defined in [section 9.3](chapter9.md#s0020).
 Again, the calling function(s) must be changed to expect a pipe.
 
 * Guess and save.
@@ -1028,7 +1030,7 @@ Unfortunately, it does have one major difficulty: there has to be a way of packa
 For our Prolog interpreter, the current state is succinctly represented as a list of goals.
 In other problems, it is not so easy to summarize the entire state.
 
-We will see in [section 22.4](B9780080571157500224.xhtml#s0025) that the Scheme dialect of Lisp provides a function, `call-with-current-continuation`, that does exactly what we want: it packages the current state of the computation into a function, which can be stored away and invoked later.
+We will see in [section 22.4](chapter22.md#s0025) that the Scheme dialect of Lisp provides a function, `call-with-current-continuation`, that does exactly what we want: it packages the current state of the computation into a function, which can be stored away and invoked later.
 Unfortunately, there is no corresponding function in Common Lisp.
 
 ### Anonymous Variables
@@ -1064,7 +1066,7 @@ It is installed in the top-level macros `<-` and `?-` so that all clauses and qu
 ```
 
 A named variable that is used only once in a clause can also be considered an anonymous variable.
-This is addressed in a different way in [section 12.3](B9780080571157500121.xhtml#s0020).
+This is addressed in a different way in [section 12.3](chapter12.md#s0020).
 
 ## 11.4 The Zebra Puzzle
 
@@ -1425,24 +1427,24 @@ The programmer must be aware of Prolog's search strategy, using it to implement 
 Prolog, like Lisp, has suffered unfairly from some common myths.
 It has been thought to be an inefficient language because early implementations were interpreted, and because it has been used to write interpreters.
 But modern compiled Prolog can be quite efficient (see [Warren et al.
-1977](B9780080571157500285.xhtml#bb1335) and Van Roy 1990).
+1977](bibliography.md#bb1335) and Van Roy 1990).
 There is a temptation to see Prolog as a solution in itself rather than as a programming language.
 Those who take that view object that Prolog's depth-first search strategy and basis in predicate calculus is too inflexible.
 This objection is countered by Prolog programmers who use the facilities provided by the language to build more powerful search strategies and representations, just as one would do in Lisp or any other language.
 
 ## 11.9 History and References
 
-Cordell [Green (1968)](B9780080571157500285.xhtml#bb0490) was the first to articulate the view that mathematical results on theorem proving could be used to make deductions and thereby answer queries.
-However, the major technique in use at the time, resolution theorem proving (see [Robinson 1965](B9780080571157500285.xhtml#bb0995)), did not adequately constrain search, and thus was not practical.
+Cordell [Green (1968)](bibliography.md#bb0490) was the first to articulate the view that mathematical results on theorem proving could be used to make deductions and thereby answer queries.
+However, the major technique in use at the time, resolution theorem proving (see [Robinson 1965](bibliography.md#bb0995)), did not adequately constrain search, and thus was not practical.
 The idea of goal-directed computing was developed in Carl Hewitt's work (1971) on the PLANNER language for robot problem solving.
 He suggested that the user provide explicit hints on how to control deduction.
 
 At about the same time and independently, Alain Colmerauer was developing a system to perform natural language analysis.
 His approach was to weaken the logical language so that computationally complex statements (such as logical disjunctions) could not be made.
-Colmerauer and his group implemented the first Prolog interpreter using Algol-W in the summer of 1972 (see [Roussel 1975](B9780080571157500285.xhtml#bb1005)).
+Colmerauer and his group implemented the first Prolog interpreter using Algol-W in the summer of 1972 (see [Roussel 1975](bibliography.md#bb1005)).
 It was Roussel's wife, Jacqueline, who came up with the name Prolog as an abbreviation for "programmation en logique." The first large Prolog program was their natural language system, also completed that year ([Colmerauer et al.
-1973](B9780080571157500285.xhtml#bb0255)).
-For those who read English better than French, [Colmerauer (1985)](B9780080571157500285.xhtml#bb0245) presents an overview of Prolog.
+1973](bibliography.md#bb0255)).
+For those who read English better than French, [Colmerauer (1985)](bibliography.md#bb0245) presents an overview of Prolog.
 Robert Kowalski is generally considered the co-inventor of Prolog.
 His 1974 article outlines his approach, and his 1988 article is a historical review on the early logic programming work.
 
@@ -1471,10 +1473,10 @@ Both are experts on Prolog.)
 
 Lloyd's *Foundations of Logic Programming* (1987) provides a theoretical explanation of the formal semantics of Prolog and related languages.
 [Lassez et al.
-(1988)](B9780080571157500285.xhtml#bb0705) and [Knight (1989)](B9780080571157500285.xhtml#bb0625) provide overviews of unification.
+(1988)](bibliography.md#bb0705) and [Knight (1989)](bibliography.md#bb0625) provide overviews of unification.
 
 There have been many attempts to extend Prolog to be closer to the ideal of Logic Programming.
-The language MU-Prolog and NU-Prolog ([Naish 1986](B9780080571157500285.xhtml#bb0890)) and Prolog III ([Colmerauer 1990](B9780080571157500285.xhtml#bb0250)) are particularly interesting.
+The language MU-Prolog and NU-Prolog ([Naish 1986](bibliography.md#bb0890)) and Prolog III ([Colmerauer 1990](bibliography.md#bb0250)) are particularly interesting.
 The latter includes a systematic treatment of the &ne; relation and an interpretation of infinite trees.
 
 ## 11.10 Exercises
@@ -1482,8 +1484,8 @@ The latter includes a systematic treatment of the &ne; relation and an interpret
 **Exercise  11.4 [m]** It is somewhat confusing to see "no" printed after one or more valid answers have appeared.
 Modify the program to print "no" only when there are no answers at all, and "no more" in other cases.
 
-**Exercise  11.5 [h]** At least six books (Abelson and Sussman 1985, [Charniak and McDermott 1985](B9780080571157500285.xhtml#bb0175), Charniak et al.
-1986, [Hennessey 1989](B9780080571157500285.xhtml#bb0530), [Wilensky 1986](B9780080571157500285.xhtml#bb1390), and [Winston and Horn 1988](B9780080571157500285.xhtml#bb1410)) present unification algorithms with a common error.
+**Exercise  11.5 [h]** At least six books (Abelson and Sussman 1985, [Charniak and McDermott 1985](bibliography.md#bb0175), Charniak et al.
+1986, [Hennessey 1989](bibliography.md#bb0530), [Wilensky 1986](bibliography.md#bb1390), and [Winston and Horn 1988](bibliography.md#bb1410)) present unification algorithms with a common error.
 They all have problems unifying (`?x ?y a`) with (`?y ?x ?x`).
 Some of these texts assume that `unify` will be called in a context where no variables are shared between the two arguments.
 However, they are still suspect to the bug, as the following example points out:
@@ -1503,7 +1505,7 @@ Start by making a clear statement of the specification.
 Apply that to the other algorithms, and show where they go wrong.
 Then see if you can prove that the `unify` function in this chapter is correct.
 Failing a complete proof, can you at least prove that the algorithm will always terminate?
-See [Norvig 1991](B9780080571157500285.xhtml#bb0915) for more on this problem.
+See [Norvig 1991](bibliography.md#bb0915) for more on this problem.
 
 **Exercise  11.6 [h]** Since logic variables are so basic to Prolog, we would like them to be efficient.
 In most implementations, structures are not the best choice for small objects.
@@ -1550,7 +1552,7 @@ For example, here's a definition of grandfather that says that G is the grandfat
         (parent ?p ?c))
 ```
 
-**Exercise 11.10 [m]** The following problem is presented in [Wirth 1976](B9780080571157500285.xhtml#bb1415):
+**Exercise 11.10 [m]** The following problem is presented in [Wirth 1976](bibliography.md#bb1415):
 
 *I married a widow (let's call her W) who has a grown-up daughter (call her D).
 My father (F), who visited us often, fell in love with my step-daughter and married her.
@@ -1569,7 +1571,7 @@ Represent this situation using the predicates defined in the previous exercise, 
 
 It is possible to produce 4 instead of `(1+ (1+ (1+ (1+ 0))))` by extending the notion of unification.
 [A&iuml;t-Kaci et al.
-1987](B9780080571157500285.xhtml#bb0025) might give you some ideas how to do this.
+1987](bibliography.md#bb0025) might give you some ideas how to do this.
 
 **Exercise  11.12 [h]** The function `rename-variables` was necessary to avoid confusion between the variables in the first argument to `unify` and those in the second argument.
 An alternative is to change the `unify` so that it takes two binding lists, one for each argument, and keeps them separate.
@@ -1654,4 +1656,4 @@ In this chapter we have adopted the traditional Prolog definition of `member`.
 See exercise 11.12 for an alternative approach.
 
 <a id="fn11-4"></a><sup>[4](#tfn11-4)</sup>
-See the MU-Prolog and NU-Prolog languages ([Naish 1986](B9780080571157500285.xhtml#bb0890)).
+See the MU-Prolog and NU-Prolog languages ([Naish 1986](bibliography.md#bb0890)).

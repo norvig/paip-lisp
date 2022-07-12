@@ -5,7 +5,7 @@
 
 > -Thomas Carlyle (1795-1881)
 
-In [chapters 4](B9780080571157500042.xhtml) and [5](B9780080571157500054.xhtml) we were concerned with building two particular programs, GPS and ELIZA. In this chapter, we will reexamine those two programs to discover some common patterns.
+In [chapters 4](chapter4.md) and [5](chapter5.md) we were concerned with building two particular programs, GPS and ELIZA. In this chapter, we will reexamine those two programs to discover some common patterns.
 Those patterns will be abstracted out to form reusable software tools that will prove helpful in subsequent chapters.
 
 ## 6.1 An Interactive Interpreter Tool
@@ -116,7 +116,7 @@ The following version of `interactive-interpreter` adds two new features.
 First, it uses the macro `handler-case`<a id="tfn06-1"></a><sup>[1](#fn06-1)</sup> to handle errors.
 This macro evaluates its first argument, and normally just returns that value.
 However, if an error occurs, the subsequent arguments are checked for an error condition that matches the error that occurred.
-In this use, the case `error` matches all errors, and the action taken is to prints the error condition and continue.
+In this use, the case `error` matches all errors, and the action taken is to print the error condition and continue.
 
 This version also allows the prompt to be either a string or a function of no arguments that will be called to print the prompt.
 The function `prompt-generator`, for example, returns a function that will print prompts of the form [1], [2], and so forth.
@@ -196,7 +196,7 @@ It has to be listed as a segment pattern rather than a single pattern because it
 ```
 
 When the description of a problem gets this complicated, it is a good idea to attempt a more formal specification.
-The following table describes a grammar of patterns, using the same grammar rule format described in [chapter 2](B9780080571157500029.xhtml).
+The following table describes a grammar of patterns, using the same grammar rule format described in [chapter 2](chapter2.md).
 
 | []()            |                         |                                                   |
 |-----------------|-------------------------|---------------------------------------------------|
@@ -300,7 +300,7 @@ Then programmers who want to extend the matcher just add entries to the table, a
 This style of programming, where pattern/action pairs are stored in a table, is called *data*-*driven programming*.
 It is a very flexible style that is appropriate for writing extensible systems.
 
-There are many ways to implement tables in Common Lisp, as discussed in [section 3.6](B9780080571157500030.xhtml#s0080), [page 73](B9780080571157500030.xhtml#p73).
+There are many ways to implement tables in Common Lisp, as discussed in [section 3.6](chapter3.md#s0080), [page 73](chapter3.md#p73).
 In this case, the keys to the table will be symbols  (like `?*`), and it is fine if the representation of the table is distributed across memory.
 Thus, property lists are an appropriate choice.
 We will have two tables, represented by the `segment-match` property and the `single-match` property of symbols like `?*`.
@@ -687,8 +687,8 @@ The `binary-tree` function generates an infinite tree of which the first 15 node
 (defun binary-tree (x) (list (* 2 x) (+  1 (* 2 x))))
 ```
 
-To make it easier to specify a goal, we define the function is as a function that returns a predicate that tests for a particular value.
-Note that is does not do the test itself.
+To make it easier to specify a goal, we define the function `is` as a function that returns a predicate that tests for a particular value.
+Note that `is` does not do the test itself.
 Rather, it returns a function that can be called to perform tests:
 
 ```lisp
@@ -960,7 +960,7 @@ The cities are shown on the map in [figure 6.1](#fig-06-01), which has connectio
 This map was drawn with the help of `air-distance`, a function that returns the distance in kilometers between two cities "as the crow flies."
 It will be defined later.
 Two other useful functions are `neighbors`, which finds all the cities within 1000 kilometers, and `city`, which maps from a name to a city.
-The former uses `find-all-if`, which was defined on [page 101](B9780080571157500030.xhtml#p101) as a synonym for `remove-if-not`.
+The former uses `find-all-if`, which was defined on [page 101](chapter3.md#p101) as a synonym for `remove-if-not`.
 
 | <a id="fig-06-01"></a>[]() |
 |---|
@@ -1271,7 +1271,7 @@ Of course, iterative deepening does waste some time because at each increasing d
 But suppose that the average state has ten successors.
 That means that increasing the depth by one results in ten times more search, so only 10% of the time is wasted on repeated work.
 So iterative deepening uses only slightly more time and much less space.
-We will see it again in [chapters 11](B978008057115750011X.xhtml) and [18](B9780080571157500182.xhtml).
+We will see it again in [chapters 11](chapter11.md) and [18](chapter18.md).
 
 ### Searching Graphs
 
@@ -1498,7 +1498,7 @@ They could be arranged in a graph and searched just as we searched for a route b
 | **Figure 6.5: The Blocks World as a Graph** |
 
 The function `search-gps` does just that.
-Like the gps function on [page 135](B9780080571157500042.xhtml#p135), it computes a final state and then picks out the actions that lead to that state.
+Like the gps function on [page 135](chapter4.md#p135), it computes a final state and then picks out the actions that lead to that state.
 But it computes the state with a beam search.
 The goal predicate tests if the current state satisfies every condition in the goal, the successor function finds all applicable operators and applies them, and the cost function simply sums the number of actions taken so far, plus the number of conditions that are not yet satisfied:
 
@@ -1567,13 +1567,13 @@ This is left as an exercise.
 
 Pattern matching is one of the most important tools for AI.
 As such, it is covered in most textbooks on Lisp.
-Good treatments include Abelson and Sussman (1984), [Wilensky (1986)](B9780080571157500285.xhtml#bb1390), [Winston and Horn (1988)](B9780080571157500285.xhtml#bb1410), and [Kreutzer and McKenzie (1990)](B9780080571157500285.xhtml#bb0680).
-An overview is presented in the "pattern-matching" entry in *Encyclopedia of AI* ([Shapiro 1990](B9780080571157500285.xhtml#bb1085)).
+Good treatments include Abelson and Sussman (1984), [Wilensky (1986)](bibliography.md#bb1390), [Winston and Horn (1988)](bibliography.md#bb1410), and [Kreutzer and McKenzie (1990)](bibliography.md#bb0680).
+An overview is presented in the "pattern-matching" entry in *Encyclopedia of AI* ([Shapiro 1990](bibliography.md#bb1085)).
 
 Nilsson's *Problem*-*Solving Methods in Artificial Intelligence* (1971) was an early text-book that emphasized search as the most important defining characteristic of AI.
 More recent texts give less importance to search; Winston's *Artificial Intelligence* (1984) gives a balanced overview, and his *Lisp* (1988) provides implementations of some of the algorithms.
 They are at a lower level of abstraction than the ones in this chapter.
-Iterative deepening was first presented by [Korf (1985)](B9780080571157500285.xhtml#bb0640), and iterative broadening by [Ginsberg and Harvey (1990)](B9780080571157500285.xhtml#bb0470).
+Iterative deepening was first presented by [Korf (1985)](bibliography.md#bb0640), and iterative broadening by [Ginsberg and Harvey (1990)](bibliography.md#bb0470).
 
 ## 6.7 Exercises
 
@@ -1754,7 +1754,7 @@ The built-in constant `most-positive-fixnum` is a large integer, the largest tha
 Its value depends on the implementation, but in most Lisps it is over 16 million.
 
 <a id="fn06-4"></a><sup>[4](#tfn06-4)</sup>
-In [chapter 8](B978008057115750008X.xhtml) we will see an example where the fog did lift: symbolic integration was once handled as a problem in search, but new mathematical results now make it possible to solve the same class of integration problems without search.
+In [chapter 8](chapter8.md) we will see an example where the fog did lift: symbolic integration was once handled as a problem in search, but new mathematical results now make it possible to solve the same class of integration problems without search.
 
 <a id="fn06-5"></a><sup>[5](#tfn06-5)</sup>
 The astute reader will recognize that this graph is not a tree.

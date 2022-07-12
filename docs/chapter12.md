@@ -1,9 +1,9 @@
 # Chapter 12
 ## Compiling Logic Programs
 
-The end of [chapter 11](B978008057115750011X.xhtml) introduced a new, more efficient representation for logic variables.
+The end of [chapter 11](chapter11.md) introduced a new, more efficient representation for logic variables.
 It would be reasonable to build a new version of the Prolog interpreter incorporating this representation.
-However, [chapter 9](B9780080571157500091.xhtml) has taught us that compilers run faster than interpreters and are not that much harder to build.
+However, [chapter 9](chapter9.md) has taught us that compilers run faster than interpreters and are not that much harder to build.
 Thus, this chapter will present a Prolog compiler that translates from Prolog to Lisp.
 
 Each Prolog predicate will be translated into a Lisp function, and we will adopt the convention that a predicate called with a different number of arguments is a different predicate.
@@ -615,7 +615,7 @@ Thus, the initial binding list will be:
 ((?arg1 .?arg1) (?arg2 . ?arg2))
 ```
 
-We saw in the previous chapter ([page 354](B978008057115750011X.xhtml#p354)) that binding a variable to itself can lead to problems; we will have to be careful.
+We saw in the previous chapter ([page 354](chapter11.md#p354)) that binding a variable to itself can lead to problems; we will have to be careful.
 
 Besides eliminating unifications of new variables against parameters, there are quite a few other improvements that can be made.
 For example, unifications involving only constants can be done at compile time.
@@ -891,7 +891,7 @@ This change should speed execution time and limit the amount of garbage generate
 Of course, it makes the generated code longer, so that could slow things down if the program ends up spending too much time bringing the code to the processor.
 
 **Exercise  12.1 [h]** Write definitions for `consp-or-variable-p, unify-first!,` and `unify-rest!`, and change the compiler to generate code like that outlined previously.
-You might want to look at the function `compile-rule` in [section 9.6](B9780080571157500091.xhtml#s0035), starting on [page 300](B9780080571157500091.xhtml#p300).
+You might want to look at the function `compile-rule` in [section 9.6](chapter9.md#s0035), starting on [page 300](chapter9.md#p300).
 This function compiled a call to `pat-match` into individual tests; now we want to do the same thing to `unify!`.
 Run some benchmarks to compare the altered compiler to the original version.
 
@@ -1228,7 +1228,7 @@ We can also define `not,` or at least the normal Prolog `not,` which is quite di
 In fact, in some dialects, `not` is written `\+`, which is supposed to be &#x22AC;, that is, "can not be derived."
 The interpretation is that if goal G can not be proved, then (`not G` ) is true.
 Logically, there is a difference between (`not G` ) being true and being unknown, but ignoring that difference makes Prolog a more practical programming language.
-See [Lloyd 1987](B9780080571157500285.xhtml#bb0745) for more on the formal semantics of negation in Prolog.
+See [Lloyd 1987](bibliography.md#bb0745) for more on the formal semantics of negation in Prolog.
 
 Here's an implementation of `not/1`.
 Since it has to manipulate the trail, and we may have other predicates that will want to do the same, we'll package up what was done in `maybe-add-undo-bindings` into the macro `with-undo-bindings:`
@@ -1393,7 +1393,7 @@ Needless to say, `lisp` is not a part of standard Prolog.
  (funcall cont)))
 ```
 
-**Exercise  12.7 [m]** Define the primitive `solve/1`, which works like the function `solve` used in student ([page 225](B9780080571157500078.xhtml#p225)).
+**Exercise  12.7 [m]** Define the primitive `solve/1`, which works like the function `solve` used in student ([page 225](chapter7.md#p225)).
 Decide if it should take a single equation as argument or a list of equations.
 
 **Exercise  12.8 [h]** Assume we had a goal of the form `(solve (=  12 (* (+ ?x 1) 4)))`.
@@ -1593,7 +1593,7 @@ But here there is no way to tell that four of the six goals in the body comprise
 Second, it violates the principle of abstraction.
 A predicate should be understandable as a separate unit.
 But here the predicate process can only be understood by considering the context in which it is called: a context that requires it to fail after processing each command.
-As [Richard O'Keefe 1990](B9780080571157500285.xhtml#bb0925) points out, the correct way to write this clause is as follows:
+As [Richard O'Keefe 1990](bibliography.md#bb0925) points out, the correct way to write this clause is as follows:
 
 ```lisp
 (<- (main)
@@ -1670,13 +1670,13 @@ The Prolog term `p(a,b)` corresponds to the Lisp vector `#(p/2 a b)`, not the li
 A minority of Prolog implementations use *structure sharing.* In this approach, every non-atomic term is represented by a skeleton that contains place holders for variables and a header that points to the skeleton and also contains the variables that will fill the place holders.
 With structure sharing, making a copy is easy: just copy the header, regardless of the size of the skeleton.
 However, manipulating terms is complicated by the need to keep track of both skeleton and header.
-See [Boyer and Moore 1972](B9780080571157500285.xhtml#bb0110) for more on structure sharing.
+See [Boyer and Moore 1972](bibliography.md#bb0110) for more on structure sharing.
 
 Another major difference is that real Prolog uses the equivalent of failure continuations, not success continuations.
 No actual continuation, in the sense of a closure, is built.
 Instead, when a choice is made, the address of the code for the next choice is pushed on a stack.
 Upon failure, the next choice is popped off the stack.
-This is reminiscent of the backtracking approach using Scheme's `call/cc` facility outlined on [page 772](B9780080571157500224.xhtml#p772).
+This is reminiscent of the backtracking approach using Scheme's `call/cc` facility outlined on [page 772](chapter22.md#p772).
 
 **Exercise  12.15 [m]** Assuming an approach using a stack of failure continuations instead of success continuations, show what the code for `p` and `member` would look like.
 Note that you need not pass failure continuations around; you can just push them onto a stack that `top-level-prove` will invoke.
@@ -1685,13 +1685,13 @@ Did we make the right choice in implementing our compiler with success continuat
 
 ## 12.11 History and References
 
-As described in [chapter 11](B978008057115750011X.xhtml), the idea of logic programming was fairly well understood by the mid-1970s.
+As described in [chapter 11](chapter11.md), the idea of logic programming was fairly well understood by the mid-1970s.
 But because the implementations of that time were slow, logic programming did not catch on.
 It was the Prolog compiler for the DEC-10 that made logic programming a serious alternative to Lisp and other general-purpose languages.
 The compiler was developed in 1977 by David H.
 D.
 Warren with Fernando Pereira and Luis Pereira.
-See the paper by [Warren (1979)](B9780080571157500285.xhtml#bb1325) and by all three (1977).
+See the paper by [Warren (1979)](bibliography.md#bb1325) and by all three (1977).
 
 Unfortunately, David H.
 D.
@@ -1699,10 +1699,10 @@ Warren's pioneering work on compiling Prolog has never been published in a widel
 His main contribution was the description of the Warren Abstract Machine (WAM), an instruction set for compiled Prolog.
 Most existing compilers use this instruction set, or a slight modification of it.
 This can be done either through byte-code interpretation or through macroexpansion to native machine instructions.
-[A&iuml;t-Kaci 1991](B9780080571157500285.xhtml#bb0020) provides a good tutorial on the WAM, much less terse than the original ([Warren 1983](B9780080571157500285.xhtml#bb1330)).
+[A&iuml;t-Kaci 1991](bibliography.md#bb0020) provides a good tutorial on the WAM, much less terse than the original ([Warren 1983](bibliography.md#bb1330)).
 The compiler presented in this chapter does not use the WAM.
-Instead, it is modeled after Mark [Stickel's (1988)](B9780080571157500285.xhtml#bb1200) theorem prover.
-A similar compiler is briefly sketched by Jacques [Cohen 1985](B9780080571157500285.xhtml#bb0225).
+Instead, it is modeled after Mark [Stickel's (1988)](bibliography.md#bb1200) theorem prover.
+A similar compiler is briefly sketched by Jacques [Cohen 1985](bibliography.md#bb0225).
 
 ## 12.12 Exercises
 
