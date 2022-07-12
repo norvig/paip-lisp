@@ -2336,7 +2336,7 @@ You will have to consult a reference to learn new `format` directives.
 
 ## 3.22 Answers
 
-**Answer 3.2** `(cons` *a b*) = (`list *` *a b*)
+**Answer 3.2** `(cons` *a b*) = (`list*` *a b*)
 
 **Answer 3.3**
 
