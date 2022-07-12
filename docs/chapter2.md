@@ -12,7 +12,7 @@ Rather, you must hear and speak (or read and write) the language to gain profici
 The same is true for learning computer languages.
 
 This chapter shows how to combine the basic functions and special forms of Lisp into a complete program.
-If you can learn how to do that, then acquiring the remaining vocabulary of Lisp (as outlined in chapter 3) will be easy.
+If you can learn how to do that, then acquiring the remaining vocabulary of Lisp (as outlined in [chapter 3](chapter3.md)) will be easy.
 
 ## 2.1 A Grammar for a Subset of English
 

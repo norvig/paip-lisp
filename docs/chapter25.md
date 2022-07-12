@@ -172,7 +172,7 @@ The following function is handy for this purpose:
 ```
 
 **Diagnosis:** Are you using `labels` and `flet` properly?
-Consider again the function `replace-?-vars`, which was defined in [section 11.3](B978008057115750011X.xhtml#s0025) to replace an anonymous logic variable with a unique new variable.
+Consider again the function `replace-?-vars`, which was defined in [section 11.3](chapter11.md#s0025) to replace an anonymous logic variable with a unique new variable.
 
 ```lisp
 (defun replace-?-vars (exp)
@@ -577,7 +577,7 @@ To avoid this problem, use `let*` whenever a variable's initial binding refers t
 
 ## 25.14 Problems with Macros
 
-In [section 3.2](B9780080571157500030.xhtml#s0015) we described a four-part approach to the design of macros:
+In [section 3.2](chapter3.md#s0015) we described a four-part approach to the design of macros:
 
 *   Decide if the macro is really necessary.
 
@@ -904,7 +904,7 @@ New functions should be introduced for any of the following reasons:
 
 In (2), it is interesting to consider what "too long" means.
 [Charniak et al.
-(1987)](B9780080571157500285.xhtml#bb0180) suggested that 20 lines is the limit.
+(1987)](bibliography.md#bb0180) suggested that 20 lines is the limit.
 But now that large bit-map displays have replaced 24-line terminals, function definitions have become longer.
 So perhaps one screenful is a better limit than 20 lines.
 The addition of `flet` and `labels` also contributes to longer function definitions.
@@ -1281,7 +1281,7 @@ It looks for the key in the a-list, and if the key is there, it modifies the cdr
 ----------------------
 
 <a id="fn25-1"></a><sup>[1](#tfn25-1)</sup>
-This misunderstanding has shown up even in published articles, such as [Baker 1991](B9780080571157500285.xhtml#bb0060).
+This misunderstanding has shown up even in published articles, such as [Baker 1991](bibliography.md#bb0060).
 
 <a id="fn25-2"></a><sup>[2](#tfn25-2)</sup>
 Scheme requires a list of keys in each clause.

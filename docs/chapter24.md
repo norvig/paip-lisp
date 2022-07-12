@@ -13,7 +13,7 @@ A *package* is a symbol table that maps from strings to symbols named by those s
 When read is confronted with a sequence of characters like `list`, it uses the symbol table to determine that this refers to the symbol `list`.
 The important point is that every use of the symbol name `list` refers to the same symbol.
 That makes it easy to refer to predefined symbols, but it also makes it easy to introduce unintended name conflicts.
-For example, if I wanted to hook up the `emycin` expert system from [chapter 16](B9780080571157500169.xhtml) with the parser from [chapter 19](B9780080571157500194.xhtml), there would be a conflict because both programs use the symbol `defrule` to mean different things.
+For example, if I wanted to hook up the `emycin` expert system from [chapter 16](chapter16.md) with the parser from [chapter 19](chapter19.md), there would be a conflict because both programs use the symbol `defrule` to mean different things.
 
 Common Lisp uses the package system to help resolve such conflicts.
 Instead of a single symbol table, Common Lisp allows any number of packages.
@@ -81,7 +81,7 @@ Also note that ANSI renames the `lisp package` as `common-lisp`.
  (:export emycin defrule defcontext defparm yes/no yes no is))
 ```
 
-For more on packages and building systems, see [section 25.16](B978008057115750025X.xhtml#s0110) or *Common Lisp the Language.*
+For more on packages and building systems, see [section 25.16](chapter25.md#s0110) or *Common Lisp the Language.*
 
 ### The Seven Name Spaces
 
@@ -231,7 +231,7 @@ The example using series would look like:
 This looks very much like the functional version: only the names have been changed.
 However, it compiles into efficient iterative code very much like the `dolist` version.
 
-Like pipes (see [section 9.3](B9780080571157500091.xhtml#s0015)), elements of a series are only evaluated when they are needed.
+Like pipes (see [section 9.3](chapter9.md#s0015)), elements of a series are only evaluated when they are needed.
 So we can write `(scan-range :from 0)` to indicate the infinite series of integers starting from 0, but if we only use, say, the first five elements of this series, then only the first five elements will be generated.
 
 The series facility offers a convenient and efficient alternative to iterative loops and sequence functions.
@@ -562,7 +562,7 @@ Each keyword is quite simple:
 The `collect` keyword poses another challenge.
 How do you collect a list of expressions presented one at a time?
 The answer is to view the expressions as a queue, one where we add items to the rear but never remove them from the front of the queue.
-Then we can use the queue functions defined in [section 10.5](B9780080571157500108.xhtml#s0025).
+Then we can use the queue functions defined in [section 10.5](chapter10.md#s0025).
 
 Unlike the other clauses, value accumulation clauses can communicate with each other.
 There can be, say, two `collect` and an append clause in the same loop, and they all build onto the same list.
@@ -700,7 +700,7 @@ There is one extra feature in loop's conditionals: the value of the test is stor
 The conditional clauses are a little tricky to implement, since they involve parsing other clauses.
 The idea is that `call-loop-fn` parses the THEN and ELSE parts, adding whatever is necessary to the body and to other parts of the loop structure.
 Then `add-body` is used to add labels and go statements that branch to the labels as needed.
-This is the same technique that is used to compile conditionals in [chapter 23](B9780080571157500236.xhtml); see the function `comp-if` on [page 787](B9780080571157500236.xhtml#p787).
+This is the same technique that is used to compile conditionals in [chapter 23](chapter23.md); see the function `comp-if` on [page 787](chapter23.md#p787).
 Here is the code:
 
 ```lisp
@@ -838,7 +838,7 @@ Here's roughly what we want:
 
 where `g001` is a new symbol, to avoid conflicts with the `x` or with symbols in the body.
 Normally, we generate macro bodies using backquotes, but if the macro body itself has a backquote, then what?
-It is possible to nest backquotes (and [appendix C](B9780080571157500273.xhtml) of *Common Lisp the Language*, 2d edition has a nice discussion of doubly and triply nested backquotes), but it certainly is not trivial to understand.
+It is possible to nest backquotes (and appendix C of *Common Lisp the Language*, 2d edition has a nice discussion of doubly and triply nested backquotes), but it certainly is not trivial to understand.
 I recommend replacing the inner backquote with its equivalent using `list` and `quote`:
 
 ```lisp
@@ -898,7 +898,7 @@ When this variable is non-nil, uninterned symbols are printed with a prefix `#`:
 This insures that the symbol will not be interned by a subsequent read.
 
 It is worth noting that Common Lisp automatically handles problems related to multiple evaluation of subforms in setf methods.
-See [page 884](B978008057115750025X.xhtml#p884) for an example.
+See [page 884](chapter25.md#p884) for an example.
 
 ### Avoid Overusing Macros
 
@@ -931,7 +931,7 @@ which would expand into:
     ((SETQ THAT (ASSOC ITEM A-LIST)) (PROCESS (CDR THAT)))))
 ```
 
-This was a convenient feature (compare it to the => feature of Scheme's cond, as discussed on [page 778](B9780080571157500224.xhtml#p778)), but it backfired often enough that I eventually gave up on my version of `if`.
+This was a convenient feature (compare it to the => feature of Scheme's cond, as discussed on [page 778](chapter22.md#p778)), but it backfired often enough that I eventually gave up on my version of `if`.
 Here's why.
 I would write code like this:
 
@@ -956,7 +956,7 @@ But in this case, violating referential transparency can lead to confusion.
 
 ### MAP-INTO
 
-The function `map-into` is used on [page 632](B9780080571157500182.xhtml#p632).
+The function `map-into` is used on [page 632](chapter18.md#p632).
 This function, added for the ANSI version of Common Lisp, is like `map`, except that instead of building a new sequence, the first argument is changed to hold the results.
 This section describes how to write a fairly efficient version of `map-into`, using techniques that are applicable to any sequence function.
 We'll start with a simple version:

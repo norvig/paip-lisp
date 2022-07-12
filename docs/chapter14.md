@@ -23,7 +23,7 @@ The general inferencing mechanisms that worked on toy examples just did not scal
 
 The *expert-system* approach offered an alternative.
 The key to solving hard problems was seen to be the acquisition of special-case rules to break the problem into easier problems.
-According to Feigenbaum, the lesson learned from expert systems like MYCIN (which we will see in [chapter 16](B9780080571157500169.xhtml)) is that the choice of inferencing mechanism is not as important as having the right knowledge.
+According to Feigenbaum, the lesson learned from expert systems like MYCIN (which we will see in [chapter 16](chapter16.md)) is that the choice of inferencing mechanism is not as important as having the right knowledge.
 In this view it doesn't matter very much if MYCIN uses forward- or backward-chaining, or if it uses certainty factors, probabilities, or fuzzy set theory.
 What matters crucially is that we know pseudomonas is a gram-negative, rod-shaped organism that can infect patients with compromised immune systems.
 In other words, the key problem is acquiring and representing knowledge.
@@ -218,7 +218,7 @@ Introducing negation wrecks havoc on the simple Prolog evaluation scheme.
 It is no longer sufficient to consider a single clause at a time.
 Rather, multiple clauses must be considered together if we want to derive all the right answers.
 
-Robert [Moore 1982](B9780080571157500285.xhtml#bb0865) gives a good example of the power of disjunctive reasoning.
+Robert [Moore 1982](bibliography.md#bb0865) gives a good example of the power of disjunctive reasoning.
 His problem concerned three colored blocks, but we will update it to deal with three countries.
 Suppose that a certain Eastern European country, *E*, has just decided if it will remain under communist rule or become a democracy, but we do not know the outcome of the decision.
 *E* is situated between the democracy *D* and the communist country *C*:
@@ -480,7 +480,7 @@ The solutions to the three problems-expressiveness, completeness, and indexing-w
 
 A better solution to the phone-book problem is to index each phone-book entry in some kind of table that makes it easy to add, delete, and retrieve entries.
 That is what we will do in this section.
-We will develop an extension of the trie or discrimination tree data structure built in [section 10.5](B9780080571157500108.xhtml#s0030) ([page 344](B9780080571157500108.xhtml#p344)).
+We will develop an extension of the trie or discrimination tree data structure built in [section 10.5](chapter10.md#s0030) ([page 344](chapter10.md#p344)).
 
 Making a discrimination tree for Prolog facts is complicated by the presence of variables in both the facts and the query.
 Either facts with variables in them will have to be indexed in several places, or queries with variables will have to look in several places, or both.
@@ -649,7 +649,7 @@ Property lists would not work, because they are searched using eq and atoms can 
 Association lists are searched using `eql` by default.
 An alternative would be to use hash tables for the index, or even to use a scheme that starts with association lists and switches to a hash table when the number of entries gets large.
 I use `lookup` to look up the value of a key in a property list.
-This function, and its `setf` method, are defined on [page 896](B978008057115750025X.xhtml#p896).
+This function, and its `setf` method, are defined on [page 896](chapter25.md#p896).
 
 ```lisp
 (defun index (key)
@@ -792,7 +792,7 @@ Now let's stop and see what we have accomplished.
 The functions `fetch and dtree-fetch` fulfill their contract of returning potential matches.
 However, we still need to integrate the dtree facility with Prolog.
 We need to go through the potential matches and determine which candidates are actual matches.
-For simplicity we will use the version of `unify` with binding lists defined in [section 11.2](B978008057115750011X.xhtml#s0020).
+For simplicity we will use the version of `unify` with binding lists defined in [section 11.2](chapter11.md#s0020).
 (It is also possible to construct a more efficient version that uses the compiler and the destructive function `unify!`.)
 
 The function `mapc-retrieve` calls `fetch` to get a list-of-lists of potential matches and then calls `unify` to see if the match is a true one.
@@ -908,7 +908,7 @@ Here is the implementation:
 
 ## 14.9 A Solution to the Completeness Problem
 
-We saw in [chapter 6](B9780080571157500066.xhtml) that iterative deepening is an efficient way to cover a search space without falling into an infinite loop.
+We saw in [chapter 6](chapter6.md) that iterative deepening is an efficient way to cover a search space without falling into an infinite loop.
 Iterative deepening can also be used to guide the search in Prolog.
 It will insure that all valid answers are found eventually, but it won't turn an infinite search space into a finite one.
 
@@ -1794,7 +1794,7 @@ Here we see that the facts entered in `W7031` are not accessible, but the facts 
 
 ### Unification, Equality, Types, and Skolem Constants
 
-The lesson of the zebra puzzle in [section 11.4](B978008057115750011X.xhtml#s0040) was that unification can be used to lessen the need for backtracking, because an uninstantiated logic variable or partially instantiated term can stand for a whole range of possible solutions.
+The lesson of the zebra puzzle in [section 11.4](chapter11.md#s0040) was that unification can be used to lessen the need for backtracking, because an uninstantiated logic variable or partially instantiated term can stand for a whole range of possible solutions.
 However, this advantage can quickly disappear when the representation forces the problem solver to enumerate possible solutions rather than treating a whole range of solutions as one.
 For example, consider the following query in the frame language and its expansion into primitives:
 
@@ -1821,40 +1821,41 @@ The equality mechanism is used to keep track of each Skolem variable's possible 
 
 ## 14.11 History and References
 
-[Brachman and Levesque (1985)](B9780080571157500285.xhtml#bb0115) collect thirty of the key papers in knowledge representation.
-Included are some early approaches to semantic network based ([Quillian 1967](B9780080571157500285.xhtml#bb0965)) and logic-based ([McCarthy 1968](B9780080571157500285.xhtml#bb0805)) representation.
-Two thoughtful critiques of the ad hoc use of representations without defining their meaning are by [Woods (1975)](B9780080571157500285.xhtml#bb1430) and [McDermott (1978)](B9780080571157500285.xhtml#bb0820).
-It is interesting to contrast the latter with [McDermott 1987](B9780080571157500285.xhtml#bb0825), which argues that logic by itself is not sufficient to solve the problems of AI.
+[Brachman and Levesque (1985)](bibliography.md#bb0115) collect thirty of the key papers in knowledge representation.
+Included are some early approaches to semantic network based ([Quillian 1967](bibliography.md#bb0965)) and logic-based ([McCarthy 1968](bibliography.md#bb0805)) representation.
+Two thoughtful critiques of the ad hoc use of representations without defining their meaning are by [Woods (1975)](bibliography.md#bb1430) and [McDermott (1978)](bibliography.md#bb0820).
+It is interesting to contrast the latter with [McDermott 1987](bibliography.md#bb0825), which argues that logic by itself is not sufficient to solve the problems of AI.
 This argument should not be surprising to those who remember the slogan *logic = algorithm - control.*
 
-[Genesereth and Nilsson's textbook (1987)](B9780080571157500285.xhtml#bb0455) cover the predicate-calculus-based approach to knowledge representation and AI in general.
-[Ernest Davis (1990)](B9780080571157500285.xhtml#bb0275) presents a good overview of the field that includes specialized representations for time, space, qualitative physics, propositional attitudes, and the interaction between agents.
+[Genesereth and Nilsson's textbook (1987)](bibliography.md#bb0455) cover the predicate-calculus-based approach to knowledge representation and AI in general.
+[Ernest Davis (1990)](bibliography.md#bb0275) presents a good overview of the field that includes specialized representations for time, space, qualitative physics, propositional attitudes, and the interaction between agents.
 
 Many representation languages focus on the problem of defining descriptions for categories of objects.
-These have come to be known as *term-subsumption languages.* Examples include KL-ONE ([Schmolze and Lipkis 1983](B9780080571157500285.xhtml#bb1060)) and KRYPTON ([Brachman, Fikes, and Levesque 1983](B9780080571157500285.xhtml#bb0120)).
-See [Lakoff 1987](B9780080571157500285.xhtml#bb0685) for much more on the problem of categories and prototypes.
+These have come to be known as *term-subsumption languages.*
+Examples include KL-ONE ([Schmolze and Lipkis 1983](bibliography.md#bb1060)) and KRYPTON ([Brachman, Fikes, and Levesque 1983](bibliography.md#bb0120)).
+See [Lakoff 1987](bibliography.md#bb0685) for much more on the problem of categories and prototypes.
 
-Hector [Levesque (1986)](B9780080571157500285.xhtml#bb0720) points out that the areas Prolog has difficulty with-disjunction, negation, and existentials-all involve a degree of vagueness.
+Hector [Levesque (1986)](bibliography.md#bb0720) points out that the areas Prolog has difficulty with-disjunction, negation, and existentials-all involve a degree of vagueness.
 In his term, they lack *vividness.* A vivid proposition is one that could be represented directly in a picture: the car is blue; she has a martini in her left hand; Albany is the capital of New York.
 Nonvivid propositions cannot be so represented: the car is not blue; she has a martini in one hand; either Albany or New York City is the capital of New York.
 There is interest in separating vivid from nonvivid reasoning, but no current systems are actually built this way.
 
-The possible world approach of [section 14.10](#s0055) was used in the MRS system ([Russell 1985](B9780080571157500285.xhtml#bb1020)).
+The possible world approach of [section 14.10](#s0055) was used in the MRS system ([Russell 1985](bibliography.md#bb1020)).
 More recent knowledge representation systems tend to use truth maintenance systems instead of possible worlds.
-This approach was pioneered by [Doyle (1979)](B9780080571157500285.xhtml#bb0340) and [McAllester (1982)](B9780080571157500285.xhtml#bb0785).
+This approach was pioneered by [Doyle (1979)](bibliography.md#bb0340) and [McAllester (1982)](bibliography.md#bb0785).
 Doyle tried to change the name to "reason maintenance,' in (1983), but it was too late.
 The version in widest used today is the assumption-based truth maintenance system, or ATMS, developed by de Kleer (1986a,b,c).
 [Charniak et al.
-(1987)](B9780080571157500285.xhtml#bb0180) present a complete Common Lisp implementation of a McAllester-style TMS.
+(1987)](bibliography.md#bb0180) present a complete Common Lisp implementation of a McAllester-style TMS.
 
 There is little communication between the logic programming and knowledge representation communities, even though they cover overlapping territory.
-[Colmerauer (1990)](B9780080571157500285.xhtml#bb0250) and [Cohen (1990)](B9780080571157500285.xhtml#bb0230) describe Logic Programming languages that address some of the issues covered in this chapter.
-Key papers in equality reasoning include Galler and Fisher 1974, [Kornfeld 1983](B9780080571157500285.xhtml#bb0645),<a id="tfn14-1"></a><sup>[1](#fn14-1)</sup>
-Jaffar, Lassez, and Maher 1984, and [van Emden and Yukawa 1987](B9780080571157500285.xhtml#bb1265).
-[H&ouml;lldobler's book (1987)](B9780080571157500285.xhtml#bb0550) includes an overview of the area.
+[Colmerauer (1990)](bibliography.md#bb0250) and [Cohen (1990)](bibliography.md#bb0230) describe Logic Programming languages that address some of the issues covered in this chapter.
+Key papers in equality reasoning include Galler and Fisher 1974, [Kornfeld 1983](bibliography.md#bb0645),<a id="tfn14-1"></a><sup>[1](#fn14-1)</sup>
+Jaffar, Lassez, and Maher 1984, and [van Emden and Yukawa 1987](bibliography.md#bb1265).
+[H&ouml;lldobler's book (1987)](bibliography.md#bb0550) includes an overview of the area.
 Papers on extending unification in ways other than equality include [A&iuml;t-Kaci et al.
-1987](B9780080571157500285.xhtml#bb0025) and [Staples and Robinson 1988](B9780080571157500285.xhtml#bb1125).
-Finally, papers on extending Prolog to cover disjunction and negation (i.e., non-Horn clauses) include [Loveland 1987](B9780080571157500285.xhtml#bb0755), [Plaisted 1988](B9780080571157500285.xhtml#bb0960), and [Stickel 1988](B9780080571157500285.xhtml#bb1200).
+1987](bibliography.md#bb0025) and [Staples and Robinson 1988](bibliography.md#bb1125).
+Finally, papers on extending Prolog to cover disjunction and negation (i.e., non-Horn clauses) include [Loveland 1987](bibliography.md#bb0755), [Plaisted 1988](bibliography.md#bb0960), and [Stickel 1988](bibliography.md#bb1200).
 
 ## 14.12 Exercises
 
@@ -1917,4 +1918,4 @@ Now figure out how to find all the nlists that an item is indexed under.
 ----------------------
 
 <a id="fn14-1"></a><sup>[1](#tfn14-1)</sup>
-A commentary on this paper appears in [Elcock and Hoddinott 1986](B9780080571157500285.xhtml#bb0360).
+A commentary on this paper appears in [Elcock and Hoddinott 1986](bibliography.md#bb0360).
