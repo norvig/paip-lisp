@@ -1572,7 +1572,7 @@ All output, including the symbols <= and => are printed by the stepper itself; I
 133/4
 ```
 
-The functions `describe`, `inspect`, `documentation,` and `apropos` provide information about the state of the current program.
+The functions `describe`, `inspect`, `documentation`, and `apropos` provide information about the state of the current program.
 `apropos` prints information about all symbols whose name matches the argument:
 
 ```lisp

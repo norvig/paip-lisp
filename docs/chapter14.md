@@ -868,8 +868,6 @@ Within this list of forms, the variables will be bound to the values that satisf
 The syntax was chosen to be the same as `multiple-value-bind`.
 Here we see a typical use of `query-bind`, its result, and its macro-expansion:
 
-## code block
-
 ```lisp
 > (query-bind (?x ?fn) '(p ?x (?fn c))
   (format t "~&P holds between ~a and ~a of c." ?x ?fn)) =>
@@ -1752,8 +1750,6 @@ Two new facts are added to this new world:
 ```
 
 We see that the two new facts are accessible in this world:
-
-## code block
 
 ```lisp
 > (retrieve-bagof-in-world '(p ?z c)) =>

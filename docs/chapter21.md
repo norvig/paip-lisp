@@ -1461,7 +1461,7 @@ In connection to the previous exercise, note that it is rare if not impossible f
 **Exercise  21.4 [m]** Add rules to `advp` to allow for adverbs to modify other adverbs, as in "extremely likely" or "very strongly."
 
 **Exercise  21.5 [h]** Allow adverbs to modify adjectives, as in "very good" or "really delicious." The syntax will be easy, but it is harder to get a reasonable semantics.
-While you're at it, make sure that you can handle adjectives with so-called *nonintersective* semantics.
+While you're at it, make sure that you can handle adjectives with so-called *non-intersective* semantics.
 Some adjectives can be handled by intersective semantics: a red circle is something that is red and is a circle.
 But for other adjectives, this model does not work: a former senator is not something that is former and is a senator-a former senator is not a senator at all.
 Similarly, a toy elephant is not an elephant.

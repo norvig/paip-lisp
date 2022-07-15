@@ -1760,7 +1760,7 @@ Add procedures `p-trace` and `p-untrace` to trace and untrace Prolog predicates.
 Add code to the compiler to generate calls to a printing procedure for goals that are traced.
 In Lisp, we have to trace procedures when they are called and when they return.
 In Prolog, there are four cases to consider: the call, successful completion, backtrack into subsequent clauses, and failure with no more clauses.
-We will call these four cases `call`, `exit`, `redo,` and `fail`, respectively.
+We will call these four cases `call`, `exit`, `redo`, and `fail`, respectively.
 If we traced `member,` we would expect tracing output to look something like this:
 
 ```lisp

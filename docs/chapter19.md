@@ -82,9 +82,8 @@ To emphasize this, I include "noun" and "verb" as nouns in the grammar `*grammar
 (setf *grammar* *grammar3*)
 ```
 
-
-I also define the data types `rule, parse`, and `tree`, and some functions for getting at the rules.
-Rules are defined as structures of type list with three slots: the left-hand side, the arrow (which should always be represented as the literal ->) and the right-hand side.
+I also define the data types `rule`, `parse`, and `tree`, and some functions for getting at the rules.
+Rules are defined as structures of type list with three slots: the left-hand side, the arrow (which should always be represented as the literal `->`) and the right-hand side.
 Compare this to the treatment on [page 40](chapter2.md#p40).
 
 ```lisp
