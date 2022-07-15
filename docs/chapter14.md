@@ -1050,7 +1050,7 @@ The following table gives some examples, along with English translations:
 | `(rel birthday animal date)` | The birthday relation holds between each animal and some date. |
 | `(ind fido dog)`             | The individual Fido is categorized as a dog.                   |
 | `(val birthday fido july-1)` | The birthday of Fido is July-1.                                |
-| `(and *A B*)`                | Both *A* and *B* are true.                                     |
+| `(and` *A B*`)`              | Both *A* and *B* are true.                                     |
 
 For those who feel more comfortable with predicate calculus, the following table gives the formal definition of each primitive.
 The most complicated definition is for rel.
