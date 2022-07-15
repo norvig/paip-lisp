@@ -8,8 +8,8 @@ The simplest compiler need not be much more complex than an interpreter.
 One thing that makes a compiler more complex is that we have to describe the output of the compiler: the instruction set of the machine we are compiling for.
 For the moment let's assume a stack-based machine.
 The calling sequence on this machine for a function call with *n* arguments is to push the *n* arguments onto the stack and then push the function to be called.
-A `"CALL *n*"` instruction saves the return point on the stack and goes to the first instruction of the called function.
-By convention, the first instruction of a function will always be `"ARGS *n*"`, which pops *n* arguments off the stack, putting them in the new function's environment, where they can be accessed by `LVAR` and `LSET` instructions.
+A "`CALL` *n*" instruction saves the return point on the stack and goes to the first instruction of the called function.
+By convention, the first instruction of a function will always be "`ARGS` *n*", which pops *n* arguments off the stack, putting them in the new function's environment, where they can be accessed by `LVAR` and `LSET` instructions.
 The function should return with a `RETURN` instruction, which resets the program counter and the environment to the point of the original `CALL` instruction.
 
 In addition, our machine has three `JUMP` instructions; one that branches unconditionally, and two that branch depending on if the top of the stack is nil or non-nil.
@@ -379,8 +379,8 @@ Here's another example:
 | `GVAR`   | `X` |
 | `RETURN` |     |
 
-In this expression, if we can be assured that + and * refer to the normal arithmetic functions, then we can compile this as if it were `(begin (f x) x)`.
-Furthermore, it is reasonable to assume that + and * will be instructions in our machine that can be invoked inline, rather than having to call out to a function.
+In this expression, if we can be assured that `+` and `*` refer to the normal arithmetic functions, then we can compile this as if it were `(begin (f x) x)`.
+Furthermore, it is reasonable to assume that `+` and `*` will be instructions in our machine that can be invoked inline, rather than having to call out to a function.
 Many compilers spend a significant portion of their time optimizing arithmetic operations, by taking into account associativity, commutativity, distributivity, and other properties.
 
 Besides arithmetic, compilers often have expertise in conditional expressions.
@@ -430,7 +430,7 @@ Consider the following:
 |      | `CALL`   | `1` |
 |      | `RETURN` |     |
 
-Here we call `g` and when `g` returns we call `f` , and when `f` returns we return from this function.
+Here we call `g` and when `g` returns we call `f`, and when `f` returns we return from this function.
 But this last return is wasteful; we push a return address on the stack, and then pop it off, and return to the next return address.
 An alternative function-calling protocol involves pushing the return address before calling `g,` but then not pushing a return address before calling `f;` when `f` returns, it returns directly to the calling function, whatever that is.
 
@@ -471,7 +471,7 @@ The code is indented to show nested functions.
 The top-level function loads the constant 4 and an anonymous function, and calls the function.
 This function loads the constant 3 and the local variable `x`, which is the first (0th) element in the top (0th) frame.
 It then calls the double-nested function on these two arguments.
-This function loads `x, y`, and `z: x` is now the 0th element in the next-to-top (1st) frame, and `y` and `z` are the 0th and 1st elements of the top frame.
+This function loads `x`, `y`, and `z`: `x` is now the 0th element in the next-to-top (1st) frame, and `y` and `z` are the 0th and 1st elements of the top frame.
 With all the arguments in place, the function `f` is finally called.
 Note that no continuations are stored-`f` can return directly to the caller of this function.
 
@@ -867,7 +867,7 @@ The `prim` data type has five slots.
 The first holds the name of a symbol that is globally bound to a primitive operation.
 The second, `n-args`, is the number of arguments that the primitive requires.
 We have to take into account the number of arguments to each function because we want `(+ x y)` to compile into a primitive addition instruction, while `(+ x y z)` should not.
-It will compile into a call to the + function instead.
+It will compile into a call to the `+` function instead.
 The `opcode` slot gives the opcode that is used to implement the primitive.
 The `always` field is true if the primitive always returns non-nil, `false` if it always returns nil, and nil otherwise.
 It is used in exercise 23.6.
@@ -919,9 +919,9 @@ We can enforce that by altering `gen-set` to preserve them as constants:
             (gen 'GSET var)))))
 ```
 
-Now an expression like `(+ x 1)` will be properly compiled using the + instruction rather than a subroutine call, and an expression like `(set ! + *)` will be flagged as an error when + is a global variable, but allowed when it has been locally bound.
+Now an expression like `(+ x 1)` will be properly compiled using the `+` instruction rather than a subroutine call, and an expression like `(set ! + *)` will be flagged as an error when `+` is a global variable, but allowed when it has been locally bound.
 However, we still need to be able to handle expressions like `(set ! add +)` and then `(add x y)`.
-Thus, we need some function object that + will be globally bound to, even if the compiler normally optimizes away references to that function.
+Thus, we need some function object that `+` will be globally bound to, even if the compiler normally optimizes away references to that function.
 The function `init-scheme-comp` takes care of this requirement:
 
 ```lisp
@@ -1180,7 +1180,7 @@ The most important architectural feature of the Lisp Machine was the inclusion o
 Also important was microcode to implement certain frequently used generic operations.
 For example, in the Symbolics 3600 Lisp Machine, the microcode for addition simultaneously did an integer add, a floating-point add, and a check of the tag bits.
 If both arguments turned out to be either integers or floating-point numbers, then the appropriate result was taken.
-Otherwise, a trap was signaled, and a converison routine was entered.
+Otherwise, a trap was signaled, and a conversion routine was entered.
 This approach makes the compiler relatively simple, but the trend in architecture is away from highly microcoded processors toward simpler (RISC) processors.
 
 **Software.** We can remove many of these problems with a technique known as *byte-code assembly.* Here we translate the instructions into a vector of bytes and then interpret the bytes with a byte-code interpreter.
@@ -1610,11 +1610,12 @@ This chapter has shown how to evaluate a language with Lisp-like syntax, by writ
 In this section we see how to make the `read` part slightly more general.
 We still read Lisp-like syntax, but the lexical conventions can be slightly different.
 
-The Lisp function `read` is driven by an object called the *readtable,* which is stored in the special variable `*readtable*.` This table associates some action to take with each of the possible characters that can be read.
+The Lisp function `read` is driven by an object called the *readtable,* which is stored in the special variable `*readtable*`.
+This table associates some action to take with each of the possible characters that can be read.
 The entry in the readtable for the character `#\(`, for example, would be directions to read a list.
 The entry for `#\;` would be directions to ignore every character up to the end of the line.
 
-Because the readtable is stored in a special variable, it is possible to alter completely the way read works just by dynamically rebinding this variable.
+Because the readtable is stored in a special variable, it is possible to alter completely the way `read` works just by dynamically rebinding this variable.
 
 The new function `scheme-read` temporarily changes the readtable to a new one, the Scheme readtable.
 It also accepts an optional argument, the stream to read from, and it returns a special marker on end of file.
@@ -1653,7 +1654,7 @@ Note that the backquote and comma characters are defined as read macros, but the
 
 (set-dispatch-macro-character #\# #\d
   ;; In both Common Lisp and Scheme,
-  ;; #x, #o and #b are hexidecimal, octal, and binary,
+  ;; #x, #o and #b are hexadecimal, octal, and binary,
   ;; e.g. #xff = #o377 = #b11111111 = 255
   ;; In Scheme only, #d255 is decimal 255.
   #'(lambda (stream &rest ignore)
@@ -1859,11 +1860,9 @@ What time and space complexity does it have?
 
 The next three exercises describe extensions that are not part of the Scheme standard.
 
-**Exercise  23.8 [h]** The set!
-special form is defined only when its first argument is a symbol.
+**Exercise  23.8 [h]** The `set!` special form is defined only when its first argument is a symbol.
 Extend `set!` to work like `setf` when the first argument is a list.
-That is, `(set!
-(car x) y)` should expand into something like `((setter car) y x)`, where `(setter car)` evaluates to the primitive procedure `set-car!`.
+That is, `(set! (car x) y)` should expand into something like `((setter car) y x)`, where `(setter car)` evaluates to the primitive procedure `set-car!`.
 You will need to add some new primitive functions, and you should also provide a way for the user to define new `set!` procedures.
 One way to do that would be with a `setter` function for `set!`, for example:
 

@@ -169,13 +169,13 @@ Contrast this to the code for `g`, which has no declarations and is compiled at 
 ;; disassembling #<Function g @ #x83dbd1  >
 ;; formals: x y
 ;; code vector @ #x83db64
-0:      add.l   #8,31(a2
+0:      add.l   #8,31(a2)
 4:      sub.w   #2,dl
 6:      beq.s   12
 8:      jmp     16(a4)        ; wnaerr
 12:     link    a6,#0
-16:     move.l  a2,-(a7
-18:     move.l  a5,-(a7
+16:     move.l  a2,-(a7)
+18:     move.l  a5,-(a7)
 20:     move.l  7(a2),a5
 24:     tst.b   -  208(a4)    ; signal-hit
 28:     beq.s   34
@@ -185,15 +185,15 @@ Contrast this to the code for `g`, which has no declarations and is compiled at 
 42:     or.l    d4,d0
 44:     and.b   #7,d0
 48:     bne.s   62
-50:     add.l   12(a6),d4 ;   x
+50:     add.l   12(a6),d4     ; x
 54:     bvc.s   76
 56:     jsr     696(a4)       ; add-overflow
 60:     bra.s   76
 62:     move.l  12(a6),-(a7)  ; x
-66:     move.l  d4,-(a7
+66:     move.l  d4,-(a7)
 68:     move.l  #2,d1
 70:     move.l  -304(a4),a0   ; +  _2op
-74:     jsr     (a4
+74:     jsr     (a4)
 76:     move.l  #1,d1
 78:     move.l  -8(a6),a5
 82:     unlk    a6
@@ -206,7 +206,7 @@ If not, there is a jump to `wnaerr` (wrong-number-of-arguments-error).
 Instructions 12-20 have the argument loading code that was at 0-8 in `f`.
 At 24-30 there is a check for asynchronous signals, such as the user hitting the abort key.
 After `x` and `y` are loaded, there is a type check (42-48).
-If the arguments are not both fixnums, then the code at instructions 62-74 sets up a call to  `+  _2op`, which handles type coercion and non-fixnum addition.
+If the arguments are not both fixnums, then the code at instructions 62-74 sets up a call to  `+_2op`, which handles type coercion and non-fixnum addition.
 If all goes well, we don't have to call this routine, and do the addition at instruction 50 instead.
 But even then we are not done-just because the two arguments were fixnums does not mean the result will be.
 Instructions 54-56 check and branch to an overflow routine if needed.
@@ -235,11 +235,11 @@ Numbers declared as fixnums or floating-point numbers can be handled directly by
 On some systems, `float` by itself is not enough; you have to say `single-float` or `double-float`.
 Other numeric declarations will probably be ignored.
 For example, declaring a variable as integer does not help the compiler much, because bignums are integers.
-The code to add bignums is too complex to put inline, so the compiler will branch to a general-purpose routine (like  `+  _2op` in Allegro), the same routine it would use if no declarations were given.
+The code to add bignums is too complex to put inline, so the compiler will branch to a general-purpose routine (like `+_2op` in Allegro), the same routine it would use if no declarations were given.
 
 *   `list and array`.
 Many Lisp systems provide separate functions for the list- and array- versions of commonly used sequence functions.
-For example, `(delete  x  (the list 1 ))` compiles into `(sys: delete-list-eql x 1)` on a TI Explorer Lisp Machine.
+For example, `(delete x (the list l))` compiles into `(sys: delete-list-eql x l)` on a TI Explorer Lisp Machine.
 Another function, `sys:delete-vector`, is used for arrays, and the generic function `delete` is used only when the compiler can't tell what type the sequence is.
 So if you know that the argument to a generic function is either a `list` or an `array`, then declare it as such.
 
@@ -283,7 +283,7 @@ For example, if you write `(elt x 0)`, different machine instruction will be exe
 Without declarations, checks will have to be done at runtime.
 You can either provide declarations, as in `(elt (the list x) 0)`, or use a more specific function, such as `(first x)` in the case of lists, `(char x 0)` for strings, `(aref x 0)` for vectors, and `(svref x 0)` for simple vectors.
 Of course, generic functions are useful-I wrote `random-elt` as shown following to work on lists, when I could have written the more efficient `random-mem` instead.
-The choice paid off when `I` wanted a function to choose a random character from a string-`random-elt` does the job unchanged, while `random-mem` does not.
+The choice paid off when I wanted a function to choose a random character from a string-`random-elt` does the job unchanged, while `random-mem` does not.
 
 ```lisp
 (defun random-elt (s) (elt s (random (length s))))
@@ -388,7 +388,7 @@ First, here's the assembly code for `reg`, to give you an idea of the minimal ca
 
 ```
 > (disassemble 'reg)
-;; disassembling #<Function reg @ #x83db59  >
+;; disassembling #<Function reg @ #x83db59>
 ;; formals: a b c d
 ;; code vector @ #x83dblc
 0:      link    a6,#0
@@ -410,7 +410,7 @@ Now we see that `&rest` arguments take a lot more code in this system:
 
 ```
 > (disassemble 'rst)
-;; disassembling #<Function rst @ #x83de89  >
+;; disassembling #<Function rst @ #x83de89>
 ;; formals: a b c &rest d
 ;; code vector @ #x83de34
 0:      sub.w   #3,dl
@@ -623,7 +623,7 @@ Some garbage-collection algorithms have been optimized to deal particularly well
 If your system has an *ephemeral* or *generational* garbage collector, you need not be so concerned with short-lived objects.
 Instead, it will be the medium-aged objects that cause problems.
 The other problem with such systems arises when an object in an old generation is changed to point to an object in a newer generation.
-This is to be avoided, and it may be that reverse is actually faster than nreverse in such cases.
+This is to be avoided, and it may be that `reverse` is actually faster than `nreverse` in such cases.
 To decide what works best on your particular system, design some test cases and time them.
 
 As an example of efficient use of storage, here is a version of `pat-match` that eliminates (almost) all consing.
@@ -646,7 +646,7 @@ Vectors with fill pointers act like a cross between a vector and a stack.
 You can push new elements onto the stack with the functions `vector-push` or `vector-push-extend`.
 The latter will automatically allocate a larger vector and copy over elements if necessary.
 You can remove elements with `vector-pop`, or you can explicitly look at the fill pointer with `fill-pointer`, or change it with a `setf`.
-Here are some examples (with `*print-array*` set to t so we can see the results):
+Here are some examples (with `*print-array*` set to `t` so we can see the results):
 
 ```lisp
 > (setf a (make-array 5 :fill-pointer 0))
@@ -826,9 +826,9 @@ Here is an implementation of `ucons`:
     (setf (gethash y car-table) (cons x y)))))
 ```
 
-`ucons`, unlike `cons`, is a true function: it will always return the same value, given the same arguments, where "same" is measured by eq.
-However, if `ucons` is given arguments that are equal but not eq, it will not return a unique result.
-For that we need the function unique.
+`ucons`, unlike `cons`, is a true function: it will always return the same value, given the same arguments, where "same" is measured by `eq`.
+However, if `ucons` is given arguments that are `equal` but not `eq`, it will not return a unique result.
+For that we need the function `unique`.
 It has the property that `(unique x)` is eq to `(unique y)` whenever `x` and `y` are equal.
 `unique` uses a hash table for atoms in addition to the double hash table for conses.
 This is necessary because strings and arrays can be equal without being eq.
@@ -1046,7 +1046,8 @@ As an example, consider the implementation of pattern-matching variables.
 We saw from the instrumentation of `simplify` that `variable-p` was one of the most frequently used functions.
 In compiling the matching expressions, I did away with all calls to `variable-p`, but let's suppose we had an application that required run-time use of variables.
 The specification of the data type `variable` will include two operators, the recognizer `variable-p`, and the constructor `make-variable`, which gives a new, previously unused variable.
-(This was not needed in the pattern matchers shown so far, but will be needed for unification with backward chaining.) One implementation of variables is as symbols that begin with the character #\?:
+(This was not needed in the pattern matchers shown so far, but will be needed for unification with backward chaining.)
+One implementation of variables is as symbols that begin with the character `#\?`:
 
 ```lisp
 (defun variable-p (x)
@@ -1063,14 +1064,16 @@ We could try to speed things up by changing the implementation of variables to b
 (defun make-variable O (gentemp "X" #.(find-package "KEYWORD")))
 ```
 
-(The reader character sequence #.
-means to evaluate at read time, rather than at execution time.) On my machine, this implementation is pretty fast, and I accepted it as a viable compromise.
+(The reader character sequence `#.` means to evaluate at read time, rather than at execution time.)
+On my machine, this implementation is pretty fast, and I accepted it as a viable compromise.
 However, other implementations were also considered.
 One was to have variables as structures, and provide a read macro and print function:
 
 ```lisp
 (defstruct (variable (:print-function print-variable)) name)
+
 (defvar *vars* (make-hash-table))
+
 (set-macro-character #\?
  #'(lambda (stream char)
    ;; Find an old var, or make a new one with the given name
@@ -1078,14 +1081,15 @@ One was to have variables as structures, and provide a read macro and print func
    (let ((name (read stream t nil t)))
     (or (gethash name *vars*)
      (setf (gethash name *vars*) (make-variable :name name))))))
+
 (defun print-variable (var stream depth)
- (declare (ignore depth))
- (format stream "?~a" (var-name var)))
+  (declare (ignore depth))
+  (format stream "?~a" (var-name var)))
 ```
 
 It turned out that, on all three Lisps tested, structures were slower than keywords or symbols.
-Another alternative is to have the ? read macro return a cons whose first is, say, `:var`.
-This requires a special output routine to translate back to the ? notation.
+Another alternative is to have the `?` read macro return a cons whose first is, say, `:var`.
+This requires a special output routine to translate back to the `?` notation.
 Yet another alternative, which turned out to be the fastest of all, was to implement variables as negative integers.
 Of course, this means that the user cannot use negative integers elsewhere in patterns, but that turned out to be acceptable for the application at hand.
 The moral is to know which features are done well in your particular implementation and to go out of your way to use them in critical situations, but to stick with the most straightforward implementation in noncritical sections.
@@ -1270,11 +1274,9 @@ It is an inobtrusive choice, because the programmer who decides not to store nul
 There are a few subtleties in the implementation.
 First, we test for deleted entries with an `eq` comparison to a distinguished marker, the string `trie-deleted`.
 No other object will be `eq` to this string except `trie-deleted` itself, so this is a good test.
-We also use a distinguished marker, the string "." to mark cons cells.
+We also use a distinguished marker, the string `"."` to mark cons cells.
 Components are implicitly compared against this marker with an `eql` test by the `assoc` in `follow-arc`.
-Maintaining the identity of this string is crucial; if, for example, you recompiled the definition of `find-trie` (without changing the definition at all), then you could no longer find keys that were indexed in an existing trie, because the ".
-" used by `find-trie` would be a different one from the ".
-" in the existing trie.
+Maintaining the identity of this string is crucial; if, for example, you recompiled the definition of `find-trie` (without changing the definition at all), then you could no longer find keys that were indexed in an existing trie, because the `"."` used by `find-trie` would be a different one from the `"."` in the existing trie.
 
 *Artificial Intelligence Programming* ([Charniak et al.
 1987](bibliography.md#bb0180)) discusses variations on the trie, particularly in the indexing scheme.
@@ -1287,10 +1289,10 @@ In general, that term refers to any tree with tests at the nodes.
 A trie is, of course, a kind of tree, but there are cases where it pays to convert a trie into a *dag*-a directed acyclic graph.
 A dag is a tree where some of the subtrees are shared.
 Imagine you have a spelling corrector program with a list of some 50,000 or so words.
-You could put them into a trie, each word with the value t.
+You could put them into a trie, each word with the value `t`.
 But there would be many subtrees repeated in this trie.
 For example, given a word list containing *look*, *looks*, *looked*, and *looking* as well as *show*, *shows*, *showed*, and *showing*, there would be repetition of the subtree containing *-s*, *-ed* and *-ing*.
-After the trie is built, we could pass the whole trie to un i que, and it would collapse the shared subtrees, saving storage.
+After the trie is built, we could pass the whole trie to `unique`, and it would collapse the shared subtrees, saving storage.
 Of course, you can no longer add or delete keys from the dag without risking unintended side effects.
 
 This process was carried out for a 56,000 word list.

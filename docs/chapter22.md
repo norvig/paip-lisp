@@ -75,10 +75,9 @@ How many errors does it have as a Common Lisp expression?
 
 A great many functions, such as `car`, `cdr`, `cons`, `append`, +, `*`, and `list` are the same (or nearly the same) in both dialects.
 However, Scheme has some spelling conventions that are different from Common Lisp.
-Most Scheme mutators, like `set`!, end in '`!`' Common Lisp has no consistent convention for this; some mutators start with `n` (`nreverse, nsubst, nintersection`) while others have idiosyncratic names (`delete versus remove`).
-Scheme would use consistent names-`reverse`!
-and `remove`!
--if these functions were defined at all (they are not defined in the standard).
+Most Scheme mutators, like `set!`, end in '`!`'
+Common Lisp has no consistent convention for this; some mutators start with `n` (`nreverse`, `nsubst`, `nintersection`) while others have idiosyncratic names (`delete` versus `remove`).
+Scheme would use consistent names - `reverse!` and `remove!` - if these functions were defined at all (they are not defined in the standard).
 Most Scheme predicates end in '`?`', not '`p`'.
 This makes predicates more obvious and eliminates the complicated conventions for adding a hyphen before the `p`.<a id="tfn22-1"></a><sup>[1](#fn22-1)</sup>
 The only problem with this convention is in spoken language: is `equal?` pronounced "equal-question-mark" or "equal-q" or perhaps equal, with rising intonation?
@@ -292,7 +291,7 @@ To test the interpreter, we add a simple read-eval-print loop:
 ```
 
 And now we're ready to try out the interpreter.
-Note the Common Lisp prompt is ">," while the Scheme prompt is "==>."
+Note the Common Lisp prompt is `>`, while the Scheme prompt is `==>`.
 
 ```lisp
 > (scheme)
@@ -650,7 +649,8 @@ Without it, every function along the calling path would have to be altered to ac
 
 In Common Lisp, the functions `throw` and `catch` are provided for this kind of nonlocal exit.
 Scott Zimmerman, the perennial world Frisbee champion, is also a programmer for a Southern California firm.
-He once told me, "I'm starting to learn Lisp, and it must be a good language because it's got `throw` and `catch` in it." Unfortunately for `Scott`, `throw` and `catch` don't refer to Frisbees but to transfer of control.
+He once told me, "I'm starting to learn Lisp, and it must be a good language because it's got `throw` and `catch` in it."
+Unfortunately for Scott, `throw` and `catch` don't refer to Frisbees but to transfer of control.
 They are both special forms, with the following syntax:
 
 ```lisp
@@ -689,12 +689,12 @@ A more representative example is:
 ```
 
 Here `print-table` calls `print-sqrt-abs`, which calls `must-be-number`.
-The first three times all is fine and the values 1,2,3 get printed.
+The first three times all is fine and the values 1, 2, 3 get printed.
 The next time `x` is not a number, so the value `"huh?"` gets thrown to the tag `not-a-number` established by `catch` in `f`.
 The throw bypasses the pending calls to `abs`, `sqrt`, and `print`, as well as the rest of the call to `mapcar`.
 
-This kind of control is provided in Scheme with a very general and powerful procedure, `call-with-current-continuation`, which is often abbreviated `call/cc.
-call/cc` is a normal procedure (not a special form like `throw` and `catch`) that takes a single argument.
+This kind of control is provided in Scheme with a very general and powerful procedure, `call-with-current-continuation`, which is often abbreviated `call/cc`.
+`call/cc` is a normal procedure (not a special form like `throw` and `catch`) that takes a single argument.
 Let's call the argument `computation`.
 `computation` must be a procedure of one argument.
 When `call/cc` is invoked, it calls `computation`, and whatever `computation` returns is the value of the call to `call/cc`.
@@ -704,22 +704,22 @@ Here are some examples:
 
 ```lisp
 > (scheme)
-=> (+  1 (call/cc (lambda (cc) (+  20 300))))
+=> (+ 1 (call/cc (lambda (cc) (+ 20 300))))
 321
 ```
 
-This example ignores `cc` and just computes `(+  1 (+  20 300 ))`.
+This example ignores `cc` and just computes `(+ 1 (+ 20 300))`.
 More precisely, it is equivalent to:
 
 ```lisp
-((lambda (val) (+  1  val))
-  (+  20 300))
+((lambda (val) (+ 1 val))
+  (+ 20 300))
 ```
 
 The next example does make use of `cc`:
 
 ```lisp
-=> (+  1 (call/cc (lambda (cc) (+  20 (cc 300)))))
+=> (+ 1 (call/cc (lambda (cc) (+ 20 (cc 300)))))
 301
 ```
 
@@ -728,16 +728,16 @@ It effectively throws `300` out of the computation to the catch point establishe
 It is equivalent to:
 
 ```lisp
-((lambda (val) (+  1  val))
+((lambda (val) (+ 1 val))
   300)
 ```
 
 or to:
 
 ```lisp
-((lambda (val) (+  1  val))
+((lambda (val) (+ 1 val))
   (catch 'cc
-    ((lambda (v) (+  20 v))
+    ((lambda (v) (+ 20 v))
       (throw 'cc 300))))
 ```
 
@@ -749,11 +749,14 @@ Here's how the `throw/catch` mechanism would look in Scheme:
   (lambda (escape)
    (set! not-a-number escape)
    (map print-sqrt-abs l))))
+
 (define (print-sqrt-abs x)
   (write (sqrt (abs (must-be-number x)))))
+
 (define (must-be-number x)
   (if (numberp x) x
       (not-a-number "huh?")))
+
 (define (map fn l)
  (if (null? l)
    '()
@@ -770,6 +773,7 @@ Consider a slight variation:
            (set! old-cc cc)
            (+ 20 (cc 300)))))
 301
+
 => (old-cc 500)
 501
 ```
@@ -779,20 +783,21 @@ Afterward, calling `(old-cc 500)` returns (for the second time) to the point in 
 The equivalent Common Lisp code leads to an error:
 
 ```lisp
-> (+  1 (catch 'tag (+  20 (throw 'tag 300))))
+> (+ 1 (catch 'tag (+ 20 (throw 'tag 300))))
 301
+
 > (throw 'tag 500)
 *Error*: *there was no pending CATCH for the tag TAG*
 ```
 
 In other words, `call/cc`'s continuations have indefinite extent, while throw/catch tags only have dynamic extent.
 
-We can use `cal1/cc` to implement automatic backtracking (among other things).
+We can use `call/cc` to implement automatic backtracking (among other things).
 Suppose we had a special form, `amb`, the "ambiguous" operator, which returns one of its arguments, chosen at random.
 We could write:
 
 ```lisp
-(define (integer) (amb 1 (+  1 (integer))))
+(define (integer) (amb 1 (+ 1 (integer))))
 ```
 
 and a call to `integer` would return some random positive integer.
@@ -805,7 +810,7 @@ Then we could write succinct<a id="tfn22-2"></a><sup>[2](#fn22-2)</sup> backtrac
  (if (prime? n) n (fail))))
 ```
 
-If `prime?` is a predicate that returns true only when its argument is a prime number, then prime will always return some `prime` number, decided by generating random integers.
+If `prime?` is a predicate that returns true only when its argument is a prime number, then `prime` will always return some prime number, decided by generating random integers.
 While this looks like a major change to the language-adding backtracking and nondeterminism-it turns out that `amb` and `fail` can be implemented quite easily with `call/cc`.
 First, we need to make `amb` be a macro:
 
@@ -847,9 +852,9 @@ Or, we could do some more complex analysis to choose a good backtrack point.
 
 `call/cc` can be used to implement a variety of control structures.
 As another example, many Lisp implementations provide a `reset` function that aborts the current computation and returns control to the top-level read-eval-print loop.
-reset can be defined quite easily using `call/cc`.
+`reset` can be defined quite easily using `call/cc`.
 The trick is to capture a continuation that is at the top level and save it away for future use.
-The following expression, evaluated at the top level, saves the appropriate continuation in the value of reset:
+The following expression, evaluated at the top level, saves the appropriate continuation in the value of `reset`:
 
 ```lisp
 (call/cc (lambda (cc) (set! reset (lambda ()
@@ -1050,7 +1055,7 @@ How can you eliminate this duplicated effort?
 
 **Exercise  22.8 [m]** It turns out Scheme allows some additional syntax in `let` and `cond`.
 First, there is the "named-let" expression, which binds initial values for variables but also defines a local function that can be called within the body of the `let`.
-Second, `cond` recognizes the symbol => when it is the second element of a cond clause, and treats it as a directive to pass the value of the test (when it is not false) to the third element of the clause, which must be a function of one argument.
+Second, `cond` recognizes the symbol `=>` when it is the second element of a cond clause, and treats it as a directive to pass the value of the test (when it is not false) to the third element of the clause, which must be a function of one argument.
 Here are two examples:
 
 ```lisp
@@ -1151,7 +1156,7 @@ While we're at it, we might as well add some error checking:
 ```
 
 **Answer 22.6** Storing the environment as an association list, `((*var val*)...)`, makes it easy to look up variables with `assoc`.
-We could save one cons cell per variable just by changing to `((*var* . *val*)...)`.
+We could save one cons cell per variable just by changing to ((*var* . *val*)...).
 But even better is to switch to a different representation, one presented by Steele and Sussman in *The Art of the Interpreter* (1978).
 In this representation we switch from a single list of var/val pairs to a list of frames, where each frame is a var-list/val-list pair.
 It looks like this:
@@ -1172,8 +1177,7 @@ Now `extend-env` is trivial:
 
 The advantage of this approach is that in most cases we already have a list of variables (the procedure's parameter list) and values (from the `mapcar` of `interp` over the arguments).
 So it is cheaper to just cons these two lists together, rather than arranging them into pairs.
-Of course, `get-var` and `set-var`!
-become more complex.
+Of course, `get-var` and `set-var!` become more complex.
 
 **Answer 22.7** One answer is to destructively alter the source code as it is macro-expanded, so that the next time the source code is interpreted, it will already be expanded.
 The following code takes care of that:

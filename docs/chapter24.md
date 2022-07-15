@@ -156,7 +156,7 @@ An error handler is much like a `catch`, and signaling an error is like a `throw
 In fact, in many systems `catch` and `throw` are implemented with the error-condition system.
 
 The simplest way of handling an error is with the macro `ignore-errors`.
-If noerror occurs, `ignore-errors` is just like `progn`.
+If no error occurs, `ignore-errors` is just like `progn`.
 But if an error does occur, `ignore-errors` will return `nil` as its first value and `t` as its second, to indicate that an error has occurred but without doing anything else:
 
 ```lisp
@@ -214,11 +214,16 @@ Unfortunately, it is inefficient: both `find-all-if` and `mapcar` cons up interm
 The following two versions using `loop` and `dolist` are efficient but not as pretty:
 
 ```lisp
-;; Using Loop           ;; Using dolist
-(loop for num in nums   (let ((sum 0))
-  when (plusp num)        (dolist (num nums sum)
-  sum (sqrt num))            (when (plusp num)
-                                                            (incf sum num))))
+;; Using Loop
+(loop for num in nums
+      when (plusp num)
+      sum (sqrt num))
+
+;; Using dolist
+(let ((sum 0))
+  (dolist (num nums sum)
+     (when (plusp num)
+       (incf sum num))))
 ```
 
 A compromise between the two approaches is provided by the *series* facility, defined in appendix A of *Common Lisp the Language*, 2d edition.
@@ -670,9 +675,8 @@ However, sometimes you want to make, say, a `collect` conditional on some test.
 In that case, loop conditionals are acceptable.
 The clauses covered here are:
 
-(`LOOP WHEN test ... CELSE ...]) ; IF` is asynonym for `WHEN`
-
 ```lisp
+(LOOP WHEN test ... [ELSE ...])   ; IF is a synonym for WHEN
 (LOOP UNLESS test ... [ELSE ...])
 ```
 
@@ -683,11 +687,11 @@ Here is an example of `when`:
      when (oddp x)
          collect x
      else collect (- x))
-(1 -2 3 -4 5- 6 7 -8 9 -10)
+(1 -2 3 -4 5 -6 7 -8 9 -10)
 ```
 
-Of course, we could have said `collect (if (oddp x ) x ( - x ) )` and done without the conditional.
-There is one extra feature in loop's conditionals: the value of the test is stored in the variable it for subsequent use in the THEN or ELSE parts.
+Of course, we could have said `collect (if (oddp x ) x (- x ))` and done without the conditional.
+There is one extra feature in loop's conditionals: the value of the test is stored in the variable `it` for subsequent use in the THEN or ELSE parts.
 (This is just the kind of feature that makes some people love `loop` and others throw up their hands in despair.) Here is an example:
 
 ```lisp
@@ -735,7 +739,7 @@ Here is the code:
 
 ### Unconditional Execution (26.11)
 
-The unconditional execution keywords are do and return:
+The unconditional execution keywords are `do` and `return`:
 
 ```lisp
 (defloop do (l exp exps)
@@ -803,7 +807,7 @@ But it doesn't work as well here:
 
 The problem is that `i` will get incremented twice, not once, and two different values will get printed, not one.
 We need to bind `(print (incf i))` to a local variable before doing the multiplication.
-On the other hand, it would be superfluous to bind z to a local variable in the previous example.
+On the other hand, it would be superfluous to bind `z` to a local variable in the previous example.
 This is where `once-only` comes in.
 It allows us to write macro definitions like this:
 
@@ -894,7 +898,7 @@ Here we see the expansion of the call to `once-only` and a repeat of the expansi
 ```
 
 This output was produced with `*print-gensym*` set to `nil`.
-When this variable is non-nil, uninterned symbols are printed with a prefix `#`:,as in `#:G3811`.
+When this variable is non-nil, uninterned symbols are printed with a prefix `#:`, as in `#:G3811`.
 This insures that the symbol will not be interned by a subsequent read.
 
 It is worth noting that Common Lisp automatically handles problems related to multiple evaluation of subforms in setf methods.
@@ -911,9 +915,7 @@ Before `if` was a standard part of Lisp, I defined my own version of `if`.
 Unlike the simple `if`, my version took any number of test/result pairs, followed by an optional else result.
 In general, the expansion was:
 
-```lisp
-(if *a b c d...x)* => (cond *(a b)* (*c d*) ... (T *x*))
-```
+`(if` *a b c d ... x*) => (`cond` *(a b) (c d)* ... (`T` *x*))
 
 My `if` also had one more feature: the symbol `'that'` could be used to refer to the value of the most recent test.
 For example, I could write:
@@ -930,8 +932,9 @@ which would expand into:
   (COND
     ((SETQ THAT (ASSOC ITEM A-LIST)) (PROCESS (CDR THAT)))))
 ```
+### remove extra line
 
-This was a convenient feature (compare it to the => feature of Scheme's cond, as discussed on [page 778](chapter22.md#p778)), but it backfired often enough that I eventually gave up on my version of `if`.
+This was a convenient feature (compare it to the `=>` feature of Scheme's `cond`, as discussed on [page 778](chapter22.md#p778)), but it backfired often enough that I eventually gave up on my version of `if`.
 Here's why.
 I would write code like this:
 
@@ -985,9 +988,9 @@ Here's a version that generates less garbage:
 ```
 
 There are three problems with this definition.
-First, it wastes space: mapcar creates a new argument list each time, only to have the list be discarded.
-Second, it wastes time: doing a `setf` of the ith element of a list makes the algorithm *O*(*n<sup>2</sup>*) instead of *O*(*n*), where *n* is the length of the list.
-Third, it is subtly wrong: if `result-sequence` is a vector with a fill pointer, then `map-into` is supposed to ignore `result-sequence's` current length and extend the fill pointer as needed.
+First, it wastes space: `mapcar` creates a new argument list each time, only to have the list be discarded.
+Second, it wastes time: doing a `setf` of the *i*th element of a list makes the algorithm *O*(*n<sup>2</sup>*) instead of *O*(*n*), where *n* is the length of the list.
+Third, it is subtly wrong: if `result-sequence` is a vector with a fill pointer, then `map-into` is supposed to ignore `result-sequence`'s current length and extend the fill pointer as needed.
 The following version fixes those problems:
 
 ```lisp
@@ -1038,12 +1041,12 @@ There are several things worth noticing here.
 First, I split the main loop into two versions, one where the result is a list, and the other where it is a vector.
 Rather than duplicate code, the local functions `do-one-call` and `do-result` are defined.
 The former is declared inline because it it called often, while the latter is not.
-The arguments are computed by looking at each sequence in turn, taking the ith element if it is a vector, and popping the sequence if it is a list.
+The arguments are computed by looking at each sequence in turn, taking the *i*th element if it is a vector, and popping the sequence if it is a list.
 The arguments are stored into the list `arglist`, which has been preallocated to the correct size.
 All in all, we compute the answer fairly efficiently, without generating unnecessary garbage.
 
 The application could be done more efficiently, however.
-Think what apply must do: scan down the argument list, and put each argument into the location expected by the function-calling conventions, and then branch to the function.
+Think what `apply` must do: scan down the argument list, and put each argument into the location expected by the function-calling conventions, and then branch to the function.
 Some implementations provide a better way of doing this.
 For example, the TI Lisp Machine provides two low-level primitive functions, `%push` and `%call`, that compile into single instructions to put the arguments into the right locations and branch to the function.
 With these primitives, the body of `do-one-call` would be:
@@ -1092,7 +1095,7 @@ If `map-into` is declared `inline` and the compiler is reasonably good, then it 
 
 Another change in the ANSI proposal is to add a `:key` keyword to `reduce`.
 This is a useful addition-in fact, for years I had been using a `reduce-by` function that provided just this functionality.
-In this section we see how to add the : key keyword.
+In this section we see how to add the `:key` keyword.
 
 At the top level, I define reduce as an interface to the keywordless function `reduce*`.
 They are both proclaimed inline, so there will be no overhead for the keywords in normal uses of reduce.

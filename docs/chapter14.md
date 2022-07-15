@@ -188,7 +188,7 @@ Fortunately, the assertion "Either NYC or Albany is the capital of NY" can be re
 (<- (capital NYC NY) (not (capital Albany NY)))
 ```
 
-Unfortunately, Prolog's not is different from logic's `not`.
+Unfortunately, Prolog's `not` is different from logic's `not`.
 When Prolog answers "no" to a query, it means the query cannot be proven from the known facts.
 If everything is known, then the query must be false, but if there are facts that are not known, the query may in fact be true.
 This is hardly surprising; we can't expect a program to come up with answers using knowledge it doesn't have.
@@ -338,7 +338,7 @@ However, Patrick Hayes has shown that when the proper choices are made, predicat
 The details are in Hayes 1985.
 
 The need to define categories is a more difficult problem.
-Predicate calculus works very well for crisp, mathematical categories: a; is a triangle if and only if *x* is a polygon with three sides.
+Predicate calculus works very well for crisp, mathematical categories: *x* is a triangle if and only if *x* is a polygon with three sides.
 Unfortunately, most categories that humans deal with in everyday life are not defined so rigorously.
 The category *friend* refers to someone you have mostly positive feelings for, whom you can usually trust, and so on.
 This "definition" is not a set of necessary and sufficient conditions but rather is an open-ended list of ill-defined qualities that are highly correlated with the category *friend.* We have a prototype for what an ideal friend should be, but no clear-cut boundaries that separate *friend* from, say, *acquaintance.* Furthermore, the boundaries seem to vary from one situation to another: a person you describe as a good friend in your work place might be only an acquaintance in the context of your home life.
@@ -391,7 +391,7 @@ Consider the example:
 
 ```lisp
 (<- (natural 0))
-(<- (natural (1  + ?n)) (natural ?n))
+(<- (natural (1+ ?n)) (natural ?n))
 ```
 
 These rules define the natural numbers (the non-negative integers).
@@ -402,13 +402,13 @@ One approach would be this:
 
 ```lisp
 (<- (integer 0))
-(<- (integer ?n) (integer (1  + ?n)))
-(<- (integer (1  + ?n)) (integer ?n))
+(<- (integer ?n) (integer (1+ ?n)))
+(<- (integer (1+ ?n)) (integer ?n))
 ```
 
 These rules say that 0 is an integer, and any *n* is an integer if *n* + 1 is, and *n* + 1 is if *n* is.
 While these rules are correct in a logical sense, they don't work as a Prolog program.
-Asking `(integer *x*)` will result in an endless series of ever-increasing queries: `(integer (1  + *x*)), (integer (1  + (1  + *x*)))`, and so on.
+Asking `(integer` *x*`)` will result in an endless series of ever-increasing queries: `(integer (1+` *x*`))`, `(integer (1+ (1+` *x*`)))`, and so on.
 Each goal is different, so no check can stop the recursion.
 
 The occurs check may or may not introduce problems into Prolog, depending on your interpretation of infinite trees.
@@ -562,8 +562,8 @@ Because of these problems, we make a design choice: we will first build a data b
 We are ready for a more complete specification of the indexing strategy:
 
 *   The value will be indexed under each non-nil nonvariable atom in the key, with a separate index for each position.
-For example, given the preceding data base, the atom a in the first argument position would index values 1,2,3, and 6, while the atom b in the second argument position would index value 4 and 5.
-The atom p in the predicate position would index all six values.
+For example, given the preceding data base, the atom `a` in the first argument position would index values 1, 2, 3, and 6, while the atom `b` in the second argument position would index value 4 and 5.
+The atom `p` in the predicate position would index all six values.
 
 *   In addition, we will maintain a separate index for variables at each position.
 For example, value 3 would be stored under the index "variable in second argument position."
@@ -870,11 +870,7 @@ Here we see a typical use of `query-bind`, its result, and its macro-expansion:
 
 ```lisp
 > (query-bind (?x ?fn) '(p ?x (?fn c))
-```
-
-`  (format t "~&P holds between ~a and ~a of c." ?x ?fn))`=>
-
-```lisp
+  (format t "~&P holds between ~a and ~a of c." ?x ?fn)) =>
 P holds between B and F of c.
 P holds between A and F of c.
 P holds between A and ?FN of c.
@@ -1006,6 +1002,7 @@ The infinite loop is avoided, and the first four solutions are found.
 ```lisp
 (<- (natural 0))
 (<- (natural (1  + ?n)) (natural ?n))
+
 > (?- (natural ?n))
 ?N = 0;
 ?N = (1  + 0);
@@ -1053,7 +1050,7 @@ The following table gives some examples, along with English translations:
 | `(rel birthday animal date)` | The birthday relation holds between each animal and some date. |
 | `(ind fido dog)`             | The individual Fido is categorized as a dog.                   |
 | `(val birthday fido july-1)` | The birthday of Fido is July-1.                                |
-| `(and *AB*)`                 | Both *A* and *B* are true.                                     |
+| `(and` *A B*`)`              | Both *A* and *B* are true.                                     |
 
 For those who feel more comfortable with predicate calculus, the following table gives the formal definition of each primitive.
 The most complicated definition is for rel.
@@ -1077,7 +1074,7 @@ To find out what individual animals of what kinds there are, use:
 ```
 
 The implementation of this new language can be based directly on the previous implementation of dtrees.
-Each assertion is stored as a fact in a dtree, except that the components of an and assertion are stored separately.
+Each assertion is stored as a fact in a dtree, except that the components of an `and` assertion are stored separately.
 The function `add-fact` does this:
 
 ```lisp
@@ -1244,7 +1241,7 @@ If not, it indexes the fact and calls `run-attached-fn` to do additional checkin
   (retrieve fact))
 ```
 
-The attached functions are stored on the operator's property list under the indicator `attached-fn:`
+The attached functions are stored on the operator's property list under the indicator `attached-fn`:
 
 ```lisp
 (defun run-attached-fn (fact)
@@ -1289,13 +1286,13 @@ But we want to be sure the data base stays consistent even if facts are asserted
 The most complicated attached function is for `sub`.
 Adding a fact such as `(sub bear animal)` causes the following to happen:
 
-*   All of `animal`'s supercategories (such as `living-thing)` become supercategories of all of `bear`'s subcategories (such as `polar-bear)`.
+*   All of `animal`'s supercategories (such as `living-thing)` become supercategories of all of `bear`'s subcategories (such as `polar-bear`).
 
 *   `animal` itself becomes a supercategory all of `bear`'s subcategories.
 
-*   bear itself becomes a subcategory of all of `animal`'s supercategories.
+*   `bear` itself becomes a subcategory of all of `animal`'s supercategories.
 
-*   All of the individuals of bear become individuals of `animal` and its supercategories.
+*   All of the individuals of `bear` become individuals of `animal` and its supercategories.
 
 The following accomplishes these four tasks.
 It does it with four calls to `index-new-fact`, which is used instead of `add-fact` because we don't need to run the attached function on the new facts.
@@ -1383,7 +1380,7 @@ Many representation languages are based on the idea of *frames,* and their synta
 A frame is an object with slots.
 We will continue to use the same data base in the same format, but we will provide an alternative syntax that considers the individuals and categories as frames, and the relations as slots.
 
-Here is an example of the frame syntax for individuals, which uses the operator a.
+Here is an example of the frame syntax for individuals, which uses the operator `a`.
 Note that it is more compact than the equivalent notation using the primitives.
 
 ```lisp
@@ -1528,10 +1525,10 @@ The following table shows the possibilities for the propositions "Jan likes Dean
 
 | Approach | True Prop.                 | False Prop.                |
 |----------|----------------------------|----------------------------|
-| 1)       | `(likes Jan Dean) -- true` | `(likes Jan Ian) -- false` |
+| (1)      | `(likes Jan Dean) -- true` | `(likes Jan Ian) -- false` |
 | (2a)     | `(likes true Jan Dean)`    | `(likes false Jan Ian)`    |
 | (2b)     | `(likes Jan Dean)`         | `(not (likes Jan Dean))`   |
-| (2c)     | `(likes Jan Dean)`         | `(~  likes Jan Dean)`      |
+| (2c)     | `(likes Jan Dean)`         | `(~likes Jan Dean)`        |
 
 The difference between (1) and (2) shows up when we want to make a query.
 With (1), we make the single query `(likes Jan Dean)` (or perhaps `(likes Jan ?x))`, and the answers will tell us who Jan does and does not like.
@@ -1738,11 +1735,8 @@ First, in `W0` we see that the facts from `test-index` are still in the data bas
 
 ```lisp
 > *world* => W0
-```
 
-`> (retrieve-bagof-in-world '(p ?z c))`=>
-
-```lisp
+> (retrieve-bagof-in-world '(p ?z c)) =>
 ((P A C) (P A C) (P B C))
 ```
 
@@ -1757,15 +1751,11 @@ Two new facts are added to this new world:
 
 We see that the two new facts are accessible in this world:
 
-`> (retrieve-bagof-in-world '(p ?z c))`=>
-
 ```lisp
+> (retrieve-bagof-in-world '(p ?z c)) =>
 ((P A C) (P A C) (P B C) (P NEW C))
-```
 
-`> (retrieve-bagof-in-world '(~p ?x ?y))`=>
-
-```lisp
+> (retrieve-bagof-in-world '(~p ?x ?y)) =>
 ((~P B B))
 ```
 
@@ -1780,15 +1770,11 @@ Now we create another world as an alternative to the current one by first switch
 
 Here we see that the facts entered in `W7031` are not accessible, but the facts in the new world and in `W0` are:
 
-`> (retrieve-bagof-in-world '(p ?z c))`=>
-
 ```lisp
+> (retrieve-bagof-in-world '(p ?z c)) =>
 ((P A C) (P A C) (P B C) (P NEWEST C))
-```
 
-`> (retrieve-bagof-in-world '(~p ?x ?y))`=>
-
-```lisp
+> (retrieve-bagof-in-world '(~p ?x ?y)) =>
 ((~P C NEWEST))
 ```
 

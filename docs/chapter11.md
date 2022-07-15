@@ -66,7 +66,7 @@ Here are some facts pertaining to the `likes` relation:
 
 These facts could be interpreted as meaning that Kim likes Robin, Sandy likes both Lee and Kim, and Robin likes cats.
 We need some way of telling Lisp that these are to be interpreted as Prolog facts, not a Lisp function call.
-We will use the macro <- to mark facts.
+We will use the macro `<-` to mark facts.
 Think of this as an assignment arrow which adds a fact to the data base:
 
 ```lisp
@@ -94,7 +94,7 @@ This can be read in two ways.
 Viewed as a logical assertion, it is read, "For any x, Sandy likes x if x likes cats." This is a *declarative* interpretation.
 Viewed as a piece of a Prolog program, it is read, "If you ever want to show that Sandy likes some x, one way to do it is to show that x likes cats." This is a *procedural* interpretation.
 It is called a *backward-chaining* interpretation, because one reasons backward from the goal (Sandy likes x) to the premises (x likes cats).
-The symbol <- is appropriate for both interpretations: it is an arrow indicating logical implication, and it points backwards to indicate backward chaining.
+The symbol `<-` is appropriate for both interpretations: it is an arrow indicating logical implication, and it points backwards to indicate backward chaining.
 
 It is possible to give more than one procedural interpretation to a declarative form.
 (We did that in [chapter 1](chapter1.md), where grammar rules were used to generate both strings of words and parse trees.)
@@ -106,7 +106,7 @@ Many expert systems use forward chaining exclusively, and some systems use a mix
 The leftmost expression in a clause is called the *head*, and the remaining ones are called the *body.* In this view, a fact is just a rule that has no body; that is, a fact is true no matter what.
 In general, then, the form of a clause is:
 
-(<- *head body*...)
+`(<-` *head body*...)
 
 A clause asserts that the head is true only if all the goals in the body are true.
 For example, the following clause says that Kim likes anyone who likes both Lee and Kim:
@@ -153,10 +153,10 @@ For example, if we have two equations, *a* + *a* = 0 and *x* + *y* = *y,* and if
 The version of `unify` we will define shows this result by binding `?y` to `0`, `?x` to `?y`, and `?a` to `?x`.
 We will also define the function `unifier`, which shows the structure that results from unifying two structures.
 
-`> (unify '(?a + ?a = 0) '(?x + ?y = ?y))`=>
-
-```lisp
+```
+> (unify '(?a + ?a = 0) '(?x + ?y = ?y)) =>
 ((?Y . 0) (?X . ?Y) (?A . ?X))
+
 > (unifier '(?a + ?a = 0) '(?x + ?y = ?y)) => (0 + 0 = 0)
 ```
 
@@ -543,9 +543,9 @@ Since the data base is now distributed across the property list of various symbo
 ```
 
 Now we need a way of adding a new clause.
-The work is split up into the macro <-, which provides the user interface, and a function, add-clause, that does the work.
+The work is split up into the macro `<-`, which provides the user interface, and a function, `add-clause`, that does the work.
 It is worth defining a macro to add clauses because in effect we are defining a new language: Prolog-In-Lisp.
-This language has only two syntactic constructs: the <- macro to add clauses, and the ?- macro to make queries.
+This language has only two syntactic constructs: the `<-` macro to add clauses, and the `?-` macro to make queries.
 
 ```lisp
 (defmacro <- (&rest clause)
@@ -616,7 +616,7 @@ The function `rename-variables` does this:<a id="tfn11-3"></a><sup>[3](#fn11-3)<
           x))
 ```
 
-`Rename - variables` makes use of `gensym,` a function that generates a new symbol each time it is called.
+`Rename-variables` makes use of `gensym`, a function that generates a new symbol each time it is called.
 The symbol is not interned in any package, which means that there is no danger of a programmer typing a symbol of the same name.
 The predicate `variables-in` and its auxiliary function are defined here:
 
@@ -668,9 +668,9 @@ To ask whom Sandy likes, we would use:
 (((?WHO . LEE))
   ((?WHO . KIM))
   ((?X2856 . ROBIN) (?WHO .?X2856))
-  ((?X2860 . CATS) (?X2857 CATS) (?X2856 . SANDAY) (?WHO ?X2856)
+  ((?X2860 . CATS) (?X2857 CATS) (?X2856 . SANDY) (?WHO ?X2856)
   ((?X2865 . CATS) (?X2856 ?X2865)((?WHO . ?X2856))
-  (?WHO . SANDY) (?X2867 . SANDAY)))
+  (?WHO . SANDY) (?X2867 . SANDY)))
 ```
 
 Perhaps surprisingly, there are six answers.
@@ -775,7 +775,7 @@ The next section shows how to write a new interpreter that fixes this problem.
 However, for relations with no arguments, some people prefer to write `(<- p q r)` rather than `(<- (p) (q) (r))`.
 Make changes so that either form is acceptable.
 
-**Exercise  11.2 [m]** Some people find the < - notation difficult to read.
+**Exercise  11.2 [m]** Some people find the `<-` notation difficult to read.
 Define macros `rule` and `fact` so that we can write:
 
 ```lisp
@@ -968,8 +968,8 @@ No.
 No.
 ```
 
-The next two queries show the two lists of length two with a as a member.
-Both queries give the correct answer, a two-element list that either starts or ends with a.
+The next two queries show the two lists of length two with `a` as a member.
+Both queries give the correct answer, a two-element list that either starts or ends with `a`.
 However, the behavior after generating these two solutions is quite different.
 
 ```lisp
@@ -983,10 +983,10 @@ No.
 ```
 
 In the first query, length only generates one possible solution, the list with two unbound elements.
-`member` takes this solution and instantiates either the first or the second element to a.
+`member` takes this solution and instantiates either the first or the second element to `a`.
 
 In the second query, `member` keeps generating potential solutions.
-The first two partial solutions, where a is the first or second member of a list of unknown length, are extended by `length` to yield the solutions where the list has length two.
+The first two partial solutions, where `a` is the first or second member of a list of unknown length, are extended by `length` to yield the solutions where the list has length two.
 After that, `member` keeps generating longer and longer lists, which `length` keeps rejecting.
 It is implicit in the definition of `member` that subsequent solutions will be longer, but because that is not explicitly known, they are all generated anyway and then explicitly tested and rejected by `length.`
 
@@ -1107,34 +1107,30 @@ The questions to be answered are: who drinks water and who owns the zebra?
 To solve this puzzle, we first define the relations `nextto` (for "next to") and `iright` (for "immediately to the right of").
 They are closely related to `member,` which is repeated here.
 
-(<- `(member ?item (?item . ?rest)))`
+```
+(<- (member ?item (?item . ?rest)))
+(<- (member ?item (?x . ? rest)) (member ?item ?rest))
 
-(<- `(member ?item (?x . ? rest)) (member ?item ?rest))`
+(<- (nextto ?x ?y ?list) (iright ?x ?y ?list))
+(<- (nextto ?x ?y ?list) (iright ?y ?x ?list))
 
-(<- `(nextto ?x ?y ?list) (iright ?x ?y ?list))`
+(<- (iright ?left ?right (?left ?right . ?rest)))
+(<- (iright ?left ?right (?x . ?rest))
+    (iright ?left ?right ?rest))
 
-(<- `(nextto ?x ?y ?list) (iright ?y ?x ?list))`
-
-(<- `(iright ?left ?right (?left ?right . ?rest)))`
-
-(<- `(iright ?left ?right (?x . ?rest))`
-
-```lisp
-      (iright ?left ?right ?rest))
+(<- (= ?x ?x))
 ```
 
-(<- `(= ?x ?x))`
-
-We also defined the identity relation, =.
+We also defined the identity relation, `=`.
 It has a single clause that says that any x is equal to itself.
-One might think that this implements eq or equal.
-Actually, since Prolog uses unification to see if the two arguments of a goal each unify with `?x`, this means that = is unification.
+One might think that this implements `eq` or `equal`.
+Actually, since Prolog uses unification to see if the two arguments of a goal each unify with `?x`, this means that `=` is unification.
 
 Now we are ready to define the zebra puzzle with a single (long) clause.
 The variable `?h` represents the list of five houses, and each house is represented by a term of the form (house *nationality pet cigarette drink color*).
 The variable `?w` is the water drinker, and `?z` is the zebra owner.
-Each of the 15 constraints in the puzzle is listed in the `body` of `zebra,` although constraints 9 and 10 have been combined into the first one.
-Consider constraint 2, "The Englishman lives in the `red` house." This is interpreted as "there is a house whose nationality is Englishman and whose color is `red,` and which is a member of the list of houses": in other words, `(member (house englishman ? ? ? red) ?h).` The other constraints are similarly straightforward.
+Each of the 15 constraints in the puzzle is listed in the body of `zebra`, although constraints 9 and 10 have been combined into the first one.
+Consider constraint 2, "The Englishman lives in the red house." This is interpreted as "there is a house whose nationality is Englishman and whose color is red, and which is a member of the list of houses": in other words, `(member (house englishman ? ? ? red) ?h).` The other constraints are similarly straightforward.
 
 ```lisp
 (<- (zebra ?h ?w ?z)
@@ -1178,12 +1174,12 @@ Here's the query and solution to the puzzle:
 No.
 ```
 
-This took 278 seconds, and profiling (see page 288) reveals that the function prove was called 12,825 times.
-A call to prove has been termed a *logical inference, so* our system is performing 12825/278 = 46 logical inferences per second, or LIPS.
+This took 278 seconds, and profiling (see page 288) reveals that the function `prove` was called 12,825 times.
+A call to prove has been termed a *logical inference,* so our system is performing 12825/278 = 46 logical inferences per second, or LIPS.
 Good Prolog systems perform at 10,000 to 100,000 LIPS or more, so this is barely limping along.
 
 Small changes to the problem can greatly affect the search time.
-For example, the relation nextto holds when the first house is immediately right of the second, or when the second is immediately right of the first.
+For example, the relation `nextto` holds when the first house is immediately right of the second, or when the second is immediately right of the first.
 It is arbitrary in which order these clauses are listed, and one might think it would make no difference in which order they were listed.
 In fact, if we reverse the order of these two clauses, the execution time is roughly cut in half.
 
@@ -1194,7 +1190,7 @@ It makes it easy to implement a *generate-and-test* strategy, where possible sol
 But generate-and-test is only feasible when the space of possible solutions is small.
 
 In the zebra puzzle, there are five attributes for each of the five houses.
-Thus there are 5!5, or over 24 billion candidate solutions, far too many to test one at a time.
+Thus there are 5!<sup>5</sup>, or over 24 billion candidate solutions, far too many to test one at a time.
 It is the concept of unification (with the corresponding notion of a logic variable) that makes generate-and-test feasible on this puzzle.
 Instead of enumerating complete candidate solutions, unification allows us to specify *partial* candidates.
 We start out knowing that there are five houses, with the Norwegian living on the far left and the milk drinker in the middle.
@@ -1250,7 +1246,7 @@ Such variables will be called `vars` to distinguish them from the implementation
 (defun bound-p (var) (not (eq (var-binding var) unbound)))
 ```
 
-The macro deref gets at the binding of a variable, returning its argument when it is an unbound variable or a non-variable expression.
+The macro `deref` gets at the binding of a variable, returning its argument when it is an unbound variable or a non-variable expression.
 It includes a loop because a variable can be bound to another variable, which in turn is bound to the ultimate value.
 
 Normally, it would be considered bad practice to implement deref as a macro, since it could be implemented as an inline function, provided the caller was willing to write `(setf x (deref x))` instead of `(deref x)`.
@@ -1325,11 +1321,11 @@ Now, for backtracking purposes, we want to make `set-binding!` keep track of the
 
 Now we need a way of making new variables, where each one is distinct.
 That could be done by `gensym-ing` a new name for each variable, but a quicker solution is just to increment a counter.
-The constructor function ? is defined to generate a new variable with a name that is a new integer.
+The constructor function `?` is defined to generate a new variable with a name that is a new integer.
 This is not strictly necessary; we could have just used the automatically provided constructor `make-var`.
 However, I thought that the operation of providing new anonymous variable was different enough from providing a named variable that it deserved its own function.
 Besides, `make-var` may be less efficient, because it has to process the keyword arguments.
-The function ? has no arguments; it just assigns the default values specified in the slots of the `var` structure.
+The function `?` has no arguments; it just assigns the default values specified in the slots of the `var` structure.
 
 ```lisp
 (defvar *var-counter* 0)
@@ -1354,10 +1350,10 @@ It calls `prove-all`, which attempts to prove a list of goals, `prove-all` succe
 ```lisp
 (<- (prove ?goal) (prove-all (?goal)))
 (<- (prove-all nil))
-(<- (prove-all (?goal . !!!(char) îgoals))
-        (clause (<- ?goal . ?body))
-        (concat ?body ?goals ?new-goals)
-        (prove-all ?new-goals))
+(<- (prove-all (?goal . ?goals))
+    (clause (<- ?goal . ?body))
+    (concat ?body ?goals ?new-goals)
+    (prove-all ?new-goals))
 ```
 
 Now we add two clauses to the data base to define the member relation:

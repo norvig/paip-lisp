@@ -38,7 +38,7 @@ Person and number agreement is propagated in the variable `?agr`, and we also ke
 English has three cases that are reflected in certain pronouns.
 In the first person singular, "I" is the *nominative* or *subjective* case, "me" is the *accusative* or *objective* case, and "my" is the *genitive* case.
 To distinguish them from the genitive, we refer to the nominative and the objective cases as the *common* cases.
-Accordingly, the three cases will be marked by the expressions `(common nom), (common obj),` and gen, respectively.
+Accordingly, the three cases will be marked by the expressions `(common nom)`, `(common obj)`, and `gen`, respectively.
 Many languages of the world have suffixes that mark nouns as being one case or another, but English does not.
 Thus, we use the expression `(common ?)` to mark nouns.
 
@@ -130,7 +130,7 @@ The following rules implement these four cases:
 (rule (modifiers ? ? ? () ? ?g1 ?g1 t) ==> )
 ```
 
-We need to say more about the list of complements, or slots, that can be associated with words in the lexcion.
+We need to say more about the list of complements, or slots, that can be associated with words in the lexicon.
 Each slot is a list of the form (*role number form),* where the role refers to some semantic relation, the number indicates the ordering of the complements, and the form is the type of constituent expected: noun phrase, verb phrase, or whatever.
 The details will be covered in the following section on verb phrases, and `complement` will be covered in the section on XPs.
 For now, we give a single example.
@@ -240,7 +240,9 @@ For example, `(a ?x (dog ?x) )` or `((number 3) ?x (dog ?x))`.
 These are the most important determiner types, but there are others, and there are pre- and postdeterminers that combine in restricted combinations.
 Predeterminers include all, both, half, double, twice, and such.
 Postdeterminers include every, many, several, and few.
-Thus, we can say "all her many good ideas" or "all the King's men." But we can not say "*all much ideas" or "*the our children." The details are complicated and are omitted from this grammar.
+Thus, we can say "all her many good ideas" or "all the King's men."
+But we can not say "\*all much ideas" or "\*the our children."
+The details are complicated and are omitted from this grammar.
 
 ## 21.5 Verb Phrases
 
@@ -496,7 +498,7 @@ The relation `slot-constituent` maps between the slot notation used for compleme
 There are eight types of complements, five of which can appear in gap lists: noun phrases, clauses, prepositional phrases, the word "it" (as in "it is raining"), and adverbial phrases.
 The three phrases that are allowed only as complements are verb phrases, particles (such as "up" in "look up the number"), and adjectives.
 Here is the mapping between the two notations.
-The *** indicates no mapping:
+The `***` indicates no mapping:
 
 ```lisp
 (<- (slot-constituent (?role ?n (NP ?x))
@@ -706,7 +708,8 @@ Here are the rules for the remaining word classes:
 The lexicon itself consists of a large number of entries in the `word` relation, and it would certainly be possible to ask the lexicon writer to make a long list of `word` facts.
 But to make the lexicon easier to read and write, we adopt three useful tools.
 First, we introduce a system of abbreviations.
-Common expressions can be abbreviated with a symbol that will be expanded by `word.` Second, we provide the macros verb and `noun` to cover the two most complex word classes.
+Common expressions can be abbreviated with a symbol that will be expanded by `word`.
+Second, we provide the macros `verb` and `noun` to cover the two most complex word classes.
 Third, we provide a macro `word` that makes entries into a hash table.
 This is more efficient than compiling a `word` relation consisting of hundreds of Prolog clauses.
 
@@ -987,7 +990,7 @@ The common articles are listed here:
 
 ### Cardinal and Ordinal Numbers
 
-We can take advantage of `format's` capabilities to fill up the lexicon.
+We can take advantage of `format`'s capabilities to fill up the lexicon.
 To go beyond 20, we would need a subgrammar of numbers.
 
 ```lisp
@@ -1022,7 +1025,8 @@ Here is a fairly complete list of prepositions:
 
 ## 21.12 Supporting the Lexicon
 
-This section describes the implementation of the macros `word`, `verb, noun`, and `abbrev.` Abbreviations are stored in a hash table.
+This section describes the implementation of the macros `word`, `verb`, `noun`, and `abbrev`.
+Abbreviations are stored in a hash table.
 The macro `abbrev` and the functions `get-abbrev` and `clear-abbrevs` define the interface.
 We will see how to expand abbreviations later.
 
@@ -1058,7 +1062,7 @@ When used as an index into the hash table, each word returns a list of entries, 
 (defun kwote (x) (list 'quote x))
 ```
 
-The function `expand-abbrevs-and-variables` expands abbreviations and substitutes variable structures for symbols beginning with ?.
+The function `expand-abbrevs-and-variables` expands abbreviations and substitutes variable structures for symbols beginning with `?`.
 This makes it easier to make a copy of the structure, which will be needed later.
 
 ```lisp
@@ -1457,7 +1461,7 @@ In connection to the previous exercise, note that it is rare if not impossible f
 **Exercise  21.4 [m]** Add rules to `advp` to allow for adverbs to modify other adverbs, as in "extremely likely" or "very strongly."
 
 **Exercise  21.5 [h]** Allow adverbs to modify adjectives, as in "very good" or "really delicious." The syntax will be easy, but it is harder to get a reasonable semantics.
-While you're at it, make sure that you can handle adjectives with so-called *noninter- sective* semantics.
+While you're at it, make sure that you can handle adjectives with so-called *non-intersective* semantics.
 Some adjectives can be handled by intersective semantics: a red circle is something that is red and is a circle.
 But for other adjectives, this model does not work: a former senator is not something that is former and is a senator-a former senator is not a senator at all.
 Similarly, a toy elephant is not an elephant.

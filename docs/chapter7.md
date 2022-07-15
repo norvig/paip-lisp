@@ -70,7 +70,7 @@ In general, the notation (`:constructor` *fn args*) creates a constructor functi
 
 We ignored commas and periods in ELIZA, but they are crucial for STUDENT, so we must make allowances for them.
 The problem is that a `","` in Lisp normally can be used only within a backquote construction, and a `"."` normally can be used only as a decimal point or in a dotted pair.
-The special meaning of these characters to the Lisp reader can be escaped either by preceding the character with a backslash (\,) or by surrounding the character by vertical bars (| , |).
+The special meaning of these characters to the Lisp reader can be escaped either by preceding the character with a backslash (`\,`) or by surrounding the character by vertical bars (`|,|`).
 
 ```lisp
 (pat-match-abbrev '?x* '(?* ?x))
@@ -261,7 +261,7 @@ The STUDENT program mentioned the function `solve-equations`, passing it one arg
 
 The real work is done by solve, which has the following specification: (1) Find an equation with exactly one occurrence of an unknown in it.
 (2) Transform that equation so that the unknown is isolated on the left-hand side.
-This can be done if we limit the operators to  +, -, *,and /.
+This can be done if we limit the operators to `+`, `-`, `*`, and `/`.
 (3) Evaluate the arithmetic on the right-hand side, yielding a numeric value for the unknown.
 (4) Substitute the numeric value for the unknown in all the other equations, and remember the known value.
 Then try to solve the resulting set of equations.
@@ -360,7 +360,7 @@ Therefore, assuming the input is of finite size, we must eventually reach a recu
 When `isolate` returns, the right-hand side must consist only of numbers and operators.
 We could easily write a function to evaluate such an expression.
 However, we don't have to go to that effort, since the function already exists.
-The data structure exp was carefully selected to be the same structure (lists with prefix functions) used by Lisp itself for its own expressions.
+The data structure `exp` was carefully selected to be the same structure (lists with prefix functions) used by Lisp itself for its own expressions.
 So Lisp will find the right-hand side to be an acceptable expression, one that could be evaluated if typed in to the top level.
 Lisp evaluates expressions by calling the function `eval`, so we can call `eval` directly and have it return a number.
 The function `solve-arithmetic` returns an equation of the form (= *var number*).
@@ -659,27 +659,27 @@ If an attempt to solve the problem yields no solutions, the program should reali
 Since the variables are arbitrary symbols, the printing routine should probably print the phrases associated with each variable rather than the variable itself.
 
 **Exercise  7.4 [h]** The original STUDENT also had a set of "common knowledge" equations that it could use when necessary.
-These were mostly facts about conversion factors, such as (`1 inch = 2.54  cm`).
-Also included were equations like (`distance equals rate times time`), which could be used to solve problems like "If the distance from Anabru to Champaign is 10 miles and the time it takes Sandy to travel this distance is 2 hours, what is Sandy's rate of speed?"
+These were mostly facts about conversion factors, such as `(1 inch = 2.54 cm)`.
+Also included were equations like `(distance equals rate times time)`, which could be used to solve problems like "If the distance from Anabru to Champaign is 10 miles and the time it takes Sandy to travel this distance is 2 hours, what is Sandy's rate of speed?"
 Make changes to incorporate this facility.
 It probably only helps in conjunction with a solution to the previous exercise.
 
 **Exercise  7.5 [h]** Change `student` so that it prints values only for those variables that are being asked for in the problem.
 That is, given the problem "X is 3.
 Y is 4.
-How much is X  +  Y ?" it should not print values for X and Y.
+How much is X + Y?" it should not print values for X and Y.
 
 **Exercise  7.6 [m]** Try STUDENT on the following examples.
 Make sure you handle special characters properly:
 
 (a)  The price of a radio is 69.70 dollars.
-If this price is 15% less than the marked The number of soldiers the Russians have is one half of the number of guns
+If this price is 15% less than the marked price, find the marked price.
 
 (b)  The number of soldiers the Russians have is one half of the number of guns they have.
 The number of guns they have is 7000.
 What is the number of soldiers they have?
 
-(c)  If the number of customers Tom gets is twice the square of 20 % of the number of advertisements he runs, and the number of advertisements is 45, and the profit Tom receives is 10 times the number of customers he gets, then what is the profit?
+(c)  If the number of customers Tom gets is twice the square of 20% of the number of advertisements he runs, and the number of advertisements is 45, and the profit Tom receives is 10 times the number of customers he gets, then what is the profit?
 
 (d)  The average score is 73.
 The maximum score is 97.
@@ -688,16 +688,16 @@ What is the square of the difference between the average and the maximum?
 (e)  Tom is twice Mary's age, and Jane's age is half the difference between Mary and Tom.
 If Mary is 18 years old, how old is Jane?
 
-(f)  What is 4  +  5* 14/7?
+(f)  What is 4 + 5 * 14 / 7?
 
-(g)  *x  x  b  =  c  +  d.
-b  x  c  =  x.
-x  =  b  +  b.
-b  =  5.*
+(g)  *x &times; b = c + d.
+b &times; c = x.
+x = b + b.
+b = 5.*
 
-**Exercise  7.7 [h]**`Student's` infix-to-prefix rules account for the priority of operators properly, but they don't handle associativity in the standard fashion.
+**Exercise  7.7 [h]** `Student's` infix-to-prefix rules account for the priority of operators properly, but they don't handle associativity in the standard fashion.
 For example, (`12 - 6 - 3`) translates to (`- 12 (- 6 3)`) or `9`, when the usual convention is to interpret this as (`- (- 12 6) 3`) or `3`.
-Fix student to handle this convention.
+Fix `student` to handle this convention.
 
 **Exercise  7.8 [d]** Find a mathematically oriented domain that is sufficiently limited so that STUDENT can solve problems in it.
 The chemistry of solutions (calculating pH concentrations) might be an example.

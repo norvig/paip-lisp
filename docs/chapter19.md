@@ -42,7 +42,7 @@ In general, there may be several possible derivations, in which case we say the 
 In certain circles, the term "parse" means to arrive at an understanding of a sentence's meaning, not just its grammatical form.
 We will attack that more difficult question later.
 
-We start with the grammar defined on [page 39](chapter2.md#p39) for the generate program:
+We start with the grammar defined on [page 39](chapter2.md#p39) for the `generate` program:
 
 ```lisp
 (defvar *grammar* nil "The grammar used by GENERATE.")
@@ -67,7 +67,7 @@ For the `generate` program it was fine to have them all together, because that m
 Later on we will want to add more information to each rule, like the semantics of the assembled left-hand side, and constraints between constituents on the right-hand side, so the rules would become quite large indeed if we didn't split up the alternatives.
 I also take this opportunity to clear up the confusion between words and category symbols.
 The convention is that a right-hand side can be either an atom, in which case it is a word, or a list of symbols, which are then all interpreted as categories.
-To emphasize this, I include "noun" and "verb" as nouns in the grammar `*grammar3*`, which is otherwise equivalent to the previous `*grammarl*`.
+To emphasize this, I include "noun" and "verb" as nouns in the grammar `*grammar3*`, which is otherwise equivalent to the previous `*grammar1*`.
 
 ```lisp
 (defparameter *grammar3*
@@ -82,8 +82,8 @@ To emphasize this, I include "noun" and "verb" as nouns in the grammar `*grammar
 (setf *grammar* *grammar3*)
 ```
 
-I also define the data types `rule, parse`, and `tree`, and some functions for getting at the rules.
-Rules are defined as structures of type list with three slots: the left-hand side, the arrow (which should always be represented as the literal ->) and the right-hand side.
+I also define the data types `rule`, `parse`, and `tree`, and some functions for getting at the rules.
+Rules are defined as structures of type list with three slots: the left-hand side, the arrow (which should always be represented as the literal `->`) and the right-hand side.
 Compare this to the treatment on [page 40](chapter2.md#p40).
 
 ```lisp
@@ -114,9 +114,9 @@ Compare this to the treatment on [page 40](chapter2.md#p40).
 ```
 
 Now we're ready to define the parser.
-The main function parser takes a list of words to parse.
+The main function `parser` takes a list of words to parse.
 It calls `parse`, which returns a list of all parses that parse some subsequence of the words, starting at the beginning.
-parser keeps only the parses with no remainder-that is, the parses that span all the words.
+`parser` keeps only the parses with no remainder - that is, the parses that span all the words.
 
 ```lisp
 (defun parser (words)
@@ -172,7 +172,7 @@ This gets extended as a sentence with a VP needed, and eventually we get a parse
         (parse rem))))
 ```
 
-This makes use of the auxiliary function append1:
+This makes use of the auxiliary function `append1`:
 
 ```lisp
 (defun append1 (items item)
@@ -404,7 +404,7 @@ Things are not always so straightforward, unfortunately, as the following exampl
         (PP (P ON) (NP (D THE) (N WABE)))))
 ```
 
-If the program knew morphology-that a *y* at the end of a word often signais an adjective, an *s* a plural noun, and an *ed* a past-tense verb-then it could do much better.
+If the program knew morphology-that a *y* at the end of a word often signals an adjective, an *s* a plural noun, and an *ed* a past-tense verb-then it could do much better.
 
 ## 19.5 Parsing into a Semantic Representation
 
@@ -567,7 +567,7 @@ Note that this also means that an empty list, such as "3 to 2," will also fail.
 
 The previous grammar only allowed for the numbers 0 to 9.
 We can allow larger numbers by stringing together digits.
-So now we have two rules for numbers: a number is either a single digit, in which case the value is the digit itself (the i denti ty function), or it is a number followed by another digit, in which case the value is 10 times the number plus the digit.
+So now we have two rules for numbers: a number is either a single digit, in which case the value is the digit itself (the `identity` function), or it is a number followed by another digit, in which case the value is 10 times the number plus the digit.
 We could alternately have specified a number to be a digit followed by a number, or even a number followed by a number, but either of those formulations would require a more complex semantic interpretation.
 
 ```lisp
@@ -621,7 +621,7 @@ To get the "best" interpretation out of an arbitrary input, we will not only nee
 In other words, we will assign each interpretation a numeric score, and then pick the interpretation with the highest score.
 
 We start by once again modifying the rule and tree data types to include a score component.
-As with the sem component, this will be used to hold first a function to compute a score and then eventually the score itself.
+As with the `sem` component, this will be used to hold first a function to compute a score and then eventually the score itself.
 
 ```lisp
 (defstruct (rule (:type list)
@@ -982,7 +982,7 @@ For example, consider solving the subject-predicate agreement problem.
 It is possible to do this with a context-free language including categories like singular-NP, plural-NP, singular-VP, and plural-VP, but it is far easier to augment the grammatical formalism to allow passing features between constituents.
 
 It should be noted that context-free phrase-structure rules turned out to be very useful for describing programming languages.
-Starting with Algol 60, the formalism has been used under the name *Backus-NaurForm* (BNF) by computer scientists.
+Starting with Algol 60, the formalism has been used under the name *Backus-Naur Form* (BNF) by computer scientists.
 In this book we are more interested in natural languages, so in the next chapter we will see a more powerful formalism known as *unification grammar* that can handle the problem of agreement, as well as other difficulties.
 Furthermore, *unification grammars* allow a natural way of attaching semantics to a parse.
 
@@ -1089,8 +1089,8 @@ It turns out that, for the Lisp system used in the timings above, this version i
 **Answer 19.3** Actually, the top-down parser is a little easier (shorter) than the bottom-up version.
 The problem is that the most straightforward way of implementing a top-down parser does not handle so-called *left recursive* rules-rules of the form `(X -> (X ...))`.
 This includes rules we've used, like `(NP -> (NP and NP))`.
-The problem is that the parser will postulate an NP, and then postulate that it is of the form `(NP and NP)`, and that the first NP of that expression is of the form `(NP and NP)`, and so on.
-An infinite structure of NPs is explored before even the first word is considered.
+The problem is that the parser will postulate an `NP`, and then postulate that it is of the form `(NP and NP)`, and that the first `NP` of that expression is of the form `(NP and NP)`, and so on.
+An infinite structure of `NP`s is explored before even the first word is considered.
 
 Bottom-up parsers are stymied by rules with null right-hand sides: `(X -> O)`.
 Note that I was careful to exclude such rules in my grammars earlier.

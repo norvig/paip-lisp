@@ -166,7 +166,7 @@ A glossary for a second version of the program is on [page 623](#p623).
 *(ed: this should be a markdown table)*
 
 What follows is the code for directions and pieces.
-We explicitly define the type `piece` to be a number from `empty` to `outer` (0 to 3), and define the function `name-of` to map from a piece number to a character: a dot for empty, `@` for black, 0 for white, and a question mark (which should never be printed) for `outer`.
+We explicitly define the type `piece` to be a number from `empty` to `outer` (0 to 3), and define the function `name-of` to map from a piece number to a character: a dot for empty, `@` for black, `0` for white, and a question mark (which should never be printed) for `outer`.
 
 ```lisp
 (defconstant all-directions '(-11 -10 -9 -1 1 9 10 11))
@@ -417,26 +417,26 @@ Here we define two simple strategies:
 
 ```lisp
 (defun human (player board)
-    "A human player for the game of Othello"
-    (declare (ignore board))
-    (format t "~&~c to move: " (name-of player))
-    (read))
+  "A human player for the game of Othello"
+  (declare (ignore board))
+  (format t "~&~c to move: " (name-of player))
+  (read))
 
 (defun random-strategy (player board)
-    "Make any legal move."
-    (random-elt (legal-moves player board)))
+  "Make any legal move."
+  (random-elt (legal-moves player board)))
 
 (defun legal-moves (player board)
-    "Returns a list of legal moves for player"
-    (loop for move in all-squares
-        when (legal-p move player board) collect move))
+  "Returns a list of legal moves for player"
+  (loop for move in all-squares
+     when (legal-p move player board) collect move))
 ```
 
 We are now in a position to play the game.
 The expression
 
 `(othello #'human #'human)` will let two people play against each other.
-Alternately, `(othello #' random-strategy #'human)` will allow us to match our wits against a particularly poor strategy.
+Alternately, `(othello #'random-strategy #'human)` will allow us to match our wits against a particularly poor strategy.
 The rest of this chapter shows how to develop a better strategy.
 
 ## 18.3 Evaluating Positions
@@ -1071,7 +1071,7 @@ The clock is passed to `get-move` and `print-board` but is otherwise unused.
 I could have complicated the main game loop by adding tests for forfeits because of expired time and, as we shall see later, resignation by either player.
 However, I felt that would add a great deal of complexity for rarely used options.
 Instead, I wrap the whole game loop, along with the computation of the final score, in a `catch` special form.
-Then, if get-move encounters a forfeit or resignation, it can `throw` an appropriate final score: 64 or -64, depending on which player forfeits.
+Then, if `get-move` encounters a forfeit or resignation, it can `throw` an appropriate final score: 64 or -64, depending on which player forfeits.
 
 ```lisp
 (defvar *move-number* 1 "The number of the move to be played")
@@ -1268,11 +1268,7 @@ In the following, the weighted-squares strategy wins 4 out of 10 games against t
         (alpha-beta-searcher 2#'modified-weighted-squares)
         5)
 4
-```
-
--  `76`
-
-```lisp
+-76
 (-8 -40 22 -30 10 -10 12 -18 4 -18)
 ```
 
@@ -1638,7 +1634,7 @@ The following function computes both current and potential mobility for a player
 
 ```lisp
 (defun mobility (player board)
-  "Current mobility is the number of legal moves.
+  "Current Mobility is the number of legal moves.
   Potential mobility is the number of blank squares
   adjacent to an opponent that are not legal moves.
   Returns current and potential mobility for player."

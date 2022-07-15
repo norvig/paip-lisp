@@ -39,7 +39,7 @@ Here are four incomplete expressions:
     x)
 ```
 
-**Remedy:** Add a ), ", `|`, and `| #`, respectively.
+**Remedy:** Add a `)`, `"`, `|`, and `|#`, respectively.
 Or hit the interrupt key and type the input again.
 
 **Diagnosis:** Your program may be waiting for input.
@@ -101,15 +101,15 @@ The following excerpt from a recent textbook is an example of this error:
 
 ```lisp
 (defun test ()
-  (setq x 'test-data)      :*Warning!*
-  (solve-problem x))        :*Don't do this.*
+  (setq x 'test-data)       ; Warning!
+  (solve-problem x))        ; Don't do this.
 ```
 
 This function should have been written:
 
 ```lisp
 (defun test ()
-  (let ((x 'test-data))      :*Do this instead.*
+  (let ((x 'test-data))     ; Do this instead.
       (solve-problem x)))
 ```
 
@@ -264,7 +264,7 @@ It is important to remember that `function` (and thus `#'`) is a special form, a
 A common error is to use `#'` notation in positions that are not evaluated:
 
 ```lisp
-(defvar *obscure-fns* '(#'cis #'cosh #'ash #'bit-orc2)) ; *wrong*
+(defvar *obscure-fns* '(#'cis #'cosh #'ash #'bit-orc2)) ; wrong
 ```
 
 This does not create a list of four functions.
@@ -451,7 +451,7 @@ A user might write:
 ```
 
 expecting the expression to start reading at position `2` and thus return `b`.
-In fact, this expression returns a.
+In fact, this expression returns `a`.
 The angry user thinks the implementation has erroneously ignored the `:start` argument and files a bug report,<a id="tfn25-1"></a><sup>[1](#fn25-1)</sup> only to get back the following explanation:
 
 The function `read-from-string` takes two optional arguments, `eof-errorp` and `eof-value`, in addition to the keyword arguments.
@@ -477,9 +477,9 @@ However, I was reminded of the function `butlast`, which is also similar to the 
 The index directed me to page 422 for `butlast`, and on the same page I found `ldiff`, which was exactly the desired function.
 It might have been easier to find (and remember) if it were called `list-difference`, but the methodology of browsing near similar functions paid off.
 
-If you think you know part of the name of the desired function, then you can use apropos to find it.
+If you think you know part of the name of the desired function, then you can use `apropos` to find it.
 For example, suppose I thought there was a function to push a new element onto the front of an array.
-Looking under `array, push-array`, and `array - push` in the index yields nothing.
+Looking under `array`, `push-array`, and `array-push` in the index yields nothing.
 But I can turn to Lisp itself and ask:
 
 ```lisp
@@ -509,7 +509,7 @@ That way, you may find the exact function you want, and you may get additional i
 
 `loop` by itself is a powerful programming language, one with a syntax quite different from the rest of Lisp.
 It is therefore important to exercise restraint in using `loop`, lest the reader of your program become lost.
-One simple rule for limiting the complexity of `loops` is to avoid the `with` and and keywords.
+One simple rule for limiting the complexity of `loops` is to avoid the `with` and `and` keywords.
 This eliminates most problems dealing with binding and scope.
 
 When in doubt, macro-expand the loop to see what it actually does.
@@ -555,8 +555,8 @@ For example:
   (u ...))
 ```
 
-Here the t is taken as the default clause; it will always succeed, and all subsequent clauses will be ignored.
-Similarly, using a () `ornil` as a key will not have the desired effect: it will be interpreted as an empty key list.
+Here the `t` is taken as the default clause; it will always succeed, and all subsequent clauses will be ignored.
+Similarly, using a `()` or `nil` as a key will not have the desired effect: it will be interpreted as an empty key list.
 If you want to be completely safe, you can use a list of keys for every clause.<a id="tfn25-2"></a><sup>[2](#fn25-2)</sup>
 This is a particularly good idea when you write a macro that expands into a `case`.
 The following code correctly tests for `t` and `nil` keys:
@@ -586,6 +586,7 @@ In [section 3.2](chapter3.md#s0015) we described a four-part approach to the des
 *   Figure out what the macro should expand into.
 
 *   Use `defmacro` to implement the syntax/expansion correspondence.
+
 This section shows the problems that can arise in each part, starting with the first:
 
 *   Decide if the macro is really necessary.
@@ -606,7 +607,7 @@ That way you get the efficiency gain, you have not introduced a spurious macro, 
 
 ```lisp
 (proclaim '(inline binding-of))
-(defun binding-of (binding)    ; *Do this instead.*
+(defun binding-of (binding)    ; Do this instead.
   (second binding))
 ```
 
@@ -637,9 +638,9 @@ Consider the following definition for `pop-end`, a function to pop off and retur
 The definition uses `last1`, which was defined on page 305 to return the last element of a list, and the built-in function `nbutlast` returns all but the last element of a list, destructively altering the list.
 
 ```lisp
-(defmacro pop-end (place)    ; *Warning!Buggy!*
+(defmacro pop-end (place)    ; Warning! Buggy!
   "Pop and return last element of the list in PLACE."
-  '(let ((result (lastl .place)))
+  '(let ((result (last1 .place)))
       (setf .place (nbutlast .place))
       result))
 ```
@@ -648,7 +649,7 @@ This will do the wrong thing for (`pop-end result`), or for other expressions th
 The solution is to use a brand new local variable that could not possibly be used elsewhere:
 
 ```lisp
-(defmacro pop-end (place)    ; *Less buggy*
+(defmacro pop-end (place)    ; Less buggy
   "Pop and return last element of the list in PLACE."
   (let ((result (gensym)))
   '(let ((,result (lastl ,place)))
@@ -659,20 +660,20 @@ The solution is to use a brand new local variable that could not possibly be use
 There is still the problem of shadowing local *functions.* For example, a user who writes:
 
 ```lisp
-(flet ((lastl (x) (sqrt x)))
+(flet ((last1 (x) (sqrt x)))
   (pop-end list)
   ...)
 ```
 
-will be in for a surprise, pop-end will expand into code that calls `lastl`, but since `lastl` has been locally defined to be something else, the code won't work.
+will be in for a surprise, `pop-end` will expand into code that calls `last1`, but since `last1` has been locally defined to be something else, the code won't work.
 Thus, the expansion of the macro violates referential transparency.
 To be perfectly safe, we could try:
 
 ```lisp
-(defmacro pop-end (place)    ; *Less buggy*
+(defmacro pop-end (place)    ; Less buggy
   "Pop and return last element of the list in PLACE."
   (let ((result (gensym)))
-    '(let ((.result (funcall .#'lastl .place)))
+    '(let ((.result (funcall .#'last1 .place)))
       (setf .place (funcall .#'nbutlast .place))
         ,result)))
 ```
@@ -837,7 +838,7 @@ To make matters worse, a conscientious user might write:
 The designer of a new macro must decide if declarations are allowed and must make sure that compiler warnings will not be generated unless they are warranted.
 
 Macros have the full power of Lisp at their disposal, but the macro designer must remember the purpose of a macro is to translate macro code into primitive code, and not to do any computations.
-Consider the following macro, which assumes that `translate - rule-body` is defined elsewhere:
+Consider the following macro, which assumes that `translate-rule-body` is defined elsewhere:
 
 ```lisp
 (defmacro defrule (name &body body)  ; Warning! buggy!
@@ -947,9 +948,9 @@ Some of the conventions are listed here:
 2.  You can introduce an abbreviation if you are consistent: `get-dtree`, `dtree-fetch`.
 For example, this book uses `fn` consistently as the abbreviation for "function."
 
-3.  Predicates end in - `p` (or ? in Scheme), unless the name is already a predicate: `variable-p`, `occurs-in`.
+3.  Predicates end in `-p` (or `?` in Scheme), unless the name is already a predicate: `variable-p`, `occurs-in`.
 
-4.  Destructive functions start with n (or end in ! in Scheme): nreverse.
+4.  Destructive functions start with `n` (or end in `!` in Scheme): `nreverse`.
 
 5.  Generalized variable-setting macros end in `f`: `setf`, `incf`.
 (`Push` is an exception.)
@@ -972,7 +973,7 @@ Use parser: `print-tree` instead of `parser-print-tree`.
 12.  Parameters are named by type: (`defun length (sequence) ...)` or by purpose: (`defun subsetp(subset superset) ...`) or both: (`defun / (number &rest denominator-numbers) ...`)
 
 13.  Avoid ambiguity.
-A variable named `last-node` could have two meanings; use `previous` -`node` or `final` - `node` instead.
+A variable named `last-node` could have two meanings; use `previous-node` or `final-node` instead.
 
 14.  A name like `propagate-constraints-to-neighboring-vertexes` is too long, while `prp-con` is too short.
 In deciding on length, consider how the name will be used: `propagate-constraints` is just right, because a typical call will be `(propagate-constraints vertex)`, so it will be obvious what the constraints are propagating to.
@@ -1017,7 +1018,8 @@ I recommend defining any packages in that file, although others put package defi
 The following is a sample file for the mythical system Project-X.
 Each entry in the file is discussed in turn.
 
-1.  The first line is a comment known as the *mode line.* The text editor emacs will parse the characters between -*- delimiters to discover that the file contains Lisp code, and thus the Lisp editing commands should be made available.
+1.  The first line is a comment known as the *mode line.*
+The text editor emacs will parse the characters between `-*-` delimiters to discover that the file contains Lisp code, and thus the Lisp editing commands should be made available.
 The dialect of Lisp and the package are also specified.
 This notation is becoming widespread as other text editors emulate emacs's conventions.
 
@@ -1096,12 +1098,7 @@ Here is the first part of the file `defsys.lisp`, showing the definition of `def
   name source-dir object-dir modules)
 (defun define-system (&key name source-dir object-dir modules)
   "Define a new system."
-```
-
-`  ;; Delete any old system of this name.
-and add the new one.`
-
-```lisp
+  ;; Delete any old system of this name, and add the new one.
   (setf *systems* (delete name *systems* :test #'string-equal
       :key #'sys-name))
   (push (make-sys
@@ -1165,12 +1162,7 @@ This is not hard to do, since Common Lisp provides the function `file-write-date
   (>-num (if (probe-file filel) (file-write-date filel))
   (if (probe-file file2) (file-write-date file2))))
 (defun >-num (x y)
-```
-
-`  "True if x and y are numbers.
-and x > y."`
-
-```lisp
+  "True if x and y are numbers, and x > y."
   (and (numberp x) (numberp y) (> x y)))
 ```
 
@@ -1191,9 +1183,9 @@ Some implementations may signal an error, but others may not.
 An implementation would be within its right to return 1, or any other number or non-number as the result.
 
 An unsuspecting programmer may code an expression that is an error but still computes reasonable results in his or her implementation.
-A common example is applying get to a non-symbol.
+A common example is applying `get` to a non-symbol.
 This is an error, but many implementations will just return nil, so the programmer may write (`get x ' prop`) when `(if ( symbol p x) (get x 'prop) nil`) is actually needed for portable code.
-Another common problem is with subseq and the sequence functions that take `:end` keywords.
+Another common problem is with `subseq` and the sequence functions that take `:end` keywords.
 It is an error if the `:end` parameter is not an integer less than the length of the sequence, but many implementations will not complain if `:end` is nil or is an integer greater than the length of the sequence.
 
 The Common Lisp specification often places constraints on the result that a function must compute, without fully specifying the result.
@@ -1229,17 +1221,17 @@ What kind of mistakes do you make most often?
 How could you correct that?
 
 **Exercise  25.2 [s-d]** Take a Common Lisp program and get it to work with a different compiler on a different computer.
-Make sure you use conditional compilation read macros (#+ and #-) so that the program will work on both systems.
+Make sure you use conditional compilation read macros (`#+` and `#-`) so that the program will work on both systems.
 What did you have to change?
 
 **Exercise  25.3 [m]** Write a `setf` method for `if` that works like this:
 
 ```lisp
-(setf (if test (first x) y) (+  2 3))=
-(let ((temp (+  2 3)))
+(setf (if test (first x) y) (+ 2 3))=
+(let ((temp (+ 2 3)))
   (if test
-    (setf (first x) temp)
-    (setf y temp)))
+      (setf (first x) temp)
+      (setf y temp)))
 ```
 
 You will need to use `define-setf-method`, not `defsetf`.

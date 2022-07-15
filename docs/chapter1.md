@@ -250,7 +250,7 @@ Thus, the special form `(setf x (+ 2 1))` should be considered the equivalent of
 When there is risk of confusion, we will call `setf` a *special form operator* and `(setf x 3)` a *special form expression.*
 
 It turns out that the quote mark is just an abbreviation for another special form.
-The expression '*x* is equivalent to `(quote x)`, a special form expression that evaluates to *x.*
+The expression '*x* is equivalent to `(quote` *x*`)`, a special form expression that evaluates to *x*.
 The special form operators used in this chapter are:
 
 | []()            |                                              |
@@ -518,14 +518,13 @@ This definition says that if the first word of the name is a member of the list 
 Otherwise, we use the first word, just as before.
 Another built-in function, `member`, tests to see if its first argument is an element of the list passed as the second argument.
 
-The special form `if` has the form `(if *test then-part else-part*)`.
+The special form `if` has the form `(if` *test then-part else-part*).
 There are many special forms for performing conditional tests in Lisp; `if` is the most appropriate for this example.
 An `if` form is evaluated by first evaluating the *test* expression.
 If it is true, the *then-part* is evaluated and returned as the value of the `if` form; otherwise the *else-part* is evaluated and returned.
 While some languages insist that the value of a conditional test must be either `true` or `false`, Lisp is much more forgiving.
 The test may legally evaluate to any value at all.
 Only the value `nil` is considered false; all other values are considered true.
-*(ed. note: is `false` considered `true`?)*
 In the definition of `first-name` below, the function `member` will return a non-nil (hence true) value if the first element of the name is in the list of titles, and will return `nil` (hence false) if it is not.
 Although all non-nil values are considered true, by convention the constant `t` is usually used to represent truth.
 
@@ -715,7 +714,7 @@ The alternate definition of `mappend` shown in the following doesn't make use of
 > (funcall #'+ '(2 3)) => *Error: (2 3) is not a number.*
 ```
 
-These are equivalent to `(+ 2 3), (+ 2 3)`,and`(+ '(2 3))`, respectively.
+These are equivalent to `(+ 2 3)`, `(+ 2 3)`, and `(+ '(2 3))`, respectively.
 
 So far, every function we have used has been either predefined in Common Lisp or introduced with a `defun`, which pairs a function with a name.
 It is also possible to introduce a function without giving it a name, using the special syntax `lambda`.
@@ -732,9 +731,7 @@ John McCarthy was a student of Church's at Princeton, so when McCarthy invented 
 There were no Greek letters on the keypunches of that era, so McCarthy used (`lambda (x) (+ x x)`), and it has survived to this day.
 In general, the form of a lambda expression is
 
-```lisp
-(lambda (*parameters...*) *body...*)
-```
+`(lambda` (*parameters...*) *body...*)
 
 A lambda expression is just a nonatomic *name* for a function, just as `append` is an atomic name for a built-in function.
 As such, it is appropriate for use in the first position of a function call, but if we want to get at the actual function, rather than its name, we still have to use the `#'` notation.
@@ -769,7 +766,7 @@ For example:
 Here are some more examples of the correct use of functions:
 
 ```lisp
->(mapcar #'(lambda (x) (+ x x))
+> (mapcar #'(lambda (x) (+ x x))
          '(1 2 3 4 5)) =>
 (2 4 6 8 10)
 
@@ -932,38 +929,53 @@ This makes the functional style possible but can lead to errors.
 For example, consider the trivial problem of computing the expression *a* x (b + c), where *a*, *b*, and *c* are numbers.
 The code is trivial in any language; here it is in Pascal and in Lisp:
 
-| []()           |                 |
-|----------------|-----------------|
-| `/* Pascal */` | `;;; Lisp`      |
-| `a * (b + c)`  | `(* a (+ b c))` |
+```pascal
+/* Pascal */
+a * (b + c)
+```
+
+```lisp
+;;; Lisp
+(* a (+ b c))
+```
 
 The only difference is that Pascal uses infix notation and Lisp uses prefix.
-Now consider computing *a* x (b + c) when *a*, *b*, and *c* are matrices.
+Now consider computing *a \* (b + c)* when *a*, *b*, and *c* are matrices.
 Assume we have procedures for matrix multiplication and addition.
 In Lisp the form is exactly the same; only the names of the functions are changed.
 In Pascal we have the choice of approaches mentioned before.
 We could declare temporary variables to hold intermediate results on the stack, and replace the functional expression with a series of procedure calls:
 
-| []()                        |                      |
-|-----------------------------|----------------------|
-| `/* Pascal */`              | `;;; Lisp`           |
-| `var temp, result: matrix;` |                      |
-| `add(b,c,temp);`            | `(mult a (add b c))` |
-| `mult(a,temp,result);`      |                      |
-| `return(result);`           |                      |
+```pascal
+/* Pascal */
+var temp, result: matrix;
+add(b,c,temp);
+mult(a,temp,result);
+return(result);
+```
+
+```lisp
+;;; Lisp
+(mult a (add b c))
+```
 
 The other choice is to write Pascal functions that allocate new matrices on the heap.
 Then one can write nice functional expressions like `mult(a,add(b,c))` even in Pascal.
 However, in practice it rarely works this nicely, because of the need to manage storage explicitly:
 
-| []()                     |                      |
-|--------------------------|----------------------|
-| `/* Pascal */`           | `;;; Lisp`           |
-| `var a,b,c,x,y: matrix;` |                      |
-| `x := add(b.c);`         | `(mult a (add b c))` |
-| `y := mult(a,x);`        |                      |
-| `free(x);`               |                      |
-| `return(y);`             |                      |
+```pascal
+/* Pascal */
+var a,b,c,x,y: matrix;
+x := add(b.c);
+y := mult(a,x);
+free(x);
+return(y);
+```
+
+```lisp
+;;; Lisp
+(mult a (add b c))
+```
 
 In general, deciding which structures to free is a difficult task for the Pascal programmer.
 If the programmer misses some, then the program may run out of memory.
@@ -1004,7 +1016,7 @@ There are two answers to this objection.
 First, consider the alternative: in a language with "conventional" syntax, Lisp's parentheses pairs would be replaced either by an implicit operator precedence rule (in the case of arithmetic and logical expressions) or by a `begin/end` pair (in the case of control structures).
 But neither of these is necessarily an advantage.
 Implicit precedence is notoriously error-prone, and `begin/end` pairs clutter up the page without adding any content.
-Many languages are moving away from `begin/end: C` uses { and }, which are equivalent to parentheses, and several modern functional languages (such as Haskell) use horizontal blank space, with no explicit grouping at all.
+Many languages are moving away from `begin/end`: `C` uses `{` and `}`, which are equivalent to parentheses, and several modern functional languages (such as Haskell) use horizontal blank space, with no explicit grouping at all.
 Second, many Lisp programmers *have* considered the alternative.
 There have been a number of preprocessors that translate from "conventional" syntax into Lisp.
 None of these has caught on.
@@ -1072,7 +1084,6 @@ A (COND
 (SETQ RESTLIST (CONS(CONS LIST DEPTH) RESTLIST))))
 (SETQ RESTLIST (CONS (CONS TEMP
      (ADD1 DEPTH)) RESTLIST))
-))))
 ))))
 (GO A))
 ```

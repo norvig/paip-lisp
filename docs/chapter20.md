@@ -28,7 +28,7 @@ The rule says that a given string of words `?s` is a sentence if there is a stri
 Logically, this is fine, and it would work as a program to generate random sentences.
 However, it is a very inefficient program for parsing sentences.
 It will consider all possible noun phrases and verb phrases, without regard to the input words.
-Only when it gets to the concat goal (defined on [page 411](chapter12.md#p411)) will it test to see if the two constituents can be concatenated together to make up the input string.
+Only when it gets to the `concat` goal (defined on [page 411](chapter12.md#p411)) will it test to see if the two constituents can be concatenated together to make up the input string.
 Thus, a better order of evaluation for parsing is:
 
 ```lisp
@@ -233,7 +233,7 @@ So, we will take the usual step when our bare programming language becomes messy
 Edinburgh Prolog recognizes assertions called *definite clause grammar* (DCG) rules.
 The term *definite clause* is just another name for a Prolog clause, so DCGs are also called "logic grammars." They could have been called "Horn clause grammars" or "Prolog grammars" as well.
 
-DCG rules are clauses whose main functor is an arrow, usually written -->.
+DCG rules are clauses whose main functor is an arrow, usually written `-->`.
 They compile into regular Prolog clauses with extra arguments.
 In normal DCG rules, only the string arguments are automatically added.
 But we will see later how this can be extended to add other arguments automatically as well.
@@ -506,9 +506,9 @@ The problem in the representation we have been using becomes more acute when we 
 
 This can be considered ambiguous between the following two meanings, in predicate calculus form:
 
-`&forall; x picture(x)`=> `&exist; y story(y) &and; paint(x,y)`
+&forall; x picture(x) => &exist; y story(y) &and; paint(x,y)
 
-`&exist; y story (y) &and; &forall; x picture(x)`=> `paint(x,y)`
+&exist; y story (y) &and; &forall; x picture(x) => paint(x,y)
 
 The first says that for each picture, there is a story that it paints.
 The second says that there is a certain special story that every picture paints.
@@ -670,10 +670,9 @@ paints a picture that stinks.
 
 Consider the simple sentence "Every man loves a woman." This sentence is ambiguous between the following two interpretations:
 
-```lisp
 &forall;m&exist;w man(m) &and; woman(w) &and; loves(m,w)
+
 &exist;w&forall;m man(m) &and; woman(w) &and; loves(m,w)
-```
 
 The first interpretation is that every man loves some woman-his wife, perhaps.
 The second interpretation is that there is a certain woman whom every man loves-Natassja Kinski, perhaps.
@@ -850,7 +849,7 @@ In the next chapter, we will see how to impose additional constraints on gaps.
 ## 20.7 Augmenting DCG Rules
 
 In the previous section, we saw how to build up a semantic representation of a sentence by conjoining the semantics of the components.
-One problem with this approach is that the semantic interpretation is often something of the form `(and (and t *a) b),*` when we would prefer `(and *a b)*`.
+One problem with this approach is that the semantic interpretation is often something of the form `(and (and t` *a) b),* when we would prefer `(and` *a b)*.
 There are two ways to correct this problem: either we add a step that takes the final semantic interpretation and simplifies it, or we complicate each individual rule, making it generate the simplified form.
 The second choice would be slightly more efficient, but would be very ugly and error prone.
 We should be doing all we can to make the rules simpler, not more complicated; that is the whole point of the DCG formalism.
@@ -875,7 +874,7 @@ If we were to alter this rule to produce a simplified semantic interpretation, i
 ```
 
 Many rules will have this form, so we adopt a simple convention: if the last argument of the constituent on the left-hand side of a rule is the keyword `:sem`, then we will build the semantics by replacing `:sem` with a conjunction formed by combining all the last arguments of the constituents on the right-hand side of the rule.
-`A==>` arrow will be used for rules that follow this convention, so the following rule is equivalent to the one above:
+A `==>` arrow will be used for rules that follow this convention, so the following rule is equivalent to the one above:
 
 ```lisp
 (rule (S :sem) ==>
@@ -1002,7 +1001,7 @@ If there are more than one, it inserts a call to the predicate `and*`.
 ```
 
 We could have implemented `and*` with Prolog clauses, but it is slightly more efficient to do it directly in Lisp.
-A call to `conjuncts` collects all the conjuncts, and we then add an and if necessary:
+A call to `conjuncts` collects all the conjuncts, and we then add an `and` if necessary:
 
 ```lisp
 (defun and*/2 (in out cont)
@@ -1030,7 +1029,7 @@ The code in `make-augmented-dcg` turns examples into expressions of the form:
 (:ex (S ?sem) "John likes Mary" "He sleeps")
 ```
 
-To make this work, :ex will have to be a macro:
+To make this work, `:ex` will have to be a macro:
 
 ```lisp
 (defmacro :ex ((category . args) &body examples)
@@ -1038,7 +1037,7 @@ To make this work, :ex will have to be a macro:
   `(add-examples ',category ',args ',examples))
 ```
 
-`:ex calls add-examples` to do all the work.
+`:ex` calls `add-examples` to do all the work.
 Each example is stored in a hash table indexed under the the category.
 Each example is transformed into a two-element list: the example phrase string itself and a call to the proper predicate with all arguments supplied.
 The function `add-examples` does this transformation and indexing, and `run-examples` retrieves the examples stored under a category, prints each phrase, and calls each goal.

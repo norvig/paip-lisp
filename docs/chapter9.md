@@ -130,7 +130,7 @@ The techniques outlined here result in a 130-fold speed-up in this program.
 We start with a simple mathematical function to demonstrate the advantages of caching techniques.
 Later we will demonstrate more complex examples.
 
-The Fibonacci sequence is defined as the numbers 1,1,2,3,5,8,... where each number is the sum of the two previous numbers.
+The Fibonacci sequence is defined as the numbers 1, 1, 2, 3, 5, 8, ... where each number is the sum of the two previous numbers.
 The most straightforward function to compute the nth number in this sequence is as follows:
 
 ```lisp
@@ -165,7 +165,7 @@ The expression (`memo #'fib`) will produce a function that remembers its results
 With `fib` traced, it would look like this:
 
 ```lisp
-> (setf memo-fib (memo #'fib)) => #  <  CLOSURE -  67300731  >
+> (setf memo-fib (memo #'fib)) => #<CLOSURE -67300731>
 > (funcall memo-fib 3) =>
 (1 ENTER FIB: 3)
   (2 ENTER FIB: 2)
@@ -239,7 +239,7 @@ This time, each computation is done only once.
 Furthermore, when the computation of `(fib 5)` is repeated, the answer is returned immediately with no intermediate computation, and a further call to `(fib 6)` can make use of the value of `(fib 5)`.
 
 ```lisp
-> (memoize 'fib) => #  <  CLOSURE 76626607  >
+> (memoize 'fib) => #<CLOSURE 76626607>
 > (fib 5) =>
 (1 ENTER FIB: 5)
   (2 ENTER FIB: 4)
@@ -262,12 +262,12 @@ Furthermore, when the computation of `(fib 5)` is repeated, the answer is return
 ```
 
 Understanding why this works requires a clear understanding of the distinction between functions and function names.
-The original (`defun fib ...`) form does two things: builds a function and stores it as the `symbol - function` value of `fib`.
-Within that function there are two references to `fib`; these are compiled (or interpreted) as instructions to fetch the `symbol - function` of `fib` and apply it to the argument.
+The original `(defun fib ...)` form does two things: builds a function and stores it as the `symbol-function` value of `fib`.
+Within that function there are two references to `fib`; these are compiled (or interpreted) as instructions to fetch the `symbol-function` of `fib` and apply it to the argument.
 
 What `memoize` does is fetch the original function and transform it with `memo` to a function that, when called, will first look in the table to see if the answer is already known.
 If not, the original function is called, and a new value is placed in the table.
-The trick is that `memoize` takes this new function and makes it the `symbol - function` value of the function name.
+The trick is that `memoize` takes this new function and makes it the `symbol-function` value of the function name.
 This means that all the references in the original function will now go to the new function, and the table will be properly checked on each recursive call.
 One further complication to `memo:` the function `gethash` returns both the value found in the table and an indicator of whether the key was present or not.
 We use `multiple-value-bind` to capture both values, so that we can distinguish the case when `nil` is the value of the function stored in the table from the case where there is no stored value.
@@ -295,7 +295,7 @@ Both of these approaches rely on the fact that `defun` returns the name of the f
 
 | []() |             |            |          |                |
 |------|-------------|------------|----------|----------------|
-| *n*  | `(fib *n*)` | unmemoized | memoized | memoized up to |
+| *n*  | `(fib` *n*) | unmemoized | memoized | memoized up to |
 | 25   | 121393      | 1.1        | .010     | 0              |
 | 26   | 196418      | 1.8        | .001     | 25             |
 | 27   | 317811      | 2.9        | .001     | 26             |
@@ -314,7 +314,7 @@ Both of these approaches rely on the fact that `defun` returns the name of the f
 | 1000 | 7.0e208     | -          | .001     | 1000           |
 | 1000 | 7.0e208     | -          | .876     | 0              |
 
-Now we show a table giving the values of `(fib *n*)` for certain *n*, and the time in seconds to compute the value, before and after `(memoize 'fib)`.
+Now we show a table giving the values of `(fib` *n*) for certain *n*, and the time in seconds to compute the value, before and after `(memoize 'fib)`.
 For larger values of *n*, approximations are shown in the table, although `fib` actually returns an exact integer.
 With the unmemoized version, I stopped at *n*  =  34, because the times were getting too long.
 For the memoized version, even *n*  =  1000 took under a second.
@@ -704,8 +704,9 @@ When it is created, only the zeroth element, 0, is evaluated.
 The computation of the other elements is delayed.
 
 ```lisp
-> (setf c (integers 0)) => (0 . #S(DELAY :FUNCTION #  <  CLOSURE -  77435477  >))
->  (pipe-elt c 0) =>    0
+> (setf c (integers 0)) => (0 . #S(DELAY :FUNCTION #<CLOSURE -77435477>))
+
+> (pipe-elt c 0) => 0
 ```
 
 Calling `pipe-elt` to look at the third element causes the first through third elements to be evaluated.
@@ -723,7 +724,7 @@ c =>
                           : VALUE
                           (3 . #S(DELAY
                                    :FUNCTION
-                                   # < CLOSURE - 77432724 >))))))))
+                                   #<CLOSURE -77432724 >))))))))
 ```
 
 While this seems to work fine, there is a heavy price to pay.
@@ -731,8 +732,7 @@ Every delayed value must be stored in a two-element structure, where one of the 
 Thus, there is some storage wasted.
 There is also some time wasted, as `tail` or `pipe-elt` must traverse the structures.
 
-An alternate representation for pipes is as (*value.
-closure*) pairs, where the closure values are stored into the actual cons cells as they are computed.
+An alternate representation for pipes is as (*value . closure*) pairs, where the closure values are stored into the actual cons cells as they are computed.
 Previously we needed structures of type delay to distinguish a delayed from a nondelayed object, but in a pipe we know the rest can be only one of three things: nil, a list, or a delayed value.
 Thus, we can use the closures directly instead of using `delay` structures, if we have some way of distinguishing closures from lists.
 Compiled closures are atoms, so they can always be distinguished from lists.
@@ -760,11 +760,12 @@ The following definitions do not make this assumption:
 ```
 
 Everything else remains the same.
-If we recompile `integers` (because it uses the `macro make-pipe`), we see the following behavior.
+If we recompile `integers` (because it uses the macro `make-pipe`), we see the following behavior.
 First, creation of the infinite pipe `c` is similar:
 
 ```lisp
-> (setf c (integers 0)) => (0 . #  <  CLOSURE 77350123  >)
+> (setf c (integers 0)) => (0 . #<CLOSURE 77350123>)
+
 > (pipe-elt c 0) => 0
 ```
 
@@ -772,16 +773,20 @@ Accessing an element of the pipe forces evaluation of all the intervening elemen
 
 ```lisp
 > (pipe-elt c 5) => 5
-> c => (0 1 2 3 4 5 . #  <  CLOSURE 77351636  >)
+
+> c => (0 1 2 3 4 5 . #<CLOSURE 77351636>)
 ```
 
 Pipes can also be used for finite lists.
 Here we see a pipe of length 11:
 
 ```lisp
-> (setf i (integers 0 10)) => (0 . #  <  CLOSURE 77375357  >)
+> (setf i (integers 0 10)) => (0 . #<CLOSURE 77375357>)
+
 > (pipe-elt i 10) => 10
+
 > (pipe-elt i 11) => NIL
+
 > i => (0 1 2 3 4 5 6 7 8 9 10)
 ```
 
@@ -820,9 +825,9 @@ And here's an application of pipes: generating prime numbers using the sieve of 
        (filter #'(lambda (x) (/= (mod x (head pipe)) 0))
                 (sieve (tail pipe)))))
 (defvar *primes* (sieve (integers 2)))
-> *primes* => (2 . #  <  CLOSURE 3075345  >)
+> *primes* => (2 . #<CLOSURE 3075345>)
 > (enumerate *primes* :count 10) =>
-(2 3 5 7 11 13 17 19 23 29 31 . #  <  CLOSURE 5224472  >)
+(2 3 5 7 11 13 17 19 23 29 31 . #<CLOSURE 5224472>)
 ```
 
 Finally, let's return to the problem of generating all strings in a grammar.
@@ -883,21 +888,22 @@ With these definitions, here's the pipe of all sentences from `*grammar2*` (from
 
 ```lisp
 > (setf ss (generate-all 'sentence)) =>
-((THE . #  <  CLOSURE 27265720  >) . #  <  CLOSURE 27266035>)
+((THE . #<CLOSURE 27265720>) . #<CLOSURE 27266035>)
 > (enumerate ss :count 5) =>
-((THE . #  <  CLOSURE 27265720  >)
-(A . #  <  CLOSURE 27273143  >)
-(THE . #  <  CLOSURE 27402545  >)
-(A . #  <  CLOSURE 27404344  >)
-(THE . #  <  CLOSURE 27404527  >)
-(A . #  <  CLOSURE 27405473  >) . #  <  CLOSURE 27405600  >)
+((THE . #<CLOSURE 27265720>)
+(A . #<CLOSURE 27273143>)
+(THE . #<CLOSURE 27402545>)
+(A . #<CLOSURE 27404344>)
+(THE . #<CLOSURE 27404527>)
+(A . #<CLOSURE 27405473>) . #<CLOSURE 27405600>)
+
 > (enumerate ss .-count 5 :key #'enumerate) =>
 ((THE MAN HIT THE MAN)
 (A MAN HIT THE MAN)
 (THE BIG MAN HIT THE MAN)
 (A BIG MAN HIT THE MAN)
 (THE LITTLE MAN HIT THE MAN)
-(THE . #  <  CLOSURE 27423236  >) . #  <  CLOSURE 27423343  >)
+(THE . #<CLOSURE 27423236>) . #<CLOSURE 27423343>)
 > (enumerate (pipe-elt ss 200)) =>
 (THE ADIABATIC GREEN BLUE MAN HIT THE MAN)
 ```
@@ -1024,11 +1030,13 @@ Here is the basic code for `profile` and `unprofile:`
 ```lisp
 (defvar *profiled-functions* nil
  "Function names that are currently profiled")
+
 (defmacro profile (&rest fn-names)
  "Profile fn-names. With no args, list profiled functions."
  '(mapcar #'profile1
        (setf *profiled-functions*
       (union *profiled-functions* fn-names))))
+
 (defmacro unprofile (&rest fn-names)
  "Stop profiling fn-names. With no args, stop all profiling."
  '(progn
@@ -1041,8 +1049,8 @@ Here is the basic code for `profile` and `unprofile:`
             ',fn-names)))))
 ```
 
-The idiom ' ',`fn-names` deserves comment, since it is common but can be confusing at first.
-It may be easier to understand when written in the equivalent form '`(quote , fn-names)`.
+The idiom `'',fn-names` deserves comment, since it is common but can be confusing at first.
+It may be easier to understand when written in the equivalent form `'(quote ,fn-names)`.
 As always, the backquote builds a structure with both constant and evaluated components.
 In this case, the `quote` is constant and the variable `fn-names` is evaluated.
 In MacLisp, the function `kwote` was defined to serve this purpose:
@@ -1088,7 +1096,7 @@ For example, on TI Explorer Lisp Machines, `get-internal-real-time` measures 1/6
 The function `time:microsecond-time-difference` is used to compare two of these numbers with compensation for wraparound, as long as no more than one wraparound has occurred.
 
 In the code below, I use the conditional read macro characters `#+` and `#-` to define the right behavior on both Explorer and non-Explorer machines.
-We have seeen that `#` is a special character to the reader that takes different action depending on the following character.
+We have seen that `#` is a special character to the reader that takes different action depending on the following character.
 For example, `#'fn` is read as `(function fn)`.
 The character sequence `#+` is defined so that `#+`*feature expression* reads as *expression* if the *feature* is defined in the current implementation, and as nothing at all if it is not.
 The sequence `#-` acts in just the opposite way.
@@ -1119,8 +1127,8 @@ The conditional read macro characters are used in the following definitions:
 The next step is to update `profiled-fn` to keep track of the timing data.
 The simplest way to do this would be to set a variable, say `start`, to the time when a function is entered, run the function, and then increment the function's time by the difference between the current time and `start`.
 The problem with this approach is that every function in the call stack gets credit for the time of each called function.
-Suppose the function f calls itself recursively five times, with each call and return taking place a second apart, so that the whole computation takes nine seconds.
-Then f will be charged nine seconds for the outer call, seven seconds for the next call, and so on, for a total of 25 seconds, even though in reality it only took nine seconds for all of them together.
+Suppose the function `f` calls itself recursively five times, with each call and return taking place a second apart, so that the whole computation takes nine seconds.
+Then `f` will be charged nine seconds for the outer call, seven seconds for the next call, and so on, for a total of 25 seconds, even though in reality it only took nine seconds for all of them together.
 
 A better algorithm would be to charge each function only for the time since the last call or return.
 Then `f` would only be charged the nine seconds.
@@ -1292,13 +1300,13 @@ Note that with `eq` hashing, the resetting version was faster, presumably becaus
 | hashing | resetting | time |
 |---------|-----------|------|
 | none    | -         | 6.6  |
-| equal   | yes       | 3.8  |
-| equal   | no        | 3.0  |
-| eq      | yes       | 7.0  |
-| eq      | no        | 10.2 |
+| `equal` | yes       | 3.8  |
+| `equal` | no        | 3.0  |
+| `eq`    | yes       | 7.0  |
+| `eq`    | no        | 10.2 |
 
 This approach makes the function `simplify` remember the work it has done, in a hash table.
-If the overhead of hash table maintenance becomes too large, there is an alternative: make the data remember what simplify has done.
+If the overhead of hash table maintenance becomes too large, there is an alternative: make the data remember what `simplify` has done.
 This approach was taken in MACSYMA: it represented operators as lists rather than as atoms.
 Thus, instead of `(* 2 x)`, MACSYMA would use `((*) 2 x)`.
 The simplification function would destructively insert a marker into the operator list.
@@ -1306,7 +1314,7 @@ Thus, the result of simplifying 2*x* would be `((* simp) 2 x)`.
 Then, when the simplifier was called recursively on this expression, it would notice the `simp` marker and return the expression as is.
 
 The idea of associating memoization information with the data instead of with the function will be more efficient unless there are many functions that all want to place their marks on the same data.
-The data-oriented approach has two drawbacks: it doesn't identify structures that are `equal` but not `eq`, and, because it requires explicitly altering the data, it requires every other operation that manipulates the data to know about the marker s.
+The data-oriented approach has two drawbacks: it doesn't identify structures that are `equal` but not `eq`, and, because it requires explicitly altering the data, it requires every other operation that manipulates the data to know about the markers.
 The beauty of the hash table approach is that it is transparent; no code needs to know that memoization is taking place.
 
 #### Indexing
@@ -1366,7 +1374,7 @@ For example, the rule `(x + x = 2 * x)` could be compiled into something like:
 
 This eliminates the need for consing up and passing around variable bindings, and should be faster than the general matching procedure.
 When used in conjunction with indexing, the individual rules can be simpler, because we already know we have the right operator.
-For example, with the above rule indexed under "+", it could now be compiled as:
+For example, with the above rule indexed under `+`, it could now be compiled as:
 
 ```lisp
 (lambda (exp)
@@ -1385,7 +1393,7 @@ I have chosen a slightly different format for the code; the main difference is t
 This is useful especially for deeply nested patterns.
 The other difference is that I explicitly build up the answer with a call to `list`, rather than `make-exp`.
 This is normally considered bad style, but since this is code generated by a compiler, I wanted it to be as efficient as possible.
-If the representation of the exp data type changed, we could simply change the compiler; a much easier task than hunting down all the references spread throughout a human- written program.
+If the representation of the `exp` data type changed, we could simply change the compiler; a much easier task than hunting down all the references spread throughout a human-written program.
 The comments following were not generated by the compiler.
 
 ```lisp
@@ -1394,19 +1402,20 @@ The comments following were not generated by the compiler.
 (x * 0  =  0)
 (0 * x  =  0)
 (x * x  =  x ^ 2)
+
 (lambda (x)
-    (let ((xl (exp-lhs x))
-                (xr (exp-rhs x)))
-        (or (if (eql xr '1)        ; (x*1  =  X)
-                        xl)
-                (if (eql xl '1)        ; (1*x  =  X)
-                        xr)
-                (if (eql xr '0)        ; (x*0  =  0)
-                        '0)
-                (if (eql xl '0)        ; (0*x  =  0)
-                        '0)
-                (if (equal xr xl)    ; (x*x  =  x  ^  2)
-                        (list '^ xl '2)))))
+  (let ((xl (exp-lhs x))
+        (xr (exp-rhs x)))
+    (or (if (eql xr '1)          ; (x * 1  =  x)
+            xl)
+        (if (eql xl '1)          ; (1 * x  =  x)
+            xr)
+        (if (eql xr '0)          ; (x * 0  =  0)
+            '0)
+        (if (eql xl '0)          ; (0 * x  =  0)
+            '0)
+        (if (equal xr xl)        ; (x * x  =  x  ^  2)
+            (list '^ xl '2)))))
 ```
 
 I chose this format for the code because I imagined (and later *show*) that it would be fairly easy to write the compiler for it.
@@ -1769,7 +1778,7 @@ Make sure that the compiler is data-driven, so that the programmer who adds a ne
 One hard part will be accounting for segment variables.
 It is worth spending a considerable amount of effort at compile time to make this efficient at run time.
 
-**Exercise 9.4 [m]** Define the time to compute (fib n) without memoization as *T<sub>n</sub>*.
+**Exercise 9.4 [m]** Define the time to compute `(fib n)` without memoization as *T<sub>n</sub>*.
 Write a formula to express *T<sub>n</sub>*.
 Given that *T*<sub>25</sub> &asymp; 1.1 seconds, predict *T*<sub>100</sub>.
 

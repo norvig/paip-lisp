@@ -116,7 +116,8 @@ First, the program is written in traditional procedural style:
            (account-balance account))))
 ```
 
-We can create new bank accounts with `make-account` and modify them with `account-withdraw, account-deposit,` and `account-interest.` This is a simple problem, and this simple solution suffices.
+We can create new bank accounts with `make-account` and modify them with `account-withdraw`, `account-deposit`, and `account-interest`.
+This is a simple problem, and this simple solution suffices.
 Problems appear when we change the specification of the problem, or when we envision ways that this implementation could be inadvertently used in error.
 For example, suppose a programmer looks at the `account` structure and decides to use `(decf (account-balance account)`) directly instead of going through the `account-withdraw` function.
 This could lead to negative account balances, which were not intended.
@@ -154,7 +155,7 @@ The advantage of this approach is that account objects are completely encapsulat
 We have a guarantee that no other code can manipulate the information in the account in any other way.<a id="tfn13-1"></a><sup>[1](#fn13-1)</sup>
 
 The function `get-method` finds the method that implements a message for a given object.
-The function send gets the method and applies it to a list of arguments.
+The function `send` gets the method and applies it to a list of arguments.
 The name send comes from the Flavors object-oriented system, which is discussed in the history section ([page 456](#p456)).
 
 ```lisp
@@ -170,26 +171,23 @@ The name send comes from the Flavors object-oriented system, which is discussed 
 
 Here is an example of the use of `new-account` and `send`:
 
-`> (setf acct (new-account "J.
-Random Customer" 1000.00))`=>
-
 ```lisp
+> (setf acct (new-account "J. Random Customer" 1000.00)) =>
 #<CLOSURE 23652465>
+
 > (send acct 'withdraw 500.00) => 500.0
+
 > (send acct 'deposit 123.45) => 623.45
-```
 
-`> (send acct 'name) => "J.
-Random Customer"`
+> (send acct 'name) => "J. Random Customer"
 
-```lisp
 > (send acct 'balance) => 623.45
 ```
 
 ## 13.3 Generic Functions
 
-The send syntax is awkward, as it is different from the normal Lisp function-calling syntax, and it doesn't fit in with the other Lisp tools.
-For example, we might like to say (`mapcar 'balance accounts`), but with messages we would have to write that as:
+The `send` syntax is awkward, as it is different from the normal Lisp function-calling syntax, and it doesn't fit in with the other Lisp tools.
+For example, we might like to say `(mapcar 'balance accounts)`, but with messages we would have to write that as:
 
 ```lisp
 (mapcar #'(lambda (acct) (send acct 'balance)) accounts)
@@ -456,7 +454,7 @@ The class-options are rarely used.
         :reader interest-rate)))
 ```
 
-In the definition of account, we see that the list of superclasses is empty, because account does not inherit from any classes.
+In the definition of `account`, we see that the list of superclasses is empty, because `account` does not inherit from any classes.
 There are three slot specifiers, for the `name`, `balance`, and `interest-rate` slots.
 Each slot name can be followed by optional keyword/value pairs defining how the slot is used.
 The `name` slot has an `:initarg` option, which says that the name can be specified when a new account is created with `make-instance`.
@@ -478,7 +476,7 @@ Here we see the creation of an object, and the application of the automatically 
 
 CLOS differs from most object-oriented systems in that methods are defined separately from classes.
 To define a method (besides the ones defined automatically by `:reader`, `:writer`, or `:accessor` options) we use the `defmethod` macro.
-It is similar to defun in form:
+It is similar to `defun` in form:
 
 `(defmethod` *method-name* (*parameter...*) *body...*)
 
@@ -506,7 +504,8 @@ With CLOS it is easy to define a `limited-account` as a subclass of `account`, a
 ```
 
 Note the use of `call-next-method` to invoke the `withdraw` method for the `account` class.
-Also note that all the other methods for accounts automatically work on instances of the class limited-account, because it is defined to inherit from `account.` In the following example, we show that the `name` method is inherited, that the `withdraw` method for `limited-account` is invoked first, and that the `withdraw` method for `account` is invoked by the `call-next-method` function:
+Also note that all the other methods for accounts automatically work on instances of the class limited-account, because it is defined to inherit from `account`.
+In the following example, we show that the `name` method is inherited, that the `withdraw` method for `limited-account` is invoked first, and that the `withdraw` method for `account` is invoked by the `call-next-method` function:
 
 ```lisp
 > (setf a2 (make-instance 'limited-account
@@ -521,7 +520,8 @@ Also note that all the other methods for accounts automatically work on instance
 In general, there may be several methods appropriate to a given message.
 In that case, all the appropriate methods are gathered together and sorted, most specific first.
 The most specific method is then called.
-That is why the method for `limited-account` is called first rather than the method for `account.` The function `call-next-method` can be used within the body of a method to call the next most specific method.
+That is why the method for `limited-account` is called first rather than the method for `account`.
+The function `call-next-method` can be used within the body of a method to call the next most specific method.
 
 The complete story is actually even more complicated than this.
 As one example of the complication, consider the class `audited-account`, which prints and keeps a trail of all deposits and withdrawals.
@@ -543,7 +543,7 @@ In general, there might be several of each kind of method.
 In that case, all the `:before` methods are called in order, most specific first.
 Then the most specific primary method is called.
 It may choose to invoke `call-next-method` to get at the other methods.
-(It is an error for a `:before` or `:after` method to use `call-next-method.)`
+(It is an error for a `:before` or `:after` method to use `call-next-method`.)
 Finally, all the `:after` methods are called, least specific first.
 
 The values from the `:before` and `:after` methods are ignored, and the value from the primary method is returned.
@@ -606,7 +606,7 @@ The main difference is that searcher uses generic functions instead of passing a
       (searcher prob))))
 ```
 
-searcher does not assume that the problem states are organized in a list; rather, it uses the generic function `no-states-p` to test if there are any states, `pop-state` to remove and return the first state, and `current-state` to access the first state.
+`searcher` does not assume that the problem states are organized in a list; rather, it uses the generic function `no-states-p` to test if there are any states, `pop-state` to remove and return the first state, and `current-state` to access the first state.
 For the basic `problem` class, we will in fact implement the states as a list, but another class of problem is free to use another representation.
 
 ```lisp
@@ -630,7 +630,7 @@ It is a `:before` method because we want to see the output before carrying out t
  (dbg 'search ";; Search: ~a" (problem-states prob)))
 ```
 
-The generic functions that remain to be defined are `goal-p, probl em-combiner,` and `problem-successors`.
+The generic functions that remain to be defined are `goal-p`, `problem-combiner`, and `problem-successors`.
 We will address `goal-p` first, by recognizing that for many problems we will be searching for a state that is `eql` to a specified goal state.
 We define the class `eql-problem` to refer to such problems, and specify `goal-p` for that class.
 Note that we make it possible to specify the goal when a problem is created, but not to change the goal:
@@ -677,7 +677,7 @@ Naturally, this gets represented as a class:
 ```
 
 Now suppose we want to solve a binary-tree problem with breadth-first search, searching for a particular goal.
-Simply create a class that mixes in `binary-tree-problem, eql-problem` and `bfs-problem,` create an instance of that class, and call `searcher` on that instance:
+Simply create a class that mixes in `binary-tree-problem`, `eql-problem` and `bfs-problem,` create an instance of that class, and call `searcher` on that instance:
 
 ```lisp
 (defclass binary-tree-eql-bfs-problem
@@ -725,7 +725,7 @@ The following is a `cost-fn` that is reasonable for any `eql-problem` dealing wi
 
 Beam search is a modification of best-first search where all but the best *b* states are thrown away on each iteration.
 A beam search problem is represented by a class where the instance variable `beam-width` holds the parameter *b*.
-If this nil, then full best-first search is done.
+If this is nil, then full best-first search is done.
 Beam search is implemented by an `:around` method on `problem-combiner`.
 It calls the next method to get the list of states produced by best-first search, and then extracts the first *b* elements.
 
@@ -769,7 +769,7 @@ The applications programmer then just picks what is needed from the library.
 From the following we see that it is not too difficult to pick out the right code to define a trip-planning searcher.
 Compare this with the definition of `trip` on page 198 to see if you prefer CLOS in this case.
 The main difference is that here we say that the cost function is `air-distance` and the successors are the `neighbors` by defining methods; in `trip` we did it by passing parameters.
-The latter is a little more succint, but the former may be more clear, especially as the number of parameters grows.
+The latter is a little more succinct, but the former may be more clear, especially as the number of parameters grows.
 
 ```lisp
 (defclass trip-problem (binary-tree-eql-best-beam-problem)
@@ -867,7 +867,7 @@ len(L.N). NI is N+1.
 Bertrand Meyer, in his book on the object-oriented language Eiffel (1988), lists five qualities that contribute to software quality:
 
 *   *Correctness*.
-Clearly, a correct program is of the upmost importance.
+Clearly, a correct program is of the utmost importance.
 
 *   *Robustness*.
 Programs should continue to function in a reasonable manner even for input that is beyond the original specifications.

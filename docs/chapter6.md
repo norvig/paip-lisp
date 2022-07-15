@@ -953,7 +953,7 @@ Instead of just giving the name of the structure, it is also possible to use:
 (defstruct (structure-name (option value)...) "optional doc" slot...)
 ```
 
-For city, the option :type is specified as `list`.
+For city, the option `:type` is specified as `list`.
 This means that cities will be implemented as lists of three elements, as they are in the initial value for `*cities*`.
 
 The cities are shown on the map in [figure 6.1](#fig-06-01), which has connections between all cities within the 1000 kilometer range of each other.<a id="tfn06-5"></a><sup>[5](#fn06-5)</sup>
@@ -1586,7 +1586,7 @@ Hint: You may want to use the function `reduce`.
 **Exercise  6**.**5** [**m**] Define a version of `compose` that allows any number of arguments but is more efficient than the answer to the previous exercise.
 Hint: try to make decisions when `compose` is called to build the resulting function, rather than making the same decisions over and over each time the resulting function is called.
 
-**Exercise  6**.**6** [**m**] One problem with `pat-match` is that it gives special significance to symbols starting with ?, which means that they can not be used to match a literal pattern.
+**Exercise  6**.**6** [**m**] One problem with `pat-match` is that it gives special significance to symbols starting with `?`, which means that they can not be used to match a literal pattern.
 Define a pattern that matches the input literally, so that such symbols can be matched.
 
 **Exercise  6**.**7** [**m**] Discuss the pros and cons of data-driven programming compared to the conventional approach.

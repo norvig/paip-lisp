@@ -195,13 +195,13 @@ The `and` form tests whether every one of a list of conditions is true, and `or`
 Both evaluate the arguments left to right, and stop as soon as the final result can be determined.
 Here is a table of equivalences:
 
-| **conditional**                  | `if` **form**                       | `cond` **form**                    |
-|----------------------------------|-------------------------------------|------------------------------------|
-| `(when` *test a b c*)            | `(if` *test* `(progn` *a  b c*))    | `(cond` (*test a b c*))            |
-| `(unless` *test x y*)            | `(if (not` *test*) `(progn` *x y*)) | `(cond ((not` *test*) *x y*))      |
-| `(and` *a b c*)                  | `(if` *a* `(if` *b c*))             | `(cond` (*a* `(cond` (*b c*))))    |
-| `(or` *a b c*)                   | `(if` *a a* `(if` *b b c*))         | `(cond (a)` (*b*) (*c*))           |
-| `(*case*` *a* (*b c*) `*(t x*))` | `(if (eql` *a 'b*) *c x*)           | `(cond ((eql` *a 'b*) *c*) (*t x*))|
+| conditional                    | `if` form                           | `cond` form                        |
+|--------------------------------|-------------------------------------|------------------------------------|
+| `(when` *test a b c*)          | `(if` *test* `(progn` *a  b c*))    | `(cond` (*test a b c*))            |
+| `(unless` *test x y*)          | `(if (not` *test*) `(progn` *x y*)) | `(cond ((not` *test*) *x y*))      |
+| `(and` *a b c*)                | `(if` *a* `(if` *b c*))             | `(cond` (*a* `(cond` (*b c*))))    |
+| `(or` *a b c*)                 | `(if` *a a* `(if` *b b c*))         | `(cond (a)` (*b*) (*c*))           |
+| `(case` *a* (*b c*) (`t` *x*)) | `(if (eql` *a 'b*) *c x*)           | `(cond ((eql` *a 'b*) *c*) (`t` *x*)) |
 
 It is considered poor style to use `and` and `or` for anything other than testing a logical condition, `when`, `unless,` and `if` can all be used for taking conditional action.
 For example:
@@ -996,7 +996,7 @@ Next, `eql` tests for objects that are either `eq` or are equivalent numbers.
 `equal` tests for objects that are either `eql` or are lists or strings with `eql` elements.
 Finally, `equalp` is like `equal` except it also matches upper- and lowercase characters and numbers of different types.
 The following table summarizes the results of applying each of the four predicates to various values of *x* and *y*.
-The ? value means that the result depends on your implementation: two integers that are `eql` may or may not be `eq`.
+The `?` value means that the result depends on your implementation: two integers that are `eql` may or may not be `eq`.
 
 | *x*     | *y*     | `eq`  | `eql` | `equal` | `equalp` |
 |---------|---------|-------|-------|---------|----------|
@@ -1465,7 +1465,7 @@ For example, the string `"hello there"` would print as `"hello there".`
 The function `princ` is used to print in a human-readable format.
 The string in question would print as `hello there` with `princ`-the quote marks are not printed.
 This means that `read` cannot recover the original form; `read` would interpret it as two symbols, not one string.
-The function `write` accepts eleven different keyword arguments that control whether it acts like `prin1` or `princ,` among other things.
+The function `write` accepts eleven different keyword arguments that control whether it acts like `prin1` or `princ`, among other things.
 
 The output functions also take a stream as an optional argument.
 In the following, we create the file `test.text` and print two expressions to it.
@@ -1476,12 +1476,12 @@ The final `read` hits the end of file, and so returns the specified value, `eof`
 ```lisp
 > (with-open-file (stream "test.text" :direction :output)
     (print '(hello there) stream)
-    (princ 'goodbye stream))=>
-GOODBYE        :*and creates the file test.text
+    (princ 'goodbye stream)) =>
+GOODBYE        ; and creates the file test.text
 
 > (with-open-file (stream "test.text" :direction :input)
     (list (read stream) (read-char stream) (read stream)
-          (read stream nil 'eof)))=>
+          (read stream nil 'eof))) =>
 ((HELLO THERE) #\G OODBYE EOF)
 ```
 
@@ -1572,14 +1572,14 @@ All output, including the symbols <= and => are printed by the stepper itself; I
 133/4
 ```
 
-The functions `describe`, `inspect, documentation,` and `apropos` provide information about the state of the current program.
+The functions `describe`, `inspect`, `documentation`, and `apropos` provide information about the state of the current program.
 `apropos` prints information about all symbols whose name matches the argument:
 
 ```lisp
 > (apropos 'string)
 MAKE-STRING            function (LENGTH &KEY INITIAL-ELEMENT)
-PRIN1-T0-STRING        function (OBJECT)
-PRINC-T0-STRING        function (OBJECT)
+PRIN1-TO-STRING        function (OBJECT)
+PRINC-TO-STRING        function (OBJECT)
 STRING                 function (X)
 ...
 ```
@@ -2063,7 +2063,7 @@ Here is the program:
 
 (defun problem (x op y)
   "Ask a math problem, read a reply, and say if it is correct."
-  (format t "~&How much is ~d ~a ~d? " x op y)
+  (format t "~&How much is ~d ~a ~d?" x op y)
   (if (eql (read) (funcall op x y))
       (princ "Correct!")
       (princ "Sorry, that's not right.")))
@@ -2257,7 +2257,7 @@ The definition is:
 The only hard part about this definition is understanding the parameter list.
 The `&rest` accumulates all the keyword/value pairs in the variable `keyword-args`.
 In addition to the `&rest` parameter, two specific keyword parameters, `:test` and `:test-not`, are specified.
-Any time you put a `&key` in a parameter list, you need an `&allow-other- keys` if, in fact, other keywords are allowed.
+Any time you put a `&key` in a parameter list, you need an `&allow-other-keys` if, in fact, other keywords are allowed.
 In this case we want to accept keywords like `:start` and `:key` and pass them on to `remove`.
 
 All the keyword/value pairs will be accumulated in the list `keyword-args`, including the `:test` or `:test-not` values.

@@ -9,7 +9,7 @@ The examples in this book are designed to be clear examples of good programming 
 They are also paradigms of AI research-historically significant programs that use widely applicable techniques to solve important problems.
 
 <a id="tfnpreface-1"></a>
-Just as a liberal arts education includes a course in "the great books" of a culture, so this book is, at one level, a course in "the great programs" that define the AI culture.[1](#fnpreface-1)
+Just as a liberal arts education includes a course in "the great books" of a culture, so this book is, at one level, a course in "the great programs" that define the AI culture.<sup>[1](#fnpreface-1)</sup>
 
 At another level, this book is a highly technical compendium of the knowledge you will need to progress from being an intermediate Lisp programmer to being an expert.
 Parts I and II are designed to help the novice get up to speed, but the complete beginner may have a hard time even with this material.
@@ -326,4 +326,4 @@ Finally, thanks to Mike Morgan and Yonie Overton for overseeing the production o
 ----------------------
 
 <a id="fnpreface-1"></a>
-[1](#tfnpreface-1) This does not imply that the programs chosen are the best of all AI programs-just that they are representative.
+<sup>[1](#tfnpreface-1)</sup> This does not imply that the programs chosen are the best of all AI programs-just that they are representative.
