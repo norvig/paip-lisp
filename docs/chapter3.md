@@ -2455,7 +2455,7 @@ or, with an ANSI-compliant Common Lisp, you can specify a `:` key
   (reduce #'+ list :key #'(lambda (x) 1)))
 ```
 
-**Answer 3.12** `(format t "~@(~{~a~^ ~).~)" '(this is a test))`
+**Answer 3.12** `(format t "~@(~{~a~^ ~}.~)" '(this is a test))`
 
 ----------------------
 
