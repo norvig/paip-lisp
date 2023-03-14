@@ -967,7 +967,7 @@ For example,
 (true and x = x)
 (false and x = false)
 (true or x = true)
-(false or x = false)
+(false or x = x)
 ```
 
 **Exercise 8.8 [m]** The simplification rule `(x / 0 = undefined)` is necessary to avoid problems with division by zero, but the treatment of `undefined` is inadequate.
