@@ -993,22 +993,22 @@ Note that there is nothing that says the places in the maze are arranged in a fi
 ```lisp
 > (gps '((at 1)) '((at 25)))
 ((START)
-  (EXECUTING-(MOVE-FROM-1 TO 2))
-  (EXECUTING-(MOVE-FROM-2 TO 3))
-  (EXECUTING-(MOVE-FROM-3 TO 4))
-  (EXECUTING-(MOVE-FROM-4 TO 9))
-  (EXECUTING-(MOVE-FROM-9 TO 8))
-  (EXECUTING-(MOVE-FROM-8 TO 7))
-  (EXECUTING-(MOVE-FROM-7 TO 12))
-  (EXECUTING-(MOVE-FROM-12 TO 11))
-  (EXECUTING-(MOVE-FROM-11 TO 16))
-  (EXECUTING-(MOVE-FROM-16 TO 17))
-  (EXECUTING-(MOVE-FROM-17 TO 22))
-  (EXECUTING-(MOVE-FROM-22 TO 23))
-  (EXECUTING-(MOVE-FROM-23 TO 24))
-  (EXECUTING-(MOVE-FROM-24 TO 19))
-  (EXECUTING-(MOVE-FROM-19 TO 20))
-  (EXECUTING-(MOVE-FROM-20 TO 25))
+  (EXECUTING (MOVE FROM 1 TO 2))
+  (EXECUTING (MOVE FROM 2 TO 3))
+  (EXECUTING (MOVE FROM 3 TO 4))
+  (EXECUTING (MOVE FROM 4 TO 9))
+  (EXECUTING (MOVE FROM 9 TO 8))
+  (EXECUTING (MOVE FROM 8 TO 7))
+  (EXECUTING (MOVE FROM 7 TO 12))
+  (EXECUTING (MOVE FROM 12 TO 11))
+  (EXECUTING (MOVE FROM 11 TO 16))
+  (EXECUTING (MOVE FROM 16 TO 17))
+  (EXECUTING (MOVE FROM 17 TO 22))
+  (EXECUTING (MOVE FROM 22 TO 23))
+  (EXECUTING (MOVE FROM 23 TO 24))
+  (EXECUTING (MOVE FROM 24 TO 19))
+  (EXECUTING (MOVE FROM 19 TO 20))
+  (EXECUTING (MOVE FROM 20 TO 25))
   (AT 25))
 ```
 
@@ -1043,11 +1043,11 @@ We could do this by calling GPS as a subfunction and then manipulating the resul
 ```lisp
 (defun find-path (start end)
   "Search a maze for a path from start to end."
-  (let ((results (GPS '((at .start)) '((at .end)))))
+  (let ((results (GPS `((at ,start)) `((at ,end)))))
     (unless (null results)
       (cons start (mapcar #'destination
-              (remove '(start) results
-                  :test #'equal))))))
+                          (remove '(start) results
+                                  :test #'equal))))))
 (defun destination (action)
   "Find the Y in (executing (move from X to Y))"
   (fifth (second action)))
@@ -1093,14 +1093,14 @@ We will create an operator for each possible block move.
 (defun move-op (a b c)
   "Make an operator to move A from B to C."
   (op
-      '(move ,a from ,b to ,c)
-      :preconds '((space on ,a) (space on ,c) (,a on ,b))
+      `(move ,a from ,b to ,c)
+      :preconds `((space on ,a) (space on ,c) (,a on ,b))
       :add-list (move-ons a b c)
       :del-list (move-ons a c b)))
 (defun move-ons (a b c)
   (if (eq b 'table)
-      '((,a on ,c))
-      '((.a on ,c) (space on ,b))))
+      `((,a on ,c))
+      `((,a on ,c) (space on ,b))))
 ```
 
 Now we try these operators out on some problems.
@@ -1197,7 +1197,7 @@ That is, we could change `achieve-all` as follows:
       current-state)))
 
 (defun orderings (l)
-  (if (> (length l) l)
+  (if (> (length l) 1)
       (list l (reverse l))
       (list l)))
 ```
