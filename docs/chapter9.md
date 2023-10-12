@@ -420,10 +420,10 @@ Finally, if there are several elements in the right-hand side, they are each tur
 (defun compile-rule (rule)
  "Translate a grammar rule into a LISP function definition."
  (let ((rhs (rule-rhs rule)))
-   '(defun ,(rule-lhs rule) ()
+   `(defun ,(rule-lhs rule) ()
     ,(cond ((every #'atom rhs) '(one-of ',rhs))
        ((length=l rhs) (build-code (first rhs)))
-       (t '(case (random ,(length rhs))
+       (t `(case (random ,(length rhs))
          ,@(build-cases 0 rhs)))))))
 
 (defun build-cases (number choices)
