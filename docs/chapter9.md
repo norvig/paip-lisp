@@ -422,8 +422,8 @@ Finally, if there are several elements in the right-hand side, they are each tur
  (let ((rhs (rule-rhs rule)))
    '(defun ,(rule-lhs rule) ()
     ,(cond ((every #'atom rhs) '(one-of ',rhs))
-       ((length =l rhs) (build-code (first rhs)))
-       (t '(case (random .(length rhs))
+       ((length=l rhs) (build-code (first rhs)))
+       (t '(case (random ,(length rhs))
          ,@(build-cases 0 rhs)))))))
 
 (defun build-cases (number choices)
