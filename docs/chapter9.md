@@ -808,7 +808,7 @@ Here are some more utility functions on pipes:
        (progn
        (unless (null key) (funcall key (head pipe)))
        (enumerate (tail pipe) :count (if count (- count 1))
-                        : key key : result result))))
+                        :key key :result result))))
 (defun filter (pred pipe)
  "Keep only items in pipe satisfying pred."
  (if (funcall pred (head pipe))
