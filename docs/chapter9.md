@@ -621,11 +621,11 @@ The function `force` checks if the function needs to be called, and returns the 
 If `force` is passed an argument that is not a delay, it just returns the argument.
 
 ```lisp
-(defstruct delay value (computed? nil))
+(defstruct delay (value nil) (function nil))
 
 (defmacro delay (&rest body)
   "A computation that can be executed later by FORCE."
-  `(make-delay :value #'(lambda () . ,body)))
+  `(make-delay :function #'(lambda () . ,body)))
 ```
 
 ```lisp
