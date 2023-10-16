@@ -420,10 +420,10 @@ Finally, if there are several elements in the right-hand side, they are each tur
 (defun compile-rule (rule)
  "Translate a grammar rule into a LISP function definition."
  (let ((rhs (rule-rhs rule)))
-   '(defun ,(rule-lhs rule) ()
+   `(defun ,(rule-lhs rule) ()
     ,(cond ((every #'atom rhs) '(one-of ',rhs))
-       ((length =l rhs) (build-code (first rhs)))
-       (t '(case (random .(length rhs))
+       ((length=l rhs) (build-code (first rhs)))
+       (t `(case (random ,(length rhs))
          ,@(build-cases 0 rhs)))))))
 
 (defun build-cases (number choices)
@@ -621,11 +621,11 @@ The function `force` checks if the function needs to be called, and returns the 
 If `force` is passed an argument that is not a delay, it just returns the argument.
 
 ```lisp
-(defstruct delay value (computed? nil))
+(defstruct delay (value nil) (function nil))
 
 (defmacro delay (&rest body)
   "A computation that can be executed later by FORCE."
-  `(make-delay :value #'(lambda () . ,body)))
+  `(make-delay :function #'(lambda () . ,body)))
 ```
 
 ```lisp
@@ -676,7 +676,7 @@ Note that `make-pipe` is a macro that delays evaluation of the tail.
 ```lisp
 (defmacro make-pipe (head tail)
  "Create a pipe by evaluating head and delaying tail."
- '(cons ,head (delay ,tail)))
+ `(cons ,head (delay ,tail)))
 (defconstant empty-pipe nil)
 (defun head (pipe) (first pipe))
 (defun tail (pipe)(force (rest pipe)))
@@ -750,7 +750,7 @@ The following definitions do not make this assumption:
 ```lisp
 (defmacro make-pipe (head tai1)
  "Create a pipe by evaluating head and delaying tail."
- '(cons ,head #'(lambda () ,tail)))
+ `(cons ,head #'(lambda () ,tail)))
 (defun tail (pipe)
  "Return tail of pipe or list, and destructively update
  the tail if it is a function."
@@ -808,7 +808,7 @@ Here are some more utility functions on pipes:
        (progn
        (unless (null key) (funcall key (head pipe)))
        (enumerate (tail pipe) :count (if count (- count 1))
-                        : key key : result result))))
+                        :key key :result result))))
 (defun filter (pred pipe)
  "Keep only items in pipe satisfying pred."
  (if (funcall pred (head pipe))
