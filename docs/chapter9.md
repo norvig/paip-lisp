@@ -750,7 +750,7 @@ The following definitions do not make this assumption:
 ```lisp
 (defmacro make-pipe (head tai1)
  "Create a pipe by evaluating head and delaying tail."
- '(cons ,head #'(lambda () ,tail)))
+ `(cons ,head #'(lambda () ,tail)))
 (defun tail (pipe)
  "Return tail of pipe or list, and destructively update
  the tail if it is a function."
