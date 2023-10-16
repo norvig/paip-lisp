@@ -676,7 +676,7 @@ Note that `make-pipe` is a macro that delays evaluation of the tail.
 ```lisp
 (defmacro make-pipe (head tail)
  "Create a pipe by evaluating head and delaying tail."
- '(cons ,head (delay ,tail)))
+ `(cons ,head (delay ,tail)))
 (defconstant empty-pipe nil)
 (defun head (pipe) (first pipe))
 (defun tail (pipe)(force (rest pipe)))
