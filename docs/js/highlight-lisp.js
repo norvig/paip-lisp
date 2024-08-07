@@ -477,7 +477,7 @@ var highlight_lisp = function() {
 			{
 				var child = children[i];
 				var open = is_opening(child);
-				// mark the first occurance of the paren, and start counting
+				// mark the first occurrence of the paren, and start counting
 				// from there
 				if(child === paren)
 				{
