@@ -1127,13 +1127,10 @@ Explain how this would be done both for the first version of the interpreter and
 **Answer 22.2** There is no way to implement a full `call/cc` to Common Lisp, but the following works for cases where the continuation is only used with dynamic extent:
 
 ```lisp
-(defun call/cc (cc computation)
-  "Make the continuation accessible to a Scheme procedure."
-  (funcall computation cc
-           ;; Package up CC into a Scheme function:
-           #'(lambda (cont val)
-               (declare (ignore cont))
-               (funcall cc val))))
+(defun call/cc (computation)
+  "Call the computation, passing it the current continuation.
+  The continuation has only dynamic extent."
+  (funcall computation #'(lambda (x) (return-from call/cc x))))
 ```
 
 **Answer 22.3** No.
