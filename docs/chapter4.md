@@ -1197,7 +1197,7 @@ That is, we could change `achieve-all` as follows:
       current-state)))
 
 (defun orderings (l)
-  (if (> (length l) l)
+  (if (> (length l) 1)
       (list l (reverse l))
       (list l)))
 ```
