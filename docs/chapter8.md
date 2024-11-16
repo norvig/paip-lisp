@@ -1,5 +1,6 @@
 # Chapter 8
 ## Symbolic Mathematics: A Simplification Program
+<a id="chapter8_top"></a>
 
 > *Our life is frittered away by detail....*
 

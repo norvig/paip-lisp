@@ -1,5 +1,6 @@
 # Chapter 11
 ## Logic Programming
+<a id="chapter11_top"></a>
 
 > A language that doesn't affect the way you think about programming is not worth knowing.
 

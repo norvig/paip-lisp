@@ -1,5 +1,6 @@
 # Chapter 2
 ## A Simple Lisp Program
+<a id="chapter2_top"></a>
 
 > *Certum quod factum.* \
 > (One is certain of only what one builds.)
@@ -188,6 +189,7 @@ If we wanted to develop a larger grammar, the problem could get worse, because t
 
 ## 2.3 A Rule-Based Solution
 
+<a id="p39"></a>
 An alternative implementation of this program would concentrate on making it easy to write grammar rules and would worry later about how they will be processed.
 Let's look again at the original grammar rules:
 

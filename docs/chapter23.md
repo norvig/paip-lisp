@@ -1,5 +1,6 @@
 # Chapter 23
 ## Compiling Lisp
+<a id="chapter23_top"></a>
 
 Many textbooks show simple interpreters for Lisp, because they are simple to write, and because it is useful to know how an interpreter works.
 Unfortunately, not as many textbooks show how to write a compiler, even though the same two reasons hold.

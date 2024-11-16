@@ -1,5 +1,6 @@
 # Chapter 1
 ## Introduction to Lisp
+<a id="chapter1_top"></a>
 
 > You think you know when you learn, are more sure when you can write, even more when you can teach, but certain when you can program.
 >

@@ -1,4 +1,5 @@
 # Bibliography
+<a id="bibliography_top"></a>
 
 Abelson, Harold, Sussman Gerald J., Sussman Julie.
 *Structure and Interpretation of Computer Programs.* MIT Press; 1985.

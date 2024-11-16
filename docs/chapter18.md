@@ -1,5 +1,6 @@
 # Chapter 18
 ## Search and the Game of Othello
+<a id="chapter18_top"></a>
 
 > In the beginner's mind there are endless possibilities; in the expert's there are few.
 

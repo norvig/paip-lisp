@@ -1,5 +1,6 @@
 # Chapter 19
 ## Introduction to Natural Language
+<a id="chapter19_top"></a>
 
 > Language is everywhere.
 It permeates our thoughts, mediates our relations with others, and even creeps into our dreams.

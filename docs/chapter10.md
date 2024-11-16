@@ -1,5 +1,6 @@
 # Chapter 10
 ## Low-Level Efficiency Issues
+<a id="chapter10_top"></a>
 
 > There are only two qualities in the world: efficiency and inefficiency; and only two sorts of people: the efficient and the inefficient.
 >

@@ -1,5 +1,6 @@
 # Chapter 4
 ## GPS: The General Problem Solver
+<a id="chapter4_top"></a>
 
 > *There are now in the world machines that think.*
 

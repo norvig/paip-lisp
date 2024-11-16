@@ -1,5 +1,6 @@
 # Chapter 5
 ## ELIZA: Dialog with a Machine
+<a id="chapter5_top"></a>
 
 > *It is said that to explain is to explain away.*
 
