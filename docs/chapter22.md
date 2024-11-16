@@ -1,5 +1,6 @@
 # Chapter 22
 ## Scheme: An Uncommon Lisp
+<a id="chapter22_top"></a>
 
 > The best laid schemes o' mice an' men
 

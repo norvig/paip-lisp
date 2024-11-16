@@ -1,5 +1,6 @@
 # Chapter 20
 ## Unification Grammars
+<a id="chapter20_top"></a>
 
 Prolog was invented because Alain Colmerauer wanted a formalism to describe the grammar of French.
 His intuition was that the combination of Horn clauses and unification resulted in a language that was just powerful enough to express the kinds of constraints that show up in natural languages, while not as powerful as, for example, full predicate calculus.

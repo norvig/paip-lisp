@@ -1,5 +1,6 @@
 # Chapter 9
 ## Efficiency Issues
+<a id="chapter9_top"></a>
 
 > A Lisp programmer knows the value of everything, but the cost of nothing.
 

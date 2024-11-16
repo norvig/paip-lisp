@@ -1,4 +1,5 @@
 # Preface
+<a id="preface_top"></a>
 
 > **paradigm** *n* **1** an example or pattern; *esp* an outstandingly clear or typical example.  
 > -*Longman's Dictionary of the English Language*, 1984

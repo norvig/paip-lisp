@@ -1,5 +1,6 @@
 # Chapter 12
 ## Compiling Logic Programs
+<a id="chapter12_top"></a>
 
 The end of [chapter 11](chapter11.md) introduced a new, more efficient representation for logic variables.
 It would be reasonable to build a new version of the Prolog interpreter incorporating this representation.

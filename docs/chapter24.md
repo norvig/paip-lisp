@@ -1,5 +1,6 @@
 # Chapter 24
 ## ANSI Common Lisp
+<a id="chapter24_top"></a>
 
 This chapter briefly covers some advanced features of Common Lisp that were not used in the rest of the book.
 The first topic, packages, is crucial in building large systems but was not covered in this book, since the programs are concise.

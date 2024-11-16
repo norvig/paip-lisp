@@ -1,5 +1,6 @@
 # Chapter 14
 ## Knowledge Representation and Reasoning
+<a id="chapter14_top"></a>
 
 > *Knowledge itself is power.* \
 > -Francis Bacon (1561-1626)

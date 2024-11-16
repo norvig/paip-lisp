@@ -1,5 +1,6 @@
 # Chapter 25
 ## Troubleshooting
+<a id="chapter25_top"></a>
 
 > Perhaps if we wrote programs from childhood on, as adults we'd be able to read them.
 

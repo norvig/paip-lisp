@@ -1,5 +1,6 @@
 # Chapter 3
 ## Overview of Lisp
+<a id="chapter3_top"></a>
 
 > No doubt about it.
 Common Lisp is a *big* language.

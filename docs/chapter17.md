@@ -1,5 +1,6 @@
 # Chapter 17
 ## Line-Diagram Labeling by Constraint Satisfaction
+<a id="chapter17_top"></a>
 
 > It is wrong to think of Waltz's work only as a statement of the epistemology of line drawings of polyhedra.
 Instead I think it is an elegant case study of a paradigm we can expect to see again and again.

@@ -1,5 +1,6 @@
 # Chapter 2
 ## A Simple Lisp Program
+<a id="chapter2_top"></a>
 
 > *Certum quod factum.* \
 > (One is certain of only what one builds.)

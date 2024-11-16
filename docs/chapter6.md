@@ -1,5 +1,6 @@
 # Chapter 6
 ## Building Software Tools
+<a id="chapter6_top"></a>
 
 > *Man is a tool-using animal...Without tools he is nothing with tools he is all.*
 

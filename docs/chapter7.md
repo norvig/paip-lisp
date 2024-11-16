@@ -1,5 +1,6 @@
 # Chapter 7
 ## STUDENT: Solving Algebra Word Problems
+<a id="chapter7_top"></a>
 
 > *[This] is an example par excellence* of the power of using meaning to solve linguistic problems.
 >
