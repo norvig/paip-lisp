@@ -783,7 +783,7 @@ Before defining the sequence functions, the macro `once-only` is introduced.
 ### Once-only: A Lesson in Macrology
 
 The macro `once-only` has been around for a long time on various systems, although it didn't make it into the Common Lisp standard.
-I include it here for two reasons: first, it is used in the following `funcall-if` macro, and second, if you can understand how to write and when to use `once-only`, then you truly understand macro.
+I include it here for two reasons: first, it is used in the following `funcall-if` macro, and second, if you can understand how to write and when to use `once-only`, then you truly understand macros.
 
 First, you have to understand the problem that `once-only` addresses.
 Suppose we wanted to have a macro that multiplies its input by itself:<a id="tfn24-2"></a><sup>[2](#fn24-2)</sup>
