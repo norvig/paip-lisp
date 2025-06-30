@@ -78,12 +78,66 @@ After that we will return to the main core of EMYCIN, the backward-chaining rule
 Finally, we will show how to add some medical knowledge to EMYCIN to reconstruct MYCIN.
 A glossary of the program is in [figure  16.1](#f0010).
 
-| []()                                         |
-|----------------------------------------------|
-| ![f16-01](images/chapter16/f16-01.jpg)       |
-| Figure 16.1: Glossary for the EMYCIN Program |
 
-*(ed: this could be a markdown table)*
+| Function               | Description                                                         |
+|------------------------|---------------------------------------------------------------------|
+|                        | **Top-Level Functions for the Client**                              |
+| `emycin`               | Run the shell on a list of contexts representing a problem.         |
+| `mycin`                | Run the shell on the microbial infection domain.                    |
+|                        | **Top-Level Functions for the Expert**                              |
+| `defcontext`           | Define a context.                                                   |
+| `defparm`              | Define a parameter.                                                 |
+| `defrule`              | Define a rule.                                                      |
+|                        | **Constaints**                                                      |
+| `true`                 | A certainty factor of +1.                                           |
+| `false`                | A certainty factor of -1.                                           |
+| `unknown`              | A certainty factor of 0.                                            |
+| `cf-cut-off`           | Below this certainty we cut off search.                             |
+|                        | **Data Types**                                                      |
+| `context`              | A subdomain concerning a particular problem.                        |
+| `parm`                 | A parameter.                                                        |
+| `rule`                 | A backward-chainging rule with certainty factors.                   |
+| `yes/no`               | The type with members `yes` and `no`.                               |
+|                        | **Major Functions within Emycin**                                   |
+| `get-context-data`     | Collect data and draw conclusions.                                  |
+| `find-out`             | Determine values by knowing, asking, or using rules.                |
+| `get-db`               | Retrieve a fact from the data base.                                 |
+| `use-rules`            | Apply all rules relevent to a parameter.                            |
+| `use-rule`             | Applky one rule.                                                    |
+| `new-instance`         | Create a new instance of a context.                                 |
+| `report-findings`      | Print the results.                                                  |
+|                        | **Auxiliary Functions**                                             |
+| `cf-or`                | Combine certainty factors (CFs) with OR.                            |
+| `cf-and`               | Combine certainty factors (CFs) with AND.                           |
+| `true-p`               | Is this CF true for purposes of search?                             |
+| `false-p`              | Is this CF false for purposes of search?                            |
+| `cf-p`                 | Is this a certainty factor?                                         |
+| `put-db`               | Place a fact in the data base.                                      |
+| `clear-db`             | Clear all facts from the data base.                                 |
+| `get-vals`             | Get value and CF for a parameter/instance.                          |
+| `get-cf`               | Get CF for a parameter/instance/value triplet.                      |
+| `update-cf`            | Change CF for a parameter/instance/value triplet.                   |
+| `ask-vals`             | Ask the user for value/CF for a parameter/instance.                 |
+| `prompt-and-read-vals` | Print a prompt and read a reply.                                    |
+| `inst-name`            | The name of an instance.                                            |
+| `check-reply`          | See if reply is valid list of CF/values.                            |
+| `parse-reply`          | Convert reply into list of CF/values.                               |
+| `parm-type`            | Values of this parameter must be of this type.                      |
+| `get-parm`             | Find or make a parameter structure for this name.                   |
+| `put-rule`             | Add a new rule, indexed under each conclusion.                      |
+| `get-rules`            | Retrieve rules that help determine a parameter.                     |
+| `clear-rules`          | Remove all rules.                                                   |
+| `satisfy-premises`     | Calculate the combined CF for the premeises.                        |
+| `eval-condition`       | Determine the CF for a condition.                                   |
+| `reject-premise`       | Rule out a premise if it is clearly false.                          |
+| `conclude`             | Add a parameter/instance/value/CF to the data base.                 |
+| `is`                   | An alias for equal.                                                 |
+| `check-conditions`     | Make sure a rule is valid.                                          |
+| `print-rule`           | Print a rule.                                                       |
+| `print-conditions`     | Print a list of conditions.                                         |
+| `print-condition`      | Print a single condition.                                           |
+
+Figure 16.1: Glossary for the EMYCIN Program
 
 ## 16.1 Dealing with Uncertainty
 

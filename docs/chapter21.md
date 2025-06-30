@@ -24,12 +24,41 @@ All single-letter arguments denote metavariables; for example, each noun phrase 
 Similarly, the `hin modifiers` is a variable that refers to the head-the thing that is being modified.
 The other arguments and categories will be explained in turn, but it is handy to have this figure to refer back to.
 
-| []()                                                    |
-|---------------------------------------------------------|
-| ![f21-01](images/chapter21/f21-01.jpg)                  |
-| Figure 21.1: Grammatical Categories and their Arguments |
 
-*(ed: should be a markdown table)*
+| Category      | Arguments                                  |
+|---------------|--------------------------------------------|
+|               | **Preterminals**                           |
+|  `name`       | `agr name`                                 |
+|  `verb`       | `verb inflection slots v sem`              |
+|  `rel-pro`    | `case type`                                |
+|  `pronoun`    | `arg case wh x sem`                        |
+|  `art`        | `agr quant`                                |
+|  `adj`        | `x sem`                                    |
+|  `cardinal`   | `number agr`                               |
+|  `ordinal`    | `number`                                   |
+|  `prep`       | `prep sem`                                 |
+|  `noun`       | `agr slots x sem`                          |
+|  `aux`        | `inflection needs-inflection v sem`        |
+|  `adverb`     | `x sem`                                    |
+|               |  **Nonterminals**                          |
+|  `S`          | `s sem`                                    |
+|  `aux-inv-S`  | `subject s sem`                            |
+|  `clause`     | `inflection x int-subj v gapl gap2 sem`    |
+|  `subject`    | `agr x subj-slot int-subj gap1 gap2 sem`   |
+|  `VP`         | `inflection x subject-slot v gap1 gap2 vp` |
+|  `NP`         | `agr case wh x gap1 gap2 np`               |
+|  `NP2`        | `agr case x gap1 gap2 sem`                 |
+|  `PP`         | `prep role wh np x gap1 gap2 sem`          |
+|  `XP`         | `slot constituent wh x gap1 gap2 sem`      |
+|  `Det`        | `agr wh x restriction sem`                 |
+|  `rel-clause` | `agr x sem`                                |
+|  `modifiers`  | `pre/post cat info slots h gap1 gap2 sem`  |
+|  `complement` | `cat info slot h gap1 gap2 sem`            |
+|  `adjunct`    | `pre/post cat info h gap1 gap2 sem`        |
+|  `advp`       | `wh x gap1 gap2 sem`                       |
+
+
+Figure 21.1: Grammatical Categories and their Arguments
 
 ## 21.1 Noun Phrases
 

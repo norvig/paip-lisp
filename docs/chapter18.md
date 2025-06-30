@@ -158,12 +158,58 @@ With this much decided, we are ready to begin.
 [Figure 18.3](#f0020) is the glossary for the complete program.
 A glossary for a second version of the program is on [page 623](#p623).
 
-| []()                                          |
-|-----------------------------------------------|
-| ![f18-03](images/chapter18/f18-03.jpg)        |
-| Figure 18.3: Glossary for the Othello Program |
+| Function                    | Description                                                         |
+|-----------------------------|---------------------------------------------------------------------|
+|                             | **Top-Level Function**                                              |
+| `othello`                   | Play a game of Othello. Return the score.                           |
+|                             | **Constants**                                                       |
+| `empty`                     | `0` represents an empty square.                                     |
+| `black`                     | `1` represents a black piece.                                       |
+| `white`                     | `2` represents a white piece.                                       |
+| `outer`                     | `3` represents a piece outside the 8 x 8 board.                     |
+| `all-directions`            | A list of integers representing the eight directions.               |
+| `all-squares`               | A list of all legal squares.                                        |
+| `winning-value`             | The best possible evaluation.                                       |
+| `losing-value`              | The worst possible evaluation.                                      |
+|                             | **Data Types**                                                      |
+| `piece`                     | An integer from `empty` to `outer`.                                 |
+| `board`                     | A vector of 100 pieces.                                             |
+|                             | **Major Functions**                                                 |
+| `get-move`                  | Call the player's strategy function to get a move.                  |
+| `make-move`                 | Update board to reflect move by player.                             |
+| `human`                     | A strategy that prompts a human player.                             |
+| `random-strategy`           | Make any legal move.                                                |
+| `maximize-difference`       | A strategy that maximizes the difference in pieces.                 |
+| `maximizer`                 | Return a strategy that maximizes some measure.                      |
+| `weighted-squares`          | Sum of the weights of player's squares minus opponent's.            |
+| `modified-weighted-squares` | Like above, but treating corners better.                            |
+| `minimax`                   | Find the best move according to `EVAL-FN`, searching `PLY` levels.  |
+| `minimax-searcher`          | Return a strategy that uses `minimax` to search.                    |
+| `alpha-beta`                | Find the best move according to `EVAL-FN`, searching `PLY` levels.  |
+| `alpha-beta-searcher`       | Return a strategy that uses `alpha-beta` to search.                 |
+|                             | **Auxiliary Functions**                                             |
+| `bref`                      | Reference to a position on the board.                               |
+| `copy-board`                | Make a new board.                                                   |
+| `initial-board`             | Return a board, empty except for the four pieces in the middle.     |
+| `print-board`               | Print a board, along with some statistics.                          |
+| `count-difference`          | Count player's pieces minus opponent's pieces.                      |
+| `name-of`                   | A character used to print a piece.                                  |
+| `opponent`                  | The opponent of `black` is `white`, and vice-versa.                 |
+| `valid-p`                   | A syntactically valid square.                                       |
+| `legal-p`                   | A legal move on the board.                                          |
+| `make-flips`                | Make any flips in the given direction.                              |
+| `would-flip?`               | Would this move result in any flips in this direction?              |
+| `find-bracketing-piece`     | Return the square number of the bracketing piece.                   |
+| `any-legal-move?`           | Does player have any legal moves in this position?                  |
+| `next-to-play`              | Compute the player to move next, or `NIL` if nobody can move.       |
+| `legal-moves`               | Returns a list of legal moves for player.                           |
+| `final-value`               | Is this a win, loss, or draw for player?                            |
+| `neighbors`                 | Return a list of all squares adjacent to a square.                  |
+| `switch-strategies`         | PLay one strategy for a while, then switch.                         |
+|                             | **Previously Defined Functions**                                    |
+| `random-elt`                | Choose a random element from a sequence. (pg. 36)                   |
 
-*(ed: this should be a markdown table)*
+Figure 18.3: Glossary for the Othello Program
 
 What follows is the code for directions and pieces.
 We explicitly define the type `piece` to be a number from `empty` to `outer` (0 to 3), and define the function `name-of` to map from a piece number to a character: a dot for empty, `@` for black, `0` for white, and a question mark (which should never be printed) for `outer`.
@@ -1055,12 +1101,42 @@ While we're at it, we'll also print the list of possible moves:
   (h8->88 (read)))
 ```
 
-| []()                                                        |
-|-------------------------------------------------------------|
-| ![f18-05](images/chapter18/f18-05.jpg)                      |
-| Figure 18.5: Glossary for the Tournament Version of Othello |
 
-*(ed: should be a markdown table)*
+| Function                | Description                                              |
+|-------------------------|----------------------------------------------------------|
+|                         | **Top-Level Functions**                                  |
+| `othello-series`        | Play a series of `N` games.                              |
+| `random-othello-series` | Play a series of games, starting from a random position. |
+| `round-robin`           | PLay a tournament among strategies.                      |
+|                         | **Special Variables**                                    |
+| `*clock*`               | A copy of the game clock (tournament version only).      |
+| `*board*`               | A copy of the game board (tournament version only).      |
+| `*move-number*`         | Number of moves made (tournament version only).          |
+| `*ply-boards*`          | A vector of boards; used as a resource to avoid consing. |
+|                         | **Data Structures**                                      |
+| `node`                  | Holds a board and its evaluation.                        |
+|                         | **Main Functions**                                       |
+| `alpha-beta2`           | Sorts moves by static evaluation.                        |
+| `alpha-beta-searcher2`  | Strategy using `alpha-beta2`.                            |
+| `alpha-beta3`           | Uses the `killer` heuristic.                             |
+| `alpha-beta-searcher3`  | Strategy using `alpha-beta3`.                            |
+| `Iago-eval`             | Evaluation function based on Rosenbloom's program.       |
+| `Iago`                  | Strategy using `Iago-eval`.                              |
+|                         | **Auxiliary Functions**                                  |
+| `h8->88`                | Convert from alphanumeric to numeric square notation.    |
+| `88->h8`                | Convert from numeric to alphanumeric square notation.    |
+| `time-string`           | Convert internal time units to a `mm:ss` string          |
+| `switch-strategies`     | Play one strategy for a while, then another.             |
+| `mobility`              | A strategy that counts the number of legal moves.        |
+| `legal-nodes`           | A list of legal moves sorted by their evaluation.        |
+| `negate-node`           | Set the value of a node to its negative.                 |
+| `put-first`             | Put the `killer` move first, if it is legal.             |
+|                         | **Previously Defined Functions**                         |
+| `cross-product`         | Apply `fn` to all pairs of arguements. (pg. 47)          |
+| `symbol`                | Build a symbol by concatenting components.               |
+
+
+Figure 18.5: Glossary for the Tournament Version of Othello
 
 The `othello` function needn't worry about notation, but it does need to monitor the time.
 We make up a new data structure, the clock, which is an array of integers saying how much time (in internal units) each player has left.

@@ -114,12 +114,39 @@ That completes the sketch of the line-labeling algorithm.
 We are now ready to implement a labeling program.
 Its glossary is in [figure 17.5](#fig-17-05).
 
-| []()                                                |
-|-----------------------------------------------------|
-| ![f17-05](images/chapter17/f17-05.jpg)              |
-| Figure 17.5: Glossary for the Line-Labeling Program |
 
-*(ed: should be a markdown table)*
+| Function                | Description                                                         |
+|-------------------------|---------------------------------------------------------------------|
+|                         | **Top-Level Functions**                                             |
+| `print-labelings`       | Label the diagram by propagating constraints and then searching.    |
+|                         | **Data Types**                                                      |
+| `diagram`               | A diagram is a list of vertexes.                                    |
+| `vertex`                | A vertex has a name, type, and list of neighbors and labelings.     |
+|                         | **Major Functions**                                                 |
+| `find-labelings`        | Do the same constraint propagation, but don't print anything.       |
+| `propagate-constraints` | Reduce the number of labeling on vertex by considering neighbors.   |
+| `consistent-labelings`  | Return the set of labelings that are consistent with neighbors.|
+| `search-solutions`      | Try all labelings for one ambiguous vertex, and propagate.          |
+| `defdiagram`            | (macro) Define a diagram.                                           |
+| `diagram`               | Retrieve a diagram stored by name.                                  |
+| `ground`                | Attach the line between the two vertexes to the ground.             |
+|                         | **Auxiliary Functions**                                             |
+| `labels-for`            | Return all the labels for the line going to vertex.                 |
+| `reverse-label`         | Reverse left and right on arrow labels.                             |
+| `ambiguous-vertex-p`    | A vertex is ambiguous if it has more than one labeling.             |
+| `number-of-labelings`   | Number of labels on a vertex.                                       |
+| `find-vertex`           | Find the vertex with the given name.                                |
+| `matrix-transpose`      | Turn a matrix on its side.                                          |
+| `possible-labelings`    | The list of possible labelings fora given vertex type.              |
+| `print-vertex`          | Print a vertex in the short form.                                   |
+| `show-vertex`           | Print a vertex in a long form, on a new line.                       |
+| `show-diagram`          | Print a diagram in a long form. Include a title.                    |
+| `construct-diagram`     | Build a new diagram from a set of vertex descriptions.              |
+| `construct-vertex`      | Build a new vertex from a vertex description.                       |
+| `make-copy-diagram`     | Make a copy of a diagram, preserving connectivity.                  |
+| `check-diagram`         | Check if the description appears consistent.                        |
+
+Figure 17.5: Glossary for the Line-Labeling Program
 
 The two main data structures are the `diagram` and the `vertex`.
 It would have been possible to implement a data type for `lines`, but it is not necessary: lines are defined implicitly by the two vertexes at their end points.
